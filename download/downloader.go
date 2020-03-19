@@ -1,4 +1,4 @@
-package main
+package download
 
 import (
 	"fmt"
@@ -36,7 +36,7 @@ func (wc WriteCounter) PrintProgress() {
 // DownloadFile will download a url to a local file. It's efficient because it will
 // write as it downloads and not load the whole file into memory. We pass an io.TeeReader
 // into Copy() to report progress on the download.
-func DownloadFile(filepath string, url string) error {
+func Start(filepath string, url string) error {
 
 	// Create the file, but give it a tmp file extension, this means we won't overwrite a
 	// file until it's downloaded, but we'll remove the tmp extension once downloaded.

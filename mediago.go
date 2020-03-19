@@ -1,16 +1,9 @@
 package main
 
 import (
-	"bufio"
 	"flag"
-	"fmt"
-	"net/url"
-	"os"
-	"path"
-	"strings"
+	"mediago/download"
 )
-
-var segmentList []string
 
 func main() {
 
@@ -18,42 +11,28 @@ func main() {
 	urlString := flag.String("url", "", "is ok")
 	flag.Parse()
 
-	fileHandle, _ := os.Open(*filename)
-	defer fileHandle.Close()
-	fileScanner := bufio.NewScanner(fileHandle)
-
-	for fileScanner.Scan() {
-		text := fileScanner.Text()
-		switch {
-		case strings.HasPrefix(text, "#EXT"):
-		case strings.HasPrefix(text, "#"):
-			continue
-		default:
-			segmentList = append(segmentList, text)
-		}
+	end := make(chan bool)
+	u := download.Urls{
+		Chs: make(chan int, 5), // 默认同时下载5个
+		Ans: make(chan bool),
 	}
+	// 初始化url
+	go u.InitUrl(end, *filename)
+	if ok := <-end; ok {
+		// 分发的下载线程
+		go func() {
+			for _, v := range u.Urls {
+				u.Chs <- 1 // 限制线程数 （每次下载缓存加1， 直到加满阻塞）
+				u.Wg.Add(1)
+				go u.Work(v, *urlString)
+			}
+			u.Wg.Wait()  // 等待所有分发出去的线程结束
+			close(u.Ans) // 否则range 会报错哦
+		}()
 
-	for _, segmentName := range segmentList {
-
-		var (
-			u   *url.URL
-			err error
-		)
-
-		if u, err = url.Parse(*urlString); err != nil {
-			panic("invalid url")
+		// 静静的等待每个下载完成
+		for _ = range u.Ans {
 		}
-
-		u.Path = path.Join(u.Path, segmentName)
-		newFileName := fmt.Sprintf("C:\\Users\\admin\\Desktop\\test\\%s", segmentName)
-		fullUrl := u.String()
-
-		fmt.Println("Download Started")
-		err = DownloadFile(newFileName, fullUrl)
-		if err != nil {
-			panic(err)
-		}
-		fmt.Println("Download Finished")
 	}
 
 }
