@@ -19,7 +19,7 @@ type Urls struct {
 }
 
 // 初始化下载地址  根据项目确认使用配置文件的方式还是其他方式，此处使用爬虫处理没公开
-func (u *Urls) InitUrl(end chan bool, filename string) {
+func (u *Urls) InitUrl(filename string) {
 	fileHandle, _ := os.Open(filename)
 	defer fileHandle.Close()
 	fileScanner := bufio.NewScanner(fileHandle)
@@ -34,7 +34,6 @@ func (u *Urls) InitUrl(end chan bool, filename string) {
 			u.Urls = append(u.Urls, text)
 		}
 	}
-	end <- true
 }
 
 // 实际的下载操作
