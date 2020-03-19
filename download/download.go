@@ -27,8 +27,12 @@ func New(count int) Downloader {
 }
 
 // 初始化下载地址  根据项目确认使用配置文件的方式还是其他方式，此处使用爬虫处理没公开
-func (downloader *Downloader) InitSegments(filename string) {
-	fileHandle, _ := os.Open(filename)
+func (downloader *Downloader) InitSegments(filename string) (err error) {
+	var fileHandle *os.File
+	if fileHandle, err = os.Open(filename); err != nil {
+		return
+	}
+
 	defer fileHandle.Close()
 	fileScanner := bufio.NewScanner(fileHandle)
 
@@ -42,6 +46,7 @@ func (downloader *Downloader) InitSegments(filename string) {
 			downloader.Segments = append(downloader.Segments, text)
 		}
 	}
+	return
 }
 
 // 实际的下载操作
@@ -59,7 +64,7 @@ url 下载地址
 chs 默认下载量
 ans 每个线程的下载状态
 */
-func (downloader *Downloader) Work(segmentName string, urlString string) {
+func (downloader *Downloader) Work(segmentName string, urlString string, baseFolder string) {
 	defer func() {
 		<-downloader.Chs // 某个任务下载完成，让出
 		downloader.Done()
@@ -76,7 +81,7 @@ func (downloader *Downloader) Work(segmentName string, urlString string) {
 	}
 
 	u1.Path = path.Join(u1.Path, segmentName)
-	newFilePath := fmt.Sprintf("C:\\Users\\admin\\Desktop\\test\\%s", segmentName)
+	newFilePath := fmt.Sprintf(path.Join(baseFolder, segmentName))
 	fullUrl := u1.String()
 
 	downloadHandle(fullUrl, newFilePath)
