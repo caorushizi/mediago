@@ -12,8 +12,9 @@ import (
 )
 
 type Downloader struct {
+	sync.WaitGroup
+
 	Segments []string
-	Wg       sync.WaitGroup
 	Chs      chan int  // 默认下载量
 	Ans      chan bool // 每个进程的下载状态
 }
@@ -26,7 +27,7 @@ func New(count int) Downloader {
 }
 
 // 初始化下载地址  根据项目确认使用配置文件的方式还是其他方式，此处使用爬虫处理没公开
-func (downloader *Downloader) InitUrl(filename string) {
+func (downloader *Downloader) InitSegments(filename string) {
 	fileHandle, _ := os.Open(filename)
 	defer fileHandle.Close()
 	fileScanner := bufio.NewScanner(fileHandle)
@@ -61,7 +62,7 @@ ans 每个线程的下载状态
 func (downloader *Downloader) Work(segmentName string, urlString string) {
 	defer func() {
 		<-downloader.Chs // 某个任务下载完成，让出
-		downloader.Wg.Done()
+		downloader.Done()
 	}()
 
 	fmt.Println("开始下载" + segmentName)
