@@ -10,6 +10,8 @@ import (
 	"strings"
 )
 
+var segmentList []string
+
 func main() {
 
 	filename := flag.String("filename", "", "is ok")
@@ -23,26 +25,35 @@ func main() {
 	for fileScanner.Scan() {
 		text := fileScanner.Text()
 		switch {
+		case strings.HasPrefix(text, "#EXT"):
 		case strings.HasPrefix(text, "#"):
 			continue
-		case strings.HasPrefix(text, "#EXT"):
 		default:
-			u, err := url.Parse(*urlString)
-			if err != nil {
-				panic("invalid url")
-			}
-
-			u.Path = path.Join(u.Path, text)
-			newFileName := fmt.Sprintf("C:\\Users\\admin\\Desktop\\test\\%s", text)
-
-			fmt.Println("Download Started")
-			err = DownloadFile(newFileName, u.String())
-			if err != nil {
-				panic(err)
-			}
-			fmt.Println("Download Finished")
-
+			segmentList = append(segmentList, text)
 		}
+	}
+
+	for _, segmentName := range segmentList {
+
+		var (
+			u   *url.URL
+			err error
+		)
+
+		if u, err = url.Parse(*urlString); err != nil {
+			panic("invalid url")
+		}
+
+		u.Path = path.Join(u.Path, segmentName)
+		newFileName := fmt.Sprintf("C:\\Users\\admin\\Desktop\\test\\%s", segmentName)
+		fullUrl := u.String()
+
+		fmt.Println("Download Started")
+		err = DownloadFile(newFileName, fullUrl)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("Download Finished")
 	}
 
 }
