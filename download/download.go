@@ -11,15 +11,22 @@ import (
 	"sync"
 )
 
-type Urls struct {
-	Urls []string
-	Wg   sync.WaitGroup
-	Chs  chan int  // 默认下载量
-	Ans  chan bool // 每个进程的下载状态
+type Downloader struct {
+	Segments []string
+	Wg       sync.WaitGroup
+	Chs      chan int  // 默认下载量
+	Ans      chan bool // 每个进程的下载状态
+}
+
+func New(count int) Downloader {
+	return Downloader{
+		Chs: make(chan int, count),
+		Ans: make(chan bool),
+	}
 }
 
 // 初始化下载地址  根据项目确认使用配置文件的方式还是其他方式，此处使用爬虫处理没公开
-func (u *Urls) InitUrl(filename string) {
+func (downloader *Downloader) InitUrl(filename string) {
 	fileHandle, _ := os.Open(filename)
 	defer fileHandle.Close()
 	fileScanner := bufio.NewScanner(fileHandle)
@@ -31,7 +38,7 @@ func (u *Urls) InitUrl(filename string) {
 		case strings.HasPrefix(text, "#"):
 			continue
 		default:
-			u.Urls = append(u.Urls, text)
+			downloader.Segments = append(downloader.Segments, text)
 		}
 	}
 }
@@ -51,10 +58,10 @@ url 下载地址
 chs 默认下载量
 ans 每个线程的下载状态
 */
-func (u *Urls) Work(segmentName string, urlString string) {
+func (downloader *Downloader) Work(segmentName string, urlString string) {
 	defer func() {
-		<-u.Chs // 某个任务下载完成，让出
-		u.Wg.Done()
+		<-downloader.Chs // 某个任务下载完成，让出
+		downloader.Wg.Done()
 	}()
 
 	fmt.Println("开始下载" + segmentName)
@@ -74,5 +81,5 @@ func (u *Urls) Work(segmentName string, urlString string) {
 	downloadHandle(fullUrl, newFilePath)
 
 	fmt.Println("下载完成" + segmentName)
-	u.Ans <- true // 告知下载完成
+	downloader.Ans <- true // 告知下载完成
 }
