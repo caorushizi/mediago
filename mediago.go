@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"mediago/download"
 )
 
@@ -12,7 +13,7 @@ func main() {
 	baseFolder := flag.String("baseFolder", "", "is ok")
 	flag.Parse()
 
-	downloader := download.New(5)
+	downloader := download.New(10)
 	// 初始化url
 	if err := downloader.InitSegments(*filename); err != nil {
 		panic(err)
@@ -30,6 +31,8 @@ func main() {
 
 	// 静静的等待每个下载完成
 	for _ = range downloader.Ans {
+		downloader.Success++
+		fmt.Printf("总共%d个，已经下载%d个~\n", len(downloader.Segments), downloader.Success)
 	}
 
 }

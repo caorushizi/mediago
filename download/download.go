@@ -2,7 +2,6 @@ package download
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"net/url"
 	"os"
@@ -17,6 +16,7 @@ type Downloader struct {
 	Segments []string
 	Chs      chan int  // 默认下载量
 	Ans      chan bool // 每个进程的下载状态
+	Success  int
 }
 
 func New(count int) Downloader {
@@ -64,13 +64,12 @@ url 下载地址
 chs 默认下载量
 ans 每个线程的下载状态
 */
-func (downloader *Downloader) Work(segmentName string, urlString string, baseFolder string) {
+func (downloader *Downloader) Work(segmentPath string, urlString string, baseFolder string) {
 	defer func() {
 		<-downloader.Chs // 某个任务下载完成，让出
 		downloader.Done()
 	}()
 
-	fmt.Println("开始下载" + segmentName)
 	var (
 		u1  *url.URL
 		err error
@@ -79,13 +78,19 @@ func (downloader *Downloader) Work(segmentName string, urlString string, baseFol
 	if u1, err = url.Parse(urlString); err != nil {
 		panic("invalid url")
 	}
+	var filePath string
 
-	u1.Path = path.Join(u1.Path, segmentName)
-	newFilePath := fmt.Sprintf(path.Join(baseFolder, segmentName))
+	if path.IsAbs(segmentPath) {
+		u1.Path = segmentPath
+		filePath = path.Join(baseFolder, path.Base(segmentPath))
+	} else {
+		u1.Path = path.Join(u1.Path, segmentPath)
+		// fixme: 相对路径下本地文件的下载
+		filePath = path.Join(baseFolder, segmentPath)
+	}
 	fullUrl := u1.String()
 
-	downloadHandle(fullUrl, newFilePath)
+	downloadHandle(fullUrl, filePath)
 
-	fmt.Println("下载完成" + segmentName)
 	downloader.Ans <- true // 告知下载完成
 }
