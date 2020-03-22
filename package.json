@@ -1,0 +1,24 @@
+{
+  "name": "mediago",
+  "version": "1.0.0",
+  "description": "media go",
+  "main": "index.js",
+  "scripts": {
+    "install": "node-gyp rebuild"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caorushizi/mediago.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "gypfile": true,
+  "bugs": {
+    "url": "https://github.com/caorushizi/mediago/issues"
+  },
+  "homepage": "https://github.com/caorushizi/mediago#readme",
+  "devDependencies": {
+    "node-gyp": "^6.1.0"
+  }
+}

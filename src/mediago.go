@@ -47,7 +47,6 @@ func main() {
 		panic(err)
 	}
 
-	return
 	// 创建视频文件夹
 	baseMediaPath := path.Join(*local, *name)
 	if err = os.MkdirAll(baseMediaPath, os.ModePerm); err != nil {
