@@ -6,6 +6,10 @@ import (
 	"mediago/download"
 )
 
+type Workspace struct {
+	Path string
+}
+
 func main() {
 
 	filename := flag.String("filename", "", "is ok")
@@ -13,7 +17,13 @@ func main() {
 	baseFolder := flag.String("baseFolder", "", "is ok")
 	flag.Parse()
 
-	downloader := download.New(10)
+	var (
+		downloader download.Downloader
+		err        error
+	)
+	if downloader, err = download.New(10, *baseFolder, *urlString); err != nil {
+		panic(err)
+	}
 	// 初始化url
 	if err := downloader.InitSegments(*filename); err != nil {
 		panic(err)
@@ -23,7 +33,7 @@ func main() {
 		for _, segment := range downloader.Segments {
 			downloader.Chs <- 1 // 限制线程数 （每次下载缓存加1， 直到加满阻塞）
 			downloader.Add(1)
-			go downloader.Work(segment, *urlString, *baseFolder)
+			go downloader.Work(segment)
 		}
 		downloader.Wait()     // 等待所有分发出去的线程结束
 		close(downloader.Ans) // 否则 range 会报错哦
