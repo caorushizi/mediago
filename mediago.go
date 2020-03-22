@@ -12,7 +12,7 @@ type Workspace struct {
 
 func main() {
 
-	filename := flag.String("filename", "", "is ok")
+	playlist := flag.String("playlist", "", "is ok")
 	urlString := flag.String("url", "", "is ok")
 	baseFolder := flag.String("baseFolder", "", "is ok")
 	flag.Parse()
@@ -25,7 +25,7 @@ func main() {
 		panic(err)
 	}
 	// 初始化url
-	if err := downloader.InitSegments(*filename); err != nil {
+	if err := downloader.InitSegments(*playlist); err != nil {
 		panic(err)
 	}
 	// 分发的下载线程
