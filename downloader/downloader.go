@@ -1,20 +1,10 @@
-package download
+package downloader
 
 import (
 	"io"
 	"net/http"
 	"os"
 )
-
-type WriteCounter struct {
-	Total uint64
-}
-
-func (wc *WriteCounter) Write(p []byte) (int, error) {
-	n := len(p)
-	wc.Total += uint64(n)
-	return n, nil
-}
 
 func StartDownload(filepath string, url string) error {
 
