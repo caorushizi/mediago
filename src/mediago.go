@@ -1,7 +1,7 @@
 package main
 
 import (
-	"flag"
+	"C"
 	"fmt"
 	"os"
 	"path"
@@ -12,15 +12,16 @@ import (
 	"mediago/utils"
 )
 
-func main() {
-	urlString := flag.String("url", "", "m3u8 文件 url")
-	local := flag.String("local", "", "下载根目录")
-	name := flag.String("name", "新影片", "视频文件的名称")
-	flag.Parse()
+//export Start
+func Start(name, local, urlString string) {
+	//urlString := flag.String("url", "", "m3u8 文件 url")
+	//local := flag.String("local", "", "下载根目录")
+	//name := flag.String("name", "新影片", "视频文件的名称")
+	//flag.Parse()
 
 	var err error
 
-	if err = utils.CheckDirAndAccess(*local); err != nil {
+	if err = utils.CheckDirAndAccess(local); err != nil {
 		panic(err)
 	}
 
@@ -34,12 +35,12 @@ func main() {
 		panic(err)
 	}
 	// 开始初始化解析器
-	if playlist, err = m3u8.New(*name, *urlString); err != nil {
+	if playlist, err = m3u8.New(name, urlString); err != nil {
 		panic(err)
 	}
 
-	pName := fmt.Sprintf("%s%s", *name, path.Ext(playlist.Url.Path))
-	playlistName := path.Join(*local, pName)
+	pName := fmt.Sprintf("%s%s", name, path.Ext(playlist.Url.Path))
+	playlistName := path.Join(local, pName)
 	if playlistFile, err = os.Create(playlistName); err != nil {
 		panic(err)
 	}
@@ -48,7 +49,7 @@ func main() {
 	}
 
 	// 创建视频文件夹
-	baseMediaPath := path.Join(*local, *name)
+	baseMediaPath := path.Join(local, name)
 	if err = os.MkdirAll(baseMediaPath, os.ModePerm); err != nil {
 		panic(err)
 	}
@@ -67,7 +68,7 @@ func main() {
 					}
 					return
 				})
-			}(*local, segmentUrl.String())
+			}(local, segmentUrl.String())
 		}
 		sc.Wait()     // 等待所有分发出去的线程结束
 		close(sc.Ans) // 否则 range 会报错哦
@@ -78,5 +79,9 @@ func main() {
 		sc.Success++
 		fmt.Printf("总共%d个，已经下载%d个~\n", len(playlist.Segments), sc.Success)
 	}
+
+}
+
+func main() {
 
 }
