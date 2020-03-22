@@ -9,11 +9,14 @@ import (
 )
 
 type Playlist struct {
+	Name     string
+	Content  string
 	Url      *url.URL
 	Segments []url.URL
 }
 
-func New(urlString string) (playlist Playlist, err error) {
+func New(name string, urlString string) (playlist Playlist, err error) {
+	playlist.Name = name
 	// 检查 url 是否正确
 	if playlist.Url, err = url.Parse(urlString); err != nil {
 		return
@@ -48,6 +51,8 @@ func New(urlString string) (playlist Playlist, err error) {
 		text := fileScanner.Text()
 		switch {
 		case strings.HasPrefix(text, "#EXTINF"):
+			playlist.Content = playlist.Content + text + "\n"
+
 			fileScanner.Scan() // 开始读下一行
 			// 这一行就是 url 地址
 			segment := fileScanner.Text()
@@ -61,9 +66,13 @@ func New(urlString string) (playlist Playlist, err error) {
 				tempUrl.Path = path.Join(tempBaseUrl, segment)
 			}
 
+			localContent := path.Join(playlist.Name, path.Base(tempUrl.Path))
+			playlist.Content = playlist.Content + localContent + "\n"
+
 			segments = append(segments, tempUrl)
-		case strings.HasPrefix(text, "#"):
 		case strings.HasPrefix(text, "#EXT"):
+			playlist.Content = playlist.Content + text + "\n"
+		case strings.HasPrefix(text, "#"):
 		default:
 		}
 	}
