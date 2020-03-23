@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">-->
+    <!-- <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">-->
+    <title>Hello World!</title>
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+<form>
+    <div class="form-group">
+        <label for="exampleInputEmail1">M3U8 文件地址</label>
+        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+        <small id="emailHelp" class="form-text text-muted">这个必须是一个播放列表文件</small>
+    </div>
+    <div class="form-group">
+        <label for="exampleInputPassword1">专辑名称</label>
+        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="请输入影片名称">
+    </div>
+    <div class="form-group">
+        <label for="exampleInputPassword2">本地路径</label>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username"
+                   aria-describedby="basic-addon2">
+            <div class="input-group-append">
+                <span class="input-group-text" id="basic-addon2">点击选择</span>
+            </div>
+        </div>
+    </div>
+    <button id="startDownload" type="submit" class="btn btn-primary">开始下载</button>
+</form>
+
+<!-- You can also require other files to run in this process -->
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<script src="./renderer.js"></script>
+</body>
+</html>

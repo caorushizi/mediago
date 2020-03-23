@@ -2,7 +2,6 @@
 #include <node_api.h>
 #include <stdio.h>
 #include <string>
-#include "mediago.h"
 
 
 using namespace std;

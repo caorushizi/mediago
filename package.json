@@ -2,7 +2,7 @@
   "name": "mediago",
   "version": "1.0.0",
   "description": "media go",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "install": "node-gyp rebuild",
     "build:win": "go build -buildmode c-shared -o mediago.dll mediago.go",
@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/caorushizi/mediago#readme",
   "devDependencies": {
+    "electron": "^8.1.1",
     "node-gyp": "^6.1.0"
   }
 }
