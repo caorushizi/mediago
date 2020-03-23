@@ -2,6 +2,7 @@
 #include <node_api.h>
 #include <stdio.h>
 #include <string>
+#include "test.h"
 
 
 using namespace std;
