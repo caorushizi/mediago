@@ -13,15 +13,10 @@ import (
 )
 
 //export Start
-func Start(name, local, urlString string) {
-	//urlString := flag.String("url", "", "m3u8 文件 url")
-	//local := flag.String("local", "", "下载根目录")
-	//name := flag.String("name", "新影片", "视频文件的名称")
-	//flag.Parse()
-
+func Start(nameString, pathString, urlString string) {
 	var err error
 
-	if err = utils.CheckDirAndAccess(local); err != nil {
+	if err = utils.CheckDirAndAccess(pathString); err != nil {
 		panic(err)
 	}
 
@@ -35,12 +30,12 @@ func Start(name, local, urlString string) {
 		panic(err)
 	}
 	// 开始初始化解析器
-	if playlist, err = m3u8.New(name, urlString); err != nil {
+	if playlist, err = m3u8.New(nameString, urlString); err != nil {
 		panic(err)
 	}
 
-	pName := fmt.Sprintf("%s%s", name, path.Ext(playlist.Url.Path))
-	playlistName := path.Join(local, pName)
+	pName := fmt.Sprintf("%s%s", nameString, path.Ext(playlist.Url.Path))
+	playlistName := path.Join(pathString, pName)
 	if playlistFile, err = os.Create(playlistName); err != nil {
 		panic(err)
 	}
@@ -49,7 +44,7 @@ func Start(name, local, urlString string) {
 	}
 
 	// 创建视频文件夹
-	baseMediaPath := path.Join(local, name)
+	baseMediaPath := path.Join(pathString, nameString)
 	if err = os.MkdirAll(baseMediaPath, os.ModePerm); err != nil {
 		panic(err)
 	}
@@ -68,7 +63,7 @@ func Start(name, local, urlString string) {
 					}
 					return
 				})
-			}(local, segmentUrl.String())
+			}(pathString, segmentUrl.String())
 		}
 		sc.Wait()     // 等待所有分发出去的线程结束
 		close(sc.Ans) // 否则 range 会报错哦

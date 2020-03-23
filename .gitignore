@@ -4,6 +4,10 @@
 *.dll
 *.so
 *.dylib
+*.a
+*.node
+
+*.h
 
 # Test binary, built with `go test -c`
 *.test

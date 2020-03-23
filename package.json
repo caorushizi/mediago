@@ -2,7 +2,7 @@
   "name": "mediago",
   "version": "1.0.0",
   "description": "media go",
-  "main": "main.js",
+  "main": "electron/main.js",
   "scripts": {
     "install": "node-gyp rebuild",
     "build:win": "go build -buildmode c-shared -o mediago.dll mediago.go",

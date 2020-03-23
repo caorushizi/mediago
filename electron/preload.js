@@ -1,8 +1,8 @@
 const {remote} = require("electron");
-const native = require("./build/Release/addon");
+const native = require("../build/Release/addon");
 
 window.addEventListener('DOMContentLoaded', () => {
-    $("#alert").hide()
+    $("#alert").hide();
     // m3u8 文件地址
     $("#exampleInputEmail1").val("https://www.yxlmbbs.com:65/20200318/6PnR6gn6/1500kb/hls/index.m3u8");
 
@@ -22,11 +22,11 @@ window.addEventListener('DOMContentLoaded', () => {
     $("#startDownload").click((event) => {
         event.preventDefault();
         const nameValue = $("#exampleInputPassword1").val();
-        const localValue = $("#folder").val();
+        const pathValue = $("#folder").val();
         const urlValue = $("#exampleInputEmail1").val();
-        if (nameValue && localValue && urlValue) {
+        if (nameValue && pathValue && urlValue) {
             $("#alert").hide();
-            console.log(native.add("你好", "世界"))
+            console.log(native.add(nameValue, pathValue, urlValue))
         } else {
             $("#alert").show()
         }
