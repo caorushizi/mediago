@@ -1,6 +1,11 @@
 #include <assert.h>
 #include <node_api.h>
 #include <stdio.h>
+#include <string>
+#include "mediago.h"
+
+
+using namespace std;
 
 napi_value Add(napi_env env, napi_callback_info info) {
 	napi_status status;
@@ -38,11 +43,16 @@ napi_value Add(napi_env env, napi_callback_info info) {
 	status = napi_get_value_string_utf8(env, args[1], &value1, value1_size, &value1_size);
 	assert(status == napi_ok);
 
-	napi_value sum;
-	status = napi_create_double(env, value0 + value1, &sum);
-	assert(status == napi_ok);
+	
 
-	printf(&value0);
+	size_t total_length = value0_size + value1_size;
+
+	napi_value sum;
+	char str3;
+	strcpy(&str3, &value0);
+	strcat(&str3, &value1);
+	status = napi_create_string_utf8(env, &str3, value0_size + value1_size, &sum);
+	assert(status == napi_ok);
 
 	return sum;
 }

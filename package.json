@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "install": "node-gyp rebuild",
-    "build": "go build -buildmode c-archive -o mediago.a mediago.go"
+    "build:win": "go build -buildmode c-shared -o mediago.dll mediago.go",
+    "build:darwin": "go build -buildmode c-shared -o mediago.dylib mediago.go"
   },
   "repository": {
     "type": "git",
