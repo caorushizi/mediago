@@ -19,6 +19,12 @@ func Start(name, local, urlString string) {
 	//name := flag.String("name", "新影片", "视频文件的名称")
 	//flag.Parse()
 
+	fmt.Println(name)
+	fmt.Println(local)
+	fmt.Println(urlString)
+
+	return
+
 	var err error
 
 	if err = utils.CheckDirAndAccess(local); err != nil {
