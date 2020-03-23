@@ -1,9 +1,6 @@
 package utils
 
-import (
-	"os"
-	"syscall"
-)
+import "os"
 
 func CheckDirAndAccess(pathString string) (err error) {
 	// 检查下载路径是否存在
@@ -12,8 +9,6 @@ func CheckDirAndAccess(pathString string) (err error) {
 	if err != nil && os.IsNotExist(err) && !fileInfo.IsDir() {
 		return
 	}
-	if err = syscall.Access(pathString, syscall.O_RDWR); err != nil {
-		return
-	}
+	// fixme： 检查时候有权限写入
 	return
 }

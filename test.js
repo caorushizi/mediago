@@ -1,4 +1,3 @@
-// test.js
-const addon = require('./build/Release/addon');
+var addon = require("./build/Release/addon")
 
-console.log('This should be eight:', addon.hello());
+console.log('This should be eight:', addon.add("3", "5"))
