@@ -3,7 +3,8 @@
     {
       "target_name": "addon",
       "sources": [
-        "binding.cc"
+        "binding.cc",
+        "lib/mediago.h"
       ],
       "libraries": [
         "../lib/mediago.a"
