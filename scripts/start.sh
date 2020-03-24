@@ -9,7 +9,7 @@ go build -buildmode c-archive -o ../lib/mediago.a mediago.go || exit
 echo ""
 cd ..
 pwd
-node-gyp rebuild || exit
+npm install || exit
 
 # 启动客户端
 electron .

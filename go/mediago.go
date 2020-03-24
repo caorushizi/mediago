@@ -2,6 +2,7 @@ package main
 
 import (
 	"C"
+	"flag"
 	"fmt"
 	"os"
 	"path"
@@ -78,5 +79,10 @@ func Start(nameString, pathString, urlString string) {
 }
 
 func main() {
+	var name = flag.String("name", "新影片", "string类型参数")
+	var pathString = flag.String("path", "", "string类型参数")
+	var url = flag.String("url", "", "string类型参数")
+	flag.Parse()
 
+	Start(*name, *pathString, *url)
 }
