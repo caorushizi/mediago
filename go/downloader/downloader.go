@@ -2,41 +2,36 @@ package downloader
 
 import (
 	"io"
-	"net/http"
 	"os"
+
+	"mediago/utils"
 )
 
-func StartDownload(filepath string, url string) error {
+func StartDownload(filepath string, url string) (err error) {
+	var (
+		respReader   io.ReadCloser
+		downloadFile *os.File
+	)
 
-	out, err := os.Create(filepath + ".tmp")
-	if err != nil {
-		return err
+	if respReader, err = utils.HttpClient(url); err != nil {
+		return
 	}
 
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		out.Close()
-		return err
+	defer respReader.Close()
+
+	if downloadFile, err = os.Create(filepath + ".tmp"); err != nil {
+		return
 	}
-	req.Header.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36")
-	resp, err := client.Do(req)
-	if err != nil {
-		out.Close()
-		return err
-	}
-	defer resp.Body.Close()
 
 	counter := &WriteCounter{}
-	if _, err = io.Copy(out, io.TeeReader(resp.Body, counter)); err != nil {
-		out.Close()
+	if _, err = io.Copy(downloadFile, io.TeeReader(respReader, counter)); err != nil {
+		downloadFile.Close()
 		return err
 	}
 
-	out.Close()
-
+	downloadFile.Close()
 	if err = os.Rename(filepath+".tmp", filepath); err != nil {
 		return err
 	}
-	return nil
+	return
 }

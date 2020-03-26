@@ -2,20 +2,23 @@ package m3u8
 
 import (
 	"bufio"
-	"net/http"
+	"errors"
+	"io"
+	"mediago/utils"
 	"net/url"
 	"path"
+	"regexp"
 	"strings"
 )
 
-type Playlist struct {
+type ExtM3u8 struct {
 	Name     string
 	Content  string
 	Url      *url.URL
 	Segments []url.URL
 }
 
-func New(name string, urlString string) (playlist Playlist, err error) {
+func New(name string, urlString string) (playlist ExtM3u8, err error) {
 	playlist.Name = name
 	// 检查 url 是否正确
 	if playlist.Url, err = url.Parse(urlString); err != nil {
@@ -23,60 +26,68 @@ func New(name string, urlString string) (playlist Playlist, err error) {
 	}
 
 	// 开始处理 http 请求
-	var (
-		client *http.Client
-		req    *http.Request
-		resp   *http.Response
-	)
-	client = &http.Client{}
-
-	if req, err = http.NewRequest("GET", playlist.Url.String(), nil); err != nil {
+	var repReader io.ReadCloser
+	if repReader, err = utils.HttpClient(urlString); err != nil {
 		return
 	}
-	req.Header.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36")
-
-	if resp, err = client.Do(req); err != nil {
-		return
-	}
-	defer resp.Body.Close()
+	defer repReader.Close()
 
 	// 文件扫描
 	var (
 		fileScanner *bufio.Scanner
 		segments    []url.URL
 	)
-	fileScanner = bufio.NewScanner(resp.Body)
+	fileScanner = bufio.NewScanner(repReader)
+
+	// 解析第一行必须是 `#EXTM3U`
+	fileScanner.Scan()
+	text := fileScanner.Text()
+	if text != "#EXTM3U" {
+		err = errors.New("不是一个 m3u8 文件")
+		return
+	}
+
+	var (
+		extInfReg   = regexp.MustCompile("^EXTINF")
+		commentsReg = regexp.MustCompile("^#[^EXT]")
+	)
 
 	for fileScanner.Scan() {
 		text := fileScanner.Text()
 		switch {
-		case strings.HasPrefix(text, "#EXTINF"):
+		case extInfReg.MatchString(text):
 			playlist.Content = playlist.Content + text + "\n"
-
-			fileScanner.Scan() // 开始读下一行
-			// 这一行就是 url 地址
-			segment := fileScanner.Text()
-
+		case strings.HasPrefix(text, "#EXT"):
+			playlist.Content = playlist.Content + text + "\n"
+		case commentsReg.MatchString(text):
+			// 这一行是注释直接跳过
+		default:
 			// 拼接与 url
 			tempUrl := *playlist.Url
-			if path.IsAbs(segment) {
-				tempUrl.Path = segment
+			if path.IsAbs(text) {
+				tempUrl.Path = text
 			} else {
 				tempBaseUrl := path.Dir(tempUrl.Path)
-				tempUrl.Path = path.Join(tempBaseUrl, segment)
+				tempUrl.Path = path.Join(tempBaseUrl, text)
 			}
 
 			localContent := path.Join(playlist.Name, path.Base(tempUrl.Path))
 			playlist.Content = playlist.Content + localContent + "\n"
 
 			segments = append(segments, tempUrl)
-		case strings.HasPrefix(text, "#EXT"):
-			playlist.Content = playlist.Content + text + "\n"
-		case strings.HasPrefix(text, "#"):
-		default:
 		}
 	}
 
 	playlist.Segments = segments
 	return
+}
+
+func (m3u *ExtM3u8) Parse() {
+
+}
+func parseTag() {
+
+}
+func parseAttr() {
+
 }

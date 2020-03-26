@@ -23,7 +23,7 @@ func Start(nameString, pathString, urlString string) {
 
 	var (
 		sc           scheduler.Scheduler
-		playlist     m3u8.Playlist
+		playlist     m3u8.ExtM3u8
 		playlistFile *os.File
 	)
 	// 开始初始化下载器
