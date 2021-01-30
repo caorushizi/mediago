@@ -1,8 +1,13 @@
 import ReactDOM from "react-dom";
 import React from "react";
-import "./index.css";
+import "normalize.css/normalize.css";
+import "./index.scss";
+import App from "./App";
 
-const App = () => <div>123123</div>;
+document.title = window.location.href;
+window.onhashchange = () => {
+  document.title = window.location.href;
+};
 
 const root = document.getElementById("root");
 ReactDOM.render(<App />, root);

@@ -64,6 +64,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
+    "@babel/plugin-transform-runtime": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-react": "^7.12.10",
     "@electron-forge/cli": "^6.0.0-beta.54",
@@ -87,11 +88,16 @@
     "eslint-webpack-plugin": "^2.4.3",
     "node-loader": "^1.0.1",
     "prettier": "2.2.1",
+    "sass": "^1.32.5",
+    "sass-loader": "^10.1.1",
     "style-loader": "^1.2.1"
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
+    "normalize.css": "^8.0.1",
+    "prop-types": "^15.7.2",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "react-router-dom": "^5.2.0"
   }
 }

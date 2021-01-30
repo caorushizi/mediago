@@ -16,6 +16,10 @@
     "prettier/prettier": "error"
   },
   "settings": {
+    "import/extensions": [
+      ".js",
+      ".jsx"
+    ],
     "import/core-modules": [
       "electron"
     ]

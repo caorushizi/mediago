@@ -1,0 +1,30 @@
+.form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .form-item {
+    padding-bottom: 5px;
+    display: flex;
+    flex-direction: row;
+
+    .form-item__label {
+      width: 160px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .form-item__inner {
+      flex: 1;
+
+      input {
+        box-sizing: border-box;
+        width: 100%;
+        outline-style: none;
+        border-radius: 0;
+        border: 1px solid #000;
+      }
+    }
+  }
+}

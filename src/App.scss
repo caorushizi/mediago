@@ -1,0 +1,26 @@
+.app {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+
+  .nav {
+    display: flex;
+    flex-direction: column;
+
+    a {
+      padding: 5px 10px;
+
+      &.selected {
+        background: #000;
+        color: #fff;
+      }
+    }
+  }
+
+  .main-wrapper {
+    padding: 5px;
+    flex: 1;
+  }
+}
