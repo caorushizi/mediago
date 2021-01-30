@@ -1,4 +1,5 @@
 import React from "react";
+import { remote } from "electron";
 import {
   HashRouter as Router,
   Route,
@@ -10,7 +11,6 @@ import Video from "./components/Video";
 import Download from "./components/Download";
 import Settings from "./components/Settings";
 import "./App.scss";
-import { remote } from "electron";
 
 class App extends React.Component {
   constructor(props) {
@@ -56,7 +56,7 @@ class App extends React.Component {
           <div className="main-wrapper">
             <Switch>
               <Route path="/" exact>
-                {dir ? <Download /> : <Redirect to="settings" />}
+                {dir ? <Download local={dir} /> : <Redirect to="settings" />}
               </Route>
               <Route path="/video">
                 {dir ? <Video /> : <Redirect to="settings" />}

@@ -1,4 +1,5 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
+import { spawn } from "child_process";
 
 // eslint-disable-next-line global-require
 if (require("electron-squirrel-startup")) {
@@ -19,9 +20,48 @@ const createWindow = () => {
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   mainWindow.webContents.openDevTools();
+
+  const exec = (n, p, u) =>
+    new Promise((resolve, reject) => {
+      const args = ["--path", p, "--name", n, "--url", u];
+      const command = spawn("mediago", args);
+      let errMsg = "";
+
+      command.stdout.on("data", (data) => {
+        console.log(data.toString());
+      });
+
+      command.stderr.on("data", (data) => {
+        errMsg += data;
+      });
+
+      command.on("close", (code) => {
+        if (code !== 0) {
+          reject(new Error(errMsg));
+        } else {
+          resolve();
+        }
+      });
+    });
+
+  const successFn = (data) => ({ code: 0, msg: "", data });
+  const failFn = (code, msg) => ({ code, msg, data: null });
+
+  ipcMain.on("asynchronous-message", async (event, ...args) => {
+    const [nameString, pathString, urlString] = args;
+
+    let resp;
+    try {
+      const result = await exec(nameString, pathString, urlString);
+      resp = successFn(result);
+    } catch (e) {
+      resp = failFn(-1, e.message);
+    }
+    event.reply("asynchronous-reply", resp);
+  });
 };
 
-app.on("ready", createWindow);
+app.whenReady().then(createWindow);
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
