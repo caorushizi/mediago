@@ -1,10 +1,13 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import { spawn } from "child_process";
+import createServer from "./server";
 
 // eslint-disable-next-line global-require
 if (require("electron-squirrel-startup")) {
   app.quit();
 }
+
+createServer();
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
