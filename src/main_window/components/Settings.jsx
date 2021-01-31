@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import "./Setting.scss";
+import "./Settings.scss";
 
 const Settings = ({ dir, handleSelectDir }) => (
   <div className="settings">

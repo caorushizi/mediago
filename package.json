@@ -5,10 +5,10 @@
   "description": "My Electron application description",
   "main": ".webpack/main",
   "scripts": {
-    "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
-    "publish": "electron-forge publish",
+    "start": "cross-env NODE_ENV=development electron-forge start --inspect-electron",
+    "package": "cross-env NODE_ENV=production electron-forge package",
+    "make": "cross-env NODE_ENV=production electron-forge make",
+    "publish": "cross-env NODE_ENV=production electron-forge publish",
     "lint": "echo \"No linting configured\""
   },
   "keywords": [],
@@ -51,9 +51,12 @@
               "config": "./webpack.renderer.config.js",
               "entryPoints": [
                 {
-                  "html": "./src/index.html",
-                  "js": "./src/renderer.jsx",
-                  "name": "main_window"
+                  "html": "./src/main_window/index.html",
+                  "js": "./src/main_window/renderer.jsx",
+                  "name": "main_window",
+                  "preload": {
+                    "js": "./src/main_window/preload.js"
+                  }
                 }
               ]
             }
@@ -75,7 +78,9 @@
     "@electron-forge/plugin-webpack": "6.0.0-beta.54",
     "@marshallofsound/webpack-asset-relocator-loader": "^0.5.0",
     "babel-loader": "^8.2.2",
+    "cross-env": "^7.0.3",
     "css-loader": "^4.2.1",
+    "dotenv": "^8.2.0",
     "electron": "11.2.1",
     "eslint": "7.2.0",
     "eslint-config-airbnb": "18.2.1",
@@ -93,8 +98,13 @@
     "style-loader": "^1.2.1"
   },
   "dependencies": {
+    "@koa/cors": "^3.1.0",
+    "@koa/router": "^10.0.0",
+    "axios": "^0.21.1",
     "electron-squirrel-startup": "^1.0.0",
+    "electron-store": "^7.0.0",
     "koa": "^2.13.1",
+    "koa-static": "^5.0.0",
     "normalize.css": "^8.0.1",
     "prop-types": "^15.7.2",
     "react": "^17.0.1",

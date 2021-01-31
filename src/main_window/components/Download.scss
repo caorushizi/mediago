@@ -1,0 +1,34 @@
+.download {
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  .download-form {
+  }
+
+  .webview-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    #videoView {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ddd;
+    }
+
+    .webview-nav {
+      display: flex;
+      flex-direction: row;
+
+      .webview-input {
+      }
+
+      .webview-button {
+      }
+    }
+  }
+}

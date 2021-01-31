@@ -11,26 +11,35 @@ import Video from "./components/Video";
 import Download from "./components/Download";
 import Settings from "./components/Settings";
 import "./App.scss";
+import { ipcGetStore, ipcSetStore } from "./utils";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      dir: localStorage.getItem("local"),
+      dir: "",
     };
 
     this.handleSelectDir = this.handleSelectDir.bind(this);
   }
 
-  handleSelectDir() {
+  async componentDidMount() {
+    const dir = await ipcGetStore("local");
+    this.setState({
+      dir: dir || "",
+    });
+  }
+
+  async handleSelectDir() {
     const { dir } = this.state;
     const result = remote.dialog.showOpenDialogSync({
       defaultPath: dir || remote.app.getPath("documents"),
       properties: ["openDirectory"],
     });
+    if (!result) return;
     const local = result[0];
-    localStorage.setItem("local", local);
+    await ipcSetStore("local", local);
     this.setState({
       dir: local,
     });

@@ -1,15 +1,15 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 const ESLintPlugin = require("eslint-webpack-plugin");
+const fs = require("fs");
+const dotenv = require("dotenv");
+
+const envConfig = dotenv.parse(fs.readFileSync(".env.override"));
+for (const k of Object.keys(envConfig)) {
+  process.env[k] = envConfig[k];
+}
 
 module.exports = {
-  /**
-   * This is the main entry point for your application, it's the first file
-   * that runs in the main process.
-   */
-  entry: "./src/main.js",
-  // Put your normal webpack config below here
+  entry: "./src/main/index.js",
   module: {
-    // eslint-disable-next-line global-require
     rules: require("./webpack.rules"),
   },
   plugins: [

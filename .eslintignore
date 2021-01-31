@@ -1,0 +1,6 @@
+/node_modules/*/*
+/.webpack/*
+webpack.main.config.js
+webpack.renderer.config.js
+webpack.rules.js
+webpack.plugins.js

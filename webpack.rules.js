@@ -1,5 +1,4 @@
 module.exports = [
-  // Add support for native node modules
   {
     test: /\.node$/,
     use: "node-loader",

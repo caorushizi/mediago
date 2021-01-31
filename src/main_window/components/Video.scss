@@ -1,0 +1,21 @@
+.video {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+
+  .video-inner {
+    flex: 1;
+  }
+
+  .video-playlist {
+    height: 100%;
+    overflow: auto;
+    border-left: 1px solid #000;
+
+    .video-item {
+      display: block;
+      margin: 0 10px 5px 10px;
+      cursor: pointer;
+    }
+  }
+}
