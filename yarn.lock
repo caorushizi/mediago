@@ -842,7 +842,7 @@
     core-js-pure "^3.0.0"
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.1.2", "@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.4", "@babel/runtime@^7.9.2":
+"@babel/runtime@^7.10.2", "@babel/runtime@^7.11.2", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.4", "@babel/runtime@^7.9.2":
   version "7.12.5"
   resolved "https://mirrors.huaweicloud.com/repository/npm/@babel/runtime/-/runtime-7.12.5.tgz#410e7e487441e1b360c29be715d870d9b985882e"
   integrity sha512-plcc+hbExy3McchJCEQG3knOsuh3HH+Prx1P6cLIkET/0dLuQDEnrT+s27Axgc9bqfsmNUNHfscgMUdBpC9xfg==
@@ -1177,6 +1177,68 @@
     global-agent "^2.0.2"
     global-tunnel-ng "^2.7.1"
 
+"@fluentui/date-time-utilities@^7.9.0":
+  version "7.9.0"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/@fluentui/date-time-utilities/-/date-time-utilities-7.9.0.tgz#4c8570b3af8bc654963ecb034d0fd100010e7d6d"
+  integrity sha512-D8p5WWeonqRO1EgIvo7WSlX1rcm87r2VQd62zTJPQImx8rpwc77CRI+iAvfxyVHRZMdt4Qk6Jq99dUaudPWaZw==
+  dependencies:
+    "@uifabric/set-version" "^7.0.23"
+    tslib "^1.10.0"
+
+"@fluentui/dom-utilities@^1.1.1":
+  version "1.1.1"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/@fluentui/dom-utilities/-/dom-utilities-1.1.1.tgz#b0bbab665fe726f245800bb9e7883b1ceb54248b"
+  integrity sha512-w40gi8fzCpwa7U8cONiuu8rszPStkVOL/weDf5pCbYEb1gdaV7MDPSNkgM6IV0Kz+k017noDgK9Fv4ru1Dwz1g==
+  dependencies:
+    "@uifabric/set-version" "^7.0.23"
+    tslib "^1.10.0"
+
+"@fluentui/keyboard-key@^0.2.12":
+  version "0.2.12"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/@fluentui/keyboard-key/-/keyboard-key-0.2.12.tgz#74eddf4657c164193b6c8855746e691af466441a"
+  integrity sha512-t3yIbbPKJubb22vQ/FIWwS9vFAzaPYzFxKWPHVWLtxs/P+5yL+LD3B16DRtYreWAdl9CZvEbos58ChLZ0KHwSQ==
+  dependencies:
+    tslib "^1.10.0"
+
+"@fluentui/react-focus@^7.17.1":
+  version "7.17.1"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/@fluentui/react-focus/-/react-focus-7.17.1.tgz#e1f136bfb0fce6e07fe4f6595a3f6270f110b126"
+  integrity sha512-Nulq2pE4pX6Pf+tGZl8uLp8VfqUzx3elC5v7QvYSBdjnZK8ykitdsa+Sd3PKYWW2EMlzVRSptlzbuJ6JyEDQKQ==
+  dependencies:
+    "@fluentui/keyboard-key" "^0.2.12"
+    "@uifabric/merge-styles" "^7.19.1"
+    "@uifabric/set-version" "^7.0.23"
+    "@uifabric/styling" "^7.16.19"
+    "@uifabric/utilities" "^7.33.2"
+    tslib "^1.10.0"
+
+"@fluentui/react-window-provider@^1.0.1":
+  version "1.0.1"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/@fluentui/react-window-provider/-/react-window-provider-1.0.1.tgz#8ec71db8cfd57e11f00ed42c5c1377ef4dfe5f6b"
+  integrity sha512-5hvruDyF0uE8+6YN6Y+d2sEzexBadxUNxUjDcDreTPsmtHPwF5FPBYLhoD7T84L5U4YNvKxKh25tYJm6E0GE2w==
+  dependencies:
+    "@uifabric/set-version" "^7.0.23"
+    tslib "^1.10.0"
+
+"@fluentui/react@^7.157.2":
+  version "7.157.2"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/@fluentui/react/-/react-7.157.2.tgz#b4bdf36c09365c7fcf08018d5ce08003f3014814"
+  integrity sha512-/+MES27Cb4WlLSpAvkiBV/oO8PEZNnThxmRREoArUwpQsnU3p9W6/7SZXQOGA7gjNfRG0B0obmgFtnZOXkT5kA==
+  dependencies:
+    "@uifabric/set-version" "^7.0.23"
+    office-ui-fabric-react "^7.157.2"
+    tslib "^1.10.0"
+
+"@fluentui/theme@^1.7.1":
+  version "1.7.1"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/@fluentui/theme/-/theme-1.7.1.tgz#24ee99d756ea71c722d3027388dbbe0df3fc8105"
+  integrity sha512-cwx8gJ0O9d+Z8g6Lq7BgDgH8XPfSloUSy0GN3fWHJGrDCBPcnmz6/GKbbvxw9PZ2t1iNcAzJEJNT6NyuOOobPA==
+  dependencies:
+    "@uifabric/merge-styles" "^7.19.1"
+    "@uifabric/set-version" "^7.0.23"
+    "@uifabric/utilities" "^7.33.2"
+    tslib "^1.10.0"
+
 "@koa/cors@^3.1.0":
   version "3.1.0"
   resolved "https://mirrors.huaweicloud.com/repository/npm/@koa/cors/-/cors-3.1.0.tgz#618bb073438cfdbd3ebd0e648a76e33b84f3a3b2"
@@ -1208,6 +1270,11 @@
   integrity sha512-X50R97SiDNTpOckiplghBo63Vo8GxSsr98s3VTwEu3qyVr+TY4I91KRtKelEj2OAfgMnkTymw89+psFVq8aB1g==
   dependencies:
     sourcemap-codec "^1.4.4"
+
+"@microsoft/load-themed-styles@^1.10.26":
+  version "1.10.146"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/@microsoft/load-themed-styles/-/load-themed-styles-1.10.146.tgz#dd039865dfb21157a4b22c486e78da8957dee05d"
+  integrity sha512-qQZ4J58J2VMe/XRpr2YRDusQB9uRBJ1SjJB76x7uH94t9hqxjVVxn2qL99Bl+ERbfrACZ9peGn2uamt4ponqZQ==
 
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
@@ -1369,6 +1436,74 @@
   integrity sha512-A1b8SU4D10uoPjwb0lnHmmu8wZhR9d+9o2PKBQT2jU5YPTKsxac6M2qGAdY7VcL+dHHhARVUDmeg0rOrcd9EjA==
   dependencies:
     "@types/node" "*"
+
+"@uifabric/foundation@^7.9.21":
+  version "7.9.21"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/@uifabric/foundation/-/foundation-7.9.21.tgz#7583f81cb70ee819422997e9f518ea0a5c43402c"
+  integrity sha512-z58pcC0hJr6S0iYLxNFoqfrfLIMxbSxFHRirk5LDT2HXbiVIYbJwbK4O0InS+sz3chdx8GGSdIUz7muXeT/D+A==
+  dependencies:
+    "@uifabric/merge-styles" "^7.19.1"
+    "@uifabric/set-version" "^7.0.23"
+    "@uifabric/styling" "^7.16.19"
+    "@uifabric/utilities" "^7.33.2"
+    tslib "^1.10.0"
+
+"@uifabric/icons@^7.5.18":
+  version "7.5.18"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/@uifabric/icons/-/icons-7.5.18.tgz#f50c1ce876c35ee8feab08dbaee77c4064c837cd"
+  integrity sha512-gLPEccWlTER9NiXcOHZ+dSJ3tgLAQ4mTf3hTlKV7e7dKBTl95jzcemG5S2NJQ7xWPTH3+5K1Bpd+nqZo9EJw3w==
+  dependencies:
+    "@uifabric/set-version" "^7.0.23"
+    "@uifabric/styling" "^7.16.19"
+    tslib "^1.10.0"
+
+"@uifabric/merge-styles@^7.19.1":
+  version "7.19.1"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/@uifabric/merge-styles/-/merge-styles-7.19.1.tgz#446b3da48ce9925d1649edd0fc232221974b00c9"
+  integrity sha512-yqUwmk62Kgu216QNPE9vOfS3h0kiSbTvoqM5QcZi+IzpqsBOlzZx3A9Er9UiDaqHRd5lsYF5pO/jeUULmBWF/A==
+  dependencies:
+    "@uifabric/set-version" "^7.0.23"
+    tslib "^1.10.0"
+
+"@uifabric/react-hooks@^7.13.9":
+  version "7.13.9"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/@uifabric/react-hooks/-/react-hooks-7.13.9.tgz#82373cdfbccc81b6fa00586dd8994bb47c97e99b"
+  integrity sha512-VtDg2b3ypYXX7MLp1STk1Fj6ZIeZktXnm0hu1Os/pGvq6xkuLRly5XP6ZSHitm8K7ZcMo48CcNL8smmiXprBQg==
+  dependencies:
+    "@fluentui/react-window-provider" "^1.0.1"
+    "@uifabric/set-version" "^7.0.23"
+    "@uifabric/utilities" "^7.33.2"
+    tslib "^1.10.0"
+
+"@uifabric/set-version@^7.0.23":
+  version "7.0.23"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/@uifabric/set-version/-/set-version-7.0.23.tgz#bfe10b6ba17a2518704cca856bdba8adbc11ffb0"
+  integrity sha512-9E+YKtnH2kyMKnK9XZZsqyM8OCxEJIIfxtaThTlQpYOzrWAGJxQADFbZ7+Usi0U2xHnWNPFROjq+B9ocEzhqMA==
+  dependencies:
+    tslib "^1.10.0"
+
+"@uifabric/styling@^7.16.19":
+  version "7.16.19"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/@uifabric/styling/-/styling-7.16.19.tgz#5ee38e1c13cc2c6d0d006f275d40b4669f97cb09"
+  integrity sha512-T5fjUCx0LbzUC8Myw15YCaBjdGbSrihWSiPHtLVW77k59yWAW947XnH73QngE8xU7kyKPH3AhQrUEBMB2NjHag==
+  dependencies:
+    "@fluentui/theme" "^1.7.1"
+    "@microsoft/load-themed-styles" "^1.10.26"
+    "@uifabric/merge-styles" "^7.19.1"
+    "@uifabric/set-version" "^7.0.23"
+    "@uifabric/utilities" "^7.33.2"
+    tslib "^1.10.0"
+
+"@uifabric/utilities@^7.33.2":
+  version "7.33.2"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/@uifabric/utilities/-/utilities-7.33.2.tgz#426f9a8d1f9f7738e65abe4a9e36b65583476d81"
+  integrity sha512-v2c3IUJdpru/hoGNOwIW549O5D4XBAc5sLpB7RREGI5ywoWuIJlNyYtBEGOwhAY62J2blj11qi86Ep+oZDM/Kw==
+  dependencies:
+    "@fluentui/dom-utilities" "^1.1.1"
+    "@uifabric/merge-styles" "^7.19.1"
+    "@uifabric/set-version" "^7.0.23"
+    prop-types "^15.7.2"
+    tslib "^1.10.0"
 
 "@videojs/http-streaming@2.2.4":
   version "2.2.4"
@@ -4507,18 +4642,6 @@ he@^1.2.0:
   resolved "https://mirrors.huaweicloud.com/repository/npm/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
   integrity sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
 
-history@^4.9.0:
-  version "4.10.1"
-  resolved "https://mirrors.huaweicloud.com/repository/npm/history/-/history-4.10.1.tgz#33371a65e3a83b267434e2b3f3b1b4c58aad4cf3"
-  integrity sha512-36nwAD620w12kuzPAsyINPWJqlNbij+hpK1k9XRloDtym8mxzGYl2c17LnV6IAGB2Dmg4tEa7G7DlawS0+qjew==
-  dependencies:
-    "@babel/runtime" "^7.1.2"
-    loose-envify "^1.2.0"
-    resolve-pathname "^3.0.0"
-    tiny-invariant "^1.0.2"
-    tiny-warning "^1.0.0"
-    value-equal "^1.0.1"
-
 hmac-drbg@^1.0.0:
   version "1.0.1"
   resolved "https://mirrors.huaweicloud.com/repository/npm/hmac-drbg/-/hmac-drbg-1.0.1.tgz#d2745701025a6c775a6c545793ed502fc0c649a1"
@@ -4527,13 +4650,6 @@ hmac-drbg@^1.0.0:
     hash.js "^1.0.3"
     minimalistic-assert "^1.0.0"
     minimalistic-crypto-utils "^1.0.1"
-
-hoist-non-react-statics@^3.1.0:
-  version "3.3.2"
-  resolved "https://mirrors.huaweicloud.com/repository/npm/hoist-non-react-statics/-/hoist-non-react-statics-3.3.2.tgz#ece0acaf71d62c2969c2ec59feff42a4b1a85b45"
-  integrity sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==
-  dependencies:
-    react-is "^16.7.0"
 
 homedir-polyfill@^1.0.1:
   version "1.0.3"
@@ -5468,7 +5584,7 @@ log-symbols@^4.0.0:
   dependencies:
     chalk "^4.0.0"
 
-loose-envify@^1.1.0, loose-envify@^1.2.0, loose-envify@^1.3.1, loose-envify@^1.4.0:
+loose-envify@^1.1.0, loose-envify@^1.4.0:
   version "1.4.0"
   resolved "https://mirrors.huaweicloud.com/repository/npm/loose-envify/-/loose-envify-1.4.0.tgz#71ee51fa7be4caec1a63839f7e682d8132d30caf"
   integrity sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==
@@ -5732,14 +5848,6 @@ min-document@^2.19.0:
   integrity sha1-e9KC4/WELtKVu3SM3Z8f+iyCRoU=
   dependencies:
     dom-walk "^0.1.0"
-
-mini-create-react-context@^0.4.0:
-  version "0.4.1"
-  resolved "https://mirrors.huaweicloud.com/repository/npm/mini-create-react-context/-/mini-create-react-context-0.4.1.tgz#072171561bfdc922da08a60c2197a497cc2d1d5e"
-  integrity sha512-YWCYEmd5CQeHGSAKrYvXgmzzkrvssZcuuQDDeqkT+PziKGMgE+0MCCtcKbROzocGBG1meBLl2FotlRwf4gAzbQ==
-  dependencies:
-    "@babel/runtime" "^7.12.1"
-    tiny-warning "^1.0.3"
 
 minimalistic-assert@^1.0.0, minimalistic-assert@^1.0.1:
   version "1.0.1"
@@ -6246,6 +6354,25 @@ object.values@^1.1.1:
     es-abstract "^1.18.0-next.1"
     has "^1.0.3"
 
+office-ui-fabric-react@^7.157.2:
+  version "7.157.1"
+  resolved "https://mirrors.huaweicloud.com/repository/npm/office-ui-fabric-react/-/office-ui-fabric-react-7.157.1.tgz#fe5a1fc8010ff8dfaab45040d9d52ab9ab500303"
+  integrity sha512-VW8ipsuU7nv0Ed5QVUN8tox5B0JdaZZk3XVNGdvQVQAY00iYs4+fQyo6cpDbCgRcWVNLU59j4VdbM8USJKUlLw==
+  dependencies:
+    "@fluentui/date-time-utilities" "^7.9.0"
+    "@fluentui/react-focus" "^7.17.1"
+    "@fluentui/react-window-provider" "^1.0.1"
+    "@microsoft/load-themed-styles" "^1.10.26"
+    "@uifabric/foundation" "^7.9.21"
+    "@uifabric/icons" "^7.5.18"
+    "@uifabric/merge-styles" "^7.19.1"
+    "@uifabric/react-hooks" "^7.13.9"
+    "@uifabric/set-version" "^7.0.23"
+    "@uifabric/styling" "^7.16.19"
+    "@uifabric/utilities" "^7.33.2"
+    prop-types "^15.7.2"
+    tslib "^1.10.0"
+
 on-finished@^2.3.0, on-finished@~2.3.0:
   version "2.3.0"
   resolved "https://mirrors.huaweicloud.com/repository/npm/on-finished/-/on-finished-2.3.0.tgz#20f1336481b083cd75337992a16971aa2d906947"
@@ -6547,13 +6674,6 @@ path-to-regexp@0.1.7:
   resolved "https://mirrors.huaweicloud.com/repository/npm/path-to-regexp/-/path-to-regexp-0.1.7.tgz#df604178005f522f15eb4490e7247a1bfaa67f8c"
   integrity sha1-32BBeABfUi8V60SQ5yR6G/qmf4w=
 
-path-to-regexp@^1.7.0:
-  version "1.8.0"
-  resolved "https://mirrors.huaweicloud.com/repository/npm/path-to-regexp/-/path-to-regexp-1.8.0.tgz#887b3ba9d84393e87a0a0b9f4cb756198b53548a"
-  integrity sha512-n43JRhlUKUAlibEJhPeir1ncUID16QnEjNpwzNdO3Lm4ywrBpBZ5oLD0I6br9evr1Y9JTqwRtAh7JLoOzAQdVA==
-  dependencies:
-    isarray "0.0.1"
-
 path-to-regexp@^6.1.0:
   version "6.2.0"
   resolved "https://mirrors.huaweicloud.com/repository/npm/path-to-regexp/-/path-to-regexp-6.2.0.tgz#f7b3803336104c346889adece614669230645f38"
@@ -6812,7 +6932,7 @@ promise-inflight@^1.0.1:
   resolved "https://mirrors.huaweicloud.com/repository/npm/promise-inflight/-/promise-inflight-1.0.1.tgz#98472870bf228132fcbdd868129bad12c3c029e3"
   integrity sha1-mEcocL8igTL8vdhoEputEsPAKeM=
 
-prop-types@^15.6.2, prop-types@^15.7.2:
+prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://mirrors.huaweicloud.com/repository/npm/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -6975,39 +7095,10 @@ react-dom@^17.0.1:
     object-assign "^4.1.1"
     scheduler "^0.20.1"
 
-react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1:
+react-is@^16.8.1:
   version "16.13.1"
   resolved "https://mirrors.huaweicloud.com/repository/npm/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
-
-react-router-dom@^5.2.0:
-  version "5.2.0"
-  resolved "https://mirrors.huaweicloud.com/repository/npm/react-router-dom/-/react-router-dom-5.2.0.tgz#9e65a4d0c45e13289e66c7b17c7e175d0ea15662"
-  integrity sha512-gxAmfylo2QUjcwxI63RhQ5G85Qqt4voZpUXSEqCwykV0baaOTQDR1f0PmY8AELqIyVc0NEZUj0Gov5lNGcXgsA==
-  dependencies:
-    "@babel/runtime" "^7.1.2"
-    history "^4.9.0"
-    loose-envify "^1.3.1"
-    prop-types "^15.6.2"
-    react-router "5.2.0"
-    tiny-invariant "^1.0.2"
-    tiny-warning "^1.0.0"
-
-react-router@5.2.0:
-  version "5.2.0"
-  resolved "https://mirrors.huaweicloud.com/repository/npm/react-router/-/react-router-5.2.0.tgz#424e75641ca8747fbf76e5ecca69781aa37ea293"
-  integrity sha512-smz1DUuFHRKdcJC0jobGo8cVbhO3x50tCL4icacOlcwDOEQPq4TMqwx3sY1TP+DvtTgz4nm3thuo7A+BK2U0Dw==
-  dependencies:
-    "@babel/runtime" "^7.1.2"
-    history "^4.9.0"
-    hoist-non-react-statics "^3.1.0"
-    loose-envify "^1.3.1"
-    mini-create-react-context "^0.4.0"
-    path-to-regexp "^1.7.0"
-    prop-types "^15.6.2"
-    react-is "^16.6.0"
-    tiny-invariant "^1.0.2"
-    tiny-warning "^1.0.0"
 
 react@^17.0.1:
   version "17.0.1"
@@ -7287,11 +7378,6 @@ resolve-path@^1.4.0:
   dependencies:
     http-errors "~1.6.2"
     path-is-absolute "1.0.1"
-
-resolve-pathname@^3.0.0:
-  version "3.0.0"
-  resolved "https://mirrors.huaweicloud.com/repository/npm/resolve-pathname/-/resolve-pathname-3.0.0.tgz#99d02224d3cf263689becbb393bc560313025dcd"
-  integrity sha512-C7rARubxI8bXFNB/hqcp/4iUeIXJhJZvFPFPiSPRnhU5UPxzMFIl+2E6yY6c4k9giDJAhtV+enfA+G89N6Csng==
 
 resolve-url@^0.2.1:
   version "0.2.1"
@@ -8163,16 +8249,6 @@ tiny-each-async@2.0.3:
   resolved "https://mirrors.huaweicloud.com/repository/npm/tiny-each-async/-/tiny-each-async-2.0.3.tgz#8ebbbfd6d6295f1370003fbb37162afe5a0a51d1"
   integrity sha1-jru/1tYpXxNwAD+7NxYq/loKUdE=
 
-tiny-invariant@^1.0.2:
-  version "1.1.0"
-  resolved "https://mirrors.huaweicloud.com/repository/npm/tiny-invariant/-/tiny-invariant-1.1.0.tgz#634c5f8efdc27714b7f386c35e6760991d230875"
-  integrity sha512-ytxQvrb1cPc9WBEI/HSeYYoGD0kWnGEOR8RY6KomWLBVhqz0RgTwVO9dLrGz7dC+nN9llyI7OKAgRq8Vq4ZBSw==
-
-tiny-warning@^1.0.0, tiny-warning@^1.0.3:
-  version "1.0.3"
-  resolved "https://mirrors.huaweicloud.com/repository/npm/tiny-warning/-/tiny-warning-1.0.3.tgz#94a30db453df4c643d0fd566060d60a875d84754"
-  integrity sha512-lBN9zLN/oAf68o3zNXYrdCt1kP8WsiGW8Oo2ka41b2IM5JL/S1CTyX1rW0mb/zSuJun0ZUrDxx4sqvYS2FWzPA==
-
 tmp-promise@^1.0.5:
   version "1.1.0"
   resolved "https://mirrors.huaweicloud.com/repository/npm/tmp-promise/-/tmp-promise-1.1.0.tgz#bb924d239029157b9bc1d506a6aa341f8b13e64c"
@@ -8291,7 +8367,7 @@ tsconfig-paths@^3.9.0:
     minimist "^1.2.0"
     strip-bom "^3.0.0"
 
-tslib@^1.9.0:
+tslib@^1.10.0, tslib@^1.9.0:
   version "1.14.1"
   resolved "https://mirrors.huaweicloud.com/repository/npm/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
@@ -8547,11 +8623,6 @@ validate-npm-package-license@^3.0.1:
   dependencies:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
-
-value-equal@^1.0.1:
-  version "1.0.1"
-  resolved "https://mirrors.huaweicloud.com/repository/npm/value-equal/-/value-equal-1.0.1.tgz#1e0b794c734c5c0cade179c437d356d931a34d6c"
-  integrity sha512-NOJ6JZCAWr0zlxZt+xqCHNTEKOsrks2HQd4MqhP1qy4z1SkbEP467eNx6TgDKXMvUOb+OENfJCZwM+16n7fRfw==
 
 vary@^1.1.2, vary@~1.1.2:
   version "1.1.2"

@@ -9,5 +9,4 @@ window.onhashchange = () => {
   document.title = window.location.href;
 };
 
-const root = document.getElementById("root");
-ReactDOM.render(<App />, root);
+ReactDOM.render(<App />, document.getElementById("root"));

@@ -1,12 +1,6 @@
 import React from "react";
 import { remote } from "electron";
-import {
-  HashRouter as Router,
-  Route,
-  Switch,
-  Redirect,
-  NavLink,
-} from "react-router-dom";
+import { Nav } from "@fluentui/react";
 import Video from "./components/Video";
 import Download from "./components/Download";
 import Settings from "./components/Settings";
@@ -19,6 +13,7 @@ class App extends React.Component {
 
     this.state = {
       dir: "",
+      key: "settings",
     };
 
     this.handleSelectDir = this.handleSelectDir.bind(this);
@@ -46,36 +41,61 @@ class App extends React.Component {
   }
 
   render() {
-    const { dir } = this.state;
+    const { dir, key } = this.state;
+
+    const onLinkClick = (e, item) => {
+      console.log(item);
+      this.setState({
+        key: item.key,
+      });
+    };
+
+    const navLinkGroups = [
+      {
+        name: "Media Download",
+        links: [
+          {
+            name: "下载",
+            key: "download",
+          },
+          {
+            name: "视频",
+            key: "video",
+          },
+          {
+            name: "设置",
+            key: "settings",
+          },
+        ],
+      },
+    ];
+
+    const onRenderGroupHeader = (group) => <h3>{group.name}</h3>;
+
+    const mainContent = () => {
+      const { key } = this.state;
+      switch (key) {
+        case "download":
+          return <Download local={dir} />;
+        case "video":
+          return <Video />;
+        case "settings":
+          return <Settings dir={dir} handleSelectDir={this.handleSelectDir} />;
+        default:
+          return <Settings dir={dir} handleSelectDir={this.handleSelectDir} />;
+      }
+    };
 
     return (
       <div className="app">
-        <Router>
-          <div className="nav">
-            <NavLink activeClassName="selected" to="/" exact>
-              下载
-            </NavLink>
-            <NavLink activeClassName="selected" to="/video">
-              视频
-            </NavLink>
-            <NavLink activeClassName="selected" to="/settings">
-              设置
-            </NavLink>
-          </div>
-          <div className="main-wrapper">
-            <Switch>
-              <Route path="/" exact>
-                {dir ? <Download local={dir} /> : <Redirect to="settings" />}
-              </Route>
-              <Route path="/video">
-                {dir ? <Video /> : <Redirect to="settings" />}
-              </Route>
-              <Route path="/settings">
-                <Settings dir={dir} handleSelectDir={this.handleSelectDir} />
-              </Route>
-            </Switch>
-          </div>
-        </Router>
+        <Nav
+          onLinkClick={onLinkClick}
+          onRenderGroupHeader={onRenderGroupHeader}
+          selectedKey={key}
+          ariaLabel="Nav example with custom group headers"
+          groups={navLinkGroups}
+        />
+        <div className="main-wrapper">{mainContent()}</div>
       </div>
     );
   }

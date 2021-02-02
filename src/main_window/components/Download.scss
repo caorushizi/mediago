@@ -4,6 +4,27 @@
   display: flex;
   flex-direction: column;
 
+  .m3u8-list {
+    position: absolute;
+    top: 0;
+    right: 10px;
+    background: #000;
+    z-index: 1000;
+
+    .m3u8-item {
+      background: none;
+      color: #fff;
+      border: none;
+      display: block;
+      cursor: pointer;
+      width: 100px;
+      padding: 5px 10px;
+      overflow: hidden; //超出的文本隐藏
+      text-overflow: ellipsis; //溢出用省略号显示
+      white-space: nowrap; //溢出不换行
+    }
+  }
+
   .download-form {
   }
 

@@ -1,8 +1,7 @@
 import { app, BrowserWindow, BrowserView, ipcMain, session } from "electron";
-import { spawn } from "child_process";
-import path from "path";
 import createServer from "./server";
 import store from "./store";
+import { exec, failFn, successFn } from "./utils";
 
 // eslint-disable-next-line global-require
 if (require("electron-squirrel-startup")) {
@@ -11,7 +10,7 @@ if (require("electron-squirrel-startup")) {
 
 createServer();
 
-const createWindow = () => {
+const createMainWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
@@ -20,7 +19,13 @@ const createWindow = () => {
       enableRemoteModule: true,
     },
   });
+  // eslint-disable-next-line no-undef
+  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+  mainWindow.webContents.openDevTools();
+  return mainWindow;
+};
 
+const createMainView = (window) => {
   const view = new BrowserView({
     webPreferences: {
       // nodeIntegration: true,
@@ -30,65 +35,44 @@ const createWindow = () => {
     },
   });
   view.setBounds({ x: 0, y: 0, height: 0, width: 0 });
-  view.webContents.openDevTools();
-
+  const { webContents } = view;
+  webContents.openDevTools();
   const filter = {
     urls: ["*://*/*"],
   };
-  view.webContents.session.webRequest.onBeforeSendHeaders(
-    filter,
-    (details, callback) => {
-      console.log("from here: ", details.url);
-      callback({ requestHeaders: details.requestHeaders });
+  const { webRequest } = webContents.session;
+  webRequest.onBeforeSendHeaders(filter, (details, callback) => {
+    console.log("from here: ", details.url);
+    const m3u8Reg = /\.m3u8$/;
+    const tsReg = /\.ts$/;
+    let cancel = false;
+    const myURL = new URL(details.url);
+    if (m3u8Reg.test(myURL.pathname)) {
+      window.webContents.send("m3u8", details.url);
+    } else if (tsReg.test(myURL.pathname)) {
+      cancel = true;
     }
-  );
-
-  mainWindow.setBrowserView(view);
-  // eslint-disable-next-line no-undef
-  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-  mainWindow.webContents.openDevTools();
-
-  const exec = (n, p, u) =>
-    new Promise((resolve, reject) => {
-      const args = ["--path", p, "--name", n, "--url", u];
-      const command = spawn("mediago", args);
-      let errMsg = "";
-
-      command.stdout.on("data", (data) => {
-        console.log(data.toString());
-      });
-
-      command.stderr.on("data", (data) => {
-        errMsg += data;
-      });
-
-      command.on("close", (code) => {
-        if (code !== 0) {
-          reject(new Error(errMsg));
-        } else {
-          resolve();
-        }
-      });
+    callback({
+      cancel,
+      requestHeaders: details.requestHeaders,
     });
-
-  const successFn = (data) => ({ code: 0, msg: "", data });
-  const failFn = (code, msg) => ({ code, msg, data: null });
-
-  ipcMain.on("exec", async (event, ...args) => {
-    const [nameString, pathString, urlString] = args;
-
-    let resp;
-    try {
-      const result = await exec(nameString, pathString, urlString);
-      resp = successFn(result);
-    } catch (e) {
-      resp = failFn(-1, e.message);
-    }
-    event.reply("execReply", resp);
   });
+
+  webContents.on("dom-ready", () => {
+    webContents.on("new-window", async (event, url) => {
+      event.preventDefault();
+      await webContents.loadURL(url);
+    });
+  });
+
+  return view;
 };
 
-app.whenReady().then(createWindow);
+const init = () => {
+  const window = createMainWindow();
+  const view = createMainView(window);
+  window.setBrowserView(view);
+};
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
@@ -98,20 +82,35 @@ app.on("window-all-closed", () => {
 
 app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
+    init();
   }
 });
 
 app.whenReady().then(async () => {
   try {
+    init();
+
     const reactTool = process.env.REACT_EXTENSION_PATH;
     await session.defaultSession.loadExtension(reactTool);
 
     const reduxTool = process.env.REDUX_EXTENSION_PATH;
     await session.defaultSession.loadExtension(reduxTool);
   } catch (e) {
-    console.log("加载开发者工具失败：", e);
+    console.log("初始化失败：", e);
   }
+});
+
+ipcMain.on("exec", async (event, ...args) => {
+  const [name, path, url] = args;
+
+  let resp;
+  try {
+    const result = await exec(name, path, url);
+    resp = successFn(result);
+  } catch (e) {
+    resp = failFn(-1, e.message);
+  }
+  event.reply("execReply", resp);
 });
 
 ipcMain.on("setLocalPath", async (event, ...args) => {

@@ -1,4 +1,5 @@
 import React from "react";
+import { List } from "@fluentui/react";
 import videojs from "video.js";
 import "video.js/dist/video-js.min.css";
 import "./Video.scss";
@@ -56,28 +57,27 @@ class Video extends React.Component {
           />
         </div>
         <div className="video-playlist">
-          {videoList.map((video) => (
-            <button
-              type="button"
-              onClick={() => {
-                this.player.src({
-                  type: "video/mp4",
-                  src: `http://127.0.0.1:7789/${video}`,
-                });
-                this.player.ready(() => {
-                  console.log("准备好了");
-                  // tech() will error with no argument
-                  // const tech = this.player.tech({
-                  //   IWillNotUseThisInPlugins: true,
-                  // });
-                });
-              }}
-              className="video-item"
-              key={video}
-            >
-              {video}
-            </button>
-          ))}
+          <List
+            items={videoList}
+            onRenderCell={(item) => (
+              <div
+                role="presentation"
+                onClick={() => {
+                  this.player.src({
+                    type: "video/mp4",
+                    src: `http://127.0.0.1:7789/${item}`,
+                  });
+                  this.player.ready(() => {
+                    console.log("准备好了");
+                  });
+                }}
+                className="video-item"
+                key={item}
+              >
+                {item}
+              </div>
+            )}
+          />
         </div>
       </div>
     );

@@ -5,19 +5,19 @@
   display: flex;
   flex-direction: row;
 
-  .nav {
-    display: flex;
-    flex-direction: column;
-
-    a {
-      padding: 5px 10px;
-
-      &.selected {
-        background: #000;
-        color: #fff;
-      }
-    }
-  }
+  //.nav {
+  //  display: flex;
+  //  flex-direction: column;
+  //
+  //  a {
+  //    padding: 5px 10px;
+  //
+  //    &.selected {
+  //      background: #000;
+  //      color: #fff;
+  //    }
+  //  }
+  //}
 
   .main-wrapper {
     padding: 5px;

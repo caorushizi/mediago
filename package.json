@@ -98,6 +98,7 @@
     "style-loader": "^1.2.1"
   },
   "dependencies": {
+    "@fluentui/react": "^7.157.2",
     "@koa/cors": "^3.1.0",
     "@koa/router": "^10.0.0",
     "axios": "^0.21.1",
@@ -109,7 +110,6 @@
     "prop-types": "^15.7.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "react-router-dom": "^5.2.0",
     "video.js": "^7.10.2"
   }
 }
