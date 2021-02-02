@@ -1,9 +1,22 @@
 import { spawn } from "child_process";
 
-const exec = (n, p, u) =>
+const exec = (n, p, u, h) =>
   new Promise((resolve, reject) => {
-    const args = ["--path", p, "--name", n, "--url", u];
-    const command = spawn("mediago", args);
+    const args = [
+      "--path",
+      `"${p}"`,
+      "--name",
+      `"${n}"`,
+      "--url",
+      `"${u}"`,
+      "--headers",
+      `"${h}"`,
+    ];
+    console.log("params: ", args.join(" "));
+    const command = spawn("mediago", args, {
+      detached: process.env.NODE_ENV === "development",
+      shell: process.env.NODE_ENV === "development",
+    });
     let errMsg = "";
 
     command.stdout.on("data", (data) => {
@@ -16,6 +29,7 @@ const exec = (n, p, u) =>
 
     command.on("close", (code) => {
       if (code !== 0) {
+        console.log(errMsg);
         reject(new Error(errMsg));
       } else {
         resolve();

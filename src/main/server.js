@@ -3,6 +3,7 @@ import Router from "@koa/router";
 import fs from "fs";
 import cors from "@koa/cors";
 import serve from "koa-static";
+import range from "koa-range";
 import store from "./store";
 
 const VideoRoot = `${store.get("local")}`;
@@ -31,6 +32,7 @@ export default function createServer() {
   });
 
   app.use(cors());
+  app.use(range);
   app.use(serve(VideoRoot));
   app.use(router.routes()).use(router.allowedMethods());
   app.listen(7789);

@@ -44,7 +44,6 @@ class App extends React.Component {
     const { dir, key } = this.state;
 
     const onLinkClick = (e, item) => {
-      console.log(item);
       this.setState({
         key: item.key,
       });
@@ -73,7 +72,6 @@ class App extends React.Component {
     const onRenderGroupHeader = (group) => <h3>{group.name}</h3>;
 
     const mainContent = () => {
-      const { key } = this.state;
       switch (key) {
         case "download":
           return <Download local={dir} />;

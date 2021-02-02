@@ -13,6 +13,11 @@ module.exports = {
           { loader: "sass-loader" },
         ],
       },
+      {
+        test: /\.jsx?$/,
+        use: "babel-loader",
+        exclude: /node_modules/,
+      },
     ],
   },
   plugins: [

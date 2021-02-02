@@ -29,6 +29,7 @@ class Video extends React.Component {
         preload: "auto",
         width: 100,
         fluid: true,
+        playbackRates: [0.5, 1, 1.5, 2],
       },
       function onPlayerReady() {
         console.log("onPlayerReady", this);

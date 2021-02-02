@@ -7,7 +7,7 @@
   .m3u8-list {
     position: absolute;
     top: 0;
-    right: 10px;
+    right: 0;
     background: #000;
     z-index: 1000;
 
@@ -17,7 +17,7 @@
       border: none;
       display: block;
       cursor: pointer;
-      width: 100px;
+      width: 200px;
       padding: 5px 10px;
       overflow: hidden; //超出的文本隐藏
       text-overflow: ellipsis; //溢出用省略号显示
@@ -42,9 +42,6 @@
     }
 
     .webview-nav {
-      display: flex;
-      flex-direction: row;
-
       .webview-input {
       }
 

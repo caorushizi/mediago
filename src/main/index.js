@@ -21,7 +21,9 @@ const createMainWindow = () => {
   });
   // eslint-disable-next-line no-undef
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-  mainWindow.webContents.openDevTools();
+  if (process.env.NODE_ENV === "development") {
+    mainWindow.webContents.openDevTools();
+  }
   return mainWindow;
 };
 
@@ -36,19 +38,21 @@ const createMainView = (window) => {
   });
   view.setBounds({ x: 0, y: 0, height: 0, width: 0 });
   const { webContents } = view;
-  webContents.openDevTools();
+  if (process.env.NODE_ENV === "development") {
+    webContents.openDevTools();
+  }
   const filter = {
     urls: ["*://*/*"],
   };
   const { webRequest } = webContents.session;
   webRequest.onBeforeSendHeaders(filter, (details, callback) => {
-    console.log("from here: ", details.url);
     const m3u8Reg = /\.m3u8$/;
     const tsReg = /\.ts$/;
     let cancel = false;
     const myURL = new URL(details.url);
     if (m3u8Reg.test(myURL.pathname)) {
-      window.webContents.send("m3u8", details.url);
+      console.log("from here: ", details.url);
+      window.webContents.send("m3u8", details);
     } else if (tsReg.test(myURL.pathname)) {
       cancel = true;
     }
@@ -86,26 +90,28 @@ app.on("activate", () => {
   }
 });
 
-app.whenReady().then(async () => {
+app.on("did-frame-finish-load", async () => {
   try {
-    init();
-
     const reactTool = process.env.REACT_EXTENSION_PATH;
     await session.defaultSession.loadExtension(reactTool);
 
     const reduxTool = process.env.REDUX_EXTENSION_PATH;
     await session.defaultSession.loadExtension(reduxTool);
   } catch (e) {
-    console.log("初始化失败：", e);
+    console.log(e);
   }
 });
 
+app.whenReady().then(async () => {
+  init();
+});
+
 ipcMain.on("exec", async (event, ...args) => {
-  const [name, path, url] = args;
+  const [name, path, url, headers] = args;
 
   let resp;
   try {
-    const result = await exec(name, path, url);
+    const result = await exec(name, path, url, headers);
     resp = successFn(result);
   } catch (e) {
     resp = failFn(-1, e.message);

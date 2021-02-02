@@ -105,6 +105,7 @@
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^7.0.0",
     "koa": "^2.13.1",
+    "koa-range": "^0.3.0",
     "koa-static": "^5.0.0",
     "normalize.css": "^8.0.1",
     "prop-types": "^15.7.2",

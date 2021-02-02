@@ -2,7 +2,7 @@ import React from "react";
 import "./Download.scss";
 import PropTypes from "prop-types";
 import { remote, ipcRenderer } from "electron";
-import { PrimaryButton, TextField, Label } from "@fluentui/react";
+import { PrimaryButton, TextField } from "@fluentui/react";
 import { ipcExec } from "../utils";
 
 class Download extends React.Component {
@@ -12,6 +12,7 @@ class Download extends React.Component {
     this.state = {
       name: "",
       url: "",
+      headers: "",
       err: "",
       inputUrl: "https://baidu.com",
       m3u8List: [],
@@ -29,8 +30,6 @@ class Download extends React.Component {
     if (this.view) {
       const videoView = document.getElementById("videoView");
       const { left, top, width, height } = videoView.getBoundingClientRect();
-      console.log(this.view);
-      console.log(left, top, width, height);
       this.view.setBounds({
         x: Math.floor(left),
         y: Math.floor(top),
@@ -55,17 +54,17 @@ class Download extends React.Component {
   }
 
   handleWebViewMessage(e, ...args) {
-    const [m3u8Url] = args;
-    console.log("下载页面收到链接：", m3u8Url);
+    const [m3u8Object] = args;
+    console.log("下载页面收到链接：", m3u8Object);
     const { m3u8List } = this.state;
     this.setState({
-      m3u8List: [...m3u8List, m3u8Url],
+      m3u8List: [...m3u8List, m3u8Object],
     });
   }
 
   async handleStartDownload() {
     const { local } = this.props;
-    const { name, url } = this.state;
+    const { name, url, headers } = this.state;
 
     if (!name) {
       this.setState({ err: "请输入视频名称" });
@@ -84,7 +83,7 @@ class Download extends React.Component {
 
     this.setState({ err: "" });
 
-    const result = await ipcExec(name, local, url);
+    const result = await ipcExec(name, local, url, headers);
     console.log("result : ", result);
     const { code, msg, data } = result;
     if (code === 0) {
@@ -97,7 +96,11 @@ class Download extends React.Component {
 
   handleViewDOMReady() {
     console.log("dom-ready");
-    this.setState({ name: this.view.webContents.getTitle() });
+    const { webContents } = this.view;
+    this.setState({
+      name: webContents.getTitle(),
+      inputUrl: webContents.getURL(),
+    });
   }
 
   render() {
@@ -109,12 +112,22 @@ class Download extends React.Component {
             <button
               type="button"
               className="m3u8-item"
-              key={item}
+              key={item.url}
               onClick={() => {
-                this.setState({ url: item });
+                console.log(item);
+                const headers = [];
+                const { requestHeaders } = item;
+                Object.keys(requestHeaders).forEach((key) => {
+                  headers.push(`${key}~${requestHeaders[key]}`);
+                });
+                console.log(headers.join("|"));
+                this.setState({
+                  url: item.url,
+                  headers: headers.join("|"),
+                });
               }}
             >
-              {item}
+              {item.url}
             </button>
           ))}
         </div>
@@ -145,9 +158,7 @@ class Download extends React.Component {
         <div className="webview-container">
           <div id="videoView">webview</div>
           <div className="webview-nav">
-            <input
-              className="webview-input"
-              type="text"
+            <TextField
               value={inputUrl}
               onChange={(e) => {
                 this.setState({

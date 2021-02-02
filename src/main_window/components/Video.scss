@@ -8,6 +8,7 @@
   }
 
   .video-playlist {
+    width: 180px;
     height: 100%;
     overflow: auto;
     border-left: 1px solid #000;
@@ -16,6 +17,9 @@
       display: block;
       margin: 0 10px 5px 10px;
       cursor: pointer;
+      overflow: hidden; //超出的文本隐藏
+      text-overflow: ellipsis; //溢出用省略号显示
+      white-space: nowrap; //溢出不换行
     }
   }
 }
