@@ -100,6 +100,7 @@ class Download extends React.Component {
     this.setState({
       name: webContents.getTitle(),
       inputUrl: webContents.getURL(),
+      m3u8List: [],
     });
   }
 

@@ -1,9 +1,10 @@
 import React from "react";
 import { List } from "@fluentui/react";
-import videojs from "video.js";
-import "video.js/dist/video-js.min.css";
 import "./Video.scss";
 import axios from "axios";
+
+import Player from "xgplayer";
+import "xgplayer-mp4";
 
 class Video extends React.Component {
   constructor(props) {
@@ -21,27 +22,19 @@ class Video extends React.Component {
     });
 
     // instantiate Video.js
-    this.player = videojs(
-      this.videoNode,
-      {
-        controls: true,
-        autoplay: false,
-        preload: "auto",
-        width: 100,
-        fluid: true,
-        playbackRates: [0.5, 1, 1.5, 2],
-      },
-      function onPlayerReady() {
-        console.log("onPlayerReady", this);
-      }
-    );
-  }
-
-  // destroy player on unmount
-  componentWillUnmount() {
-    if (this.player) {
-      this.player.dispose();
-    }
+    this.player = new Player({
+      id: "mse",
+      url: [],
+      playsinline: true,
+      whitelist: [""],
+      fluid: true,
+      volume: 0.5,
+      playbackRate: [0.5, 1, 1.5, 2],
+      pip: true,
+      keyShortcut: "on",
+      videoInit: true,
+      lang: "zh-cn",
+    });
   }
 
   render() {
@@ -49,13 +42,7 @@ class Video extends React.Component {
     return (
       <div className="video">
         <div className="video-inner">
-          {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-          <video
-            ref={(node) => {
-              this.videoNode = node;
-            }}
-            className="video-js"
-          />
+          <div id="mse" />
         </div>
         <div className="video-playlist">
           <List
@@ -64,13 +51,8 @@ class Video extends React.Component {
               <div
                 role="presentation"
                 onClick={() => {
-                  this.player.src({
-                    type: "video/mp4",
-                    src: `http://127.0.0.1:7789/${item}`,
-                  });
-                  this.player.ready(() => {
-                    console.log("准备好了");
-                  });
+                  const mediaUrl = `http://127.0.0.1:7789/${item}`;
+                  this.player.start(mediaUrl);
                 }}
                 className="video-item"
                 key={item}

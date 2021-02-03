@@ -18,4 +18,13 @@ const ipcSetStore = (key, value) =>
 
 const ipcGetStore = (key) => ipcRenderer.invoke("getLocalPath", key);
 
-export { ipcExec, ipcSetStore, ipcGetStore };
+const onEvent = (eventId, label, mapKv) => {
+  try {
+    console.log(eventId);
+    window.TDAPP.onEvent(eventId, label, mapKv);
+  } catch (err) {
+    console.log(`${eventId}=>err`, err);
+  }
+};
+
+export { ipcExec, ipcSetStore, ipcGetStore, onEvent };

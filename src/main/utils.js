@@ -14,8 +14,8 @@ const exec = (n, p, u, h) =>
     ];
     console.log("params: ", args.join(" "));
     const command = spawn("mediago", args, {
-      detached: process.env.NODE_ENV === "development",
-      shell: process.env.NODE_ENV === "development",
+      detached: true,
+      shell: true,
     });
     let errMsg = "";
 
