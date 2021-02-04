@@ -51,7 +51,7 @@ class App extends React.Component {
 
     const navLinkGroups = [
       {
-        name: "Media Download",
+        name: "",
         links: [
           {
             name: "下载",

@@ -2,7 +2,12 @@ import React from "react";
 import "./Download.scss";
 import PropTypes from "prop-types";
 import { remote, ipcRenderer } from "electron";
-import { PrimaryButton, TextField } from "@fluentui/react";
+import {
+  PrimaryButton,
+  TextField,
+  FocusZone,
+  Separator,
+} from "@fluentui/react";
 import { ipcExec } from "../utils";
 
 class Download extends React.Component {
@@ -155,6 +160,8 @@ class Download extends React.Component {
             <span style={{ color: "red" }}>{err}</span>
           </div>
         </form>
+
+        <Separator>Webview</Separator>
 
         <div className="webview-container">
           <div id="videoView">webview</div>
