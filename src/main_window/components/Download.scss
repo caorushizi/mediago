@@ -1,51 +1,24 @@
 .download {
+  padding: 10px;
   height: 100%;
   overflow: hidden;
   display: flex;
   flex-direction: column;
 
   .m3u8-list {
-    position: absolute;
-    top: 0;
-    right: 0;
-    background: #000;
-    z-index: 1000;
-
     .m3u8-item {
+      margin-bottom: 5px;
       background: none;
-      color: #fff;
-      border: none;
-      display: block;
       cursor: pointer;
-      width: 200px;
-      padding: 5px 10px;
-      overflow: hidden; //超出的文本隐藏
-      text-overflow: ellipsis; //溢出用省略号显示
-      white-space: nowrap; //溢出不换行
-    }
-  }
-
-  .download-form {
-  }
-
-  .webview-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-
-    #videoView {
-      flex: 1;
+      word-break: break-all;
+      border: 1px solid #000;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #ddd;
-    }
+      flex-direction: column;
 
-    .webview-nav {
-      .webview-input {
+      .title {
       }
 
-      .webview-button {
+      .url {
       }
     }
   }

@@ -1,14 +1,19 @@
 import React from "react";
 import "./Download.scss";
 import PropTypes from "prop-types";
-import { remote, ipcRenderer } from "electron";
-import {
-  PrimaryButton,
-  TextField,
-  FocusZone,
-  Separator,
-} from "@fluentui/react";
+import { ipcRenderer } from "electron";
+import { PrimaryButton, TextField, Stack } from "@fluentui/react";
 import { ipcExec } from "../utils";
+
+// const parseTest = async () => {
+//   const resp = await axios.get(
+//   );
+//   const parser = new Parser();
+//   parser.push(resp.data);
+//   parser.end();
+//   const parsedManifest = parser.manifest;
+//   console.log(parsedManifest);
+// };
 
 class Download extends React.Component {
   constructor(props) {
@@ -19,48 +24,28 @@ class Download extends React.Component {
       url: "",
       headers: "",
       err: "",
-      inputUrl: "https://baidu.com",
       m3u8List: [],
     };
 
+    // parseTest();
+
     this.handleStartDownload = this.handleStartDownload.bind(this);
     this.handleWebViewMessage = this.handleWebViewMessage.bind(this);
-    this.handleViewDOMReady = this.handleViewDOMReady.bind(this);
+    this.handleClickM3U8Item = this.handleClickM3U8Item.bind(this);
+    this.handleOpenBrowserWindow = this.handleOpenBrowserWindow.bind(this);
   }
 
   componentDidMount() {
-    this.window = remote.getCurrentWindow();
-    this.view = this.window.getBrowserView();
-
-    if (this.view) {
-      const videoView = document.getElementById("videoView");
-      const { left, top, width, height } = videoView.getBoundingClientRect();
-      this.view.setBounds({
-        x: Math.floor(left),
-        y: Math.floor(top),
-        width: Math.floor(width),
-        height: Math.floor(height),
-      });
-      this.view.webContents.on("dom-ready", this.handleViewDOMReady);
-    }
-
     ipcRenderer.on("m3u8", this.handleWebViewMessage);
   }
 
   componentWillUnmount() {
-    if (this.view) {
-      this.view.setBounds({ x: 0, y: 0, height: 0, width: 0 });
-      this.view.webContents.off("dom-ready", this.handleViewDOMReady);
-      this.window = null;
-      this.view = null;
-    }
-
     ipcRenderer.removeListener("m3u8", this.handleWebViewMessage);
   }
 
   handleWebViewMessage(e, ...args) {
     const [m3u8Object] = args;
-    console.log("下载页面收到链接：", m3u8Object);
+    console.log("下载页面收到链接：", JSON.stringify(m3u8Object));
     const { m3u8List } = this.state;
     this.setState({
       m3u8List: [...m3u8List, m3u8Object],
@@ -88,57 +73,31 @@ class Download extends React.Component {
 
     this.setState({ err: "" });
 
-    const result = await ipcExec(name, local, url, headers);
-    console.log("result : ", result);
-    const { code, msg, data } = result;
-    if (code === 0) {
-      console.log("成功：", data);
-    } else {
-      console.log("出错");
-      console.log(msg);
-    }
+    await ipcExec(name, local, url, headers);
   }
 
-  handleViewDOMReady() {
-    console.log("dom-ready");
-    const { webContents } = this.view;
-    this.setState({
-      name: webContents.getTitle(),
-      inputUrl: webContents.getURL(),
-      m3u8List: [],
-    });
+  handleClickM3U8Item(item) {
+    const { title, requestDetails } = item;
+    const { requestHeaders, url } = requestDetails;
+    const headers = Object.keys(requestHeaders)
+      .reduce((result, key) => {
+        result.push(`${key}~${requestHeaders[key]}`);
+        return result;
+      }, [])
+      .join("|");
+    this.setState({ name: title, url, headers });
+  }
+
+  handleOpenBrowserWindow() {
+    console.log(this);
+    ipcRenderer.send("openBrowserWindow");
   }
 
   render() {
-    const { name, url, err, inputUrl, m3u8List } = this.state;
+    const { name, url, err, m3u8List, headers } = this.state;
     return (
       <div className="download">
-        <div className="m3u8-list">
-          {m3u8List.map((item) => (
-            <button
-              type="button"
-              className="m3u8-item"
-              key={item.url}
-              onClick={() => {
-                console.log(item);
-                const headers = [];
-                const { requestHeaders } = item;
-                Object.keys(requestHeaders).forEach((key) => {
-                  headers.push(`${key}~${requestHeaders[key]}`);
-                });
-                console.log(headers.join("|"));
-                this.setState({
-                  url: item.url,
-                  headers: headers.join("|"),
-                });
-              }}
-            >
-              {item.url}
-            </button>
-          ))}
-        </div>
-
-        <form className="form download-form">
+        <Stack tokens={{ childrenGap: 5 }}>
           <TextField
             required
             label="视频名称"
@@ -153,52 +112,44 @@ class Download extends React.Component {
             onChange={(e) => this.setState({ url: e.target.value })}
           />
 
+          <TextField
+            label="请求头"
+            value={headers}
+            onChange={(e) => this.setState({ headers: e.target.value })}
+          />
+
           <div className="form-item">
-            <PrimaryButton onClick={this.handleStartDownload}>
-              开始下载
-            </PrimaryButton>
-            <span style={{ color: "red" }}>{err}</span>
-          </div>
-        </form>
+            <Stack horizontal tokens={{ childrenGap: 15 }}>
+              <PrimaryButton onClick={this.handleStartDownload}>
+                开始下载
+              </PrimaryButton>
 
-        <Separator>Webview</Separator>
-
-        <div className="webview-container">
-          <div id="videoView">webview</div>
-          <div className="webview-nav">
-            <TextField
-              value={inputUrl}
-              onChange={(e) => {
-                this.setState({
-                  inputUrl: e.target.value,
-                });
-              }}
-            />
-            <PrimaryButton
-              onClick={async () => {
-                await this.view.webContents.loadURL(inputUrl);
-              }}
-            >
-              go
-            </PrimaryButton>
-            <PrimaryButton
-              onClick={() => {
-                this.view.webContents.reload();
-              }}
-            >
-              刷新
-            </PrimaryButton>
-            <PrimaryButton
-              onClick={() => {
-                const canGoBack = this.view.webContents.canGoBack();
-                if (canGoBack) {
-                  this.view.webContents.goBack();
-                }
-              }}
-            >
-              返回
-            </PrimaryButton>
+              <PrimaryButton onClick={this.handleOpenBrowserWindow}>
+                打开
+              </PrimaryButton>
+              <span style={{ color: "red" }}>{err}</span>
+            </Stack>
           </div>
+        </Stack>
+
+        <div className="m3u8-list">
+          {m3u8List.map((item) => (
+            <div
+              role="presentation"
+              className="m3u8-item"
+              key={item.requestDetails.url}
+              onClick={() => this.handleClickM3U8Item(item)}
+            >
+              <div className="title">
+                标题：
+                {item.title}
+              </div>
+              <div className="url">
+                链接：
+                {item.requestDetails.url}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     );

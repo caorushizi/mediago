@@ -1,6 +1,6 @@
 import React from "react";
-import { remote } from "electron";
-import { Nav } from "@fluentui/react";
+import { remote, ipcRenderer } from "electron";
+import { Pivot, PivotItem } from "@fluentui/react";
 import Video from "./components/Video";
 import Download from "./components/Download";
 import Settings from "./components/Settings";
@@ -41,60 +41,32 @@ class App extends React.Component {
   }
 
   render() {
-    const { dir, key } = this.state;
-
-    const onLinkClick = (e, item) => {
-      this.setState({
-        key: item.key,
-      });
-    };
-
-    const navLinkGroups = [
-      {
-        name: "",
-        links: [
-          {
-            name: "下载",
-            key: "download",
-          },
-          {
-            name: "视频",
-            key: "video",
-          },
-          {
-            name: "设置",
-            key: "settings",
-          },
-        ],
-      },
-    ];
-
-    const onRenderGroupHeader = (group) => <h3>{group.name}</h3>;
-
-    const mainContent = () => {
-      switch (key) {
-        case "download":
-          return <Download local={dir} />;
-        case "video":
-          return <Video />;
-        case "settings":
-          return <Settings dir={dir} handleSelectDir={this.handleSelectDir} />;
-        default:
-          return <Settings dir={dir} handleSelectDir={this.handleSelectDir} />;
-      }
-    };
+    const { dir } = this.state;
 
     return (
-      <div className="app">
-        <Nav
-          onLinkClick={onLinkClick}
-          onRenderGroupHeader={onRenderGroupHeader}
-          selectedKey={key}
-          ariaLabel="Nav example with custom group headers"
-          groups={navLinkGroups}
-        />
-        <div className="main-wrapper">{mainContent()}</div>
-      </div>
+      <>
+        <div className="drag-region" />
+        <div
+          role="presentation"
+          className="action-button"
+          onClick={() => {
+            ipcRenderer.send("closeMainWindow");
+          }}
+        >
+          关闭
+        </div>
+        <Pivot className="app" styles={{ itemContainer: "main-wrapper" }}>
+          <PivotItem headerText="下载">
+            <Download local={dir} />
+          </PivotItem>
+          <PivotItem headerText="视频">
+            <Video />
+          </PivotItem>
+          <PivotItem headerText="设置">
+            <Settings dir={dir} handleSelectDir={this.handleSelectDir} />
+          </PivotItem>
+        </Pivot>
+      </>
     );
   }
 }

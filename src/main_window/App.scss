@@ -1,11 +1,35 @@
 .app {
   height: 100vh;
-  width: 100vw;
+  width: 100%;
   overflow: hidden;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 
   .main-wrapper {
     flex: 1;
+    overflow: auto;
+  }
+}
+
+.drag-region {
+  position: absolute;
+  top: 0;
+  right: 50px;
+  left: 160px;
+  height: 50px;
+  -webkit-app-region: drag;
+}
+
+.action-button {
+  -webkit-app-region: no-drag;
+  padding: 5px 10px;
+  position: absolute;
+  right: 0;
+  cursor: pointer;
+  z-index: 1000;
+
+  &:hover {
+    background-color: #d71526;
+    color: #fff;
   }
 }
