@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { ipcRenderer } from "electron";
 import { PrimaryButton, TextField, Stack } from "@fluentui/react";
 import { ipcExec } from "../utils";
+import { onEvent } from "../../renderer_common/utils";
 
 // const parseTest = async () => {
 //   const resp = await axios.get(
@@ -53,6 +54,8 @@ class Download extends React.Component {
   }
 
   async handleStartDownload() {
+    onEvent("下载页面", "打开浏览器页面");
+
     const { local } = this.props;
     const { name, url, headers } = this.state;
 
@@ -73,7 +76,12 @@ class Download extends React.Component {
 
     this.setState({ err: "" });
 
-    await ipcExec(name, local, url, headers);
+    const { code, msg } = await ipcExec(name, local, url, headers);
+    if (code === 0) {
+      onEvent("下载页面", "下载视频成功", { code, msg, url });
+    } else {
+      onEvent("下载页面", "下载视频失败", { code, msg, url });
+    }
   }
 
   handleClickM3U8Item(item) {
@@ -89,6 +97,7 @@ class Download extends React.Component {
   }
 
   handleOpenBrowserWindow() {
+    onEvent("下载页面", "打开浏览器页面");
     console.log(this);
     ipcRenderer.send("openBrowserWindow");
   }
@@ -125,7 +134,7 @@ class Download extends React.Component {
               </PrimaryButton>
 
               <PrimaryButton onClick={this.handleOpenBrowserWindow}>
-                打开
+                打开浏览器
               </PrimaryButton>
               <span style={{ color: "red" }}>{err}</span>
             </Stack>

@@ -6,14 +6,24 @@
   flex-direction: column;
 
   .m3u8-list {
+    margin-top: 5px;
+
     .m3u8-item {
+      box-sizing: border-box;
+      color: #303133;
+      font-size: 14px;
+      padding: 5px;
       margin-bottom: 5px;
       background: none;
       cursor: pointer;
       word-break: break-all;
-      border: 1px solid #000;
+      border: 2px solid #323130;
       display: flex;
       flex-direction: column;
+
+      &:hover {
+        border: 2px solid #0078d4;
+      }
 
       .title {
       }

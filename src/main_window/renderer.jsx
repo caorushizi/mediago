@@ -3,9 +3,4 @@ import React from "react";
 import "./index.scss";
 import App from "./App";
 
-document.title = window.location.href;
-window.onhashchange = () => {
-  document.title = window.location.href;
-};
-
 ReactDOM.render(<App />, document.getElementById("root"));

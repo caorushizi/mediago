@@ -5,6 +5,7 @@ import axios from "axios";
 
 import Player from "xgplayer";
 import "xgplayer-mp4";
+import { onEvent } from "../../renderer_common/utils";
 
 class Video extends React.Component {
   constructor(props) {
@@ -51,6 +52,7 @@ class Video extends React.Component {
               <div
                 role="presentation"
                 onClick={() => {
+                  onEvent("视频页面", "点击视频列表开始播放视频");
                   const mediaUrl = `http://127.0.0.1:7789/${item}`;
                   this.player.start(mediaUrl);
                 }}

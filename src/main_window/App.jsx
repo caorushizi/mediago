@@ -6,6 +6,7 @@ import Download from "./components/Download";
 import Settings from "./components/Settings";
 import "./App.scss";
 import { ipcGetStore, ipcSetStore } from "./utils";
+import { onEvent } from "../renderer_common/utils";
 
 class App extends React.Component {
   constructor(props) {
@@ -13,7 +14,6 @@ class App extends React.Component {
 
     this.state = {
       dir: "",
-      key: "settings",
     };
 
     this.handleSelectDir = this.handleSelectDir.bind(this);
@@ -55,14 +55,20 @@ class App extends React.Component {
         >
           关闭
         </div>
-        <Pivot className="app" styles={{ itemContainer: "main-wrapper" }}>
-          <PivotItem headerText="下载">
+        <Pivot
+          className="app"
+          styles={{ itemContainer: "main-wrapper" }}
+          onLinkClick={(item) => {
+            onEvent("页面标签栏", item.props.itemKey);
+          }}
+        >
+          <PivotItem headerText="下载" itemKey="download">
             <Download local={dir} />
           </PivotItem>
-          <PivotItem headerText="视频">
+          <PivotItem headerText="视频" itemKey="video">
             <Video />
           </PivotItem>
-          <PivotItem headerText="设置">
+          <PivotItem headerText="设置" itemKey="settings">
             <Settings dir={dir} handleSelectDir={this.handleSelectDir} />
           </PivotItem>
         </Pivot>

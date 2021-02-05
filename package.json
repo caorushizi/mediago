@@ -116,10 +116,10 @@
     "koa": "^2.13.1",
     "koa-range": "^0.3.0",
     "koa-static": "^5.0.0",
-    "m3u8-parser": "^4.5.2",
     "prop-types": "^15.7.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-icons": "^4.1.0",
     "xgplayer": "^2.17.11",
     "xgplayer-mp4": "^1.2.1"
   }
