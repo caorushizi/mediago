@@ -86,7 +86,7 @@ class App extends React.Component {
               }}
             />
           </div>
-          {title}
+          <div className="title">{title}</div>
           <div className="tool-bar-right">
             <div
               className="button"

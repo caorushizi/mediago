@@ -1,4 +1,4 @@
-import { app, BrowserWindow, BrowserView, ipcMain, session } from "electron";
+import { app, BrowserView, BrowserWindow, ipcMain, session } from "electron";
 import { is } from "electron-util";
 import createServer from "./server";
 import store from "./store";
@@ -129,12 +129,10 @@ app.whenReady().then(async () => {
   await init();
 });
 
-ipcMain.on("exec", async (event, ...args) => {
-  const [name, path, url, headers] = args;
-
+ipcMain.on("exec", async (event, exeFile, ...args) => {
   let resp;
   try {
-    const result = await exec(name, path, url, headers);
+    const result = await exec(exeFile, ...args);
     resp = successFn(result);
   } catch (e) {
     resp = failFn(-1, e.message);
@@ -143,12 +141,26 @@ ipcMain.on("exec", async (event, ...args) => {
 });
 
 ipcMain.on("setLocalPath", async (event, ...args) => {
-  const [key, value] = args;
-  store.set(key, value);
-  event.reply("setLocalPathReply");
+  let resp;
+  try {
+    const [key, value] = args;
+    store.set(key, value);
+    resp = successFn();
+  } catch (e) {
+    console.log("设置 store 失败：", e.message);
+    resp = failFn(-1, "设置 store 失败");
+  }
+  event.reply("setLocalPathReply", resp);
 });
 
-ipcMain.handle("getLocalPath", (event, key) => store.get(key));
+ipcMain.handle("getLocalPath", (event, key) => {
+  try {
+    return store.get(key);
+  } catch (e) {
+    console.log("获取 store 中数据失败：", e.message);
+    return "";
+  }
+});
 
 ipcMain.on("closeMainWindow", async () => {
   console.log("close");

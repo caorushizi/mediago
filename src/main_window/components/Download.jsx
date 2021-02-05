@@ -2,7 +2,13 @@ import React from "react";
 import "./Download.scss";
 import PropTypes from "prop-types";
 import { ipcRenderer } from "electron";
-import { PrimaryButton, TextField, Stack } from "@fluentui/react";
+import {
+  PrimaryButton,
+  TextField,
+  Stack,
+  MessageBar,
+  MessageBarType,
+} from "@fluentui/react";
 import { ipcExec } from "../utils";
 import { onEvent } from "../../renderer_common/utils";
 
@@ -24,8 +30,9 @@ class Download extends React.Component {
       name: "",
       url: "",
       headers: "",
-      err: "",
       m3u8List: [],
+      showError: false,
+      errorMsg: "",
     };
 
     // parseTest();
@@ -54,42 +61,58 @@ class Download extends React.Component {
   }
 
   async handleStartDownload() {
-    onEvent("下载页面", "打开浏览器页面");
+    onEvent("下载页面", "开始下载");
+    this.setState({ showError: false, errorMsg: "" });
 
-    const { local } = this.props;
+    const { local, exeFile } = this.props;
     const { name, url, headers } = this.state;
 
     if (!name) {
-      this.setState({ err: "请输入视频名称" });
+      this.setState({ errorMsg: "请输入视频名称", showError: true });
       return;
     }
 
     if (!url) {
-      this.setState({ err: "请输入 m3u8 地址" });
+      this.setState({ errorMsg: "请输入 m3u8 地址", showError: true });
       return;
     }
 
-    if (!local) {
-      this.setState({ err: "错误" });
+    if (!local || !exeFile) {
+      this.setState({
+        errorMsg: "请先去设置页面配置本地路径和执行程序",
+        showError: true,
+      });
       return;
     }
 
-    this.setState({ err: "" });
-
-    const { code, msg } = await ipcExec(name, local, url, headers);
+    const { code, msg, data } = await ipcExec(
+      exeFile,
+      local,
+      name,
+      url,
+      headers
+    );
+    console.log("获取到下载视频响应：", { code, msg, data });
     if (code === 0) {
       onEvent("下载页面", "下载视频成功", { code, msg, url });
     } else {
+      this.setState({ showError: true, errorMsg: msg });
       onEvent("下载页面", "下载视频失败", { code, msg, url });
     }
   }
 
   handleClickM3U8Item(item) {
+    this.setState({ showError: false, errorMsg: "" });
+    const { exeFile } = this.props;
     const { title, requestDetails } = item;
     const { requestHeaders, url } = requestDetails;
     const headers = Object.keys(requestHeaders)
       .reduce((result, key) => {
-        result.push(`${key}~${requestHeaders[key]}`);
+        if (exeFile === "mediago") {
+          result.push(`${key}~${requestHeaders[key]}`);
+        } else {
+          result.push(`${key}:${requestHeaders[key]}`);
+        }
         return result;
       }, [])
       .join("|");
@@ -103,9 +126,18 @@ class Download extends React.Component {
   }
 
   render() {
-    const { name, url, err, m3u8List, headers } = this.state;
+    const { name, url, m3u8List, headers, showError, errorMsg } = this.state;
+
+    const ErrorExample = () => (
+      <MessageBar messageBarType={MessageBarType.error} isMultiline={false}>
+        {errorMsg}
+      </MessageBar>
+    );
+
     return (
       <div className="download">
+        {showError && <ErrorExample />}
+
         <Stack tokens={{ childrenGap: 5 }}>
           <TextField
             required
@@ -136,7 +168,6 @@ class Download extends React.Component {
               <PrimaryButton onClick={this.handleOpenBrowserWindow}>
                 打开浏览器
               </PrimaryButton>
-              <span style={{ color: "red" }}>{err}</span>
             </Stack>
           </div>
         </Stack>
@@ -155,7 +186,7 @@ class Download extends React.Component {
               </div>
               <div className="url">
                 链接：
-                {item.requestDetails.url}
+                {item.requestDetails.url.split("?")[0]}
               </div>
             </div>
           ))}
@@ -167,6 +198,7 @@ class Download extends React.Component {
 
 Download.propTypes = {
   local: PropTypes.string.isRequired,
+  exeFile: PropTypes.string.isRequired,
 };
 
 export default Download;

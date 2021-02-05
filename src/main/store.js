@@ -6,5 +6,5 @@ export default new Store({
   name: variables.appName,
   cwd: path.join(variables.appData, variables.appName),
   fileExtension: "json",
-  defaults: { local: "" },
+  defaults: { local: "", exeFile: "" },
 });

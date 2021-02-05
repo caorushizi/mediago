@@ -1,9 +1,9 @@
 const onEvent = (eventId, label, mapKv) => {
   try {
-    console.log(eventId);
     window.TDAPP.onEvent(eventId, label, mapKv);
+    console.log("埋点成功：", eventId, label, mapKv);
   } catch (err) {
-    console.log(`${eventId}=>err`, err);
+    console.log(`埋点失败：${eventId}`, err);
   }
 };
 

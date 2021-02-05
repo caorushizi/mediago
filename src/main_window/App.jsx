@@ -14,15 +14,21 @@ class App extends React.Component {
 
     this.state = {
       dir: "",
+      exeFile: "",
     };
 
     this.handleSelectDir = this.handleSelectDir.bind(this);
+    this.handleSelectExeFile = this.handleSelectExeFile.bind(this);
   }
 
   async componentDidMount() {
     const dir = await ipcGetStore("local");
+    const exeFile = await ipcGetStore("exeFile");
+    console.log(dir);
+    console.log(exeFile);
     this.setState({
       dir: dir || "",
+      exeFile: exeFile || "",
     });
   }
 
@@ -40,8 +46,15 @@ class App extends React.Component {
     });
   }
 
+  async handleSelectExeFile(event, options) {
+    await ipcSetStore("exeFile", options.key);
+    this.setState({
+      exeFile: options.key,
+    });
+  }
+
   render() {
-    const { dir } = this.state;
+    const { dir, exeFile } = this.state;
 
     return (
       <>
@@ -63,13 +76,18 @@ class App extends React.Component {
           }}
         >
           <PivotItem headerText="下载" itemKey="download">
-            <Download local={dir} />
+            <Download local={dir} exeFile={exeFile} />
           </PivotItem>
           <PivotItem headerText="视频" itemKey="video">
             <Video />
           </PivotItem>
           <PivotItem headerText="设置" itemKey="settings">
-            <Settings dir={dir} handleSelectDir={this.handleSelectDir} />
+            <Settings
+              dir={dir}
+              handleSelectDir={this.handleSelectDir}
+              exeFile={exeFile}
+              handleSelectExeFile={this.handleSelectExeFile}
+            />
           </PivotItem>
         </Pivot>
       </>

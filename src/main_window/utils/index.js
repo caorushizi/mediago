@@ -1,17 +1,22 @@
 import { ipcRenderer } from "electron";
 
-const ipcExec = (name, path, url, headers) =>
+const ipcExec = (exeFile, ...args) =>
   new Promise((resolve) => {
     ipcRenderer.on("execReply", (event, arg) => {
       resolve(arg);
     });
-    ipcRenderer.send("exec", name, path, url, headers);
+    ipcRenderer.send("exec", exeFile, ...args);
   });
 
 const ipcSetStore = (key, value) =>
-  new Promise((resolve) => {
-    ipcRenderer.on("setLocalPathReply", () => {
-      resolve();
+  new Promise((resolve, reject) => {
+    ipcRenderer.on("setLocalPathReply", (e, resp) => {
+      const { code, msg, data } = resp;
+      if (code === 0) {
+        resolve(data);
+      } else {
+        reject(new Error(msg));
+      }
     });
     ipcRenderer.send("setLocalPath", key, value);
   });
