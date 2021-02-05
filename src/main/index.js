@@ -1,6 +1,5 @@
 import { app, BrowserView, BrowserWindow, ipcMain, session } from "electron";
 import { is } from "electron-util";
-import createServer from "./server";
 import store from "./store";
 import { exec, failFn, successFn } from "./utils";
 
@@ -8,8 +7,6 @@ import { exec, failFn, successFn } from "./utils";
 if (require("electron-squirrel-startup")) {
   app.quit();
 }
-
-createServer();
 
 const createMainWindow = async () => {
   const mainWindow = new BrowserWindow({

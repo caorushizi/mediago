@@ -107,20 +107,12 @@
   },
   "dependencies": {
     "@fluentui/react": "^7.157.2",
-    "@koa/cors": "^3.1.0",
-    "@koa/router": "^10.0.0",
-    "axios": "^0.21.1",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^7.0.0",
     "electron-util": "^0.14.2",
-    "koa": "^2.13.1",
-    "koa-range": "^0.3.0",
-    "koa-static": "^5.0.0",
     "prop-types": "^15.7.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "react-icons": "^4.1.0",
-    "xgplayer": "^2.17.11",
-    "xgplayer-mp4": "^1.2.1"
+    "react-icons": "^4.1.0"
   }
 }

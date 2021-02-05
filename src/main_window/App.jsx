@@ -1,7 +1,6 @@
 import React from "react";
 import { remote, ipcRenderer } from "electron";
 import { Pivot, PivotItem } from "@fluentui/react";
-import Video from "./components/Video";
 import Download from "./components/Download";
 import Settings from "./components/Settings";
 import "./App.scss";
@@ -77,9 +76,6 @@ class App extends React.Component {
         >
           <PivotItem headerText="下载" itemKey="download">
             <Download local={dir} exeFile={exeFile} />
-          </PivotItem>
-          <PivotItem headerText="视频" itemKey="video">
-            <Video />
           </PivotItem>
           <PivotItem headerText="设置" itemKey="settings">
             <Settings
