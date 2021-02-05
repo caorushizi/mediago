@@ -1,10 +1,18 @@
 import React from "react";
 import { remote, ipcRenderer } from "electron";
-import { Pivot, PivotItem } from "@fluentui/react";
-import Download from "./components/Download";
-import Settings from "./components/Settings";
 import "./App.scss";
-import { ipcGetStore, ipcSetStore } from "./utils";
+import {
+  ChoiceGroup,
+  MessageBar,
+  MessageBarType,
+  PrimaryButton,
+  Stack,
+  TextField,
+  Separator,
+  DefaultButton,
+} from "@fluentui/react";
+import { AiOutlineClose } from "react-icons/ai";
+import { ipcExec, ipcGetStore, ipcSetStore } from "./utils";
 import { onEvent } from "../renderer_common/utils";
 
 class App extends React.Component {
@@ -14,13 +22,25 @@ class App extends React.Component {
     this.state = {
       dir: "",
       exeFile: "",
+      name: "",
+      url: "",
+      headers: "",
+      m3u8List: [],
+      showError: false,
+      errorMsg: "",
     };
 
+    this.handleStartDownload = this.handleStartDownload.bind(this);
+    this.handleWebViewMessage = this.handleWebViewMessage.bind(this);
+    this.handleClickM3U8Item = this.handleClickM3U8Item.bind(this);
+    this.handleOpenBrowserWindow = this.handleOpenBrowserWindow.bind(this);
     this.handleSelectDir = this.handleSelectDir.bind(this);
     this.handleSelectExeFile = this.handleSelectExeFile.bind(this);
   }
 
   async componentDidMount() {
+    ipcRenderer.on("m3u8", this.handleWebViewMessage);
+
     const dir = await ipcGetStore("local");
     const exeFile = await ipcGetStore("exeFile");
     console.log(dir);
@@ -29,6 +49,10 @@ class App extends React.Component {
       dir: dir || "",
       exeFile: exeFile || "",
     });
+  }
+
+  componentWillUnmount() {
+    ipcRenderer.removeListener("m3u8", this.handleWebViewMessage);
   }
 
   async handleSelectDir() {
@@ -52,11 +76,106 @@ class App extends React.Component {
     });
   }
 
+  handleWebViewMessage(e, ...args) {
+    const [m3u8Object] = args;
+    console.log("下载页面收到链接：", JSON.stringify(m3u8Object));
+    const { m3u8List } = this.state;
+    this.setState({
+      m3u8List: [...m3u8List, m3u8Object],
+    });
+  }
+
+  async handleStartDownload() {
+    onEvent("下载页面", "开始下载");
+    this.setState({ showError: false, errorMsg: "" });
+
+    const { dir, exeFile, name, url, headers } = this.state;
+
+    if (!name) {
+      this.setState({ errorMsg: "请输入视频名称", showError: true });
+      return;
+    }
+
+    if (!url) {
+      this.setState({ errorMsg: "请输入 m3u8 地址", showError: true });
+      return;
+    }
+
+    if (!dir || !exeFile) {
+      this.setState({
+        errorMsg: "请先去设置页面配置本地路径和执行程序",
+        showError: true,
+      });
+      return;
+    }
+
+    const { code, msg, data } = await ipcExec(exeFile, dir, name, url, headers);
+    console.log("获取到下载视频响应：", { code, msg, data });
+    if (code === 0) {
+      onEvent("下载页面", "下载视频成功", { code, msg, url });
+    } else {
+      this.setState({ showError: true, errorMsg: msg });
+      onEvent("下载页面", "下载视频失败", { code, msg, url });
+    }
+  }
+
+  handleClickM3U8Item(item) {
+    this.setState({ showError: false, errorMsg: "" });
+    const { exeFile } = this.state;
+    const { title, requestDetails } = item;
+    const { requestHeaders, url } = requestDetails;
+    const headers = Object.keys(requestHeaders)
+      .reduce((result, key) => {
+        if (exeFile === "mediago") {
+          result.push(`${key}~${requestHeaders[key]}`);
+        } else {
+          result.push(`${key}:${requestHeaders[key]}`);
+        }
+        return result;
+      }, [])
+      .join("|");
+    this.setState({ name: title, url, headers });
+  }
+
+  handleOpenBrowserWindow() {
+    onEvent("下载页面", "打开浏览器页面");
+    console.log(this);
+    ipcRenderer.send("openBrowserWindow");
+  }
+
   render() {
-    const { dir, exeFile } = this.state;
+    const {
+      dir,
+      exeFile,
+      name,
+      url,
+      m3u8List,
+      headers,
+      showError,
+      errorMsg,
+    } = this.state;
+
+    const options = [
+      {
+        key: "mediago",
+        text: "mediago",
+        onRenderField: (props, render) => <div>{render(props)}</div>,
+      },
+      {
+        key: "N_m3u8DL-CLI",
+        text: "N_m3u8DL-CLI",
+        onRenderField: (props, render) => <div>{render(props)}</div>,
+      },
+    ];
+
+    const ErrorExample = () => (
+      <MessageBar messageBarType={MessageBarType.error} isMultiline={false}>
+        {errorMsg}
+      </MessageBar>
+    );
 
     return (
-      <>
+      <div className="app">
         <div className="drag-region" />
         <div
           role="presentation"
@@ -65,28 +184,111 @@ class App extends React.Component {
             ipcRenderer.send("closeMainWindow");
           }}
         >
-          关闭
+          <AiOutlineClose />
         </div>
-        <Pivot
-          className="app"
-          styles={{ itemContainer: "main-wrapper" }}
-          onLinkClick={(item) => {
-            onEvent("页面标签栏", item.props.itemKey);
-          }}
-        >
-          <PivotItem headerText="下载" itemKey="download">
-            <Download local={dir} exeFile={exeFile} />
-          </PivotItem>
-          <PivotItem headerText="设置" itemKey="settings">
-            <Settings
-              dir={dir}
-              handleSelectDir={this.handleSelectDir}
-              exeFile={exeFile}
-              handleSelectExeFile={this.handleSelectExeFile}
+        <div className="download">
+          {showError && <ErrorExample />}
+
+          <Stack tokens={{ childrenGap: 5 }}>
+            <TextField
+              label="本地路径"
+              required
+              size="small"
+              placeholder="请选择文件夹"
+              value={dir}
+              onRenderSuffix={() => (
+                <div
+                  role="presentation"
+                  style={{ cursor: "pointer" }}
+                  onClick={this.handleSelectDir}
+                >
+                  选择文件夹
+                </div>
+              )}
             />
-          </PivotItem>
-        </Pivot>
-      </>
+
+            <ChoiceGroup
+              options={options}
+              onChange={this.handleSelectExeFile}
+              selectedKey={exeFile}
+              label="请选择执行程序"
+              required
+            />
+
+            <TextField
+              required
+              label="视频名称"
+              value={name}
+              onChange={(e) => this.setState({ name: e.target.value })}
+            />
+
+            <TextField
+              required
+              label="m3u8 链接"
+              value={url}
+              onChange={(e) => this.setState({ url: e.target.value })}
+            />
+
+            <TextField
+              label="请求头"
+              value={headers}
+              onChange={(e) => this.setState({ headers: e.target.value })}
+            />
+
+            <div className="form-item">
+              <Stack horizontal tokens={{ childrenGap: 15 }}>
+                <PrimaryButton onClick={this.handleStartDownload}>
+                  开始下载
+                </PrimaryButton>
+
+                <PrimaryButton onClick={this.handleOpenBrowserWindow}>
+                  打开浏览器
+                </PrimaryButton>
+
+                <PrimaryButton
+                  onClick={() => {
+                    this.setState({
+                      m3u8List: [],
+                    });
+                  }}
+                >
+                  清除列表
+                </PrimaryButton>
+
+                <DefaultButton
+                  onClick={async () => {
+                    await remote.shell.openExternal("https://baidu.com");
+                  }}
+                >
+                  使用帮助
+                </DefaultButton>
+              </Stack>
+            </div>
+          </Stack>
+
+          {m3u8List.length > 0 && <Separator>辅助链接</Separator>}
+
+          <div className="m3u8-list">
+            {m3u8List.map((item) => (
+              <div
+                role="presentation"
+                className="m3u8-item"
+                key={item.requestDetails.url}
+                onClick={() => this.handleClickM3U8Item(item)}
+              >
+                <div className="title">
+                  标题：
+                  {item.title}
+                </div>
+                <div className="url">
+                  链接：
+                  {item.requestDetails.url.split("?")[0]}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     );
   }
 }

@@ -47,6 +47,7 @@ const createBrowserWindow = async (parentWindow) => {
     },
   });
   browserWindow.setBrowserView(view);
+  browserWindow.webContents.send("viewReady");
   view.setBounds({ x: 0, y: 0, height: 0, width: 0 });
   const { webContents } = view;
   if (is.development) webContents.openDevTools();
