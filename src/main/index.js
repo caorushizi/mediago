@@ -2,6 +2,10 @@ import { app, BrowserView, BrowserWindow, ipcMain, session } from "electron";
 import { is } from "electron-util";
 import store from "./store";
 import { exec, failFn, successFn } from "./utils";
+import initEnvironment from "./environment";
+import logger from "./logger";
+
+logger.info("test……");
 
 // eslint-disable-next-line global-require
 if (require("electron-squirrel-startup")) {
@@ -16,6 +20,8 @@ const createMainWindow = async () => {
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
+      // eslint-disable-next-line no-undef
+      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
   });
   // eslint-disable-next-line no-undef
@@ -29,7 +35,6 @@ const createBrowserWindow = async (parentWindow) => {
     width: 800,
     height: 600,
     show: false,
-    parent: parentWindow,
     frame: false,
     webPreferences: {
       nodeIntegration: true,
@@ -61,7 +66,7 @@ const createBrowserWindow = async (parentWindow) => {
     let cancel = false;
     const myURL = new URL(details.url);
     if (m3u8Reg.test(myURL.pathname)) {
-      console.log("from here: ", details.url);
+      logger.info("在窗口中捕获 m3u8 链接: ", details.url);
       parentWindow.webContents.send("m3u8", {
         title: webContents.getTitle(),
         requestDetails: details,
@@ -87,7 +92,7 @@ const createBrowserWindow = async (parentWindow) => {
   });
 
   ipcMain.on("closeBrowserWindow", () => {
-    console.log("closeBrowserWindow");
+    logger.info("closeBrowserWindow");
     browserWindow.hide();
   });
 
@@ -97,6 +102,7 @@ const createBrowserWindow = async (parentWindow) => {
 const init = async () => {
   const mainWindow = await createMainWindow();
   await createBrowserWindow(mainWindow);
+  await initEnvironment(mainWindow);
 };
 
 app.on("window-all-closed", () => {
@@ -119,7 +125,7 @@ app.on("did-frame-finish-load", async () => {
     const reduxTool = process.env.REDUX_EXTENSION_PATH;
     await session.defaultSession.loadExtension(reduxTool);
   } catch (e) {
-    console.log(e);
+    logger.info(e);
   }
 });
 
@@ -145,7 +151,7 @@ ipcMain.on("setLocalPath", async (event, ...args) => {
     store.set(key, value);
     resp = successFn();
   } catch (e) {
-    console.log("设置 store 失败：", e.message);
+    logger.info("设置 store 失败：", e.message);
     resp = failFn(-1, "设置 store 失败");
   }
   event.reply("setLocalPathReply", resp);
@@ -155,12 +161,11 @@ ipcMain.handle("getLocalPath", (event, key) => {
   try {
     return store.get(key);
   } catch (e) {
-    console.log("获取 store 中数据失败：", e.message);
+    logger.info("获取 store 中数据失败：", e.message);
     return "";
   }
 });
 
 ipcMain.on("closeMainWindow", async () => {
-  console.log("close");
   app.quit();
 });

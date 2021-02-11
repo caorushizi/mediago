@@ -23,5 +23,6 @@
     "import/core-modules": [
       "electron"
     ]
-  }
+  },
+  "parser": "babel-eslint"
 }

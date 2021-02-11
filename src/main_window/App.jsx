@@ -16,6 +16,17 @@ import { ipcExec, ipcGetStore, ipcSetStore } from "./utils";
 import { onEvent } from "../renderer_common/utils";
 
 class App extends React.Component {
+  binaryFileOptions = [
+    {
+      key: "N_m3u8DL-CLI",
+      text: <span style={{ fontWeight: "bold" }}>N_m3u8DL-CLI（推荐）</span>,
+    },
+    {
+      key: "mediago",
+      text: "mediago",
+    },
+  ];
+
   constructor(props) {
     super(props);
 
@@ -29,13 +40,6 @@ class App extends React.Component {
       showError: false,
       errorMsg: "",
     };
-
-    this.handleStartDownload = this.handleStartDownload.bind(this);
-    this.handleWebViewMessage = this.handleWebViewMessage.bind(this);
-    this.handleClickM3U8Item = this.handleClickM3U8Item.bind(this);
-    this.handleOpenBrowserWindow = this.handleOpenBrowserWindow.bind(this);
-    this.handleSelectDir = this.handleSelectDir.bind(this);
-    this.handleSelectExeFile = this.handleSelectExeFile.bind(this);
   }
 
   async componentDidMount() {
@@ -55,7 +59,7 @@ class App extends React.Component {
     ipcRenderer.removeListener("m3u8", this.handleWebViewMessage);
   }
 
-  async handleSelectDir() {
+  handleSelectDir = async () => {
     const { dir } = this.state;
     const result = remote.dialog.showOpenDialogSync({
       defaultPath: dir || remote.app.getPath("documents"),
@@ -67,25 +71,25 @@ class App extends React.Component {
     this.setState({
       dir: local,
     });
-  }
+  };
 
-  async handleSelectExeFile(event, options) {
+  handleSelectExeFile = async (event, options) => {
     await ipcSetStore("exeFile", options.key);
     this.setState({
       exeFile: options.key,
     });
-  }
+  };
 
-  handleWebViewMessage(e, ...args) {
+  handleWebViewMessage = (e, ...args) => {
     const [m3u8Object] = args;
     console.log("下载页面收到链接：", JSON.stringify(m3u8Object));
     const { m3u8List } = this.state;
     this.setState({
       m3u8List: [...m3u8List, m3u8Object],
     });
-  }
+  };
 
-  async handleStartDownload() {
+  handleStartDownload = async () => {
     onEvent("下载页面", "开始下载");
     this.setState({ showError: false, errorMsg: "" });
 
@@ -101,11 +105,13 @@ class App extends React.Component {
       return;
     }
 
-    if (!dir || !exeFile) {
-      this.setState({
-        errorMsg: "请先去设置页面配置本地路径和执行程序",
-        showError: true,
-      });
+    if (!dir) {
+      this.setState({ errorMsg: "请配置本地路径", showError: true });
+      return;
+    }
+
+    if (!exeFile) {
+      this.setState({ errorMsg: "请选择执行程序", showError: true });
       return;
     }
 
@@ -117,9 +123,9 @@ class App extends React.Component {
       this.setState({ showError: true, errorMsg: msg });
       onEvent("下载页面", "下载视频失败", { code, msg, url });
     }
-  }
+  };
 
-  handleClickM3U8Item(item) {
+  handleClickM3U8Item = (item) => {
     this.setState({ showError: false, errorMsg: "" });
     const { exeFile } = this.state;
     const { title, requestDetails } = item;
@@ -135,44 +141,27 @@ class App extends React.Component {
       }, [])
       .join("|");
     this.setState({ name: title, url, headers });
-  }
+  };
 
-  handleOpenBrowserWindow() {
+  handleOpenBrowserWindow = () => {
     onEvent("下载页面", "打开浏览器页面");
     console.log(this);
     ipcRenderer.send("openBrowserWindow");
-  }
+  };
+
+  renderErrorMsg = () => {
+    const { errorMsg, showError } = this.state;
+    return (
+      showError && (
+        <MessageBar messageBarType={MessageBarType.error} isMultiline={false}>
+          {errorMsg}
+        </MessageBar>
+      )
+    );
+  };
 
   render() {
-    const {
-      dir,
-      exeFile,
-      name,
-      url,
-      m3u8List,
-      headers,
-      showError,
-      errorMsg,
-    } = this.state;
-
-    const options = [
-      {
-        key: "mediago",
-        text: "mediago",
-        onRenderField: (props, render) => <div>{render(props)}</div>,
-      },
-      {
-        key: "N_m3u8DL-CLI",
-        text: "N_m3u8DL-CLI",
-        onRenderField: (props, render) => <div>{render(props)}</div>,
-      },
-    ];
-
-    const ErrorExample = () => (
-      <MessageBar messageBarType={MessageBarType.error} isMultiline={false}>
-        {errorMsg}
-      </MessageBar>
-    );
+    const { dir, exeFile, name, url, m3u8List, headers } = this.state;
 
     return (
       <div className="app">
@@ -187,7 +176,7 @@ class App extends React.Component {
           <AiOutlineClose />
         </div>
         <div className="download">
-          {showError && <ErrorExample />}
+          {this.renderErrorMsg()}
 
           <Stack tokens={{ childrenGap: 5 }}>
             <TextField
@@ -208,10 +197,10 @@ class App extends React.Component {
             />
 
             <ChoiceGroup
-              options={options}
+              options={this.binaryFileOptions}
               onChange={this.handleSelectExeFile}
               selectedKey={exeFile}
-              label="请选择执行程序"
+              label={`请选择执行程序（${window.binaryDir}）`}
               required
             />
 
@@ -257,7 +246,9 @@ class App extends React.Component {
 
                 <DefaultButton
                   onClick={async () => {
-                    await remote.shell.openExternal("https://baidu.com");
+                    await remote.shell.openExternal(
+                      "https://blog.ziying.site/post/media-downloader-how-to-use/?form=client"
+                    );
                   }}
                 >
                   使用帮助
