@@ -5,12 +5,8 @@ import { TextField } from "@fluentui/react";
 import { remote, ipcRenderer } from "electron";
 import { BiArrowBack } from "react-icons/bi";
 import { IoMdRefresh } from "react-icons/io";
+import { AiOutlineHome } from "react-icons/ai";
 import { onEvent } from "../renderer_common/utils";
-
-document.title = window.location.href;
-window.onhashchange = () => {
-  document.title = window.location.href;
-};
 
 const computeRect = ({ left, top, width, height }) => ({
   x: Math.floor(left),
@@ -24,7 +20,7 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      url: "https://baidu.com",
+      url: "",
     };
 
     this.handleViewDOMReady = this.handleViewDOMReady.bind(this);
@@ -32,9 +28,9 @@ class App extends React.Component {
     this.initWebView = this.initWebView.bind(this);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     // 页面刷新时提供 view 的初始化
-    this.initWebView();
+    await this.initWebView();
 
     ipcRenderer.on("viewReady", this.handleViewReady);
   }
@@ -55,14 +51,15 @@ class App extends React.Component {
       title: webContents.getTitle(),
       url: webContents.getURL(),
     });
+    document.title = webContents.getTitle();
   }
 
-  handleViewReady() {
+  async handleViewReady() {
     // 在 browser window 创建时初始化 view
-    this.initWebView();
+    await this.initWebView();
   }
 
-  initWebView() {
+  async initWebView() {
     // 如果 view 已经初始化
     if (this.view) return;
 
@@ -75,6 +72,7 @@ class App extends React.Component {
     const rect = computeRect(videoView.getBoundingClientRect());
     this.view.setBounds(rect);
     this.view.webContents.on("dom-ready", this.handleViewDOMReady);
+    await this.view.webContents.loadURL("https://baidu.com");
 
     // 监控 webview 元素的大小
     this.resizeObserver = new ResizeObserver((entries) => {
@@ -110,6 +108,12 @@ class App extends React.Component {
                 this.view.webContents.reload();
               }}
             />
+            <AiOutlineHome
+              className="icon home"
+              onClick={async () => {
+                await this.view.webContents.loadURL("https://baidu.com");
+              }}
+            />
           </div>
           <div className="title">{title}</div>
           <div className="tool-bar-right">
@@ -135,7 +139,6 @@ class App extends React.Component {
                 });
               }}
               onKeyPress={async (e) => {
-                console.log(e);
                 if (e.code === "Enter") {
                   onEvent("浏览器页面", "点击打开链接");
                   await this.view.webContents.loadURL(url);

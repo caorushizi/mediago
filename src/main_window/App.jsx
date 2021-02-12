@@ -10,8 +10,9 @@ import {
   TextField,
   Separator,
   DefaultButton,
+  TooltipHost,
 } from "@fluentui/react";
-import { AiOutlineClose } from "react-icons/ai";
+import { AiOutlineClose, AiOutlineWarning } from "react-icons/ai";
 import { ipcExec, ipcGetStore, ipcSetStore } from "./utils";
 import { onEvent } from "../renderer_common/utils";
 
@@ -84,9 +85,15 @@ class App extends React.Component {
     const [m3u8Object] = args;
     console.log("下载页面收到链接：", JSON.stringify(m3u8Object));
     const { m3u8List } = this.state;
-    this.setState({
-      m3u8List: [...m3u8List, m3u8Object],
-    });
+    if (
+      m3u8List.findIndex(
+        (item) => item.requestDetails.url === m3u8Object.requestDetails.url
+      ) < 0
+    ) {
+      this.setState({
+        m3u8List: [...m3u8List, m3u8Object],
+      });
+    }
   };
 
   handleStartDownload = async () => {
@@ -145,7 +152,6 @@ class App extends React.Component {
 
   handleOpenBrowserWindow = () => {
     onEvent("下载页面", "打开浏览器页面");
-    console.log(this);
     ipcRenderer.send("openBrowserWindow");
   };
 
@@ -277,6 +283,18 @@ class App extends React.Component {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+        <div className="toolbar">
+          <div className="left"> </div>
+          <div className="right">
+            <TooltipHost
+              content="这是一个 tooltip"
+              calloutProps={{ gapSpace: 0 }}
+              styles={{ root: { display: "inline-block" } }}
+            >
+              <AiOutlineWarning />
+            </TooltipHost>
           </div>
         </div>
       </div>

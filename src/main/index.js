@@ -5,8 +5,6 @@ import { exec, failFn, successFn } from "./utils";
 import initEnvironment from "./environment";
 import logger from "./logger";
 
-logger.info("test……");
-
 // eslint-disable-next-line global-require
 if (require("electron-squirrel-startup")) {
   app.quit();

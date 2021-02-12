@@ -25,6 +25,11 @@ const spawnWrapper = (command, args, options) =>
     });
   });
 
+/**
+ * 获取文件目录
+ * @param pattern
+ * @returns {Promise<string[]>}
+ */
 const globWrapper = (pattern) =>
   new Promise((resolve, reject) => {
     glob(pattern, { cwd: workspace }, (err, files) => {

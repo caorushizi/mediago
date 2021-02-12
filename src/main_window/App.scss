@@ -32,9 +32,9 @@
   }
 
   .download {
+    flex: 1;
     margin-top: 30px;
     padding: 0 10px 10px 10px;
-    height: 100%;
     overflow: auto;
     display: flex;
     flex-direction: column;
@@ -66,5 +66,15 @@
         }
       }
     }
+  }
+
+  .toolbar {
+    height: 25px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0 18px 0 10px;
+    border-top: #dcdfe6 1px solid;
+    justify-content: space-between;
   }
 }

@@ -22,6 +22,7 @@ body,
     align-items: center;
     justify-content: space-between;
     box-sizing: border-box;
+    user-select: none;
 
     .tool-bar-left {
       -webkit-app-region: no-drag;
@@ -31,6 +32,11 @@ body,
 
       .icon {
         padding: 5px;
+
+        &.home {
+          font-size: 14px;
+          margin-top: -1px;
+        }
 
         &:hover {
           background: #ddd;
