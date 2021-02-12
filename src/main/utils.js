@@ -3,6 +3,7 @@ import glob from "glob";
 import spawnargs from "spawn-args";
 import semver from "semver";
 import { workspace } from "./variables";
+import logger from "./logger";
 
 const spawnWrapper = (command, args, options) =>
   new Promise((resolve, reject) => {
@@ -10,18 +11,10 @@ const spawnWrapper = (command, args, options) =>
       cwd: workspace,
       ...options,
     });
-    let errMsg = "";
-
-    spawnCommand.stderr.on("data", (data) => {
-      errMsg += data;
-    });
 
     spawnCommand.on("close", (code) => {
-      if (code !== 0) {
-        reject(new Error(errMsg));
-      } else {
-        resolve();
-      }
+      if (code !== 0) reject(new Error("下载视频失败"));
+      else resolve();
     });
   });
 
@@ -43,12 +36,12 @@ const exec = async (exeFile, ...args) => {
 
   // 判断使用的可执行程序
   let binName = "";
-  let argsArr;
+  let argsStr;
 
   switch (exeFile) {
     case "mediago":
       binName = "mediago";
-      argsArr = `--path="${localPath}" --name="${name}" --url="${url}" --headers="${headers}"`;
+      argsStr = `--path "${localPath}" --name "${name}" --url "${url}" --headers "${headers}"`;
       break;
     case "N_m3u8DL-CLI": {
       let binNameList = await globWrapper("N_m3u8DL-CLI*.exe");
@@ -59,14 +52,15 @@ const exec = async (exeFile, ...args) => {
       if (binNameList.length === 0) throw new Error("没有找到可执行程序");
       binName = `N_m3u8DL-CLI_v${binNameList[0]}`;
 
-      argsArr = `"${url}" --workDir "${localPath}" --saveName "${name}" --headers "${headers}"`;
+      argsStr = `"${url}" --workDir "${localPath}" --saveName "${name}" --headers "${headers}"`;
       break;
     }
     default:
       throw new Error("暂不支持该下载方式");
   }
 
-  return spawnWrapper(binName, argsArr, {
+  logger.info("下载参数：", argsStr);
+  return spawnWrapper(binName, argsStr, {
     detached: true,
     shell: true,
   });

@@ -125,10 +125,10 @@ class App extends React.Component {
     const { code, msg, data } = await ipcExec(exeFile, dir, name, url, headers);
     console.log("获取到下载视频响应：", { code, msg, data });
     if (code === 0) {
-      onEvent("下载页面", "下载视频成功", { code, msg, url });
+      onEvent("下载页面", "下载视频成功", { code, msg, url, exeFile });
     } else {
       this.setState({ showError: true, errorMsg: msg });
-      onEvent("下载页面", "下载视频失败", { code, msg, url });
+      onEvent("下载页面", "下载视频失败", { code, msg, url, exeFile });
     }
   };
 

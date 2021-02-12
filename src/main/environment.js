@@ -54,22 +54,8 @@ export default async function initEnvironment(mainWindow) {
     try {
       if (!files.some((fileName) => ffmpegReg.test(fileName))) {
         // 开始下载 ffmpeg
-        const filename = `ffmpeg-4.3.2-2021-02-02-essentials_build.zip`;
-        const name = `ffmpeg-4.3.2-2021-02-02-essentials_build`;
-
-        const filepath = path.resolve(workspaceTemp, filename);
-        // 文件不存在的话则从网上下载
-        if (!fs.existsSync(filepath)) {
-          await download(
-            mainWindow,
-            `http://static.ziying.site/ffmpeg-4.3.2-2021-02-02-essentials_build.zip`,
-            { directory: workspaceTemp, filename }
-          );
-        }
-
-        const zip = new AdmZip(path.resolve(workspaceTemp, filename));
-        const entry = `${name}/bin/ffmpeg.exe`;
-        zip.extractEntryTo(entry, workspace, false, true, "ffmpeg.exe");
+        const url = "http://static.ziying.site/ffmpeg.exe";
+        await download(mainWindow, url, { directory: workspace });
       }
     } catch (e) {
       logger.info("初始化 ffmpeg 失败：", e);
