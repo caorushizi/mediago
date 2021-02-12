@@ -1,11 +1,8 @@
 import { is } from "electron-util";
 import { download } from "electron-dl";
 import axios from "axios";
-import fs from "fs";
-import path from "path";
-import AdmZip from "adm-zip";
 import { globWrapper } from "./utils";
-import { workspace, workspaceTemp } from "./variables";
+import { workspace } from "./variables";
 import logger from "./logger";
 
 const ffmpegReg = /ffmpeg/;
