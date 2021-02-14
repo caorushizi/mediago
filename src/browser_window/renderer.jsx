@@ -1,7 +1,7 @@
 import ReactDOM from "react-dom";
 import React from "react";
 import "./index.scss";
-import { TextField } from "@fluentui/react";
+import { TextField, Spinner } from "@fluentui/react";
 import { remote, ipcRenderer } from "electron";
 import { BiArrowBack } from "react-icons/bi";
 import { IoMdRefresh } from "react-icons/io";
@@ -158,7 +158,9 @@ class App extends React.Component {
               )}
             />
           </div>
-          <div id="videoView">webview</div>
+          <div id="videoView">
+            <Spinner label="正在加载，请稍候……" />
+          </div>
         </div>
       </>
     );
