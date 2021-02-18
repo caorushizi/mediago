@@ -2,7 +2,6 @@ import React from "react";
 import { remote, ipcRenderer } from "electron";
 import "./App.scss";
 import {
-  ChoiceGroup,
   MessageBar,
   MessageBarType,
   PrimaryButton,
@@ -10,10 +9,9 @@ import {
   TextField,
   Separator,
   DefaultButton,
-  TooltipHost,
   Dropdown,
 } from "@fluentui/react";
-import { AiOutlineClose, AiOutlineWarning } from "react-icons/ai";
+import { AiOutlineClose } from "react-icons/ai";
 import { ipcExec, ipcGetStore, ipcSetStore } from "./utils";
 import { onEvent } from "../renderer_common/utils";
 
@@ -49,8 +47,6 @@ class App extends React.Component {
 
     const dir = await ipcGetStore("local");
     const exeFile = await ipcGetStore("exeFile");
-    console.log(dir);
-    console.log(exeFile);
     this.setState({
       dir: dir || "",
       exeFile: exeFile || "",
@@ -84,7 +80,6 @@ class App extends React.Component {
 
   handleWebViewMessage = (e, ...args) => {
     const [m3u8Object] = args;
-    console.log("下载页面收到链接：", JSON.stringify(m3u8Object));
     const { m3u8List } = this.state;
     if (
       m3u8List.findIndex(
@@ -123,8 +118,7 @@ class App extends React.Component {
       return;
     }
 
-    const { code, msg, data } = await ipcExec(exeFile, dir, name, url, headers);
-    console.log("获取到下载视频响应：", { code, msg, data });
+    const { code, msg } = await ipcExec(exeFile, dir, name, url, headers);
     if (code === 0) {
       onEvent("下载页面", "下载视频成功", { code, msg, url, exeFile });
     } else {
@@ -287,16 +281,8 @@ class App extends React.Component {
           </div>
         </div>
         <div className="toolbar">
-          <div className="left"> </div>
-          <div className="right">
-            <TooltipHost
-              content="这是一个 tooltip"
-              calloutProps={{ gapSpace: 0 }}
-              styles={{ root: { display: "inline-block" } }}
-            >
-              <AiOutlineWarning />
-            </TooltipHost>
-          </div>
+          <div className="left" />
+          <div className="right" />
         </div>
       </div>
     );
