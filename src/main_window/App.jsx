@@ -11,6 +11,7 @@ import {
   Separator,
   DefaultButton,
   TooltipHost,
+  Dropdown,
 } from "@fluentui/react";
 import { AiOutlineClose, AiOutlineWarning } from "react-icons/ai";
 import { ipcExec, ipcGetStore, ipcSetStore } from "./utils";
@@ -20,7 +21,7 @@ class App extends React.Component {
   binaryFileOptions = [
     {
       key: "N_m3u8DL-CLI",
-      text: <span style={{ fontWeight: "bold" }}>N_m3u8DL-CLI（推荐）</span>,
+      text: "N_m3u8DL-CLI（推荐）",
     },
     {
       key: "mediago",
@@ -188,7 +189,6 @@ class App extends React.Component {
             <TextField
               label="本地路径"
               required
-              size="small"
               placeholder="请选择文件夹"
               value={dir}
               onRenderSuffix={() => (
@@ -202,11 +202,12 @@ class App extends React.Component {
               )}
             />
 
-            <ChoiceGroup
+            <Dropdown
+              placeholder="请选择执行程序"
+              label="请选择执行程序"
               options={this.binaryFileOptions}
-              onChange={this.handleSelectExeFile}
               selectedKey={exeFile}
-              label={`请选择执行程序（${window.binaryDir}）`}
+              onChange={this.handleSelectExeFile}
               required
             />
 
