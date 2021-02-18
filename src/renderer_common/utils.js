@@ -1,4 +1,4 @@
-const onEvent = (eventId, label, mapKv) => {
+const onEvent = (eventId, label = "", mapKv = {}) => {
   try {
     window.TDAPP.onEvent(eventId, label, mapKv);
   } catch (err) {

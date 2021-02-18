@@ -98,16 +98,6 @@ class App extends React.Component {
 
     const { dir, exeFile, name, url, headers } = this.state;
 
-    if (!name) {
-      this.setState({ errorMsg: "请输入视频名称", showError: true });
-      return;
-    }
-
-    if (!url) {
-      this.setState({ errorMsg: "请输入 m3u8 地址", showError: true });
-      return;
-    }
-
     if (!dir) {
       this.setState({ errorMsg: "请配置本地路径", showError: true });
       return;
@@ -115,6 +105,16 @@ class App extends React.Component {
 
     if (!exeFile) {
       this.setState({ errorMsg: "请选择执行程序", showError: true });
+      return;
+    }
+
+    if (!name) {
+      this.setState({ errorMsg: "请输入视频名称", showError: true });
+      return;
+    }
+
+    if (!url) {
+      this.setState({ errorMsg: "请输入 m3u8 地址", showError: true });
       return;
     }
 
@@ -235,15 +235,17 @@ class App extends React.Component {
                   打开浏览器
                 </PrimaryButton>
 
-                <PrimaryButton
-                  onClick={() => {
-                    this.setState({
-                      m3u8List: [],
-                    });
-                  }}
-                >
-                  清除列表
-                </PrimaryButton>
+                {m3u8List.length > 0 && (
+                  <PrimaryButton
+                    onClick={() => {
+                      this.setState({
+                        m3u8List: [],
+                      });
+                    }}
+                  >
+                    清除列表
+                  </PrimaryButton>
+                )}
 
                 <DefaultButton
                   onClick={async () => {
