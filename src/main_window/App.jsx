@@ -2,7 +2,6 @@ import React from "react";
 import { remote, ipcRenderer } from "electron";
 import "./App.scss";
 import {
-  ChoiceGroup,
   MessageBar,
   MessageBarType,
   PrimaryButton,
@@ -10,9 +9,9 @@ import {
   TextField,
   Separator,
   DefaultButton,
-  TooltipHost,
+  Dropdown,
 } from "@fluentui/react";
-import { AiOutlineClose, AiOutlineWarning } from "react-icons/ai";
+import { AiOutlineClose } from "react-icons/ai";
 import { ipcExec, ipcGetStore, ipcSetStore } from "./utils";
 import { onEvent } from "../renderer_common/utils";
 
@@ -20,7 +19,7 @@ class App extends React.Component {
   binaryFileOptions = [
     {
       key: "N_m3u8DL-CLI",
-      text: <span style={{ fontWeight: "bold" }}>N_m3u8DL-CLI（推荐）</span>,
+      text: "N_m3u8DL-CLI（推荐）",
     },
     {
       key: "mediago",
@@ -48,8 +47,6 @@ class App extends React.Component {
 
     const dir = await ipcGetStore("local");
     const exeFile = await ipcGetStore("exeFile");
-    console.log(dir);
-    console.log(exeFile);
     this.setState({
       dir: dir || "",
       exeFile: exeFile || "",
@@ -83,7 +80,6 @@ class App extends React.Component {
 
   handleWebViewMessage = (e, ...args) => {
     const [m3u8Object] = args;
-    console.log("下载页面收到链接：", JSON.stringify(m3u8Object));
     const { m3u8List } = this.state;
     if (
       m3u8List.findIndex(
@@ -102,16 +98,6 @@ class App extends React.Component {
 
     const { dir, exeFile, name, url, headers } = this.state;
 
-    if (!name) {
-      this.setState({ errorMsg: "请输入视频名称", showError: true });
-      return;
-    }
-
-    if (!url) {
-      this.setState({ errorMsg: "请输入 m3u8 地址", showError: true });
-      return;
-    }
-
     if (!dir) {
       this.setState({ errorMsg: "请配置本地路径", showError: true });
       return;
@@ -122,8 +108,17 @@ class App extends React.Component {
       return;
     }
 
-    const { code, msg, data } = await ipcExec(exeFile, dir, name, url, headers);
-    console.log("获取到下载视频响应：", { code, msg, data });
+    if (!name) {
+      this.setState({ errorMsg: "请输入视频名称", showError: true });
+      return;
+    }
+
+    if (!url) {
+      this.setState({ errorMsg: "请输入 m3u8 地址", showError: true });
+      return;
+    }
+
+    const { code, msg } = await ipcExec(exeFile, dir, name, url, headers);
     if (code === 0) {
       onEvent("下载页面", "下载视频成功", { code, msg, url, exeFile });
     } else {
@@ -188,7 +183,6 @@ class App extends React.Component {
             <TextField
               label="本地路径"
               required
-              size="small"
               placeholder="请选择文件夹"
               value={dir}
               onRenderSuffix={() => (
@@ -202,11 +196,12 @@ class App extends React.Component {
               )}
             />
 
-            <ChoiceGroup
+            <Dropdown
+              placeholder="请选择执行程序"
+              label="请选择执行程序"
               options={this.binaryFileOptions}
-              onChange={this.handleSelectExeFile}
               selectedKey={exeFile}
-              label={`请选择执行程序（${window.binaryDir}）`}
+              onChange={this.handleSelectExeFile}
               required
             />
 
@@ -240,15 +235,17 @@ class App extends React.Component {
                   打开浏览器
                 </PrimaryButton>
 
-                <PrimaryButton
-                  onClick={() => {
-                    this.setState({
-                      m3u8List: [],
-                    });
-                  }}
-                >
-                  清除列表
-                </PrimaryButton>
+                {m3u8List.length > 0 && (
+                  <PrimaryButton
+                    onClick={() => {
+                      this.setState({
+                        m3u8List: [],
+                      });
+                    }}
+                  >
+                    清除列表
+                  </PrimaryButton>
+                )}
 
                 <DefaultButton
                   onClick={async () => {
@@ -286,16 +283,8 @@ class App extends React.Component {
           </div>
         </div>
         <div className="toolbar">
-          <div className="left"> </div>
-          <div className="right">
-            <TooltipHost
-              content="这是一个 tooltip"
-              calloutProps={{ gapSpace: 0 }}
-              styles={{ root: { display: "inline-block" } }}
-            >
-              <AiOutlineWarning />
-            </TooltipHost>
-          </div>
+          <div className="left" />
+          <div className="right" />
         </div>
       </div>
     );
