@@ -46,9 +46,9 @@
         [
           "@electron-forge/plugin-webpack",
           {
-            "mainConfig": "./webpack.main.config.js",
+            "mainConfig": "./build/webpack.main.config.js",
             "renderer": {
-              "config": "./webpack.renderer.config.js",
+              "config": "./build/webpack.renderer.config.js",
               "entryPoints": [
                 {
                   "html": "./src/main_window/index.html",
@@ -95,6 +95,7 @@
     "cross-env": "^7.0.3",
     "css-loader": "^4.2.1",
     "dotenv": "^8.2.0",
+    "dotenv-expand": "^5.1.0",
     "electron": "11.2.1",
     "eslint": "7.2.0",
     "eslint-config-airbnb": "18.2.1",

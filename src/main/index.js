@@ -116,14 +116,16 @@ app.on("activate", async () => {
 });
 
 app.on("did-frame-finish-load", async () => {
-  try {
-    const reactTool = process.env.REACT_EXTENSION_PATH;
-    await session.defaultSession.loadExtension(reactTool);
+  if (is.development) {
+    try {
+      const reactTool = process.env.REACT_EXTENSION_PATH;
+      await session.defaultSession.loadExtension(reactTool);
 
-    const reduxTool = process.env.REDUX_EXTENSION_PATH;
-    await session.defaultSession.loadExtension(reduxTool);
-  } catch (e) {
-    logger.info(e);
+      const reduxTool = process.env.REDUX_EXTENSION_PATH;
+      await session.defaultSession.loadExtension(reduxTool);
+    } catch (e) {
+      logger.info(e);
+    }
   }
 });
 
