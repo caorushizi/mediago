@@ -5,7 +5,7 @@
   "description": "My Electron application description",
   "main": ".webpack/main",
   "scripts": {
-    "start": "cross-env NODE_ENV=development electron-forge start --inspect-electron",
+    "start": "scripts/start.bat",
     "package": "cross-env NODE_ENV=production electron-forge package",
     "make": "cross-env NODE_ENV=production electron-forge make",
     "publish": "cross-env NODE_ENV=production electron-forge publish",
@@ -18,60 +18,7 @@
   },
   "license": "MIT",
   "config": {
-    "forge": {
-      "packagerConfig": {},
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "media_downloader"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
-        }
-      ],
-      "plugins": [
-        [
-          "@electron-forge/plugin-webpack",
-          {
-            "mainConfig": "./build/webpack.main.config.js",
-            "renderer": {
-              "config": "./build/webpack.renderer.config.js",
-              "entryPoints": [
-                {
-                  "html": "./src/main_window/index.html",
-                  "js": "./src/main_window/renderer.jsx",
-                  "name": "main_window",
-                  "preload": {
-                    "js": "./src/main_window/preload.js"
-                  }
-                },
-                {
-                  "html": "./src/browser_window/index.html",
-                  "js": "./src/browser_window/renderer.jsx",
-                  "name": "browser_window",
-                  "preload": {
-                    "js": "./src/browser_window/preload.js"
-                  }
-                }
-              ]
-            }
-          }
-        ]
-      ]
-    }
+    "forge": "./forge.config.js"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
@@ -115,8 +62,6 @@
   "dependencies": {
     "@fluentui/react": "^7.157.2",
     "adm-zip": "^0.5.2",
-    "axios": "^0.21.1",
-    "electron-dl": "^3.0.2",
     "electron-log": "^4.3.1",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^7.0.0",

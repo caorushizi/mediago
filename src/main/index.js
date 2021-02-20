@@ -2,7 +2,6 @@ import { app, BrowserView, BrowserWindow, ipcMain, session } from "electron";
 import { is } from "electron-util";
 import store from "./store";
 import { exec, failFn, successFn } from "./utils";
-import initEnvironment from "./environment";
 import logger from "./logger";
 
 // eslint-disable-next-line global-require
@@ -18,11 +17,9 @@ const createMainWindow = async () => {
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
-      // eslint-disable-next-line no-undef
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
   });
-  // eslint-disable-next-line no-undef
   await mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
   if (is.development) mainWindow.webContents.openDevTools();
   return mainWindow;
@@ -39,13 +36,11 @@ const createBrowserWindow = async (parentWindow) => {
       enableRemoteModule: true,
     },
   });
-  // eslint-disable-next-line no-undef
   await browserWindow.loadURL(BROWSER_WINDOW_WEBPACK_ENTRY);
   if (is.development) browserWindow.webContents.openDevTools();
 
   const view = new BrowserView({
     webPreferences: {
-      // eslint-disable-next-line no-undef
       preload: BROWSER_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
   });
@@ -100,7 +95,6 @@ const createBrowserWindow = async (parentWindow) => {
 const init = async () => {
   const mainWindow = await createMainWindow();
   await createBrowserWindow(mainWindow);
-  await initEnvironment(mainWindow);
 };
 
 app.on("window-all-closed", () => {
