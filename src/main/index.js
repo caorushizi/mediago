@@ -1,5 +1,6 @@
 import { app, BrowserView, BrowserWindow, ipcMain, session } from "electron";
 import { is } from "electron-util";
+import path from "path";
 import store from "./store";
 import { exec, failFn, successFn } from "./utils";
 import logger from "./logger";
@@ -7,6 +8,13 @@ import logger from "./logger";
 // eslint-disable-next-line global-require
 if (require("electron-squirrel-startup")) {
   app.quit();
+}
+
+if (!is.development) {
+  // eslint-disable-next-line no-underscore-dangle
+  global.__bin__ = path
+    .resolve(app.getAppPath(), "../.bin")
+    .replace(/\\/g, "\\\\");
 }
 
 const createMainWindow = async () => {
