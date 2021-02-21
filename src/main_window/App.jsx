@@ -13,7 +13,7 @@ import {
 } from "@fluentui/react";
 import { AiOutlineClose } from "react-icons/ai";
 import { ipcExec, ipcGetStore, ipcSetStore } from "./utils";
-import { onEvent } from "../renderer_common/utils";
+import tdApp from "../renderer_common/td";
 
 class App extends React.Component {
   binaryFileOptions = [
@@ -93,7 +93,7 @@ class App extends React.Component {
   };
 
   handleStartDownload = async () => {
-    onEvent("下载页面", "开始下载");
+    tdApp.onEvent("下载页面-开始下载");
     this.setState({ showError: false, errorMsg: "" });
 
     const { dir, exeFile, name, url, headers } = this.state;
@@ -120,10 +120,10 @@ class App extends React.Component {
 
     const { code, msg } = await ipcExec(exeFile, dir, name, url, headers);
     if (code === 0) {
-      onEvent("下载页面", "下载视频成功", { code, msg, url, exeFile });
+      tdApp.onEvent("下载页面-下载视频成功", { msg, url, exeFile });
     } else {
       this.setState({ showError: true, errorMsg: msg });
-      onEvent("下载页面", "下载视频失败", { code, msg, url, exeFile });
+      tdApp.onEvent("下载页面-下载视频失败", { msg, url, exeFile });
     }
   };
 
@@ -146,7 +146,7 @@ class App extends React.Component {
   };
 
   handleOpenBrowserWindow = () => {
-    onEvent("下载页面", "打开浏览器页面");
+    tdApp.onEvent("下载页面-打开浏览器页面");
     ipcRenderer.send("openBrowserWindow");
   };
 
@@ -284,7 +284,21 @@ class App extends React.Component {
         </div>
         <div className="toolbar">
           <div className="left" />
-          <div className="right" />
+          <div className="right">
+            2021.02.21更新（
+            <span
+              role="presentation"
+              className="cursor"
+              onClick={async () => {
+                await remote.shell.openExternal(
+                  "https://blog.ziying.site/post/media-downloader-how-to-use/?form=client"
+                );
+              }}
+            >
+              更新日志
+            </span>
+            ）
+          </div>
         </div>
       </div>
     );

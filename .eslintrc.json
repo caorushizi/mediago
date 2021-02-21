@@ -24,5 +24,12 @@
       "electron"
     ]
   },
+  "globals": {
+    "__bin__": "readonly",
+    "MAIN_WINDOW_WEBPACK_ENTRY": "readonly",
+    "MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY": "readonly",
+    "BROWSER_WINDOW_WEBPACK_ENTRY": "readonly",
+    "BROWSER_WINDOW_PRELOAD_WEBPACK_ENTRY": "readonly"
+  },
   "parser": "babel-eslint"
 }

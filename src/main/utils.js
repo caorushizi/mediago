@@ -13,7 +13,7 @@ const spawnWrapper = (command, args, options) =>
     });
 
     spawnCommand.on("close", (code) => {
-      if (code !== 0) reject(new Error("下载视频失败"));
+      if (code !== 0) reject(new Error(`调用 ${command} 可执行文件执行失败`));
       else resolve();
     });
   });
@@ -21,11 +21,12 @@ const spawnWrapper = (command, args, options) =>
 /**
  * 获取文件目录
  * @param pattern
+ * @param options
  * @returns {Promise<string[]>}
  */
-const globWrapper = (pattern) =>
+const globWrapper = (pattern, options = {}) =>
   new Promise((resolve, reject) => {
-    glob(pattern, { cwd: workspace }, (err, files) => {
+    glob(pattern, { cwd: workspace, ...options }, (err, files) => {
       if (err) reject(err);
       resolve(files);
     });
@@ -44,12 +45,14 @@ const exec = async (exeFile, ...args) => {
       argsStr = `--path "${localPath}" --name "${name}" --url "${url}" --headers "${headers}"`;
       break;
     case "N_m3u8DL-CLI": {
-      let binNameList = await globWrapper("N_m3u8DL-CLI*.exe");
+      let binNameList = await globWrapper("N_m3u8DL-CLI*.exe", {
+        cwd: __bin__,
+      });
       binNameList = binNameList
         .map((item) => /N_m3u8DL-CLI_v(.*).exe/.exec(item)?.[1] || "0.0.0")
         .filter((item) => semver.valid(item))
         .sort((a, b) => (semver.gt(a, b) ? -1 : 1));
-      if (binNameList.length === 0) throw new Error("没有找到可执行程序");
+      if (binNameList.length === 0) throw new Error("没有找到 N_m3u8DL-CLI");
       binName = `N_m3u8DL-CLI_v${binNameList[0]}`;
 
       argsStr = `"${url}" --workDir "${localPath}" --saveName "${name}" --headers "${headers}"`;
@@ -63,6 +66,7 @@ const exec = async (exeFile, ...args) => {
   return spawnWrapper(binName, argsStr, {
     detached: true,
     shell: true,
+    cwd: __bin__,
   });
 };
 
