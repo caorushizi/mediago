@@ -13,7 +13,7 @@ const spawnWrapper = (command, args, options) =>
     });
 
     spawnCommand.on("close", (code) => {
-      if (code !== 0) reject(new Error("下载视频失败"));
+      if (code !== 0) reject(new Error(`调用 ${command} 可执行文件执行失败`));
       else resolve();
     });
   });
@@ -52,7 +52,7 @@ const exec = async (exeFile, ...args) => {
         .map((item) => /N_m3u8DL-CLI_v(.*).exe/.exec(item)?.[1] || "0.0.0")
         .filter((item) => semver.valid(item))
         .sort((a, b) => (semver.gt(a, b) ? -1 : 1));
-      if (binNameList.length === 0) throw new Error("没有找到可执行程序");
+      if (binNameList.length === 0) throw new Error("没有找到 N_m3u8DL-CLI");
       binName = `N_m3u8DL-CLI_v${binNameList[0]}`;
 
       argsStr = `"${url}" --workDir "${localPath}" --saveName "${name}" --headers "${headers}"`;

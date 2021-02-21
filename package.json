@@ -7,7 +7,7 @@
   "scripts": {
     "start": "scripts/start.bat",
     "package": "cross-env NODE_ENV=production electron-forge package",
-    "make": "cross-env NODE_ENV=production electron-forge make",
+    "make": "scripts/build.bat",
     "publish": "cross-env NODE_ENV=production electron-forge publish",
     "lint": "echo \"No linting configured\""
   },

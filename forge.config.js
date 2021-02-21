@@ -1,12 +1,16 @@
+const path = require("path");
+
 module.exports = {
   packagerConfig: {
     extraResource: [".bin"],
+    icon: "./assets/icon",
   },
   makers: [
     {
       name: "@electron-forge/maker-squirrel",
       config: {
         name: "media_downloader",
+        setupIcon: path.resolve(__dirname, "./assets/icon.ico"),
       },
     },
     {

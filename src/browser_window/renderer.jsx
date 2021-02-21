@@ -8,6 +8,8 @@ import { IoMdRefresh } from "react-icons/io";
 import { AiOutlineHome } from "react-icons/ai";
 import tdApp from "../renderer_common/td";
 
+tdApp.init();
+
 const computeRect = ({ left, top, width, height }) => ({
   x: Math.floor(left),
   y: Math.floor(top),
@@ -94,7 +96,7 @@ class App extends React.Component {
             <BiArrowBack
               className="icon"
               onClick={() => {
-                tdApp.onEvent("浏览器页面", "点击返回按钮");
+                tdApp.onEvent("浏览器页面-点击返回按钮");
                 const canGoBack = this.view.webContents.canGoBack();
                 if (canGoBack) {
                   this.view.webContents.goBack();
@@ -104,7 +106,7 @@ class App extends React.Component {
             <IoMdRefresh
               className="icon"
               onClick={() => {
-                tdApp.onEvent("浏览器页面", "点击刷新按钮");
+                tdApp.onEvent("浏览器页面-点击刷新按钮");
                 this.view.webContents.reload();
               }}
             />
@@ -140,7 +142,7 @@ class App extends React.Component {
               }}
               onKeyPress={async (e) => {
                 if (e.code === "Enter") {
-                  tdApp.onEvent("浏览器页面", "点击打开链接");
+                  tdApp.onEvent("浏览器页面-enter打开链接");
                   await this.view.webContents.loadURL(url);
                 }
               }}
@@ -149,7 +151,7 @@ class App extends React.Component {
                   role="presentation"
                   style={{ cursor: "pointer" }}
                   onClick={async () => {
-                    tdApp.onEvent("浏览器页面", "点击打开链接");
+                    tdApp.onEvent("浏览器页面-点击打开链接");
                     await this.view.webContents.loadURL(url);
                   }}
                 >

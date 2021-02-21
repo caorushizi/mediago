@@ -1,8 +1,8 @@
-const onEvent = (eventId, label = "", mapKv = {}) => {
+const onEvent = (eventId, mapKv = {}) => {
   try {
-    window.TDAPP.onEvent(eventId, label, mapKv);
+    window.TDAPP.onEvent(eventId, "", mapKv);
   } catch (err) {
-    // eslint-disable-next-line no-empty
+    console.log("添加埋点失败：", err);
   }
 };
 
@@ -16,8 +16,4 @@ const init = () => {
   headElement.appendChild(script);
 };
 
-const onPageStart = () => {};
-
-const onPageEnd = () => {};
-
-export default { onEvent, init, onPageStart, onPageEnd };
+export default { onEvent, init };
