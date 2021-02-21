@@ -89,3 +89,4 @@ typings/
 out/
 
 .idea/
+.bin/

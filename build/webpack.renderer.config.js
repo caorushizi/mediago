@@ -1,20 +1,23 @@
 const ESLintPlugin = require("eslint-webpack-plugin");
-const fs = require("fs");
-const dotenv = require("dotenv");
 const rules = require("./webpack.rules");
+const loadEnv = require("./loadEnv");
 
-const envConfig = dotenv.parse(fs.readFileSync(".env.override"));
-for (const k of Object.keys(envConfig)) {
-  process.env[k] = envConfig[k];
-}
+loadEnv();
 
 module.exports = {
-  entry: "./src/main/index.js",
   module: {
     rules: [
       ...rules,
       {
-        test: /\.js$/,
+        test: /\.(s?css)$/,
+        use: [
+          { loader: "style-loader" },
+          { loader: "css-loader" },
+          { loader: "sass-loader" },
+        ],
+      },
+      {
+        test: /\.jsx?$/,
         use: "babel-loader",
         exclude: /node_modules/,
       },
