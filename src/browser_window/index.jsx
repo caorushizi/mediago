@@ -1,12 +1,15 @@
 import ReactDOM from "react-dom";
 import React from "react";
 import "./index.scss";
-import { TextField, Spinner } from "@fluentui/react";
+import { Input, Spin } from "antd";
+import {
+  ArrowLeftOutlined,
+  ReloadOutlined,
+  HomeOutlined,
+} from "@ant-design/icons";
 import { remote, ipcRenderer } from "electron";
-import { BiArrowBack } from "react-icons/bi";
-import { IoMdRefresh } from "react-icons/io";
-import { AiOutlineHome } from "react-icons/ai";
 import tdApp from "../renderer_common/td";
+import "antd/dist/antd.css";
 
 tdApp.init();
 
@@ -87,13 +90,26 @@ class App extends React.Component {
     this.resizeObserver.observe(videoView);
   }
 
+  renderSearchButton = (url) => (
+    <div
+      role="presentation"
+      style={{ cursor: "pointer" }}
+      onClick={async () => {
+        tdApp.onEvent("浏览器页面-点击打开链接");
+        await this.view.webContents.loadURL(url);
+      }}
+    >
+      打开链接
+    </div>
+  );
+
   render() {
     const { url, title } = this.state;
     return (
       <>
         <div className="tool-bar">
           <div className="tool-bar-left">
-            <BiArrowBack
+            <ArrowLeftOutlined
               className="icon"
               onClick={() => {
                 tdApp.onEvent("浏览器页面-点击返回按钮");
@@ -103,14 +119,14 @@ class App extends React.Component {
                 }
               }}
             />
-            <IoMdRefresh
+            <ReloadOutlined
               className="icon"
               onClick={() => {
                 tdApp.onEvent("浏览器页面-点击刷新按钮");
                 this.view.webContents.reload();
               }}
             />
-            <AiOutlineHome
+            <HomeOutlined
               className="icon home"
               onClick={async () => {
                 await this.view.webContents.loadURL("https://baidu.com");
@@ -132,7 +148,7 @@ class App extends React.Component {
         </div>
         <div className="webview-container">
           <div className="webview-nav">
-            <TextField
+            <Input
               underlined
               value={url}
               onChange={(e) => {
@@ -146,22 +162,11 @@ class App extends React.Component {
                   await this.view.webContents.loadURL(url);
                 }
               }}
-              onRenderSuffix={() => (
-                <div
-                  role="presentation"
-                  style={{ cursor: "pointer" }}
-                  onClick={async () => {
-                    tdApp.onEvent("浏览器页面-点击打开链接");
-                    await this.view.webContents.loadURL(url);
-                  }}
-                >
-                  打开链接
-                </div>
-              )}
+              addonAfter={this.renderSearchButton(url)}
             />
           </div>
           <div id="videoView">
-            <Spinner label="正在加载，请稍候……" />
+            <Spin label="正在加载，请稍候……" />
           </div>
         </div>
       </>

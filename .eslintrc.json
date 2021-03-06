@@ -31,5 +31,5 @@
     "BROWSER_WINDOW_WEBPACK_ENTRY": "readonly",
     "BROWSER_WINDOW_PRELOAD_WEBPACK_ENTRY": "readonly"
   },
-  "parser": "babel-eslint"
+  "parser": "@babel/eslint-parser"
 }
