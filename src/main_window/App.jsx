@@ -151,7 +151,7 @@ class App extends React.Component {
   };
 
   renderBaseForm = () => (
-    <Row>
+    <Row gutter={[16, 0]}>
       <Col span={12}>
         <Form.Item
           label="本地路径"
@@ -198,7 +198,7 @@ class App extends React.Component {
       </Col>
       <Col span={12}>
         <Form.Item
-          label="m3u8 链接"
+          label="m3u8链接"
           name="url"
           rules={[{ required: true, message: "请填写 m3u8 链接" }]}
         >
@@ -210,7 +210,12 @@ class App extends React.Component {
 
   renderMediaGoForm = () => (
     <div>
-      <Form.Item label="请求标头" name="headers">
+      <Form.Item
+        labelCol={{ span: 3 }}
+        wrapperCol={{ span: 21 }}
+        label="请求标头"
+        name="headers"
+      >
         <Input />
       </Form.Item>
     </div>
@@ -222,14 +227,14 @@ class App extends React.Component {
       <>
         {showMore ? (
           <>
-            <Row>
+            <Row gutter={[16, 0]}>
               <Col span={12}>
                 <Form.Item label="请求标头" name="headers">
                   <Input />
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="BASEURL" name="headers">
+                <Form.Item label="BASEURL" name="baseurl">
                   <Input />
                 </Form.Item>
               </Col>
@@ -239,116 +244,138 @@ class App extends React.Component {
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="设置代理" name="headers">
+                <Form.Item label="设置代理" name="proxy">
                   <Input />
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="自定义KEY" name="headers">
+                <Form.Item label="自定义KEY" name="key">
                   <Input />
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="自定义IV" name="headers">
+                <Form.Item label="自定义IV" name="iv">
                   <Input />
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="范围选择" name="headers">
+                <Form.Item label="范围选择" name="timeRange">
                   <TimePicker.RangePicker />
                 </Form.Item>
               </Col>
             </Row>
-            <Row>
-              <Form.Item name="checkbox-group">
-                <Checkbox.Group>
-                  <Row>
-                    <Col span={8}>
-                      <Checkbox value="C">合并后删除分片</Checkbox>
-                    </Col>
-                    <Col span={8}>
-                      <Checkbox value="C">合并时不写入日期</Checkbox>
-                    </Col>
-                    <Col span={8}>
-                      <Checkbox value="C">不使用系统代理</Checkbox>
-                    </Col>
-                    <Col span={8}>
-                      <Checkbox value="C">仅解析m3u8</Checkbox>
-                    </Col>
-                    <Col span={8}>
-                      <Checkbox value="C">混流MP4边下边看</Checkbox>
-                    </Col>
-                    <Col span={8}>
-                      <Checkbox value="C">下载完成后不合并</Checkbox>
-                    </Col>
-                    <Col span={8}>
-                      <Checkbox value="C">使用二进制合并</Checkbox>
-                    </Col>
-                    <Col span={8}>
-                      <Checkbox value="C">仅合并音频轨道</Checkbox>
-                    </Col>
-                    <Col span={8}>
-                      <Checkbox value="C">关闭完整性检查</Checkbox>
-                    </Col>
-                  </Row>
-                </Checkbox.Group>
-              </Form.Item>
-            </Row>
-            <Row>
+            <Form.Item wrapperCol={{ span: 24 }} name="checkbox">
+              <Checkbox.Group>
+                <Row gutter={[16, 10]}>
+                  <Col span={8}>
+                    <Checkbox value="C">合并后删除分片</Checkbox>
+                  </Col>
+                  <Col span={8}>
+                    <Checkbox value="C">合并时不写入日期</Checkbox>
+                  </Col>
+                  <Col span={8}>
+                    <Checkbox value="C">不使用系统代理</Checkbox>
+                  </Col>
+                  <Col span={8}>
+                    <Checkbox value="C">仅解析m3u8</Checkbox>
+                  </Col>
+                  <Col span={8}>
+                    <Checkbox value="C">混流MP4边下边看</Checkbox>
+                  </Col>
+                  <Col span={8}>
+                    <Checkbox value="C">下载完成后不合并</Checkbox>
+                  </Col>
+                  <Col span={8}>
+                    <Checkbox value="C">使用二进制合并</Checkbox>
+                  </Col>
+                  <Col span={8}>
+                    <Checkbox value="C">仅合并音频轨道</Checkbox>
+                  </Col>
+                  <Col span={8}>
+                    <Checkbox value="C">关闭完整性检查</Checkbox>
+                  </Col>
+                </Row>
+              </Checkbox.Group>
+            </Form.Item>
+            <Row gutter={[16, 0]}>
               <Col span={8}>
-                <Form.Item label="最大线程">
+                <Form.Item
+                  labelCol={{ span: 12 }}
+                  wrapperCol={{ span: 12 }}
+                  label="最大线程"
+                  name="max"
+                >
                   <InputNumber min={0} defaultValue={32} />
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="最小线程">
+                <Form.Item
+                  labelCol={{ span: 12 }}
+                  wrapperCol={{ span: 12 }}
+                  label="最小线程"
+                  name="min"
+                >
                   <InputNumber min={0} defaultValue={16} />
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="重试次数">
+                <Form.Item
+                  labelCol={{ span: 12 }}
+                  wrapperCol={{ span: 12 }}
+                  label="重试次数"
+                  name="try"
+                >
                   <InputNumber min={0} defaultValue={15} />
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="超时时长(s)">
+                <Form.Item
+                  labelCol={{ span: 12 }}
+                  wrapperCol={{ span: 12 }}
+                  label="超时时长(s)"
+                  name="timeout"
+                >
                   <InputNumber min={0} defaultValue={10} />
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="停速(kb/s)">
+                <Form.Item
+                  labelCol={{ span: 12 }}
+                  wrapperCol={{ span: 12 }}
+                  label="停速(kb/s)"
+                  name="stop"
+                >
                   <InputNumber min={0} defaultValue={0} />
                 </Form.Item>
               </Col>
               <Col span={8}>
-                <Form.Item label="限速(kb/s)">
+                <Form.Item
+                  labelCol={{ span: 12 }}
+                  wrapperCol={{ span: 12 }}
+                  label="限速(kb/s)"
+                  name="limit"
+                >
                   <InputNumber min={0} defaultValue={0} />
                 </Form.Item>
               </Col>
             </Row>
           </>
         ) : (
-          <Form.Item label="请求标头" name="headers">
+          <Form.Item
+            labelCol={{ span: 3 }}
+            wrapperCol={{ span: 21 }}
+            label="请求标头"
+            name="headers"
+          >
             <Input />
           </Form.Item>
         )}
-        <Form.Item>
-          <Button
-            type="link"
-            onClick={() => {
-              this.setState({ showMore: !showMore });
-            }}
-          >
-            {showMore ? "隐藏" : "显示"}
-            高级设置
-          </Button>
-        </Form.Item>
       </>
     );
   };
 
   renderActionButton = () => {
-    const { m3u8List } = this.state;
+    const { m3u8List, showMore, exeFile } = this.state;
     return (
       <Form.Item>
         <Space>
@@ -379,6 +406,17 @@ class App extends React.Component {
           >
             使用帮助
           </Button>
+          {exeFile !== "mediago" && (
+            <Button
+              type="link"
+              onClick={() => {
+                this.setState({ showMore: !showMore });
+              }}
+            >
+              {showMore ? "隐藏" : "显示"}
+              高级设置
+            </Button>
+          )}
         </Space>
       </Form.Item>
     );
@@ -403,12 +441,14 @@ class App extends React.Component {
         <div className="form">
           {this.renderErrorMsg()}
           <Form
+            colon={false}
             className="form-inner"
             labelCol={layout.labelCol}
             wrapperCol={layout.wrapperCol}
             onFinish={this.onFinish}
             ref={this.formRef}
             onFieldsChange={this.onFieldsChange}
+            size="small"
           >
             {this.renderBaseForm()}
             {exeFile !== "mediago"

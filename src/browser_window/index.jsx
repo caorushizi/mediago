@@ -11,6 +11,8 @@ import { remote, ipcRenderer } from "electron";
 import tdApp from "../renderer_common/td";
 import "antd/dist/antd.css";
 
+const { Search } = Input;
+
 tdApp.init();
 
 const computeRect = ({ left, top, width, height }) => ({
@@ -90,19 +92,6 @@ class App extends React.Component {
     this.resizeObserver.observe(videoView);
   }
 
-  renderSearchButton = (url) => (
-    <div
-      role="presentation"
-      style={{ cursor: "pointer" }}
-      onClick={async () => {
-        tdApp.onEvent("浏览器页面-点击打开链接");
-        await this.view.webContents.loadURL(url);
-      }}
-    >
-      打开链接
-    </div>
-  );
-
   render() {
     const { url, title } = this.state;
     return (
@@ -148,21 +137,20 @@ class App extends React.Component {
         </div>
         <div className="webview-container">
           <div className="webview-nav">
-            <Input
-              underlined
+            <Search
               value={url}
               onChange={(e) => {
-                this.setState({
-                  url: e.target.value,
-                });
+                this.setState({ url: e.target.value });
               }}
-              onKeyPress={async (e) => {
-                if (e.code === "Enter") {
-                  tdApp.onEvent("浏览器页面-enter打开链接");
-                  await this.view.webContents.loadURL(url);
-                }
+              onPressEnter={async () => {
+                tdApp.onEvent("浏览器页面-enter打开链接");
+                await this.view.webContents.loadURL(url);
               }}
-              addonAfter={this.renderSearchButton(url)}
+              enterButton="打开链接"
+              onSearch={async () => {
+                tdApp.onEvent("浏览器页面-点击打开链接");
+                await this.view.webContents.loadURL(url);
+              }}
             />
           </div>
           <div id="videoView">

@@ -19,7 +19,8 @@ if (!is.development) {
 
 const createMainWindow = async () => {
   const mainWindow = new BrowserWindow({
-    width: 800,
+    width: 590,
+    minWidth: 590,
     height: 600,
     frame: false,
     webPreferences: {
