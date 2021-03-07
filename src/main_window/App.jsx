@@ -532,7 +532,7 @@ class App extends React.Component {
         <div className="toolbar">
           <div className="left" />
           <div className="right">
-            2021.02.21更新（
+            2021.03.07更新（
             <span
               role="presentation"
               className="cursor"
