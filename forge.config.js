@@ -36,7 +36,7 @@ module.exports = {
           entryPoints: [
             {
               html: "./src/main_window/index.html",
-              js: "./src/main_window/renderer.jsx",
+              js: "./src/main_window/index.jsx",
               name: "main_window",
               preload: {
                 js: "./src/main_window/preload.js",
@@ -44,7 +44,7 @@ module.exports = {
             },
             {
               html: "./src/browser_window/index.html",
-              js: "./src/browser_window/renderer.jsx",
+              js: "./src/browser_window/index.jsx",
               name: "browser_window",
               preload: {
                 js: "./src/browser_window/preload.js",
