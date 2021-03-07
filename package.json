@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
+    "@babel/eslint-parser": "^7.13.8",
     "@babel/plugin-proposal-class-properties": "^7.12.13",
     "@babel/plugin-proposal-decorators": "^7.12.13",
     "@babel/plugin-proposal-object-rest-spread": "^7.12.13",
@@ -37,7 +38,6 @@
     "@electron-forge/maker-zip": "^6.0.0-beta.54",
     "@electron-forge/plugin-webpack": "6.0.0-beta.54",
     "@marshallofsound/webpack-asset-relocator-loader": "^0.5.0",
-    "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
     "cross-env": "^7.0.3",
     "css-loader": "^4.2.1",
@@ -60,8 +60,9 @@
     "style-loader": "^1.2.1"
   },
   "dependencies": {
-    "@fluentui/react": "^7.157.2",
+    "@ant-design/icons": "^4.5.0",
     "adm-zip": "^0.5.2",
+    "antd": "^4.12.3",
     "electron-log": "^4.3.1",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^7.0.0",
@@ -69,7 +70,6 @@
     "glob": "^7.1.6",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "react-icons": "^4.1.0",
     "semver": "^7.3.4",
     "spawn-args": "^0.2.0"
   }
