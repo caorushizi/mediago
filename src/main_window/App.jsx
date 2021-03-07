@@ -129,10 +129,41 @@ class App extends React.Component {
   onFinish = async (values) => {
     tdApp.onEvent("下载页面-开始下载");
     this.setState({ showError: false, errorMsg: "" });
+    console.log(values);
 
     const { workspace, exeFile, name, url, headers } = values;
+    const commonFields = ["exeFile", "workspace", "name", "url", "headers"];
+    let args = "";
+    if (exeFile !== "mediago") {
+      Object.keys(values).forEach((value) => {
+        if (commonFields.findIndex((key) => value === key) < 0) {
+          let v = values[value];
+          if (v) {
+            let tempArgs;
+            if (value === "downloadRange") {
+              v = v?.map((m) => m.format("HH:mm:ss")).join("-");
+              tempArgs = ` --${value} "${v}"`;
+            } else if (value === "checkbox") {
+              tempArgs = v?.map((c) => `--${c}`).join(" ");
+            } else {
+              tempArgs = ` --${value} "${v}"`;
+            }
+            args += tempArgs;
+          }
+        }
+      });
+    }
 
-    const { code, msg } = await ipcExec(exeFile, workspace, name, url, headers);
+    console.log("args: ", args);
+
+    const { code, msg } = await ipcExec(
+      exeFile,
+      workspace,
+      name,
+      url,
+      headers,
+      args
+    );
     if (code === 0) {
       this.setState({
         showError: true,
@@ -234,32 +265,32 @@ class App extends React.Component {
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="BASEURL" name="baseurl">
+                <Form.Item label="BASEURL" name="baseUrl">
                   <Input />
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="混流文件" name="headers">
+                <Form.Item label="混流文件" name="muxSetJson">
                   <Input />
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="设置代理" name="proxy">
+                <Form.Item label="设置代理" name="proxyAddress">
                   <Input />
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="自定义KEY" name="key">
+                <Form.Item label="自定义KEY" name="useKeyBase64">
                   <Input />
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="自定义IV" name="iv">
+                <Form.Item label="自定义IV" name="useKeyIV">
                   <Input />
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="范围选择" name="timeRange">
+                <Form.Item label="范围选择" name="downloadRange">
                   <TimePicker.RangePicker />
                 </Form.Item>
               </Col>
@@ -268,31 +299,41 @@ class App extends React.Component {
               <Checkbox.Group>
                 <Row gutter={[16, 10]}>
                   <Col span={8}>
-                    <Checkbox value="C">合并后删除分片</Checkbox>
+                    <Checkbox value="enableDelAfterDone">
+                      合并后删除分片
+                    </Checkbox>
                   </Col>
                   <Col span={8}>
-                    <Checkbox value="C">合并时不写入日期</Checkbox>
+                    <Checkbox value="disableDateInfo">
+                      合并时不写入日期
+                    </Checkbox>
                   </Col>
                   <Col span={8}>
-                    <Checkbox value="C">不使用系统代理</Checkbox>
+                    <Checkbox value="noProxy">不使用系统代理</Checkbox>
                   </Col>
                   <Col span={8}>
-                    <Checkbox value="C">仅解析m3u8</Checkbox>
+                    <Checkbox value="enableParseOnly">仅解析m3u8</Checkbox>
                   </Col>
                   <Col span={8}>
-                    <Checkbox value="C">混流MP4边下边看</Checkbox>
+                    <Checkbox value="enableMuxFastStart ">
+                      混流MP4边下边看
+                    </Checkbox>
                   </Col>
                   <Col span={8}>
-                    <Checkbox value="C">下载完成后不合并</Checkbox>
+                    <Checkbox value="noMerge ">下载完成后不合并</Checkbox>
                   </Col>
                   <Col span={8}>
-                    <Checkbox value="C">使用二进制合并</Checkbox>
+                    <Checkbox value="enableBinaryMerge ">
+                      使用二进制合并
+                    </Checkbox>
                   </Col>
                   <Col span={8}>
-                    <Checkbox value="C">仅合并音频轨道</Checkbox>
+                    <Checkbox value="enableAudioOnly ">仅合并音频轨道</Checkbox>
                   </Col>
                   <Col span={8}>
-                    <Checkbox value="C">关闭完整性检查</Checkbox>
+                    <Checkbox value="disableIntegrityCheck ">
+                      关闭完整性检查
+                    </Checkbox>
                   </Col>
                 </Row>
               </Checkbox.Group>
@@ -303,9 +344,9 @@ class App extends React.Component {
                   labelCol={{ span: 12 }}
                   wrapperCol={{ span: 12 }}
                   label="最大线程"
-                  name="max"
+                  name="maxThreads"
                 >
-                  <InputNumber min={0} defaultValue={32} />
+                  <InputNumber min={0} />
                 </Form.Item>
               </Col>
               <Col span={8}>
@@ -313,9 +354,9 @@ class App extends React.Component {
                   labelCol={{ span: 12 }}
                   wrapperCol={{ span: 12 }}
                   label="最小线程"
-                  name="min"
+                  name="minThreads"
                 >
-                  <InputNumber min={0} defaultValue={16} />
+                  <InputNumber min={0} />
                 </Form.Item>
               </Col>
               <Col span={8}>
@@ -323,9 +364,9 @@ class App extends React.Component {
                   labelCol={{ span: 12 }}
                   wrapperCol={{ span: 12 }}
                   label="重试次数"
-                  name="try"
+                  name="retryCount"
                 >
-                  <InputNumber min={0} defaultValue={15} />
+                  <InputNumber min={0} />
                 </Form.Item>
               </Col>
               <Col span={8}>
@@ -333,9 +374,9 @@ class App extends React.Component {
                   labelCol={{ span: 12 }}
                   wrapperCol={{ span: 12 }}
                   label="超时时长(s)"
-                  name="timeout"
+                  name="timeOut"
                 >
-                  <InputNumber min={0} defaultValue={10} />
+                  <InputNumber min={0} />
                 </Form.Item>
               </Col>
               <Col span={8}>
@@ -343,9 +384,9 @@ class App extends React.Component {
                   labelCol={{ span: 12 }}
                   wrapperCol={{ span: 12 }}
                   label="停速(kb/s)"
-                  name="stop"
+                  name="stopSpeed"
                 >
-                  <InputNumber min={0} defaultValue={0} />
+                  <InputNumber min={0} />
                 </Form.Item>
               </Col>
               <Col span={8}>
@@ -353,9 +394,9 @@ class App extends React.Component {
                   labelCol={{ span: 12 }}
                   wrapperCol={{ span: 12 }}
                   label="限速(kb/s)"
-                  name="limit"
+                  name="maxSpeed"
                 >
-                  <InputNumber min={0} defaultValue={0} />
+                  <InputNumber min={0} />
                 </Form.Item>
               </Col>
             </Row>
@@ -449,6 +490,14 @@ class App extends React.Component {
             ref={this.formRef}
             onFieldsChange={this.onFieldsChange}
             size="small"
+            initialValues={{
+              maxThreads: 32,
+              minThreads: 16,
+              retryCount: 15,
+              timeOut: 10,
+              stopSpeed: 0,
+              maxSpeed: 0,
+            }}
           >
             {this.renderBaseForm()}
             {exeFile !== "mediago"

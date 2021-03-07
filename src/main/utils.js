@@ -33,7 +33,7 @@ const globWrapper = (pattern, options = {}) =>
   });
 
 const exec = async (exeFile, ...args) => {
-  const [localPath, name, url, headers] = args;
+  const [localPath, name, url, headers, restArgs] = args;
 
   // 判断使用的可执行程序
   let binName = "";
@@ -55,7 +55,7 @@ const exec = async (exeFile, ...args) => {
       if (binNameList.length === 0) throw new Error("没有找到 N_m3u8DL-CLI");
       binName = `N_m3u8DL-CLI_v${binNameList[0]}`;
 
-      argsStr = `"${url}" --workDir "${localPath}" --saveName "${name}" --headers "${headers}"`;
+      argsStr = `"${url}" --workDir "${localPath}" --saveName "${name}" --headers "${headers}" ${restArgs}`;
       break;
     }
     default:
