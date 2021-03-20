@@ -1,5 +1,6 @@
-const onEvent = (eventId, mapKv = {}) => {
+const onEvent = (eventId: string, mapKv: any = {}) => {
   try {
+    // @ts-ignore
     window.TDAPP.onEvent(eventId, "", mapKv);
   } catch (err) {
     console.log("添加埋点失败：", err);

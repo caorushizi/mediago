@@ -11,7 +11,6 @@ if (require("electron-squirrel-startup")) {
 }
 
 if (!is.development) {
-  // eslint-disable-next-line no-underscore-dangle
   global.__bin__ = path
     .resolve(app.getAppPath(), "../.bin")
     .replace(/\\/g, "\\\\");
@@ -112,6 +111,20 @@ const init = async () => {
   );
 };
 
+app.on("did-frame-finish-load", async () => {
+  if (is.development) {
+    try {
+      const reactTool = process.env.REACT_EXTENSION_PATH ?? "";
+      await session.defaultSession.loadExtension(reactTool);
+
+      const reduxTool = process.env.REDUX_EXTENSION_PATH ?? "";
+      await session.defaultSession.loadExtension(reduxTool);
+    } catch (e) {
+      logger.info(e);
+    }
+  }
+});
+
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
@@ -121,20 +134,6 @@ app.on("window-all-closed", () => {
 app.on("activate", async () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     await init();
-  }
-});
-
-app.on("did-frame-finish-load", async () => {
-  if (is.development) {
-    try {
-      const reactTool = process.env.REACT_EXTENSION_PATH;
-      await session.defaultSession.loadExtension(reactTool);
-
-      const reduxTool = process.env.REDUX_EXTENSION_PATH;
-      await session.defaultSession.loadExtension(reduxTool);
-    } catch (e) {
-      logger.info(e);
-    }
   }
 });
 
@@ -158,7 +157,7 @@ ipcMain.on("setLocalPath", async (event, ...args) => {
   try {
     const [key, value] = args;
     store.set(key, value);
-    resp = successFn();
+    resp = successFn("");
   } catch (e) {
     logger.info("设置 store 失败：", e.message);
     resp = failFn(-1, "设置 store 失败");

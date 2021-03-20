@@ -20,10 +20,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react"
+    "jsx": "react",
   },
   "include": [
     "./renderer",
-    "./main"
+    "./main",
+    "./types"
   ]
 }

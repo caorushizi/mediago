@@ -13,6 +13,7 @@ import {
   TimePicker,
   Checkbox,
   InputNumber,
+  FormInstance,
 } from "antd";
 import { CloseOutlined, SettingOutlined } from "@ant-design/icons";
 import { ipcExec, ipcGetStore, ipcSetStore } from "./utils";
@@ -25,10 +26,20 @@ const layout = {
   wrapperCol: { span: 18 },
 };
 
-class App extends React.Component {
-  formRef = React.createRef();
+interface Props {}
+interface State {
+  m3u8List: any[];
+  exeFile: string;
+  showMore: boolean;
+  showError: boolean;
+  errorMsg: string;
+  alertType: "success" | "error" | "info" | "warning" | undefined;
+}
 
-  constructor(props) {
+class App extends React.Component<Props, State> {
+  formRef = React.createRef<FormInstance>();
+
+  constructor(props: Props) {
     super(props);
 
     this.state = {
@@ -37,7 +48,7 @@ class App extends React.Component {
       m3u8List: [],
       showError: false,
       errorMsg: "",
-      alertType: "",
+      alertType: "success",
     };
   }
 
@@ -47,7 +58,7 @@ class App extends React.Component {
     const workspace = await ipcGetStore("local");
     const exeFile = await ipcGetStore("exeFile");
 
-    this.formRef.current.setFieldsValue({
+    this.formRef.current?.setFieldsValue({
       workspace: workspace || "",
       exeFile: exeFile || "",
     });
@@ -60,9 +71,7 @@ class App extends React.Component {
   }
 
   handleSelectDir = async () => {
-    const formRef = this.formRef.current;
-
-    const workspace = formRef.getFieldValue(["workspace"]);
+    const workspace = this.formRef.current?.getFieldValue(["workspace"]);
     const result = remote.dialog.showOpenDialogSync({
       defaultPath: workspace || remote.app.getPath("documents"),
       properties: ["openDirectory"],
@@ -70,19 +79,19 @@ class App extends React.Component {
     if (!result) return;
     const local = result[0];
     await ipcSetStore("local", local);
-    formRef.setFieldsValue({
+    this.formRef.current?.setFieldsValue({
       workspace: local || "",
     });
   };
 
-  handleSelectExeFile = async (value) => {
+  handleSelectExeFile = async (value: string) => {
     await ipcSetStore("exeFile", value);
     this.setState({ exeFile: value || "" });
   };
 
-  handleWebViewMessage = (e, ...args) => {
-    const [m3u8Object] = args;
+  handleWebViewMessage = (e: any, ...args: any[]) => {
     const { m3u8List } = this.state;
+    const [m3u8Object] = args;
     if (
       m3u8List.findIndex(
         (item) => item.requestDetails.url === m3u8Object.requestDetails.url
@@ -94,23 +103,24 @@ class App extends React.Component {
     }
   };
 
-  handleClickM3U8Item = (item) => {
+  handleClickM3U8Item = (item: any) => {
     this.setState({ showError: false, errorMsg: "" });
-    const formRef = this.formRef.current;
-    const exeFile = formRef.getFieldValue(["exeFile"]);
+    const exeFile = this.formRef.current?.getFieldValue(["exeFile"]);
     const { title, requestDetails } = item;
     const { requestHeaders, url } = requestDetails;
     const headers = Object.keys(requestHeaders)
       .reduce((result, key) => {
         if (exeFile === "mediago") {
+          // @ts-ignore
           result.push(`${key}~${requestHeaders[key]}`);
         } else {
+          // @ts-ignore
           result.push(`${key}:${requestHeaders[key]}`);
         }
         return result;
       }, [])
       .join("|");
-    formRef.setFieldsValue({
+    this.formRef.current?.setFieldsValue({
       name: title,
       url,
       headers,
@@ -127,7 +137,7 @@ class App extends React.Component {
     return showError && <Alert message={errorMsg} type={alertType} closable />;
   };
 
-  onFinish = async (values) => {
+  onFinish = async (values: any) => {
     tdApp.onEvent("下载页面-开始下载");
     this.setState({ showError: false, errorMsg: "" });
     console.log(values);
@@ -142,10 +152,10 @@ class App extends React.Component {
           if (v) {
             let tempArgs;
             if (value === "downloadRange") {
-              v = v?.map((m) => m.format("HH:mm:ss")).join("-");
+              v = v?.map((m: any) => m.format("HH:mm:ss")).join("-");
               tempArgs = ` --${value} "${v}"`;
             } else if (value === "checkbox") {
-              tempArgs = v?.map((c) => `--${c}`).join(" ");
+              tempArgs = v?.map((c: any) => `--${c}`).join(" ");
             } else {
               tempArgs = ` --${value} "${v}"`;
             }
@@ -157,6 +167,7 @@ class App extends React.Component {
 
     console.log("args: ", args);
 
+    // @ts-ignore
     const { code, msg } = await ipcExec(
       exeFile,
       workspace,
@@ -176,10 +187,6 @@ class App extends React.Component {
       this.setState({ showError: true, errorMsg: msg, alertType: "error" });
       tdApp.onEvent("下载页面-下载视频失败", { msg, url, exeFile });
     }
-  };
-
-  onFieldsChange = (a, b) => {
-    console.log(a, b);
   };
 
   renderBaseForm = () => (
@@ -489,7 +496,6 @@ class App extends React.Component {
             wrapperCol={layout.wrapperCol}
             onFinish={this.onFinish}
             ref={this.formRef}
-            onFieldsChange={this.onFieldsChange}
             size="small"
             initialValues={{
               maxThreads: 32,
