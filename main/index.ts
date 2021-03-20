@@ -111,21 +111,6 @@ const init = async () => {
   );
 };
 
-// @ts-ignore
-app.on("did-frame-finish-load", async () => {
-  if (is.development) {
-    try {
-      const reactTool = process.env.REACT_EXTENSION_PATH ?? "";
-      await session.defaultSession.loadExtension(reactTool);
-
-      const reduxTool = process.env.REDUX_EXTENSION_PATH ?? "";
-      await session.defaultSession.loadExtension(reduxTool);
-    } catch (e) {
-      logger.info(e);
-    }
-  }
-});
-
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
@@ -140,6 +125,17 @@ app.on("activate", async () => {
 
 app.whenReady().then(async () => {
   await init();
+
+  if (is.development) {
+    try {
+      const reactTool = path.resolve(__dirname, "../devtools/react");
+      await session.defaultSession.loadExtension(reactTool);
+      const reduxTool = path.resolve(__dirname, "../devtools/redux");
+      await session.defaultSession.loadExtension(reduxTool);
+    } catch (e) {
+      logger.info(e);
+    }
+  }
 });
 
 ipcMain.on("exec", async (event, exeFile, ...args) => {

@@ -8,14 +8,11 @@ const onEvent = (eventId: string, mapKv: any = {}) => {
 };
 
 const init = () => {
-  const appId = process.env.TD_APP_ID;
-  const vn = process.env.TD_APP_VN;
-  const vc = process.env.TD_APP_VC;
+  const appId = import.meta.env.VITE_APP_TDID;
+  const vn = import.meta.env.VITE_APP_TDVN;
+  const vc = import.meta.env.VITE_APP_TDVC;
   const script = document.createElement("script");
   script.src = `https://jic.talkingdata.com/app/h5/v1?appid=${appId}&vn=${vn}&vc=${vc}`;
-  console.log(
-    `https://jic.talkingdata.com/app/h5/v1?appid=${appId}&vn=${vn}&vc=${vc}`
-  );
   const headElement = document.getElementsByTagName("head")[0];
   headElement.appendChild(script);
 };
