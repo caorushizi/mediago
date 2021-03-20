@@ -1,12 +1,14 @@
-import { spawn } from "child_process";
+import { spawn, SpawnOptions } from "child_process";
 import glob from "glob";
+// @ts-ignore
 import spawnargs from "spawn-args";
 import semver from "semver";
 import { workspace } from "./variables";
 import logger from "./logger";
 
-const spawnWrapper = (command, args, options) =>
+const spawnWrapper = (command: string, args: string, options: SpawnOptions) =>
   new Promise((resolve, reject) => {
+    console.log(command, spawnargs(args));
     const spawnCommand = spawn(command, spawnargs(args), {
       cwd: workspace,
       ...options,
@@ -14,17 +16,17 @@ const spawnWrapper = (command, args, options) =>
 
     spawnCommand.on("close", (code) => {
       if (code !== 0) reject(new Error(`调用 ${command} 可执行文件执行失败`));
-      else resolve();
+      else resolve(true);
     });
   });
 
 /**
  * 获取文件目录
- * @param pattern
- * @param options
- * @returns {Promise<string[]>}
  */
-const globWrapper = (pattern, options = {}) =>
+const globWrapper: (
+  pattern: string,
+  options: glob.IOptions
+) => Promise<string[]> = (pattern, options = {}) =>
   new Promise((resolve, reject) => {
     glob(pattern, { cwd: workspace, ...options }, (err, files) => {
       if (err) reject(err);
@@ -32,7 +34,7 @@ const globWrapper = (pattern, options = {}) =>
     });
   });
 
-const exec = async (exeFile, ...args) => {
+const exec = async (exeFile: string, ...args: string[]) => {
   const [localPath, name, url, headers, restArgs] = args;
 
   // 判断使用的可执行程序
@@ -46,6 +48,7 @@ const exec = async (exeFile, ...args) => {
       break;
     case "N_m3u8DL-CLI": {
       let binNameList = await globWrapper("N_m3u8DL-CLI*.exe", {
+        // @ts-ignore
         cwd: __bin__,
       });
       binNameList = binNameList
@@ -66,11 +69,12 @@ const exec = async (exeFile, ...args) => {
   return spawnWrapper(binName, argsStr, {
     detached: true,
     shell: true,
+    // @ts-ignore
     cwd: __bin__,
   });
 };
 
-const successFn = (data) => ({ code: 0, msg: "", data });
-const failFn = (code, msg) => ({ code, msg, data: null });
+const successFn = (data: any) => ({ code: 0, msg: "", data });
+const failFn = (code: number, msg: string) => ({ code, msg, data: null });
 
 export { exec, successFn, failFn, globWrapper, spawnWrapper };

@@ -7,3 +7,4 @@ dist-ssr
 .bin
 
 yarn.lock
+yarn-error.log
