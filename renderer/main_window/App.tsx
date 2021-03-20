@@ -1,5 +1,4 @@
-import React from "react";
-import { remote, ipcRenderer } from "electron";
+import * as React from "react";
 import "./App.scss";
 import {
   Alert,
@@ -18,6 +17,8 @@ import {
 import { CloseOutlined, SettingOutlined } from "@ant-design/icons";
 import { ipcExec, ipcGetStore, ipcSetStore } from "./utils";
 import tdApp from "../renderer_common/td";
+
+const { remote, ipcRenderer } = window.require("electron");
 
 const layout = {
   labelCol: { span: 6 },

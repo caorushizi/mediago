@@ -12,6 +12,9 @@ const init = () => {
   const vc = process.env.TD_APP_VC;
   const script = document.createElement("script");
   script.src = `https://jic.talkingdata.com/app/h5/v1?appid=${appId}&vn=${vn}&vc=${vc}`;
+  console.log(
+    `https://jic.talkingdata.com/app/h5/v1?appid=${appId}&vn=${vn}&vc=${vc}`
+  );
   const headElement = document.getElementsByTagName("head")[0];
   headElement.appendChild(script);
 };

@@ -25,16 +25,16 @@ const createMainWindow = async () => {
     frame: false,
     webPreferences: {
       nodeIntegration: true,
+      contextIsolation: false,
       enableRemoteModule: true,
-      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
   });
-  await mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+  await mainWindow.loadURL("http://localhost:3000/main_window/");
   if (is.development) mainWindow.webContents.openDevTools();
   return mainWindow;
 };
 
-const createBrowserWindow = async (parentWindow) => {
+const createBrowserWindow = async () => {
   const browserWindow = new BrowserWindow({
     width: 800,
     height: 600,
@@ -42,52 +42,12 @@ const createBrowserWindow = async (parentWindow) => {
     frame: false,
     webPreferences: {
       nodeIntegration: true,
+      contextIsolation: false,
       enableRemoteModule: true,
     },
   });
-  await browserWindow.loadURL(BROWSER_WINDOW_WEBPACK_ENTRY);
+  await browserWindow.loadURL("http://localhost:3000/browser_window/");
   if (is.development) browserWindow.webContents.openDevTools();
-
-  const view = new BrowserView({
-    webPreferences: {
-      preload: BROWSER_WINDOW_PRELOAD_WEBPACK_ENTRY,
-    },
-  });
-  browserWindow.setBrowserView(view);
-  browserWindow.webContents.send("viewReady");
-  view.setBounds({ x: 0, y: 0, height: 0, width: 0 });
-  const { webContents } = view;
-  if (is.development) webContents.openDevTools();
-  const filter = {
-    urls: ["*://*/*"],
-  };
-  const { webRequest } = webContents.session;
-  webRequest.onBeforeSendHeaders(filter, (details, callback) => {
-    const m3u8Reg = /\.m3u8$/;
-    const tsReg = /\.ts$/;
-    let cancel = false;
-    const myURL = new URL(details.url);
-    if (m3u8Reg.test(myURL.pathname)) {
-      logger.info("在窗口中捕获 m3u8 链接: ", details.url);
-      parentWindow.webContents.send("m3u8", {
-        title: webContents.getTitle(),
-        requestDetails: details,
-      });
-    } else if (tsReg.test(myURL.pathname)) {
-      cancel = true;
-    }
-    callback({
-      cancel,
-      requestHeaders: details.requestHeaders,
-    });
-  });
-
-  webContents.on("dom-ready", () => {
-    webContents.on("new-window", async (event, url) => {
-      event.preventDefault();
-      await webContents.loadURL(url);
-    });
-  });
 
   ipcMain.on("openBrowserWindow", () => {
     browserWindow.show();
@@ -103,7 +63,53 @@ const createBrowserWindow = async (parentWindow) => {
 
 const init = async () => {
   const mainWindow = await createMainWindow();
-  await createBrowserWindow(mainWindow);
+  const browserWindow = await createBrowserWindow();
+
+  const partition = "persist:webview";
+  const ses = session.fromPartition(partition);
+
+  ses.protocol.registerFileProtocol("webview", (request, callback) => {
+    const url = request.url.substr(10);
+    callback({ path: path.normalize(`${__dirname}/${url}`) });
+  });
+
+  const view = new BrowserView({ webPreferences: { partition } });
+  browserWindow.setBrowserView(view);
+  browserWindow.webContents.send("viewReady");
+  view.setBounds({ x: 0, y: 0, height: 0, width: 0 });
+
+  const { webContents } = view;
+  // if (is.development) webContents.openDevTools();
+
+  webContents.on("dom-ready", () => {
+    webContents.on("new-window", async (event, url) => {
+      event.preventDefault();
+      await webContents.loadURL(url);
+    });
+  });
+
+  ses.webRequest.onBeforeSendHeaders(
+    { urls: ["*://*/*"] },
+    (details, callback) => {
+      const m3u8Reg = /\.m3u8$/;
+      const tsReg = /\.ts$/;
+      let cancel = false;
+      const myURL = new URL(details.url);
+      if (m3u8Reg.test(myURL.pathname)) {
+        logger.info("在窗口中捕获 m3u8 链接: ", details.url);
+        mainWindow.webContents.send("m3u8", {
+          title: webContents.getTitle(),
+          requestDetails: details,
+        });
+      } else if (tsReg.test(myURL.pathname)) {
+        cancel = true;
+      }
+      callback({
+        cancel,
+        requestHeaders: details.requestHeaders,
+      });
+    }
+  );
 };
 
 app.on("window-all-closed", () => {
