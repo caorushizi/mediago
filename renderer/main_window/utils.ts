@@ -1,4 +1,4 @@
-import { ipcRenderer } from "electron";
+const { ipcRenderer } = window.require("electron");
 
 const ipcExec = (exeFile, ...args) =>
   new Promise((resolve) => {

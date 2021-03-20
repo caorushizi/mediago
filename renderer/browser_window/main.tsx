@@ -7,10 +7,10 @@ import {
   ReloadOutlined,
   HomeOutlined,
 } from "@ant-design/icons";
-import { remote, ipcRenderer } from "electron";
 import tdApp from "../renderer_common/td";
 import "antd/dist/antd.css";
 
+const { remote, ipcRenderer } = window.require("electron");
 const { Search } = Input;
 
 tdApp.init();
