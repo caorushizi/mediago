@@ -4,5 +4,6 @@ dist
 dist-ssr
 *.local
 .idea
+.bin
 
 yarn.lock
