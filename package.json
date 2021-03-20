@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development vite",
     "electron": "cross-env NODE_ENV=development node esbuild.config.js && electron dist/index.js",
+    "prestart": "script/prestart",
     "start": "concurrently -n=vite,electron -c=green,blue \"npm run dev\" \"npm run electron\"",
     "build": "tsc && vite script",
     "serve": "vite preview"
