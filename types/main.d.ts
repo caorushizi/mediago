@@ -6,4 +6,6 @@ declare global {
   }
 }
 
+declare var __bin__: string;
+
 export {};

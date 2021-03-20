@@ -51,14 +51,11 @@ class App extends React.Component<Props, State> {
       url: "",
       title: "",
     };
-
-    const window = remote.getCurrentWindow();
-    this.view = window.getBrowserView();
   }
 
   async componentDidMount() {
     // 页面刷新时提供 view 的初始化
-    await this.initWebView();
+    this.view = remote.getCurrentWindow().getBrowserView();
 
     ipcRenderer.on("viewReady", this.handleViewReady);
   }
@@ -66,6 +63,7 @@ class App extends React.Component<Props, State> {
   componentWillUnmount() {
     this.view?.setBounds({ x: 0, y: 0, height: 0, width: 0 });
     this.view?.webContents.off("dom-ready", this.handleViewDOMReady);
+    ipcRenderer.removeListener("viewReady", this.handleViewReady);
     this.view = undefined;
     this.resizeObserver?.disconnect();
   }
@@ -82,6 +80,8 @@ class App extends React.Component<Props, State> {
 
   handleViewReady = async () => {
     // 在 browser window 创建时初始化 view
+    this.view = remote.getCurrentWindow().getBrowserView();
+
     await this.initWebView();
   };
 
