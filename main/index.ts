@@ -111,6 +111,7 @@ const init = async () => {
   );
 };
 
+// @ts-ignore
 app.on("did-frame-finish-load", async () => {
   if (is.development) {
     try {
