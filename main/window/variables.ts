@@ -1,0 +1,4 @@
+export enum WindowName {
+  MAIN_WINDOW = "MAIN_WINDOW",
+  BROWSER_WINDOW = "BROWSER_WINDOW",
+}

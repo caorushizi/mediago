@@ -4,11 +4,16 @@ import path from "path";
 import store from "./store";
 import { exec, failFn, successFn } from "./utils";
 import logger from "./logger";
+import XhrFilter from "./xhrFilter";
+import windowManager from "./window/windowManager";
+import { WindowName } from "./window/variables";
 
 // eslint-disable-next-line global-require
 if (require("electron-squirrel-startup")) {
   app.quit();
 }
+
+const xhrFilter = new XhrFilter();
 
 if (!is.development) {
   global.__bin__ = path
@@ -16,53 +21,9 @@ if (!is.development) {
     .replace(/\\/g, "\\\\");
 }
 
-const createMainWindow = async () => {
-  const mainWindow = new BrowserWindow({
-    width: 590,
-    minWidth: 590,
-    height: 600,
-    frame: false,
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
-      enableRemoteModule: true,
-    },
-  });
-  await mainWindow.loadURL("http://localhost:3000/main_window/");
-  if (is.development) mainWindow.webContents.openDevTools();
-  return mainWindow;
-};
-
-const createBrowserWindow = async () => {
-  const browserWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    show: false,
-    frame: false,
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
-      enableRemoteModule: true,
-    },
-  });
-  await browserWindow.loadURL("http://localhost:3000/browser_window/");
-  if (is.development) browserWindow.webContents.openDevTools();
-
-  ipcMain.on("openBrowserWindow", () => {
-    browserWindow.show();
-  });
-
-  ipcMain.on("closeBrowserWindow", () => {
-    logger.info("closeBrowserWindow");
-    browserWindow.hide();
-  });
-
-  return browserWindow;
-};
-
 const init = async () => {
-  const mainWindow = await createMainWindow();
-  const browserWindow = await createBrowserWindow();
+  const mainWindow = await windowManager.create(WindowName.MAIN_WINDOW);
+  const browserWindow = await windowManager.create(WindowName.BROWSER_WINDOW);
 
   const partition = "persist:webview";
   const ses = session.fromPartition(partition);
@@ -78,7 +39,7 @@ const init = async () => {
   view.setBounds({ x: 0, y: 0, height: 0, width: 0 });
 
   const { webContents } = view;
-  // if (is.development) webContents.openDevTools();
+  if (is.development) webContents.openDevTools();
 
   webContents.on("dom-ready", () => {
     webContents.on("new-window", async (event, url) => {
@@ -87,28 +48,8 @@ const init = async () => {
     });
   });
 
-  ses.webRequest.onBeforeSendHeaders(
-    { urls: ["*://*/*"] },
-    (details, callback) => {
-      const m3u8Reg = /\.m3u8$/;
-      const tsReg = /\.ts$/;
-      let cancel = false;
-      const myURL = new URL(details.url);
-      if (m3u8Reg.test(myURL.pathname)) {
-        logger.info("在窗口中捕获 m3u8 链接: ", details.url);
-        mainWindow.webContents.send("m3u8", {
-          title: webContents.getTitle(),
-          requestDetails: details,
-        });
-      } else if (tsReg.test(myURL.pathname)) {
-        cancel = true;
-      }
-      callback({
-        cancel,
-        requestHeaders: details.requestHeaders,
-      });
-    }
-  );
+  const filter = { urls: ["*://*/*"] };
+  ses.webRequest.onBeforeSendHeaders(filter, xhrFilter.beforeSendHeaders);
 };
 
 app.on("window-all-closed", () => {
