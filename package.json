@@ -1,14 +1,19 @@
 {
   "name": "vite-project-1",
   "version": "0.0.0",
+  "description": "在线视频下载",
+  "author": "caorushizi",
   "main": "dist/main/index.js",
+  "license": "MIT",
   "scripts": {
     "dev": "cross-env NODE_ENV=development vite",
-    "electron": "cross-env NODE_ENV=development node esbuild.config.js && electron dist/index.js",
+    "electron": "cross-env NODE_ENV=development node esbuild.config.js && electron dist/main/index.js",
     "prestart": "script/prestart",
     "start": "concurrently -n=vite,electron -c=green,blue \"npm run dev\" \"npm run electron\"",
     "build": "tsc && vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
@@ -29,6 +34,7 @@
     "cross-env": "^7.0.3",
     "dotenv": "^8.2.0",
     "electron": "11.2.1",
+    "electron-builder": "^22.10.5",
     "electron-log": "^4.3.2",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^7.0.2",
@@ -50,5 +56,50 @@
     "spawn-args": "^0.2.0",
     "typescript": "^4.1.2",
     "vite": "^2.1.0"
+  },
+  "build": {
+    "productName": "xxxx",
+    "appId": "com.xxx.xxxxx",
+    "copyright": "xxxx",
+    "directories": {
+      "output": "build"
+    },
+    "files": [
+      "dist/electron",
+      "dist/main",
+      "node_modules/",
+      "package.json"
+    ],
+    "win": {
+      "icon": "build/icons/aims.ico",
+      "target": [
+        {
+          "target": "nsis"
+        }
+      ]
+    },
+    "dmg": {
+      "contents": [
+      ]
+    },
+    "mac": {
+      "icon": "build/icons/icon.icns"
+    },
+    "linux": {
+      "icon": "build/icons"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "./build/icons/aaa.ico",
+      "uninstallerIcon": "./build/icons/bbb.ico",
+      "installerHeaderIcon": "./build/icons/aaa.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "xxxx",
+      "include": "build/script/installer.nsh",
+      "script": "build/script/installer.nsh"
+    }
   }
 }

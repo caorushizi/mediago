@@ -15,5 +15,5 @@ require("esbuild").buildSync({
     // 开发环境中二进制可执行文件的路径
     __bin__: `"${resolve(__dirname, ".bin").replace(/\\/g, "\\\\")}"`,
   },
-  outdir: resolve(__dirname, "./dist/"),
+  outdir: resolve(__dirname, "./dist/main"),
 });

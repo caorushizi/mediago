@@ -8,3 +8,4 @@ dist-ssr
 
 yarn.lock
 yarn-error.log
+build
