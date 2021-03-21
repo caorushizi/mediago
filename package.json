@@ -10,8 +10,8 @@
     "electron": "cross-env NODE_ENV=development node esbuild.config.js && electron dist/main/index.js",
     "prestart": "script/prestart",
     "start": "concurrently -n=vite,electron -c=green,blue \"npm run dev\" \"npm run electron\"",
-    "build": "rimraf dist && tsc && vite build && node esbuild.config.js",
     "serve": "vite preview",
+    "build": "rimraf dist && tsc && vite build && node esbuild.config.js",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
   },
@@ -66,10 +66,10 @@
       "output": "build"
     },
     "files": [
-      "dist/electron",
-      "dist/main",
+      "dist/**/*",
       "package.json"
     ],
+    "extraResources": [".bin/**"],
     "win": {
       "icon": "",
       "target": [
