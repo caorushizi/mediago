@@ -10,7 +10,7 @@
     "electron": "cross-env NODE_ENV=development node esbuild.config.js && electron dist/main/index.js",
     "prestart": "script/prestart",
     "start": "concurrently -n=vite,electron -c=green,blue \"npm run dev\" \"npm run electron\"",
-    "build": "tsc && vite build && node esbuild.config.js",
+    "build": "rimraf dist && tsc && vite build && node esbuild.config.js",
     "serve": "vite preview",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
@@ -51,6 +51,7 @@
     "glob": "^7.1.6",
     "mime": "^2.5.2",
     "prettier": "2.2.1",
+    "rimraf": "^3.0.2",
     "sass": "^1.32.8",
     "semver": "^7.3.4",
     "spawn-args": "^0.2.0",
@@ -78,8 +79,7 @@
       ]
     },
     "dmg": {
-      "contents": [
-      ]
+      "contents": []
     },
     "mac": {
       "icon": "build/icons/icon.icns"
@@ -96,7 +96,7 @@
       "installerHeaderIcon": "",
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "xxxx",
+      "shortcutName": "",
       "include": "",
       "script": ""
     }
