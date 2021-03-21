@@ -41,9 +41,7 @@ app.on("activate", async () => {
 app.whenReady().then(async () => {
   protocol.registerFileProtocol("mediago", (request, callback) => {
     const url = request.url.substr(10);
-    console.log("url: ", url);
-    console.log("after: ", resolve(__dirname, "../electron", url));
-    callback({ path: resolve(__dirname, "../electron", url) });
+    callback({ path: resolve(__dirname, "../", url) });
   });
 
   await init();

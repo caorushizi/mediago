@@ -6,6 +6,7 @@ import { resolve } from "path";
 export default defineConfig({
   plugins: [reactRefresh()],
   build: {
+    target: "es2015",
     rollupOptions: {
       input: {
         main: resolve(__dirname, "main_window.html"),
