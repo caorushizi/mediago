@@ -8,10 +8,11 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, "index.html"),
-        nested: resolve(__dirname, "nested/index.html"),
+        main: resolve(__dirname, "renderer/main_window/index.html"),
+        browser: resolve(__dirname, "renderer/browser_window/index.html"),
       },
     },
+    outDir: resolve(__dirname, "dist"),
   },
   root: "renderer",
 });
