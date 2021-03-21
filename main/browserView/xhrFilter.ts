@@ -1,6 +1,7 @@
-import logger from "./logger";
-import windowManager from "./window/windowManager";
-import { WindowName } from "./window/variables";
+import { getType } from "mime";
+import logger from "../utils/logger";
+import windowManager from "../window/windowManager";
+import { WindowName } from "../window/variables";
 
 class XhrFilter {
   // 当请求即将发生时
@@ -17,6 +18,7 @@ class XhrFilter {
     const tsReg = /\.ts$/;
     let cancel = false;
     const myURL = new URL(details.url);
+    console.log(getType(myURL.pathname));
     if (m3u8Reg.test(myURL.pathname)) {
       logger.info("在窗口中捕获 m3u8 链接: ", details.url);
       const { webContents } = windowManager.get(WindowName.MAIN_WINDOW) ?? {};

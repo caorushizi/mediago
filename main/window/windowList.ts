@@ -1,7 +1,7 @@
 import { IWindowListItem } from "../../types/main";
 import { is } from "electron-util";
 import { ipcMain } from "electron";
-import logger from "../logger";
+import logger from "../utils/logger";
 import { WindowName } from "./variables";
 
 const windowList = new Map<WindowName, IWindowListItem>();
