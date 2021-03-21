@@ -8,8 +8,8 @@ const windowList = new Map<WindowName, IWindowListItem>();
 
 windowList.set(WindowName.MAIN_WINDOW, {
   url: is.development
-    ? "mediago://main_window.html"
-    : "mediago://main_window.html",
+    ? "http://localhost:3000/main_window.html"
+    : "mediago://electron/main_window.html",
   options() {
     return {
       width: 590,
@@ -30,8 +30,8 @@ windowList.set(WindowName.MAIN_WINDOW, {
 
 windowList.set(WindowName.BROWSER_WINDOW, {
   url: is.development
-    ? "mediago://browser_window.html"
-    : "mediago://browser_window.html",
+    ? "http://localhost:3000/browser_window.html"
+    : "mediago://electron/browser_window.html",
   options() {
     return {
       width: 800,

@@ -1,5 +1,5 @@
 {
-  "name": "vite-project-1",
+  "name": "media-downloader",
   "version": "0.0.0",
   "description": "在线视频下载",
   "author": "caorushizi",
@@ -10,7 +10,7 @@
     "electron": "cross-env NODE_ENV=development node esbuild.config.js && electron dist/main/index.js",
     "prestart": "script/prestart",
     "start": "concurrently -n=vite,electron -c=green,blue \"npm run dev\" \"npm run electron\"",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && node esbuild.config.js",
     "serve": "vite preview",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
@@ -58,20 +58,19 @@
     "vite": "^2.1.0"
   },
   "build": {
-    "productName": "xxxx",
-    "appId": "com.xxx.xxxxx",
-    "copyright": "xxxx",
+    "productName": "在线视频下载",
+    "appId": "mediago.ziying.site",
+    "copyright": "caorushizi",
     "directories": {
       "output": "build"
     },
     "files": [
       "dist/electron",
       "dist/main",
-      "node_modules/",
       "package.json"
     ],
     "win": {
-      "icon": "build/icons/aims.ico",
+      "icon": "",
       "target": [
         {
           "target": "nsis"
@@ -92,14 +91,14 @@
       "oneClick": false,
       "allowElevation": true,
       "allowToChangeInstallationDirectory": true,
-      "installerIcon": "./build/icons/aaa.ico",
-      "uninstallerIcon": "./build/icons/bbb.ico",
-      "installerHeaderIcon": "./build/icons/aaa.ico",
+      "installerIcon": "",
+      "uninstallerIcon": "",
+      "installerHeaderIcon": "",
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "xxxx",
-      "include": "build/script/installer.nsh",
-      "script": "build/script/installer.nsh"
+      "include": "",
+      "script": ""
     }
   }
 }
