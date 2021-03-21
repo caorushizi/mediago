@@ -7,21 +7,14 @@
     "electron": "cross-env NODE_ENV=development node esbuild.config.js && electron dist/index.js",
     "prestart": "script/prestart",
     "start": "concurrently -n=vite,electron -c=green,blue \"npm run dev\" \"npm run electron\"",
-    "build": "tsc && vite script",
+    "build": "tsc && vite build",
     "serve": "vite preview"
   },
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
     "antd": "^4.14.0",
-    "electron-log": "^4.3.2",
-    "electron-squirrel-startup": "^1.0.0",
-    "electron-store": "^7.0.2",
-    "electron-util": "^0.14.2",
-    "glob": "^7.1.6",
     "react": "^17.0.0",
-    "react-dom": "^17.0.0",
-    "semver": "^7.3.4",
-    "spawn-args": "^0.2.0"
+    "react-dom": "^17.0.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.13.10",
@@ -35,6 +28,10 @@
     "cross-env": "^7.0.3",
     "dotenv": "^8.2.0",
     "electron": "11.2.1",
+    "electron-log": "^4.3.2",
+    "electron-squirrel-startup": "^1.0.0",
+    "electron-store": "^7.0.2",
+    "electron-util": "^0.14.2",
     "esbuild": "^0.9.5",
     "eslint": "7.2.0",
     "eslint-config-airbnb": "18.2.1",
@@ -44,8 +41,11 @@
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-react": "7.21.5",
     "eslint-plugin-react-hooks": "1.7.0",
+    "glob": "^7.1.6",
     "prettier": "2.2.1",
     "sass": "^1.32.8",
+    "semver": "^7.3.4",
+    "spawn-args": "^0.2.0",
     "typescript": "^4.1.2",
     "vite": "^2.1.0"
   }
