@@ -1,13 +1,13 @@
 import { BrowserWindow } from "electron";
 import windowList from "./windowList";
 import { IWindowListItem, IWindowManager } from "../../types/main";
-import { WindowName } from "./variables";
+import { Windows } from "./variables";
 
 class WindowManager implements IWindowManager {
-  private windowMap: Map<WindowName | string, BrowserWindow> = new Map();
-  private windowIdMap: Map<number, WindowName | string> = new Map();
+  private windowMap: Map<Windows | string, BrowserWindow> = new Map();
+  private windowIdMap: Map<number, Windows | string> = new Map();
 
-  async create(name: WindowName) {
+  async create(name: Windows) {
     const windowConfig: IWindowListItem = windowList.get(name)!;
     const window = new BrowserWindow(windowConfig.options());
     const id = window.id;
@@ -21,11 +21,11 @@ class WindowManager implements IWindowManager {
     return window;
   }
 
-  get(name: WindowName) {
+  get(name: Windows) {
     return this.windowMap.get(name)!;
   }
 
-  has(name: WindowName) {
+  has(name: Windows) {
     return this.windowMap.has(name);
   }
 

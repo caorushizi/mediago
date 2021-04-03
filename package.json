@@ -69,7 +69,9 @@
       "dist/**/*",
       "package.json"
     ],
-    "extraResources": [".bin/**"],
+    "extraResources": [
+      ".bin/**"
+    ],
     "win": {
       "icon": "",
       "target": [

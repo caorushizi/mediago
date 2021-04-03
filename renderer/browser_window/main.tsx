@@ -1,14 +1,15 @@
 import * as ReactDOM from "react-dom";
 import * as React from "react";
 import "./index.scss";
-import { Input, Spin } from "antd";
+import { Drawer, Input, Spin } from "antd";
 import {
   ArrowLeftOutlined,
   HomeOutlined,
   ReloadOutlined,
 } from "@ant-design/icons";
-import tdApp from "../renderer_common/td";
+import tdApp from "../common/scripts/td";
 import "antd/dist/antd.css";
+import { SourceUrl, SourceUrlToRenderer } from "../../types/common";
 
 const { remote, ipcRenderer } = window.require("electron");
 const { Search } = Input;
@@ -36,6 +37,8 @@ interface Props {}
 interface State {
   url: string;
   title: string;
+  drawerVisible: boolean;
+  m3u8List: SourceUrl[];
 }
 
 class App extends React.Component<Props, State> {
@@ -50,23 +53,39 @@ class App extends React.Component<Props, State> {
     this.state = {
       url: "",
       title: "",
+      drawerVisible: false,
+      m3u8List: [],
     };
   }
 
   async componentDidMount() {
     // 页面刷新时提供 view 的初始化
     this.view = remote.getCurrentWindow().getBrowserView();
+    await this.initWebView();
 
     ipcRenderer.on("viewReady", this.handleViewReady);
+    ipcRenderer.on("m3u8", this.handleWebViewMessage);
   }
 
   componentWillUnmount() {
     this.view?.setBounds({ x: 0, y: 0, height: 0, width: 0 });
     this.view?.webContents.off("dom-ready", this.handleViewDOMReady);
     ipcRenderer.removeListener("viewReady", this.handleViewReady);
+    ipcRenderer.removeListener("m3u8", this.handleWebViewMessage);
     this.view = undefined;
     this.resizeObserver?.disconnect();
   }
+
+  handleWebViewMessage: typeof SourceUrlToRenderer = (event, source) => {
+    const { m3u8List } = this.state;
+    if (
+      m3u8List.findIndex((item) => item.detail.url === source.detail.url) < 0
+    ) {
+      this.setState({
+        m3u8List: [...m3u8List, source],
+      });
+    }
+  };
 
   handleViewDOMReady = () => {
     const url = this.view?.webContents?.getURL() ?? "";
@@ -86,6 +105,7 @@ class App extends React.Component<Props, State> {
   };
 
   initWebView = async () => {
+    const { drawerVisible } = this.state;
     const webviewRef = this.webviewRef.current;
     const view = this.view;
     if (webviewRef && view) {
@@ -100,14 +120,34 @@ class App extends React.Component<Props, State> {
         const viewRect = computeRect(entry.contentRect);
         viewRect.x += rect.x;
         viewRect.y += rect.y;
-        view.setBounds(viewRect);
+        console.log(drawerVisible);
+        drawerVisible && view.setBounds(viewRect);
       });
       this.resizeObserver.observe(webviewRef);
     }
   };
 
+  onClose = () => {
+    this.setState({ drawerVisible: false });
+  };
+
+  showDrawer = () => {
+    this.view?.setBounds({ x: 0, y: 0, height: 0, width: 0 });
+    this.setState({ drawerVisible: true });
+  };
+
+  afterVisibleChange = (visible: boolean) => {
+    if (!visible) {
+      const webviewRef = this.webviewRef.current;
+      if (webviewRef) {
+        const rect = computeRect(webviewRef.getBoundingClientRect());
+        this.view?.setBounds(rect);
+      }
+    }
+  };
+
   render() {
-    const { url, title } = this.state;
+    const { url, title, drawerVisible, m3u8List } = this.state;
     return (
       <>
         <div className="tool-bar">
@@ -167,10 +207,32 @@ class App extends React.Component<Props, State> {
               }}
             />
           </div>
-          <div id="videoView" ref={this.webviewRef}>
-            <Spin />
+          <div className="webview-inner">
+            <div className="playlist">
+              <ul>
+                {m3u8List.map((m3u8) => (
+                  <li onClick={this.showDrawer}>{m3u8.title}</li>
+                ))}
+              </ul>
+            </div>
+            <div id="videoView" ref={this.webviewRef}>
+              <Spin />
+            </div>
           </div>
         </div>
+        <Drawer
+          title="Basic Drawer"
+          className="playlist-drawer"
+          placement="right"
+          closable={false}
+          onClose={this.onClose}
+          visible={drawerVisible}
+          afterVisibleChange={this.afterVisibleChange}
+        >
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+        </Drawer>
       </>
     );
   }

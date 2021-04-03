@@ -1,12 +1,11 @@
 import { IWindowListItem } from "../../types/main";
 import { is } from "electron-util";
-import { ipcMain } from "electron";
-import logger from "../utils/logger";
-import { WindowName } from "./variables";
+import { Windows } from "./variables";
+import { resolve } from "path";
 
-const windowList = new Map<WindowName, IWindowListItem>();
+const windowList = new Map<Windows, IWindowListItem>();
 
-windowList.set(WindowName.MAIN_WINDOW, {
+windowList.set(Windows.MAIN_WINDOW, {
   url: is.development
     ? "http://localhost:3000/main_window.html"
     : "mediago://electron/main_window.html",
@@ -15,6 +14,7 @@ windowList.set(WindowName.MAIN_WINDOW, {
       width: 590,
       minWidth: 590,
       height: 600,
+      show: false,
       frame: false,
       webPreferences: {
         nodeIntegration: true,
@@ -25,14 +25,18 @@ windowList.set(WindowName.MAIN_WINDOW, {
   },
   async callback(window) {
     if (is.development) window.webContents.openDevTools();
+
+    window.once("ready-to-show", () => {
+      window.show();
+    });
   },
 });
 
-windowList.set(WindowName.BROWSER_WINDOW, {
+windowList.set(Windows.BROWSER_WINDOW, {
   url: is.development
     ? "http://localhost:3000/browser_window.html"
     : "mediago://electron/browser_window.html",
-  options() {
+  options(): Electron.BrowserWindowConstructorOptions {
     return {
       width: 800,
       height: 600,
@@ -47,15 +51,29 @@ windowList.set(WindowName.BROWSER_WINDOW, {
   },
   async callback(window) {
     if (is.development) window.webContents.openDevTools();
+  },
+});
 
-    ipcMain.on("openBrowserWindow", () => {
-      window.show();
-    });
-
-    ipcMain.on("closeBrowserWindow", () => {
-      logger.info("closeBrowserWindow");
-      window.hide();
-    });
+windowList.set(Windows.SETTING_WINDOW, {
+  url: is.development
+    ? "http://localhost:3000/setting_window.html"
+    : "mediago://electron/setting_window.html",
+  options(): Electron.BrowserWindowConstructorOptions {
+    return {
+      width: 800,
+      height: 600,
+      show: false,
+      frame: false,
+      webPreferences: {
+        nodeIntegration: false,
+        contextIsolation: true,
+        enableRemoteModule: false,
+        preload: resolve(__dirname, "./preload.js"),
+      },
+    };
+  },
+  async callback(window) {
+    if (is.development) window.webContents.openDevTools();
   },
 });
 
