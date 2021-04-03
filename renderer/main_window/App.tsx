@@ -17,7 +17,7 @@ import {
 } from "antd";
 import { CloseOutlined, SettingOutlined } from "@ant-design/icons";
 import { ipcExec, ipcGetStore, ipcSetStore } from "./utils";
-import tdApp from "../renderer_common/td";
+import tdApp from "../common/scripts/td";
 
 const { remote, ipcRenderer } = window.require("electron");
 
@@ -53,8 +53,6 @@ class App extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    ipcRenderer.on("m3u8", this.handleWebViewMessage);
-
     const workspace = await ipcGetStore("local");
     const exeFile = await ipcGetStore("exeFile");
 
@@ -64,10 +62,6 @@ class App extends React.Component<Props, State> {
     });
 
     this.setState({ exeFile: exeFile || "" });
-  }
-
-  componentWillUnmount() {
-    ipcRenderer.removeListener("m3u8", this.handleWebViewMessage);
   }
 
   handleSelectDir = async () => {
@@ -87,20 +81,6 @@ class App extends React.Component<Props, State> {
   handleSelectExeFile = async (value: string) => {
     await ipcSetStore("exeFile", value);
     this.setState({ exeFile: value || "" });
-  };
-
-  handleWebViewMessage = (e: any, ...args: any[]) => {
-    const { m3u8List } = this.state;
-    const [m3u8Object] = args;
-    if (
-      m3u8List.findIndex(
-        (item) => item.requestDetails.url === m3u8Object.requestDetails.url
-      ) < 0
-    ) {
-      this.setState({
-        m3u8List: [...m3u8List, m3u8Object],
-      });
-    }
   };
 
   handleClickM3U8Item = (item: any) => {
@@ -537,7 +517,15 @@ class App extends React.Component<Props, State> {
           </div>
         </div>
         <div className="toolbar">
-          <div className="left" />
+          <div className="left">
+            <button
+              onClick={() => {
+                ipcRenderer.invoke("openSettingWindow");
+              }}
+            >
+              设置
+            </button>
+          </div>
           <div className="right">
             2021.03.07更新（
             <span

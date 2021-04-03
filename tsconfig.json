@@ -23,8 +23,8 @@
     "jsx": "react"
   },
   "include": [
-    "./renderer",
-    "./main",
-    "./types"
+    "./renderer/**/*",
+    "./main/**/*",
+    "./types/**/*"
   ]
 }

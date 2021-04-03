@@ -77,6 +77,7 @@ $playlist-width: 200px;
     flex-direction: column;
 
     .webview-nav {
+      padding: 2px;
     }
 
     .webview-inner {
@@ -95,21 +96,35 @@ $playlist-width: 200px;
       }
 
       .playlist {
+        background: red;
         width: $playlist-width;
         overflow-y: auto;
-        background: #c2c2c2;
 
         &::-webkit-scrollbar {
-          height: 8px;
-          width: 8px;
+          /*滚动条整体样式*/
+          width: 10px; /*高宽分别对应横竖滚动条的尺寸*/
+          height: 1px;
         }
-
-        &::-webkit-scrollbar-track {
-          background: transparent;
-        }
-
         &::-webkit-scrollbar-thumb {
-          background: rgba(0, 0, 0, 0.15);
+          /*滚动条里面小方块*/
+          border-radius: 10px;
+          background-color: skyblue;
+          background-image: -webkit-linear-gradient(
+            45deg,
+            rgba(255, 255, 255, 0.2) 25%,
+            transparent 25%,
+            transparent 50%,
+            rgba(255, 255, 255, 0.2) 50%,
+            rgba(255, 255, 255, 0.2) 75%,
+            transparent 75%,
+            transparent
+          );
+        }
+        &::-webkit-scrollbar-track {
+          /*滚动条里面轨道*/
+          box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+          background: #ededed;
+          border-radius: 10px;
         }
       }
     }

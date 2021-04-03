@@ -1,5 +1,5 @@
 import windowManager from "../window/windowManager";
-import { WindowName } from "../window/variables";
+import { Windows } from "../window/variables";
 import { BrowserView, session } from "electron";
 import path from "path";
 import { is } from "electron-util";
@@ -8,7 +8,7 @@ import XhrFilter from "./xhrFilter";
 const xhrFilter = new XhrFilter();
 
 const createBrowserView = async () => {
-  const browserWindow = windowManager.get(WindowName.BROWSER_WINDOW);
+  const browserWindow = windowManager.get(Windows.BROWSER_WINDOW);
   const partition = "persist:webview";
   const ses = session.fromPartition(partition);
 

@@ -3,7 +3,7 @@ import { is } from "electron-util";
 import { resolve } from "path";
 import logger from "./utils/logger";
 import windowManager from "./window/windowManager";
-import { WindowName } from "./window/variables";
+import { Windows } from "./window/variables";
 import handleIpc from "./utils/handleIpc";
 import createBrowserView from "./browserView/create";
 
@@ -12,17 +12,14 @@ if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
-// protocol.registerSchemesAsPrivileged([
-//   { scheme: "mediago", privileges: { bypassCSP: true } },
-// ]);
-
 if (!is.development) {
   global.__bin__ = resolve(app.getAppPath(), "../.bin").replace(/\\/g, "\\\\");
 }
 
 const init = async () => {
-  await windowManager.create(WindowName.MAIN_WINDOW);
-  await windowManager.create(WindowName.BROWSER_WINDOW);
+  windowManager.create(Windows.MAIN_WINDOW);
+  windowManager.create(Windows.SETTING_WINDOW);
+  await windowManager.create(Windows.BROWSER_WINDOW);
   await createBrowserView();
 };
 
