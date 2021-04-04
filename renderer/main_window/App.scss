@@ -1,18 +1,12 @@
-.app {
+@import "../common/style/common";
+@include window-common;
+
+.main-window {
   height: 100vh;
   width: 100%;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-
-  .drag-region {
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 30px;
-    border-bottom: 1px #dcdfe6 solid;
-    -webkit-app-region: drag;
-  }
 
   .action-button {
     -webkit-app-region: no-drag;
@@ -73,26 +67,6 @@
 
         .url {
         }
-      }
-    }
-  }
-
-  .toolbar {
-    height: 25px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 0 5px 0 5px;
-    border-top: #dcdfe6 1px solid;
-    justify-content: space-between;
-
-    .right {
-      color: #909399;
-      font-size: 14px;
-
-      .cursor {
-        cursor: pointer;
-        color: #000;
       }
     }
   }

@@ -1,7 +1,7 @@
 // 从主进程中想渲染进程发送的参数
 declare interface SourceUrl {
   title: string;
-  detail: Electron.OnBeforeSendHeadersListenerDetails;
+  details: Electron.OnBeforeSendHeadersListenerDetails;
 }
 
 declare function SourceUrlToRenderer(

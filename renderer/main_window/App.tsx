@@ -18,6 +18,7 @@ import {
 import { CloseOutlined, SettingOutlined } from "@ant-design/icons";
 import { ipcExec, ipcGetStore, ipcSetStore } from "./utils";
 import tdApp from "../common/scripts/td";
+import WindowToolBar from "../common/components/WindowToolBar";
 
 const { remote, ipcRenderer } = window.require("electron");
 
@@ -455,17 +456,12 @@ class App extends React.Component<Props, State> {
     const { m3u8List, exeFile } = this.state;
 
     return (
-      <div className="app">
-        <div className="drag-region" />
-        <div
-          role="presentation"
-          className="action-button"
-          onClick={() => {
+      <div className="main-window">
+        <WindowToolBar
+          onClose={() => {
             ipcRenderer.send("closeMainWindow");
           }}
-        >
-          <CloseOutlined />
-        </div>
+        />
 
         <div className="form">
           {this.renderErrorMsg()}

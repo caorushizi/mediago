@@ -18,6 +18,10 @@
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
     "antd": "^4.14.0",
+    "axios": "^0.21.1",
+    "classnames": "^2.3.1",
+    "dayjs": "^1.10.4",
+    "m3u8-parser": "^4.6.0",
     "react": "^17.0.0",
     "react-dom": "^17.0.0"
   },

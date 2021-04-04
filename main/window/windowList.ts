@@ -60,8 +60,8 @@ windowList.set(Windows.SETTING_WINDOW, {
     : "mediago://electron/setting_window.html",
   options(): Electron.BrowserWindowConstructorOptions {
     return {
-      width: 800,
-      height: 600,
+      width: 600,
+      height: 400,
       show: false,
       frame: false,
       webPreferences: {
