@@ -1,16 +1,10 @@
-import React, { Component } from "react";
+import * as ReactDOM from "react-dom";
+import * as React from "react";
+import "./index.scss";
+import App from "./App";
+import tdApp from "../common/scripts/td";
+import "antd/dist/antd.css";
 
-interface Props {}
-interface State {}
+tdApp.init();
 
-class SettingWindow extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-  }
-
-  render() {
-    return <div>setting</div>;
-  }
-}
-
-export default SettingWindow;
+ReactDOM.render(<App />, document.getElementById("root"));

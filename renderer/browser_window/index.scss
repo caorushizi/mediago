@@ -1,72 +1,12 @@
-html,
-body,
-#root {
-  padding: 0;
-  margin: 0;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
-}
+@import "../common/style/common";
+@include window-common;
 
 $playlist-width: 200px;
 
-#root {
+.browser-window {
+  height: 100%;
   display: flex;
   flex-direction: column;
-
-  .tool-bar {
-    margin-top: 3px;
-    height: 30px;
-    line-height: 30px;
-    -webkit-app-region: drag;
-    z-index: 1000;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    box-sizing: border-box;
-    user-select: none;
-
-    .tool-bar-left {
-      -webkit-app-region: no-drag;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-
-      .icon {
-        padding: 5px;
-
-        &.home {
-          font-size: 14px;
-          margin-top: -1px;
-        }
-
-        &:hover {
-          background: #dcdfe6;
-        }
-      }
-    }
-
-    .title {
-      overflow: hidden; //超出的文本隐藏
-      text-overflow: ellipsis; //溢出用省略号显示
-      white-space: nowrap; //溢出不换行
-    }
-
-    .tool-bar-right {
-      .button {
-        width: 50px;
-        text-align: center;
-        cursor: pointer;
-        -webkit-app-region: no-drag;
-
-        &:hover {
-          background-color: #d71526;
-          color: #fff;
-        }
-      }
-    }
-  }
 
   .webview-container {
     flex: 1;
@@ -97,19 +37,32 @@ $playlist-width: 200px;
       .playlist {
         width: $playlist-width;
         overflow-y: auto;
-        background: #c2c2c2;
+        border-right: 1px solid #dcdfe6;
 
-        &::-webkit-scrollbar {
-          height: 8px;
-          width: 8px;
-        }
+        @include scrollbar;
 
-        &::-webkit-scrollbar-track {
-          background: transparent;
-        }
-
-        &::-webkit-scrollbar-thumb {
-          background: rgba(0, 0, 0, 0.15);
+        .playlist-item {
+          padding: 10px;
+          margin: 5px;
+          box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+          .media-title {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            height: 30px;
+            line-height: 30px;
+            user-select: none;
+          }
+          .action {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            .left {
+            }
+            .right {
+            }
+          }
         }
       }
     }

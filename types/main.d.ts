@@ -10,15 +10,15 @@ declare global {
 
 declare var __bin__: string;
 
-declare enum WindowName {
+declare enum Windows {
   MAIN_WINDOW = "MAIN_WINDOW",
   BROWSER_WINDOW = "BROWSER_WINDOW",
 }
 
 declare interface IWindowManager {
-  create: (name: WindowName) => Promise<BrowserWindow | null>;
-  get: (name: WindowName) => BrowserWindow | null;
-  has: (name: WindowName) => boolean;
+  create: (name: Windows) => Promise<BrowserWindow | null>;
+  get: (name: Windows) => BrowserWindow | null;
+  has: (name: Windows) => boolean;
   deleteById: (id: number) => void;
 }
 

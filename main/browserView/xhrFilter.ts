@@ -2,6 +2,7 @@ import { getType } from "mime";
 import logger from "../utils/logger";
 import windowManager from "../window/windowManager";
 import { Windows } from "../window/variables";
+import { SourceUrl } from "../../types/common";
 
 class XhrFilter {
   // 当请求即将发生时
@@ -15,17 +16,16 @@ class XhrFilter {
     callback: (beforeSendResponse: Electron.BeforeSendResponse) => void
   ) {
     const m3u8Reg = /\.m3u8$/;
-    const tsReg = /\.ts$/;
     let cancel = false;
     const myURL = new URL(details.url);
     if (m3u8Reg.test(myURL.pathname)) {
       logger.info("在窗口中捕获 m3u8 链接: ", details.url);
       const { webContents } = windowManager.get(Windows.BROWSER_WINDOW);
-      webContents.send("m3u8", {
+      const value: SourceUrl = {
         title: webContents.getTitle(),
-        requestDetails: details,
-      });
-    } else if (tsReg.test(myURL.pathname)) {
+        details: details,
+      };
+      webContents.send("m3u8", value);
       cancel = true;
     }
     callback({
