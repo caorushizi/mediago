@@ -1,7 +1,7 @@
 import * as ReactDOM from "react-dom";
 import * as React from "react";
 import "./index.scss";
-import { Button, Drawer, Space, Spin, Tag } from "antd";
+import { Button, Drawer, Modal, Space, Spin, Tag } from "antd";
 import { DownloadOutlined, SettingOutlined } from "@ant-design/icons";
 import tdApp from "../common/scripts/td";
 import "antd/dist/antd.css";
@@ -9,6 +9,7 @@ import { SourceUrl, SourceUrlToRenderer } from "../../types/common";
 import WindowToolBar from "../common/components/WindowToolBar";
 import axios from "axios";
 import SearchBar from "./SearchBar";
+import { ipcGetStore } from "../main_window/utils";
 
 const m3u8Parser = window.require("m3u8-parser");
 const { remote, ipcRenderer } = window.require("electron");
@@ -83,7 +84,7 @@ class App extends React.Component<Props, State> {
   async componentDidMount() {
     // 页面刷新时提供 view 的初始化
     this.view = remote.getCurrentWindow().getBrowserView();
-    // await this.initWebView();
+    await this.initWebView();
 
     ipcRenderer.on("viewReady", this.handleViewReady);
     ipcRenderer.on("m3u8", this.handleWebViewMessage);
@@ -124,7 +125,7 @@ class App extends React.Component<Props, State> {
     // 在 browser window 创建时初始化 view
     this.view = remote.getCurrentWindow().getBrowserView();
 
-    // await this.initWebView();
+    await this.initWebView();
   };
 
   initWebView = async () => {
@@ -269,10 +270,15 @@ class App extends React.Component<Props, State> {
                           type="primary"
                           icon={<DownloadOutlined />}
                           size="small"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            // event.preventDefault();
-                            console.log(123123);
+                          onClick={async () => {
+                            const workspace = await ipcGetStore("local");
+                            if (workspace) {
+                              Modal.error({
+                                title: "Use Hook!",
+                                content: <>123</>,
+                              });
+                            }
+                            console.log(workspace);
                           }}
                         />
                         <Button
