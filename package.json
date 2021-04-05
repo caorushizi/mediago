@@ -54,6 +54,7 @@
     "eslint-plugin-react-hooks": "1.7.0",
     "glob": "^7.1.6",
     "mime": "^2.5.2",
+    "plop": "^2.7.4",
     "prettier": "2.2.1",
     "rimraf": "^3.0.2",
     "sass": "^1.32.8",
