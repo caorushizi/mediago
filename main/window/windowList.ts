@@ -7,8 +7,8 @@ const windowList = new Map<Windows, IWindowListItem>();
 
 windowList.set(Windows.MAIN_WINDOW, {
   url: is.development
-    ? "http://localhost:3000/main_window.html"
-    : "mediago://electron/main_window.html",
+    ? "http://localhost:3000/main-window.html"
+    : "mediago://electron/main-window.html",
   options() {
     return {
       width: 590,
@@ -34,8 +34,8 @@ windowList.set(Windows.MAIN_WINDOW, {
 
 windowList.set(Windows.BROWSER_WINDOW, {
   url: is.development
-    ? "http://localhost:3000/browser_window.html"
-    : "mediago://electron/browser_window.html",
+    ? "http://localhost:3000/browser-window.html"
+    : "mediago://electron/browser-window.html",
   options(): Electron.BrowserWindowConstructorOptions {
     return {
       width: 800,
@@ -56,8 +56,8 @@ windowList.set(Windows.BROWSER_WINDOW, {
 
 windowList.set(Windows.SETTING_WINDOW, {
   url: is.development
-    ? "http://localhost:3000/setting_window.html"
-    : "mediago://electron/setting_window.html",
+    ? "http://localhost:3000/setting-window.html"
+    : "mediago://electron/settin-window.html",
   options(): Electron.BrowserWindowConstructorOptions {
     return {
       width: 600,
@@ -79,8 +79,8 @@ windowList.set(Windows.SETTING_WINDOW, {
 
 windowList.set(Windows.CONFIRM_WINDOW, {
   url: is.development
-    ? "http://localhost:3000/confirm_window.html"
-    : "mediago://electron/confirm_window.html",
+    ? "http://localhost:3000/confirm-window.html"
+    : "mediago://electron/confirm-window.html",
   options(): Electron.BrowserWindowConstructorOptions {
     return {
       width: 300,
