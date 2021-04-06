@@ -9,7 +9,7 @@ import { SourceUrl, SourceUrlToRenderer } from "../../types/common";
 import WindowToolBar from "../common/components/WindowToolBar";
 import axios from "axios";
 import SearchBar from "./SearchBar";
-import { ipcGetStore } from "../main_window/utils";
+import { ipcGetStore } from "../main-window/utils";
 
 const m3u8Parser = window.require("m3u8-parser");
 const { remote, ipcRenderer } = window.require("electron");
@@ -74,7 +74,7 @@ class App extends React.Component<Props, State> {
       drawerVisible: false,
       m3u8List: [
         JSON.parse(
-          '{"title":"新封神：哪吒重生1080P在线播放,免费观看电影完整版-青苹果影院新封神：哪吒重生1080P在线播放,免费观看电影完整版-青苹果影院","details":{"id":949,"url":"https://vod.ebaiya.com/20210402/OZAmg4R0/1704kb/hls/index.m3u8","method":"GET","timestamp":1617539297192.7349,"resourceType":"xhr","webContentsId":6,"referrer":"","requestHeaders":{"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Electron/11.2.1 Safari/537.36","Accept":"*/*","Origin":"https://dp.url-play.top","Sec-Fetch-Site":"cross-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Accept-Encoding":"gzip, deflate, br","Accept-Language":"zh-CN"}}}'
+          '{"title":"新封神：哪吒重生1080P在线播放,免费观看电影完整版-青苹果影院","details":{"id":949,"url":"https://vod.ebaiya.com/20210402/OZAmg4R0/1704kb/hls/index.m3u8","method":"GET","timestamp":1617539297192.7349,"resourceType":"xhr","webContentsId":6,"referrer":"","requestHeaders":{"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Electron/11.2.1 Safari/537.36","Accept":"*/*","Origin":"https://dp.url-play.top","Sec-Fetch-Site":"cross-site","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Accept-Encoding":"gzip, deflate, br","Accept-Language":"zh-CN"}}}'
         ),
       ],
       currentSource: null,
@@ -298,20 +298,18 @@ class App extends React.Component<Props, State> {
             </div>
           </div>
         </div>
-        {currentSource && (
-          <Drawer
-            title={currentSource.title}
-            className="playlist-drawer"
-            placement="right"
-            onClose={this.onClose}
-            maskClosable={false}
-            visible={drawerVisible}
-            afterVisibleChange={this.afterVisibleChange}
-          >
-            <p>url: {currentSource.details.url}</p>
-            <p>headers:</p>
-          </Drawer>
-        )}
+        <Drawer
+          title={currentSource?.title}
+          className="playlist-drawer"
+          placement="right"
+          onClose={this.onClose}
+          maskClosable={false}
+          visible={drawerVisible}
+          afterVisibleChange={this.afterVisibleChange}
+        >
+          <p>url: {currentSource?.details.url}</p>
+          <p>headers:</p>
+        </Drawer>
       </div>
     );
   }
