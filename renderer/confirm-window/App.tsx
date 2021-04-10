@@ -13,11 +13,10 @@ class SettingWindow extends React.Component<Props, State> {
     return (
       <div className="confirm-window">
         <WindowToolBar onClose={() => {}}>是否确认</WindowToolBar>
-        <div className="window-inner">
-        </div>
+        <div className="window-inner"></div>
       </div>
     );
   }
 }
 
-export default ConfirmWindow;
+export default SettingWindow;

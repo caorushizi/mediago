@@ -2,13 +2,13 @@ import React from "react";
 import "./index.scss";
 import {
   ArrowLeftOutlined,
+  EnterOutlined,
   HomeOutlined,
   ReloadOutlined,
-  SettingOutlined,
 } from "@ant-design/icons";
 import classNames from "classnames";
 
-type Props = {
+interface Props {
   onGoBack: () => void;
   onReload: () => void;
   onGoBackHome: () => void;
@@ -16,7 +16,7 @@ type Props = {
   url: string;
   onUrlChange: (url: string) => void;
   className: string;
-};
+}
 
 const SearchBar: React.FC<Props> = (props) => {
   const {
@@ -47,7 +47,7 @@ const SearchBar: React.FC<Props> = (props) => {
         onChange={(e) => onUrlChange(e.target.value)}
       />
       <div className="btn">
-        <SettingOutlined className="button" onClick={onSetting} />
+        <EnterOutlined className="button" onClick={onSetting} />
       </div>
     </div>
   );
