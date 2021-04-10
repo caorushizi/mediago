@@ -19,6 +19,7 @@ import { CloseOutlined, SettingOutlined } from "@ant-design/icons";
 import { ipcExec, ipcGetStore, ipcSetStore } from "./utils";
 import tdApp from "../common/scripts/td";
 import WindowToolBar from "../common/components/WindowToolBar";
+import { SourceUrl } from "../../types/common";
 
 const { remote, ipcRenderer } = window.require("electron");
 
@@ -29,7 +30,7 @@ const layout = {
 
 interface Props {}
 interface State {
-  m3u8List: any[];
+  m3u8List: SourceUrl[];
   exeFile: string;
   showMore: boolean;
   showError: boolean;
@@ -63,7 +64,22 @@ class App extends React.Component<Props, State> {
     });
 
     this.setState({ exeFile: exeFile || "" });
+
+    ipcRenderer.on("m3u8", this.handleWebViewMessage);
   }
+
+  componentWillUnmount() {
+    ipcRenderer.removeListener("m3u8", this.handleWebViewMessage);
+  }
+
+  handleWebViewMessage = (e: any, source: SourceUrl) => {
+    const { m3u8List } = this.state;
+    const isInList =
+      m3u8List.findIndex((item) => item.details.url === source.details.url) < 0;
+    if (isInList) {
+      this.setState({ m3u8List: [...m3u8List, source] });
+    }
+  };
 
   handleSelectDir = async () => {
     const workspace = this.formRef.current?.getFieldValue(["workspace"]);
@@ -87,8 +103,8 @@ class App extends React.Component<Props, State> {
   handleClickM3U8Item = (item: any) => {
     this.setState({ showError: false, errorMsg: "" });
     const exeFile = this.formRef.current?.getFieldValue(["exeFile"]);
-    const { title, requestDetails } = item;
-    const { requestHeaders, url } = requestDetails;
+    const { title, details } = item;
+    const { requestHeaders, url } = details;
     const headers = Object.keys(requestHeaders)
       .reduce((result, key) => {
         if (exeFile === "mediago") {
@@ -497,7 +513,7 @@ class App extends React.Component<Props, State> {
               <div
                 role="presentation"
                 className="m3u8-item"
-                key={item.requestDetails.url}
+                key={item.details.url}
                 onClick={() => this.handleClickM3U8Item(item)}
               >
                 <div className="title">
@@ -506,22 +522,13 @@ class App extends React.Component<Props, State> {
                 </div>
                 <div className="url">
                   链接：
-                  {item.requestDetails.url.split("?")[0]}
+                  {item.details.url.split("?")[0]}
                 </div>
               </div>
             ))}
           </div>
         </div>
         <div className="toolbar">
-          <div className="left">
-            <button
-              onClick={() => {
-                ipcRenderer.invoke("openSettingWindow");
-              }}
-            >
-              设置
-            </button>
-          </div>
           <div className="right">
             2021.03.07更新（
             <span

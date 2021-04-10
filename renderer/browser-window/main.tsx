@@ -256,60 +256,11 @@ class App extends React.Component<Props, State> {
             onSetting={this.onSetting}
           />
           <div className="webview-inner">
-            <div className="playlist">
-              {m3u8List.map((m3u8) => (
-                <div className="playlist-item">
-                  <div className="media-title">{m3u8.title}</div>
-                  <div className="action">
-                    <div className="left">
-                      <Tag color="processing">m3u8</Tag>
-                    </div>
-                    <div className="right">
-                      <Space>
-                        <Button
-                          type="primary"
-                          icon={<DownloadOutlined />}
-                          size="small"
-                          onClick={async () => {
-                            const workspace = await ipcGetStore("local");
-                            if (workspace) {
-                              Modal.error({
-                                title: "Use Hook!",
-                                content: <>123</>,
-                              });
-                            }
-                            console.log(workspace);
-                          }}
-                        />
-                        <Button
-                          type="primary"
-                          icon={<SettingOutlined />}
-                          size="small"
-                          onClick={() => this.showDrawer(m3u8)}
-                        />
-                      </Space>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
             <div id="videoView" ref={this.webviewRef}>
               <Spin />
             </div>
           </div>
         </div>
-        <Drawer
-          title={currentSource?.title}
-          className="playlist-drawer"
-          placement="right"
-          onClose={this.onClose}
-          maskClosable={false}
-          visible={drawerVisible}
-          afterVisibleChange={this.afterVisibleChange}
-        >
-          <p>url: {currentSource?.details.url}</p>
-          <p>headers:</p>
-        </Drawer>
       </div>
     );
   }

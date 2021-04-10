@@ -20,7 +20,7 @@ class XhrFilter {
     const myURL = new URL(details.url);
     if (m3u8Reg.test(myURL.pathname)) {
       logger.info("在窗口中捕获 m3u8 链接: ", details.url);
-      const { webContents } = windowManager.get(Windows.BROWSER_WINDOW);
+      const { webContents } = windowManager.get(Windows.MAIN_WINDOW);
       const value: SourceUrl = {
         title: webContents.getTitle(),
         details: details,
