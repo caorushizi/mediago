@@ -7,6 +7,7 @@ import {
   ReloadOutlined,
 } from "@ant-design/icons";
 import classNames from "classnames";
+import PropTypes from "prop-types";
 
 interface Props {
   onGoBack: () => void;
@@ -52,5 +53,11 @@ const SearchBar: React.FC<Props> = (props) => {
     </div>
   );
 };
+
+SearchBar.propTypes = {
+  onGoBack: PropTypes.func.isRequired,
+};
+
+SearchBar.defaultProps = {};
 
 export default SearchBar;

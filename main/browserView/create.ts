@@ -1,5 +1,5 @@
-import windowManager from "../window/windowManager";
-import { Windows } from "../window/variables";
+import windowManager from "main/window/windowManager";
+import { Windows } from "main/window/variables";
 import { BrowserView, session } from "electron";
 import path from "path";
 import { is } from "electron-util";

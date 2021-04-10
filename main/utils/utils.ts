@@ -1,9 +1,8 @@
 import { spawn, SpawnOptions } from "child_process";
 import glob from "glob";
-// @ts-ignore
 import spawnargs from "spawn-args";
 import semver from "semver";
-import { workspace } from "./variables";
+import { workspace } from "main/utils/variables";
 import logger from "./logger";
 
 const spawnWrapper = (command: string, args: string, options: SpawnOptions) =>

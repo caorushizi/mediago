@@ -1,4 +1,5 @@
 import { BrowserWindow } from "electron";
+import { Windows } from "main/window/variables";
 
 declare global {
   namespace NodeJS {
@@ -8,12 +9,7 @@ declare global {
   }
 }
 
-declare var __bin__: string;
-
-declare enum Windows {
-  MAIN_WINDOW = "MAIN_WINDOW",
-  BROWSER_WINDOW = "BROWSER_WINDOW",
-}
+declare let __bin__: string;
 
 declare interface IWindowManager {
   create: (name: Windows) => Promise<BrowserWindow | null>;

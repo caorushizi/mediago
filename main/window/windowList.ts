@@ -1,7 +1,6 @@
-import { IWindowListItem } from "../../types/main";
 import { is } from "electron-util";
+import { IWindowListItem } from "types/main";
 import { Windows } from "./variables";
-import { resolve } from "path";
 
 const windowList = new Map<Windows, IWindowListItem>();
 
@@ -14,7 +13,7 @@ windowList.set(Windows.MAIN_WINDOW, {
       width: 590,
       minWidth: 590,
       height: 600,
-      show: false,
+      show: true,
       frame: false,
       webPreferences: {
         nodeIntegration: true,
@@ -25,8 +24,10 @@ windowList.set(Windows.MAIN_WINDOW, {
   },
   async callback(window) {
     if (is.development) window.webContents.openDevTools();
+    console.log("1212312312312312");
 
     window.once("ready-to-show", () => {
+      console.log("main window is ready to show!");
       window.show();
     });
   },
