@@ -20,7 +20,19 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react"
+    "jsx": "react",
+    "baseUrl": "./",
+    "paths": {
+      "main/*": [
+        "main/*"
+      ],
+      "renderer/*": [
+        "renderer/*"
+      ],
+      "types/*": [
+        "types/*"
+      ]
+    }
   },
   "include": [
     "./renderer/**/*",

@@ -21,9 +21,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      main: resolve(__dirname, "main"),
       renderer: resolve(__dirname, "renderer"),
-      common: resolve(__dirname, "common"),
+      types: resolve(__dirname, "types"),
     },
   },
 });

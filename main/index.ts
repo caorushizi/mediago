@@ -1,11 +1,11 @@
 import { app, BrowserWindow, protocol, session } from "electron";
 import { is } from "electron-util";
 import { resolve } from "path";
-import logger from "./utils/logger";
-import windowManager from "./window/windowManager";
-import { Windows } from "./window/variables";
-import handleIpc from "./utils/handleIpc";
-import createBrowserView from "./browserView/create";
+import logger from "main/utils/logger";
+import windowManager from "main/window/windowManager";
+import { Windows } from "main/window/variables";
+import handleIpc from "main/utils/handleIpc";
+import createBrowserView from "main/browserView/create";
 
 // eslint-disable-next-line global-require
 if (require("electron-squirrel-startup")) {
@@ -18,7 +18,7 @@ if (!is.development) {
 
 const init = async () => {
   windowManager.create(Windows.MAIN_WINDOW);
-  windowManager.create(Windows.SETTING_WINDOW);
+  // windowManager.create(Windows.SETTING_WINDOW);
   await windowManager.create(Windows.BROWSER_WINDOW);
   await createBrowserView();
 };

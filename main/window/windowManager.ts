@@ -1,16 +1,17 @@
 import { BrowserWindow } from "electron";
+import { IWindowListItem, IWindowManager } from "types/main";
 import windowList from "./windowList";
-import { IWindowListItem, IWindowManager } from "../../types/main";
 import { Windows } from "./variables";
 
 class WindowManager implements IWindowManager {
   private windowMap: Map<Windows | string, BrowserWindow> = new Map();
+
   private windowIdMap: Map<number, Windows | string> = new Map();
 
   async create(name: Windows) {
     const windowConfig: IWindowListItem = windowList.get(name)!;
     const window = new BrowserWindow(windowConfig.options());
-    const id = window.id;
+    const { id } = window;
     this.windowMap.set(name, window);
     this.windowIdMap.set(window.id, name);
     await window.loadURL(windowConfig.url);
