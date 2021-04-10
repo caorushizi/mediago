@@ -18,9 +18,9 @@ module.exports = function (plop) {
       const title = "{{title}}";
       return [
         {
-          type: "add", //类型创建模板文件
-          path: "renderer/{{dashCase name}}/main.tsx", //文件创建路径
-          templateFile: "plop-templates/view/main.tsx.hbs", //文件模板
+          type: "add",
+          path: "renderer/{{dashCase name}}/main.tsx",
+          templateFile: "plop-templates/view/main.tsx.hbs",
           data: { name, title },
         },
         {
@@ -30,15 +30,15 @@ module.exports = function (plop) {
           data: { name, title },
         },
         {
-          type: "add", //类型创建模板文件
-          path: "renderer/{{dashCase name}}/App.tsx", //文件创建路径
-          templateFile: "plop-templates/view/App.tsx.hbs", //文件模板
+          type: "add",
+          path: "renderer/{{dashCase name}}/App.tsx",
+          templateFile: "plop-templates/view/App.tsx.hbs",
           data: { name, title },
         },
         {
-          type: "add", //类型创建模板文件
-          path: "{{dashCase name}}.html", //文件创建路径
-          templateFile: "plop-templates/view/index.html.hbs", //文件模板
+          type: "add",
+          path: "{{dashCase name}}.html",
+          templateFile: "plop-templates/view/index.html.hbs",
           data: { name, title },
         },
       ];
