@@ -3,6 +3,7 @@ import "./index.scss";
 import WindowToolBar from "../common/components/WindowToolBar";
 
 interface Props {}
+
 interface State {}
 
 class SettingWindow extends React.Component<Props, State> {

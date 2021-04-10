@@ -29,6 +29,7 @@
     flex-direction: row;
     align-items: center;
     -webkit-app-region: no-drag;
+
     .btn {
       height: 29px;
       width: 45px;
@@ -36,9 +37,11 @@
       font-size: 15px;
       margin-left: 1px;
       transition: background-color 0.3s ease;
+
       &:hover {
         background: #e5e5e5;
       }
+
       &.close {
         &:hover {
           background: #e81123;

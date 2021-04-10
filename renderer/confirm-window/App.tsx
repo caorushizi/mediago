@@ -2,6 +2,7 @@ import React from "react";
 import WindowToolBar from "../common/components/WindowToolBar";
 
 interface Props {}
+
 interface State {}
 
 class SettingWindow extends React.Component<Props, State> {
@@ -13,7 +14,7 @@ class SettingWindow extends React.Component<Props, State> {
     return (
       <div className="confirm-window">
         <WindowToolBar onClose={() => {}}>是否确认</WindowToolBar>
-        <div className="window-inner"></div>
+        <div className="window-inner" />
       </div>
     );
   }
