@@ -1,4 +1,5 @@
 .eslintrc.js
 esbuild.config.js
+babel.config.js
 webpack.config.js
 script/dev-server.js
