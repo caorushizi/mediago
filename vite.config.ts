@@ -5,6 +5,10 @@ import { resolve } from "path";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [reactRefresh()],
+  server: {
+    port: 7789,
+    strictPort: true,
+  },
   build: {
     target: "es2015",
     rollupOptions: {
@@ -14,5 +18,12 @@ export default defineConfig({
       },
     },
     outDir: resolve(__dirname, "dist/electron"),
+  },
+  resolve: {
+    alias: {
+      main: resolve(__dirname, "main"),
+      renderer: resolve(__dirname, "renderer"),
+      common: resolve(__dirname, "common"),
+    },
   },
 });

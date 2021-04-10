@@ -7,7 +7,7 @@ const windowList = new Map<Windows, IWindowListItem>();
 
 windowList.set(Windows.MAIN_WINDOW, {
   url: is.development
-    ? "http://localhost:3000/main-window.html"
+    ? "http://localhost:7789/main-window.html"
     : "mediago://electron/main-window.html",
   options() {
     return {
@@ -34,7 +34,7 @@ windowList.set(Windows.MAIN_WINDOW, {
 
 windowList.set(Windows.BROWSER_WINDOW, {
   url: is.development
-    ? "http://localhost:3000/browser-window.html"
+    ? "http://localhost:7789/browser-window.html"
     : "mediago://electron/browser-window.html",
   options(): Electron.BrowserWindowConstructorOptions {
     return {
@@ -56,7 +56,7 @@ windowList.set(Windows.BROWSER_WINDOW, {
 
 // windowList.set(Windows.SETTING_WINDOW, {
 //   url: is.development
-//     ? "http://localhost:3000/setting-window.html"
+//     ? "http://localhost:7789/setting-window.html"
 //     : "mediago://electron/settin-window.html",
 //   options(): Electron.BrowserWindowConstructorOptions {
 //     return {
@@ -79,7 +79,7 @@ windowList.set(Windows.BROWSER_WINDOW, {
 
 // windowList.set(Windows.CONFIRM_WINDOW, {
 //   url: is.development
-//     ? "http://localhost:3000/confirm-window.html"
+//     ? "http://localhost:7789/confirm-window.html"
 //     : "mediago://electron/confirm-window.html",
 //   options(): Electron.BrowserWindowConstructorOptions {
 //     return {
