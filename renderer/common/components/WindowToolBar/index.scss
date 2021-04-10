@@ -1,0 +1,50 @@
+@import "../../style/common";
+
+.window-tool-bar {
+  height: 30px;
+  line-height: 30px;
+  -webkit-app-region: drag;
+  z-index: 1000;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  user-select: none;
+  border-bottom: 1px solid #dcdfe6;
+
+  &-left {
+    -webkit-app-region: no-drag;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  &-title {
+    @include text-ellipsis();
+  }
+
+  &-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    -webkit-app-region: no-drag;
+    .btn {
+      height: 29px;
+      width: 45px;
+      text-align: center;
+      font-size: 15px;
+      margin-left: 1px;
+      transition: background-color 0.3s ease;
+      &:hover {
+        background: #e5e5e5;
+      }
+      &.close {
+        &:hover {
+          background: #e81123;
+          color: #fff;
+        }
+      }
+    }
+  }
+}
