@@ -1,3 +1,4 @@
 .eslintrc.js
 esbuild.config.js
 webpack.config.js
+script/dev-server.js

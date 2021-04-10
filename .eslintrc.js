@@ -7,15 +7,26 @@ module.exports = {
     node: true,
   },
   extends: [
-    "airbnb",
+    "airbnb-typescript",
     "airbnb/hooks",
     "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "prettier",
   ],
   plugins: ["@typescript-eslint", "prettier"],
   rules: {
     "prettier/prettier": "error",
     "react/jsx-filename-extension": [1, { extensions: [".tsx", ".ts"] }],
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        js: "never",
+        jsx: "never",
+        ts: "never",
+        tsx: "never",
+      },
+    ],
   },
   settings: {
     "import/extensions": [".js", ".jsx", ".ts", ".tsx"],
