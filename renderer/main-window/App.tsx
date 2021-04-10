@@ -15,11 +15,11 @@ import {
   InputNumber,
   FormInstance,
 } from "antd";
-import { CloseOutlined, SettingOutlined } from "@ant-design/icons";
+import { SettingOutlined } from "@ant-design/icons";
+import tdApp from "renderer/common/scripts/td";
+import WindowToolBar from "renderer/common/components/WindowToolBar";
+import { SourceUrl } from "types/common";
 import { ipcExec, ipcGetStore, ipcSetStore } from "./utils";
-import tdApp from "../common/scripts/td";
-import WindowToolBar from "../common/components/WindowToolBar";
-import { SourceUrl } from "../../types/common";
 
 const { remote, ipcRenderer } = window.require("electron");
 
