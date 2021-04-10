@@ -1,0 +1,73 @@
+@import "../common/style/common";
+@include window-common;
+
+.main-window {
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  .action-button {
+    -webkit-app-region: no-drag;
+    height: 30px;
+    padding: 0 10px;
+    position: absolute;
+    right: 0;
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    &:hover {
+      background-color: #d71526;
+      color: #fff;
+    }
+  }
+
+  .form {
+    flex: 1;
+    margin-top: 30px;
+    padding: 15px 10px 10px 10px;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+
+    .form-inner {
+      margin-top: 10px;
+    }
+
+    .m3u8-list {
+      margin-top: 5px;
+
+      .divider {
+        margin: 0 0 25px 0;
+      }
+
+      .m3u8-item {
+        box-sizing: border-box;
+        color: #303133;
+        font-size: 14px;
+        padding: 5px;
+        margin-bottom: 5px;
+        background: none;
+        cursor: pointer;
+        word-break: break-all;
+        border: 2px solid #323130;
+        display: flex;
+        flex-direction: column;
+
+        &:hover {
+          border: 2px solid #0078d4;
+        }
+
+        .title {
+        }
+
+        .url {
+        }
+      }
+    }
+  }
+}
