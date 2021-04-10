@@ -9,10 +9,10 @@ module.exports = {
   extends: [
     "airbnb",
     "airbnb/hooks",
-    "prettier",
     "plugin:@typescript-eslint/recommended",
+    "prettier",
   ],
-  plugins: ["prettier", "@typescript-eslint"],
+  plugins: ["@typescript-eslint", "prettier"],
   rules: {
     "prettier/prettier": "error",
     "react/jsx-filename-extension": [1, { extensions: [".tsx", ".ts"] }],

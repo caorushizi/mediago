@@ -18,8 +18,8 @@ windowList.set(Windows.MAIN_WINDOW, {
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false,
-        enableRemoteModule: true,
-      },
+        enableRemoteModule: true
+      }
     };
   },
   async callback(window) {
@@ -30,7 +30,7 @@ windowList.set(Windows.MAIN_WINDOW, {
       console.log("main window is ready to show!");
       window.show();
     });
-  },
+  }
 });
 
 windowList.set(Windows.BROWSER_WINDOW, {
@@ -46,13 +46,13 @@ windowList.set(Windows.BROWSER_WINDOW, {
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false,
-        enableRemoteModule: true,
-      },
+        enableRemoteModule: true
+      }
     };
   },
   async callback(window) {
     if (is.development) window.webContents.openDevTools();
-  },
+  }
 });
 
 // windowList.set(Windows.SETTING_WINDOW, {

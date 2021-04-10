@@ -11,6 +11,7 @@ interface Props {
   extraButton?: ReactNode[];
   onClose: () => void;
 }
+
 interface State {}
 
 class WindowToolBar extends Component<Props, State> {

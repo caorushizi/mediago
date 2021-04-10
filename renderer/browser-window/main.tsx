@@ -1,30 +1,18 @@
 import * as ReactDOM from "react-dom";
 import * as React from "react";
 import "./index.scss";
-import { Button, Drawer, Modal, Space, Spin, Tag } from "antd";
-import { DownloadOutlined, SettingOutlined } from "@ant-design/icons";
-import tdApp from "../common/scripts/td";
+import { Spin } from "antd";
+import tdApp from "renderer/common/scripts/td";
 import "antd/dist/antd.css";
-import { SourceUrl, SourceUrlToRenderer } from "../../types/common";
-import WindowToolBar from "../common/components/WindowToolBar";
+import { SourceUrl, SourceUrlToRenderer } from "types/common";
 import axios from "axios";
+import WindowToolBar from "../common/components/WindowToolBar";
 import SearchBar from "./SearchBar";
-import { ipcGetStore } from "../main-window/utils";
 
 const m3u8Parser = window.require("m3u8-parser");
 const { remote, ipcRenderer } = window.require("electron");
 
 tdApp.init();
-
-function formatTime(seconds: number) {
-  return [
-    Math.floor(seconds / 60 / 60),
-    Math.floor((seconds / 60) % 60),
-    Math.floor(seconds % 60),
-  ]
-    .join(":")
-    .replace(/\b(\d)\b/g, "0$1");
-}
 
 type M3u8Detail = SourceUrl & {
   loading: boolean;
@@ -51,6 +39,7 @@ const computeRect = ({
 });
 
 interface Props {}
+
 interface State {
   url: string;
   title: string;
@@ -61,8 +50,11 @@ interface State {
 
 class App extends React.Component<Props, State> {
   static defaultProps = {};
+
   view?: Electron.BrowserView;
+
   resizeObserver?: ResizeObserver;
+
   webviewRef = React.createRef<HTMLDivElement>();
 
   constructor(props: Props) {
@@ -131,7 +123,7 @@ class App extends React.Component<Props, State> {
   initWebView = async () => {
     const { drawerVisible } = this.state;
     const webviewRef = this.webviewRef.current;
-    const view = this.view;
+    const { view } = this;
     if (webviewRef && view) {
       const rect = computeRect(webviewRef.getBoundingClientRect());
       view.setBounds(rect);
