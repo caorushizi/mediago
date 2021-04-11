@@ -1,0 +1,21 @@
+@import "renderer/common/style/common";
+
+.download-list {
+}
+
+.download-drawer {
+  .ant-drawer-body {
+    @include scrollbar;
+  }
+  .item {
+    display: flex;
+    flex-direction: row;
+    .label {
+      width: 90px;
+      min-width: 90px;
+      text-align: right;
+    }
+    .value {
+    }
+  }
+}

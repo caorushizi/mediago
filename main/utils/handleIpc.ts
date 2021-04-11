@@ -43,12 +43,14 @@ const handleIpc = () => {
     app.quit();
   });
 
-  ipcMain.on("openBrowserWindow", () => {
+  ipcMain.on("openBrowserWindow", (e, url) => {
     // 开始计算主窗口的位置
-    const mainWindow = windowManager.get(Windows.MAIN_WINDOW);
-    const rect = mainWindow.getBounds();
     const browserWindow = windowManager.get(Windows.BROWSER_WINDOW);
-    browserWindow.setBounds({ x: rect.x + rect.width, y: rect.y });
+    const browserView = browserWindow.getBrowserView();
+    console.log("url: ", url);
+    if (url) {
+      browserView?.webContents.loadURL(url);
+    }
     browserWindow.show();
   });
 

@@ -9,4 +9,9 @@ declare function SourceUrlToRenderer(
   url: SourceUrl
 ): void;
 
-export { SourceUrl, SourceUrlToRenderer };
+declare interface Fav {
+  url: string;
+  title: string;
+}
+
+export { SourceUrl, SourceUrlToRenderer, Fav };

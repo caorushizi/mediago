@@ -5,6 +5,8 @@ import {
   EnterOutlined,
   HomeOutlined,
   ReloadOutlined,
+  StarFilled,
+  StarOutlined,
 } from "@ant-design/icons";
 import classNames from "classnames";
 import PropTypes from "prop-types";
@@ -13,10 +15,12 @@ interface Props {
   onGoBack: () => void;
   onReload: () => void;
   onGoBackHome: () => void;
-  onSetting: () => void;
+  handleEnter: () => void;
   url: string;
   onUrlChange: (url: string) => void;
   className: string;
+  isFav: boolean;
+  handleClickFav: () => void;
 }
 
 const SearchBar: React.FC<Props> = (props) => {
@@ -27,7 +31,9 @@ const SearchBar: React.FC<Props> = (props) => {
     url,
     onUrlChange,
     className,
-    onSetting,
+    handleEnter,
+    isFav,
+    handleClickFav,
   } = props;
   return (
     <div className={classNames("search-bar", className)}>
@@ -40,6 +46,9 @@ const SearchBar: React.FC<Props> = (props) => {
       <div className="btn">
         <HomeOutlined className="icon home" onClick={onGoBackHome} />
       </div>
+      <div className="btn" onClick={handleClickFav}>
+        {isFav ? <StarFilled /> : <StarOutlined />}
+      </div>
       <input
         className="search-inner"
         placeholder="请在此输入网址"
@@ -48,7 +57,7 @@ const SearchBar: React.FC<Props> = (props) => {
         onChange={(e) => onUrlChange(e.target.value)}
       />
       <div className="btn">
-        <EnterOutlined className="button" onClick={onSetting} />
+        <EnterOutlined className="button" onClick={handleEnter} />
       </div>
     </div>
   );

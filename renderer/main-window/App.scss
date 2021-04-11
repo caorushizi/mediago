@@ -5,70 +5,53 @@
 .main-window {
   height: 100vh;
   width: 100%;
-  overflow: hidden;
+  overflow: auto;
   display: flex;
   flex-direction: column;
+  position: relative;
 
-  .action-button {
-    -webkit-app-region: no-drag;
-    height: 30px;
-    padding: 0 10px;
-    position: absolute;
-    right: 0;
-    cursor: pointer;
-    z-index: 1000;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+  .main-window-tabs {
+    flex: 1;
 
-    &:hover {
-      background-color: #d71526;
-      color: #fff;
+    .ant-tabs-nav {
+      margin: 0;
+    }
+
+    .ant-tabs-content {
+      padding: 10px;
+      height: 100%;
+      overflow: auto;
+      @include scrollbar;
     }
   }
 
-  .form {
-    flex: 1;
-    margin-top: 30px;
-    padding: 15px 10px 10px 10px;
-    overflow: auto;
+  .float-icon {
+    position: absolute;
+    bottom: 40px;
+    left: 10px;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    background: #e2e2e2;
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    outline: none;
+  }
 
-    .form-inner {
-      margin-top: 10px;
-    }
+  .toolbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid #dcdfe6;
+  }
+}
 
-    .m3u8-list {
-      margin-top: 5px;
-
-      .divider {
-        margin: 0 0 25px 0;
-      }
-
-      .m3u8-item {
-        box-sizing: border-box;
-        color: #303133;
-        font-size: 14px;
-        padding: 5px;
-        margin-bottom: 5px;
-        background: none;
-        cursor: pointer;
-        word-break: break-all;
-        border: 2px solid #323130;
-        display: flex;
-        flex-direction: column;
-
-        &:hover {
-          border: 2px solid #0078d4;
-        }
-
-        .title {
-        }
-
-        .url {
-        }
-      }
-    }
+.comment-drawer {
+  .ant-drawer-body {
+    @include scrollbar;
   }
 }

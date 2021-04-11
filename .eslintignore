@@ -3,3 +3,4 @@ esbuild.config.js
 babel.config.js
 webpack.config.js
 script/dev-server.js
+vite.config.ts
