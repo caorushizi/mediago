@@ -73,13 +73,3 @@ $playlist-width: 200px;
     }
   }
 }
-
-.playlist-drawer {
-  .ant-drawer-mask {
-    background-color: rgba(255, 255, 255, 1);
-  }
-
-  .ant-drawer-content-wrapper {
-    width: calc(100% - 200px) !important;
-  }
-}

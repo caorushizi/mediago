@@ -6,7 +6,7 @@
   "main": "dist/main/index.js",
   "license": "MIT",
   "scripts": {
-    "prestart": "script/prestart",
+    "prestart-test": "script/prestart",
     "start": "node script/dev-server.js",
     "serve": "vite preview",
     "build": "rimraf dist && tsc && vite build && node esbuild.config.js",
@@ -26,13 +26,15 @@
     "electron-store": "^7.0.2",
     "electron-util": "^0.14.2",
     "glob": "^7.1.6",
+    "localforage": "^1.9.0",
     "m3u8-parser": "^4.6.0",
     "mime": "^2.5.2",
     "prop-types": "^15.7.2",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
     "semver": "^7.3.4",
-    "spawn-args": "^0.2.0"
+    "spawn-args": "^0.2.0",
+    "valine": "^1.4.14"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.13.10",

@@ -3,9 +3,8 @@ import { Windows } from "main/window/variables";
 import { BrowserView, session } from "electron";
 import path from "path";
 import { is } from "electron-util";
-import XhrFilter from "./xhrFilter";
-
-const xhrFilter = new XhrFilter();
+import logger from "main/utils/logger";
+import { SourceUrl } from "types/common";
 
 const createBrowserView = async () => {
   const browserWindow = windowManager.get(Windows.BROWSER_WINDOW);
@@ -33,7 +32,33 @@ const createBrowserView = async () => {
   });
 
   const filter = { urls: ["*://*/*"] };
-  ses.webRequest.onBeforeSendHeaders(filter, xhrFilter.beforeSendHeaders);
+  ses.webRequest.onBeforeSendHeaders(
+    filter,
+    (
+      details: Electron.OnBeforeSendHeadersListenerDetails,
+      callback: (beforeSendResponse: Electron.BeforeSendResponse) => void
+    ) => {
+      const m3u8Reg = /\.m3u8$/;
+      let cancel = false;
+      const myURL = new URL(details.url);
+      if (m3u8Reg.test(myURL.pathname)) {
+        logger.info("在窗口中捕获 m3u8 链接: ", details.url);
+        const { webContents: mainWindow } = windowManager.get(
+          Windows.MAIN_WINDOW
+        );
+        const value: SourceUrl = {
+          title: webContents.getTitle(),
+          details,
+        };
+        mainWindow.send("m3u8", value);
+        cancel = true;
+      }
+      callback({
+        cancel,
+        requestHeaders: details.requestHeaders,
+      });
+    }
+  );
 };
 
 export default createBrowserView;

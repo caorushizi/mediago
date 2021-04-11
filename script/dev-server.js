@@ -18,7 +18,6 @@ concurrently(
   {
     prefix: "name",
     killOthers: ["failure", "success"],
-    restartTries: 3,
   }
 ).then(
   () => {

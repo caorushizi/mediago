@@ -30,3 +30,7 @@
     overflow: hidden;
   }
 }
+
+.ant-modal-wrap {
+  @include scrollbar;
+}
