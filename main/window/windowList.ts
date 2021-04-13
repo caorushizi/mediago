@@ -10,27 +10,26 @@ windowList.set(Windows.MAIN_WINDOW, {
     : "mediago://electron/main-window.html",
   options() {
     return {
-      width: 590,
-      minWidth: 590,
-      height: 600,
+      width: 960,
+      minWidth: 960,
+      height: 700,
+      minHeight: 700,
       show: true,
       frame: false,
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false,
-        enableRemoteModule: true
-      }
+        enableRemoteModule: true,
+      },
     };
   },
-  async callback(window) {
+  callback(window) {
     if (is.development) window.webContents.openDevTools();
-    console.log("1212312312312312");
-
     window.once("ready-to-show", () => {
       console.log("main window is ready to show!");
       window.show();
     });
-  }
+  },
 });
 
 windowList.set(Windows.BROWSER_WINDOW, {
@@ -46,13 +45,13 @@ windowList.set(Windows.BROWSER_WINDOW, {
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false,
-        enableRemoteModule: true
-      }
+        enableRemoteModule: true,
+      },
     };
   },
   async callback(window) {
     if (is.development) window.webContents.openDevTools();
-  }
+  },
 });
 
 // windowList.set(Windows.SETTING_WINDOW, {

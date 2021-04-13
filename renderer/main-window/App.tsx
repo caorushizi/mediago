@@ -46,27 +46,6 @@ class App extends React.Component<Props, State> {
     this.setState({ exeFile: exeFile || "", workspace: workspace || "" });
   }
 
-  onFinish = async (values: any) => {
-    tdApp.onEvent("下载页面-开始下载");
-
-    const { workspace, exeFile, name, url, headers } = values;
-    const args = "";
-
-    const { code, msg } = await ipcExec(
-      exeFile,
-      workspace,
-      name,
-      url,
-      headers,
-      args
-    );
-    if (code === 0) {
-      tdApp.onEvent("下载页面-下载视频成功", { msg, url, exeFile });
-    } else {
-      tdApp.onEvent("下载页面-下载视频失败", { msg, url, exeFile });
-    }
-  };
-
   handleDrawerClose = () => {
     this.setState({ isDrawerVisible: false });
   };

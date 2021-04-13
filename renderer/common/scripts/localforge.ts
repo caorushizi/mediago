@@ -1,10 +1,10 @@
-import { Fav, SourceUrl } from "types/common";
+import { Fav, SourceItem } from "types/common";
 import * as localforage from "localforage";
 
 const keys = { videos: "videos", fav: "fav" };
 
-const insertVideo = async (item: SourceUrl): Promise<SourceUrl[]> => {
-  let videos = await localforage.getItem<SourceUrl[]>(keys.videos);
+const insertVideo = async (item: SourceItem): Promise<SourceItem[]> => {
+  let videos = await localforage.getItem<SourceItem[]>(keys.videos);
   // 首先查看数据库中是否存在
   if (!Array.isArray(videos)) videos = [];
   const isFav =
@@ -15,8 +15,11 @@ const insertVideo = async (item: SourceUrl): Promise<SourceUrl[]> => {
   return videos;
 };
 
-const getVideos = async (page: number, pageSize = 20): Promise<SourceUrl[]> => {
-  let videos = await localforage.getItem<SourceUrl[]>(keys.videos);
+const getVideos = async (
+  page: number,
+  pageSize = 20
+): Promise<SourceItem[]> => {
+  let videos = await localforage.getItem<SourceItem[]>(keys.videos);
   if (!Array.isArray(videos)) videos = [];
   return videos.slice((page - 1) * pageSize, page * pageSize);
 };

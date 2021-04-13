@@ -1,26 +1,44 @@
-const { ipcRenderer } = window.require("electron");
+const { ipcRenderer }: { ipcRenderer: Electron.IpcRenderer } = window.require(
+  "electron"
+);
 
-const ipcExec = (exeFile: string, ...args: string[]) =>
+type IpcRendererResp = {
+  code: number;
+  msg: string;
+  data: any;
+};
+
+const ipcExec = (
+  exeFile: string,
+  ...args: string[]
+): Promise<IpcRendererResp> =>
   new Promise((resolve) => {
-    ipcRenderer.on("execReply", (event: any, arg: any) => {
-      resolve(arg);
-    });
+    ipcRenderer.on(
+      "execReply",
+      (event: Electron.IpcRendererEvent, arg: IpcRendererResp) => {
+        resolve(arg);
+      }
+    );
     ipcRenderer.send("exec", exeFile, ...args);
   });
 
-const ipcSetStore = (key: string, value: string) =>
+const ipcSetStore = (key: string, value: string): Promise<any> =>
   new Promise((resolve, reject) => {
-    ipcRenderer.on("setLocalPathReply", (e: any, resp: any) => {
-      const { code, msg, data } = resp;
-      if (code === 0) {
-        resolve(data);
-      } else {
-        reject(new Error(msg));
+    ipcRenderer.on(
+      "setLocalPathReply",
+      (e: Electron.IpcRendererEvent, resp: IpcRendererResp) => {
+        const { code, msg, data } = resp;
+        if (code === 0) {
+          resolve(data);
+        } else {
+          reject(new Error(msg));
+        }
       }
-    });
+    );
     ipcRenderer.send("setLocalPath", key, value);
   });
 
-const ipcGetStore = (key: any) => ipcRenderer.invoke("getLocalPath", key);
+const ipcGetStore = (key: string): Promise<string> =>
+  ipcRenderer.invoke("getLocalPath", key) as Promise<string>;
 
 export { ipcExec, ipcSetStore, ipcGetStore };
