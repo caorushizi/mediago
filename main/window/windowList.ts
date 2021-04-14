@@ -10,10 +10,10 @@ windowList.set(Windows.MAIN_WINDOW, {
     : "mediago://electron/main-window.html",
   options() {
     return {
-      width: 960,
-      minWidth: 960,
-      height: 700,
-      minHeight: 700,
+      width: 800,
+      minWidth: 800,
+      height: 600,
+      minHeight: 600,
       show: true,
       frame: false,
       webPreferences: {
