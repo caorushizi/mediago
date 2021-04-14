@@ -13,6 +13,7 @@ import { SourceItem, SourceUrl } from "types/common";
 import { SourceStatus, SourceType } from "renderer/common/types";
 import { insertVideo } from "renderer/common/scripts/localforge";
 import { ReactNode } from "react";
+import AppStore from "renderer/main-window/store";
 import TipMedia from "./assets/tip.mp3";
 import { ipcExec, ipcGetStore } from "./utils";
 
@@ -26,7 +27,9 @@ const {
 
 const { TabPane } = Tabs;
 
-interface Props {}
+interface Props {
+  store: AppStore;
+}
 
 interface State {
   workspace: string;
@@ -87,6 +90,7 @@ class App extends React.Component<Props, State> {
       notifyCount,
       tableData,
     } = this.state;
+    const { store } = this.props;
 
     return (
       <div className="main-window">
@@ -118,6 +122,8 @@ class App extends React.Component<Props, State> {
         >
           评论反馈
         </button>
+
+        {store.number}
 
         <Drawer
           title="评论反馈"
