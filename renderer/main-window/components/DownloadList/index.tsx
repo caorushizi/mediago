@@ -34,7 +34,9 @@ type ActionButton = {
   cb: () => void;
 };
 
-interface Props {}
+interface Props {
+  tableData: SourceItem[];
+}
 
 interface State {
   isModalVisible: boolean;
@@ -59,27 +61,7 @@ class DownloadList extends React.Component<Props, State> {
     const { page } = this.state;
     const tableData = await getVideos(page);
     this.setState({ tableData });
-    ipcRenderer.on("m3u8", this.handleWebViewMessage);
   }
-
-  componentWillUnmount(): void {
-    ipcRenderer.removeListener("m3u8", this.handleWebViewMessage);
-  }
-
-  handleWebViewMessage = async (
-    e: Electron.IpcRendererEvent,
-    source: SourceUrl
-  ): Promise<void> => {
-    const item: SourceItem = {
-      ...source,
-      loading: true,
-      status: SourceStatus.Ready,
-      type: SourceType.M3u8,
-    };
-    const tableData = await insertVideo(item);
-    const { page } = this.state;
-    this.setState({ tableData: tableData.slice(page, 20) });
-  };
 
   handleOk = (): void => {
     this.setState({
@@ -238,45 +220,50 @@ class DownloadList extends React.Component<Props, State> {
             使用帮助
           </Button>
         </Space>
-        <Table
-          rowSelection={{}}
-          columns={[
-            {
-              title: "标题",
-              dataIndex: "title",
-              key: "title",
-              render: (text: string) => <span>{text}</span>,
-            },
-            {
-              title: "详情",
-              dataIndex: "url",
-              key: "url",
-              width: 200,
-              render: (value, row) => (
-                <div>
-                  <div>分片数:{row.loading ? "正在加载" : row.title}</div>
-                  <div>时长:{row.loading ? "正在加载" : row.title}</div>
-                </div>
-              ),
-            },
-            {
-              title: "状态",
-              key: "action",
-              width: 90,
-              render: (value, row) => (
-                <Space size="middle">
-                  <Tag color="volcano">{row.status}</Tag>
-                </Space>
-              ),
-            },
-            {
-              title: "操作",
-              key: "action",
-              render: this.renderActionButtons,
-            },
-          ]}
-          dataSource={tableData}
-        />
+        <div className="download-list-table">
+          <Table
+            rowSelection={{}}
+            columns={[
+              {
+                title: "标题",
+                dataIndex: "title",
+                key: "title",
+                width: 250,
+                className: "title",
+                render: (text: string) => <span>{text}</span>,
+              },
+              {
+                title: "详情",
+                dataIndex: "url",
+                key: "url",
+                width: 190,
+                render: (value, row) => (
+                  <div>
+                    <div>分片数:{row.loading ? "正在加载" : row.title}</div>
+                    <div>时长:{row.loading ? "正在加载" : row.title}</div>
+                  </div>
+                ),
+              },
+              {
+                title: "状态",
+                key: "action",
+                width: 90,
+                render: (value, row) => (
+                  <Space size="middle">
+                    <Tag color="volcano">{row.status}</Tag>
+                  </Space>
+                ),
+              },
+              {
+                title: "操作",
+                key: "action",
+                render: this.renderActionButtons,
+              },
+            ]}
+            dataSource={tableData}
+            scroll={{ y: 240 }}
+          />
+        </div>
         <Modal
           title="新建下载"
           visible={isModalVisible}
@@ -323,8 +310,7 @@ class DownloadList extends React.Component<Props, State> {
               :authority: stats.g.doubleclick.net <br />
               :method: POST
               <br />
-              :path:
-              /j/collect?t=dc&aip=1&_r=3&v=1&_v=j89&tid=UA-72788897-1&cid=1353696824.1612031808&jid=1795274895&gjid=1458936427&_gid=562285368.1618061588&_u=AACAAUAAAAAAAC~&z=476229443
+              :path: /j/collect?t=dc&aip=1&_r=3&v=1&
               <br />
               :scheme: https
               <br />

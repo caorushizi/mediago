@@ -1,30 +1,29 @@
 import React, { Component, ReactNode } from "react";
 import "./index.scss";
-import {
-  BorderOutlined,
-  CloseOutlined,
-  MinusOutlined,
-} from "@ant-design/icons";
+import close from "./assets/close.png";
+import minimize from "./assets/minimize.png";
+import maximize from "./assets/maximize.png";
 
 interface Props {
   leftContent?: ReactNode;
   extraButton?: ReactNode[];
+  color: string;
   onClose: () => void;
 }
 
 interface State {}
 
 class WindowToolBar extends Component<Props, State> {
-  static propTypes = {};
-
-  constructor(props: Props) {
-    super(props);
-  }
-
-  render() {
-    const { leftContent, extraButton, children, onClose } = this.props;
+  render(): ReactNode {
+    const {
+      leftContent,
+      extraButton,
+      children,
+      onClose,
+      color = "#4090F7",
+    } = this.props;
     return (
-      <div className="window-tool-bar">
+      <div className="window-tool-bar" style={{ background: color }}>
         <div className="window-tool-bar-left">{leftContent}</div>
         <div className="window-tool-bar-title">{children}</div>
         <div className="window-tool-bar-right">
@@ -32,13 +31,13 @@ class WindowToolBar extends Component<Props, State> {
             <div className="btn">{item}</div>
           ))}
           <div className="btn">
-            <MinusOutlined />
+            <img src={minimize} alt="" />
           </div>
           <div className="btn">
-            <BorderOutlined />
+            <img src={maximize} alt="" />
           </div>
-          <div className="btn close">
-            <CloseOutlined onClick={onClose} />
+          <div role="presentation" className="btn close" onClick={onClose}>
+            <img src={close} alt="" />
           </div>
         </div>
       </div>

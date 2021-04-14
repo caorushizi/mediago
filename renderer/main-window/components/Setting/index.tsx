@@ -10,6 +10,7 @@ import {
 } from "antd";
 import { SettingOutlined } from "@ant-design/icons";
 import { ipcSetStore } from "renderer/main-window/utils";
+import "./index.scss";
 
 const {
   remote,
@@ -25,18 +26,22 @@ interface Props {
 }
 interface State {}
 class Index extends React.Component<Props, State> {
-  formRef = React.createRef<FormInstance>();
+  workspaceFormRef = React.createRef<FormInstance>();
+
+  exeFileFormRef = React.createRef<FormInstance>();
 
   constructor(props: Props) {
     super(props);
     this.state = {};
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     const { workspace, exeFile } = this.props;
     console.log(workspace, exeFile, 12123);
-    this.formRef.current?.setFieldsValue({
+    this.workspaceFormRef.current?.setFieldsValue({
       workspace: workspace || "",
+    });
+    this.exeFileFormRef.current?.setFieldsValue({
       exeFile: exeFile || "",
     });
   }
@@ -49,7 +54,9 @@ class Index extends React.Component<Props, State> {
 
   // 选择下载地址
   handleSelectDir = async () => {
-    const workspace = this.formRef.current?.getFieldValue(["workspace"]);
+    const workspace = this.workspaceFormRef.current?.getFieldValue([
+      "workspace",
+    ]);
     const result = remote.dialog.showOpenDialogSync({
       defaultPath: workspace || remote.app.getPath("documents"),
       properties: ["openDirectory"],
@@ -57,18 +64,16 @@ class Index extends React.Component<Props, State> {
     if (!result) return;
     const local = result[0];
     await ipcSetStore("local", local);
-    this.formRef.current?.setFieldsValue({
+    this.workspaceFormRef.current?.setFieldsValue({
       workspace: local || "",
     });
   };
 
   render() {
     return (
-      <div>
-        <Form ref={this.formRef}>
-          <Divider orientation="left" plain>
-            基础设置
-          </Divider>
+      <div className="setting-form">
+        <div className="form-title">基础设置</div>
+        <Form className="form-inner" ref={this.workspaceFormRef}>
           <Form.Item label="本地路径" name="workspace">
             <Input
               disabled
@@ -80,29 +85,29 @@ class Index extends React.Component<Props, State> {
             <Switch defaultChecked onChange={() => {}} />
           </Form.Item>
         </Form>
-        <Divider orientation="left" plain>
-          下载设置
-        </Divider>
-        <Form.Item label="默认下载器" name="exeFile">
-          <Select
-            placeholder="请选择执行程序"
-            options={[
-              {
-                value: "N_m3u8DL-CLI",
-                label: "N_m3u8DL-CLI（推荐）",
-              },
-              {
-                value: "mediago",
-                label: "mediago",
-              },
-            ]}
-            onSelect={this.handleSelectExeFile}
-          />
-        </Form.Item>
-        <Descriptions title="N_m3u8DL-CLI">
-          <Descriptions.Item label="描述">Zhou Maomao</Descriptions.Item>
-          <Descriptions.Item label="源代码地址">1810000000</Descriptions.Item>
-        </Descriptions>
+        <div className="form-title">下载设置</div>
+        <Form className="form-inner" ref={this.exeFileFormRef}>
+          <Form.Item label="默认下载器" name="exeFile">
+            <Select
+              placeholder="请选择执行程序"
+              options={[
+                {
+                  value: "N_m3u8DL-CLI",
+                  label: "N_m3u8DL-CLI（推荐）",
+                },
+                {
+                  value: "mediago",
+                  label: "mediago",
+                },
+              ]}
+              onSelect={this.handleSelectExeFile}
+            />
+          </Form.Item>
+          <Descriptions title="N_m3u8DL-CLI">
+            <Descriptions.Item label="描述">Zhou Maomao</Descriptions.Item>
+            <Descriptions.Item label="源代码地址">1810000000</Descriptions.Item>
+          </Descriptions>
+        </Form>
       </div>
     );
   }

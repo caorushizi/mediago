@@ -14,11 +14,33 @@
     flex: 1;
 
     .ant-tabs-nav {
+      height: 40px;
+      background: #4090f7;
+      -webkit-app-region: drag;
+      .ant-tabs-nav-wrap {
+        padding: 0 20px;
+      }
       margin: 0;
+      .ant-tabs-tab-btn {
+        -webkit-app-region: no-drag;
+        color: #fff;
+        font-size: 17px;
+        user-select: none;
+      }
+      .ant-tabs-tab-active {
+        .ant-tabs-tab-btn {
+          color: #fff;
+        }
+      }
+      .ant-tabs-ink-bar {
+        height: 3px;
+        background: #fff;
+        transform: translateY(-5px);
+      }
     }
 
     .ant-tabs-content {
-      padding: 10px;
+      padding: 20px;
       height: 100%;
       overflow: auto;
       @include scrollbar;
