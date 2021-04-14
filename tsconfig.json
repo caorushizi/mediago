@@ -19,7 +19,6 @@
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "experimentalDecorators": true,
     "noEmit": true,
     "jsx": "react",
     "baseUrl": "./",
