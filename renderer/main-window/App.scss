@@ -14,18 +14,22 @@
     flex: 1;
 
     .ant-tabs-nav {
+      margin: 0;
       height: 40px;
       background: #4090f7;
       -webkit-app-region: drag;
       .ant-tabs-nav-wrap {
         padding: 0 20px;
       }
-      margin: 0;
       .ant-tabs-tab-btn {
         -webkit-app-region: no-drag;
         color: #fff;
         font-size: 17px;
         user-select: none;
+        .download-item {
+          font-size: 17px;
+          color: #fff;
+        }
       }
       .ant-tabs-tab-active {
         .ant-tabs-tab-btn {
@@ -40,7 +44,7 @@
     }
 
     .ant-tabs-content {
-      padding: 20px;
+      padding: 0;
       height: 100%;
       overflow: auto;
       @include scrollbar;
@@ -51,24 +55,19 @@
     position: absolute;
     bottom: 40px;
     left: 10px;
-    height: 40px;
-    width: 40px;
-    border-radius: 50%;
-    background: #e2e2e2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    height: 50px;
+    width: 60px;
     cursor: pointer;
-    border: none;
-    outline: none;
   }
 
   .toolbar {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     border-top: 1px solid #dcdfe6;
+    padding: 5px 12px;
+    font-size: 20px;
   }
 }
 

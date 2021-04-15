@@ -5,14 +5,12 @@ import { observer } from "mobx-react-lite";
 import App from "./App";
 import tdApp from "../common/scripts/td";
 import "antd/dist/antd.css";
-import AppStore from "./store";
+import { appStore, AppStore } from "./store";
 
 tdApp.init();
-
-const store = new AppStore();
 
 const TestComp = observer(({ store: useStore }: { store: AppStore }) => (
   <App store={toJS<AppStore>(useStore)} />
 ));
 
-ReactDOM.render(<TestComp store={store} />, document.getElementById("root"));
+ReactDOM.render(<TestComp store={appStore} />, document.getElementById("root"));

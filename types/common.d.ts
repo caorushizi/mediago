@@ -11,6 +11,7 @@ declare type SourceItem = SourceUrl & {
   loading: boolean;
   status: SourceStatus;
   type: SourceType;
+  directory: string;
 };
 
 declare function SourceUrlToRenderer(
