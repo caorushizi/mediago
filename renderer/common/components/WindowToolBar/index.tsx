@@ -20,7 +20,7 @@ class WindowToolBar extends Component<Props, State> {
       extraButton,
       children,
       onClose,
-      color = "#4090F7",
+      color = "#e2e2e2",
     } = this.props;
     return (
       <div className="window-tool-bar" style={{ background: color }}>
