@@ -1,6 +1,6 @@
 import * as React from "react";
 import "./App.scss";
-import { Badge, Button, Drawer, Tabs } from "antd";
+import { Badge, Button, Drawer, Dropdown, Menu, Tabs } from "antd";
 import tdApp from "renderer/common/scripts/td";
 import WindowToolBar from "renderer/common/components/WindowToolBar";
 import DownloadList from "renderer/main-window/components/DownloadList";
@@ -11,11 +11,16 @@ import FavList from "renderer/main-window/components/FavList";
 import Electron from "electron";
 import { SourceItem, SourceUrl } from "types/common";
 import { SourceStatus, SourceType } from "renderer/common/types";
-import { insertVideo } from "renderer/common/scripts/localforge";
+import {
+  getVideos,
+  insertVideo,
+  updateVideoStatus,
+} from "renderer/common/scripts/localforge";
 import { ReactNode } from "react";
-import AppStore from "renderer/main-window/store";
+import { EllipsisOutlined } from "@ant-design/icons";
 import TipMedia from "./assets/tip.mp3";
 import { ipcExec, ipcGetStore } from "./utils";
+import FeedImage from "./assets/feed.png";
 
 const {
   remote,
@@ -25,11 +30,15 @@ const {
   ipcRenderer: Electron.IpcRenderer;
 } = window.require("electron");
 
+enum TabKey {
+  HomeTab = "1",
+  FavTab = "2",
+  SettingTab = "3",
+}
+
 const { TabPane } = Tabs;
 
-interface Props {
-  store: AppStore;
-}
+interface Props {}
 
 interface State {
   workspace: string;
@@ -40,6 +49,32 @@ interface State {
 }
 
 class App extends React.Component<Props, State> {
+  // 渲染右下角的菜单
+  menu = (
+    <Menu>
+      <Menu.Item>
+        <Button
+          type="link"
+          onClick={async () => {
+            await remote.shell.openExternal(variables.urls.help);
+          }}
+        >
+          更新日志
+        </Button>
+      </Menu.Item>
+      <Menu.Item>
+        <Button
+          type="link"
+          onClick={async () => {
+            await remote.shell.openExternal(variables.urls.sourceUrl);
+          }}
+        >
+          源码地址
+        </Button>
+      </Menu.Item>
+    </Menu>
+  );
+
   constructor(props: Props) {
     super(props);
 
@@ -53,9 +88,15 @@ class App extends React.Component<Props, State> {
   }
 
   async componentDidMount(): Promise<void> {
+    // 开始初始化表格数据
+    const tableData = await getVideos(1);
     const workspace = await ipcGetStore("local");
     const exeFile = await ipcGetStore("exeFile");
-    this.setState({ exeFile: exeFile || "", workspace: workspace || "" });
+    this.setState({
+      exeFile: exeFile || "",
+      workspace: workspace || "",
+      tableData,
+    });
 
     ipcRenderer.on("m3u8", this.handleWebViewMessage);
   }
@@ -68,18 +109,41 @@ class App extends React.Component<Props, State> {
     e: Electron.IpcRendererEvent,
     source: SourceUrl
   ): Promise<void> => {
+    const { notifyCount } = this.state;
     const item: SourceItem = {
       ...source,
       loading: true,
       status: SourceStatus.Ready,
       type: SourceType.M3u8,
+      directory: "",
     };
-    const tableData = await insertVideo(item);
-    this.setState({ tableData: tableData.slice(0, 20) });
+    const sourceItem = await insertVideo(item);
+    if (!sourceItem) return;
+    const tableData = await getVideos(1);
+    this.setState({ tableData, notifyCount: notifyCount + 1 });
   };
 
   handleDrawerClose = () => {
     this.setState({ isDrawerVisible: false });
+  };
+
+  // 首页面板切换事件
+  onTabChange = (activeKey: TabKey): void => {
+    console.log(123123123, activeKey);
+    if (activeKey === TabKey.HomeTab) {
+      console.log(123123);
+      this.setState({ notifyCount: 0 });
+    }
+  };
+
+  // 切换视频源的 status
+  changeSourceStatus = async (
+    source: SourceItem,
+    status: SourceStatus
+  ): Promise<void> => {
+    await updateVideoStatus(source, status);
+    const tableData = await getVideos(1);
+    this.setState({ tableData });
   };
 
   render(): ReactNode {
@@ -90,40 +154,51 @@ class App extends React.Component<Props, State> {
       notifyCount,
       tableData,
     } = this.state;
-    const { store } = this.props;
 
     return (
       <div className="main-window">
         <WindowToolBar
+          color="#4090F7"
           onClose={() => {
             ipcRenderer.send("closeMainWindow");
           }}
         />
         <div className="main-window">
-          <Tabs tabPosition="top" className="main-window-tabs">
-            <TabPane tab={<Badge count={notifyCount}>下载</Badge>} key="1">
-              <DownloadList tableData={tableData} />
+          <Tabs
+            tabPosition="top"
+            className="main-window-tabs"
+            onChange={(value) => this.onTabChange(value as TabKey)}
+          >
+            <TabPane
+              tab={
+                <Badge className="download-item" count={notifyCount}>
+                  下载
+                </Badge>
+              }
+              key={TabKey.HomeTab}
+            >
+              <DownloadList
+                workspace={workspace}
+                tableData={tableData}
+                changeSourceStatus={this.changeSourceStatus}
+              />
             </TabPane>
-            <TabPane tab="收藏" key="2">
+            <TabPane tab="收藏" key={TabKey.FavTab}>
               <FavList />
             </TabPane>
-            <TabPane tab="设置" key="3">
+            <TabPane tab="设置" key={TabKey.SettingTab}>
               <Setting workspace={workspace} exeFile={exeFile} />
             </TabPane>
           </Tabs>
         </div>
 
-        <button
-          type="button"
+        <img
           className="float-icon"
+          src={FeedImage}
           onClick={() => {
             this.setState({ isDrawerVisible: true });
           }}
-        >
-          评论反馈
-        </button>
-
-        {store.number}
+        />
 
         <Drawer
           title="评论反馈"
@@ -138,17 +213,9 @@ class App extends React.Component<Props, State> {
         </Drawer>
 
         <div className="toolbar">
-          <div className="left" />
-          <div className="right">
-            <Button
-              type="link"
-              onClick={async () => {
-                await remote.shell.openExternal(variables.urls.help);
-              }}
-            >
-              更新日志
-            </Button>
-          </div>
+          <Dropdown overlay={this.menu} placement="topRight">
+            <EllipsisOutlined />
+          </Dropdown>
         </div>
       </div>
     );

@@ -81,7 +81,7 @@ class Index extends React.Component<Props, State> {
               addonAfter={<SettingOutlined onClick={this.handleSelectDir} />}
             />
           </Form.Item>
-          <Form.Item label="下载完成提示" name="123">
+          <Form.Item label="下载完成提示" name="tip">
             <Switch defaultChecked onChange={() => {}} />
           </Form.Item>
         </Form>

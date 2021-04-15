@@ -1,27 +1,49 @@
 import { Fav, SourceItem } from "types/common";
 import * as localforage from "localforage";
+import { SourceStatus } from "renderer/common/types";
+import { cloneDeep } from "lodash";
 
 const keys = { videos: "videos", fav: "fav" };
 
-const insertVideo = async (item: SourceItem): Promise<SourceItem[]> => {
+const insertVideo = async (
+  item: SourceItem
+): Promise<SourceItem | undefined> => {
   let videos = await localforage.getItem<SourceItem[]>(keys.videos);
   // 首先查看数据库中是否存在
   if (!Array.isArray(videos)) videos = [];
   const isFav =
     videos.findIndex((video) => video.details.url === item.details.url) >= 0;
-  if (isFav) return videos;
+  if (isFav) return undefined;
   videos.push(item);
   await localforage.setItem(keys.videos, videos);
-  return videos;
+  return item;
 };
 
 const getVideos = async (
   page: number,
   pageSize = 20
 ): Promise<SourceItem[]> => {
+  let queryPage = page;
+  if (page <= 0) queryPage = 1;
   let videos = await localforage.getItem<SourceItem[]>(keys.videos);
   if (!Array.isArray(videos)) videos = [];
-  return videos.slice((page - 1) * pageSize, page * pageSize);
+  return videos.slice((queryPage - 1) * pageSize, queryPage * pageSize);
+};
+
+const updateVideoStatus = async (
+  source: SourceItem,
+  status: SourceStatus
+): Promise<void> => {
+  // fixme: 当数据量比较大的时候
+  let videos = await localforage.getItem<SourceItem[]>(keys.videos);
+  if (!Array.isArray(videos)) videos = [];
+  const findIndex = videos.findIndex(
+    (video) => source.details.url === video.details.url
+  );
+  if (findIndex >= 0) {
+    videos.splice(findIndex, 1, { ...source, status });
+    await localforage.setItem(keys.videos, videos);
+  }
 };
 
 const insertFav = async (fav: Fav): Promise<Fav[]> => {
@@ -55,4 +77,12 @@ const getFavs = async (): Promise<Fav[]> => {
   return favs;
 };
 
-export { insertVideo, getVideos, insertFav, isFavFunc, removeFav, getFavs };
+export {
+  insertVideo,
+  getVideos,
+  updateVideoStatus,
+  insertFav,
+  isFavFunc,
+  removeFav,
+  getFavs,
+};
