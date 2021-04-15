@@ -84,7 +84,6 @@ class App extends React.Component<Props, State> {
     const url = this.view?.webContents?.getURL() || "";
     const title = this.view?.webContents?.getTitle() || "";
     const isFav = await isFavFunc(url);
-    console.log(isFav, "isFav");
     this.setState({ title, url, isFav });
     document.title = title;
   };
@@ -110,6 +109,7 @@ class App extends React.Component<Props, State> {
         const viewRect = computeRect(entry.contentRect);
         viewRect.x += rect.x;
         viewRect.y += rect.y;
+        view.setBounds(viewRect);
       });
       this.resizeObserver.observe(webviewRef);
     }
