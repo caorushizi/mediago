@@ -1,7 +1,6 @@
 import * as React from "react";
 import "./App.scss";
 import { Badge, Button, Drawer, Dropdown, Menu, Tabs } from "antd";
-import tdApp from "renderer/common/scripts/td";
 import WindowToolBar from "renderer/common/components/WindowToolBar";
 import DownloadList from "renderer/main-window/components/DownloadList";
 import Setting from "renderer/main-window/components/Setting";
@@ -18,8 +17,7 @@ import {
 } from "renderer/common/scripts/localforge";
 import { ReactNode } from "react";
 import { EllipsisOutlined } from "@ant-design/icons";
-import TipMedia from "./assets/tip.mp3";
-import { ipcExec, ipcGetStore } from "./utils";
+import { ipcGetStore } from "./utils";
 import FeedImage from "./assets/feed.png";
 
 const {
@@ -123,15 +121,13 @@ class App extends React.Component<Props, State> {
     this.setState({ tableData, notifyCount: notifyCount + 1 });
   };
 
-  handleDrawerClose = () => {
+  handleDrawerClose = (): void => {
     this.setState({ isDrawerVisible: false });
   };
 
   // 首页面板切换事件
   onTabChange = (activeKey: TabKey): void => {
-    console.log(123123123, activeKey);
     if (activeKey === TabKey.HomeTab) {
-      console.log(123123);
       this.setState({ notifyCount: 0 });
     }
   };
@@ -144,6 +140,12 @@ class App extends React.Component<Props, State> {
     await updateVideoStatus(source, status);
     const tableData = await getVideos(1);
     this.setState({ tableData });
+  };
+
+  // 更新表格的数据
+  updateTableData = async (): Promise<void> => {
+    const videos = await getVideos(1);
+    this.setState({ tableData: videos });
   };
 
   render(): ReactNode {
@@ -181,6 +183,7 @@ class App extends React.Component<Props, State> {
                 workspace={workspace}
                 tableData={tableData}
                 changeSourceStatus={this.changeSourceStatus}
+                updateTableData={this.updateTableData}
               />
             </TabPane>
             <TabPane tab="收藏" key={TabKey.FavTab}>
@@ -193,6 +196,8 @@ class App extends React.Component<Props, State> {
         </div>
 
         <img
+          role="presentation"
+          alt=""
           className="float-icon"
           src={FeedImage}
           onClick={() => {

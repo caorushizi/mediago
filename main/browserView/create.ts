@@ -6,7 +6,7 @@ import { is } from "electron-util";
 import logger from "main/utils/logger";
 import { SourceUrl } from "types/common";
 
-const createBrowserView = async () => {
+const createBrowserView = (): void => {
   const browserWindow = windowManager.get(Windows.BROWSER_WINDOW);
   const partition = "persist:webview";
   const ses = session.fromPartition(partition);
@@ -48,7 +48,9 @@ const createBrowserView = async () => {
         );
         const value: SourceUrl = {
           title: webContents.getTitle(),
-          details,
+          url: details.url,
+          headers: details.requestHeaders,
+          duration: 0,
         };
         mainWindow.send("m3u8", value);
         cancel = true;

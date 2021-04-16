@@ -4,7 +4,8 @@ import { SourceStatus, SourceType } from "renderer/common/types";
 declare interface SourceUrl {
   title: string;
   duration: number;
-  details: Electron.OnBeforeSendHeadersListenerDetails;
+  url: string;
+  headers?: Record<string, string>;
 }
 
 declare type SourceItem = SourceUrl & {
@@ -14,14 +15,16 @@ declare type SourceItem = SourceUrl & {
   directory: string;
 };
 
-declare function SourceUrlToRenderer(
-  event: Electron.IpcRendererEvent,
-  url: SourceUrl
-): void;
-
 declare interface Fav {
   url: string;
   title: string;
 }
 
-export { SourceUrl, SourceUrlToRenderer, Fav, SourceItem };
+declare interface SourceItemForm {
+  title: string;
+  url: string;
+  headers: string;
+  delete: boolean;
+}
+
+export { SourceUrl, Fav, SourceItem, SourceItemForm };

@@ -7,7 +7,7 @@ import maximize from "./assets/maximize.png";
 interface Props {
   leftContent?: ReactNode;
   extraButton?: ReactNode[];
-  color: string;
+  color?: string;
   onClose: () => void;
 }
 

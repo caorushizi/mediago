@@ -7,10 +7,8 @@ interface Props {
 
 const MediaBadge: React.FC<Props> = (props) => {
   const { sourceUrl } = props;
-  console.log(sourceUrl);
   const mimeName = mime.getType(sourceUrl);
 
-  console.log(mimeName);
   return mimeName ? <div>{mimeName}</div> : <div>暂不支持</div>;
 };
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import "./index.scss";
 import WindowToolBar from "../common/components/WindowToolBar";
 
@@ -6,12 +6,9 @@ interface Props {}
 
 interface State {}
 
+// 设置页面
 class SettingWindow extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-  }
-
-  render() {
+  render(): ReactNode {
     return (
       <div className="setting-window">
         <WindowToolBar onClose={() => {}}>设置页面</WindowToolBar>

@@ -1,12 +1,14 @@
-import React from "react";
-import Valine from "valine";
+import React, { ReactNode } from "react";
+
+const Valine = window.require("valine");
 
 interface Props {}
 interface State {}
 
 class Comment extends React.Component<Props, State> {
-  componentDidMount() {
+  componentDidMount(): void {
     setTimeout(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call,no-new
       new Valine({
         el: "#vcomments",
         appId: import.meta.env.VITE_APP_VC_AK,
@@ -20,7 +22,7 @@ class Comment extends React.Component<Props, State> {
     }, 100);
   }
 
-  render() {
+  render(): ReactNode {
     return <div id="vcomments" />;
   }
 }
