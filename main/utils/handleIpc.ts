@@ -5,7 +5,7 @@ import logger from "./logger";
 import windowManager from "../window/windowManager";
 import { Windows } from "../window/variables";
 
-const handleIpc = () => {
+const handleIpc = (): void => {
   ipcMain.on("exec", async (event, exeFile, ...args) => {
     let resp;
     try {

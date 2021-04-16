@@ -1,26 +1,16 @@
-import React from "react";
-import {
-  Checkbox,
-  Col,
-  Form,
-  Input,
-  InputNumber,
-  Row,
-  Select,
-  TimePicker,
-} from "antd";
+import React, { ReactNode } from "react";
+import { Checkbox, Col, Row, Form, Input, InputNumber, TimePicker } from "antd";
 
 interface Props {}
 interface State {}
 
 class M3u8Form extends React.Component<Props, State> {
-  render() {
+  render(): ReactNode {
     return (
       <Form
         colon={false}
         className="form-inner"
-        onFinish={this.onFinish}
-        ref={this.formRef}
+        labelCol={{ span: 6 }}
         size="small"
         initialValues={{
           maxThreads: 32,
@@ -31,66 +21,44 @@ class M3u8Form extends React.Component<Props, State> {
           maxSpeed: 0,
         }}
       >
-        <Row gutter={[16, 0]}>
-          <Col span={12}>
-            <Form.Item
-              label="视频名称"
-              name="name"
-              rules={[{ required: true, message: "请填写视频名称" }]}
-            >
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              label="m3u8链接"
-              name="url"
-              rules={[{ required: true, message: "请填写 m3u8 链接" }]}
-            >
-              <Input />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={[16, 0]}>
-          <Col span={12}>
-            <Form.Item label="请求标头" name="headers">
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label="BASEURL" name="baseUrl">
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label="混流文件" name="muxSetJson">
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label="设置代理" name="proxyAddress">
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label="自定义KEY" name="useKeyBase64">
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label="自定义IV" name="useKeyIV">
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label="范围选择" name="downloadRange">
-              <TimePicker.RangePicker />
-            </Form.Item>
-          </Col>
-        </Row>
+        <Form.Item
+          label="视频名称"
+          name="name"
+          rules={[{ required: true, message: "请填写视频名称" }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="m3u8链接"
+          name="url"
+          rules={[{ required: true, message: "请填写 m3u8 链接" }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item label="请求标头" name="headers">
+          <Input />
+        </Form.Item>
+        <Form.Item label="BASEURL" name="baseUrl">
+          <Input />
+        </Form.Item>
+        <Form.Item label="混流文件" name="muxSetJson">
+          <Input />
+        </Form.Item>
+        <Form.Item label="设置代理" name="proxyAddress">
+          <Input />
+        </Form.Item>
+        <Form.Item label="自定义KEY" name="useKeyBase64">
+          <Input />
+        </Form.Item>
+        <Form.Item label="自定义IV" name="useKeyIV">
+          <Input />
+        </Form.Item>
+        <Form.Item label="范围选择" name="downloadRange">
+          <TimePicker.RangePicker />
+        </Form.Item>
         <Form.Item wrapperCol={{ span: 24 }} name="checkbox">
           <Checkbox.Group>
-            <Row gutter={[16, 10]}>
+            <Row>
               <Col span={8}>
                 <Checkbox value="enableDelAfterDone">合并后删除分片</Checkbox>
               </Col>
@@ -123,7 +91,7 @@ class M3u8Form extends React.Component<Props, State> {
             </Row>
           </Checkbox.Group>
         </Form.Item>
-        <Row gutter={[16, 0]}>
+        <Row>
           <Col span={8}>
             <Form.Item
               labelCol={{ span: 12 }}

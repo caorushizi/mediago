@@ -9,15 +9,33 @@ import {
   Table,
   Tag,
 } from "antd";
+import ProForm, {
+  ProFormSwitch,
+  ProFormText,
+  ProFormRadio,
+  ProFormCheckbox,
+  ProFormRate,
+  ProFormDatePicker,
+  ProFormSelect,
+  ProFormDigit,
+  ProFormDateTimePicker,
+  ProFormSlider,
+  ProFormDateTimeRangePicker,
+  ProFormDateRangePicker,
+  ProFormUploadButton,
+  ProFormUploadDragger,
+  ProFormFieldSet,
+} from "@ant-design/pro-form";
 import "./index.scss";
 import tdApp from "renderer/common/scripts/td";
 import * as Electron from "electron";
 import variables from "renderer/common/scripts/variables";
 import M3u8Form from "renderer/main-window/components/M3u8Form";
-import { SourceItem } from "types/common";
+import { SourceItem, SourceItemForm } from "types/common";
 import MediaGoForm from "renderer/main-window/components/MegiaGoForm";
-import { SourceStatus } from "renderer/common/types";
+import { SourceStatus, SourceType } from "renderer/common/types";
 import { ipcExec, ipcGetStore } from "renderer/main-window/utils";
+import { insertVideo } from "renderer/common/scripts/localforge";
 
 const {
   remote,
@@ -39,12 +57,13 @@ interface Props {
     status: SourceStatus
   ) => Promise<void>;
   workspace: string;
+  updateTableData: () => Promise<void>;
 }
 
 interface State {
   isModalVisible: boolean;
   isDrawerVisible: boolean;
-  page: number;
+  currentSourceItem?: SourceItem;
 }
 
 type StatusMap = { get<T extends SourceStatus>(status: T): string };
@@ -64,13 +83,43 @@ class DownloadList extends React.Component<Props, State> {
     this.state = {
       isModalVisible: false,
       isDrawerVisible: false,
-      page: 1,
+      currentSourceItem: undefined,
     };
   }
 
-  async componentDidMount(): Promise<void> {}
+  handleOk = async (item: SourceItemForm): Promise<void> => {
+    const { updateTableData } = this.props;
+    const sourceItem: SourceItem = {
+      loading: false,
+      status: SourceStatus.Ready,
+      type: SourceType.M3u8,
+      directory: "",
+      title: item.title,
+      duration: 0,
+      url: item.url,
+    };
+    await insertVideo(sourceItem);
+    await updateTableData();
+    this.setState({
+      isModalVisible: false,
+    });
+  };
 
-  handleOk = (): void => {
+  // 立即下载
+  handleDownload = async (item: SourceItemForm): Promise<void> => {
+    const { updateTableData } = this.props;
+    const sourceItem: SourceItem = {
+      loading: false,
+      status: SourceStatus.Ready,
+      type: SourceType.M3u8,
+      directory: "",
+      title: item.title,
+      duration: 0,
+      url: item.url,
+    };
+    await insertVideo(sourceItem);
+    await updateTableData();
+    await this.downloadFile(sourceItem);
     this.setState({
       isModalVisible: false,
     });
@@ -96,42 +145,40 @@ class DownloadList extends React.Component<Props, State> {
     tdApp.onEvent("下载页面-开始下载");
     const exeFile = await ipcGetStore("exeFile");
     const workspace = await ipcGetStore("local");
-    const { title, details } = item;
-    const headers = Object.keys(details.requestHeaders)
-      .reduce((prev: string[], cur) => {
-        prev.push(`${cur}:${details.requestHeaders[cur]}`);
-        return prev;
-      }, [])
+    const { title, headers, url } = item;
+    const headersString = Object.entries(headers || {})
+      .map(([key, value]) => `${key}:${value}`)
       .join("|");
 
     const { code, msg } = await ipcExec(
       exeFile,
       workspace,
       title,
-      details.url,
-      headers
+      url,
+      headersString
     );
     if (code === 0) {
       await changeSourceStatus(item, SourceStatus.Success);
       tdApp.onEvent("下载页面-下载视频成功", {
         msg,
-        url: details.url,
+        url,
         exeFile,
       });
     } else {
       await changeSourceStatus(item, SourceStatus.Failed);
       tdApp.onEvent("下载页面-下载视频失败", {
         msg,
-        url: details.url,
+        url,
         exeFile,
       });
     }
   };
 
   // 展示资源详情
-  showSourceDetail = (): void => {
+  showSourceDetail = (item: SourceItem): void => {
     this.setState({
       isDrawerVisible: true,
+      currentSourceItem: item,
     });
   };
 
@@ -153,7 +200,7 @@ class DownloadList extends React.Component<Props, State> {
         });
         buttons.push({
           text: "详情",
-          cb: this.showSourceDetail,
+          cb: () => this.showSourceDetail(row),
         });
         break;
       case SourceStatus.Failed:
@@ -164,7 +211,7 @@ class DownloadList extends React.Component<Props, State> {
         });
         buttons.push({
           text: "详情",
-          cb: this.showSourceDetail,
+          cb: () => this.showSourceDetail(row),
         });
         break;
       case SourceStatus.Downloading:
@@ -179,7 +226,7 @@ class DownloadList extends React.Component<Props, State> {
         });
         buttons.push({
           text: "详情",
-          cb: this.showSourceDetail,
+          cb: () => this.showSourceDetail(row),
         });
         break;
     }
@@ -195,7 +242,7 @@ class DownloadList extends React.Component<Props, State> {
   };
 
   render(): ReactNode {
-    const { isModalVisible, isDrawerVisible } = this.state;
+    const { isModalVisible, isDrawerVisible, currentSourceItem } = this.state;
     const { tableData } = this.props;
     return (
       <div className="download-list">
@@ -265,14 +312,14 @@ class DownloadList extends React.Component<Props, State> {
             scroll={{ y: "calc(100vh - 310px)" }}
           />
         </div>
-        <Modal
-          title="新建下载"
+
+        <MediaGoForm
           visible={isModalVisible}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
-        >
-          <MediaGoForm />
-        </Modal>
+          handleCancel={this.handleCancel}
+          handleOk={this.handleOk}
+          handleDownload={this.handleDownload}
+        />
+
         <Drawer
           width={500}
           title="视频详情"
@@ -289,43 +336,16 @@ class DownloadList extends React.Component<Props, State> {
             </div>
           }
         >
-          <div className="item">
-            <div className="label">视频标题：</div>
-            <div className="value">盗墓笔记</div>
-          </div>
-          <div className="item">
-            <div className="label">m3u8地址：</div>
-            <div className="value">http://baidu.com</div>
-          </div>
-          <div className="item">
-            <div className="label">分片数：</div>
-            <div className="value">123</div>
-          </div>
-          <div className="item">
-            <div className="label">时长：</div>
-            <div className="value">123123</div>
-          </div>
-          <div className="item">
-            <div className="label">请求标头：</div>
-            <div className="value">
-              :authority: stats.g.doubleclick.net <br />
-              :method: POST
-              <br />
-              :path: /j/collect?t=dc&aip=1&_r=3&v=1&
-              <br />
-              :scheme: https
-              <br />
-              accept: */*
-              <br />
-              accept-encoding: gzip, deflate, br
-              <br />
-              accept-language: zh-CN,zh;q=0.9,en;q=0.8
-              <br />
-              content-length: 0<br />
-              content-type: text/plain
-              <br />
-            </div>
-          </div>
+          <ProForm initialValues={currentSourceItem}>
+            <ProForm.Group>
+              <ProFormText readonly label="视频标题" name="title" />
+            </ProForm.Group>
+
+            <ProFormText label="m3u8地址" name="url" />
+            <ProFormText label="分片数" name="duration" />
+            <ProFormText label="时长" name="duration" />
+            <ProFormText label="请求标头" name="headers" />
+          </ProForm>
           <div className="item">
             <div className="label">执行程序：</div>
             <div className="value">

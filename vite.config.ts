@@ -20,9 +20,10 @@ export default defineConfig({
     outDir: resolve(__dirname, "dist/electron"),
   },
   resolve: {
-    alias: {
-      renderer: resolve(__dirname, "renderer"),
-      types: resolve(__dirname, "types"),
-    },
+    alias: [
+      { find: "renderer", replacement: resolve(__dirname, "renderer") },
+      { find: "types", replacement: resolve(__dirname, "types") },
+      { find: /^~/, replacement: "" },
+    ],
   },
 });

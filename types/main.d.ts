@@ -9,8 +9,6 @@ declare global {
   }
 }
 
-declare let __bin__: string;
-
 declare interface IWindowManager {
   create: (name: Windows) => Promise<BrowserWindow | null>;
   get: (name: Windows) => BrowserWindow | null;

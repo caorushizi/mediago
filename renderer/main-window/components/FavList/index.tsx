@@ -1,85 +1,75 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import "./index.scss";
-import { Button, Col, Popconfirm, Row, Space } from "antd";
+import { Button, Space } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { getFavs, removeFav } from "renderer/common/scripts/localforge";
 import { Fav } from "types/common";
-
-const {
-  remote,
-  ipcRenderer,
-}: {
-  remote: Electron.Remote;
-  ipcRenderer: Electron.IpcRenderer;
-} = window.require("electron");
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import update from "immutability-helper";
+import Card from "./Card";
 
 interface Props {}
 
-interface State {
-  favs: Fav[];
-}
+const FavList: React.FC<Props> = () => {
+  const [favs, setFavs] = useState<Fav[]>([]);
 
-class FavList extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
+  const initState = async (): Promise<void> => {
+    const favList = await getFavs();
+    setFavs(favList);
+  };
 
-    this.state = {
-      favs: [],
-    };
-  }
+  useEffect(() => {
+    initState();
+  }, []);
 
-  async componentDidMount(): Promise<void> {
-    const favs = await getFavs();
-    this.setState({ favs });
-  }
+  // 移动卡片
+  const moveCard = useCallback(
+    (dragIndex: number, hoverIndex: number) => {
+      const dragCard = favs[dragIndex];
+      setFavs(
+        update(favs, {
+          $splice: [
+            [dragIndex, 1],
+            [hoverIndex, 0, dragCard],
+          ],
+        })
+      );
+    },
+    [favs]
+  );
 
-  render(): ReactNode {
-    const { favs } = this.state;
-    return (
-      <div className="fav-list">
-        <Space className="button-wrapper">
-          <Button type="primary" icon={<PlusOutlined />}>
-            添加收藏
-          </Button>
-        </Space>
-        <div className="fav-wrapper">
-          {favs.map((fav) => (
-            <Row className="fav-item" key={fav.url}>
-              <Col span={18} className="fav-item__title">
-                {fav.title}
-              </Col>
-              <Col span={6} className="fav-item__action">
-                <Button
-                  type="link"
-                  onClick={() => {
-                    ipcRenderer.send("openBrowserWindow", fav.url);
-                  }}
-                >
-                  打开链接
-                </Button>
-                <Popconfirm
-                  placement="topRight"
-                  title="确认要删除这个收藏吗？"
-                  onConfirm={async () => {
-                    await removeFav(fav);
-                    const favList = await getFavs();
-                    this.setState({ favs: favList });
-                  }}
-                  okText="删除"
-                  okButtonProps={{ danger: true }}
-                  cancelText="取消"
-                >
-                  <Button type="link" danger>
-                    删除
-                  </Button>
-                </Popconfirm>
-              </Col>
-            </Row>
-          ))}
-        </div>
+  const handleDelete = async (fav: Fav): Promise<void> => {
+    await removeFav(fav);
+    const favList = await getFavs();
+    setFavs(favList);
+  };
+
+  // 渲染卡片
+  const renderCard = (fav: Fav, index: number): ReactNode => (
+    <Card
+      handleDelete={handleDelete}
+      key={fav.url}
+      index={index}
+      moveCard={moveCard}
+      fav={fav}
+    />
+  );
+
+  return (
+    <div className="fav-list">
+      <Space className="button-wrapper">
+        <Button type="primary" icon={<PlusOutlined />}>
+          添加收藏
+        </Button>
+      </Space>
+      <div className="fav-wrapper">
+        <DndProvider backend={HTML5Backend}>
+          <div>{favs.map((card, i) => renderCard(card, i))}</div>
+        </DndProvider>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 export default FavList;

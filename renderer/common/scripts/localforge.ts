@@ -1,7 +1,6 @@
 import { Fav, SourceItem } from "types/common";
 import * as localforage from "localforage";
 import { SourceStatus } from "renderer/common/types";
-import { cloneDeep } from "lodash";
 
 const keys = { videos: "videos", fav: "fav" };
 
@@ -11,10 +10,9 @@ const insertVideo = async (
   let videos = await localforage.getItem<SourceItem[]>(keys.videos);
   // 首先查看数据库中是否存在
   if (!Array.isArray(videos)) videos = [];
-  const isFav =
-    videos.findIndex((video) => video.details.url === item.details.url) >= 0;
+  const isFav = videos.findIndex((video) => video.url === item.url) >= 0;
   if (isFav) return undefined;
-  videos.push(item);
+  videos.unshift(item);
   await localforage.setItem(keys.videos, videos);
   return item;
 };
@@ -37,9 +35,7 @@ const updateVideoStatus = async (
   // fixme: 当数据量比较大的时候
   let videos = await localforage.getItem<SourceItem[]>(keys.videos);
   if (!Array.isArray(videos)) videos = [];
-  const findIndex = videos.findIndex(
-    (video) => source.details.url === video.details.url
-  );
+  const findIndex = videos.findIndex((video) => source.url === video.url);
   if (findIndex >= 0) {
     videos.splice(findIndex, 1, { ...source, status });
     await localforage.setItem(keys.videos, videos);
@@ -51,7 +47,7 @@ const insertFav = async (fav: Fav): Promise<Fav[]> => {
   if (!Array.isArray(favs)) favs = [];
   const isFav = favs.findIndex((item) => item.url === fav.url) >= 0;
   if (isFav) return favs;
-  favs.push(fav);
+  favs.unshift(fav);
   await localforage.setItem(keys.fav, favs);
   return favs;
 };
