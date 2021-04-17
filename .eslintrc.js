@@ -21,6 +21,7 @@ module.exports = {
     "@typescript-eslint/naming-convention": 0,
     "@typescript-eslint/no-misused-promises": 0,
     "@typescript-eslint/no-unsafe-assignment": 0,
+    "@typescript-eslint/ban-ts-comment": 0,
     "no-underscore-dangle": 0,
   },
   settings: {

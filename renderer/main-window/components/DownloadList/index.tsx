@@ -12,6 +12,7 @@ import { SourceStatus, SourceType } from "renderer/common/types";
 import { ipcExec, ipcGetStore } from "renderer/main-window/utils";
 import { insertVideo } from "renderer/common/scripts/localforge";
 import { PlusOutlined } from "@ant-design/icons";
+import { ProCoreActionType } from "@ant-design/pro-utils/lib/typing";
 
 const {
   remote,
@@ -169,7 +170,7 @@ class DownloadList extends React.Component<Props, State> {
   };
 
   // 渲染操作按钮
-  renderActionButtons = (value: string, row: SourceItem): ReactNode => {
+  renderActionButtons = (dom: React.ReactNode, row: SourceItem): ReactNode => {
     const buttons: ActionButton[] = [];
     switch (row.status) {
       case SourceStatus.Success:
@@ -235,14 +236,8 @@ class DownloadList extends React.Component<Props, State> {
                   取消选择
                 </a>
               </span>
-              <span>{`容器数量: ${selectedRows.reduce(
-                (pre, item) => pre + item.containers,
-                0
-              )} 个`}</span>
-              <span>{`调用量: ${selectedRows.reduce(
-                (pre, item) => pre + item.callNumber,
-                0
-              )} 次`}</span>
+              <span>{`容器数量: 1 个`}</span>
+              <span>{`调用量: 1 次`}</span>
             </Space>
           )}
           tableAlertOptionRender={() => (
@@ -281,7 +276,7 @@ class DownloadList extends React.Component<Props, State> {
               dataIndex: "title",
               className: "title",
               ellipsis: true,
-              render: (text: string) => <span>{text}</span>,
+              render: (dom: React.ReactNode) => dom,
             },
             {
               title: "详情",
@@ -331,7 +326,8 @@ class DownloadList extends React.Component<Props, State> {
             {
               title: "创建时间",
               key: "createdAt",
-              sorter: (a, b) => a.createdAt - b.createdAt,
+              // fixme: 时间排序
+              // sorter: (a, b) => a.createdAt - b.createdAt,
             },
             {
               title: "操作",
