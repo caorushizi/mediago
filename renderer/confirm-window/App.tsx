@@ -1,5 +1,5 @@
 import React from "react";
-import WindowToolBar from "../common/components/WindowToolBar";
+import WindowToolBar from "renderer/common/components/WindowToolBar";
 
 interface Props {}
 
