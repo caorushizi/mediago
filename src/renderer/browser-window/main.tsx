@@ -135,24 +135,22 @@ class App extends React.Component<Props, State> {
   };
 
   onUrlChange = (url: string) => {
-    console.log(url);
     this.setState({ url });
   };
 
-  handleEnter = async () => {
-    console.log("进入");
+  handleEnter = () => {
+    const { url } = this.state;
+    this.view?.webContents.loadURL(url);
   };
 
   handleClickFav = async () => {
     const { title, url } = this.state;
-    console.log(url);
     const isFav = await isFavFunc(url);
     if (isFav) {
       await removeFav({ title, url });
     } else {
       await insertFav({ title, url });
     }
-    console.log(isFav);
     this.setState({ isFav: !isFav });
   };
 

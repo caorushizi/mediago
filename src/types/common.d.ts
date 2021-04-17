@@ -13,6 +13,7 @@ declare type SourceItem = SourceUrl & {
   status: SourceStatus;
   type: SourceType;
   directory: string;
+  createdAt: number;
 };
 
 declare interface Fav {

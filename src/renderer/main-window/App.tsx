@@ -1,4 +1,5 @@
 import * as React from "react";
+import { ReactNode } from "react";
 import "./App.scss";
 import { Badge, Button, Drawer, Dropdown, Menu, Tabs } from "antd";
 import WindowToolBar from "renderer/common/components/WindowToolBar";
@@ -15,9 +16,11 @@ import {
   insertVideo,
   updateVideoStatus,
 } from "renderer/common/scripts/localforge";
-import { ReactNode } from "react";
 import { EllipsisOutlined } from "@ant-design/icons";
 import { ipcGetStore } from "./utils";
+import audioSrc from "./assets/tip.mp3";
+
+const audio = new Audio(audioSrc);
 
 const {
   remote,
@@ -113,6 +116,7 @@ class App extends React.Component<Props, State> {
       status: SourceStatus.Ready,
       type: SourceType.M3u8,
       directory: "",
+      createdAt: Date.now(),
     };
     const sourceItem = await insertVideo(item);
     if (!sourceItem) return;
@@ -136,6 +140,9 @@ class App extends React.Component<Props, State> {
     source: SourceItem,
     status: SourceStatus
   ): Promise<void> => {
+    if (status === SourceStatus.Success) {
+      await audio.play();
+    }
     await updateVideoStatus(source, status);
     const tableData = await getVideos(1);
     this.setState({ tableData });

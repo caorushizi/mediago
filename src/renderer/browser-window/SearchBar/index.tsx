@@ -1,7 +1,8 @@
-import React from "react";
+import React, { ChangeEvent } from "react";
 import "./index.scss";
 import {
   ArrowLeftOutlined,
+  ArrowRightOutlined,
   EnterOutlined,
   HomeOutlined,
   ReloadOutlined,
@@ -35,6 +36,19 @@ const SearchBar: React.FC<Props> = (props) => {
     isFav,
     handleClickFav,
   } = props;
+
+  // 搜索框变化
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    onUrlChange(e.target.value);
+  };
+
+  // 搜索框键盘事件
+  const handleEnterPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleEnter();
+    }
+  };
+
   return (
     <div className={classNames("search-bar", className)}>
       <div className="btn">
@@ -54,10 +68,11 @@ const SearchBar: React.FC<Props> = (props) => {
         placeholder="请在此输入网址"
         type="text"
         value={url}
-        onChange={(e) => onUrlChange(e.target.value)}
+        onKeyPress={handleEnterPress}
+        onChange={handleSearchChange}
       />
       <div className="btn">
-        <EnterOutlined className="button" onClick={handleEnter} />
+        <ArrowRightOutlined className="button" onClick={handleEnter} />
       </div>
     </div>
   );

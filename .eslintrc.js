@@ -22,6 +22,8 @@ module.exports = {
     "@typescript-eslint/no-misused-promises": 0,
     "@typescript-eslint/no-unsafe-assignment": 0,
     "@typescript-eslint/ban-ts-comment": 0,
+    "@typescript-eslint/no-unsafe-member-access": 0,
+    "@typescript-eslint/no-unsafe-call": 0,
     "no-underscore-dangle": 0,
   },
   settings: {

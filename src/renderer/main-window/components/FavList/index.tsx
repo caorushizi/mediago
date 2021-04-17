@@ -1,13 +1,23 @@
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import "./index.scss";
-import { Button, Space } from "antd";
+import { Button, message, Space } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { getFavs, removeFav } from "renderer/common/scripts/localforge";
+import {
+  getFavs,
+  insertFav,
+  removeFav,
+} from "renderer/common/scripts/localforge";
 import { Fav } from "types/common";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import update from "immutability-helper";
 import Card from "./Card";
+import ProForm, {
+  ModalForm,
+  ProFormText,
+  ProFormDateRangePicker,
+  ProFormSelect,
+} from "@ant-design/pro-form";
 
 interface Props {}
 
@@ -59,9 +69,41 @@ const FavList: React.FC<Props> = () => {
   return (
     <div className="fav-list">
       <Space className="button-wrapper">
-        <Button type="primary" icon={<PlusOutlined />}>
-          添加收藏
-        </Button>
+        <ModalForm<Fav>
+          width={500}
+          layout="horizontal"
+          title="添加收藏"
+          trigger={
+            <Button type="primary" icon={<PlusOutlined />}>
+              添加收藏
+            </Button>
+          }
+          modalProps={{
+            onCancel: () => console.log("run"),
+          }}
+          onFinish={async (fav) => {
+            console.log(fav.title);
+            await insertFav(fav);
+            const favs = await getFavs();
+            setFavs(favs);
+            return true;
+          }}
+        >
+          <ProFormText
+            required
+            name="title"
+            label="链接名称"
+            placeholder="请输入链接名称"
+            rules={[{ required: true, message: "请输入链接名称" }]}
+          />
+          <ProFormText
+            required
+            name="url"
+            label="链接地址"
+            placeholder="请输入链接地址"
+            rules={[{ required: true, message: "请输入链接地址" }]}
+          />
+        </ModalForm>
       </Space>
       <div className="fav-wrapper">
         <DndProvider backend={HTML5Backend}>
