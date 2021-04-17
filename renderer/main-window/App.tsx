@@ -195,16 +195,6 @@ class App extends React.Component<Props, State> {
           </Tabs>
         </div>
 
-        <img
-          role="presentation"
-          alt=""
-          className="float-icon"
-          src={FeedImage}
-          onClick={() => {
-            this.setState({ isDrawerVisible: true });
-          }}
-        />
-
         <Drawer
           title="评论反馈"
           placement="right"
@@ -218,6 +208,15 @@ class App extends React.Component<Props, State> {
         </Drawer>
 
         <div className="toolbar">
+          <Button
+            role="presentation"
+            type="link"
+            onClick={() => {
+              this.setState({ isDrawerVisible: true });
+            }}
+          >
+            评论反馈
+          </Button>
           <Dropdown overlay={this.menu} placement="topRight">
             <EllipsisOutlined />
           </Dropdown>

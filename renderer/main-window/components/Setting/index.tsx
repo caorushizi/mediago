@@ -1,5 +1,6 @@
 import React, { ReactNode } from "react";
 import {
+  Button,
   Descriptions,
   Divider,
   Form,
@@ -12,6 +13,7 @@ import { SettingOutlined } from "@ant-design/icons";
 import { ipcSetStore } from "renderer/main-window/utils";
 import "./index.scss";
 import { string } from "prop-types";
+import variables from "renderer/common/scripts/variables";
 
 const {
   remote,
@@ -64,16 +66,16 @@ class Setting extends React.Component<Props, State> {
       this.setState({
         downloader: {
           title: "mediago",
-          description: "123",
-          github: "123",
+          description: "",
+          github: variables.urls.mediaGoUrl,
         },
       });
     } else {
       this.setState({
         downloader: {
           title: "N_m3u8DL-CLI",
-          description: "123",
-          github: "123",
+          description: "",
+          github: variables.urls.m3u8Url,
         },
       });
     }
@@ -86,16 +88,16 @@ class Setting extends React.Component<Props, State> {
       this.setState({
         downloader: {
           title: "mediago",
-          description: "123",
-          github: "123",
+          description: "",
+          github: variables.urls.mediaGoUrl,
         },
       });
     } else {
       this.setState({
         downloader: {
           title: "N_m3u8DL-CLI",
-          description: "123",
-          github: "123",
+          description: "",
+          github: variables.urls.m3u8Url,
         },
       });
     }
@@ -154,11 +156,18 @@ class Setting extends React.Component<Props, State> {
             />
           </Form.Item>
           <Descriptions title={downloader.title}>
-            <Descriptions.Item label="描述">
-              {downloader.description}
-            </Descriptions.Item>
+            {/*<Descriptions.Item label="描述">*/}
+            {/*  {downloader.description}*/}
+            {/*</Descriptions.Item>*/}
             <Descriptions.Item label="源代码地址">
-              {downloader.github}
+              <Button
+                type="link"
+                onClick={async () => {
+                  await remote.shell.openExternal(downloader.github);
+                }}
+              >
+                {downloader.github}
+              </Button>
             </Descriptions.Item>
           </Descriptions>
         </Form>

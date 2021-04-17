@@ -21,23 +21,6 @@ class M3u8Form extends React.Component<Props, State> {
           maxSpeed: 0,
         }}
       >
-        <Form.Item
-          label="视频名称"
-          name="name"
-          rules={[{ required: true, message: "请填写视频名称" }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="m3u8链接"
-          name="url"
-          rules={[{ required: true, message: "请填写 m3u8 链接" }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item label="请求标头" name="headers">
-          <Input />
-        </Form.Item>
         <Form.Item label="BASEURL" name="baseUrl">
           <Input />
         </Form.Item>
