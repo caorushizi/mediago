@@ -1,41 +1,17 @@
 import React, { ReactNode } from "react";
-import {
-  Button,
-  Collapse,
-  Drawer,
-  Modal,
-  Select,
-  Space,
-  Table,
-  Tag,
-} from "antd";
-import ProForm, {
-  ProFormSwitch,
-  ProFormText,
-  ProFormRadio,
-  ProFormCheckbox,
-  ProFormRate,
-  ProFormDatePicker,
-  ProFormSelect,
-  ProFormDigit,
-  ProFormDateTimePicker,
-  ProFormSlider,
-  ProFormDateTimeRangePicker,
-  ProFormDateRangePicker,
-  ProFormUploadButton,
-  ProFormUploadDragger,
-  ProFormFieldSet,
-} from "@ant-design/pro-form";
+import { Button, Input, Modal, Space, Tag } from "antd";
+import ProDescriptions from "@ant-design/pro-descriptions";
+import ProTable from "@ant-design/pro-table";
 import "./index.scss";
 import tdApp from "renderer/common/scripts/td";
 import * as Electron from "electron";
 import variables from "renderer/common/scripts/variables";
-import M3u8Form from "renderer/main-window/components/M3u8Form";
 import { SourceItem, SourceItemForm } from "types/common";
 import MediaGoForm from "renderer/main-window/components/MegiaGoForm";
 import { SourceStatus, SourceType } from "renderer/common/types";
 import { ipcExec, ipcGetStore } from "renderer/main-window/utils";
 import { insertVideo } from "renderer/common/scripts/localforge";
+import { PlusOutlined } from "@ant-design/icons";
 
 const {
   remote,
@@ -77,6 +53,10 @@ const statusMap = new Map([
 
 // 下载列表
 class DownloadList extends React.Component<Props, State> {
+  actionRef = React.createRef();
+
+  tableRef = React.createRef();
+
   constructor(props: Props) {
     super(props);
 
@@ -230,88 +210,139 @@ class DownloadList extends React.Component<Props, State> {
         });
         break;
     }
-    return (
-      <>
-        {buttons.map((button) => (
-          <Button type="link" onClick={button.cb}>
-            {button.text}
-          </Button>
-        ))}
-      </>
-    );
+    return buttons.map((button) => <a onClick={button.cb}>{button.text}</a>);
   };
 
   render(): ReactNode {
     const { isModalVisible, isDrawerVisible, currentSourceItem } = this.state;
     const { tableData } = this.props;
     return (
-      <div className="download-list">
-        <Space>
-          <Button
-            onClick={() => {
-              this.setState({ isModalVisible: true });
-            }}
-          >
-            新建下载
-          </Button>
-          <Button
-            onClick={() => {
-              tdApp.onEvent("下载页面-打开浏览器页面");
-              ipcRenderer.send("openBrowserWindow");
-            }}
-          >
-            打开浏览器
-          </Button>
-          <Button
-            onClick={async () => {
-              await remote.shell.openExternal(variables.urls.help);
-            }}
-          >
-            使用帮助
-          </Button>
-        </Space>
-        <div className="download-list-table">
-          <Table
-            rowSelection={{}}
-            rowKey="url"
-            columns={[
-              {
-                title: "标题",
-                dataIndex: "title",
-                width: 250,
-                className: "title",
-                render: (text: string) => <span>{text}</span>,
+      <div className="">
+        <ProTable<SourceItem>
+          rowSelection={{}}
+          options={false}
+          rowKey="url"
+          search={false}
+          tableAlertRender={({
+            selectedRowKeys,
+            selectedRows,
+            onCleanSelected,
+          }) => (
+            <Space size={24}>
+              <span>
+                已选 {selectedRowKeys.length} 项
+                <a style={{ marginLeft: 8 }} onClick={onCleanSelected}>
+                  取消选择
+                </a>
+              </span>
+              <span>{`容器数量: ${selectedRows.reduce(
+                (pre, item) => pre + item.containers,
+                0
+              )} 个`}</span>
+              <span>{`调用量: ${selectedRows.reduce(
+                (pre, item) => pre + item.callNumber,
+                0
+              )} 次`}</span>
+            </Space>
+          )}
+          tableAlertOptionRender={() => (
+            <Space size={16}>
+              <a>批量删除</a>
+              <a>导出数据</a>
+            </Space>
+          )}
+          toolBarRender={() => [
+            <Button
+              onClick={() => {
+                this.setState({ isModalVisible: true });
+              }}
+            >
+              新建下载
+            </Button>,
+            <Button
+              onClick={() => {
+                tdApp.onEvent("下载页面-打开浏览器页面");
+                ipcRenderer.send("openBrowserWindow");
+              }}
+            >
+              打开浏览器
+            </Button>,
+            <Button
+              onClick={async () => {
+                await remote.shell.openExternal(variables.urls.help);
+              }}
+            >
+              使用帮助
+            </Button>,
+          ]}
+          columns={[
+            {
+              title: "标题",
+              dataIndex: "title",
+              className: "title",
+              ellipsis: true,
+              render: (text: string) => <span>{text}</span>,
+            },
+            {
+              title: "详情",
+              dataIndex: "url",
+              render: (value, row) => (
+                <div>
+                  <div>分片数:{row.loading ? "正在加载" : row.title}</div>
+                  <div>时长:{row.loading ? "正在加载" : row.title}</div>
+                </div>
+              ),
+            },
+            {
+              title: "状态",
+              filters: true,
+              onFilter: true,
+              valueType: "select",
+              formItemProps: {
+                rules: [
+                  {
+                    required: true,
+                    message: "此项为必填项",
+                  },
+                ],
               },
-              {
-                title: "详情",
-                dataIndex: "url",
-                width: 190,
-                render: (value, row) => (
-                  <div>
-                    <div>分片数:{row.loading ? "正在加载" : row.title}</div>
-                    <div>时长:{row.loading ? "正在加载" : row.title}</div>
-                  </div>
-                ),
+              valueEnum: {
+                all: { text: "全部", status: "Default" },
+                open: {
+                  text: "未解决",
+                  status: "Error",
+                },
+                closed: {
+                  text: "已解决",
+                  status: "Success",
+                  disabled: true,
+                },
+                processing: {
+                  text: "解决中",
+                  status: "Processing",
+                },
               },
-              {
-                title: "状态",
-                width: 90,
-                render: (value, row) => (
-                  <Space size="middle">
-                    <Tag color={statusMap.get(row.status)}>{row.status}</Tag>
-                  </Space>
-                ),
-              },
-              {
-                title: "操作",
-                key: "action",
-                render: this.renderActionButtons,
-              },
-            ]}
-            dataSource={tableData}
-            scroll={{ y: "calc(100vh - 310px)" }}
-          />
-        </div>
+              render: (value, row) => (
+                <Space size="middle">
+                  <Tag color={statusMap.get(row.status)}>{row.status}</Tag>
+                </Space>
+              ),
+            },
+            {
+              title: "创建时间",
+              key: "createdAt",
+              sorter: (a, b) => a.createdAt - b.createdAt,
+            },
+            {
+              title: "操作",
+              key: "action",
+              valueType: "option",
+              render: this.renderActionButtons,
+            },
+          ]}
+          dataSource={tableData}
+          // scroll={{ y: "calc(100vh - 310px)" }}
+        />
 
         <MediaGoForm
           visible={isModalVisible}
@@ -320,47 +351,73 @@ class DownloadList extends React.Component<Props, State> {
           handleDownload={this.handleDownload}
         />
 
-        <Drawer
+        <Modal
           width={500}
           title="视频详情"
-          placement="right"
-          onClose={this.handleDrawerClose}
+          onCancel={this.handleDrawerClose}
           visible={isDrawerVisible}
-          className="download-drawer"
           footer={
-            <div>
-              <Space>
-                <Button type="primary">保存</Button>
-                <Button>取消</Button>
-              </Space>
-            </div>
+            <Space>
+              <Button>立即下载</Button>
+              <Button>取消</Button>
+              <Button type="primary">确定</Button>
+            </Space>
           }
         >
-          <ProForm initialValues={currentSourceItem}>
-            <ProForm.Group>
-              <ProFormText readonly label="视频标题" name="title" />
-            </ProForm.Group>
-
-            <ProFormText label="m3u8地址" name="url" />
-            <ProFormText label="分片数" name="duration" />
-            <ProFormText label="时长" name="duration" />
-            <ProFormText label="请求标头" name="headers" />
-          </ProForm>
-          <div className="item">
-            <div className="label">执行程序：</div>
-            <div className="value">
-              <Select defaultValue="lucy" style={{ width: 120 }}>
-                <Select.Option value="jack">mediago</Select.Option>
-                <Select.Option value="lucy">mediago</Select.Option>
-              </Select>
-            </div>
-          </div>
-          <Collapse defaultActiveKey={["1"]} ghost>
-            <Collapse.Panel header="更多参数" key="1">
-              <M3u8Form />
-            </Collapse.Panel>
-          </Collapse>
-        </Drawer>
+          <ProDescriptions
+            actionRef={this.actionRef}
+            layout="horizontal"
+            formProps={{
+              onValuesChange: (e, f) => console.log(f),
+            }}
+            column={1}
+            request={async () =>
+              Promise.resolve({
+                success: true,
+                data: currentSourceItem,
+              })
+            }
+            editable={{}}
+            columns={[
+              {
+                title: "视频标题",
+                key: "title",
+                dataIndex: "title",
+              },
+              {
+                title: "m3u8地址",
+                key: "url",
+                dataIndex: "url",
+              },
+              {
+                title: "分片数",
+                key: "duration",
+                dataIndex: "duration",
+                renderFormItem: () => <Input />,
+              },
+              {
+                title: "时长",
+                key: "duration",
+                dataIndex: "duration",
+                valueType: "date",
+              },
+              {
+                title: "执行程序",
+                key: "exeFile",
+                dataIndex: "exeFile",
+                valueType: "select",
+                valueEnum: {
+                  open: {
+                    text: "mediago",
+                  },
+                  closed: {
+                    text: "m3u8",
+                  },
+                },
+              },
+            ]}
+          />
+        </Modal>
       </div>
     );
   }

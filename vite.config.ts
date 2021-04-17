@@ -26,4 +26,11 @@ export default defineConfig({
       { find: /^~/, replacement: "" },
     ],
   },
+  css: {
+    preprocessorOptions: {
+      less: {
+        javascriptEnabled: true,
+      },
+    },
+  },
 });
