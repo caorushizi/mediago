@@ -1,5 +1,6 @@
 import { spawn, SpawnOptions } from "child_process";
 import glob from "glob";
+// @ts-ignore
 import spawnargs from "spawn-args";
 import semver from "semver";
 import { workspace } from "main/utils/variables";

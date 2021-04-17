@@ -1,5 +1,7 @@
 const onEvent = (eventId: string, mapKv: any = {}): void => {
   try {
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
     window.TDAPP.onEvent(eventId, "", mapKv);
     console.log(`添加埋点成功：${eventId}`, mapKv);
   } catch (err) {
