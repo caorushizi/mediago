@@ -49,7 +49,7 @@ interface State {
 }
 
 class App extends React.Component<Props, State> {
-  view?: Electron.BrowserView;
+  view: Electron.BrowserView | null;
 
   resizeObserver?: ResizeObserver;
 
@@ -63,6 +63,8 @@ class App extends React.Component<Props, State> {
       title: "",
       isFav: false,
     };
+
+    this.view = null;
   }
 
   async componentDidMount() {
@@ -76,7 +78,7 @@ class App extends React.Component<Props, State> {
     this.view?.setBounds({ x: 0, y: 0, height: 0, width: 0 });
     this.view?.webContents.off("dom-ready", this.handleViewDOMReady);
     ipcRenderer.removeListener("viewReady", this.handleViewReady);
-    this.view = undefined;
+    this.view = null;
     this.resizeObserver?.disconnect();
   }
 
