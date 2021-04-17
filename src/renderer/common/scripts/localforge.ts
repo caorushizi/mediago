@@ -42,6 +42,21 @@ const updateVideoStatus = async (
   }
 };
 
+const removeVideo = async (url: string) => {
+  let videos = await localforage.getItem<SourceItem[]>(keys.videos);
+  if (!Array.isArray(videos)) videos = [];
+  const favIndex = videos.findIndex((item) => item.url === url);
+  if (favIndex >= 0) videos.splice(favIndex, 1);
+  await localforage.setItem(keys.videos, videos);
+  return videos;
+};
+
+const removeVideos = async (urls: (string | number)[]): Promise<void> => {
+  for (const url of urls) {
+    await removeVideo(String(url));
+  }
+};
+
 const insertFav = async (fav: Fav): Promise<Fav[]> => {
   let favs = await localforage.getItem<Fav[]>(keys.fav);
   if (!Array.isArray(favs)) favs = [];
@@ -77,6 +92,7 @@ export {
   insertVideo,
   getVideos,
   updateVideoStatus,
+  removeVideos,
   insertFav,
   isFavFunc,
   removeFav,

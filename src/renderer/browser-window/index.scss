@@ -34,42 +34,6 @@ $playlist-width: 200px;
         justify-content: center;
         background: #f2f6fc;
       }
-
-      .playlist {
-        width: $playlist-width;
-        overflow-y: auto;
-        border-right: 1px solid #dcdfe6;
-
-        @include scrollbar;
-
-        .playlist-item {
-          padding: 10px;
-          margin: 5px;
-          box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-
-          .media-title {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            height: 30px;
-            line-height: 30px;
-            user-select: none;
-          }
-
-          .action {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-
-            .left {
-            }
-
-            .right {
-            }
-          }
-        }
-      }
     }
   }
 }

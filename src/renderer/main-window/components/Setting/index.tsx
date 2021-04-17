@@ -58,6 +58,7 @@ class Setting extends React.Component<Props, State> {
     const { workspace, exeFile } = this.props;
     this.workspaceFormRef.current?.setFieldsValue({
       workspace: workspace || "",
+      tip: true,
     });
     this.exeFileFormRef.current?.setFieldsValue({
       exeFile: exeFile || "",

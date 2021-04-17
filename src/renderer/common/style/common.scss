@@ -1,3 +1,13 @@
+@font-face {
+  font-family: "webfont";
+  font-display: swap;
+  src: url("../assets/fonts/webfont.ttf") format("truetype");
+}
+
+@mixin font-style {
+  font-family: webfont !important;
+}
+
 @mixin text-ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;

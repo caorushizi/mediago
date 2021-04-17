@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Button, Input, Modal, Space, Tag } from "antd";
+import { Button, Input, Modal, Popconfirm, Space, Tag } from "antd";
 import ProDescriptions from "@ant-design/pro-descriptions";
 import ProTable from "@ant-design/pro-table";
 import "./index.scss";
@@ -8,11 +8,10 @@ import * as Electron from "electron";
 import variables from "renderer/common/scripts/variables";
 import { SourceItem, SourceItemForm } from "types/common";
 import MediaGoForm from "renderer/main-window/components/MegiaGoForm";
-import { SourceStatus, SourceType } from "renderer/common/types";
 import { ipcExec, ipcGetStore } from "renderer/main-window/utils";
-import { insertVideo } from "renderer/common/scripts/localforge";
-import { PlusOutlined } from "@ant-design/icons";
-import { ProCoreActionType } from "@ant-design/pro-utils/lib/typing";
+import { insertVideo, removeVideos } from "renderer/common/scripts/localforge";
+import { SourceStatus, SourceType } from "renderer/common/types";
+import moment from "moment";
 
 const {
   remote,
@@ -45,18 +44,23 @@ interface State {
 
 type StatusMap = { get<T extends SourceStatus>(status: T): string };
 
-const statusMap = new Map([
+const statusColorMap = new Map([
   [SourceStatus.Ready, "#108ee9"],
   [SourceStatus.Failed, "#f50"],
   [SourceStatus.Success, "#87d068"],
   [SourceStatus.Downloading, "#2db7f5"],
 ]) as StatusMap;
 
+const statusTextMap = new Map([
+  [SourceStatus.Ready, "未下载"],
+  [SourceStatus.Failed, "下载失败"],
+  [SourceStatus.Success, "下载成功"],
+  [SourceStatus.Downloading, "正在下载"],
+]);
+
 // 下载列表
 class DownloadList extends React.Component<Props, State> {
   actionRef = React.createRef();
-
-  tableRef = React.createRef();
 
   constructor(props: Props) {
     super(props);
@@ -78,6 +82,7 @@ class DownloadList extends React.Component<Props, State> {
       title: item.title,
       duration: 0,
       url: item.url,
+      createdAt: Date.now(),
     };
     await insertVideo(sourceItem);
     await updateTableData();
@@ -97,6 +102,7 @@ class DownloadList extends React.Component<Props, State> {
       title: item.title,
       duration: 0,
       url: item.url,
+      createdAt: Date.now(),
     };
     await insertVideo(sourceItem);
     await updateTableData();
@@ -198,6 +204,7 @@ class DownloadList extends React.Component<Props, State> {
       case SourceStatus.Downloading:
         // 正在下载
         // buttons.push();
+        // buttons.push({ text: "设置为成功", cb: () => {} });
         break;
       default:
         // 准备状态
@@ -216,7 +223,8 @@ class DownloadList extends React.Component<Props, State> {
 
   render(): ReactNode {
     const { isModalVisible, isDrawerVisible, currentSourceItem } = this.state;
-    const { tableData } = this.props;
+    const { tableData, updateTableData } = this.props;
+    // TODO: 在浏览器中嗅探成功后，自动解析 m3u8 文件，在页面中展示详情
     return (
       <div className="">
         <ProTable<SourceItem>
@@ -224,11 +232,7 @@ class DownloadList extends React.Component<Props, State> {
           options={false}
           rowKey="url"
           search={false}
-          tableAlertRender={({
-            selectedRowKeys,
-            selectedRows,
-            onCleanSelected,
-          }) => (
+          tableAlertRender={({ selectedRowKeys, onCleanSelected }) => (
             <Space size={24}>
               <span>
                 已选 {selectedRowKeys.length} 项
@@ -236,16 +240,27 @@ class DownloadList extends React.Component<Props, State> {
                   取消选择
                 </a>
               </span>
-              <span>{`容器数量: 1 个`}</span>
-              <span>{`调用量: 1 次`}</span>
             </Space>
           )}
-          tableAlertOptionRender={() => (
-            <Space size={16}>
-              <a>批量删除</a>
-              <a>导出数据</a>
-            </Space>
-          )}
+          tableAlertOptionRender={({ selectedRowKeys, onCleanSelected }) => [
+            <Button type="link">批量下载</Button>,
+            <Popconfirm
+              placement="bottomRight"
+              title="确认要删除选中项目吗？"
+              onConfirm={async () => {
+                await removeVideos(selectedRowKeys);
+                await updateTableData();
+                onCleanSelected();
+              }}
+              okText="删除"
+              okButtonProps={{ danger: true }}
+              cancelText="取消"
+            >
+              <Button type="link" danger>
+                删除
+              </Button>
+            </Popconfirm>,
+          ]}
           toolBarRender={() => [
             <Button
               onClick={() => {
@@ -279,55 +294,47 @@ class DownloadList extends React.Component<Props, State> {
               render: (dom: React.ReactNode) => dom,
             },
             {
-              title: "详情",
-              dataIndex: "url",
-              render: (value, row) => (
-                <div>
-                  <div>分片数:{row.loading ? "正在加载" : row.title}</div>
-                  <div>时长:{row.loading ? "正在加载" : row.title}</div>
-                </div>
-              ),
+              title: "创建时间",
+              key: "createdAt",
+              dataIndex: "createdAt",
+              sorter: (a, b) => a.createdAt - b.createdAt,
+              render: (dom, item) =>
+                moment(item.createdAt).format("YYYY-MM-DD HH:mm:ss"),
             },
             {
               title: "状态",
               filters: true,
               onFilter: true,
+              dataIndex: "status",
+              initialValue: "all",
               valueType: "select",
-              formItemProps: {
-                rules: [
-                  {
-                    required: true,
-                    message: "此项为必填项",
-                  },
-                ],
-              },
               valueEnum: {
-                all: { text: "全部", status: "Default" },
-                open: {
-                  text: "未解决",
-                  status: "Error",
+                all: {
+                  text: "全部",
+                  status: "Default",
                 },
-                closed: {
-                  text: "已解决",
-                  status: "Success",
-                  disabled: true,
+                ready: {
+                  text: SourceStatus.Ready,
+                  status: statusTextMap.get(SourceStatus.Ready),
                 },
-                processing: {
-                  text: "解决中",
-                  status: "Processing",
+                downloading: {
+                  text: SourceStatus.Downloading,
+                  status: statusTextMap.get(SourceStatus.Downloading),
+                },
+                failed: {
+                  text: SourceStatus.Failed,
+                  status: statusTextMap.get(SourceStatus.Failed),
+                },
+                success: {
+                  text: SourceStatus.Success,
+                  status: statusTextMap.get(SourceStatus.Success),
                 },
               },
               render: (value, row) => (
-                <Space size="middle">
-                  <Tag color={statusMap.get(row.status)}>{row.status}</Tag>
-                </Space>
+                <Tag color={statusColorMap.get(row.status)}>
+                  {statusTextMap.get(row.status)}
+                </Tag>
               ),
-            },
-            {
-              title: "创建时间",
-              key: "createdAt",
-              // fixme: 时间排序
-              // sorter: (a, b) => a.createdAt - b.createdAt,
             },
             {
               title: "操作",
