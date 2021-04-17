@@ -18,7 +18,6 @@ import {
 import { ReactNode } from "react";
 import { EllipsisOutlined } from "@ant-design/icons";
 import { ipcGetStore } from "./utils";
-import FeedImage from "./assets/feed.png";
 
 const {
   remote,
