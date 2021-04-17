@@ -3,6 +3,7 @@ import React, { ReactNode } from "react";
 const Valine = window.require("valine");
 
 interface Props {}
+
 interface State {}
 
 class Comment extends React.Component<Props, State> {

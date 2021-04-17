@@ -1,11 +1,14 @@
 .fav-list {
   padding: 20px;
+
   .button-wrapper {
     padding-bottom: 10px;
   }
+
   .fav-wrapper {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
     border-radius: 4px;
+
     .fav-item {
       margin: 5px 0;
       display: flex;

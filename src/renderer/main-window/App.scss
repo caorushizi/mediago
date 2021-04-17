@@ -18,24 +18,29 @@
       height: 40px;
       background: #4090f7;
       -webkit-app-region: drag;
+
       .ant-tabs-nav-wrap {
         padding: 0 20px;
       }
+
       .ant-tabs-tab-btn {
         -webkit-app-region: no-drag;
         color: #fff;
         font-size: 17px;
         user-select: none;
+
         .download-item {
           font-size: 17px;
           color: #fff;
         }
       }
+
       .ant-tabs-tab-active {
         .ant-tabs-tab-btn {
           color: #fff;
         }
       }
+
       .ant-tabs-ink-bar {
         height: 3px;
         background: #fff;

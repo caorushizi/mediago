@@ -21,7 +21,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react",
-    "baseUrl": "./",
+    "baseUrl": "./src",
     "paths": {
       "main/*": [
         "main/*"
@@ -35,8 +35,8 @@
     }
   },
   "include": [
-    "./renderer/**/*",
-    "./main/**/*",
-    "./types/**/*"
+    "./src/renderer/**/*",
+    "./src/main/**/*",
+    "./src/types/**/*"
   ]
 }

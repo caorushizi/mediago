@@ -175,4 +175,5 @@ class Setting extends React.Component<Props, State> {
     );
   }
 }
+
 export default Setting;
