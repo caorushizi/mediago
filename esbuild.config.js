@@ -6,8 +6,8 @@ require("dotenv").config({
 
 require("esbuild").buildSync({
   entryPoints: [
-    resolve(__dirname, "./main/index.ts"),
-    resolve(__dirname, "./main/preload.ts"),
+    resolve(__dirname, "./src/main/index.ts"),
+    resolve(__dirname, "./src/main/preload.ts"),
   ],
   bundle: true,
   platform: "node",

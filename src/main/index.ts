@@ -35,6 +35,10 @@ app.on("activate", async () => {
   }
 });
 
+protocol.registerSchemesAsPrivileged([
+  { scheme: "mediago", privileges: { secure: true, standard: true } },
+]);
+
 app.whenReady().then(async () => {
   protocol.registerFileProtocol("mediago", (request, callback) => {
     const url = request.url.substr(10);

@@ -10,7 +10,7 @@ import {
   isFavFunc,
   removeFav,
 } from "renderer/common/scripts/localforge";
-import WindowToolBar from "../common/components/WindowToolBar";
+import WindowToolBar from "renderer/common/components/WindowToolBar";
 import SearchBar from "./SearchBar";
 
 const {
