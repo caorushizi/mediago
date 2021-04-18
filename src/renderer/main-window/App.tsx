@@ -214,15 +214,15 @@ class App extends React.Component<Props, State> {
         </Drawer>
 
         <div className="toolbar">
-          <Button
-            role="presentation"
-            type="link"
-            onClick={() => {
-              this.setState({ isDrawerVisible: true });
-            }}
-          >
-            评论反馈
-          </Button>
+          {/*<Button*/}
+          {/*  role="presentation"*/}
+          {/*  type="link"*/}
+          {/*  onClick={() => {*/}
+          {/*    this.setState({ isDrawerVisible: true });*/}
+          {/*  }}*/}
+          {/*>*/}
+          {/*  评论反馈*/}
+          {/*</Button>*/}
           <Dropdown overlay={this.menu} placement="topRight">
             <EllipsisOutlined />
           </Dropdown>
