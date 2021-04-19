@@ -314,19 +314,19 @@ class DownloadList extends React.Component<Props, State> {
                   status: "Default",
                 },
                 ready: {
-                  text: SourceStatus.Ready,
+                  text: statusTextMap.get(SourceStatus.Ready),
                   status: statusTextMap.get(SourceStatus.Ready),
                 },
                 downloading: {
-                  text: SourceStatus.Downloading,
+                  text: statusTextMap.get(SourceStatus.Downloading),
                   status: statusTextMap.get(SourceStatus.Downloading),
                 },
                 failed: {
-                  text: SourceStatus.Failed,
+                  text: statusTextMap.get(SourceStatus.Failed),
                   status: statusTextMap.get(SourceStatus.Failed),
                 },
                 success: {
-                  text: SourceStatus.Success,
+                  text: statusTextMap.get(SourceStatus.Success),
                   status: statusTextMap.get(SourceStatus.Success),
                 },
               },

@@ -11,6 +11,10 @@ interface Props {
 
 interface State {}
 
+const headersPlaceholder = `[可空] 请输入一行一个Header，例如：
+Origin: https://www.sample.com
+Referer: https://www.sample.com`;
+
 class MediaGoForm extends React.Component<Props, State> {
   formRef = React.createRef<FormInstance<SourceItemForm>>();
 
@@ -39,7 +43,7 @@ class MediaGoForm extends React.Component<Props, State> {
   };
 
   render(): ReactNode {
-    const { visible, handleDownload, handleCancel } = this.props;
+    const { visible, handleCancel } = this.props;
     return (
       <Modal
         title="新建下载"
@@ -59,21 +63,21 @@ class MediaGoForm extends React.Component<Props, State> {
       >
         <Form labelCol={{ span: 4 }} ref={this.formRef}>
           <Form.Item
-            label="视频名称"
-            name="title"
-            rules={[{ required: true, message: "请填写视频名称" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
             label="m3u8"
             name="url"
             rules={[{ required: true, message: "请填写 m3u8 链接" }]}
           >
-            <Input />
+            <Input placeholder="[必填] 输入 m3u8 地址，或将M3U8文件拖拽至此" />
+          </Form.Item>
+          <Form.Item
+            label="视频名称"
+            name="title"
+            rules={[{ required: true, message: "请填写视频名称" }]}
+          >
+            <Input placeholder="[可空] 默认当前时间戳" />
           </Form.Item>
           <Form.Item label="请求标头" name="headers">
-            <Input />
+            <Input.TextArea rows={3} placeholder={headersPlaceholder} />
           </Form.Item>
           <Form.Item
             label="下载完成是否删除"
