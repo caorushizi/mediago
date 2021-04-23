@@ -4,6 +4,11 @@ require("dotenv").config({
   path: resolve(__dirname, `.env.${process.env.NODE_ENV}`),
 });
 
+const define = {};
+if (process.env.NODE_ENV === "development") {
+  define.__bin__ = `"${resolve(__dirname, ".bin").replace(/\\/g, "\\\\")}"`;
+}
+
 require("esbuild").buildSync({
   entryPoints: [
     resolve(__dirname, "./src/main/index.ts"),
@@ -14,9 +19,6 @@ require("esbuild").buildSync({
   sourcemap: true,
   target: ["node10.4"],
   external: ["electron"],
-  define: {
-    // 开发环境中二进制可执行文件的路径
-    __bin__: `"${resolve(__dirname, ".bin").replace(/\\/g, "\\\\")}"`,
-  },
+  define,
   outdir: resolve(__dirname, "./dist/main"),
 });

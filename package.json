@@ -9,7 +9,7 @@
     "prestart-test": "script/prestart",
     "start": "node script/dev-server.js",
     "serve": "vite preview",
-    "build": "rimraf dist && tsc && vite build && node esbuild.config.js",
+    "build": "rimraf dist && vite build && node esbuild.config.js",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
   },
