@@ -22,9 +22,9 @@ m3u8 视频在线提取工具 流媒体下载 m3u8下载 桌面客户端 windows
 
 # 下载链接
 
-- [v1.0.2 windows](http://static.ziying.site/media-downloader-1.0.0%20Setup.exe)
+- [v1.0.2 windows](http://static.ziying.site/media-downloader-1.0.2%20Setup.exe)
 - [v1.0.1 windows](http://static.ziying.site/media-downloader-1.0.1%20Setup.exe)
-- [v1.0.0 windows](http://static.ziying.site/media-downloader-1.0.2%20Setup.exe)
+- [v1.0.0 windows](http://static.ziying.site/media-downloader-1.0.0%20Setup.exe)
 
 # 使用 Vite & esBuild 构建
 
