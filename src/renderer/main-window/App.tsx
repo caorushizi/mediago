@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ReactNode } from "react";
 import "./App.scss";
-import { Badge, Button, Drawer, Dropdown, Menu, Tabs } from "antd";
+import { Badge, Button, Drawer, Dropdown, Menu, message, Tabs } from "antd";
 import WindowToolBar from "renderer/common/components/WindowToolBar";
 import DownloadList from "renderer/main-window/components/DownloadList";
 import Setting from "renderer/main-window/components/Setting";
@@ -38,17 +38,17 @@ enum TabKey {
 
 const { TabPane } = Tabs;
 
-interface Props {}
-
 interface State {
   workspace: string;
   exeFile: string;
   isDrawerVisible: boolean;
   notifyCount: number;
   tableData: SourceItem[];
+  activeKey: TabKey;
+  tip: boolean; // 下载完成是否播放提示音
 }
 
-class App extends React.Component<Props, State> {
+class App extends React.Component<null, State> {
   // 渲染右下角的菜单
   menu = (
     <Menu>
@@ -75,7 +75,7 @@ class App extends React.Component<Props, State> {
     </Menu>
   );
 
-  constructor(props: Props) {
+  constructor(props: null) {
     super(props);
 
     this.state = {
@@ -84,18 +84,23 @@ class App extends React.Component<Props, State> {
       isDrawerVisible: false,
       notifyCount: 0,
       tableData: [],
+      activeKey: TabKey.HomeTab,
+      tip: false,
     };
   }
 
   async componentDidMount(): Promise<void> {
     // 开始初始化表格数据
     const tableData = await getVideos(1);
-    const workspace = await ipcGetStore("local");
+    const workspace = await ipcGetStore("workspace");
     const exeFile = await ipcGetStore("exeFile");
+    const tip = await ipcGetStore("tip");
     this.setState({
       exeFile: exeFile || "",
       workspace: workspace || "",
       tableData,
+      activeKey: workspace ? TabKey.HomeTab : TabKey.SettingTab,
+      tip,
     });
 
     ipcRenderer.on("m3u8", this.handleWebViewMessage);
@@ -135,12 +140,23 @@ class App extends React.Component<Props, State> {
     }
   };
 
+  // 首页面板点击事件
+  onTabClick = async (activeKey: TabKey): Promise<void> => {
+    const { workspace } = this.state;
+    if (!workspace) {
+      message.error("请选择本地路径");
+      return;
+    }
+    this.setState({ activeKey });
+  };
+
   // 切换视频源的 status
   changeSourceStatus = async (
     source: SourceItem,
     status: SourceStatus
   ): Promise<void> => {
-    if (status === SourceStatus.Success) {
+    const { tip } = this.state;
+    if (status === SourceStatus.Success && tip) {
       await audio.play();
     }
     await updateVideoStatus(source, status);
@@ -154,6 +170,11 @@ class App extends React.Component<Props, State> {
     this.setState({ tableData: videos });
   };
 
+  // 工作目录选择事件
+  onWorkspaceChange = (workspace: string) => {
+    this.setState({ workspace });
+  };
+
   render(): ReactNode {
     const {
       exeFile,
@@ -161,6 +182,8 @@ class App extends React.Component<Props, State> {
       isDrawerVisible,
       notifyCount,
       tableData,
+      activeKey,
+      tip,
     } = this.state;
 
     return (
@@ -173,9 +196,11 @@ class App extends React.Component<Props, State> {
         />
         <div className="main-window">
           <Tabs
+            activeKey={activeKey}
             tabPosition="top"
             className="main-window-tabs"
             onChange={(value) => this.onTabChange(value as TabKey)}
+            onTabClick={(key) => this.onTabClick(key as TabKey)}
           >
             <TabPane
               tab={
@@ -196,7 +221,12 @@ class App extends React.Component<Props, State> {
               <FavList />
             </TabPane>
             <TabPane tab="设置" key={TabKey.SettingTab}>
-              <Setting workspace={workspace} exeFile={exeFile} />
+              <Setting
+                workspace={workspace}
+                exeFile={exeFile}
+                tip={tip}
+                onWorkspaceChange={this.onWorkspaceChange}
+              />
             </TabPane>
           </Tabs>
         </div>
