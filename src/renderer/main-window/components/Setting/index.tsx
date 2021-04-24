@@ -1,14 +1,5 @@
 import React, { ReactNode } from "react";
-import {
-  Button,
-  Descriptions,
-  Form,
-  FormInstance,
-  Input,
-  Select,
-  Switch,
-} from "antd";
-import { SettingOutlined } from "@ant-design/icons";
+import { Button, Descriptions, FormInstance } from "antd";
 import { ipcSetStore } from "renderer/main-window/utils";
 import "./index.scss";
 import variables from "renderer/common/scripts/variables";
@@ -53,9 +44,7 @@ interface FormData {
 
 // 设置页面
 class Setting extends React.Component<Props, State> {
-  workspaceFormRef = React.createRef<FormInstance>();
-
-  exeFileFormRef = React.createRef<FormInstance>();
+  formRef = React.createRef<FormInstance<FormData>>();
 
   constructor(props: Props) {
     super(props);
@@ -69,77 +58,30 @@ class Setting extends React.Component<Props, State> {
   }
 
   componentDidMount(): void {
-    const { workspace, exeFile, tip } = this.props;
-    this.workspaceFormRef.current?.setFieldsValue({
-      workspace: workspace || "",
-      tip,
+    const { exeFile } = this.props;
+    this.setState({
+      downloader: {
+        title: exeFile === "mediago" ? "mediago" : "N_m3u8DL-CLI",
+        description: "",
+        github:
+          exeFile === "mediago"
+            ? variables.urls.mediaGoUrl
+            : variables.urls.m3u8Url,
+      },
     });
-    this.exeFileFormRef.current?.setFieldsValue({
-      exeFile: exeFile || "",
-    });
-    if (exeFile === "mediago") {
-      this.setState({
-        downloader: {
-          title: "mediago",
-          description: "",
-          github: variables.urls.mediaGoUrl,
-        },
-      });
-    } else {
-      this.setState({
-        downloader: {
-          title: "N_m3u8DL-CLI",
-          description: "",
-          github: variables.urls.m3u8Url,
-        },
-      });
-    }
   }
-
-  // 选择默认下载器
-  handleSelectExeFile = async (value: string): Promise<void> => {
-    await ipcSetStore("exeFile", value);
-    if (value === "mediago") {
-      this.setState({
-        downloader: {
-          title: "mediago",
-          description: "",
-          github: variables.urls.mediaGoUrl,
-        },
-      });
-    } else {
-      this.setState({
-        downloader: {
-          title: "N_m3u8DL-CLI",
-          description: "",
-          github: variables.urls.m3u8Url,
-        },
-      });
-    }
-  };
-
-  // 播放提示音更改
-  handleChangeTip = async (value: boolean): Promise<void> => {
-    await ipcSetStore("tip", value);
-    this.workspaceFormRef.current?.setFieldsValue({
-      tip: value || false,
-    });
-  };
 
   // 选择下载地址
   handleSelectDir = async (): Promise<void> => {
-    const workspace = this.workspaceFormRef.current?.getFieldValue([
-      "workspace",
-    ]);
     const result = remote.dialog.showOpenDialogSync({
-      defaultPath: workspace || remote.app.getPath("documents"),
+      defaultPath: remote.app.getPath("documents"),
       properties: ["openDirectory"],
     });
     if (!result) return;
     const { onWorkspaceChange } = this.props;
     const workspaceValue = result[0];
     await ipcSetStore("workspace", workspaceValue);
-    this.workspaceFormRef.current?.setFieldsValue({
+    this.formRef.current?.setFieldsValue({
       workspace: workspaceValue || "",
     });
     onWorkspaceChange(workspaceValue);
@@ -161,15 +103,27 @@ class Setting extends React.Component<Props, State> {
     return (
       <div className="setting-form">
         <ProForm<FormData>
+          formRef={this.formRef}
           layout="horizontal"
           submitter={false}
           initialValues={{ workspace, exeFile, tip }}
           onValuesChange={async (changedValue) => {
             if (Object.keys(changedValue).includes("tip")) {
-              await this.handleChangeTip(changedValue["tip"]);
+              await ipcSetStore("tip", changedValue["tip"]);
             }
             if (Object.keys(changedValue).includes("exeFile")) {
-              await this.handleSelectExeFile(changedValue["exeFile"]);
+              const value = changedValue["exeFile"];
+              await ipcSetStore("exeFile", value);
+              this.setState({
+                downloader: {
+                  title: value === "mediago" ? "mediago" : "N_m3u8DL-CLI",
+                  description: "",
+                  github:
+                    value === "mediago"
+                      ? variables.urls.mediaGoUrl
+                      : variables.urls.m3u8Url,
+                },
+              });
             }
           }}
         >
@@ -208,14 +162,14 @@ class Setting extends React.Component<Props, State> {
         </ProForm>
         <Descriptions title={downloader.title}>
           <Descriptions.Item label="源代码地址">
-            <Button
-              type="link"
-              onClick={async () => {
+            <a
+              onClick={async (e) => {
+                e.preventDefault();
                 await remote.shell.openExternal(downloader.github);
               }}
             >
               {downloader.github}
-            </Button>
+            </a>
           </Descriptions.Item>
         </Descriptions>
         <Button onClick={this.openConfigDir}>打开配置文件路径</Button>
