@@ -18,6 +18,7 @@ import ProForm, {
   ProFormDateRangePicker,
   ProFormSelect,
 } from "@ant-design/pro-form";
+import { isUrl } from "renderer/main-window/utils";
 
 interface Props {}
 
@@ -101,13 +102,20 @@ const FavList: React.FC<Props> = () => {
             name="url"
             label="链接地址"
             placeholder="请输入链接地址"
-            rules={[{ required: true, message: "请输入链接地址" }]}
+            rules={[
+              { required: true, message: "请输入链接地址" },
+              {
+                validator(rule, value: string, callback) {
+                  if (!isUrl(value)) callback("请输入正确的 url 格式");
+                },
+              },
+            ]}
           />
         </ModalForm>
       </Space>
       <div className="fav-wrapper">
         <DndProvider backend={HTML5Backend}>
-          <div>{favs.map((card, i) => renderCard(card, i))}</div>
+          {favs.map((card, i) => renderCard(card, i))}
         </DndProvider>
       </div>
     </div>

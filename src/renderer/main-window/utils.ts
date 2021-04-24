@@ -22,7 +22,7 @@ const ipcExec = (
     ipcRenderer.send("exec", exeFile, ...args);
   });
 
-const ipcSetStore = (key: string, value: string): Promise<any> =>
+const ipcSetStore = (key: string, value: any): Promise<any> =>
   new Promise((resolve, reject) => {
     ipcRenderer.on(
       "setLocalPathReply",
@@ -38,7 +38,13 @@ const ipcSetStore = (key: string, value: string): Promise<any> =>
     ipcRenderer.send("setLocalPath", key, value);
   });
 
-const ipcGetStore = (key: string): Promise<string> =>
+const ipcGetStore = (key: string): Promise<any> =>
   ipcRenderer.invoke("getLocalPath", key) as Promise<string>;
 
-export { ipcExec, ipcSetStore, ipcGetStore };
+function isUrl(url: string) {
+  return /^(https?:\/\/(([a-zA-Z0-9]+-?)+[a-zA-Z0-9]+\.)+[a-zA-Z]+)(:\d+)?(\/.*)?(\?.*)?(#.*)?$/.test(
+    url
+  );
+}
+
+export { ipcExec, ipcSetStore, ipcGetStore, isUrl };

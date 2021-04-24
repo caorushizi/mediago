@@ -4,6 +4,7 @@ import { XYCoord } from "dnd-core";
 import { Button, Col, Popconfirm, Row } from "antd";
 import { Fav } from "types/common";
 import ItemTypes from "./ItemTypes";
+import { DragOutlined } from "@ant-design/icons";
 
 const {
   ipcRenderer,
@@ -40,46 +41,21 @@ const Card: React.FC<CardProps> = ({ index, moveCard, fav, handleDelete }) => {
       }
       const dragIndex = item.index;
       const hoverIndex = index;
-
-      // Don't replace items with themselves
       if (dragIndex === hoverIndex) {
         return;
       }
-
-      // Determine rectangle on screen
       const hoverBoundingRect = ref.current?.getBoundingClientRect();
-
-      // Get vertical middle
       const hoverMiddleY =
         (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-
-      // Determine mouse position
       const clientOffset = monitor.getClientOffset();
-
-      // Get pixels to the top
       const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top;
-
-      // Only perform the move when the mouse has crossed half of the items height
-      // When dragging downwards, only move when the cursor is below 50%
-      // When dragging upwards, only move when the cursor is above 50%
-
-      // Dragging downwards
       if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
         return;
       }
-
-      // Dragging upwards
       if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
         return;
       }
-
-      // Time to actually perform the action
       moveCard(dragIndex, hoverIndex);
-
-      // Note: we're mutating the monitor item here!
-      // Generally it's better to avoid mutations,
-      // but it's good here for the sake of performance
-      // to avoid expensive index searches.
       item.index = hoverIndex;
     },
   });
@@ -96,10 +72,11 @@ const Card: React.FC<CardProps> = ({ index, moveCard, fav, handleDelete }) => {
   drag(drop(ref));
 
   return (
-    <div ref={ref} data-handler-id={handlerId}>
-      <Row className="fav-item" key={fav.url}>
+    <div className="fav-item" ref={ref} data-handler-id={handlerId}>
+      <Row className="fav-item-inner" key={fav.url}>
         <Col span={18} className="fav-item__title">
-          {fav.title}
+          <DragOutlined />
+          <span className="fav-item__inner">{fav.title}</span>
         </Col>
         <Col span={6} className="fav-item__action">
           <Button
