@@ -1,3 +1,5 @@
+import { M3u8DLArgs, MediaGoArgs } from "types/common";
+
 const { ipcRenderer }: { ipcRenderer: Electron.IpcRenderer } = window.require(
   "electron"
 );
@@ -10,16 +12,16 @@ type IpcRendererResp = {
 
 const ipcExec = (
   exeFile: string,
-  ...args: string[]
+  args: M3u8DLArgs | MediaGoArgs
 ): Promise<IpcRendererResp> =>
   new Promise((resolve) => {
     ipcRenderer.on(
       "execReply",
-      (event: Electron.IpcRendererEvent, arg: IpcRendererResp) => {
-        resolve(arg);
+      (event: Electron.IpcRendererEvent, resp: IpcRendererResp) => {
+        resolve(resp);
       }
     );
-    ipcRenderer.send("exec", exeFile, ...args);
+    ipcRenderer.send("exec", exeFile, args);
   });
 
 const ipcSetStore = (key: string, value: any): Promise<any> =>

@@ -42,7 +42,6 @@
     "react-dnd-html5-backend": "^14.0.0",
     "react-dom": "^17.0.0",
     "semver": "^7.3.4",
-    "spawn-args": "^0.2.0",
     "valine": "^1.4.14"
   },
   "devDependencies": {

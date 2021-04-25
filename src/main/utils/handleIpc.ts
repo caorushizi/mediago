@@ -4,12 +4,13 @@ import store from "./store";
 import logger from "./logger";
 import windowManager from "../window/windowManager";
 import { Windows } from "../window/variables";
+import { M3u8DLArgs } from "types/common";
 
 const handleIpc = (): void => {
-  ipcMain.on("exec", async (event, exeFile, ...args) => {
+  ipcMain.on("exec", async (event, exeFile: string, args: M3u8DLArgs) => {
     let resp;
     try {
-      const result = await exec(exeFile, ...args);
+      const result = await exec(exeFile, args);
       resp = successFn(result);
     } catch (e) {
       resp = failFn(-1, e.message);
