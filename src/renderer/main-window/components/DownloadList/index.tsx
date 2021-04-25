@@ -131,7 +131,7 @@ class DownloadList extends React.Component<Props, State> {
     await changeSourceStatus(item, SourceStatus.Downloading);
     tdApp.onEvent("下载页面-开始下载");
     const exeFile = await ipcGetStore("exeFile");
-    const workspace = await ipcGetStore("local");
+    const workspace = await ipcGetStore("workspace");
     const { title, headers, url } = item;
     const headersString = Object.entries(headers || {})
       .map(([key, value]) => `${key}:${value}`)
