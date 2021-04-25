@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Button, Descriptions, FormInstance } from "antd";
+import { Button, Descriptions, FormInstance, Space } from "antd";
 import { ipcSetStore } from "renderer/main-window/utils";
 import "./index.scss";
 import variables from "renderer/common/scripts/variables";
@@ -9,6 +9,8 @@ import ProForm, {
   ProFormSwitch,
   ProFormText,
 } from "@ant-design/pro-form";
+import { FolderOpenOutlined } from "@ant-design/icons";
+import { workspace } from "main/utils/variables";
 const path = window.require("path");
 
 const {
@@ -87,7 +89,7 @@ class Setting extends React.Component<Props, State> {
     onWorkspaceChange(workspaceValue);
   };
 
-  // 打开配置文件路径
+  // 打开配置文件文件夹
   openConfigDir = async (): Promise<void> => {
     const appName =
       process.env.NODE_ENV === "development"
@@ -95,6 +97,18 @@ class Setting extends React.Component<Props, State> {
         : "media downloader";
     const appPath = remote.app.getPath("appData");
     await remote.shell.openPath(path.resolve(appPath, appName));
+  };
+
+  // 打开可执行程序文件夹
+  openBinDir = async (): Promise<void> => {
+    const binDir = await ipcRenderer.invoke("getBinDir");
+    await remote.shell.openPath(binDir);
+  };
+
+  // 本地存储文件夹
+  localDir = async (): Promise<void> => {
+    const { workspace } = this.props;
+    await remote.shell.openPath(workspace);
   };
 
   render(): ReactNode {
@@ -134,7 +148,10 @@ class Setting extends React.Component<Props, State> {
               name="workspace"
               placeholder="请选择视频下载目录"
               label={
-                <Button type="link" onClick={this.handleSelectDir}>
+                <Button
+                  onClick={this.handleSelectDir}
+                  icon={<FolderOpenOutlined />}
+                >
                   选择文件夹
                 </Button>
               }
@@ -172,7 +189,17 @@ class Setting extends React.Component<Props, State> {
             </a>
           </Descriptions.Item>
         </Descriptions>
-        <Button onClick={this.openConfigDir}>打开配置文件路径</Button>
+        <Space>
+          <Button onClick={this.openConfigDir} icon={<FolderOpenOutlined />}>
+            配置文件目录
+          </Button>
+          <Button onClick={this.openBinDir} icon={<FolderOpenOutlined />}>
+            可执行程序目录
+          </Button>
+          <Button onClick={this.localDir} icon={<FolderOpenOutlined />}>
+            本地存储目录
+          </Button>
+        </Space>
       </div>
     );
   }
