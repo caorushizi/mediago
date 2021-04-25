@@ -61,11 +61,13 @@ const handleIpc = (): void => {
     browserWindow.hide();
   });
 
-  ipcMain.handle("openSettingWindow", async (event) => {
+  ipcMain.handle("openSettingWindow", async () => {
     const settingWindow = windowManager.get(Windows.SETTING_WINDOW);
     settingWindow.show();
     return true;
   });
+
+  ipcMain.handle("getBinDir", async () => __bin__);
 };
 
 export default handleIpc;
