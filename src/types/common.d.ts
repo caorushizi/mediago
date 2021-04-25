@@ -1,5 +1,6 @@
 // 从主进程中想渲染进程发送的参数
 import { SourceStatus, SourceType } from "renderer/common/types";
+import { string } from "prop-types";
 
 declare interface SourceUrl {
   title: string;
@@ -30,9 +31,10 @@ declare interface SourceItemForm {
 
 // M3u8DL 全部参数
 declare interface M3u8DLArgs {
+  url: string; // 视频地址
   workDir: string; // 设定程序工作目录
   saveName: string; // 设定存储文件名(不包括后缀)
-  baseUrl: string; // 设定Baseurl
+  baseUrl?: string; // 设定Baseurl
   headers?: string; // 设定请求头，格式 key:value 使用|分割不同的key&value
   maxThreads?: number; // 设定程序的最大线程数(默认为32)
   minThreads?: number; // 设定程序的最小线程数(默认为16)
@@ -57,4 +59,12 @@ declare interface M3u8DLArgs {
   noProxy?: boolean; // 不自动使用系统代理
 }
 
-export { SourceUrl, Fav, SourceItem, SourceItemForm, M3u8DLArgs };
+// mediago 全部参数
+declare interface MediaGoArgs {
+  path: string;
+  name: string;
+  url: string;
+  headers?: string;
+}
+
+export { SourceUrl, Fav, SourceItem, SourceItemForm, M3u8DLArgs, MediaGoArgs };

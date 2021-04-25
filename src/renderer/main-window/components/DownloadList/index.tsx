@@ -6,7 +6,12 @@ import "./index.scss";
 import tdApp from "renderer/common/scripts/td";
 import * as Electron from "electron";
 import variables from "renderer/common/scripts/variables";
-import { SourceItem, SourceItemForm } from "types/common";
+import {
+  M3u8DLArgs,
+  MediaGoArgs,
+  SourceItem,
+  SourceItemForm,
+} from "types/common";
 import MediaGoForm from "renderer/main-window/components/MegiaGoForm";
 import { ipcExec, ipcGetStore } from "renderer/main-window/utils";
 import { insertVideo, removeVideos } from "renderer/common/scripts/localforge";
@@ -133,31 +138,41 @@ class DownloadList extends React.Component<Props, State> {
     const exeFile = await ipcGetStore("exeFile");
     const workspace = await ipcGetStore("workspace");
     const { title, headers, url } = item;
-    const headersString = Object.entries(headers || {})
-      .map(([key, value]) => `${key}:${value}`)
-      .join("|");
 
-    const { code, msg } = await ipcExec(
-      exeFile,
-      workspace,
-      title,
-      url,
-      headersString
-    );
+    let args: MediaGoArgs | M3u8DLArgs;
+    if (exeFile === "mediago") {
+      const headersString = Object.entries(headers || {})
+        .map(([key, value]) => `${key}~${value}`)
+        .join("|");
+      args = {
+        url,
+        path: workspace, // 设定程序工作目录
+        name: title, // 设定存储文件名(不包括后缀)
+        headers: headersString,
+      };
+    } else {
+      const headersString = Object.entries(headers || {})
+        .map(([key, value]) => `${key}:${value}`)
+        .join("|");
+      args = {
+        url,
+        workDir: workspace, // 设定程序工作目录
+        saveName: title, // 设定存储文件名(不包括后缀)
+        headers: headersString,
+      };
+    }
+
+    const { code, msg } = await ipcExec(exeFile, args);
     if (code === 0) {
       await changeSourceStatus(item, SourceStatus.Success);
-      tdApp.onEvent("下载页面-下载视频成功", {
-        msg,
-        url,
-        exeFile,
-      });
+
+      const kv = { msg, url, exeFile };
+      tdApp.onEvent("下载页面-下载视频成功", kv);
     } else {
       await changeSourceStatus(item, SourceStatus.Failed);
-      tdApp.onEvent("下载页面-下载视频失败", {
-        msg,
-        url,
-        exeFile,
-      });
+
+      const kv = { msg, url, exeFile };
+      tdApp.onEvent("下载页面-下载视频失败", kv);
     }
   };
 
