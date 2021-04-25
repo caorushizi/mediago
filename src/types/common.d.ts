@@ -1,6 +1,5 @@
 // 从主进程中想渲染进程发送的参数
 import { SourceStatus, SourceType } from "renderer/common/types";
-import { string } from "prop-types";
 
 declare interface SourceUrl {
   title: string;
