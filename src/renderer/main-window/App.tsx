@@ -123,7 +123,7 @@ class App extends React.Component<any, State> {
       type: SourceType.M3u8,
       directory: workspace,
       createdAt: Date.now(),
-      deleteSegments: false,
+      deleteSegments: true,
     };
     const sourceItem = await insertVideo(item);
     if (!sourceItem) return;
@@ -254,7 +254,6 @@ class App extends React.Component<any, State> {
 
           <div className="toolbar">
             <Button
-              role="presentation"
               type="link"
               onClick={() => {
                 this.setState({ isDrawerVisible: true });

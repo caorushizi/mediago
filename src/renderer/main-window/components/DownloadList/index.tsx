@@ -20,6 +20,7 @@ import moment from "moment";
 import {
   AppstoreAddOutlined,
   BlockOutlined,
+  FolderOpenOutlined,
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import { AppStateContext } from "renderer/main-window/types";
@@ -173,6 +174,7 @@ class DownloadList extends React.Component<Props, State> {
         workDir: workspace, // 设定程序工作目录
         saveName: title, // 设定存储文件名(不包括后缀)
         headers: headersString,
+        enableDelAfterDone: item.deleteSegments,
       };
     }
 
@@ -215,9 +217,14 @@ class DownloadList extends React.Component<Props, State> {
           cb: this.openDirectory,
         });
         buttons.push({
-          text: "详情",
-          cb: () => this.showSourceDetail(row),
+          text: "重新下载",
+          cb: () => this.downloadFile(row),
         });
+        // todo: 详情页展示
+        // buttons.push({
+        //   text: "详情",
+        //   cb: () => this.showSourceDetail(row),
+        // });
         break;
       case SourceStatus.Failed:
         // 下载失败
@@ -225,10 +232,10 @@ class DownloadList extends React.Component<Props, State> {
           text: "重新下载",
           cb: () => this.downloadFile(row),
         });
-        buttons.push({
-          text: "详情",
-          cb: () => this.showSourceDetail(row),
-        });
+        // buttons.push({
+        //   text: "详情",
+        //   cb: () => this.showSourceDetail(row),
+        // });
         break;
       case SourceStatus.Downloading:
         // 正在下载
@@ -241,10 +248,10 @@ class DownloadList extends React.Component<Props, State> {
           text: "下载",
           cb: () => this.downloadFile(row),
         });
-        buttons.push({
-          text: "详情",
-          cb: () => this.showSourceDetail(row),
-        });
+        // buttons.push({
+        //   text: "详情",
+        //   cb: () => this.showSourceDetail(row),
+        // });
         break;
     }
     return buttons.map((button) => <a onClick={button.cb}>{button.text}</a>);
@@ -261,6 +268,10 @@ class DownloadList extends React.Component<Props, State> {
           options={false}
           rowKey="url"
           search={false}
+          pagination={{
+            defaultPageSize: 5,
+            pageSizeOptions: ["5", "10", "20"],
+          }}
           tableAlertRender={({ selectedRowKeys, onCleanSelected }) => (
             <Space size={24}>
               <span>
@@ -272,7 +283,8 @@ class DownloadList extends React.Component<Props, State> {
             </Space>
           )}
           tableAlertOptionRender={({ selectedRowKeys, onCleanSelected }) => [
-            <Button type="link">批量下载</Button>,
+            // todo: 批量下载功能
+            // <Button type="link">批量下载</Button>,
             <Popconfirm
               placement="bottomRight"
               title="确认要删除选中项目吗？"
@@ -310,6 +322,15 @@ class DownloadList extends React.Component<Props, State> {
             </Button>,
             <Button
               onClick={async () => {
+                const { workspace } = this.props;
+                await remote.shell.openPath(workspace);
+              }}
+            >
+              <FolderOpenOutlined />
+              本地路径
+            </Button>,
+            <Button
+              onClick={async () => {
                 await remote.shell.openExternal(variables.urls.help);
               }}
             >
@@ -325,6 +346,12 @@ class DownloadList extends React.Component<Props, State> {
               ellipsis: true,
               render: (dom: React.ReactNode) => dom,
             },
+            // {
+            //   title: "下载后删除分片",
+            //   dataIndex: "deleteSegments",
+            //   render: (dom: React.ReactNode, item) =>
+            //     item.deleteSegments ? "是" : "否",
+            // },
             {
               title: "创建时间",
               key: "createdAt",
