@@ -17,15 +17,10 @@ const insertVideo = async (
   return item;
 };
 
-const getVideos = async (
-  page: number,
-  pageSize = 20
-): Promise<SourceItem[]> => {
-  let queryPage = page;
-  if (page <= 0) queryPage = 1;
+const getVideos = async (): Promise<SourceItem[]> => {
   let videos = await localforage.getItem<SourceItem[]>(keys.videos);
   if (!Array.isArray(videos)) videos = [];
-  return videos.slice((queryPage - 1) * pageSize, queryPage * pageSize);
+  return videos;
 };
 
 const updateVideoStatus = async (

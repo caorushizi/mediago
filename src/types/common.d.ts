@@ -12,6 +12,7 @@ declare type SourceItem = SourceUrl & {
   loading: boolean;
   status: SourceStatus;
   type: SourceType;
+  deleteSegments: boolean;
   directory: string;
   createdAt: number;
 };

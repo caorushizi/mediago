@@ -1,4 +1,4 @@
-import { app, ipcMain } from "electron";
+import { app, ipcMain, shell } from "electron";
 import { exec, failFn, successFn } from "./utils";
 import store from "./store";
 import logger from "./logger";
@@ -68,6 +68,10 @@ const handleIpc = (): void => {
   });
 
   ipcMain.handle("getBinDir", async () => __bin__);
+
+  ipcMain.on("open-url", async (event, url) => {
+    await shell.openExternal(url);
+  });
 };
 
 export default handleIpc;

@@ -1,11 +1,7 @@
 import React, { ReactNode } from "react";
 import { Checkbox, Col, Row, Form, Input, InputNumber, TimePicker } from "antd";
 
-interface Props {}
-
-interface State {}
-
-class M3u8Form extends React.Component<Props, State> {
+class M3u8Form extends React.Component {
   render(): ReactNode {
     return (
       <Form

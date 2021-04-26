@@ -1,6 +1,7 @@
 import { is } from "electron-util";
 import { IWindowListItem } from "types/main";
 import { Windows } from "./variables";
+import { shell } from "electron";
 
 const windowList = new Map<Windows, IWindowListItem>();
 
@@ -28,6 +29,10 @@ windowList.set(Windows.MAIN_WINDOW, {
     window.once("ready-to-show", () => {
       console.log("main window is ready to show!");
       window.show();
+    });
+    window.webContents.open(async (details: any) => {
+      await shell.openExternal(details.url);
+      return { action: "deny" };
     });
   },
 });

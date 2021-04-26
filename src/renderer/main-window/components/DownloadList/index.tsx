@@ -12,11 +12,17 @@ import {
   SourceItem,
   SourceItemForm,
 } from "types/common";
-import MediaGoForm from "renderer/main-window/components/MegiaGoForm";
+import NewSourceForm from "./NewSourceForm";
 import { ipcExec, ipcGetStore } from "renderer/main-window/utils";
 import { insertVideo, removeVideos } from "renderer/common/scripts/localforge";
 import { SourceStatus, SourceType } from "renderer/common/types";
 import moment from "moment";
+import {
+  AppstoreAddOutlined,
+  BlockOutlined,
+  QuestionCircleOutlined,
+} from "@ant-design/icons";
+import { AppStateContext } from "renderer/main-window/types";
 
 const {
   remote,
@@ -67,6 +73,8 @@ const statusTextMap = new Map([
 class DownloadList extends React.Component<Props, State> {
   actionRef = React.createRef();
 
+  static contextType = AppStateContext;
+
   constructor(props: Props) {
     super(props);
 
@@ -78,15 +86,19 @@ class DownloadList extends React.Component<Props, State> {
   }
 
   handleOk = async (item: SourceItemForm): Promise<void> => {
+    console.log("item: ", item);
     const { updateTableData } = this.props;
+    const { workspace } = this.context;
+    console.log(workspace);
     const sourceItem: SourceItem = {
       loading: false,
       status: SourceStatus.Ready,
       type: SourceType.M3u8,
-      directory: "",
+      directory: workspace,
       title: item.title,
       duration: 0,
       url: item.url,
+      deleteSegments: item.delete,
       createdAt: Date.now(),
     };
     await insertVideo(sourceItem);
@@ -99,15 +111,17 @@ class DownloadList extends React.Component<Props, State> {
   // 立即下载
   handleDownload = async (item: SourceItemForm): Promise<void> => {
     const { updateTableData } = this.props;
+    const { workspace } = this.context;
     const sourceItem: SourceItem = {
       loading: false,
       status: SourceStatus.Ready,
       type: SourceType.M3u8,
-      directory: "",
+      directory: workspace,
       title: item.title,
       duration: 0,
       url: item.url,
       createdAt: Date.now(),
+      deleteSegments: item.delete,
     };
     await insertVideo(sourceItem);
     await updateTableData();
@@ -241,7 +255,7 @@ class DownloadList extends React.Component<Props, State> {
     const { tableData, updateTableData } = this.props;
     // TODO: 在浏览器中嗅探成功后，自动解析 m3u8 文件，在页面中展示详情
     return (
-      <div className="">
+      <div className="download-list">
         <ProTable<SourceItem>
           rowSelection={{}}
           options={false}
@@ -282,6 +296,7 @@ class DownloadList extends React.Component<Props, State> {
                 this.setState({ isModalVisible: true });
               }}
             >
+              <AppstoreAddOutlined />
               新建下载
             </Button>,
             <Button
@@ -290,6 +305,7 @@ class DownloadList extends React.Component<Props, State> {
                 ipcRenderer.send("openBrowserWindow");
               }}
             >
+              <BlockOutlined />
               打开浏览器
             </Button>,
             <Button
@@ -297,6 +313,7 @@ class DownloadList extends React.Component<Props, State> {
                 await remote.shell.openExternal(variables.urls.help);
               }}
             >
+              <QuestionCircleOutlined />
               使用帮助
             </Button>,
           ]}
@@ -362,7 +379,7 @@ class DownloadList extends React.Component<Props, State> {
           // scroll={{ y: "calc(100vh - 310px)" }}
         />
 
-        <MediaGoForm
+        <NewSourceForm
           visible={isModalVisible}
           handleCancel={this.handleCancel}
           handleOk={this.handleOk}
