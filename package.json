@@ -1,6 +1,6 @@
 {
   "name": "media-downloader",
-  "version": "0.0.0",
+  "version": "1.0.3",
   "description": "在线视频下载",
   "author": "caorushizi",
   "main": "dist/main/index.js",
