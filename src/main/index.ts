@@ -43,17 +43,6 @@ app.on("ready", async () => {
   protocol.registerFileProtocol("mediago", (request, callback) => {
     const url = request.url.substr(10);
     callback({ path: resolve(__dirname, "../", url) });
-    // mediago://api.ip.sb/jsonip?callback=getIP
-    // mediago://cdn.jsdelivr.net/npm/leancloud-storage@3/dist/av-min.js
-    // if (
-    //   request.url.includes("cdn.jsdelivr.net") ||
-    //   request.url.includes("api.ip.sb")
-    // ) {
-    //   console.log("test url: ", `https://${url}`);
-    //   callback({ url: `https://${url}` });
-    // } else {
-    //   callback({ path: resolve(__dirname, "../", url) });
-    // }
   });
 
   await init();

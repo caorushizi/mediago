@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 import { Button, Form, FormInstance, Input, Modal, Switch } from "antd";
 import { SourceItemForm } from "types/common";
+import { AppStateContext } from "renderer/main-window/types";
 
 interface Props {
   visible: boolean;
@@ -9,13 +10,12 @@ interface Props {
   handleOk: (item: SourceItemForm) => Promise<void>;
 }
 
-interface State {}
-
 const headersPlaceholder = `[可空] 请输入一行一个Header，例如：
 Origin: https://www.sample.com
 Referer: https://www.sample.com`;
 
-class MediaGoForm extends React.Component<Props, State> {
+class NewSourceForm extends React.Component<Props> {
+  static contextType = AppStateContext;
   formRef = React.createRef<FormInstance<SourceItemForm>>();
 
   // 点击确定按钮
@@ -44,6 +44,7 @@ class MediaGoForm extends React.Component<Props, State> {
 
   render(): ReactNode {
     const { visible, handleCancel } = this.props;
+    const { exeFile } = this.context;
     return (
       <Modal
         title="新建下载"
@@ -61,7 +62,11 @@ class MediaGoForm extends React.Component<Props, State> {
           </Button>,
         ]}
       >
-        <Form labelCol={{ span: 4 }} ref={this.formRef}>
+        <Form
+          labelCol={{ span: 4 }}
+          ref={this.formRef}
+          initialValues={{ delete: true }}
+        >
           <Form.Item
             label="m3u8"
             name="url"
@@ -83,8 +88,9 @@ class MediaGoForm extends React.Component<Props, State> {
             label="下载完成是否删除"
             name="delete"
             labelCol={{ span: 8 }}
+            valuePropName="checked"
           >
-            <Switch />
+            <Switch disabled={exeFile === "mediago"} />
           </Form.Item>
         </Form>
       </Modal>
@@ -92,4 +98,4 @@ class MediaGoForm extends React.Component<Props, State> {
   }
 }
 
-export default MediaGoForm;
+export default NewSourceForm;

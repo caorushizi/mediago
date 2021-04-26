@@ -9,9 +9,9 @@
     "prestart-test": "script/prestart",
     "start": "node script/dev-server.js",
     "serve": "vite preview",
-    "build": "rimraf dist && vite build && node esbuild.config.js",
+    "dist": "rimraf dist && vite build && node esbuild.config.js",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "build": "electron-builder"
   },
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
@@ -41,8 +41,7 @@
     "react-dnd": "^14.0.2",
     "react-dnd-html5-backend": "^14.0.0",
     "react-dom": "^17.0.0",
-    "semver": "^7.3.4",
-    "valine": "^1.4.14"
+    "semver": "^7.3.4"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.13.10",

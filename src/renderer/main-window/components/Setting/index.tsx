@@ -10,7 +10,6 @@ import ProForm, {
   ProFormText,
 } from "@ant-design/pro-form";
 import { FolderOpenOutlined } from "@ant-design/icons";
-import { workspace } from "main/utils/variables";
 const path = window.require("path");
 
 const {
@@ -26,6 +25,7 @@ interface Props {
   exeFile: string;
   tip: boolean;
   onWorkspaceChange: (path: string) => void;
+  onExeFileChange: (bin: string) => void;
 }
 
 interface Downloader {
@@ -117,7 +117,7 @@ class Setting extends React.Component<Props, State> {
     return (
       <div className="setting-form">
         <ProForm<FormData>
-          formRef={this.formRef}
+          formRef={this.formRef as any}
           layout="horizontal"
           submitter={false}
           initialValues={{ workspace, exeFile, tip }}
@@ -126,8 +126,10 @@ class Setting extends React.Component<Props, State> {
               await ipcSetStore("tip", changedValue["tip"]);
             }
             if (Object.keys(changedValue).includes("exeFile")) {
+              const { onExeFileChange } = this.props;
               const value = changedValue["exeFile"];
               await ipcSetStore("exeFile", value);
+              onExeFileChange(value);
               this.setState({
                 downloader: {
                   title: value === "mediago" ? "mediago" : "N_m3u8DL-CLI",

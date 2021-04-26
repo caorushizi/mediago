@@ -1,26 +1,29 @@
 import React, { ReactNode } from "react";
+const { ipcRenderer } = window.require("electron");
 
-const Valine = window.require("valine");
-
-interface Props {}
-
-interface State {}
-
-class Comment extends React.Component<Props, State> {
+class Comment extends React.Component {
   componentDidMount(): void {
+    new Valine({
+      el: "#vcomments",
+      appId: import.meta.env.VITE_APP_VC_AK,
+      appKey: import.meta.env.VITE_APP_VC_SK,
+      placeholder: "快来评论下吧～",
+      avatar: "hide",
+      meta: ["nick", "mail"],
+      requiredFields: ["nick"],
+      path: import.meta.env.VITE_APP_VC_PATH,
+    });
+
     setTimeout(() => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call,no-new
-      new Valine({
-        el: "#vcomments",
-        appId: import.meta.env.VITE_APP_VC_AK,
-        appKey: import.meta.env.VITE_APP_VC_SK,
-        placeholder: "快来评论下吧～",
-        avatar: "hide",
-        meta: ["nick", "mail"],
-        requiredFields: ["nick"],
-        path: import.meta.env.VITE_APP_VC_PATH,
+      const links = document.querySelectorAll("a[href]");
+      links.forEach((link) => {
+        link.addEventListener("click", (e) => {
+          const url = link.getAttribute("href");
+          e.preventDefault();
+          ipcRenderer.send("open-url", url);
+        });
       });
-    }, 100);
+    }, 200);
   }
 
   render(): ReactNode {
