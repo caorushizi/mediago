@@ -9,7 +9,6 @@ declare interface SourceUrl {
 }
 
 declare type SourceItem = SourceUrl & {
-  loading: boolean;
   status: SourceStatus;
   type: SourceType;
   deleteSegments: boolean;
@@ -25,7 +24,7 @@ declare interface Fav {
 declare interface SourceItemForm {
   title: string;
   url: string;
-  headers: string;
+  headers?: string;
   delete: boolean;
 }
 
@@ -67,4 +66,17 @@ declare interface MediaGoArgs {
   headers?: string;
 }
 
-export { SourceUrl, Fav, SourceItem, SourceItemForm, M3u8DLArgs, MediaGoArgs };
+declare interface VideoDetail {
+  segmentsLen: number;
+  duration: number;
+}
+
+export {
+  SourceUrl,
+  Fav,
+  SourceItem,
+  SourceItemForm,
+  M3u8DLArgs,
+  MediaGoArgs,
+  VideoDetail,
+};
