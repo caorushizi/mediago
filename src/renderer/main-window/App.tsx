@@ -20,6 +20,7 @@ import { EllipsisOutlined } from "@ant-design/icons";
 import { ipcGetStore } from "./utils";
 import audioSrc from "./assets/tip.mp3";
 import { AppStateContext } from "renderer/main-window/types";
+import onEvent from "renderer/common/scripts/td-utils";
 
 const audio = new Audio(audioSrc);
 
@@ -57,6 +58,7 @@ class App extends React.Component<any, State> {
         <Button
           type="link"
           onClick={async () => {
+            onEvent.mainUpdateLog();
             await remote.shell.openExternal(variables.urls.help);
           }}
         >
@@ -67,6 +69,7 @@ class App extends React.Component<any, State> {
         <Button
           type="link"
           onClick={async () => {
+            onEvent.mainPageSourceCode();
             await remote.shell.openExternal(variables.urls.sourceUrl);
           }}
         >
@@ -118,7 +121,6 @@ class App extends React.Component<any, State> {
     const { notifyCount, workspace } = this.state;
     const item: SourceItem = {
       ...source,
-      loading: true,
       status: SourceStatus.Ready,
       type: SourceType.M3u8,
       directory: workspace,
@@ -148,6 +150,13 @@ class App extends React.Component<any, State> {
     if (!workspace) {
       message.error("请选择本地路径");
       return;
+    }
+    if (activeKey === TabKey.FavTab) {
+      onEvent.toFavPage();
+    } else if (activeKey === TabKey.SettingTab) {
+      onEvent.toSettingPage();
+    } else if (activeKey === TabKey.HomeTab) {
+      onEvent.toMainPage();
     }
     this.setState({ activeKey });
   };
@@ -256,6 +265,7 @@ class App extends React.Component<any, State> {
             <Button
               type="link"
               onClick={() => {
+                onEvent.mainPageOpenComment();
                 this.setState({ isDrawerVisible: true });
               }}
             >

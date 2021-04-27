@@ -48,7 +48,6 @@ const handleIpc = (): void => {
     // 开始计算主窗口的位置
     const browserWindow = windowManager.get(Windows.BROWSER_WINDOW);
     const browserView = browserWindow.getBrowserView();
-    console.log("url: ", url);
     if (url) {
       browserView?.webContents.loadURL(url);
     }

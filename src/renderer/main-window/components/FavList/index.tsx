@@ -19,6 +19,7 @@ import ProForm, {
   ProFormSelect,
 } from "@ant-design/pro-form";
 import { isUrl } from "renderer/main-window/utils";
+import onEvent from "renderer/common/scripts/td-utils";
 
 interface Props {}
 
@@ -50,7 +51,9 @@ const FavList: React.FC<Props> = () => {
     [favs]
   );
 
+  // 删除收藏
   const handleDelete = async (fav: Fav): Promise<void> => {
+    onEvent.favPageDeleteLink();
     await removeFav(fav);
     const favList = await getFavs();
     setFavs(favList);
@@ -79,11 +82,8 @@ const FavList: React.FC<Props> = () => {
               添加收藏
             </Button>
           }
-          modalProps={{
-            onCancel: () => console.log("run"),
-          }}
           onFinish={async (fav) => {
-            console.log(fav.title);
+            onEvent.favPageAddFav();
             await insertFav(fav);
             const favs = await getFavs();
             setFavs(favs);

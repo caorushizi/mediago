@@ -29,6 +29,7 @@ import {
 } from "@ant-design/icons";
 import { AppStateContext } from "renderer/main-window/types";
 import { processHeaders } from "renderer/common/scripts/utils";
+import onEvent from "renderer/common/scripts/td-utils";
 
 const {
   remote,
@@ -120,11 +121,13 @@ class DownloadList extends React.Component<Props, State> {
 
   // 新建下载窗口点击确定按钮
   handleOk = async (item: SourceItemForm): Promise<void> => {
+    onEvent.addSourceAddSource();
     await this.insertUpdateTableData(item);
   };
 
   // 新建下载窗口点击立即下载
   handleDownload = async (item: SourceItemForm): Promise<void> => {
+    onEvent.addSourceDownload();
     const sourceItem = await this.insertUpdateTableData(item);
     await this.downloadFile(sourceItem);
   };
@@ -146,7 +149,7 @@ class DownloadList extends React.Component<Props, State> {
   downloadFile = async (item: SourceItem): Promise<void> => {
     const { changeSourceStatus } = this.props;
     await changeSourceStatus(item, SourceStatus.Downloading);
-    tdApp.onEvent("下载页面-开始下载");
+    onEvent.tableStartDownload();
     const exeFile = await ipcGetStore("exeFile");
     const workspace = await ipcGetStore("workspace");
     const { title, headers, url } = item;
@@ -178,19 +181,16 @@ class DownloadList extends React.Component<Props, State> {
     const { code, msg } = await ipcExec(exeFile, args);
     if (code === 0) {
       await changeSourceStatus(item, SourceStatus.Success);
-
-      const kv = { msg, url, exeFile };
-      tdApp.onEvent("下载页面-下载视频成功", kv);
+      onEvent.mainPageDownloadSuccess({ msg, url, exeFile });
     } else {
       await changeSourceStatus(item, SourceStatus.Failed);
-
-      const kv = { msg, url, exeFile };
-      tdApp.onEvent("下载页面-下载视频失败", kv);
+      onEvent.mainPageDownloadFail({ msg, url, exeFile });
     }
   };
 
   // 展示资源详情
   showSourceDetail = (item: SourceItem): void => {
+    onEvent.tableOpenDetail();
     this.setState({
       isDrawerVisible: true,
       currentSourceItem: item,
@@ -238,6 +238,7 @@ class DownloadList extends React.Component<Props, State> {
           tooltip:
             "如果下载过程中将主程序关闭，那么主程序将无法接收到下载成功的消息，可以通过重置状态将状态改为未下载状态",
           cb: async () => {
+            onEvent.tableReNewStatus();
             await updateVideoStatus(row, SourceStatus.Ready);
             await updateTableData();
           },
@@ -313,6 +314,7 @@ class DownloadList extends React.Component<Props, State> {
           toolBarRender={() => [
             <Button
               onClick={() => {
+                onEvent.mainPageNewSource();
                 this.setState({ isModalVisible: true });
               }}
             >
@@ -321,7 +323,7 @@ class DownloadList extends React.Component<Props, State> {
             </Button>,
             <Button
               onClick={() => {
-                tdApp.onEvent("下载页面-打开浏览器页面");
+                onEvent.mainPageOpenBrowserPage();
                 ipcRenderer.send("openBrowserWindow");
               }}
             >
@@ -330,6 +332,7 @@ class DownloadList extends React.Component<Props, State> {
             </Button>,
             <Button
               onClick={async () => {
+                onEvent.mainPageOpenLocalPath();
                 const { workspace } = this.props;
                 await remote.shell.openPath(workspace);
               }}
@@ -339,6 +342,7 @@ class DownloadList extends React.Component<Props, State> {
             </Button>,
             <Button
               onClick={async () => {
+                onEvent.mainPageHelp();
                 await remote.shell.openExternal(variables.urls.help);
               }}
             >
