@@ -5,6 +5,7 @@ import { Button, Col, Popconfirm, Row } from "antd";
 import { Fav } from "types/common";
 import ItemTypes from "./ItemTypes";
 import { DragOutlined } from "@ant-design/icons";
+import onEvent from "renderer/common/scripts/td-utils";
 
 const {
   ipcRenderer,
@@ -82,6 +83,7 @@ const Card: React.FC<CardProps> = ({ index, moveCard, fav, handleDelete }) => {
           <Button
             type="link"
             onClick={() => {
+              onEvent.favPageOpenLink();
               ipcRenderer.send("openBrowserWindow", fav.url);
             }}
           >

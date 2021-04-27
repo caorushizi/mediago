@@ -12,6 +12,7 @@ import {
 } from "renderer/common/scripts/localforge";
 import WindowToolBar from "renderer/common/components/WindowToolBar";
 import SearchBar from "./SearchBar";
+import onEvent from "renderer/common/scripts/td-utils";
 
 const {
   remote,
@@ -118,7 +119,7 @@ class App extends React.Component<Props, State> {
   };
 
   onGoBack = () => {
-    tdApp.onEvent("浏览器页面-点击返回按钮");
+    onEvent.browserPageGoBack();
     const canGoBack = this.view?.webContents.canGoBack();
     if (canGoBack) {
       this.view?.webContents.goBack();
@@ -126,7 +127,7 @@ class App extends React.Component<Props, State> {
   };
 
   onReload = () => {
-    tdApp.onEvent("浏览器页面-点击刷新按钮");
+    onEvent.browserPageReload();
     this.view?.webContents.reload();
   };
 

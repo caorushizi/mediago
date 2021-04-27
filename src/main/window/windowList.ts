@@ -30,10 +30,6 @@ windowList.set(Windows.MAIN_WINDOW, {
       console.log("main window is ready to show!");
       window.show();
     });
-    window.webContents.open(async (details: any) => {
-      await shell.openExternal(details.url);
-      return { action: "deny" };
-    });
   },
 });
 
