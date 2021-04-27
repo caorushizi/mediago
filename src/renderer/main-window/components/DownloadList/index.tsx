@@ -18,6 +18,8 @@ import {
   insertVideo,
   removeVideos,
   updateVideoStatus,
+  updateVideoTitle,
+  updateVideoUrl,
 } from "renderer/common/scripts/localforge";
 import { SourceStatus, SourceType } from "renderer/common/types";
 import moment from "moment";
@@ -77,6 +79,10 @@ const statusTextMap = new Map([
   [SourceStatus.Success, "下载成功"],
   [SourceStatus.Downloading, "正在下载"],
 ]);
+
+const headersPlaceholder = `[可空] 请输入一行一个Header，例如：
+Origin: https://www.sample.com
+Referer: https://www.sample.com`;
 
 // 下载列表
 class DownloadList extends React.Component<Props, State> {
@@ -427,22 +433,39 @@ class DownloadList extends React.Component<Props, State> {
           visible={isDrawerVisible}
           footer={
             <Space>
-              <Button>立即下载</Button>
-              <Button>取消</Button>
-              <Button type="primary">确定</Button>
+              <Button
+                onClick={async () => {
+                  if (currentSourceItem) {
+                    this.setState({ isDrawerVisible: false });
+                    await this.downloadFile(currentSourceItem);
+                  }
+                }}
+              >
+                立即下载
+              </Button>
             </Space>
           }
         >
           <ProDescriptions
             actionRef={this.actionRef}
             layout="horizontal"
-            formProps={{
-              onValuesChange: (e, f) => console.log(f),
-            }}
             labelStyle={{ width: 100, textAlign: "right" }}
             column={1}
             dataSource={currentSourceItem}
-            editable={{}}
+            editable={{
+              onSave: async (key, row) => {
+                if (currentSourceItem) {
+                  const { updateTableData } = this.props;
+                  if (key === "title") {
+                    await updateVideoTitle(currentSourceItem, row.title);
+                  } else if (key === "url") {
+                    await updateVideoUrl(currentSourceItem, row.url);
+                  }
+                  await updateTableData();
+                  this.setState({ currentSourceItem: row });
+                }
+              },
+            }}
             columns={[
               {
                 title: "视频标题",
@@ -454,20 +477,16 @@ class DownloadList extends React.Component<Props, State> {
                 key: "url",
                 dataIndex: "url",
               },
-              {
-                title: "执行程序",
-                key: "exeFile",
-                dataIndex: "exeFile",
-                valueType: "select",
-                valueEnum: {
-                  open: {
-                    text: "mediago",
-                  },
-                  closed: {
-                    text: "m3u8",
-                  },
-                },
-              },
+              // {
+              //   title: "请求标头",
+              //   key: "headers",
+              //   dataIndex: "headers",
+              //   renderFormItem: () => {
+              //     return (
+              //       <Input.TextArea rows={3} placeholder={headersPlaceholder} />
+              //     );
+              //   },
+              // },
             ]}
           />
         </Drawer>
