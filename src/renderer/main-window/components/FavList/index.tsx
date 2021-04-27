@@ -107,6 +107,7 @@ const FavList: React.FC<Props> = () => {
               {
                 validator(rule, value: string, callback) {
                   if (!isUrl(value)) callback("请输入正确的 url 格式");
+                  else callback();
                 },
               },
             ]}
