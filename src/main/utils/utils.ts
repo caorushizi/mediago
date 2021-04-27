@@ -51,8 +51,8 @@ const execM3u8DL = async (args: M3u8DLArgs): Promise<string[]> => {
   let argsStr = Object.entries(args)
     .reduce((prev: string[], [key, value]) => {
       if (key === "url") return prev;
-      if (value && typeof key === "boolean") prev.push(`--${key}`);
-      if (value && typeof key === "string") prev.push(`--${key} "${value}"`);
+      if (value && typeof value === "boolean") prev.push(`--${key}`);
+      if (value && typeof value === "string") prev.push(`--${key} "${value}"`);
       return prev;
     }, [])
     .join(" ");
@@ -98,7 +98,17 @@ const exec = async (
   });
 };
 
-const successFn = (data: any) => ({ code: 0, msg: "", data });
-const failFn = (code: number, msg: string) => ({ code, msg, data: null });
+interface IpcResponse {
+  code: number;
+  msg: string;
+  data: any;
+}
+
+const successFn = (data: any): IpcResponse => ({ code: 0, msg: "", data });
+const failFn = (code: number, msg: string): IpcResponse => ({
+  code,
+  msg,
+  data: null,
+});
 
 export { exec, successFn, failFn, globWrapper, spawnWrapper };

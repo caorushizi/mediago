@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Button, Input, Modal, Popconfirm, Space, Tag } from "antd";
+import { Button, Drawer, Input, Popconfirm, Space, Tag, Tooltip } from "antd";
 import ProDescriptions from "@ant-design/pro-descriptions";
 import ProTable from "@ant-design/pro-table";
 import "./index.scss";
@@ -14,7 +14,11 @@ import {
 } from "types/common";
 import NewSourceForm from "./NewSourceForm";
 import { ipcExec, ipcGetStore } from "renderer/main-window/utils";
-import { insertVideo, removeVideos } from "renderer/common/scripts/localforge";
+import {
+  insertVideo,
+  removeVideos,
+  updateVideoStatus,
+} from "renderer/common/scripts/localforge";
 import { SourceStatus, SourceType } from "renderer/common/types";
 import moment from "moment";
 import {
@@ -24,6 +28,7 @@ import {
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import { AppStateContext } from "renderer/main-window/types";
+import { processHeaders } from "renderer/common/scripts/utils";
 
 const {
   remote,
@@ -35,6 +40,8 @@ const {
 
 type ActionButton = {
   text: string;
+  tooltip?: string;
+  showTooltip?: boolean;
   cb: () => void;
 };
 
@@ -86,50 +93,40 @@ class DownloadList extends React.Component<Props, State> {
     };
   }
 
-  handleOk = async (item: SourceItemForm): Promise<void> => {
-    console.log("item: ", item);
+  // 向列表中插入一条数据并且请求详情
+  insertUpdateTableData = async (item: SourceItemForm): Promise<SourceItem> => {
     const { updateTableData } = this.props;
     const { workspace } = this.context;
-    console.log(workspace);
     const sourceItem: SourceItem = {
-      loading: false,
       status: SourceStatus.Ready,
       type: SourceType.M3u8,
       directory: workspace,
       title: item.title,
       duration: 0,
       url: item.url,
-      deleteSegments: item.delete,
       createdAt: Date.now(),
+      deleteSegments: item.delete,
     };
+    if (item.headers) {
+      sourceItem.headers = processHeaders(item.headers);
+    }
     await insertVideo(sourceItem);
     await updateTableData();
     this.setState({
       isModalVisible: false,
     });
+    return sourceItem;
   };
 
-  // 立即下载
+  // 新建下载窗口点击确定按钮
+  handleOk = async (item: SourceItemForm): Promise<void> => {
+    await this.insertUpdateTableData(item);
+  };
+
+  // 新建下载窗口点击立即下载
   handleDownload = async (item: SourceItemForm): Promise<void> => {
-    const { updateTableData } = this.props;
-    const { workspace } = this.context;
-    const sourceItem: SourceItem = {
-      loading: false,
-      status: SourceStatus.Ready,
-      type: SourceType.M3u8,
-      directory: workspace,
-      title: item.title,
-      duration: 0,
-      url: item.url,
-      createdAt: Date.now(),
-      deleteSegments: item.delete,
-    };
-    await insertVideo(sourceItem);
-    await updateTableData();
+    const sourceItem = await this.insertUpdateTableData(item);
     await this.downloadFile(sourceItem);
-    this.setState({
-      isModalVisible: false,
-    });
   };
 
   handleCancel = (): void => {
@@ -208,6 +205,7 @@ class DownloadList extends React.Component<Props, State> {
 
   // 渲染操作按钮
   renderActionButtons = (dom: React.ReactNode, row: SourceItem): ReactNode => {
+    const { updateTableData } = this.props;
     const buttons: ActionButton[] = [];
     switch (row.status) {
       case SourceStatus.Success:
@@ -220,11 +218,6 @@ class DownloadList extends React.Component<Props, State> {
           text: "重新下载",
           cb: () => this.downloadFile(row),
         });
-        // todo: 详情页展示
-        // buttons.push({
-        //   text: "详情",
-        //   cb: () => this.showSourceDetail(row),
-        // });
         break;
       case SourceStatus.Failed:
         // 下载失败
@@ -232,15 +225,23 @@ class DownloadList extends React.Component<Props, State> {
           text: "重新下载",
           cb: () => this.downloadFile(row),
         });
-        // buttons.push({
-        //   text: "详情",
-        //   cb: () => this.showSourceDetail(row),
-        // });
+        buttons.push({
+          text: "详情",
+          cb: () => this.showSourceDetail(row),
+        });
         break;
       case SourceStatus.Downloading:
         // 正在下载
-        // buttons.push();
-        // buttons.push({ text: "设置为成功", cb: () => {} });
+        buttons.push({
+          text: "重置状态",
+          showTooltip: true,
+          tooltip:
+            "如果下载过程中将主程序关闭，那么主程序将无法接收到下载成功的消息，可以通过重置状态将状态改为未下载状态",
+          cb: async () => {
+            await updateVideoStatus(row, SourceStatus.Ready);
+            await updateTableData();
+          },
+        });
         break;
       default:
         // 准备状态
@@ -248,19 +249,26 @@ class DownloadList extends React.Component<Props, State> {
           text: "下载",
           cb: () => this.downloadFile(row),
         });
-        // buttons.push({
-        //   text: "详情",
-        //   cb: () => this.showSourceDetail(row),
-        // });
+        buttons.push({
+          text: "详情",
+          cb: () => this.showSourceDetail(row),
+        });
         break;
     }
-    return buttons.map((button) => <a onClick={button.cb}>{button.text}</a>);
+    return buttons.map((button) =>
+      button.showTooltip ? (
+        <Tooltip title={button.tooltip}>
+          <a onClick={button.cb}>{button.text}</a>
+        </Tooltip>
+      ) : (
+        <a onClick={button.cb}>{button.text}</a>
+      )
+    );
   };
 
   render(): ReactNode {
     const { isModalVisible, isDrawerVisible, currentSourceItem } = this.state;
     const { tableData, updateTableData } = this.props;
-    // TODO: 在浏览器中嗅探成功后，自动解析 m3u8 文件，在页面中展示详情
     return (
       <div className="download-list">
         <ProTable<SourceItem>
@@ -346,12 +354,6 @@ class DownloadList extends React.Component<Props, State> {
               ellipsis: true,
               render: (dom: React.ReactNode) => dom,
             },
-            // {
-            //   title: "下载后删除分片",
-            //   dataIndex: "deleteSegments",
-            //   render: (dom: React.ReactNode, item) =>
-            //     item.deleteSegments ? "是" : "否",
-            // },
             {
               title: "创建时间",
               key: "createdAt",
@@ -406,6 +408,7 @@ class DownloadList extends React.Component<Props, State> {
           // scroll={{ y: "calc(100vh - 310px)" }}
         />
 
+        {/*新建下载窗口*/}
         <NewSourceForm
           visible={isModalVisible}
           handleCancel={this.handleCancel}
@@ -413,10 +416,10 @@ class DownloadList extends React.Component<Props, State> {
           handleDownload={this.handleDownload}
         />
 
-        <Modal
+        <Drawer
           width={500}
           title="视频详情"
-          onCancel={this.handleDrawerClose}
+          onClose={this.handleDrawerClose}
           visible={isDrawerVisible}
           footer={
             <Space>
@@ -432,13 +435,9 @@ class DownloadList extends React.Component<Props, State> {
             formProps={{
               onValuesChange: (e, f) => console.log(f),
             }}
+            labelStyle={{ width: 100, textAlign: "right" }}
             column={1}
-            request={async () =>
-              Promise.resolve({
-                success: true,
-                data: currentSourceItem,
-              })
-            }
+            dataSource={currentSourceItem}
             editable={{}}
             columns={[
               {
@@ -450,18 +449,6 @@ class DownloadList extends React.Component<Props, State> {
                 title: "m3u8地址",
                 key: "url",
                 dataIndex: "url",
-              },
-              {
-                title: "分片数",
-                key: "duration",
-                dataIndex: "duration",
-                renderFormItem: () => <Input />,
-              },
-              {
-                title: "时长",
-                key: "duration",
-                dataIndex: "duration",
-                valueType: "date",
               },
               {
                 title: "执行程序",
@@ -479,7 +466,7 @@ class DownloadList extends React.Component<Props, State> {
               },
             ]}
           />
-        </Modal>
+        </Drawer>
       </div>
     );
   }
