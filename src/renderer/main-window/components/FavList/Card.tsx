@@ -6,13 +6,7 @@ import { Fav } from "types/common";
 import ItemTypes from "./ItemTypes";
 import { DragOutlined } from "@ant-design/icons";
 import onEvent from "renderer/common/scripts/td-utils";
-
-const {
-  ipcRenderer,
-}: {
-  remote: Electron.Remote;
-  ipcRenderer: Electron.IpcRenderer;
-} = window.require("electron");
+import { ipcRenderer } from "renderer/common/scripts/electron";
 
 interface CardProps {
   index: number;

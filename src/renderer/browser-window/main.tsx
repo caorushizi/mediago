@@ -13,14 +13,7 @@ import {
 import WindowToolBar from "renderer/common/components/WindowToolBar";
 import SearchBar from "./SearchBar";
 import onEvent from "renderer/common/scripts/td-utils";
-
-const {
-  remote,
-  ipcRenderer,
-}: {
-  remote: Electron.Remote;
-  ipcRenderer: Electron.IpcRenderer;
-} = window.require("electron");
+import { remote, ipcRenderer } from "renderer/common/scripts/electron";
 
 tdApp.init();
 

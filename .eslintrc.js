@@ -12,6 +12,9 @@ module.exports = {
     "plugin:@typescript-eslint/recommended",
     "prettier",
   ],
+  rules: {
+    "@typescript-eslint/ban-ts-comment": "warn",
+  },
   parserOptions: {
     project: "./tsconfig.json",
   },

@@ -10,15 +10,8 @@ import ProForm, {
   ProFormText,
 } from "@ant-design/pro-form";
 import { FolderOpenOutlined } from "@ant-design/icons";
-const path = window.require("path");
-
-const {
-  remote,
-  ipcRenderer,
-}: {
-  remote: Electron.Remote;
-  ipcRenderer: Electron.IpcRenderer;
-} = window.require("electron");
+import { remote, ipcRenderer } from "renderer/common/scripts/electron";
+import { path } from "renderer/common/scripts/node";
 
 interface Props {
   workspace: string;
@@ -75,13 +68,16 @@ class Setting extends React.Component<Props, State> {
 
   // 选择下载地址
   handleSelectDir = async (): Promise<void> => {
-    const result = remote.dialog.showOpenDialogSync({
+    const { filePaths } = await remote.dialog.showOpenDialog({
       defaultPath: remote.app.getPath("documents"),
       properties: ["openDirectory"],
     });
-    if (!result) return;
+    // 没有返回值
+    if (!filePaths) return;
+    // 返回值为空
+    if (Array.isArray(filePaths) && filePaths.length <= 0) return;
     const { onWorkspaceChange } = this.props;
-    const workspaceValue = result[0];
+    const workspaceValue = filePaths[0];
     await ipcSetStore("workspace", workspaceValue);
     this.formRef.current?.setFieldsValue({
       workspace: workspaceValue || "",

@@ -39,6 +39,7 @@ const globWrapper: (
 
 const execM3u8DL = async (args: M3u8DLArgs): Promise<string[]> => {
   let binNameList = await globWrapper("N_m3u8DL-CLI*.exe", {
+    // @ts-ignore
     cwd: __bin__,
   });
   binNameList = binNameList
@@ -90,10 +91,12 @@ const exec = async (
       throw new Error("暂不支持该下载方式");
   }
 
+  // @ts-ignore
   logger.info("下载参数：", __bin__, binName, argsStr);
   return spawnWrapper(binName, argsStr, {
     detached: true,
     shell: true,
+    // @ts-ignore
     cwd: __bin__,
   });
 };

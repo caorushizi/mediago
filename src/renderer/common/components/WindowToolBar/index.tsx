@@ -1,10 +1,7 @@
 import React, { Component, ReactNode } from "react";
 import "./index.scss";
-import {
-  CloseOutlined,
-  FullscreenOutlined,
-  MinusOutlined,
-} from "@ant-design/icons";
+import { CloseOutlined, MinusOutlined } from "@ant-design/icons";
+import { remote } from "renderer/common/scripts/electron";
 
 interface Props {
   extraButton?: ReactNode[];
@@ -12,9 +9,7 @@ interface Props {
   onClose: () => void;
 }
 
-interface State {}
-
-class WindowToolBar extends Component<Props, State> {
+class WindowToolBar extends Component<Props, Record<string, never>> {
   render(): ReactNode {
     const { extraButton, children, onClose, color = "#fff" } = this.props;
     return (
@@ -24,7 +19,12 @@ class WindowToolBar extends Component<Props, State> {
           {extraButton?.map((item) => (
             <div className="btn">{item}</div>
           ))}
-          <div className="btn">
+          <div
+            className="btn"
+            onClick={() => {
+              remote.getCurrentWindow().minimize();
+            }}
+          >
             <MinusOutlined />
           </div>
           <div className="btn close" onClick={onClose}>
