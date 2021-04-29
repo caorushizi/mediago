@@ -1,8 +1,9 @@
 import React, { ReactNode } from "react";
-const { ipcRenderer } = window.require("electron");
+import { ipcRenderer } from "renderer/common/scripts/electron";
 
 class Comment extends React.Component {
   componentDidMount(): void {
+    // @ts-ignore
     new Valine({
       el: "#vcomments",
       appId: import.meta.env.VITE_APP_VC_AK,

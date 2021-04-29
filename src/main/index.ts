@@ -1,4 +1,4 @@
-import { app, BrowserWindow, protocol, session } from "electron";
+import { app, BrowserWindow, protocol } from "electron";
 import { is } from "electron-util";
 import { resolve } from "path";
 import logger from "main/utils/logger";

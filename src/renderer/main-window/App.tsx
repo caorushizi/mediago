@@ -8,7 +8,6 @@ import Setting from "renderer/main-window/components/Setting";
 import variables from "renderer/common/scripts/variables";
 import Comment from "renderer/main-window/components/Comment";
 import FavList from "renderer/main-window/components/FavList";
-import Electron from "electron";
 import { SourceItem, SourceUrl } from "types/common";
 import { SourceStatus, SourceType } from "renderer/common/types";
 import {
@@ -21,16 +20,9 @@ import { ipcGetStore } from "./utils";
 import audioSrc from "./assets/tip.mp3";
 import { AppStateContext } from "renderer/main-window/types";
 import onEvent from "renderer/common/scripts/td-utils";
+import { remote, ipcRenderer } from "renderer/common/scripts/electron";
 
 const audio = new Audio(audioSrc);
-
-const {
-  remote,
-  ipcRenderer,
-}: {
-  remote: Electron.Remote;
-  ipcRenderer: Electron.IpcRenderer;
-} = window.require("electron");
 
 enum TabKey {
   HomeTab = "1",

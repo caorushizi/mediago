@@ -32,14 +32,7 @@ import {
 import { AppStateContext } from "renderer/main-window/types";
 import { processHeaders } from "renderer/common/scripts/utils";
 import onEvent from "renderer/common/scripts/td-utils";
-
-const {
-  remote,
-  ipcRenderer,
-}: {
-  remote: Electron.Remote;
-  ipcRenderer: Electron.IpcRenderer;
-} = window.require("electron");
+import { remote, ipcRenderer } from "renderer/common/scripts/electron";
 
 type ActionButton = {
   text: string;

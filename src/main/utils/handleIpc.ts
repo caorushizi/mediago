@@ -66,6 +66,7 @@ const handleIpc = (): void => {
     return true;
   });
 
+  // @ts-ignore
   ipcMain.handle("getBinDir", async () => __bin__);
 
   ipcMain.on("open-url", async (event, url) => {
