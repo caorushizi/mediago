@@ -1,16 +1,15 @@
 import { app, ipcMain, shell } from "electron";
-import { exec, failFn, successFn } from "./utils";
-import store from "./store";
-import logger from "./logger";
-import windowManager from "../window/windowManager";
-import { Windows } from "../window/variables";
+import { store, failFn, successFn, log } from "./utils";
+import windowManager from "./window/windowManager";
+import { Windows } from "./window/variables";
 import { M3u8DLArgs } from "types/common";
+import executor from "main/executor";
 
 const handleIpc = (): void => {
   ipcMain.on("exec", async (event, exeFile: string, args: M3u8DLArgs) => {
     let resp;
     try {
-      const result = await exec(exeFile, args);
+      const result = await executor(exeFile, args);
       resp = successFn(result);
     } catch (e) {
       resp = failFn(-1, e.message);
@@ -25,7 +24,7 @@ const handleIpc = (): void => {
       store.set(key, value);
       resp = successFn("");
     } catch (e) {
-      logger.info("设置 store 失败：", e.message);
+      log.info("设置 store 失败：", e.message);
       resp = failFn(-1, "设置 store 失败");
     }
     event.reply("setLocalPathReply", resp);
@@ -35,7 +34,7 @@ const handleIpc = (): void => {
     try {
       return store.get(key);
     } catch (e) {
-      logger.info("获取 store 中数据失败：", e.message);
+      log.info("获取 store 中数据失败：", e.message);
       return "";
     }
   });
@@ -55,7 +54,6 @@ const handleIpc = (): void => {
   });
 
   ipcMain.on("closeBrowserWindow", () => {
-    logger.info("closeBrowserWindow");
     const browserWindow = windowManager.get(Windows.BROWSER_WINDOW);
     browserWindow.hide();
   });

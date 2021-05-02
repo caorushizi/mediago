@@ -14,8 +14,8 @@ class WindowManager implements IWindowManager {
     const { id } = window;
     this.windowMap.set(name, window);
     this.windowIdMap.set(window.id, name);
-    await window.loadURL(windowConfig.url);
-    await windowConfig.callback(window, this);
+    window.loadURL(windowConfig.url).then((r) => r);
+    windowConfig.callback(window, this);
     window.on("close", () => {
       this.deleteById(id);
     });

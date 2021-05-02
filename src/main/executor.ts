@@ -1,41 +1,8 @@
-import { spawn, SpawnOptions } from "child_process";
-import glob from "glob";
-import semver from "semver";
-import { workspace } from "main/utils/variables";
-import logger from "./logger";
 import { M3u8DLArgs, MediaGoArgs } from "types/common";
-import spawnArgs from "main/utils/spawn-args";
-
-const spawnWrapper = (
-  command: string,
-  args: string,
-  options: SpawnOptions
-): Promise<void> =>
-  new Promise((resolve, reject) => {
-    const spawnCommand = spawn(command, spawnArgs(args), {
-      cwd: workspace,
-      ...options,
-    });
-
-    spawnCommand.on("close", (code) => {
-      if (code !== 0) reject(new Error(`调用 ${command} 可执行文件执行失败`));
-      else resolve();
-    });
-  });
-
-/**
- * 获取文件目录
- */
-const globWrapper: (
-  pattern: string,
-  options: glob.IOptions
-) => Promise<string[]> = (pattern, options = {}) =>
-  new Promise((resolve, reject) => {
-    glob(pattern, { cwd: workspace, ...options }, (err, files) => {
-      if (err) reject(err);
-      resolve(files);
-    });
-  });
+import semver from "semver";
+import { is } from "electron-util";
+import { log } from "main/utils";
+import { globWrapper, spawnWrapper } from "main/utils";
 
 const execM3u8DL = async (args: M3u8DLArgs): Promise<string[]> => {
   let binNameList = await globWrapper("N_m3u8DL-CLI*.exe", {
@@ -61,8 +28,9 @@ const execM3u8DL = async (args: M3u8DLArgs): Promise<string[]> => {
   return [binName, argsStr];
 };
 
+// 执行 mediago 二进制文件
 const execMediaGo = async (args: MediaGoArgs): Promise<string[]> => {
-  const binName = "mediago";
+  const binName = is.windows ? "mediago" : "./mediago";
   const argsStr = Object.entries(args)
     .reduce((prev: string[], [key, value]) => {
       if (value) prev.push(`-${key} "${value}"`);
@@ -72,7 +40,8 @@ const execMediaGo = async (args: MediaGoArgs): Promise<string[]> => {
   return [binName, argsStr];
 };
 
-const exec = async (
+// 开始调用执行可执行文件
+const executor = async (
   exeFile: string,
   args: M3u8DLArgs | MediaGoArgs
 ): Promise<void> => {
@@ -92,7 +61,7 @@ const exec = async (
   }
 
   // @ts-ignore
-  logger.info("下载参数：", __bin__, binName, argsStr);
+  log.info("下载参数：", __bin__, binName, argsStr);
   return spawnWrapper(binName, argsStr, {
     detached: true,
     shell: true,
@@ -101,17 +70,4 @@ const exec = async (
   });
 };
 
-interface IpcResponse {
-  code: number;
-  msg: string;
-  data: any;
-}
-
-const successFn = (data: any): IpcResponse => ({ code: 0, msg: "", data });
-const failFn = (code: number, msg: string): IpcResponse => ({
-  code,
-  msg,
-  data: null,
-});
-
-export { exec, successFn, failFn, globWrapper, spawnWrapper };
+export default executor;
