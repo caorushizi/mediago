@@ -1,10 +1,10 @@
 import { app, BrowserWindow, protocol } from "electron";
 import { is } from "electron-util";
 import { resolve } from "path";
-import logger from "main/utils/logger";
+import { log } from "main/utils";
 import windowManager from "main/window/windowManager";
 import { Windows } from "main/window/variables";
-import handleIpc from "main/utils/handleIpc";
+import handleIpc from "main/handleIpc";
 import createBrowserView from "main/browserView/create";
 
 // eslint-disable-next-line global-require
@@ -54,7 +54,7 @@ app.on("ready", async () => {
       // const reduxTool = resolve(__dirname, "../../devtools/redux");
       // await session.defaultSession.loadExtension(reduxTool);
     } catch (e) {
-      logger.info(e);
+      log.info(e);
     }
   }
 });

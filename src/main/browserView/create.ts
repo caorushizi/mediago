@@ -3,7 +3,7 @@ import { Windows } from "main/window/variables";
 import { BrowserView, session } from "electron";
 import path from "path";
 import { is } from "electron-util";
-import logger from "main/utils/logger";
+import { log } from "main/utils";
 import { SourceUrl } from "types/common";
 
 const createBrowserView = (): void => {
@@ -42,7 +42,7 @@ const createBrowserView = (): void => {
       let cancel = false;
       const myURL = new URL(details.url);
       if (m3u8Reg.test(myURL.pathname)) {
-        logger.info("在窗口中捕获 m3u8 链接: ", details.url);
+        log.info("在窗口中捕获 m3u8 链接: ", details.url);
         const { webContents: mainWindow } = windowManager.get(
           Windows.MAIN_WINDOW
         );

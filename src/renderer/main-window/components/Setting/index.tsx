@@ -10,7 +10,7 @@ import ProForm, {
   ProFormText,
 } from "@ant-design/pro-form";
 import { FolderOpenOutlined } from "@ant-design/icons";
-import { remote, ipcRenderer } from "renderer/common/scripts/electron";
+import { remote, ipcRenderer, is } from "renderer/common/scripts/electron";
 import { path } from "renderer/common/scripts/node";
 
 interface Props {
@@ -35,6 +35,20 @@ interface FormData {
   exeFile: string;
   workspace: string;
   tip: boolean;
+}
+
+const downloaderOptions = [
+  {
+    value: "mediago",
+    label: "mediago",
+  },
+];
+
+if (is.windows) {
+  downloaderOptions.push({
+    value: "N_m3u8DL-CLI",
+    label: "N_m3u8DL-CLI（推荐）",
+  });
 }
 
 // 设置页面
@@ -162,16 +176,7 @@ class Setting extends React.Component<Props, State> {
               name="exeFile"
               label="默认下载器"
               placeholder="请选择执行程序"
-              options={[
-                {
-                  value: "N_m3u8DL-CLI",
-                  label: "N_m3u8DL-CLI（推荐）",
-                },
-                {
-                  value: "mediago",
-                  label: "mediago",
-                },
-              ]}
+              options={downloaderOptions}
             />
           </ProFormGroup>
         </ProForm>

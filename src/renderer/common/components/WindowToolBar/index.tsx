@@ -1,7 +1,7 @@
 import React, { Component, ReactNode } from "react";
 import "./index.scss";
 import { CloseOutlined, MinusOutlined } from "@ant-design/icons";
-import { remote } from "renderer/common/scripts/electron";
+import { remote, is } from "renderer/common/scripts/electron";
 
 interface Props {
   extraButton?: ReactNode[];
@@ -19,17 +19,21 @@ class WindowToolBar extends Component<Props, Record<string, never>> {
           {extraButton?.map((item) => (
             <div className="btn">{item}</div>
           ))}
-          <div
-            className="btn"
-            onClick={() => {
-              remote.getCurrentWindow().minimize();
-            }}
-          >
-            <MinusOutlined />
-          </div>
-          <div className="btn close" onClick={onClose}>
-            <CloseOutlined />
-          </div>
+          {is.windows && (
+            <div
+              className="btn"
+              onClick={() => {
+                remote.getCurrentWindow().minimize();
+              }}
+            >
+              <MinusOutlined />
+            </div>
+          )}
+          {is.windows && (
+            <div className="btn close" onClick={onClose}>
+              <CloseOutlined />
+            </div>
+          )}
         </div>
       </div>
     );
