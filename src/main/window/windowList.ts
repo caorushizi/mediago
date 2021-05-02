@@ -16,7 +16,6 @@ windowList.set(Windows.MAIN_WINDOW, {
       minHeight: 600,
       show: false,
       frame: false,
-      titleBarStyle: "hiddenInset",
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false,
@@ -42,7 +41,6 @@ windowList.set(Windows.BROWSER_WINDOW, {
       height: 600,
       show: false,
       frame: false,
-      titleBarStyle: "hiddenInset",
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false,

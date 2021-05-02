@@ -19,6 +19,61 @@
     font-size: 14px;
     font-weight: 600;
     @include text-ellipsis();
+
+    .mac-btn {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin: 0 3px;
+      cursor: pointer;
+      font-size: 10px;
+      text-align: center;
+      color: #fff;
+
+      &.close {
+        background: rgb(250, 100, 94);
+      }
+
+      &.min {
+        background: rgb(232, 189, 90);
+      }
+
+      &.max {
+        background: rgb(106, 187, 83);
+      }
+
+      &:hover {
+        &.close {
+          background-image: url(./assets/btn-close.png);
+          background-repeat: no-repeat;
+          background-position: center center;
+          background-size: 6px 6px;
+          background-color: rgb(250, 100, 94);
+        }
+
+        &.min {
+          background-image: url(./assets/btn-min.png);
+          background-repeat: no-repeat;
+          background-position: center center;
+          background-size: 6px 2px;
+          background-color: rgb(232, 189, 90);
+        }
+
+        &.max {
+          background-image: url(./assets/btn-max.png);
+          background-repeat: no-repeat;
+          background-position: center center;
+          background-size: 6px 6px;
+          background-color: rgb(106, 187, 83);
+        }
+      }
+    }
+  }
+
+  &-title {
+    max-width: 400px;
+    @include text-ellipsis();
   }
 
   &-right {
@@ -34,6 +89,7 @@
       text-align: center;
       font-size: 14px;
       transition: background-color 0.3s ease;
+
       &:hover {
         background: #e5e5e5;
       }
