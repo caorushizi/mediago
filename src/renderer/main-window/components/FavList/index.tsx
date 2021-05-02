@@ -1,6 +1,6 @@
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import "./index.scss";
-import { Button, message, Space } from "antd";
+import { Button, Space } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import {
   getFavs,
@@ -12,12 +12,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import update from "immutability-helper";
 import Card from "./Card";
-import ProForm, {
-  ModalForm,
-  ProFormText,
-  ProFormDateRangePicker,
-  ProFormSelect,
-} from "@ant-design/pro-form";
+import { ModalForm, ProFormText } from "@ant-design/pro-form";
 import { isUrl } from "renderer/main-window/utils";
 import onEvent from "renderer/common/scripts/td-utils";
 
@@ -114,11 +109,13 @@ const FavList: React.FC<Props> = () => {
           />
         </ModalForm>
       </Space>
-      <div className="fav-wrapper">
-        <DndProvider backend={HTML5Backend}>
-          {favs.map((card, i) => renderCard(card, i))}
-        </DndProvider>
-      </div>
+      {favs.length > 0 && (
+        <div className="fav-wrapper">
+          <DndProvider backend={HTML5Backend}>
+            {favs.map((card, i) => renderCard(card, i))}
+          </DndProvider>
+        </div>
+      )}
     </div>
   );
 };
