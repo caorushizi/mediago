@@ -62,6 +62,7 @@ const createBrowserView = (): void => {
     }
   );
 
+  // fixme: 设置下载时代理
   eventEmitter.on("setProxy", async (enableProxy) => {
     try {
       const proxy = store.get("proxy");
