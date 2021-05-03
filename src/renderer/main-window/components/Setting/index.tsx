@@ -1,6 +1,13 @@
 import React, { ReactNode } from "react";
-import { Button, Descriptions, FormInstance, Space } from "antd";
-import { ipcSetStore } from "renderer/main-window/utils";
+import {
+  Button,
+  Descriptions,
+  FormInstance,
+  Space,
+  Switch,
+  Tooltip,
+} from "antd";
+import { ipcSetStore, ipcGetStore } from "renderer/main-window/utils";
 import "./index.scss";
 import variables from "renderer/common/scripts/variables";
 import ProForm, {
@@ -29,12 +36,14 @@ interface Downloader {
 
 interface State {
   downloader: Downloader;
+  proxyChecked: boolean;
 }
 
 interface FormData {
   exeFile: string;
   workspace: string;
   tip: boolean;
+  proxy: string;
 }
 
 const downloaderOptions = [
@@ -58,6 +67,7 @@ class Setting extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
+      proxyChecked: false,
       downloader: {
         title: "",
         description: "",
@@ -66,7 +76,9 @@ class Setting extends React.Component<Props, State> {
     };
   }
 
-  componentDidMount(): void {
+  async componentDidMount(): Promise<void> {
+    const proxy = await ipcGetStore("proxy");
+    this.formRef.current?.setFieldsValue({ proxy });
     const { exeFile } = this.props;
     this.setState({
       downloader: {
@@ -121,8 +133,14 @@ class Setting extends React.Component<Props, State> {
     await remote.shell.openPath(workspace);
   };
 
+  // 更改代理设置
+  toggleProxySetting = async (enableProxy: boolean): Promise<void> => {
+    await ipcRenderer.send("setProxy", enableProxy);
+    this.setState({ proxyChecked: enableProxy });
+  };
+
   render(): ReactNode {
-    const { downloader } = this.state;
+    const { downloader, proxyChecked } = this.state;
     const { workspace, exeFile, tip } = this.props;
     return (
       <div className="setting-form">
@@ -151,6 +169,14 @@ class Setting extends React.Component<Props, State> {
                 },
               });
             }
+            // 代理 onchange 事件
+            if (Object.keys(changedValue).includes("proxy")) {
+              const value = changedValue["proxy"];
+              await ipcSetStore("proxy", value);
+              if (this.state.proxyChecked) {
+                await this.toggleProxySetting(false);
+              }
+            }
           }}
         >
           <ProFormGroup label="基础设置">
@@ -169,9 +195,28 @@ class Setting extends React.Component<Props, State> {
               }
             />
             <ProFormSwitch label="下载完成提示" name="tip" />
+            <ProFormText
+              width="xl"
+              name="proxy"
+              placeholder="请填写代理地址"
+              label="代理设置"
+              fieldProps={{
+                addonAfter: (
+                  <Tooltip title="该代理会对软件自带浏览器以及下载时生效">
+                    <Switch
+                      checked={proxyChecked}
+                      checkedChildren="代理生效"
+                      unCheckedChildren="代理关闭"
+                      onChange={this.toggleProxySetting}
+                    />
+                  </Tooltip>
+                ),
+              }}
+            />
           </ProFormGroup>
           <ProFormGroup label="下载设置">
             <ProFormSelect
+              allowClear={false}
               width="xl"
               name="exeFile"
               label="默认下载器"

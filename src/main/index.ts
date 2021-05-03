@@ -7,7 +7,6 @@ import { Windows } from "main/window/variables";
 import handleIpc from "main/handleIpc";
 import createBrowserView from "main/browserView/create";
 
-// eslint-disable-next-line global-require
 if (require("electron-squirrel-startup")) {
   app.quit();
 }
@@ -18,7 +17,6 @@ if (!is.development) {
 
 const init = async () => {
   windowManager.create(Windows.MAIN_WINDOW);
-  // windowManager.create(Windows.SETTING_WINDOW);
   await windowManager.create(Windows.BROWSER_WINDOW);
   await createBrowserView();
 };

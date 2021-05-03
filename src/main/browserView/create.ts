@@ -3,7 +3,7 @@ import { Windows } from "main/window/variables";
 import { BrowserView, session } from "electron";
 import path from "path";
 import { is } from "electron-util";
-import { log } from "main/utils";
+import { eventEmitter, log, store } from "main/utils";
 import { SourceUrl } from "types/common";
 
 const createBrowserView = (): void => {
@@ -61,6 +61,20 @@ const createBrowserView = (): void => {
       });
     }
   );
+
+  eventEmitter.on("setProxy", async (enableProxy) => {
+    try {
+      const proxy = store.get("proxy");
+      if (enableProxy && proxy) {
+        await ses.setProxy({ proxyRules: proxy });
+      } else {
+        await ses.setProxy({});
+      }
+      store.set("useProxy", enableProxy);
+    } catch (e) {
+      log.error("设置代理失败：", e.message);
+    }
+  });
 };
 
 export default createBrowserView;
