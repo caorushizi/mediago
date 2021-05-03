@@ -1,5 +1,5 @@
 import { app, ipcMain, shell } from "electron";
-import { store, failFn, successFn, log } from "./utils";
+import { store, failFn, successFn, log, eventEmitter } from "./utils";
 import windowManager from "./window/windowManager";
 import { Windows } from "./window/variables";
 import { M3u8DLArgs } from "types/common";
@@ -69,6 +69,10 @@ const handleIpc = (): void => {
 
   ipcMain.on("open-url", async (event, url) => {
     await shell.openExternal(url);
+  });
+
+  ipcMain.on("setProxy", (e, enableProxy) => {
+    eventEmitter.emit("setProxy", enableProxy);
   });
 };
 
