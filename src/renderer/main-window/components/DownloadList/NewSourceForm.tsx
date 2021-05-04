@@ -42,6 +42,22 @@ class NewSourceForm extends React.Component<Props> {
     }
   };
 
+  // 文件拖入事件
+  handleFileDrop = (e: React.DragEvent<HTMLInputElement>): void => {
+    e.preventDefault();
+
+    const dataTransfer = e.dataTransfer;
+    if (
+      !dataTransfer ||
+      !dataTransfer.files ||
+      dataTransfer.files.length === 0
+    ) {
+      return;
+    }
+    const path = dataTransfer.files[0].path;
+    this.formRef.current?.setFieldsValue({ url: path });
+  };
+
   render(): ReactNode {
     const { visible, handleCancel } = this.props;
     const { exeFile } = this.context;

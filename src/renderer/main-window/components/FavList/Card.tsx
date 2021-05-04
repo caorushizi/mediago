@@ -3,10 +3,13 @@ import { useDrag, useDrop, DropTargetMonitor } from "react-dnd";
 import { XYCoord } from "dnd-core";
 import { Button, Col, Popconfirm, Row } from "antd";
 import { Fav } from "types/common";
-import ItemTypes from "./ItemTypes";
 import { DragOutlined } from "@ant-design/icons";
 import onEvent from "renderer/common/scripts/td-utils";
 import { ipcRenderer } from "renderer/common/scripts/electron";
+
+const ItemTypes = {
+  CARD: "card",
+};
 
 interface CardProps {
   index: number;
