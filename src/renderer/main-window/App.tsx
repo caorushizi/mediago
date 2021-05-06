@@ -20,7 +20,7 @@ import { ipcGetStore } from "./utils";
 import audioSrc from "./assets/tip.mp3";
 import { AppStateContext } from "renderer/main-window/types";
 import onEvent from "renderer/common/scripts/td-utils";
-import { remote, ipcRenderer } from "renderer/common/scripts/electron";
+import { ipcRenderer, remote } from "renderer/common/scripts/electron";
 
 const audio = new Audio(audioSrc);
 

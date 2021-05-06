@@ -7,11 +7,14 @@
 
   .fav-wrapper {
     border: 1px solid #dcdfe6;
+
     .fav-item {
       border-bottom: 1px solid #dcdfe6;
+
       &:last-child {
         border-bottom: 0;
       }
+
       .fav-item-inner {
         display: flex;
         flex-direction: row;
@@ -21,14 +24,17 @@
         color: #303133;
         padding: 5px 12px;
       }
+
       .fav-item__title {
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+
         .fav-item__inner {
           padding-left: 12px;
         }
       }
+
       .fav-item__action {
         text-align: right;
       }

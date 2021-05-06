@@ -3,7 +3,6 @@ import "./index.scss";
 import {
   ArrowLeftOutlined,
   ArrowRightOutlined,
-  EnterOutlined,
   HomeOutlined,
   ReloadOutlined,
   StarFilled,
