@@ -1,7 +1,7 @@
 import React, { Component, ReactNode } from "react";
 import "./index.scss";
 import { CloseOutlined, MinusOutlined } from "@ant-design/icons";
-import { remote, is } from "renderer/common/scripts/electron";
+import { is, remote } from "renderer/common/scripts/electron";
 
 interface Props {
   color?: string;

@@ -1,8 +1,7 @@
 import { M3u8DLArgs, MediaGoArgs } from "types/common";
 import semver from "semver";
 import { is } from "electron-util";
-import { log } from "main/utils";
-import { globWrapper, spawnWrapper } from "main/utils";
+import { globWrapper, log, spawnWrapper } from "main/utils";
 
 const execM3u8DL = async (args: M3u8DLArgs): Promise<string[]> => {
   let binNameList = await globWrapper("N_m3u8DL-CLI*.exe", {

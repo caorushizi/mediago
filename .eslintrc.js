@@ -6,14 +6,15 @@ module.exports = {
     node: true,
   },
   parser: "@typescript-eslint/parser",
-  plugins: ["@typescript-eslint", "prettier"],
+  plugins: ["@typescript-eslint", "react"],
   extends: [
-    "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    "prettier",
+    "react-app",
+    "plugin:prettier/recommended",
   ],
   rules: {
     "@typescript-eslint/ban-ts-comment": "warn",
+    "prettier/prettier": "error",
   },
   parserOptions: {
     project: "./tsconfig.json",

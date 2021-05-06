@@ -7,7 +7,7 @@ import {
   Switch,
   Tooltip,
 } from "antd";
-import { ipcSetStore, ipcGetStore } from "renderer/main-window/utils";
+import { ipcGetStore, ipcSetStore } from "renderer/main-window/utils";
 import "./index.scss";
 import variables from "renderer/common/scripts/variables";
 import ProForm, {
@@ -17,7 +17,7 @@ import ProForm, {
   ProFormText,
 } from "@ant-design/pro-form";
 import { FolderOpenOutlined } from "@ant-design/icons";
-import { remote, ipcRenderer, is } from "renderer/common/scripts/electron";
+import { ipcRenderer, is, remote } from "renderer/common/scripts/electron";
 import { path } from "renderer/common/scripts/node";
 
 interface Props {

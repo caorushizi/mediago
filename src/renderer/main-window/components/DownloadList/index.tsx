@@ -1,10 +1,8 @@
 import React, { ReactNode } from "react";
-import { Button, Drawer, Input, Popconfirm, Space, Tag, Tooltip } from "antd";
+import { Button, Drawer, Popconfirm, Space, Tag, Tooltip } from "antd";
 import ProDescriptions from "@ant-design/pro-descriptions";
 import ProTable from "@ant-design/pro-table";
 import "./index.scss";
-import tdApp from "renderer/common/scripts/td";
-import * as Electron from "electron";
 import variables from "renderer/common/scripts/variables";
 import {
   M3u8DLArgs,
@@ -32,7 +30,7 @@ import {
 import { AppStateContext } from "renderer/main-window/types";
 import { processHeaders } from "renderer/common/scripts/utils";
 import onEvent from "renderer/common/scripts/td-utils";
-import { remote, ipcRenderer } from "renderer/common/scripts/electron";
+import { ipcRenderer, remote } from "renderer/common/scripts/electron";
 
 type ActionButton = {
   text: string;

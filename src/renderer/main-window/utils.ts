@@ -43,7 +43,7 @@ const ipcSetStore = (key: string, value: any): Promise<any> =>
 const ipcGetStore = (key: string): Promise<any> =>
   ipcRenderer.invoke("getLocalPath", key) as Promise<string>;
 
-function isUrl(url: string) {
+function isUrl(url: string): boolean {
   return /^(https?:\/\/(([a-zA-Z0-9]+-?)+[a-zA-Z0-9]+\.)+[a-zA-Z]+)(:\d+)?(\/.*)?(\?.*)?(#.*)?$/.test(
     url
   );
