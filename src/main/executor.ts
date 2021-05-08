@@ -60,7 +60,6 @@ const executor = async (
   }
 
   // fixme: 非静默下载
-
   // @ts-ignore
   log.info("下载参数：", __bin__, binName, argsStr);
   return spawnWrapper(binName, argsStr, {
