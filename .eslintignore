@@ -2,5 +2,5 @@
 esbuild.config.js
 babel.config.js
 webpack.config.js
-script/dev-server.js
+script/watch.js
 vite.config.ts
