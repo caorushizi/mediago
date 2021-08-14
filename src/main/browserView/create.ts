@@ -1,6 +1,6 @@
 import windowManager from "main/window/windowManager";
 import { Windows } from "main/window/variables";
-import { BrowserView, session } from "electron";
+import { BrowserView, ipcMain, session } from "electron";
 import path from "path";
 import { is } from "electron-util";
 import { log } from "main/utils";
@@ -18,13 +18,17 @@ const createBrowserView = (): void => {
 
   const view = new BrowserView({ webPreferences: { partition } });
   browserWindow.setBrowserView(view);
-  browserWindow.webContents.send("viewReady");
   view.setBounds({ x: 0, y: 0, height: 0, width: 0 });
 
   const { webContents } = view;
   if (is.development) webContents.openDevTools();
 
   webContents.on("dom-ready", () => {
+    const title = webContents.getTitle();
+    const url = webContents.getURL();
+
+    browserWindow.webContents.send("dom-ready", { title, url });
+
     webContents.on("new-window", async (event, url) => {
       event.preventDefault();
       await webContents.loadURL(url);

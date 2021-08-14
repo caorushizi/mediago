@@ -58,9 +58,16 @@ interface IpcRendererResp {
   data: any;
 }
 
+interface BrowserViewRect {
+  x: number;
+  y: number;
+  height: number;
+  width: number;
+}
+
 interface ElectronApi {
   store: {
-    get: (key: string) => Promise<string>;
+    get: (key?: string) => Promise<any>;
     set: (key: string, value: any) => Promise<void>;
   };
   is: ElectronIs;
@@ -80,6 +87,18 @@ interface ElectronApi {
   showOpenDialog: (
     options: Electron.OpenDialogOptions
   ) => Promise<Electron.OpenDialogReturnValue>;
+  closeBrowserWindow: () => void;
+  getBrowserView: () => Promise<Electron.BrowserView | null>;
+  addEventListener: (
+    channel: string,
+    listener: (event: Electron.IpcRendererEvent, ...args: any[]) => void
+  ) => void;
+  removeEventListener: (
+    channel: string,
+    listener: (...args: any[]) => void
+  ) => void;
+  setBrowserViewRect: (rect: BrowserViewRect) => void;
+  closeMainWindow: () => void;
 }
 
 declare interface Window {

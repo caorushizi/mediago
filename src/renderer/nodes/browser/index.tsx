@@ -8,7 +8,6 @@ import { insertFav, isFavFunc, removeFav } from "renderer/utils/localforge";
 import WindowToolBar from "renderer/components/WindowToolBar";
 import SearchBar from "../../components/SearchBar";
 import onEvent from "renderer/utils/td-utils";
-import { ipcRenderer, remote } from "renderer/utils/electron";
 
 tdApp.init();
 
@@ -35,14 +34,14 @@ interface State {
   isFav: boolean;
 }
 
-class BrowserWindow extends React.Component<null, State> {
+class BrowserWindow extends React.Component<any, State> {
   view: Electron.BrowserView | null;
 
   resizeObserver?: ResizeObserver;
 
   webviewRef = React.createRef<HTMLDivElement>();
 
-  constructor(props: null) {
+  constructor(props: any) {
     super(props);
 
     this.state = {
@@ -56,41 +55,30 @@ class BrowserWindow extends React.Component<null, State> {
 
   async componentDidMount() {
     // 页面刷新时提供 view 的初始化
-    this.view = remote.getCurrentWindow().getBrowserView();
-    await this.initWebView();
-    ipcRenderer.on("viewReady", this.handleViewReady);
+    this.initWebView();
+    window.electron.addEventListener("dom-ready", this.handleViewDOMReady);
   }
 
   componentWillUnmount() {
-    this.view?.setBounds({ x: 0, y: 0, height: 0, width: 0 });
-    this.view?.webContents.off("dom-ready", this.handleViewDOMReady);
-    ipcRenderer.removeListener("viewReady", this.handleViewReady);
-    this.view = null;
+    window.electron.setBrowserViewRect({ x: 0, y: 0, height: 0, width: 0 });
+    window.electron.removeEventListener("dom-ready", this.handleViewDOMReady);
     this.resizeObserver?.disconnect();
   }
 
-  handleViewDOMReady = async (): Promise<void> => {
-    const url = this.view?.webContents?.getURL() || "";
-    const title = this.view?.webContents?.getTitle() || "";
+  handleViewDOMReady = async (
+    e: Electron.IpcRendererEvent,
+    { url, title }: { url: string; title: string }
+  ): Promise<void> => {
     const isFav = await isFavFunc(url);
     this.setState({ title, url, isFav });
     document.title = title;
   };
 
-  handleViewReady = async () => {
-    // 在 browser window 创建时初始化 view
-    this.view = remote.getCurrentWindow().getBrowserView();
-    await this.initWebView();
-  };
-
-  initWebView = async () => {
+  initWebView = () => {
     const webviewRef = this.webviewRef.current;
-    const { view } = this;
-    if (webviewRef && view) {
+    if (webviewRef) {
       const rect = computeRect(webviewRef.getBoundingClientRect());
-      view.setBounds(rect);
-      view.webContents.on("dom-ready", this.handleViewDOMReady);
-      await view.webContents.loadURL(variables.urls.homePage);
+      window.electron.setBrowserViewRect(rect);
 
       // 监控 webview 元素的大小
       this.resizeObserver = new ResizeObserver((entries) => {
@@ -98,7 +86,7 @@ class BrowserWindow extends React.Component<null, State> {
         const viewRect = computeRect(entry.contentRect);
         viewRect.x += rect.x;
         viewRect.y += rect.y;
-        view.setBounds(viewRect);
+        window.electron.setBrowserViewRect(viewRect);
       });
       this.resizeObserver.observe(webviewRef);
     }
@@ -147,7 +135,7 @@ class BrowserWindow extends React.Component<null, State> {
       <div className="browser-window">
         <WindowToolBar
           onClose={() => {
-            ipcRenderer.send("closeBrowserWindow");
+            window.electron.closeBrowserWindow();
           }}
         >
           {title}

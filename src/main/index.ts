@@ -65,7 +65,6 @@ app.on("ready", async () => {
     exeFile = "mediago";
   }
 
-  console.log("workspace", workspace);
   const store = new Store<AppStore>({
     name: "config",
     cwd: workspace,

@@ -18,12 +18,12 @@ import {
 import { EllipsisOutlined } from "@ant-design/icons";
 import audioSrc from "../../assets/tip.mp3";
 import onEvent from "renderer/utils/td-utils";
-import { ipcRenderer, remote } from "renderer/utils/electron";
 import { connect, ConnectedProps } from "react-redux";
 import { Dispatch } from "redux";
 import { updateSettings } from "renderer/store/actions/settings.actions";
 import { AppState } from "renderer/store/reducers";
 import { Settings } from "renderer/store/models/settings";
+import electron from "renderer/utils/electron";
 
 const audio = new Audio(audioSrc);
 
@@ -49,9 +49,9 @@ class MainPage extends React.Component<PropsFromRedux, State> {
       <Menu.Item>
         <Button
           type="link"
-          onClick={async () => {
+          onClick={() => {
             onEvent.mainUpdateLog();
-            await remote.shell.openExternal(variables.urls.help);
+            electron.openExternal(variables.urls.help);
           }}
         >
           更新日志
@@ -60,9 +60,9 @@ class MainPage extends React.Component<PropsFromRedux, State> {
       <Menu.Item>
         <Button
           type="link"
-          onClick={async () => {
+          onClick={() => {
             onEvent.mainPageSourceCode();
-            await remote.shell.openExternal(variables.urls.sourceUrl);
+            electron.openExternal(variables.urls.sourceUrl);
           }}
         >
           源码地址
@@ -87,18 +87,17 @@ class MainPage extends React.Component<PropsFromRedux, State> {
     const tableData = await getVideos();
     const { setSettings } = this.props;
     const initialSettings = await window.electron.store.get();
-    console.log("123123", initialSettings, await window.electron.store);
     setSettings(initialSettings);
     this.setState({
       tableData,
       activeKey: initialSettings.workspace ? TabKey.HomeTab : TabKey.SettingTab,
     });
 
-    ipcRenderer.on("m3u8", this.handleWebViewMessage);
+    electron.addEventListener("m3u8", this.handleWebViewMessage);
   }
 
   componentWillUnmount(): void {
-    ipcRenderer.removeListener("m3u8", this.handleWebViewMessage);
+    electron.removeEventListener("m3u8", this.handleWebViewMessage);
   }
 
   handleWebViewMessage = async (
@@ -179,7 +178,7 @@ class MainPage extends React.Component<PropsFromRedux, State> {
         <WindowToolBar
           color="#4090F7"
           onClose={() => {
-            ipcRenderer.send("closeMainWindow");
+            electron.closeMainWindow();
           }}
         />
         <div className="main-window">

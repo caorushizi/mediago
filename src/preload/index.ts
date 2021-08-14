@@ -10,7 +10,7 @@ const api: ElectronApi = {
     set(key: string, value: string) {
       return ipcRenderer.invoke("set-store", key, value);
     },
-    get(key: string) {
+    get(key?: string) {
       return ipcRenderer.invoke("get-store", key);
     },
   },
@@ -30,7 +30,7 @@ const api: ElectronApi = {
     });
   },
   openBinDir: async () => {
-    const binDir = await ipcRenderer.invoke("getBinDir");
+    const binDir = await ipcRenderer.invoke("get-bin-dir");
     await shell.openPath(binDir);
   },
   openPath: (workspace: string) => {
@@ -47,9 +47,21 @@ const api: ElectronApi = {
   openExternal: (url, options?) => {
     return shell.openExternal(url, options);
   },
-  openBrowserWindow: (url?) => ipcRenderer.send("openBrowserWindow", url),
+  openBrowserWindow: (url?) => ipcRenderer.send("open-browser-window", url),
+  closeBrowserWindow: () => ipcRenderer.send("close-browser-window"),
   getPath: (name) => ipcRenderer.invoke("get-path", name) as any,
   showOpenDialog: (options) => ipcRenderer.invoke("show-open-dialog", options),
+  getBrowserView: async () => {
+    return ipcRenderer.invoke(
+      "get-current-window"
+    ) as Promise<Electron.BrowserView | null>;
+  },
+  addEventListener: (channel, listener) => ipcRenderer.on(channel, listener),
+  removeEventListener: (channel, listener) =>
+    ipcRenderer.removeListener(channel, listener),
+  setBrowserViewRect: (rect: BrowserViewRect) =>
+    ipcRenderer.send("set-browser-view-bounds", rect),
+  closeMainWindow: () => ipcRenderer.send("close-main-window"),
 };
 
 contextBridge.exposeInMainWorld(apiKey, api);
