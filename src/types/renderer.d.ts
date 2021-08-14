@@ -83,10 +83,8 @@ interface ElectronApi {
     options?: Electron.OpenExternalOptions
   ) => Promise<void>;
   openBrowserWindow: (url?: string) => void;
-  getPath: (name: string) => string;
-  showOpenDialog: (
-    options: Electron.OpenDialogOptions
-  ) => Promise<Electron.OpenDialogReturnValue>;
+  getPath: (name: string) => Promise<string>;
+  showOpenDialog: (options: Electron.OpenDialogOptions) => Promise<any>;
   closeBrowserWindow: () => void;
   getBrowserView: () => Promise<Electron.BrowserView | null>;
   addEventListener: (
@@ -99,6 +97,9 @@ interface ElectronApi {
   ) => void;
   setBrowserViewRect: (rect: BrowserViewRect) => void;
   closeMainWindow: () => void;
+  browserViewGoBack: () => void;
+  browserViewReload: () => void;
+  browserViewLoadURL: (url?: string) => void;
 }
 
 declare interface Window {

@@ -7,7 +7,6 @@ import DownloadList from "renderer/nodes/main/elements/DownloadList";
 import Setting from "renderer/nodes/main/elements/Setting";
 import variables from "renderer/utils/variables";
 import Comment from "renderer/components/Comment";
-import FavList from "renderer/nodes/main/elements/FavList";
 import { SourceItem, SourceUrl } from "types/common";
 import { SourceStatus, SourceType } from "renderer/types";
 import {
@@ -203,9 +202,6 @@ class MainPage extends React.Component<PropsFromRedux, State> {
                 changeSourceStatus={this.changeSourceStatus}
                 updateTableData={this.updateTableData}
               />
-            </TabPane>
-            <TabPane tab="收藏" key={TabKey.FavTab}>
-              <FavList />
             </TabPane>
             <TabPane tab="设置" key={TabKey.SettingTab}>
               <Setting workspace={workspace} exeFile={exeFile} tip={tip} />

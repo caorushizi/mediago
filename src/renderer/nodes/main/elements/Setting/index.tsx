@@ -16,8 +16,6 @@ import ProForm, {
   ProFormText,
 } from "@ant-design/pro-form";
 import { FolderOpenOutlined } from "@ant-design/icons";
-import { ipcRenderer, is, remote } from "renderer/utils/electron";
-import { path } from "renderer/utils/node";
 import { AppState } from "renderer/store/reducers";
 import { Dispatch } from "redux";
 import { Settings } from "renderer/store/models/settings";
@@ -96,8 +94,9 @@ class Setting extends React.Component<Props, State> {
 
   // 选择下载地址
   handleSelectDir = async (): Promise<void> => {
+    const defaultPath = await window.electron.getPath("documents");
     const { filePaths } = await window.electron.showOpenDialog({
-      defaultPath: window.electron.getPath("documents"),
+      defaultPath,
       properties: ["openDirectory"],
     });
     // 没有返回值
