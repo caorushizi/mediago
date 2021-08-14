@@ -1,0 +1,75 @@
+@font-face {
+  font-family: "webfont";
+  font-display: swap;
+  src: url("assets/fonts/webfont.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: Alibaba-PuHuiTi-Bold;
+  src: url("./assets/fonts/Alibaba-PuHuiTi-Bold.ttf");
+}
+
+@font-face {
+  font-family: Alibaba-PuHuiTi-Heavy;
+  src: url("./assets/fonts/Alibaba-PuHuiTi-Heavy.ttf");
+}
+
+@font-face {
+  font-family: Alibaba-PuHuiTi-Light;
+  src: url("./assets/fonts/Alibaba-PuHuiTi-Light.ttf");
+}
+
+@font-face {
+  font-family: Alibaba-PuHuiTi-Medium;
+  src: url("./assets/fonts/Alibaba-PuHuiTi-Medium.ttf");
+}
+
+@font-face {
+  font-family: Alibaba-PuHuiTi-Regular;
+  src: url("./assets/fonts/Alibaba-PuHuiTi-Regular.ttf");
+}
+
+@mixin font-style {
+  font-family: webfont !important;
+}
+
+@mixin text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin scrollbar {
+  &::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+  }
+}
+
+@mixin window-common {
+  html,
+  body,
+  #root {
+    padding: 0;
+    margin: 0;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+  }
+}
+
+.ant-modal-wrap {
+  @include scrollbar;
+}
+
+* {
+  font-family: Alibaba-PuHuiTi-Regular;
+}

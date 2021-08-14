@@ -16,7 +16,4 @@ module.exports = {
     "@typescript-eslint/ban-ts-comment": "warn",
     "prettier/prettier": "error",
   },
-  parserOptions: {
-    project: "./tsconfig.json",
-  },
 };
