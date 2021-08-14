@@ -2,7 +2,6 @@ import { spawn, SpawnOptions } from "child_process";
 import glob from "glob";
 import { workspace } from "main/variables";
 import spawnArgs from "main/utils/spawn-args";
-import { EventEmitter } from "events";
 import log from "electron-log";
 import path from "path";
 import moment from "moment";
@@ -56,20 +55,10 @@ const failFn = (code: number, msg: string): IpcResponse => ({
   data: null,
 });
 
-const eventEmitter = new EventEmitter();
-
 const datetime = moment().format("YYYY-MM-DD");
 const logPath = path.resolve(workspace, `logs/${datetime}-mediago.log`);
 log.transports.console.format = "{h}:{i}:{s} {text}";
 log.transports.file.getFile();
 log.transports.file.resolvePath = () => logPath;
 
-export {
-  successFn,
-  failFn,
-  globWrapper,
-  spawnWrapper,
-  eventEmitter,
-  log,
-  spawnArgs,
-};
+export { successFn, failFn, globWrapper, spawnWrapper, log, spawnArgs };

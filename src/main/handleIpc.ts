@@ -1,5 +1,5 @@
 import { app, dialog, ipcMain, shell } from "electron";
-import { eventEmitter, failFn, successFn } from "./utils";
+import { failFn, successFn } from "./utils";
 import windowManager from "./window/windowManager";
 import { Windows } from "./window/variables";
 import { M3u8DLArgs } from "types/common";
@@ -17,40 +17,28 @@ const handleIpc = (): void => {
     event.reply("execReply", resp);
   });
 
-  ipcMain.on("closeMainWindow", async () => {
+  ipcMain.on("close-main-window", async () => {
     app.quit();
   });
 
-  ipcMain.on("openBrowserWindow", (e, url) => {
+  ipcMain.on("open-browser-window", (e, url) => {
     // 开始计算主窗口的位置
     const browserWindow = windowManager.get(Windows.BROWSER_WINDOW);
     const browserView = browserWindow.getBrowserView();
-    if (url) {
-      browserView?.webContents.loadURL(url);
-    }
+    browserView?.webContents.loadURL(url || "https://baidu.com");
     browserWindow.show();
   });
 
-  ipcMain.on("closeBrowserWindow", () => {
+  ipcMain.on("close-browser-window", () => {
     const browserWindow = windowManager.get(Windows.BROWSER_WINDOW);
     browserWindow.hide();
   });
 
-  ipcMain.handle("openSettingWindow", async () => {
-    const settingWindow = windowManager.get(Windows.SETTING_WINDOW);
-    settingWindow.show();
-    return true;
-  });
-
   // @ts-ignore
-  ipcMain.handle("getBinDir", async () => __bin__);
+  ipcMain.handle("get-bin-dir", async () => __bin__);
 
   ipcMain.on("open-url", async (event, url) => {
     await shell.openExternal(url);
-  });
-
-  ipcMain.on("setProxy", (e, enableProxy) => {
-    eventEmitter.emit("setProxy", enableProxy);
   });
 
   ipcMain.handle("set-store", (e, key, value) => {
@@ -66,6 +54,17 @@ const handleIpc = (): void => {
   ipcMain.handle("show-open-dialog", (e, options: Electron.OpenDialogOptions) =>
     dialog.showOpenDialog(options)
   );
+
+  ipcMain.handle("get-current-window", (e) => {
+    const currentWindow = windowManager.get(Windows.BROWSER_WINDOW);
+    return currentWindow.getBrowserView();
+  });
+
+  ipcMain.on("set-browser-view-bounds", (e, rect) => {
+    const currentWindow = windowManager.get(Windows.BROWSER_WINDOW);
+    const view = currentWindow.getBrowserView();
+    if (view) view.setBounds(rect);
+  });
 };
 
 export default handleIpc;
