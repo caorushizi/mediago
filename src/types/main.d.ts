@@ -1,10 +1,12 @@
 import { BrowserWindow } from "electron";
 import { Windows } from "main/window/variables";
+import Store from "electron-store";
 
 declare global {
   namespace NodeJS {
     interface Global {
       __bin__: string;
+      store: Store<AppStore>;
     }
   }
 }

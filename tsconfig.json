@@ -41,9 +41,11 @@
   "include": [
     "./src/renderer/**/*",
     "./src/main/**/*",
+    "./src/preload/**/*",
     "./src/types/**/*"
   ],
   "files": [
-    "./types/renderer.d.ts"
+    "./types/renderer.d.ts",
+    "./types/main.d.ts"
   ]
 }

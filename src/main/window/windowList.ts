@@ -1,6 +1,7 @@
 import { is } from "electron-util";
 import { IWindowListItem } from "types/main";
 import { Windows } from "./variables";
+import { resolve } from "path";
 
 const windowList = new Map<Windows, IWindowListItem>();
 
@@ -18,8 +19,9 @@ windowList.set(Windows.MAIN_WINDOW, {
       frame: false,
       webPreferences: {
         nodeIntegration: true,
-        contextIsolation: false,
+        contextIsolation: true,
         enableRemoteModule: true,
+        preload: resolve(__dirname, "../preload"),
       },
     };
   },
@@ -43,8 +45,9 @@ windowList.set(Windows.BROWSER_WINDOW, {
       frame: false,
       webPreferences: {
         nodeIntegration: true,
-        contextIsolation: false,
+        contextIsolation: true,
         enableRemoteModule: true,
+        preload: resolve(__dirname, "../preload"),
       },
     };
   },

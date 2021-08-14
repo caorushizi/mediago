@@ -1,4 +1,3 @@
-import ReactDOM from "react-dom";
 import React from "react";
 import "./index.scss";
 import { Spin } from "antd";
@@ -30,22 +29,20 @@ const computeRect = ({
   height: Math.floor(height),
 });
 
-interface Props {}
-
 interface State {
   url: string;
   title: string;
   isFav: boolean;
 }
 
-class BrowserWindow extends React.Component<Props, State> {
+class BrowserWindow extends React.Component<null, State> {
   view: Electron.BrowserView | null;
 
   resizeObserver?: ResizeObserver;
 
   webviewRef = React.createRef<HTMLDivElement>();
 
-  constructor(props: Props) {
+  constructor(props: null) {
     super(props);
 
     this.state = {

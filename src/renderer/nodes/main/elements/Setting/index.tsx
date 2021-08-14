@@ -7,7 +7,6 @@ import {
   Switch,
   Tooltip,
 } from "antd";
-import { ipcGetStore, ipcSetStore } from "renderer/utils";
 import "./index.scss";
 import variables from "renderer/utils/variables";
 import ProForm, {
@@ -19,13 +18,16 @@ import ProForm, {
 import { FolderOpenOutlined } from "@ant-design/icons";
 import { ipcRenderer, is, remote } from "renderer/utils/electron";
 import { path } from "renderer/utils/node";
+import { AppState } from "renderer/store/reducers";
+import { Dispatch } from "redux";
+import { Settings } from "renderer/store/models/settings";
+import { updateSettings } from "renderer/store/actions/settings.actions";
+import { connect, ConnectedProps } from "react-redux";
 
-interface Props {
+interface Props extends PropsFromRedux {
   workspace: string;
   exeFile: string;
   tip: boolean;
-  onWorkspaceChange: (path: string) => void;
-  onExeFileChange: (bin: string) => void;
 }
 
 interface Downloader {
@@ -53,7 +55,7 @@ const downloaderOptions = [
   },
 ];
 
-if (is.windows) {
+if (window.electron.is.windows) {
   downloaderOptions.push({
     value: "N_m3u8DL-CLI",
     label: "N_m3u8DL-CLI（推荐）",
@@ -77,7 +79,7 @@ class Setting extends React.Component<Props, State> {
   }
 
   async componentDidMount(): Promise<void> {
-    const proxy = await ipcGetStore("proxy");
+    const proxy = await window.electron.store.get("proxy");
     this.formRef.current?.setFieldsValue({ proxy });
     const { exeFile } = this.props;
     this.setState({
@@ -94,49 +96,44 @@ class Setting extends React.Component<Props, State> {
 
   // 选择下载地址
   handleSelectDir = async (): Promise<void> => {
-    const { filePaths } = await remote.dialog.showOpenDialog({
-      defaultPath: remote.app.getPath("documents"),
+    const { filePaths } = await window.electron.showOpenDialog({
+      defaultPath: window.electron.getPath("documents"),
       properties: ["openDirectory"],
     });
     // 没有返回值
     if (!filePaths) return;
     // 返回值为空
     if (Array.isArray(filePaths) && filePaths.length <= 0) return;
-    const { onWorkspaceChange } = this.props;
+    const { setSettings } = this.props;
     const workspaceValue = filePaths[0];
-    await ipcSetStore("workspace", workspaceValue);
+    await window.electron.store.set("workspace", workspaceValue);
     this.formRef.current?.setFieldsValue({
       workspace: workspaceValue || "",
     });
-    onWorkspaceChange(workspaceValue);
+    setSettings({ workspace: workspaceValue });
   };
 
   // 打开配置文件文件夹
   openConfigDir = async (): Promise<void> => {
-    const appName =
-      process.env.NODE_ENV === "development"
-        ? "media downloader dev"
-        : "media downloader";
-    const appPath = remote.app.getPath("appData");
-    await remote.shell.openPath(path.resolve(appPath, appName));
+    window.electron.openConfigDir();
   };
 
   // 打开可执行程序文件夹
-  openBinDir = async (): Promise<void> => {
-    const binDir = await ipcRenderer.invoke("getBinDir");
-    await remote.shell.openPath(binDir);
+  openBinDir = () => {
+    window.electron.openBinDir();
   };
 
   // 本地存储文件夹
   localDir = async (): Promise<void> => {
     const { workspace } = this.props;
-    await remote.shell.openPath(workspace);
+    window.electron.openPath(workspace);
   };
 
   // 更改代理设置
   toggleProxySetting = async (enableProxy: boolean): Promise<void> => {
-    await ipcRenderer.send("setProxy", enableProxy);
+    // await ipcRenderer.send("setProxy", enableProxy);
     this.setState({ proxyChecked: enableProxy });
+    await window.electron.store.set("useProxy", enableProxy);
   };
 
   render(): ReactNode {
@@ -151,13 +148,13 @@ class Setting extends React.Component<Props, State> {
           initialValues={{ workspace, exeFile, tip }}
           onValuesChange={async (changedValue) => {
             if (Object.keys(changedValue).includes("tip")) {
-              await ipcSetStore("tip", changedValue["tip"]);
+              await window.electron.store.set("tip", changedValue["tip"]);
             }
             if (Object.keys(changedValue).includes("exeFile")) {
-              const { onExeFileChange } = this.props;
+              const { setSettings } = this.props;
               const value = changedValue["exeFile"];
-              await ipcSetStore("exeFile", value);
-              onExeFileChange(value);
+              await window.electron.store.set("exeFile", value);
+              setSettings({ exeFile: value });
               this.setState({
                 downloader: {
                   title: value === "mediago" ? "mediago" : "N_m3u8DL-CLI",
@@ -172,7 +169,7 @@ class Setting extends React.Component<Props, State> {
             // 代理 onchange 事件
             if (Object.keys(changedValue).includes("proxy")) {
               const value = changedValue["proxy"];
-              await ipcSetStore("proxy", value);
+              await window.electron.store.set("proxy", value);
               if (this.state.proxyChecked) {
                 await this.toggleProxySetting(false);
               }
@@ -230,7 +227,7 @@ class Setting extends React.Component<Props, State> {
             <a
               onClick={async (e) => {
                 e.preventDefault();
-                await remote.shell.openExternal(downloader.github);
+                window.electron.openExternal(downloader.github);
               }}
             >
               {downloader.github}
@@ -252,5 +249,18 @@ class Setting extends React.Component<Props, State> {
     );
   }
 }
+const mapStateToProps = (state: AppState) => ({
+  settings: state.settings.settings,
+});
 
-export default Setting;
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return {
+    setSettings: (settings: Partial<Settings>) =>
+      dispatch(updateSettings(settings)),
+  };
+};
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+export default connector(Setting);
