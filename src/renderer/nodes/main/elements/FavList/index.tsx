@@ -1,17 +1,12 @@
-import React, { ReactNode, useCallback, useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import "./index.scss";
-import { Button, Space } from "antd";
+import { Button, Col, Empty, Popconfirm, Row } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { getFavs, insertFav, removeFav } from "renderer/utils/localforge";
 import { Fav } from "types/common";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import update from "immutability-helper";
-import Card from "./Card";
 import { ModalForm, ProFormText } from "@ant-design/pro-form";
 import { isUrl } from "renderer/utils";
 import onEvent from "renderer/utils/td-utils";
-import Empty from "renderer/components/Empty";
 
 const FavList: React.FC = () => {
   const [favs, setFavs] = useState<Fav[]>([]);
@@ -25,22 +20,6 @@ const FavList: React.FC = () => {
     initState();
   }, []);
 
-  // 移动卡片
-  const moveCard = useCallback(
-    (dragIndex: number, hoverIndex: number) => {
-      const dragCard = favs[dragIndex];
-      setFavs(
-        update(favs, {
-          $splice: [
-            [dragIndex, 1],
-            [hoverIndex, 0, dragCard],
-          ],
-        })
-      );
-    },
-    [favs]
-  );
-
   // 删除收藏
   const handleDelete = async (fav: Fav): Promise<void> => {
     onEvent.favPageDeleteLink();
@@ -51,13 +30,36 @@ const FavList: React.FC = () => {
 
   // 渲染卡片
   const renderCard = (fav: Fav, index: number): ReactNode => (
-    <Card
-      handleDelete={handleDelete}
-      key={fav.url}
-      index={index}
-      moveCard={moveCard}
-      fav={fav}
-    />
+    <div className="fav-item">
+      <Row className="fav-item-inner" key={fav.url}>
+        <Col span={18} className="fav-item__title">
+          <span className="fav-item__inner">{fav.title}</span>
+        </Col>
+        <Col span={6} className="fav-item__action">
+          <Button
+            type="link"
+            onClick={() => {
+              onEvent.favPageOpenLink();
+              window.electron.openBrowserWindow(fav.url);
+            }}
+          >
+            打开链接
+          </Button>
+          <Popconfirm
+            placement="topRight"
+            title="确认要删除这个收藏吗？"
+            onConfirm={() => handleDelete(fav)}
+            okText="删除"
+            okButtonProps={{ danger: true }}
+            cancelText="取消"
+          >
+            <Button type="link" danger>
+              删除
+            </Button>
+          </Popconfirm>
+        </Col>
+      </Row>
+    </div>
   );
 
   // 渲染添加按钮
@@ -109,12 +111,10 @@ const FavList: React.FC = () => {
   return favs.length > 0 ? (
     <div className="fav-list">
       {renderAddFav()}
-      <DndProvider backend={HTML5Backend}>
-        {favs.map((card, i) => renderCard(card, i))}
-      </DndProvider>
+      {favs.map((card, i) => renderCard(card, i))}
     </div>
   ) : (
-    <Empty extra={renderAddFav()} />
+    <Empty>{renderAddFav()}</Empty>
   );
 };
 

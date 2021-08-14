@@ -11,7 +11,6 @@ import {
   SourceItemForm,
 } from "types/common";
 import NewSourceForm from "./NewSourceForm";
-import { ipcExec, ipcGetStore } from "renderer/utils";
 import {
   insertVideo,
   removeVideos,
@@ -30,7 +29,6 @@ import {
 import { AppStateContext } from "renderer/types";
 import { processHeaders } from "renderer/utils/utils";
 import onEvent from "renderer/utils/td-utils";
-import { ipcRenderer, remote } from "renderer/utils/electron";
 
 type ActionButton = {
   text: string;
@@ -147,8 +145,8 @@ class DownloadList extends React.Component<Props, State> {
     const { changeSourceStatus } = this.props;
     await changeSourceStatus(item, SourceStatus.Downloading);
     onEvent.tableStartDownload();
-    const exeFile = await ipcGetStore("exeFile");
-    const workspace = await ipcGetStore("workspace");
+    const exeFile = await window.electron.store.get("exeFile");
+    const workspace = await window.electron.store.get("workspace");
     const { title, headers, url } = item;
 
     let args: MediaGoArgs | M3u8DLArgs;
@@ -175,7 +173,7 @@ class DownloadList extends React.Component<Props, State> {
       };
     }
 
-    const { code, msg } = await ipcExec(exeFile, args);
+    const { code, msg } = await window.electron.ipcExec(exeFile, args);
     if (code === 0) {
       await changeSourceStatus(item, SourceStatus.Success);
       onEvent.mainPageDownloadSuccess({ msg, url, exeFile });
@@ -195,9 +193,9 @@ class DownloadList extends React.Component<Props, State> {
   };
 
   // 打开所在文件夹
-  openDirectory = async (): Promise<void> => {
+  openDirectory = () => {
     const { workspace } = this.props;
-    await remote.shell.openPath(workspace);
+    window.electron.openPath(workspace);
   };
 
   // 渲染操作按钮
@@ -321,7 +319,7 @@ class DownloadList extends React.Component<Props, State> {
             <Button
               onClick={() => {
                 onEvent.mainPageOpenBrowserPage();
-                ipcRenderer.send("openBrowserWindow");
+                window.electron.openBrowserWindow();
               }}
             >
               <BlockOutlined />
@@ -331,7 +329,7 @@ class DownloadList extends React.Component<Props, State> {
               onClick={async () => {
                 onEvent.mainPageOpenLocalPath();
                 const { workspace } = this.props;
-                await remote.shell.openPath(workspace);
+                window.electron.openPath(workspace);
               }}
             >
               <FolderOpenOutlined />
@@ -340,7 +338,7 @@ class DownloadList extends React.Component<Props, State> {
             <Button
               onClick={async () => {
                 onEvent.mainPageHelp();
-                await remote.shell.openExternal(variables.urls.help);
+                window.electron.openExternal(variables.urls.help);
               }}
             >
               <QuestionCircleOutlined />

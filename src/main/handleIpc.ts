@@ -1,5 +1,5 @@
-import { app, ipcMain, shell } from "electron";
-import { eventEmitter, failFn, log, store, successFn } from "./utils";
+import { app, dialog, ipcMain, shell } from "electron";
+import { eventEmitter, failFn, successFn } from "./utils";
 import windowManager from "./window/windowManager";
 import { Windows } from "./window/variables";
 import { M3u8DLArgs } from "types/common";
@@ -15,28 +15,6 @@ const handleIpc = (): void => {
       resp = failFn(-1, e.message);
     }
     event.reply("execReply", resp);
-  });
-
-  ipcMain.on("setLocalPath", async (event, ...args) => {
-    let resp;
-    try {
-      const [key, value] = args;
-      store.set(key, value);
-      resp = successFn("");
-    } catch (e) {
-      log.info("设置 store 失败：", e.message);
-      resp = failFn(-1, "设置 store 失败");
-    }
-    event.reply("setLocalPathReply", resp);
-  });
-
-  ipcMain.handle("getLocalPath", (event, key) => {
-    try {
-      return store.get(key);
-    } catch (e) {
-      log.info("获取 store 中数据失败：", e.message);
-      return "";
-    }
   });
 
   ipcMain.on("closeMainWindow", async () => {
@@ -74,6 +52,20 @@ const handleIpc = (): void => {
   ipcMain.on("setProxy", (e, enableProxy) => {
     eventEmitter.emit("setProxy", enableProxy);
   });
+
+  ipcMain.handle("set-store", (e, key, value) => {
+    return global.store.set(key, value);
+  });
+
+  ipcMain.handle("get-store", (e, key) => {
+    return global.store.get(key);
+  });
+
+  ipcMain.handle("get-path", (e, name) => app.getPath(name));
+
+  ipcMain.handle("show-open-dialog", (e, options: Electron.OpenDialogOptions) =>
+    dialog.showOpenDialog(options)
+  );
 };
 
 export default handleIpc;

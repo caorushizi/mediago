@@ -2,25 +2,26 @@ import {
   SettingsUnionType,
   UPDATE_SETTINGS,
 } from "../actions/settings.actions";
-import { Executor, Settings } from "renderer/store/models/settings";
+import { Settings } from "renderer/store/models/settings";
 
-export interface OssState {
+export interface SettingsState {
   settings: Settings;
 }
 
-const initialState: OssState = {
+const initialState: SettingsState = {
   settings: {
     workspace: "",
-    executor: Executor.M3u8Down,
-    warningTone: true,
+    exeFile: "",
+    tip: true,
     proxy: "",
+    useProxy: false,
   },
 };
 
 export default function settings(
   state = initialState,
   action: SettingsUnionType
-): OssState {
+): SettingsState {
   switch (action.type) {
     case UPDATE_SETTINGS:
       return {

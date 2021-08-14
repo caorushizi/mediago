@@ -1,5 +1,4 @@
 import React, { ReactNode } from "react";
-import { ipcRenderer } from "renderer/utils/electron";
 
 class Comment extends React.Component {
   componentDidMount(): void {
@@ -19,9 +18,9 @@ class Comment extends React.Component {
       const links = document.querySelectorAll("a[href]");
       links.forEach((link) => {
         link.addEventListener("click", (e) => {
-          const url = link.getAttribute("href");
+          const url = link.getAttribute("href")!;
           e.preventDefault();
-          ipcRenderer.send("open-url", url);
+          window.electron.openExternal(url);
         });
       });
     }, 200);

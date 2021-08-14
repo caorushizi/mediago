@@ -1,1 +1,2 @@
-export const path = window.require("path");
+// export const path = window.electronRequire("path");
+export const path = {};

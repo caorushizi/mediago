@@ -1,4 +1,4 @@
-import { app, BrowserWindow, protocol } from "electron";
+import { app, BrowserWindow, protocol, session } from "electron";
 import { is } from "electron-util";
 import { resolve } from "path";
 import { log } from "main/utils";
@@ -6,6 +6,8 @@ import windowManager from "main/window/windowManager";
 import { Windows } from "main/window/variables";
 import handleIpc from "main/handleIpc";
 import createBrowserView from "main/browserView/create";
+import Store from "electron-store";
+import { workspace } from "main/variables";
 
 if (require("electron-squirrel-startup")) {
   app.quit();
@@ -47,14 +49,53 @@ app.on("ready", async () => {
 
   if (is.development) {
     try {
-      // const reactTool = resolve(__dirname, "../../devtools/react");
-      // await session.defaultSession.loadExtension(reactTool);
-      // const reduxTool = resolve(__dirname, "../../devtools/redux");
-      // await session.defaultSession.loadExtension(reduxTool);
+      const reactTool = resolve(__dirname, "../../devtools/react");
+      await session.defaultSession.loadExtension(reactTool);
+      const reduxTool = resolve(__dirname, "../../devtools/redux");
+      await session.defaultSession.loadExtension(reduxTool);
     } catch (e) {
       log.info(e);
     }
   }
+
+  let exeFile = "";
+  if (is.windows) {
+    exeFile = "N_m3u8DL-CLI";
+  } else {
+    exeFile = "mediago";
+  }
+
+  console.log("workspace", workspace);
+  const store = new Store<AppStore>({
+    name: "config",
+    cwd: workspace,
+    fileExtension: "json",
+    watch: true,
+    defaults: {
+      workspace: "",
+      exeFile,
+      tip: true,
+      proxy: "",
+      useProxy: false,
+    },
+  });
+
+  store.onDidChange("useProxy", async (newValue) => {
+    try {
+      const proxy = store.get("proxy");
+      if (newValue && proxy) {
+        // await ses.setProxy({ proxyRules: proxy });
+      } else {
+        // await ses.setProxy({});
+      }
+    } catch (e) {
+      log.error("设置代理失败：", e.message);
+    }
+  });
+
+  global.store = store;
+
+  // unsubscribe();
 });
 
 handleIpc();

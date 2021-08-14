@@ -4,8 +4,6 @@ import { workspace } from "main/variables";
 import spawnArgs from "main/utils/spawn-args";
 import { EventEmitter } from "events";
 import log from "electron-log";
-import Store from "electron-store";
-import { is } from "electron-util";
 import path from "path";
 import moment from "moment";
 
@@ -66,20 +64,6 @@ log.transports.console.format = "{h}:{i}:{s} {text}";
 log.transports.file.getFile();
 log.transports.file.resolvePath = () => logPath;
 
-let exeFile = "";
-if (is.windows) {
-  exeFile = "N_m3u8DL-CLI";
-} else {
-  exeFile = "mediago";
-}
-
-const store = new Store({
-  name: "config",
-  cwd: workspace,
-  fileExtension: "json",
-  defaults: { workspace: "", exeFile, tip: true, proxy: "", useProxy: false },
-});
-
 export {
   successFn,
   failFn,
@@ -87,6 +71,5 @@ export {
   spawnWrapper,
   eventEmitter,
   log,
-  store,
   spawnArgs,
 };
