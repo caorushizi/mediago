@@ -65,6 +65,27 @@ const handleIpc = (): void => {
     const view = currentWindow.getBrowserView();
     if (view) view.setBounds(rect);
   });
+
+  ipcMain.on("browser-view-go-back", (e) => {
+    const currentWindow = windowManager.get(Windows.BROWSER_WINDOW);
+    const view = currentWindow.getBrowserView();
+    if (view) {
+      const canGoBack = view.webContents.canGoBack();
+      if (canGoBack) view.webContents.goBack();
+    }
+  });
+
+  ipcMain.on("browser-view-reload", (e) => {
+    const currentWindow = windowManager.get(Windows.BROWSER_WINDOW);
+    const view = currentWindow.getBrowserView();
+    if (view) view.webContents.reload();
+  });
+
+  ipcMain.on("browser-view-load-url", (e, url: string) => {
+    const currentWindow = windowManager.get(Windows.BROWSER_WINDOW);
+    const view = currentWindow.getBrowserView();
+    if (view) view.webContents.loadURL(url || "https://baidu.com");
+  });
 };
 
 export default handleIpc;

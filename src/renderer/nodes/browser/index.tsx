@@ -6,8 +6,9 @@ import "antd/dist/antd.css";
 import variables from "renderer/utils/variables";
 import { insertFav, isFavFunc, removeFav } from "renderer/utils/localforge";
 import WindowToolBar from "renderer/components/WindowToolBar";
-import SearchBar from "../../components/SearchBar";
+import SearchBar from "./elements/SearchBar";
 import onEvent from "renderer/utils/td-utils";
+import electron from "renderer/utils/electron";
 
 tdApp.init();
 
@@ -35,8 +36,6 @@ interface State {
 }
 
 class BrowserWindow extends React.Component<any, State> {
-  view: Electron.BrowserView | null;
-
   resizeObserver?: ResizeObserver;
 
   webviewRef = React.createRef<HTMLDivElement>();
@@ -49,12 +48,9 @@ class BrowserWindow extends React.Component<any, State> {
       title: "",
       isFav: false,
     };
-
-    this.view = null;
   }
 
-  async componentDidMount() {
-    // 页面刷新时提供 view 的初始化
+  componentDidMount() {
     this.initWebView();
     window.electron.addEventListener("dom-ready", this.handleViewDOMReady);
   }
@@ -94,19 +90,16 @@ class BrowserWindow extends React.Component<any, State> {
 
   onGoBack = () => {
     onEvent.browserPageGoBack();
-    const canGoBack = this.view?.webContents.canGoBack();
-    if (canGoBack) {
-      this.view?.webContents.goBack();
-    }
+    electron.browserViewGoBack();
   };
 
   onReload = () => {
     onEvent.browserPageReload();
-    this.view?.webContents.reload();
+    electron.browserViewReload();
   };
 
   onGoBackHome = () => {
-    this.view?.webContents.loadURL(variables.urls.homePage);
+    electron.browserViewLoadURL();
   };
 
   onUrlChange = (url: string) => {
@@ -115,7 +108,7 @@ class BrowserWindow extends React.Component<any, State> {
 
   handleEnter = () => {
     const { url } = this.state;
-    this.view?.webContents.loadURL(url);
+    electron.browserViewLoadURL(url);
   };
 
   handleClickFav = async () => {

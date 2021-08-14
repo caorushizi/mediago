@@ -1,10 +1,21 @@
 import React, { ReactNode } from "react";
-import { Button, Drawer, Popconfirm, Space, Tag, Tooltip } from "antd";
+import {
+  Button,
+  Drawer,
+  Menu,
+  Popconfirm,
+  Space,
+  Tag,
+  Tooltip,
+  Dropdown,
+  Modal,
+} from "antd";
 import ProDescriptions from "@ant-design/pro-descriptions";
 import ProTable from "@ant-design/pro-table";
 import "./index.scss";
 import variables from "renderer/utils/variables";
 import {
+  Fav,
   M3u8DLArgs,
   MediaGoArgs,
   SourceItem,
@@ -12,7 +23,10 @@ import {
 } from "types/common";
 import NewSourceForm from "./NewSourceForm";
 import {
+  getFavs,
+  insertFav,
   insertVideo,
+  removeFav,
   removeVideos,
   updateVideoStatus,
   updateVideoTitle,
@@ -24,11 +38,14 @@ import {
   AppstoreAddOutlined,
   BlockOutlined,
   FolderOpenOutlined,
+  PlusOutlined,
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 import { AppStateContext } from "renderer/types";
 import { processHeaders } from "renderer/utils/utils";
 import onEvent from "renderer/utils/td-utils";
+import { ModalForm, ProFormText } from "@ant-design/pro-form";
+import { isUrl } from "renderer/utils";
 
 type ActionButton = {
   text: string;
@@ -51,6 +68,7 @@ interface State {
   isModalVisible: boolean;
   isDrawerVisible: boolean;
   currentSourceItem?: SourceItem;
+  favs: Fav[];
 }
 
 type StatusMap = { get<T extends SourceStatus>(status: T): string };
@@ -86,7 +104,15 @@ class DownloadList extends React.Component<Props, State> {
       isModalVisible: false,
       isDrawerVisible: false,
       currentSourceItem: undefined,
+      favs: [],
     };
+  }
+
+  async componentDidMount() {
+    const favList = await getFavs();
+    this.setState({
+      favs: favList,
+    });
   }
 
   // 向列表中插入一条数据并且请求详情
@@ -262,6 +288,95 @@ class DownloadList extends React.Component<Props, State> {
     );
   };
 
+  // 渲染添加按钮
+  renderAddFav = () => {
+    return (
+      <ModalForm<Fav>
+        width={500}
+        layout="horizontal"
+        title="添加收藏"
+        trigger={
+          <Button type="primary" size={"small"} icon={<PlusOutlined />}>
+            添加收藏
+          </Button>
+        }
+        onFinish={async (fav) => {
+          onEvent.favPageAddFav();
+          await insertFav(fav);
+          const favs = await getFavs();
+          this.setState({ favs });
+          return true;
+        }}
+      >
+        <ProFormText
+          required
+          name="title"
+          label="链接名称"
+          placeholder="请输入链接名称"
+          rules={[{ required: true, message: "请输入链接名称" }]}
+        />
+        <ProFormText
+          required
+          name="url"
+          label="链接地址"
+          placeholder="请输入链接地址"
+          rules={[
+            { required: true, message: "请输入链接地址" },
+            {
+              validator(rule, value: string, callback) {
+                if (!isUrl(value)) callback("请输入正确的 url 格式");
+                else callback();
+              },
+            },
+          ]}
+        />
+      </ModalForm>
+    );
+  };
+
+  // 删除收藏
+  handleDelete = async (fav: Fav): Promise<void> => {
+    Modal.confirm({
+      title: "确认要删除这个收藏吗？",
+      onOk: async () => {
+        onEvent.favPageDeleteLink();
+        await removeFav(fav);
+        const favList = await getFavs();
+        this.setState({ favs: favList });
+      },
+      okText: "删除",
+      okButtonProps: { danger: true },
+      cancelText: "取消",
+    });
+  };
+
+  browserMenu = () => {
+    const { favs } = this.state;
+    return (
+      <Menu>
+        {favs.map((fav, i) => (
+          <Menu.Item key={i}>
+            <div className="fav-item">
+              <div
+                className="fav-item__inner"
+                onClick={() => {
+                  onEvent.favPageOpenLink();
+                  window.electron.openBrowserWindow(fav.url);
+                }}
+              >
+                {fav.title}
+              </div>
+              <Button type="link" danger onClick={() => this.handleDelete(fav)}>
+                删除
+              </Button>
+            </div>
+          </Menu.Item>
+        ))}
+        <Menu.Item key="xxx">{this.renderAddFav()}</Menu.Item>
+      </Menu>
+    );
+  };
+
   render(): ReactNode {
     const { isModalVisible, isDrawerVisible, currentSourceItem } = this.state;
     const { tableData, updateTableData } = this.props;
@@ -316,15 +431,20 @@ class DownloadList extends React.Component<Props, State> {
               <AppstoreAddOutlined />
               新建下载
             </Button>,
-            <Button
+            <Dropdown.Button
+              trigger={["click"]}
               onClick={() => {
                 onEvent.mainPageOpenBrowserPage();
                 window.electron.openBrowserWindow();
               }}
+              overlay={this.browserMenu}
+              getPopupContainer={() =>
+                document.querySelector(".download-list")!
+              }
             >
               <BlockOutlined />
               打开浏览器
-            </Button>,
+            </Dropdown.Button>,
             <Button
               onClick={async () => {
                 onEvent.mainPageOpenLocalPath();

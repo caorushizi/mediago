@@ -1,4 +1,4 @@
-import { app, contextBridge } from "electron";
+import { contextBridge } from "electron";
 import { ipcRenderer, shell } from "electron";
 import { is } from "electron-util";
 import { M3u8DLArgs, MediaGoArgs } from "types/common";
@@ -36,13 +36,13 @@ const api: ElectronApi = {
   openPath: (workspace: string) => {
     return shell.openPath(workspace);
   },
-  openConfigDir: () => {
+  openConfigDir: async () => {
     const appName =
       process.env.NODE_ENV === "development"
         ? "media downloader dev"
         : "media downloader";
-    const appPath = app.getPath("appData");
-    shell.openPath(resolve(appPath, appName));
+    const appPath = await ipcRenderer.invoke("get-path", "appData");
+    await shell.openPath(resolve(appPath, appName));
   },
   openExternal: (url, options?) => {
     return shell.openExternal(url, options);
@@ -50,18 +50,20 @@ const api: ElectronApi = {
   openBrowserWindow: (url?) => ipcRenderer.send("open-browser-window", url),
   closeBrowserWindow: () => ipcRenderer.send("close-browser-window"),
   getPath: (name) => ipcRenderer.invoke("get-path", name) as any,
-  showOpenDialog: (options) => ipcRenderer.invoke("show-open-dialog", options),
-  getBrowserView: async () => {
-    return ipcRenderer.invoke(
-      "get-current-window"
-    ) as Promise<Electron.BrowserView | null>;
+  showOpenDialog: (options) => {
+    return ipcRenderer.invoke("show-open-dialog", options);
   },
+  getBrowserView: async () => ipcRenderer.invoke("get-current-window"),
   addEventListener: (channel, listener) => ipcRenderer.on(channel, listener),
   removeEventListener: (channel, listener) =>
     ipcRenderer.removeListener(channel, listener),
   setBrowserViewRect: (rect: BrowserViewRect) =>
     ipcRenderer.send("set-browser-view-bounds", rect),
   closeMainWindow: () => ipcRenderer.send("close-main-window"),
+  browserViewGoBack: () => ipcRenderer.send("browser-view-go-back"),
+  browserViewReload: () => ipcRenderer.send("browser-view-reload"),
+  browserViewLoadURL: (url?: string) =>
+    ipcRenderer.send("browser-view-load-url"),
 };
 
 contextBridge.exposeInMainWorld(apiKey, api);
