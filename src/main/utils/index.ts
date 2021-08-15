@@ -18,7 +18,6 @@ const spawnWrapper = (
   new Promise((resolve, reject) => {
     let terminalWindow: Electron.BrowserWindow | undefined;
     if (is.macos) terminalWindow = windowManager.get(Windows.TERMINAL_WINDOW);
-    console.log(args, "    console.log(args,args);");
 
     const spawnCommand = spawn(command, spawnArgs(args), {
       cwd: workspace,
@@ -46,6 +45,10 @@ const spawnWrapper = (
     spawnCommand.on("close", (code) => {
       if (code !== 0) reject(new Error(`调用 ${command} 可执行文件执行失败`));
       else resolve();
+    });
+
+    spawnCommand.on("error", (err) => {
+      console.error(`err: ${err}`);
     });
   });
 
