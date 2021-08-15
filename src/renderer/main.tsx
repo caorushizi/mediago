@@ -6,7 +6,6 @@ import tdApp from "./utils/td";
 import "antd/dist/antd.css";
 import { Provider } from "react-redux";
 import BrowserPage from "./nodes/browser";
-import TerminalPage from "./nodes/terminal";
 import MainPage from "./nodes/main";
 import "./main.scss";
 import store from "./store";
@@ -18,7 +17,6 @@ ReactDOM.render(
     <BrowserRouter>
       <Route path="/main" component={MainPage} />
       <Route path="/browser" component={BrowserPage} />
-      <Route path="/terminal" component={TerminalPage} />
     </BrowserRouter>
   </Provider>,
   document.getElementById("root")

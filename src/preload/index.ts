@@ -65,6 +65,7 @@ const api: ElectronApi = {
   browserViewReload: () => ipcRenderer.send("browser-view-reload"),
   browserViewLoadURL: (url?: string) =>
     ipcRenderer.send("browser-view-load-url"),
+  request: (options) => ipcRenderer.invoke("request", options),
 };
 
 contextBridge.exposeInMainWorld(apiKey, api);
