@@ -4,6 +4,7 @@ import windowManager from "./window/windowManager";
 import { Windows } from "./window/variables";
 import { M3u8DLArgs } from "types/common";
 import executor from "main/executor";
+import request from "main/request";
 
 const handleIpc = (): void => {
   ipcMain.on("exec", async (event, exeFile: string, args: M3u8DLArgs) => {
@@ -86,6 +87,8 @@ const handleIpc = (): void => {
     const view = currentWindow.getBrowserView();
     if (view) view.webContents.loadURL(url || "https://baidu.com");
   });
+
+  ipcMain.handle("request", (e, options: RequestOptions) => request(options));
 };
 
 export default handleIpc;

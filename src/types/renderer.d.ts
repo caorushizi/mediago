@@ -100,6 +100,7 @@ interface ElectronApi {
   browserViewGoBack: () => void;
   browserViewReload: () => void;
   browserViewLoadURL: (url?: string) => void;
+  request: <T>(options: RequestOptions) => Promise<RequestResponse<T>>;
 }
 
 declare interface Window {
@@ -112,7 +113,8 @@ declare type RequestMethod = "GET" | "get" | "POST" | "post";
 declare type RequestHeaders = Record<string, string>;
 
 declare interface RequestOptions {
-  url: string;
+  baseURL?: string;
+  url?: string;
   method?: RequestMethod;
   headers?: RequestHeaders;
   data?: any;
