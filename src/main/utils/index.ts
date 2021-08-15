@@ -5,6 +5,9 @@ import spawnArgs from "main/utils/spawn-args";
 import log from "electron-log";
 import path from "path";
 import moment from "moment";
+import windowManager from "main/window/windowManager";
+import { Windows } from "main/window/variables";
+import { is } from "electron-util";
 
 // 封装 spawn 方法
 const spawnWrapper = (
@@ -13,13 +16,31 @@ const spawnWrapper = (
   options: SpawnOptions
 ): Promise<void> =>
   new Promise((resolve, reject) => {
+    let terminalWindow: Electron.BrowserWindow | undefined;
+    if (is.macos) terminalWindow = windowManager.get(Windows.TERMINAL_WINDOW);
+    console.log(args, "    console.log(args,args);");
+
     const spawnCommand = spawn(command, spawnArgs(args), {
       cwd: workspace,
       ...options,
     });
 
+    spawnCommand.stdout?.on("data", (data) => {
+      const value = data.toString().trim();
+      console.log(`stdout: ${value}`);
+      if (terminalWindow) {
+        console.log("receive-message", value);
+        terminalWindow.webContents.send("receive-message", value);
+      }
+    });
+
     spawnCommand.stderr?.on("data", (data) => {
-      console.error(`stderr: ${data}`);
+      const value = data.toString().trim();
+      console.error(`stderr: ${value}`);
+      if (terminalWindow) {
+        console.log("receive-message", value);
+        terminalWindow.webContents.send("receive-message", value);
+      }
     });
 
     spawnCommand.on("close", (code) => {

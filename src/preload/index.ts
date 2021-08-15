@@ -31,6 +31,7 @@ const api: ElectronApi = {
   },
   openBinDir: async () => {
     const binDir = await ipcRenderer.invoke("get-bin-dir");
+    console.log(binDir, "binDir");
     await shell.openPath(binDir);
   },
   openPath: (workspace: string) => {

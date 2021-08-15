@@ -19,6 +19,7 @@ if (!is.development) {
 
 const init = async () => {
   windowManager.create(Windows.MAIN_WINDOW);
+  if (is.macos) windowManager.create(Windows.TERMINAL_WINDOW);
   await windowManager.create(Windows.BROWSER_WINDOW);
   await createBrowserView();
 };

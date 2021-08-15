@@ -39,7 +39,7 @@
   white-space: nowrap;
 }
 
-@mixin scrollbar {
+@mixin scrollbar($c: rgba(0, 0, 0, 0.15)) {
   &::-webkit-scrollbar {
     height: 8px;
     width: 8px;
@@ -50,7 +50,7 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.15);
+    background: $c;
   }
 }
 
