@@ -48,6 +48,7 @@ import { ModalForm, ProFormText } from "@ant-design/pro-form";
 import { isUrl } from "renderer/utils";
 
 type ActionButton = {
+  key: string;
   text: string;
   tooltip?: string;
   showTooltip?: boolean;
@@ -232,10 +233,12 @@ class DownloadList extends React.Component<Props, State> {
       case SourceStatus.Success:
         // 下载成功
         buttons.push({
+          key: "1",
           text: "打开目录",
           cb: this.openDirectory,
         });
         buttons.push({
+          key: "2",
           text: "重新下载",
           cb: () => this.downloadFile(row),
         });
@@ -243,10 +246,12 @@ class DownloadList extends React.Component<Props, State> {
       case SourceStatus.Failed:
         // 下载失败
         buttons.push({
+          key: "3",
           text: "重新下载",
           cb: () => this.downloadFile(row),
         });
         buttons.push({
+          key: "4",
           text: "详情",
           cb: () => this.showSourceDetail(row),
         });
@@ -254,6 +259,7 @@ class DownloadList extends React.Component<Props, State> {
       case SourceStatus.Downloading:
         // 正在下载
         buttons.push({
+          key: "5",
           text: "重置状态",
           showTooltip: true,
           tooltip:
@@ -268,10 +274,12 @@ class DownloadList extends React.Component<Props, State> {
       default:
         // 准备状态
         buttons.push({
+          key: "6",
           text: "下载",
           cb: () => this.downloadFile(row),
         });
         buttons.push({
+          key: "7",
           text: "详情",
           cb: () => this.showSourceDetail(row),
         });
@@ -280,10 +288,14 @@ class DownloadList extends React.Component<Props, State> {
     return buttons.map((button) =>
       button.showTooltip ? (
         <Tooltip title={button.tooltip}>
-          <a onClick={button.cb}>{button.text}</a>
+          <a key={button.key} onClick={button.cb}>
+            {button.text}
+          </a>
         </Tooltip>
       ) : (
-        <a onClick={button.cb}>{button.text}</a>
+        <a key={button.key} onClick={button.cb}>
+          {button.text}
+        </a>
       )
     );
   };
@@ -423,6 +435,7 @@ class DownloadList extends React.Component<Props, State> {
           ]}
           toolBarRender={() => [
             <Button
+              key={"1"}
               onClick={() => {
                 onEvent.mainPageNewSource();
                 this.setState({ isModalVisible: true });
@@ -432,6 +445,7 @@ class DownloadList extends React.Component<Props, State> {
               新建下载
             </Button>,
             <Dropdown.Button
+              key={"2"}
               trigger={["click"]}
               onClick={() => {
                 onEvent.mainPageOpenBrowserPage();
@@ -446,6 +460,7 @@ class DownloadList extends React.Component<Props, State> {
               打开浏览器
             </Dropdown.Button>,
             <Button
+              key={"3"}
               onClick={async () => {
                 onEvent.mainPageOpenLocalPath();
                 const { workspace } = this.props;
@@ -456,6 +471,7 @@ class DownloadList extends React.Component<Props, State> {
               本地路径
             </Button>,
             <Button
+              key={"4"}
               onClick={async () => {
                 onEvent.mainPageHelp();
                 window.electron.openExternal(variables.urls.help);
@@ -468,6 +484,7 @@ class DownloadList extends React.Component<Props, State> {
           columns={[
             {
               title: "标题",
+              key: "title",
               dataIndex: "title",
               className: "title",
               ellipsis: true,
