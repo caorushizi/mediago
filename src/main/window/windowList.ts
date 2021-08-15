@@ -56,4 +56,30 @@ windowList.set(Windows.BROWSER_WINDOW, {
   },
 });
 
+windowList.set(Windows.TERMINAL_WINDOW, {
+  url: is.development
+    ? "http://localhost:7789/terminal"
+    : "mediago://electron/index.html/terminal",
+  options(): Electron.BrowserWindowConstructorOptions {
+    return {
+      width: 800,
+      height: 600,
+      show: false,
+      frame: false,
+      webPreferences: {
+        nodeIntegration: true,
+        contextIsolation: true,
+        enableRemoteModule: true,
+        preload: resolve(__dirname, "../preload"),
+      },
+    };
+  },
+  async callback(window) {
+    if (is.development) window.webContents.openDevTools();
+    window.once("ready-to-show", () => {
+      window.show();
+    });
+  },
+});
+
 export default windowList;
