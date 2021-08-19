@@ -11,7 +11,12 @@ export function extend<T, U>(to: T, from: U): T & U {
   return to as T & U;
 }
 
-function createInstance(config: RequestOptions): any {
+type RequestInstance = {
+  <T>(options: RequestOptions): Promise<RequestResponse<T>>;
+  <T>(url: string): Promise<RequestResponse<T>>;
+};
+
+function createInstance(config: RequestOptions): RequestInstance {
   const context = new Request(config);
   const instance = Request.prototype.request.bind(context);
 
