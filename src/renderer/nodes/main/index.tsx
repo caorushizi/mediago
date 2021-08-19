@@ -23,7 +23,6 @@ import { updateSettings } from "renderer/store/actions/settings.actions";
 import { AppState } from "renderer/store/reducers";
 import { Settings } from "renderer/store/models/settings";
 import electron from "renderer/utils/electron";
-import { request } from "renderer/utils";
 
 const audio = new Audio(audioSrc);
 
@@ -94,16 +93,6 @@ class MainPage extends React.Component<PropsFromRedux, State> {
     });
 
     electron.addEventListener("m3u8", this.handleWebViewMessage);
-
-    const resp = await request({
-      method: "post",
-      url: "https://baidu.com",
-      data: {
-        username: 123,
-        password: 123,
-      },
-    });
-    console.log("resp", resp);
   }
 
   componentWillUnmount(): void {

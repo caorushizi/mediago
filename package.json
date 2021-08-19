@@ -28,6 +28,7 @@
     "electron-util": "^0.15.0",
     "glob": "^7.1.6",
     "localforage": "^1.9.0",
+    "m3u8-parser": "^4.7.0",
     "moment": "^2.29.1",
     "prop-types": "^15.7.2",
     "qs": "^6.10.1",
