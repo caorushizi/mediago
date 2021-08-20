@@ -5,9 +5,10 @@ import { log } from "main/utils";
 import windowManager from "main/window/windowManager";
 import { Windows } from "main/window/variables";
 import handleIpc from "main/handleIpc";
-import createBrowserView from "main/browserView/create";
+import createBrowserView from "main/browserView";
 import Store from "electron-store";
-import { workspace } from "main/variables";
+import { defaultScheme, webviewPartition, workspace } from "main/variables";
+import createSession from "main/session";
 
 if (require("electron-squirrel-startup")) {
   app.quit();
@@ -17,42 +18,50 @@ if (!is.development) {
   global.__bin__ = resolve(app.getAppPath(), "../.bin").replace(/\\/g, "\\\\");
 }
 
-const init = async () => {
-  windowManager.create(Windows.MAIN_WINDOW);
-  await windowManager.create(Windows.BROWSER_WINDOW);
-  await createBrowserView();
-};
-
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
   }
 });
 
-app.on("activate", async () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    await init();
-  }
-});
+const init = async (webviewSession: Electron.Session) => {
+  windowManager.create(Windows.MAIN_WINDOW);
+  await windowManager.create(Windows.BROWSER_WINDOW);
+  await createBrowserView(webviewSession);
+};
 
 protocol.registerSchemesAsPrivileged([
-  { scheme: "mediago", privileges: { secure: true, standard: true } },
+  {
+    scheme: defaultScheme,
+    privileges: {
+      secure: true,
+      standard: true,
+    },
+  },
 ]);
 
-app.on("ready", async () => {
-  protocol.registerFileProtocol("mediago", (request, callback) => {
+app.whenReady().then(() => {
+  const webviewSession = createSession(webviewPartition);
+
+  protocol.registerFileProtocol(defaultScheme, (request, callback) => {
     const url = request.url.substr(10);
     callback({ path: resolve(__dirname, "../", url) });
   });
 
-  await init();
+  app.on("activate", async () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      await init(webviewSession);
+    }
+  });
+
+  init(webviewSession);
 
   if (is.development) {
     try {
       const reactTool = resolve(__dirname, "../../devtools/react");
-      await session.defaultSession.loadExtension(reactTool);
+      session.defaultSession.loadExtension(reactTool);
       const reduxTool = resolve(__dirname, "../../devtools/redux");
-      await session.defaultSession.loadExtension(reduxTool);
+      session.defaultSession.loadExtension(reduxTool);
     } catch (e) {
       log.info(e);
     }
@@ -79,22 +88,27 @@ app.on("ready", async () => {
     },
   });
 
-  store.onDidChange("useProxy", async (newValue) => {
+  const setProxy = () => {
+    const proxy = store.get("proxy");
+    if (proxy) {
+      log.info("proxy 设置成功");
+      webviewSession.setProxy({ proxyRules: proxy });
+    } else {
+      webviewSession.setProxy({});
+    }
+  };
+
+  setProxy();
+
+  store.onDidChange("useProxy", (newValue) => {
     try {
-      const proxy = store.get("proxy");
-      if (newValue && proxy) {
-        // await ses.setProxy({ proxyRules: proxy });
-      } else {
-        // await ses.setProxy({});
-      }
+      if (newValue) setProxy();
     } catch (e) {
       log.error("设置代理失败：", e.message);
     }
   });
 
   global.store = store;
-
-  // unsubscribe();
 });
 
 handleIpc();

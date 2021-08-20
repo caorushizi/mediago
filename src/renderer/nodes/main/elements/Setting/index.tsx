@@ -22,12 +22,6 @@ import { Settings } from "renderer/store/models/settings";
 import { updateSettings } from "renderer/store/actions/settings.actions";
 import { connect, ConnectedProps } from "react-redux";
 
-interface Props extends PropsFromRedux {
-  workspace: string;
-  exeFile: string;
-  tip: boolean;
-}
-
 interface Downloader {
   title: string;
   description: string;
@@ -61,10 +55,10 @@ if (window.electron.is.windows) {
 }
 
 // 设置页面
-class Setting extends React.Component<Props, State> {
+class Setting extends React.Component<PropsFromRedux, State> {
   formRef = React.createRef<FormInstance<FormData>>();
 
-  constructor(props: Props) {
+  constructor(props: PropsFromRedux) {
     super(props);
     this.state = {
       proxyChecked: false,
@@ -77,10 +71,10 @@ class Setting extends React.Component<Props, State> {
   }
 
   async componentDidMount(): Promise<void> {
-    const proxy = await window.electron.store.get("proxy");
-    this.formRef.current?.setFieldsValue({ proxy });
-    const { exeFile } = this.props;
+    const { settings } = this.props;
+    const { exeFile, useProxy } = settings;
     this.setState({
+      proxyChecked: useProxy,
       downloader: {
         title: exeFile === "mediago" ? "mediago" : "N_m3u8DL-CLI",
         description: "",
@@ -124,27 +118,29 @@ class Setting extends React.Component<Props, State> {
 
   // 本地存储文件夹
   localDir = async (): Promise<void> => {
-    const { workspace } = this.props;
+    const { settings } = this.props;
+    const { workspace } = settings;
     window.electron.openPath(workspace);
   };
 
   // 更改代理设置
   toggleProxySetting = async (enableProxy: boolean): Promise<void> => {
-    // await ipcRenderer.send("setProxy", enableProxy);
     this.setState({ proxyChecked: enableProxy });
     await window.electron.store.set("useProxy", enableProxy);
   };
 
   render(): ReactNode {
     const { downloader, proxyChecked } = this.state;
-    const { workspace, exeFile, tip } = this.props;
+    const { settings } = this.props;
+    const { workspace, exeFile, tip, proxy } = settings;
+
     return (
       <div className="setting-form">
         <ProForm<FormData>
           formRef={this.formRef as any}
           layout="horizontal"
           submitter={false}
-          initialValues={{ workspace, exeFile, tip }}
+          initialValues={{ workspace, exeFile, tip, proxy }}
           onValuesChange={async (changedValue) => {
             if (Object.keys(changedValue).includes("tip")) {
               await window.electron.store.set("tip", changedValue["tip"]);
@@ -224,7 +220,7 @@ class Setting extends React.Component<Props, State> {
         <Descriptions title={downloader.title}>
           <Descriptions.Item label="源代码地址">
             <a
-              onClick={async (e) => {
+              onClick={(e) => {
                 e.preventDefault();
                 window.electron.openExternal(downloader.github);
               }}

@@ -41,11 +41,15 @@ import {
   PlusOutlined,
   QuestionCircleOutlined,
 } from "@ant-design/icons";
-import { AppStateContext } from "renderer/types";
 import { processHeaders } from "renderer/utils/utils";
 import onEvent from "renderer/utils/td-utils";
 import { ModalForm, ProFormText } from "@ant-design/pro-form";
 import { isUrl } from "renderer/utils";
+import { AppState } from "renderer/store/reducers";
+import { Dispatch } from "redux";
+import { Settings } from "renderer/store/models/settings";
+import { updateSettings } from "renderer/store/actions/settings.actions";
+import { connect, ConnectedProps } from "react-redux";
 
 type ActionButton = {
   key: string;
@@ -93,12 +97,10 @@ Origin: https://www.sample.com
 Referer: https://www.sample.com`;
 
 // 下载列表
-class DownloadList extends React.Component<Props, State> {
+class DownloadList extends React.Component<PropsFromRedux, State> {
   actionRef = React.createRef();
 
-  static contextType = AppStateContext;
-
-  constructor(props: Props) {
+  constructor(props: PropsFromRedux) {
     super(props);
 
     this.state = {
@@ -118,8 +120,8 @@ class DownloadList extends React.Component<Props, State> {
 
   // 向列表中插入一条数据并且请求详情
   insertUpdateTableData = async (item: SourceItemForm): Promise<SourceItem> => {
-    const { updateTableData } = this.props;
-    const { workspace } = this.context;
+    const { updateTableData, settings } = this.props;
+    const { workspace } = settings;
     const sourceItem: SourceItem = {
       status: SourceStatus.Ready,
       type: SourceType.M3u8,
@@ -620,5 +622,19 @@ class DownloadList extends React.Component<Props, State> {
     );
   }
 }
+
+const mapStateToProps = (state: AppState) => ({
+  settings: state.settings.settings,
+});
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return {
+    setSettings: (settings: Partial<Settings>) =>
+      dispatch(updateSettings(settings)),
+  };
+};
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+type PropsFromRedux = ConnectedProps<typeof connector> & Props;
 
 export default DownloadList;
