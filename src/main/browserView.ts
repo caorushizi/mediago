@@ -1,22 +1,19 @@
 import windowManager from "main/window/windowManager";
 import { Windows } from "main/window/variables";
-import { BrowserView, ipcMain, session } from "electron";
-import path from "path";
+import { BrowserView } from "electron";
 import { is } from "electron-util";
 import { log } from "main/utils";
 import { SourceUrl } from "types/common";
+import { webviewPartition } from "main/variables";
 
-const createBrowserView = (): void => {
+const createBrowserView = (session: Electron.Session): void => {
   const browserWindow = windowManager.get(Windows.BROWSER_WINDOW);
-  const partition = "persist:webview";
-  const ses = session.fromPartition(partition);
 
-  ses.protocol.registerFileProtocol("webview", (request, callback) => {
-    const url = request.url.substr(10);
-    callback({ path: path.normalize(`${__dirname}/${url}`) });
+  const view = new BrowserView({
+    webPreferences: {
+      partition: webviewPartition,
+    },
   });
-
-  const view = new BrowserView({ webPreferences: { partition } });
   browserWindow.setBrowserView(view);
   view.setBounds({ x: 0, y: 0, height: 0, width: 0 });
 
@@ -29,14 +26,14 @@ const createBrowserView = (): void => {
 
     browserWindow.webContents.send("dom-ready", { title, url });
 
-    webContents.on("new-window", async (event, url) => {
-      event.preventDefault();
-      await webContents.loadURL(url);
+    webContents.setWindowOpenHandler((details) => {
+      webContents.loadURL(details.url);
+      return { action: "deny" };
     });
   });
 
   const filter = { urls: ["*://*/*"] };
-  ses.webRequest.onBeforeSendHeaders(
+  session.webRequest.onBeforeSendHeaders(
     filter,
     (
       details: Electron.OnBeforeSendHeadersListenerDetails,
