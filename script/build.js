@@ -16,7 +16,7 @@ function buildMain() {
     ],
     bundle: true,
     platform: "node",
-    sourcemap: true,
+    sourcemap: false,
     target: ["node10.4"],
     external: ["electron"],
     outdir: resolve(__dirname, "../dist"),
