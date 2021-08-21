@@ -5,14 +5,15 @@
   "author": "caorushizi",
   "main": "dist/main/index.js",
   "license": "MIT",
+  "homepage": "./",
   "scripts": {
-    "prestart-test": "script/prestart",
-    "start": "node script/dev-server.js",
     "serve": "vite preview",
-    "dist": "rimraf dist && vite build && node esbuild.config.js",
+    "dist": "cross-env NODE_ENV=production node script/build.js",
     "pack": "electron-builder --dir",
     "build": "electron-builder",
-    "watch": "node script/watch.js"
+    "watch": "cross-env NODE_ENV=development node script/watch.js",
+    "staging": "npm run dist && npm run electron",
+    "electron": "cross-env NODE_ENV=staging electron ."
   },
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
@@ -77,7 +78,7 @@
     "rimraf": "^3.0.2",
     "sass": "^1.32.8",
     "typescript": "^4.2.4",
-    "vite": "^2.4.3"
+    "vite": "^2.5.0"
   },
   "build": {
     "productName": "在线视频下载",

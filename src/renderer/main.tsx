@@ -1,7 +1,7 @@
 import ReactDOM from "react-dom";
 import React from "react";
-import { BrowserRouter } from "react-router-dom";
-import { Route } from "react-router";
+import { HashRouter } from "react-router-dom";
+import { Route, Switch, Redirect } from "react-router";
 import tdApp from "./utils/td";
 import "antd/dist/antd.css";
 import { Provider } from "react-redux";
@@ -14,10 +14,13 @@ tdApp.init();
 
 ReactDOM.render(
   <Provider store={store}>
-    <BrowserRouter>
-      <Route path="/main" component={MainPage} />
-      <Route path="/browser" component={BrowserPage} />
-    </BrowserRouter>
+    <HashRouter>
+      <Switch>
+        <Route path="/main" component={MainPage} />
+        <Route path="/browser" component={BrowserPage} />
+        <Redirect to={"/main"} />
+      </Switch>
+    </HashRouter>
   </Provider>,
   document.getElementById("root")
 );

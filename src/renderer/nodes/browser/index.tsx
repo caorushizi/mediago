@@ -3,7 +3,6 @@ import "./index.scss";
 import { Spin } from "antd";
 import tdApp from "renderer/utils/td";
 import "antd/dist/antd.css";
-import variables from "renderer/utils/variables";
 import { insertFav, isFavFunc, removeFav } from "renderer/utils/localforge";
 import WindowToolBar from "renderer/components/WindowToolBar";
 import SearchBar from "./elements/SearchBar";

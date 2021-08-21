@@ -7,5 +7,5 @@ export const appName = is.development
   ? "media downloader dev"
   : "media downloader";
 export const workspace = path.resolve(appData, appName);
-export const webviewPartition = "persist:oss-client";
+export const webviewPartition = "persist:mediago";
 export const defaultScheme = "mediago";
