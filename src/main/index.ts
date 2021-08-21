@@ -17,7 +17,7 @@ if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
-if (process.env.NODE_ENV === "production") {
+if (!is.development) {
   global.__bin__ = resolve(app.getAppPath(), "../.bin").replace(/\\/g, "\\\\");
 }
 
@@ -52,12 +52,7 @@ app.whenReady().then(() => {
 
     readFile(path.join(__dirname, "../renderer", pathName), (error, data) => {
       if (error) {
-        if (error.code !== "ENOENT") {
-          console.error(
-            `Failed to register ${webviewPartition} protocol`,
-            error
-          );
-        }
+        console.error(`Failed to register ${webviewPartition} protocol`, error);
       } else {
         const extension = path.extname(pathName).toLowerCase();
         let mimeType = "";
