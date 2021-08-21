@@ -9,12 +9,15 @@ import createBrowserView from "main/browserView";
 import Store from "electron-store";
 import { defaultScheme, webviewPartition, workspace } from "main/variables";
 import createSession from "main/session";
+import { URL } from "url";
+import { readFile } from "fs";
+import path from "path";
 
 if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
-if (!is.development) {
+if (process.env.NODE_ENV === "production") {
   global.__bin__ = resolve(app.getAppPath(), "../.bin").replace(/\\/g, "\\\\");
 }
 
@@ -43,9 +46,37 @@ protocol.registerSchemesAsPrivileged([
 app.whenReady().then(() => {
   const webviewSession = createSession(webviewPartition);
 
-  protocol.registerFileProtocol(defaultScheme, (request, callback) => {
-    const url = request.url.substr(10);
-    callback({ path: resolve(__dirname, "../", url) });
+  protocol.registerBufferProtocol(defaultScheme, (request, callback) => {
+    let pathName = new URL(request.url).pathname;
+    pathName = decodeURI(pathName);
+
+    readFile(path.join(__dirname, "../renderer", pathName), (error, data) => {
+      if (error) {
+        if (error.code !== "ENOENT") {
+          console.error(
+            `Failed to register ${webviewPartition} protocol`,
+            error
+          );
+        }
+      } else {
+        const extension = path.extname(pathName).toLowerCase();
+        let mimeType = "";
+
+        if (extension === ".js") {
+          mimeType = "text/javascript";
+        } else if (extension === ".html") {
+          mimeType = "text/html";
+        } else if (extension === ".css") {
+          mimeType = "text/css";
+        } else if (extension === ".svg" || extension === ".svgz") {
+          mimeType = "image/svg+xml";
+        } else if (extension === ".json") {
+          mimeType = "application/json";
+        }
+
+        callback({ mimeType, data });
+      }
+    });
   });
 
   app.on("activate", async () => {
@@ -56,7 +87,7 @@ app.whenReady().then(() => {
 
   init(webviewSession);
 
-  if (is.development) {
+  if (process.env.NODE_ENV === "development") {
     try {
       const reactTool = resolve(__dirname, "../../devtools/react");
       session.defaultSession.loadExtension(reactTool);

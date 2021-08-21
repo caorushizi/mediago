@@ -6,9 +6,10 @@ import { resolve } from "path";
 const windowList = new Map<Windows, IWindowListItem>();
 
 windowList.set(Windows.MAIN_WINDOW, {
-  url: is.development
-    ? "http://localhost:7789/main"
-    : "mediago://electron/index.html/main",
+  url:
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:7789/#/main"
+      : "mediago://renderer/index.html/#/main",
   options(): Electron.BrowserWindowConstructorOptions {
     return {
       width: 800,
@@ -34,9 +35,10 @@ windowList.set(Windows.MAIN_WINDOW, {
 });
 
 windowList.set(Windows.BROWSER_WINDOW, {
-  url: is.development
-    ? "http://localhost:7789/browser"
-    : "mediago://electron/index.html/browser",
+  url:
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:7789/#/browser"
+      : "mediago://renderer/index.html/#/browser",
   options(): Electron.BrowserWindowConstructorOptions {
     return {
       width: 800,
