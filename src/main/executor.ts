@@ -3,9 +3,10 @@ import semver from "semver";
 import { is } from "electron-util";
 import { globWrapper, log, spawnWrapper } from "main/utils";
 
+declare const __bin__: string;
+
 const execM3u8DL = async (args: M3u8DLArgs): Promise<string[]> => {
   let binNameList = await globWrapper("N_m3u8DL-CLI*.exe", {
-    // @ts-ignore
     cwd: __bin__,
   });
   binNameList = binNameList
@@ -60,12 +61,10 @@ const executor = async (
   }
 
   // fixme: 非静默下载
-  // @ts-ignore
   log.info("下载参数：", __bin__, binName, argsStr);
   return spawnWrapper(binName, argsStr, {
     detached: true,
     shell: true,
-    // @ts-ignore
     cwd: __bin__,
   });
 };
