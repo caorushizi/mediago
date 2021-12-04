@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import "./index.scss";
 import { Spin } from "antd";
 import tdApp from "renderer/utils/td";
@@ -28,131 +28,114 @@ const computeRect = ({
   height: Math.floor(height),
 });
 
-interface State {
-  url: string;
-  title: string;
-  isFav: boolean;
-}
+const BrowserWindow: FC = () => {
+  const [url, setUrl] = useState<string>("");
+  const [title, setTitle] = useState<string>("");
+  const [isFav, setIsFav] = useState<boolean>(false);
+  const webviewRef = useRef<HTMLDivElement>();
+  const resizeObserver = useRef<ResizeObserver>(null);
 
-class BrowserWindow extends React.Component<any, State> {
-  resizeObserver?: ResizeObserver;
+  useEffect(() => {
+    initWebView();
+    window.electron.addEventListener("dom-ready", handleViewDOMReady);
 
-  webviewRef = React.createRef<HTMLDivElement>();
-
-  constructor(props: any) {
-    super(props);
-
-    this.state = {
-      url: "",
-      title: "",
-      isFav: false,
+    return () => {
+      window.electron.setBrowserViewRect({ x: 0, y: 0, height: 0, width: 0 });
+      window.electron.removeEventListener("dom-ready", handleViewDOMReady);
+      resizeObserver.current?.disconnect();
     };
-  }
+  }, []);
 
-  componentDidMount() {
-    this.initWebView();
-    window.electron.addEventListener("dom-ready", this.handleViewDOMReady);
-  }
-
-  componentWillUnmount() {
-    window.electron.setBrowserViewRect({ x: 0, y: 0, height: 0, width: 0 });
-    window.electron.removeEventListener("dom-ready", this.handleViewDOMReady);
-    this.resizeObserver?.disconnect();
-  }
-
-  handleViewDOMReady = async (
+  const handleViewDOMReady = async (
     e: Electron.IpcRendererEvent,
     { url, title }: { url: string; title: string }
   ): Promise<void> => {
     const isFav = await isFavFunc(url);
-    this.setState({ title, url, isFav });
+    setUrl(url);
+    setTitle(title);
+    setIsFav(isFav);
     document.title = title;
   };
 
-  initWebView = () => {
-    const webviewRef = this.webviewRef.current;
-    if (webviewRef) {
-      const rect = computeRect(webviewRef.getBoundingClientRect());
+  const initWebView = () => {
+    if (webviewRef.current) {
+      const rect = computeRect(webviewRef.current.getBoundingClientRect());
       window.electron.setBrowserViewRect(rect);
 
       // 监控 webview 元素的大小
-      this.resizeObserver = new ResizeObserver((entries) => {
+      resizeObserver.current = new ResizeObserver((entries) => {
         const entry = entries[0];
         const viewRect = computeRect(entry.contentRect);
         viewRect.x += rect.x;
         viewRect.y += rect.y;
         window.electron.setBrowserViewRect(viewRect);
       });
-      this.resizeObserver.observe(webviewRef);
+
+      resizeObserver.current.observe(webviewRef.current);
     }
   };
 
-  onGoBack = () => {
+  const onGoBack = () => {
     onEvent.browserPageGoBack();
     electron.browserViewGoBack();
   };
 
-  onReload = () => {
+  const onReload = () => {
     onEvent.browserPageReload();
     electron.browserViewReload();
   };
 
-  onGoBackHome = () => {
+  const onGoBackHome = () => {
     electron.browserViewLoadURL();
   };
 
-  onUrlChange = (url: string) => {
-    this.setState({ url });
+  const onUrlChange = (url: string) => {
+    setUrl(url);
   };
 
-  handleEnter = () => {
-    const { url } = this.state;
+  const handleEnter = () => {
     electron.browserViewLoadURL(url);
   };
 
-  handleClickFav = async () => {
-    const { title, url } = this.state;
+  const handleClickFav = async () => {
     const isFav = await isFavFunc(url);
     if (isFav) {
       await removeFav({ title, url });
     } else {
       await insertFav({ title, url });
     }
-    this.setState({ isFav: !isFav });
+    setIsFav((fav) => !fav);
   };
 
-  render() {
-    const { url, title, isFav } = this.state;
-    return (
-      <div className="browser-window">
-        <WindowToolBar
-          onClose={() => {
-            window.electron.closeBrowserWindow();
-          }}
-        >
-          {title}
-        </WindowToolBar>
-        <div className="webview-container">
-          <SearchBar
-            className="webview-nav"
-            url={url}
-            isFav={isFav}
-            onUrlChange={this.onUrlChange}
-            onGoBack={this.onGoBack}
-            onReload={this.onReload}
-            onGoBackHome={this.onGoBackHome}
-            handleEnter={this.handleEnter}
-            handleClickFav={this.handleClickFav}
-          />
-          <div className="webview-inner">
-            <div id="videoView" ref={this.webviewRef}>
-              <Spin />
-            </div>
+  return (
+    <div className="browser-window">
+      <WindowToolBar
+        onClose={() => {
+          window.electron.closeBrowserWindow();
+        }}
+      >
+        {title}
+      </WindowToolBar>
+      <div className="webview-container">
+        <SearchBar
+          className="webview-nav"
+          url={url}
+          isFav={isFav}
+          onUrlChange={onUrlChange}
+          onGoBack={onGoBack}
+          onReload={onReload}
+          onGoBackHome={onGoBackHome}
+          handleEnter={handleEnter}
+          handleClickFav={handleClickFav}
+        />
+        <div className="webview-inner">
+          <div id="videoView" ref={webviewRef}>
+            <Spin />
           </div>
         </div>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 export default BrowserWindow;
