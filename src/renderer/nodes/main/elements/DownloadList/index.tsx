@@ -414,40 +414,42 @@ const DownloadList: React.FC<Props> = ({
   // 渲染页面上方的按钮
   const renderToolBar = () => {
     return (
-      <Space>
-        <Button
-          key={"1"}
-          onClick={() => {
-            onEvent.mainPageNewSource();
-            setIsModalVisible(true);
-          }}
-        >
-          <AppstoreAddOutlined />
-          新建下载
-        </Button>
-        <Dropdown.Button
-          key={"2"}
-          trigger={["click"]}
-          onClick={() => {
-            onEvent.mainPageOpenBrowserPage();
-            window.electron.openBrowserWindow();
-          }}
-          overlay={browserMenu}
-        >
-          <BlockOutlined />
-          打开浏览器
-        </Dropdown.Button>
-        <Button
-          key={"4"}
-          onClick={async () => {
-            onEvent.mainPageHelp();
-            window.electron.openExternal(helpUrl);
-          }}
-        >
-          <QuestionCircleOutlined />
-          使用帮助
-        </Button>
-      </Space>
+      <Box p={10}>
+        <Space>
+          <Button
+            key={"1"}
+            onClick={() => {
+              onEvent.mainPageNewSource();
+              setIsModalVisible(true);
+            }}
+          >
+            <AppstoreAddOutlined />
+            新建下载
+          </Button>
+          <Dropdown.Button
+            key={"2"}
+            trigger={["click"]}
+            onClick={() => {
+              onEvent.mainPageOpenBrowserPage();
+              window.electron.openBrowserWindow();
+            }}
+            overlay={browserMenu}
+          >
+            <BlockOutlined />
+            打开浏览器
+          </Dropdown.Button>
+          <Button
+            key={"4"}
+            onClick={async () => {
+              onEvent.mainPageHelp();
+              window.electron.openExternal(helpUrl);
+            }}
+          >
+            <QuestionCircleOutlined />
+            使用帮助
+          </Button>
+        </Space>
+      </Box>
     );
   };
 
@@ -576,7 +578,7 @@ const DownloadList: React.FC<Props> = ({
   return (
     <FileDrop onDrop={onDrop}>
       <Box h={"100%"} w={"100%"} display={"flex"} flexDirection={"column"}>
-        <Box p={5}>{renderToolBar()}</Box>
+        {renderToolBar()}
         <Box
           flex={1}
           display={"flex"}
