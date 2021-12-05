@@ -414,7 +414,7 @@ const DownloadList: React.FC<Props> = ({
   // 渲染页面上方的按钮
   const renderToolBar = () => {
     return (
-      <Box p={10}>
+      <Box p={10} borderBottom={"1px solid #EBEEF5"}>
         <Space>
           <Button
             key={"1"}
