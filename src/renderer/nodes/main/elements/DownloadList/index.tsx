@@ -1,4 +1,11 @@
-import React, { ComponentType, ReactNode, useState } from "react";
+import React, {
+  ComponentType,
+  DragEvent as ReactDragEvent,
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { FixedSizeList as List, ListChildComponentProps } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { Resizable } from "re-resizable";
@@ -13,7 +20,18 @@ import {
 } from "types/common";
 import { SourceStatus, SourceType } from "renderer/types";
 import classNames from "classnames";
-import { Button, Dropdown, Menu, Modal, Space, Tooltip } from "antd";
+import {
+  Button,
+  Dropdown,
+  Form,
+  FormInstance,
+  Input,
+  Menu,
+  Modal,
+  Space,
+  Switch,
+  Tooltip,
+} from "antd";
 import onEvent from "renderer/utils/td-utils";
 import {
   AppstoreAddOutlined,
@@ -25,7 +43,6 @@ import {
   ReloadOutlined,
 } from "@ant-design/icons";
 import { helpUrl } from "renderer/utils/variables";
-import NewSourceForm from "renderer/nodes/main/elements/DownloadList/NewSourceForm";
 import { processHeaders } from "renderer/utils/utils";
 import {
   getFavs,
@@ -41,6 +58,7 @@ import { isUrl } from "renderer/utils";
 import { useSelector } from "react-redux";
 import { Settings } from "renderer/store/models/settings";
 import { AppState } from "renderer/store/reducers";
+import { FileDrop } from "react-file-drop";
 
 type ActionButton = {
   key: string;
@@ -71,6 +89,10 @@ interface Props {
 //   setCurrentSourceItem(row);
 // }
 
+const headersPlaceholder = `[可空] 请输入一行一个Header，例如：
+Origin: https://www.sample.com
+Referer: https://www.sample.com`;
+
 // 待下载列表页
 const DownloadList: React.FC<Props> = ({
   tableData,
@@ -82,6 +104,17 @@ const DownloadList: React.FC<Props> = ({
   const [favsList, setFavsList] = useState<Fav[]>([]);
   const [currentSourceItem, setCurrentSourceItem] = useState<SourceItem>();
   const settings = useSelector<AppState, Settings>((state) => state.settings);
+  const { exeFile } = settings;
+  const [formRef] = Form.useForm();
+
+  useEffect(() => {
+    initData();
+  }, []);
+
+  const initData = async () => {
+    const favs = await getFavs();
+    setFavsList(favs);
+  };
 
   // 渲染item
   const renderItem: ComponentType<ListChildComponentProps<SourceItem>> = ({
@@ -150,7 +183,12 @@ const DownloadList: React.FC<Props> = ({
         layout="horizontal"
         title="添加收藏"
         trigger={
-          <Button type="primary" size={"small"} icon={<PlusOutlined />}>
+          <Button
+            type="link"
+            style={{ padding: 0 }}
+            size={"small"}
+            icon={<PlusOutlined />}
+          >
             添加收藏
           </Button>
         }
@@ -231,16 +269,26 @@ const DownloadList: React.FC<Props> = ({
   };
 
   // 新建下载窗口点击确定按钮
-  const handleOk = async (item: SourceItemForm): Promise<void> => {
-    onEvent.addSourceAddSource();
-    await insertUpdateTableData(item);
+  const handleOk = async (): Promise<void> => {
+    if (formRef && (await formRef.validateFields())) {
+      const item = formRef.getFieldsValue();
+      formRef.resetFields();
+
+      onEvent.addSourceAddSource();
+      await insertUpdateTableData(item);
+    }
   };
 
   // 新建下载窗口点击立即下载
-  const handleDownload = async (item: SourceItemForm): Promise<void> => {
-    onEvent.addSourceDownload();
-    const sourceItem = await insertUpdateTableData(item);
-    await downloadFile(sourceItem);
+  const handleDownload = async (): Promise<void> => {
+    if (formRef && (await formRef.validateFields())) {
+      const item = formRef.getFieldsValue();
+      formRef.resetFields();
+
+      onEvent.addSourceDownload();
+      const sourceItem = await insertUpdateTableData(item);
+      await downloadFile(sourceItem);
+    }
   };
 
   // 删除收藏
@@ -260,28 +308,37 @@ const DownloadList: React.FC<Props> = ({
   };
 
   const browserMenu = () => {
-    console.log(123123123123, favsList);
     return (
-      <Menu>
+      <Menu className={"favorite-menu"} style={{ width: 250 }}>
         {favsList.map((fav, i) => (
-          <Menu.Item key={i}>
-            <div className="fav-item">
-              <div
-                className="fav-item__inner"
+          <Menu.Item key={i} style={{ overflow: "hidden" }}>
+            <Box
+              d={"flex"}
+              alignItems={"center"}
+              justifyContent={"space-between"}
+              width={"100%"}
+            >
+              <Box
+                flex={1}
+                overflow={"hidden"}
+                whiteSpace={"nowrap"}
+                textOverflow={"ellipsis"}
                 onClick={() => {
                   onEvent.favPageOpenLink();
                   window.electron.openBrowserWindow(fav.url);
                 }}
+                title={fav.title}
               >
                 {fav.title}
-              </div>
+              </Box>
               <Button type="link" danger onClick={() => handleDelete(fav)}>
                 删除
               </Button>
-            </div>
+            </Box>
           </Menu.Item>
         ))}
-        <Menu.Item key="xxx">{renderAddFav()}</Menu.Item>
+        <Menu.Divider />
+        <Menu.Item key="add">{renderAddFav()}</Menu.Item>
       </Menu>
     );
   };
@@ -405,46 +462,110 @@ const DownloadList: React.FC<Props> = ({
     );
   };
 
+  // 文件放入事件
+  const onDrop = async (
+    files: FileList | null,
+    event: ReactDragEvent<HTMLDivElement>
+  ) => {
+    console.log(files, event);
+    if (files?.length === 1) {
+      // 只有一个文件被拽入
+      await setIsModalVisible(true);
+      const [file] = files;
+      formRef?.setFieldsValue({ url: file.path });
+    }
+  };
+
   return (
-    <Box h={"100%"} w={"100%"} display={"flex"} flexDirection={"column"}>
-      <Box p={5}>{renderToolBar()}</Box>
-      <Box flex={1} display={"flex"} overflow={"hidden"} flexDirection={"row"}>
-        <Resizable
-          as={Box}
-          enable={{ right: true }}
-          minHeight={"100%"}
-          minWidth={currentSourceItem ? "350px" : "100%"}
-          maxWidth={"100%"}
+    <FileDrop onDrop={onDrop}>
+      <Box h={"100%"} w={"100%"} display={"flex"} flexDirection={"column"}>
+        <Box p={5}>{renderToolBar()}</Box>
+        <Box
+          flex={1}
+          display={"flex"}
+          overflow={"hidden"}
+          flexDirection={"row"}
         >
-          <AutoSizer className={"new-download-list"}>
-            {({ height, width }) => (
-              <List
-                height={height}
-                itemCount={tableData.length}
-                itemSize={35}
-                width={width}
-              >
-                {renderItem}
-              </List>
-            )}
-          </AutoSizer>
-        </Resizable>
+          <Resizable
+            as={Box}
+            enable={{ right: true }}
+            minHeight={"100%"}
+            minWidth={currentSourceItem ? "350px" : "100%"}
+            maxWidth={"100%"}
+          >
+            <AutoSizer className={"new-download-list"}>
+              {({ height, width }) => (
+                <List
+                  height={height}
+                  itemCount={tableData.length}
+                  itemSize={35}
+                  width={width}
+                >
+                  {renderItem}
+                </List>
+              )}
+            </AutoSizer>
+          </Resizable>
 
-        {currentSourceItem && (
-          <Box p={15} height={"100%"} flex={1} overflowY={"hidden"}>
-            123123123123
-          </Box>
-        )}
+          {currentSourceItem && (
+            <Box p={15} height={"100%"} flex={1} overflowY={"hidden"}>
+              123123123123
+            </Box>
+          )}
+        </Box>
+
+        {/*新建下载窗口*/}
+        <Modal
+          title="新建下载"
+          visible={isModalVisible}
+          onCancel={handleCancel}
+          footer={[
+            <Button key="back" onClick={handleDownload}>
+              立即下载
+            </Button>,
+            <Button key="submit" onClick={handleCancel}>
+              取消
+            </Button>,
+            <Button key="link" type="primary" onClick={handleOk}>
+              添加
+            </Button>,
+          ]}
+        >
+          <Form
+            labelCol={{ span: 4 }}
+            form={formRef}
+            initialValues={{ delete: true }}
+          >
+            <Form.Item
+              label="m3u8"
+              name="url"
+              rules={[{ required: true, message: "请填写 m3u8 链接" }]}
+            >
+              <Input placeholder="[必填] 输入 m3u8 地址，或将M3U8文件拖拽至此" />
+            </Form.Item>
+            <Form.Item
+              label="视频名称"
+              name="title"
+              rules={[{ required: true, message: "请填写视频名称" }]}
+            >
+              <Input placeholder="[可空] 默认当前时间戳" />
+            </Form.Item>
+            <Form.Item label="请求标头" name="headers">
+              <Input.TextArea rows={3} placeholder={headersPlaceholder} />
+            </Form.Item>
+            <Form.Item
+              label="下载完成是否删除"
+              name="delete"
+              labelCol={{ span: 8 }}
+              valuePropName="checked"
+              hidden={exeFile === "mediago"}
+            >
+              <Switch />
+            </Form.Item>
+          </Form>
+        </Modal>
       </Box>
-
-      {/*新建下载窗口*/}
-      <NewSourceForm
-        visible={isModalVisible}
-        handleCancel={handleCancel}
-        handleOk={handleOk}
-        handleDownload={handleDownload}
-      />
-    </Box>
+    </FileDrop>
   );
 };
 
