@@ -10,3 +10,36 @@
     }
   }
 }
+
+.favorite-menu {
+  .ant-dropdown-menu-title-content {
+    width: 100%;
+  }
+}
+
+.file-drop {
+  height: 100%;
+  width: 100%;
+
+  > .file-drop-target {
+    height: 100%;
+    width: 100%;
+    position: relative;
+
+    &.file-drop-dragging-over-frame {
+      &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.65);
+        z-index: 10000;
+      }
+    }
+
+    &.file-drop-dragging-over-target {
+    }
+  }
+}
