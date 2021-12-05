@@ -2,6 +2,7 @@ import React, {
   ComponentType,
   DragEvent as ReactDragEvent,
   ReactNode,
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -94,6 +95,22 @@ const headersPlaceholder = `[可空] 请输入一行一个Header，例如：
 Origin: https://www.sample.com
 Referer: https://www.sample.com`;
 
+const colorMap = {
+  ready: "#108ee9",
+  downloading: "#2db7f5",
+  failed: "#f50",
+  success: "#87d068",
+};
+
+const titleMap = {
+  ready: "未下载",
+  downloading: "正在下载",
+  failed: "下载失败",
+  success: "下载成功",
+};
+
+const winWidth = document.documentElement.clientWidth;
+
 // 待下载列表页
 const DownloadList: React.FC<Props> = ({
   tableData,
@@ -103,14 +120,26 @@ const DownloadList: React.FC<Props> = ({
 }) => {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [favsList, setFavsList] = useState<Fav[]>([]);
+  const [maxWidth, setMaxWidth] = useState<number>(winWidth);
   const [currentSourceItem, setCurrentSourceItem] = useState<SourceItem>();
   const settings = useSelector<AppState, Settings>((state) => state.settings);
   const { exeFile } = settings;
   const [formRef] = Form.useForm();
   const [detailForm] = Form.useForm();
 
+  const calcMaxWidth = useCallback(() => {
+    const max = document.documentElement.clientWidth - 300;
+    setMaxWidth(max);
+  }, []);
+
   useEffect(() => {
     initData();
+
+    window.addEventListener("resize", calcMaxWidth);
+
+    return () => {
+      window.removeEventListener("resize", calcMaxWidth);
+    };
   }, []);
 
   const initData = async () => {
@@ -141,6 +170,16 @@ const DownloadList: React.FC<Props> = ({
   // 表单数据后处理
   const postProcessFormData = () => {};
 
+  // 渲染视频下载的状态
+  const renderStatus = (item: SourceItem) => {
+    const status = item.status;
+    return (
+      <Tooltip title={titleMap[status]} placement={"right"}>
+        <Box h={8} w={8} borderRadius={4} mr={8} bg={colorMap[status]} />
+      </Tooltip>
+    );
+  };
+
   // 渲染item
   const renderItem: ComponentType<ListChildComponentProps<SourceItem>> = ({
     index,
@@ -155,20 +194,22 @@ const DownloadList: React.FC<Props> = ({
         title={item.title}
         display={"flex"}
         flexDirection={"row"}
+        alignItems={"center"}
         px={15}
       >
+        {renderStatus(item)}
         <Box
           flex={1}
           className={"list-item-inner"}
           onClick={() => {
             setCurrentSourceItem(item);
-            console.log(preProcessFormData(item));
             detailForm.setFieldsValue(preProcessFormData(item));
+            calcMaxWidth();
           }}
         >
           {item.title}
         </Box>
-        <Box display={"flex"}>{renderActionButtons(item)}</Box>
+        {renderActionButtons(item)}
       </Box>
     );
   };
@@ -489,23 +530,32 @@ const DownloadList: React.FC<Props> = ({
         });
         break;
     }
-    return buttons.map((button) =>
-      button.showTooltip ? (
-        <Tooltip title={button.tooltip}>
-          <Box
-            pl={10}
-            key={button.key}
-            onClick={button.cb}
-            title={button.title}
-          >
-            {button.text}
-          </Box>
-        </Tooltip>
-      ) : (
-        <Box pl={10} key={button.key} onClick={button.cb} title={button.title}>
-          {button.text}
-        </Box>
-      )
+    return (
+      <Box display={"flex"}>
+        {buttons.map((button) =>
+          button.showTooltip ? (
+            <Tooltip title={button.tooltip}>
+              <Box
+                pl={10}
+                key={button.key}
+                onClick={button.cb}
+                title={button.title}
+              >
+                {button.text}
+              </Box>
+            </Tooltip>
+          ) : (
+            <Box
+              pl={10}
+              key={button.key}
+              onClick={button.cb}
+              title={button.title}
+            >
+              {button.text}
+            </Box>
+          )
+        )}
+      </Box>
     );
   };
 
@@ -538,7 +588,7 @@ const DownloadList: React.FC<Props> = ({
             enable={{ right: true }}
             minHeight={"100%"}
             minWidth={currentSourceItem ? "350px" : "100%"}
-            maxWidth={"100%"}
+            maxWidth={currentSourceItem ? maxWidth : "100%"}
           >
             <AutoSizer className={"new-download-list"}>
               {({ height, width }) => (
@@ -555,7 +605,13 @@ const DownloadList: React.FC<Props> = ({
           </Resizable>
 
           {currentSourceItem && (
-            <Box p={15} height={"100%"} flex={1} overflowY={"hidden"}>
+            <Box
+              p={15}
+              height={"100%"}
+              flex={1}
+              overflowY={"scroll"}
+              minW={"300px"}
+            >
               <ProForm
                 form={detailForm}
                 size={"small"}
