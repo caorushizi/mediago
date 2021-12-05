@@ -53,12 +53,13 @@ import {
   updateVideoTitle,
   updateVideoUrl,
 } from "renderer/utils/localforge";
-import { ModalForm, ProFormText } from "@ant-design/pro-form";
+import { ModalForm, ProFormText, ProFormTextArea } from "@ant-design/pro-form";
 import { isUrl } from "renderer/utils";
 import { useSelector } from "react-redux";
 import { Settings } from "renderer/store/models/settings";
 import { AppState } from "renderer/store/reducers";
 import { FileDrop } from "react-file-drop";
+import ProForm from "@ant-design/pro-form";
 
 type ActionButton = {
   key: string;
@@ -106,6 +107,7 @@ const DownloadList: React.FC<Props> = ({
   const settings = useSelector<AppState, Settings>((state) => state.settings);
   const { exeFile } = settings;
   const [formRef] = Form.useForm();
+  const [detailForm] = Form.useForm();
 
   useEffect(() => {
     initData();
@@ -115,6 +117,29 @@ const DownloadList: React.FC<Props> = ({
     const favs = await getFavs();
     setFavsList(favs);
   };
+
+  // 表单数据预处理
+  const preProcessFormData = (data: SourceItem) => {
+    const formatter = (key: string, value: any) => {
+      switch (key) {
+        // case "headers":
+        //   return Object.entries(value)
+        //     .map(([key, value]) => `${key}:${value}`)
+        //     .join("\n");
+        default:
+          return value;
+      }
+    };
+
+    const result: Record<string, any> = {};
+    Object.keys(data).forEach((key) => {
+      result[key] = formatter(key, data[key as keyof SourceItem]);
+    });
+    return result;
+  };
+
+  // 表单数据后处理
+  const postProcessFormData = () => {};
 
   // 渲染item
   const renderItem: ComponentType<ListChildComponentProps<SourceItem>> = ({
@@ -137,6 +162,8 @@ const DownloadList: React.FC<Props> = ({
           className={"list-item-inner"}
           onClick={() => {
             setCurrentSourceItem(item);
+            console.log(preProcessFormData(item));
+            detailForm.setFieldsValue(preProcessFormData(item));
           }}
         >
           {item.title}
@@ -396,13 +423,21 @@ const DownloadList: React.FC<Props> = ({
         // 下载成功
         buttons.push({
           key: "1",
-          text: <FolderOpenOutlined />,
+          text: (
+            <Button type={"link"} size={"small"}>
+              打开文件位置
+            </Button>
+          ),
           title: "打开文件位置",
           cb: openDirectory,
         });
         buttons.push({
           key: "2",
-          text: <ReloadOutlined />,
+          text: (
+            <Button type={"link"} size={"small"}>
+              重新下载
+            </Button>
+          ),
           title: "重新下载",
           cb: () => downloadFile(row),
         });
@@ -411,7 +446,11 @@ const DownloadList: React.FC<Props> = ({
         // 下载失败
         buttons.push({
           key: "3",
-          text: <ReloadOutlined />,
+          text: (
+            <Button type={"link"} size={"small"}>
+              重新下载
+            </Button>
+          ),
           title: "重新下载",
           cb: () => downloadFile(row),
         });
@@ -420,7 +459,11 @@ const DownloadList: React.FC<Props> = ({
         // 正在下载
         buttons.push({
           key: "5",
-          text: "重置状态",
+          text: (
+            <Button type={"link"} size={"small"}>
+              重置状态
+            </Button>
+          ),
           title: "重置状态",
           showTooltip: true,
           tooltip:
@@ -436,7 +479,11 @@ const DownloadList: React.FC<Props> = ({
         // 准备状态
         buttons.push({
           key: "6",
-          text: <DownloadOutlined />,
+          text: (
+            <Button type={"link"} size={"small"}>
+              下载
+            </Button>
+          ),
           title: "下载",
           cb: () => downloadFile(row),
         });
@@ -509,7 +556,53 @@ const DownloadList: React.FC<Props> = ({
 
           {currentSourceItem && (
             <Box p={15} height={"100%"} flex={1} overflowY={"hidden"}>
-              123123123123
+              <ProForm
+                form={detailForm}
+                size={"small"}
+                layout={"horizontal"}
+                submitter={{
+                  searchConfig: {
+                    resetText: "重置",
+                    submitText: "下载",
+                  },
+                  resetButtonProps: {
+                    style: {
+                      // 隐藏重置按钮
+                      display: "none",
+                    },
+                  },
+                  onSubmit: async () => {
+                    const item = detailForm.getFieldsValue();
+                    await downloadFile(item);
+                  },
+                }}
+              >
+                <ProForm.Group>
+                  <ProFormText
+                    name={"title"}
+                    label="视频名称"
+                    placeholder="请输入视频名称"
+                  />
+                  <ProFormText
+                    name={"url"}
+                    label="请求地址"
+                    placeholder="请输入请求地址"
+                  />
+                </ProForm.Group>
+                <ProForm.Group>
+                  <ProFormText
+                    name={"workspace"}
+                    label="本地路径"
+                    placeholder="请输入本地路径"
+                  />
+                  <ProFormText
+                    name={"exeFile"}
+                    label="执行程序"
+                    placeholder="请选择可执行程序"
+                  />
+                </ProForm.Group>
+                <ProFormTextArea label={"请求标头"} name={"headers"} />
+              </ProForm>
             </Box>
           )}
         </Box>
