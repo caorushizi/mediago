@@ -19,22 +19,21 @@ class WindowToolBar extends Component<Props, Record<string, never>> {
     return (
       <div className="window-tool-bar" style={{ background: color }}>
         <div className="window-tool-bar-left">
-          {window.electron.is.macos && (
+          {window.electron.isMacos && (
             <div className="mac-btn close" onClick={onClose} />
           )}
-          {window.electron.is.macos && (
+          {window.electron.isMacos && (
             <div className="mac-btn min" onClick={this.minimizeWindow} />
           )}
-          {/*{is.macos && <div className="mac-btn max" />}*/}
         </div>
         <div className="window-tool-bar-title">{children}</div>
         <div className="window-tool-bar-right">
-          {window.electron.is.windows && (
+          {window.electron.isWindows && (
             <div className="btn" onClick={this.minimizeWindow}>
               <MinusOutlined />
             </div>
           )}
-          {window.electron.is.windows && (
+          {window.electron.isWindows && (
             <div className="btn close" onClick={onClose}>
               <CloseOutlined />
             </div>

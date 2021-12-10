@@ -1,5 +1,4 @@
 import { app, BrowserWindow, protocol, session } from "electron";
-import { is } from "electron-util";
 import { resolve } from "path";
 import { log } from "main/utils";
 import windowManager from "main/window/windowManager";
@@ -17,7 +16,7 @@ if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
-if (!is.development) {
+if (process.env.NODE_ENV !== "development") {
   global.__bin__ = resolve(app.getAppPath(), "../.bin").replace(/\\/g, "\\\\");
 }
 
@@ -94,7 +93,7 @@ app.whenReady().then(() => {
   }
 
   let exeFile = "";
-  if (is.windows) {
+  if (process.platform === "win32") {
     exeFile = "N_m3u8DL-CLI";
   } else {
     exeFile = "mediago";
@@ -129,7 +128,7 @@ app.whenReady().then(() => {
   store.onDidChange("useProxy", (newValue) => {
     try {
       if (newValue) setProxy();
-    } catch (e) {
+    } catch (e: any) {
       log.error("设置代理失败：", e.message);
     }
   });

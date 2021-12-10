@@ -1,4 +1,3 @@
-import { is } from "electron-util";
 import { IWindowListItem } from "types/main";
 import { Windows } from "./variables";
 import { resolve } from "path";
@@ -21,13 +20,14 @@ windowList.set(Windows.MAIN_WINDOW, {
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: true,
-        enableRemoteModule: true,
-        preload: resolve(__dirname, "../preload"),
+        preload: resolve(__dirname, "../preload/index.js"),
       },
     };
   },
   callback(window) {
-    if (is.development) window.webContents.openDevTools();
+    if (process.env.NODE_ENV === "development") {
+      window.webContents.openDevTools();
+    }
     window.once("ready-to-show", () => {
       window.show();
     });
@@ -48,13 +48,14 @@ windowList.set(Windows.BROWSER_WINDOW, {
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: true,
-        enableRemoteModule: true,
-        preload: resolve(__dirname, "../preload"),
+        preload: resolve(__dirname, "../preload/index.js"),
       },
     };
   },
   async callback(window) {
-    if (is.development) window.webContents.openDevTools();
+    if (process.env.NODE_ENV === "development") {
+      window.webContents.openDevTools();
+    }
   },
 });
 
