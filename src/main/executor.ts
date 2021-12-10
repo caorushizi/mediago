@@ -1,6 +1,5 @@
 import { M3u8DLArgs, MediaGoArgs } from "types/common";
 import semver from "semver";
-import { is } from "electron-util";
 import { globWrapper, log, spawnWrapper } from "main/utils";
 
 declare const __bin__: string;
@@ -30,7 +29,7 @@ const execM3u8DL = async (args: M3u8DLArgs): Promise<string[]> => {
 
 // 执行 mediago 二进制文件
 const execMediaGo = async (args: MediaGoArgs): Promise<string[]> => {
-  const binName = is.windows ? "mediago" : "./mediago";
+  const binName = process.platform === "win32" ? "mediago" : "./mediago";
   const argsStr = Object.entries(args)
     .reduce((prev: string[], [key, value]) => {
       if (value) prev.push(`-${key} "${value}"`);

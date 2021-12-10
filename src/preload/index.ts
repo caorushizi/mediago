@@ -1,6 +1,4 @@
-import { contextBridge } from "electron";
-import { ipcRenderer, shell } from "electron";
-import { is } from "electron-util";
+import { contextBridge, ipcRenderer, shell } from "electron";
 import { M3u8DLArgs, MediaGoArgs } from "types/common";
 import { resolve } from "path";
 
@@ -14,7 +12,8 @@ const api: ElectronApi = {
       return ipcRenderer.invoke("get-store", key);
     },
   },
-  is,
+  isWindows: process.platform === "win32",
+  isMacos: process.platform === "darwin",
   ipcExec: (
     exeFile: string,
     args: M3u8DLArgs | MediaGoArgs

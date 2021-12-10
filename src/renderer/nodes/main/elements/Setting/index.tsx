@@ -32,7 +32,7 @@ const downloaderOptions = [
   },
 ];
 
-if (window.electron.is.windows) {
+if (window.electron.isWindows) {
   downloaderOptions.push({
     value: "N_m3u8DL-CLI",
     label: "N_m3u8DL-CLI（推荐）",

@@ -1,7 +1,6 @@
 import windowManager from "main/window/windowManager";
 import { Windows } from "main/window/variables";
 import { BrowserView } from "electron";
-import { is } from "electron-util";
 import { log } from "main/utils";
 import { SourceUrl } from "types/common";
 import { webviewPartition } from "main/variables";
@@ -18,7 +17,7 @@ const createBrowserView = (session: Electron.Session): void => {
   view.setBounds({ x: 0, y: 0, height: 0, width: 0 });
 
   const { webContents } = view;
-  if (is.development) webContents.openDevTools();
+  if (process.env.NODE_ENV === "development") webContents.openDevTools();
 
   webContents.on("dom-ready", () => {
     const title = webContents.getTitle();

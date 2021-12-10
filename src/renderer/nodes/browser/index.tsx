@@ -33,7 +33,7 @@ const BrowserWindow: FC = () => {
   const [title, setTitle] = useState<string>("");
   const [isFav, setIsFav] = useState<boolean>(false);
   const webviewRef = useRef<HTMLDivElement>();
-  const resizeObserver = useRef<ResizeObserver>(null);
+  const resizeObserver = useRef<ResizeObserver>();
 
   useEffect(() => {
     initWebView();
@@ -129,7 +129,7 @@ const BrowserWindow: FC = () => {
           handleClickFav={handleClickFav}
         />
         <div className="webview-inner">
-          <div id="videoView" ref={webviewRef}>
+          <div id="videoView" ref={webviewRef as any}>
             <Spin />
           </div>
         </div>

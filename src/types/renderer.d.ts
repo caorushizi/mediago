@@ -70,7 +70,8 @@ interface ElectronApi {
     get: (key?: string) => Promise<any>;
     set: (key: string, value: any) => Promise<void>;
   };
-  is: ElectronIs;
+  isWindows: boolean;
+  isMacos: boolean;
   ipcExec: (
     exeFile: string,
     args: M3u8DLArgs | MediaGoArgs
