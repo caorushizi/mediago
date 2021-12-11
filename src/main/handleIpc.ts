@@ -7,15 +7,15 @@ import executor from "main/executor";
 import request from "main/request";
 
 const handleIpc = (): void => {
-  ipcMain.on("exec", async (event, exeFile: string, args: M3u8DLArgs) => {
+  ipcMain.handle("exec", async (event, exeFile: string, args: M3u8DLArgs) => {
     let resp;
     try {
       const result = await executor(exeFile, args);
       resp = successFn(result);
-    } catch (e) {
+    } catch (e: any) {
       resp = failFn(-1, e.message);
     }
-    event.reply("execReply", resp);
+    return resp;
   });
 
   ipcMain.on("close-main-window", async () => {

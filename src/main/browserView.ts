@@ -35,7 +35,7 @@ const createBrowserView = (session: Electron.Session): void => {
   session.webRequest.onBeforeSendHeaders(
     filter,
     (
-      details: Electron.OnBeforeSendHeadersListenerDetails,
+      details,
       callback: (beforeSendResponse: Electron.BeforeSendResponse) => void
     ) => {
       const m3u8Reg = /\.m3u8$/;
