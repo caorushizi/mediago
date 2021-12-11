@@ -9,3 +9,8 @@ export const appName =
 export const workspace = path.resolve(appData, appName);
 export const webviewPartition = "persist:mediago";
 export const defaultScheme = "mediago";
+
+export enum Windows {
+  MAIN_WINDOW = "MAIN_WINDOW",
+  BROWSER_WINDOW = "BROWSER_WINDOW",
+}

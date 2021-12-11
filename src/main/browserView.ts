@@ -1,9 +1,8 @@
 import windowManager from "main/window/windowManager";
-import { Windows } from "main/window/variables";
 import { BrowserView } from "electron";
 import { log } from "main/utils";
 import { SourceUrl } from "types/common";
-import { webviewPartition } from "main/variables";
+import { webviewPartition, Windows } from "main/variables";
 
 const createBrowserView = (session: Electron.Session): void => {
   const browserWindow = windowManager.get(Windows.BROWSER_WINDOW);

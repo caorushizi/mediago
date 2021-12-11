@@ -180,40 +180,6 @@ const DownloadList: React.FC<Props> = ({
     );
   };
 
-  // 渲染item
-  const renderItem: ComponentType<ListChildComponentProps<SourceItem>> = ({
-    index,
-    style,
-  }) => {
-    const item = tableData[index];
-
-    return (
-      <Box
-        className={classNames("list-item")}
-        style={style}
-        title={item.title}
-        display={"flex"}
-        flexDirection={"row"}
-        alignItems={"center"}
-        px={15}
-      >
-        {renderStatus(item)}
-        <Box
-          flex={1}
-          className={"list-item-inner"}
-          onClick={() => {
-            setCurrentSourceItem(item);
-            detailForm.setFieldsValue(preProcessFormData(item));
-            calcMaxWidth();
-          }}
-        >
-          {item.title}
-        </Box>
-        {renderActionButtons(item)}
-      </Box>
-    );
-  };
-
   // 点击取消新建下载
   const handleCancel = (): void => {
     setIsModalVisible(false);
@@ -594,13 +560,46 @@ const DownloadList: React.FC<Props> = ({
           >
             <AutoSizer className={"new-download-list"}>
               {({ height, width }) => (
-                <List
+                <List<SourceItem[]>
                   height={height}
-                  itemCount={tableData.length}
                   itemSize={35}
                   width={width}
+                  itemData={tableData}
+                  itemCount={tableData.length}
+                  itemKey={(index, data) => {
+                    const item = data[index];
+                    return item.title;
+                  }}
                 >
-                  {renderItem}
+                  {({ index, style, data }) => {
+                    const item = data[index];
+
+                    return (
+                      <Box
+                        className={classNames("list-item")}
+                        style={style}
+                        title={item.title}
+                        display={"flex"}
+                        flexDirection={"row"}
+                        alignItems={"center"}
+                        px={15}
+                      >
+                        {renderStatus(item)}
+                        <Box
+                          flex={1}
+                          className={"list-item-inner"}
+                          onClick={() => {
+                            setCurrentSourceItem(item);
+                            detailForm.setFieldsValue(preProcessFormData(item));
+                            calcMaxWidth();
+                          }}
+                        >
+                          {item.title}
+                        </Box>
+                        {renderActionButtons(item)}
+                      </Box>
+                    );
+                  }}
                 </List>
               )}
             </AutoSizer>
@@ -611,7 +610,7 @@ const DownloadList: React.FC<Props> = ({
               p={15}
               height={"100%"}
               flex={1}
-              overflowY={"scroll"}
+              overflowY={"auto"}
               minW={"300px"}
             >
               <ProForm

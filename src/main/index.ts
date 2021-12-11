@@ -2,11 +2,15 @@ import { app, BrowserWindow, protocol, session } from "electron";
 import { resolve } from "path";
 import { log } from "main/utils";
 import windowManager from "main/window/windowManager";
-import { Windows } from "main/window/variables";
 import handleIpc from "main/handleIpc";
 import createBrowserView from "main/browserView";
 import Store from "electron-store";
-import { defaultScheme, webviewPartition, workspace } from "main/variables";
+import {
+  defaultScheme,
+  webviewPartition,
+  Windows,
+  workspace,
+} from "main/variables";
 import createSession from "main/session";
 import { URL } from "url";
 import { readFile } from "fs";
