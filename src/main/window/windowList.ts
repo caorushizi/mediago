@@ -1,6 +1,6 @@
 import { IWindowListItem } from "types/main";
-import { Windows } from "./variables";
 import { resolve } from "path";
+import { Windows } from "main/variables";
 
 const windowList = new Map<Windows, IWindowListItem>();
 

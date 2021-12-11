@@ -1,10 +1,10 @@
 import { app, dialog, ipcMain, shell } from "electron";
 import { failFn, successFn } from "./utils";
 import windowManager from "./window/windowManager";
-import { Windows } from "./window/variables";
 import { M3u8DLArgs } from "types/common";
 import executor from "main/executor";
 import request from "main/request";
+import { Windows } from "main/variables";
 
 const handleIpc = (): void => {
   ipcMain.handle("exec", async (event, exeFile: string, args: M3u8DLArgs) => {
