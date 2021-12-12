@@ -1,12 +1,11 @@
 import { M3u8DLArgs, MediaGoArgs } from "types/common";
 import semver from "semver";
 import { globWrapper, log, spawnWrapper } from "main/utils";
-
-declare const __bin__: string;
+import { binDir } from "main/variables";
 
 const execM3u8DL = async (args: M3u8DLArgs): Promise<string[]> => {
   let binNameList = await globWrapper("N_m3u8DL-CLI*.exe", {
-    cwd: __bin__,
+    cwd: binDir,
   });
   binNameList = binNameList
     .map((item) => /N_m3u8DL-CLI_v(.*).exe/.exec(item)?.[1] || "0.0.0")
@@ -59,13 +58,12 @@ const executor = async (
       throw new Error("暂不支持该下载方式");
   }
 
-  // fixme: 非静默下载
-  log.info("下载参数：", __bin__, binName, argsStr);
+  log.info("下载参数：", binDir, binName, argsStr);
 
   return spawnWrapper(binName, argsStr, {
     detached: true,
     shell: true,
-    cwd: __bin__,
+    cwd: binDir,
   });
 };
 

@@ -1,6 +1,8 @@
 import { app } from "electron";
 import path from "path";
 
+declare const __bin__: string;
+
 export const appData = app.getPath("appData");
 export const appName =
   process.env.NODE_ENV === "development"
@@ -14,3 +16,5 @@ export enum Windows {
   MAIN_WINDOW = "MAIN_WINDOW",
   BROWSER_WINDOW = "BROWSER_WINDOW",
 }
+
+export const binDir = __bin__;

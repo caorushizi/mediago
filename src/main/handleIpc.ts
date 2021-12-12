@@ -4,20 +4,9 @@ import windowManager from "./window/windowManager";
 import { M3u8DLArgs } from "types/common";
 import executor from "main/executor";
 import request from "main/request";
-import { Windows } from "main/variables";
+import { binDir, Windows } from "main/variables";
 
 const handleIpc = (): void => {
-  ipcMain.handle("exec", async (event, exeFile: string, args: M3u8DLArgs) => {
-    let resp;
-    try {
-      const result = await executor(exeFile, args);
-      resp = successFn(result);
-    } catch (e: any) {
-      resp = failFn(-1, e.message);
-    }
-    return resp;
-  });
-
   ipcMain.on("close-main-window", async () => {
     app.quit();
   });
@@ -35,30 +24,8 @@ const handleIpc = (): void => {
     browserWindow.hide();
   });
 
-  // @ts-ignore
-  ipcMain.handle("get-bin-dir", async () => __bin__);
-
   ipcMain.on("open-url", async (event, url) => {
     await shell.openExternal(url);
-  });
-
-  ipcMain.handle("set-store", (e, key, value) => {
-    return global.store.set(key, value);
-  });
-
-  ipcMain.handle("get-store", (e, key) => {
-    return global.store.get(key);
-  });
-
-  ipcMain.handle("get-path", (e, name) => app.getPath(name));
-
-  ipcMain.handle("show-open-dialog", (e, options: Electron.OpenDialogOptions) =>
-    dialog.showOpenDialog(options)
-  );
-
-  ipcMain.handle("get-current-window", (e) => {
-    const currentWindow = windowManager.get(Windows.BROWSER_WINDOW);
-    return currentWindow.getBrowserView();
   });
 
   ipcMain.on("set-browser-view-bounds", (e, rect) => {
@@ -86,6 +53,34 @@ const handleIpc = (): void => {
     const currentWindow = windowManager.get(Windows.BROWSER_WINDOW);
     const view = currentWindow.getBrowserView();
     if (view) view.webContents.loadURL(url || "https://baidu.com");
+  });
+
+  ipcMain.handle("exec", async (event, exeFile: string, args: M3u8DLArgs) => {
+    let resp;
+    try {
+      const result = await executor(exeFile, args);
+      resp = successFn(result);
+    } catch (e: any) {
+      resp = failFn(-1, e.message);
+    }
+    return resp;
+  });
+
+  ipcMain.handle("get-bin-dir", async () => binDir);
+
+  ipcMain.handle("set-store", (e, key, value) => global.store.set(key, value));
+
+  ipcMain.handle("get-store", (e, key) => global.store.get(key));
+
+  ipcMain.handle("get-path", (e, name) => app.getPath(name));
+
+  ipcMain.handle("show-open-dialog", (e, options: Electron.OpenDialogOptions) =>
+    dialog.showOpenDialog(options)
+  );
+
+  ipcMain.handle("get-current-window", (e) => {
+    const currentWindow = windowManager.get(Windows.BROWSER_WINDOW);
+    return currentWindow.getBrowserView();
   });
 
   ipcMain.handle("request", (e, options: RequestOptions) => request(options));
