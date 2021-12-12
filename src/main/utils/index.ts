@@ -44,13 +44,14 @@ const spawnWrapper = (
 const globWrapper: (
   pattern: string,
   options: glob.IOptions
-) => Promise<string[]> = (pattern, options = {}) =>
-  new Promise((resolve, reject) => {
+) => Promise<string[]> = (pattern, options = {}) => {
+  return new Promise((resolve, reject) => {
     glob(pattern, { cwd: workspace, ...options }, (err, files) => {
       if (err) reject(err);
       resolve(files);
     });
   });
+};
 
 interface IpcResponse {
   code: number;
