@@ -1,7 +1,6 @@
-import { app, dialog, ipcMain, shell } from "electron";
+import { app, dialog, ipcMain, Menu, shell } from "electron";
 import { failFn, successFn } from "./utils";
 import windowManager from "./window/windowManager";
-import { M3u8DLArgs } from "types/common";
 import executor from "main/executor";
 import request from "main/request";
 import { binDir, Windows } from "main/variables";
@@ -53,6 +52,41 @@ const handleIpc = (): void => {
     const currentWindow = windowManager.get(Windows.BROWSER_WINDOW);
     const view = currentWindow.getBrowserView();
     if (view) view.webContents.loadURL(url || "https://baidu.com");
+  });
+
+  ipcMain.on("open-download-item-context-menu", (e, item: SourceItem) => {
+    const mainWin = windowManager.get(Windows.MAIN_WINDOW);
+    const menu = Menu.buildFromTemplate([
+      {
+        label: "详情",
+        click: () => {
+          e.sender.send("download-context-menu-detail", item);
+        },
+      },
+      { type: "separator" },
+      {
+        label: "下载",
+        click: () => {
+          e.sender.send("download-context-menu-download", item);
+        },
+      },
+      {
+        label: "删除",
+        click: () => {
+          e.sender.send("download-context-menu-delete", item);
+        },
+      },
+      { type: "separator" },
+      {
+        label: "清空列表",
+        click: () => {
+          e.sender.send("download-context-menu-clear-all");
+        },
+      },
+    ]);
+    menu.popup({
+      window: mainWin,
+    });
   });
 
   ipcMain.handle("exec", async (event, exeFile: string, args: M3u8DLArgs) => {

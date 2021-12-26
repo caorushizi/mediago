@@ -45,7 +45,8 @@
     "./src/types/**/*"
   ],
   "files": [
-    "./types/renderer.d.ts",
-    "./types/main.d.ts"
+    "./src/types/renderer.d.ts",
+    "./src/types/main.d.ts",
+    "./src/types/common.d.ts"
   ]
 }

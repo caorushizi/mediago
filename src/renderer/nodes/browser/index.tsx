@@ -7,7 +7,7 @@ import { insertFav, isFavFunc, removeFav } from "renderer/utils/localforge";
 import WindowToolBar from "renderer/components/WindowToolBar";
 import SearchBar from "./elements/SearchBar";
 import onEvent from "renderer/utils/td-utils";
-import electron from "renderer/utils/electron";
+import useElectron from "renderer/hooks/electron";
 
 tdApp.init();
 
@@ -34,6 +34,11 @@ const BrowserWindow: FC = () => {
   const [isFav, setIsFav] = useState<boolean>(false);
   const webviewRef = useRef<HTMLDivElement>();
   const resizeObserver = useRef<ResizeObserver>();
+  const {
+    browserViewGoBack,
+    browserViewReload,
+    browserViewLoadURL,
+  } = useElectron();
 
   useEffect(() => {
     initWebView();
@@ -77,16 +82,16 @@ const BrowserWindow: FC = () => {
 
   const onGoBack = () => {
     onEvent.browserPageGoBack();
-    electron.browserViewGoBack();
+    browserViewGoBack();
   };
 
   const onReload = () => {
     onEvent.browserPageReload();
-    electron.browserViewReload();
+    browserViewReload();
   };
 
   const onGoBackHome = () => {
-    electron.browserViewLoadURL();
+    browserViewLoadURL();
   };
 
   const onUrlChange = (url: string) => {
@@ -94,7 +99,7 @@ const BrowserWindow: FC = () => {
   };
 
   const handleEnter = () => {
-    electron.browserViewLoadURL(url);
+    browserViewLoadURL(url);
   };
 
   const handleClickFav = async () => {

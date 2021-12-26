@@ -4,7 +4,6 @@ import { Badge, Button, Drawer, message, Tabs } from "antd";
 import WindowToolBar from "renderer/components/WindowToolBar";
 import Setting from "renderer/nodes/main/elements/Setting";
 import Comment from "renderer/components/Comment";
-import { SourceItem, SourceUrl } from "types/common";
 import { SourceStatus, SourceType } from "renderer/types";
 import {
   getVideos,
@@ -17,7 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateSettings } from "renderer/store/actions/settings.actions";
 import { AppState } from "renderer/store/reducers";
 import { Settings } from "renderer/store/models/settings";
-import electron from "renderer/utils/electron";
+import useElectron from "renderer/hooks/electron";
 import NewDownloadList from "renderer/nodes/main/elements/DownloadList";
 
 const audio = new Audio(audioSrc);
@@ -37,13 +36,18 @@ const MainPage: FC = () => {
   const dispatch = useDispatch();
   const settings = useSelector<AppState, Settings>((state) => state.settings);
   const { workspace } = settings;
+  const {
+    addEventListener,
+    removeEventListener,
+    closeMainWindow,
+  } = useElectron();
 
   useEffect(() => {
     initData();
 
-    electron.addEventListener("m3u8", handleWebViewMessage);
+    addEventListener("m3u8", handleWebViewMessage);
     return () => {
-      electron.removeEventListener("m3u8", handleWebViewMessage);
+      removeEventListener("m3u8", handleWebViewMessage);
     };
   }, []);
 
@@ -129,7 +133,7 @@ const MainPage: FC = () => {
       <WindowToolBar
         color="#4090F7"
         onClose={() => {
-          electron.closeMainWindow();
+          closeMainWindow();
         }}
       />
       <div className="main-window">

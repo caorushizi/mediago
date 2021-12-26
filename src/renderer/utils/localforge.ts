@@ -1,4 +1,3 @@
-import { Fav, SourceItem } from "types/common";
 import * as localforage from "localforage";
 import { SourceStatus } from "renderer/types";
 
@@ -57,7 +56,7 @@ const updateVideoUrl = async (source: SourceItem, url: string) => {
   }
 };
 
-const removeVideo = async (url: string) => {
+export const removeVideo = async (url: string) => {
   let videos = await localforage.getItem<SourceItem[]>(keys.videos);
   if (!Array.isArray(videos)) videos = [];
   const favIndex = videos.findIndex((item) => item.url === url);
