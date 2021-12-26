@@ -1,6 +1,6 @@
 {
   "name": "media-downloader",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "在线视频下载",
   "author": "caorushizi",
   "main": "dist/main/index.js",
@@ -69,7 +69,7 @@
     "cross-env": "^7.0.3",
     "dotenv": "^8.2.0",
     "electron": "16.0.4",
-    "electron-builder": "^22.10.5",
+    "electron-builder": "^22.14.2",
     "esbuild": "^0.9.5",
     "eslint": "^7.5.0",
     "eslint-config-prettier": "^8.1.0",

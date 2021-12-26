@@ -777,17 +777,21 @@ const DownloadList: React.FC<Props> = ({
               name="url"
               rules={[{ required: true, message: "请填写 m3u8 链接" }]}
             >
-              <Input placeholder="[必填] 输入 m3u8 地址，或将M3U8文件拖拽至此" />
+              <Input placeholder="[必填] 输入 m3u8 地址" allowClear />
             </Form.Item>
             <Form.Item
               label="视频名称"
               name="title"
               rules={[{ required: true, message: "请填写视频名称" }]}
             >
-              <Input placeholder="[可空] 默认当前时间戳" />
+              <Input placeholder="[可空] 默认当前时间戳" allowClear />
             </Form.Item>
             <Form.Item label="请求标头" name="headers">
-              <Input.TextArea rows={3} placeholder={headersPlaceholder} />
+              <Input.TextArea
+                rows={3}
+                placeholder={headersPlaceholder}
+                allowClear
+              />
             </Form.Item>
             <Form.Item
               label="下载完成是否删除"
