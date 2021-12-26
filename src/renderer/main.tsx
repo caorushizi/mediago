@@ -1,6 +1,6 @@
 import ReactDOM from "react-dom";
 import React from "react";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import { Route } from "react-router";
 import tdApp from "./utils/td";
 import "antd/dist/antd.css";
@@ -14,10 +14,10 @@ tdApp.init();
 
 ReactDOM.render(
   <Provider store={store}>
-    <BrowserRouter>
+    <Router>
       <Route path="/main" component={MainPage} />
       <Route path="/browser" component={BrowserPage} />
-    </BrowserRouter>
+    </Router>
   </Provider>,
   document.getElementById("root")
 );

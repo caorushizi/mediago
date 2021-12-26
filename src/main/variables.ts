@@ -1,7 +1,11 @@
 import { app } from "electron";
-import path from "path";
+import path, { resolve } from "path";
 
 declare const __bin__: string;
+
+if (process.env.NODE_ENV !== "development") {
+  global.__bin__ = resolve(app.getAppPath(), "../.bin").replace(/\\/g, "\\\\");
+}
 
 export const appData = app.getPath("appData");
 export const appName =

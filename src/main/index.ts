@@ -20,10 +20,6 @@ if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
-if (process.env.NODE_ENV !== "development") {
-  global.__bin__ = resolve(app.getAppPath(), "../.bin").replace(/\\/g, "\\\\");
-}
-
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
@@ -47,15 +43,17 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 app.whenReady().then(() => {
-  const webviewSession = createSession(webviewPartition);
-
   protocol.registerBufferProtocol(defaultScheme, (request, callback) => {
     let pathName = new URL(request.url).pathname;
     pathName = decodeURI(pathName);
 
     readFile(path.join(__dirname, "../renderer", pathName), (error, data) => {
       if (error) {
-        console.error(`Failed to register ${webviewPartition} protocol`, error);
+        console.error(
+          `Failed to register ${webviewPartition} protocol\n`,
+          error,
+          "\n"
+        );
       } else {
         const extension = path.extname(pathName).toLowerCase();
         let mimeType = "";
@@ -77,6 +75,7 @@ app.whenReady().then(() => {
     });
   });
 
+  const webviewSession = createSession(webviewPartition);
   app.on("activate", async () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       await init(webviewSession);
