@@ -3,6 +3,7 @@ import { BrowserView } from "electron";
 import { log } from "main/utils";
 import { SourceUrl } from "types/common";
 import { webviewPartition, Windows } from "main/variables";
+import { nanoid } from "nanoid";
 
 const createBrowserView = (session: Electron.Session): void => {
   const browserWindow = windowManager.get(Windows.BROWSER_WINDOW);
@@ -46,6 +47,7 @@ const createBrowserView = (session: Electron.Session): void => {
           Windows.MAIN_WINDOW
         );
         const value: SourceUrl = {
+          id: nanoid(),
           title: webContents.getTitle(),
           url: details.url,
           headers: details.requestHeaders,

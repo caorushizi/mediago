@@ -45,6 +45,8 @@ const api: ElectronApi = {
   browserViewReload: () => ipcRenderer.send("browser-view-reload"),
   browserViewLoadURL: (url) => ipcRenderer.send("browser-view-load-url", url),
   request: (options) => ipcRenderer.invoke("request", options),
+  itemContextMenu: (item) =>
+    ipcRenderer.send("open-download-item-context-menu", item),
 };
 
 contextBridge.exposeInMainWorld(apiKey, api);

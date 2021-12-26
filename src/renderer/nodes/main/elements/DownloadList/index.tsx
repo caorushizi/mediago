@@ -12,18 +12,12 @@ import AutoSizer from "react-virtualized-auto-sizer";
 import { Resizable } from "re-resizable";
 import "./index.scss";
 import { Box } from "@chakra-ui/react";
-import {
-  Fav,
-  M3u8DLArgs,
-  MediaGoArgs,
-  SourceItem,
-  SourceItemForm,
-} from "types/common";
 import { SourceStatus, SourceType } from "renderer/types";
 import classNames from "classnames";
 import {
   Button,
   Dropdown,
+  Empty,
   Form,
   FormInstance,
   Input,
@@ -50,6 +44,8 @@ import {
   insertFav,
   insertVideo,
   removeFav,
+  removeVideo,
+  removeVideos,
   updateVideoStatus,
   updateVideoTitle,
   updateVideoUrl,
@@ -61,6 +57,8 @@ import { Settings } from "renderer/store/models/settings";
 import { AppState } from "renderer/store/reducers";
 import { FileDrop } from "react-file-drop";
 import ProForm from "@ant-design/pro-form";
+import useElectron from "renderer/hooks/electron";
+import { nanoid } from "nanoid";
 
 type ActionButton = {
   key: string;
@@ -123,6 +121,11 @@ const DownloadList: React.FC<Props> = ({
   const [maxWidth, setMaxWidth] = useState<number>(winWidth);
   const [currentSourceItem, setCurrentSourceItem] = useState<SourceItem>();
   const settings = useSelector<AppState, Settings>((state) => state.settings);
+  const {
+    itemContextMenu,
+    addEventListener,
+    removeEventListener,
+  } = useElectron();
   const { exeFile } = settings;
   const [formRef] = Form.useForm();
   const [detailForm] = Form.useForm();
@@ -136,11 +139,51 @@ const DownloadList: React.FC<Props> = ({
     initData();
 
     window.addEventListener("resize", calcMaxWidth);
+    addEventListener("download-context-menu-detail", contextMenuDetail);
+    addEventListener("download-context-menu-download", contextMenuDownload);
+    addEventListener("download-context-menu-delete", contextMenuDelete);
+    addEventListener("download-context-menu-clear-all", contextMenuClearAll);
 
     return () => {
       window.removeEventListener("resize", calcMaxWidth);
+      removeEventListener("context-menu-command", contextMenuDetail);
+      removeEventListener(
+        "download-context-menu-download",
+        contextMenuDownload
+      );
+      removeEventListener("download-context-menu-delete", contextMenuDelete);
+      removeEventListener(
+        "download-context-menu-clear-all",
+        contextMenuClearAll
+      );
     };
   }, []);
+
+  const contextMenuDetail = (
+    e: Electron.IpcRendererEvent,
+    item: SourceItem
+  ) => {
+    setCurrentSourceItem(item);
+    detailForm.setFieldsValue(preProcessFormData(item));
+    calcMaxWidth();
+  };
+  const contextMenuDownload = (
+    e: Electron.IpcRendererEvent,
+    item: SourceItem
+  ) => {
+    downloadFile(item);
+  };
+  const contextMenuDelete = async (
+    event: Electron.IpcRendererEvent,
+    item: SourceItem
+  ) => {
+    await removeVideo(item.url);
+    await updateTableData();
+  };
+  const contextMenuClearAll = () => {
+    const keys = tableData.map((item) => item.url);
+    removeVideos(keys);
+  };
 
   const initData = async () => {
     const favs = await getFavs();
@@ -167,9 +210,6 @@ const DownloadList: React.FC<Props> = ({
     return result;
   };
 
-  // 表单数据后处理
-  const postProcessFormData = () => {};
-
   // 渲染视频下载的状态
   const renderStatus = (item: SourceItem) => {
     const status = item.status;
@@ -185,12 +225,31 @@ const DownloadList: React.FC<Props> = ({
     setIsModalVisible(false);
   };
 
+  // 新建下载
+  const newDownload = () => {
+    onEvent.mainPageNewSource();
+    setIsModalVisible(true);
+  };
+
+  // 打开浏览器
+  const openBrowser = () => {
+    onEvent.mainPageOpenBrowserPage();
+    window.electron.openBrowserWindow();
+  };
+
+  // 打开使用帮助
+  const openHelp = () => {
+    onEvent.mainPageHelp();
+    window.electron.openExternal(helpUrl);
+  };
+
   // 向列表中插入一条数据并且请求详情
   const insertUpdateTableData = async (
     item: SourceItemForm
   ): Promise<SourceItem> => {
     const { workspace } = settings;
     const sourceItem: SourceItem = {
+      id: nanoid(),
       status: SourceStatus.Ready,
       type: SourceType.M3u8,
       directory: workspace,
@@ -382,35 +441,20 @@ const DownloadList: React.FC<Props> = ({
     return (
       <Box p={10} borderBottom={"1px solid #EBEEF5"}>
         <Space>
-          <Button
-            key={"1"}
-            onClick={() => {
-              onEvent.mainPageNewSource();
-              setIsModalVisible(true);
-            }}
-          >
+          <Button key={"1"} onClick={newDownload}>
             <AppstoreAddOutlined />
             新建下载
           </Button>
           <Dropdown.Button
             key={"2"}
             trigger={["click"]}
-            onClick={() => {
-              onEvent.mainPageOpenBrowserPage();
-              window.electron.openBrowserWindow();
-            }}
+            onClick={openBrowser}
             overlay={browserMenu}
           >
             <BlockOutlined />
             打开浏览器
           </Dropdown.Button>
-          <Button
-            key={"4"}
-            onClick={async () => {
-              onEvent.mainPageHelp();
-              window.electron.openExternal(helpUrl);
-            }}
-          >
+          <Button key={"4"} onClick={openHelp}>
             <QuestionCircleOutlined />
             使用帮助
           </Button>
@@ -545,124 +589,166 @@ const DownloadList: React.FC<Props> = ({
     <FileDrop onDrop={onDrop}>
       <Box h={"100%"} w={"100%"} display={"flex"} flexDirection={"column"}>
         {renderToolBar()}
-        <Box
-          flex={1}
-          display={"flex"}
-          overflow={"hidden"}
-          flexDirection={"row"}
-        >
-          <Resizable
-            as={Box}
-            enable={{ right: true }}
-            minHeight={"100%"}
-            minWidth={currentSourceItem ? "350px" : "100%"}
-            maxWidth={currentSourceItem ? maxWidth : "100%"}
+        {tableData.length > 0 ? (
+          <Box
+            flex={1}
+            display={"flex"}
+            overflow={"hidden"}
+            flexDirection={"row"}
           >
-            <AutoSizer className={"new-download-list"}>
-              {({ height, width }) => (
-                <List<SourceItem[]>
-                  height={height}
-                  itemSize={35}
-                  width={width}
-                  itemData={tableData}
-                  itemCount={tableData.length}
-                  itemKey={(index, data) => {
-                    const item = data[index];
-                    return item.title;
-                  }}
-                >
-                  {({ index, style, data }) => {
-                    const item = data[index];
+            <Resizable
+              as={Box}
+              enable={{ right: true }}
+              minHeight={"100%"}
+              minWidth={currentSourceItem ? "350px" : "100%"}
+              maxWidth={currentSourceItem ? maxWidth : "100%"}
+            >
+              <AutoSizer className={"new-download-list"}>
+                {({ height, width }) => (
+                  <List<SourceItem[]>
+                    height={height}
+                    itemSize={35}
+                    width={width}
+                    itemData={tableData}
+                    itemCount={tableData.length}
+                    itemKey={(index, data) => {
+                      const item = data[index];
+                      return item.id || `${item.title}-${index}`;
+                    }}
+                  >
+                    {({ index, style, data }) => {
+                      const item = data[index];
 
-                    return (
-                      <Box
-                        className={classNames("list-item")}
-                        style={style}
-                        title={item.title}
-                        display={"flex"}
-                        flexDirection={"row"}
-                        alignItems={"center"}
-                        px={15}
-                      >
-                        {renderStatus(item)}
+                      return (
                         <Box
-                          flex={1}
-                          className={"list-item-inner"}
-                          onClick={() => {
-                            setCurrentSourceItem(item);
-                            detailForm.setFieldsValue(preProcessFormData(item));
-                            calcMaxWidth();
+                          className={classNames("list-item-container")}
+                          _hover={{ bg: "#EBEEF5" }}
+                          style={style}
+                          title={item.title}
+                          display={"flex"}
+                          flexDirection={"row"}
+                          alignItems={"center"}
+                          px={15}
+                          onContextMenu={() => {
+                            itemContextMenu(item);
                           }}
                         >
-                          {item.title}
+                          {renderStatus(item)}
+                          <Box
+                            flex={1}
+                            className={"list-item-inner"}
+                            onClick={() => {
+                              setCurrentSourceItem(item);
+                              detailForm.setFieldsValue(
+                                preProcessFormData(item)
+                              );
+                              calcMaxWidth();
+                            }}
+                          >
+                            {item.title}
+                          </Box>
+                          {renderActionButtons(item)}
                         </Box>
-                        {renderActionButtons(item)}
-                      </Box>
-                    );
-                  }}
-                </List>
-              )}
-            </AutoSizer>
-          </Resizable>
+                      );
+                    }}
+                  </List>
+                )}
+              </AutoSizer>
+            </Resizable>
 
-          {currentSourceItem && (
-            <Box
-              p={15}
-              height={"100%"}
-              flex={1}
-              overflowY={"auto"}
-              minW={"300px"}
-            >
-              <ProForm
-                form={detailForm}
-                size={"small"}
-                layout={"horizontal"}
-                submitter={{
-                  searchConfig: {
-                    resetText: "重置",
-                    submitText: "下载",
-                  },
-                  resetButtonProps: {
-                    style: {
-                      // 隐藏重置按钮
-                      display: "none",
-                    },
-                  },
-                  onSubmit: async () => {
-                    const item = detailForm.getFieldsValue();
-                    await downloadFile(item);
-                  },
-                }}
+            {currentSourceItem && (
+              <Box
+                p={15}
+                height={"100%"}
+                flex={1}
+                overflowY={"auto"}
+                minW={"300px"}
               >
-                <ProForm.Group>
-                  <ProFormText
-                    name={"title"}
-                    label="视频名称"
-                    placeholder="请输入视频名称"
-                  />
-                  <ProFormText
-                    name={"url"}
-                    label="请求地址"
-                    placeholder="请输入请求地址"
-                  />
-                </ProForm.Group>
-                <ProForm.Group>
-                  <ProFormText
-                    name={"workspace"}
-                    label="本地路径"
-                    placeholder="请输入本地路径"
-                  />
-                  <ProFormText
-                    name={"exeFile"}
-                    label="执行程序"
-                    placeholder="请选择可执行程序"
-                  />
-                </ProForm.Group>
-                <ProFormTextArea label={"请求标头"} name={"headers"} />
-              </ProForm>
-            </Box>
-          )}
-        </Box>
+                <ProForm
+                  form={detailForm}
+                  size={"small"}
+                  layout={"horizontal"}
+                  submitter={{
+                    searchConfig: {
+                      resetText: "重置",
+                      submitText: "下载",
+                    },
+                    resetButtonProps: {
+                      style: {
+                        // 隐藏重置按钮
+                        display: "none",
+                      },
+                    },
+                    onSubmit: async () => {
+                      const item = detailForm.getFieldsValue();
+                      await downloadFile(item);
+                    },
+                  }}
+                >
+                  <ProForm.Group>
+                    <ProFormText
+                      name={"title"}
+                      label="视频名称"
+                      placeholder="请输入视频名称"
+                    />
+                    <ProFormText
+                      name={"url"}
+                      label="请求地址"
+                      placeholder="请输入请求地址"
+                    />
+                  </ProForm.Group>
+                  <ProForm.Group>
+                    <ProFormText
+                      name={"workspace"}
+                      label="本地路径"
+                      placeholder="请输入本地路径"
+                    />
+                    <ProFormText
+                      name={"exeFile"}
+                      label="执行程序"
+                      placeholder="请选择可执行程序"
+                    />
+                  </ProForm.Group>
+                  <ProFormTextArea label={"请求标头"} name={"headers"} />
+                </ProForm>
+              </Box>
+            )}
+          </Box>
+        ) : (
+          <Box
+            flex={1}
+            display={"flex"}
+            overflow={"hidden"}
+            flexDirection={"row"}
+            alignItems={"center"}
+            justifyContent={"center"}
+          >
+            <Empty
+              image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+              imageStyle={{
+                height: 120,
+              }}
+              description={
+                <span>
+                  没有数据，请
+                  <Button type={"link"} onClick={newDownload}>
+                    新建下载
+                  </Button>
+                  <br />
+                  或者
+                  <Button type={"link"} onClick={openBrowser}>
+                    打开浏览器
+                  </Button>
+                  <br />
+                  或者
+                  <Button type={"link"} onClick={openHelp}>
+                    查看帮助
+                  </Button>
+                </span>
+              }
+            />
+          </Box>
+        )}
 
         {/*新建下载窗口*/}
         <Modal

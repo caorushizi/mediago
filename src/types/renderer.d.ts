@@ -102,6 +102,7 @@ interface ElectronApi {
   browserViewReload: () => void;
   browserViewLoadURL: (url?: string) => void;
   request: <T>(options: RequestOptions) => Promise<RequestResponse<T>>;
+  itemContextMenu: (item: SourceItem) => void;
 }
 
 declare interface Window {

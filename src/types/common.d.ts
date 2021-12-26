@@ -1,12 +1,13 @@
-// 从主进程中想渲染进程发送的参数
-import { SourceStatus, SourceType } from "renderer/types";
-
 declare interface SourceUrl {
+  id: string;
   title: string;
   duration: number;
   url: string;
   headers?: Record<string, string>;
 }
+
+declare type SourceStatus = "ready" | "downloading" | "failed" | "success";
+declare type SourceType = "m3u8" | "m4s";
 
 declare type SourceItem = SourceUrl & {
   status: SourceStatus;
@@ -70,13 +71,3 @@ declare interface VideoDetail {
   segmentsLen: number;
   duration: number;
 }
-
-export {
-  SourceUrl,
-  Fav,
-  SourceItem,
-  SourceItemForm,
-  M3u8DLArgs,
-  MediaGoArgs,
-  VideoDetail,
-};
