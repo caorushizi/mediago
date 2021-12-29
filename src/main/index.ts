@@ -13,7 +13,7 @@ import {
 } from "main/variables";
 import createSession from "main/session";
 import { URL } from "url";
-import { readFile } from "fs";
+import { readFile, readFileSync } from "fs";
 import path from "path";
 
 if (require("electron-squirrel-startup")) {
@@ -54,6 +54,10 @@ app.whenReady().then(() => {
           error,
           "\n"
         );
+        const data = readFileSync(
+          path.join(__dirname, "../renderer/index.html")
+        );
+        callback({ mimeType: "text/html", data });
       } else {
         const extension = path.extname(pathName).toLowerCase();
         let mimeType = "";

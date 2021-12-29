@@ -8,7 +8,7 @@ windowList.set(Windows.MAIN_WINDOW, {
   url:
     process.env.NODE_ENV === "development"
       ? "http://localhost:7789/main"
-      : "mediago://renderer/index.html/main",
+      : "mediago://index.html/main",
   options(): Electron.BrowserWindowConstructorOptions {
     return {
       width: 800,
@@ -38,7 +38,7 @@ windowList.set(Windows.BROWSER_WINDOW, {
   url:
     process.env.NODE_ENV === "development"
       ? "http://localhost:7789/browser"
-      : "mediago://renderer/index.html/browser",
+      : "mediago://index.html/browser",
   options(): Electron.BrowserWindowConstructorOptions {
     return {
       width: 800,

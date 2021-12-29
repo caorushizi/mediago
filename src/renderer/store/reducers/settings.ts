@@ -1,8 +1,8 @@
 import {
+  Settings,
   SettingsUnionType,
   UPDATE_SETTINGS,
 } from "../actions/settings.actions";
-import { Settings } from "renderer/store/models/settings";
 
 const initialState: Settings = {
   workspace: "",
