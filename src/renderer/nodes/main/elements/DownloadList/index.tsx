@@ -3,6 +3,7 @@ import React, {
   ReactNode,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { FixedSizeList as List } from "react-window";
@@ -117,10 +118,9 @@ const DownloadList: React.FC<Props> = ({
   const [maxWidth, setMaxWidth] = useState<number>(winWidth);
   const [currentSourceItem, setCurrentSourceItem] = useState<SourceItem>();
   const settings = useSelector<AppState, Settings>((state) => state.settings);
-  const { notifyCount } = useSelector<AppState, MainState>(
-    (state) => state.main
-  );
   const dispatch = useDispatch();
+  const tableDataRef = useRef<SourceItem[]>([]);
+  tableDataRef.current = tableData;
   const {
     itemContextMenu,
     addEventListener,
@@ -181,7 +181,7 @@ const DownloadList: React.FC<Props> = ({
     await updateTableData();
   };
   const contextMenuClearAll = async () => {
-    const keys = tableData.map((item) => item.url);
+    const keys = tableDataRef.current.map((item) => item.url);
     await removeVideos(keys);
     await updateTableData();
   };
