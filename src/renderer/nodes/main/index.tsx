@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import "./index.scss";
 import { Badge, Button, Drawer, message, Tabs } from "antd";
 import WindowToolBar from "renderer/components/WindowToolBar";
@@ -13,11 +13,17 @@ import {
 import audioSrc from "../../assets/tip.mp3";
 import onEvent from "renderer/utils/td-utils";
 import { useDispatch, useSelector } from "react-redux";
-import { updateSettings } from "renderer/store/actions/settings.actions";
+import {
+  Settings,
+  updateSettings,
+} from "renderer/store/actions/settings.actions";
 import { AppState } from "renderer/store/reducers";
-import { Settings } from "renderer/store/models/settings";
 import useElectron from "renderer/hooks/electron";
 import NewDownloadList from "renderer/nodes/main/elements/DownloadList";
+import {
+  MainState,
+  updateNotifyCount,
+} from "renderer/store/actions/main.actions";
 
 const audio = new Audio(audioSrc);
 
@@ -30,11 +36,15 @@ const { TabPane } = Tabs;
 
 const MainPage: FC = () => {
   const [isDrawerVisible, setIsDrawerVisible] = useState<boolean>(false);
-  const [notifyCount, setNotifyCount] = useState<number>(0);
   const [tableData, setTableData] = useState<SourceItem[]>([]);
   const [activeKey, setActiveKey] = useState<TabKey>(TabKey.HomeTab);
   const dispatch = useDispatch();
   const settings = useSelector<AppState, Settings>((state) => state.settings);
+  const countRef = useRef(0);
+  const { notifyCount } = useSelector<AppState, MainState>(
+    (state) => state.main
+  );
+  countRef.current = notifyCount;
   const { workspace } = settings;
   const {
     addEventListener,
@@ -79,7 +89,8 @@ const MainPage: FC = () => {
     const tableData = await getVideos();
 
     setTableData(tableData);
-    setNotifyCount((count) => count + 1);
+
+    dispatch(updateNotifyCount(countRef.current + 1));
   };
 
   const handleDrawerClose = (): void => {
@@ -89,7 +100,7 @@ const MainPage: FC = () => {
   // 首页面板切换事件
   const onTabChange = (activeKey: TabKey): void => {
     if (activeKey === TabKey.HomeTab) {
-      setNotifyCount(0);
+      dispatch(updateNotifyCount(0));
     }
   };
 

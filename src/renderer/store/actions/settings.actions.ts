@@ -1,4 +1,10 @@
-import { Settings } from "renderer/store/models/settings";
+export interface Settings {
+  workspace: string;
+  tip: boolean;
+  proxy: string;
+  useProxy: boolean;
+  exeFile: string;
+}
 
 export const UPDATE_SETTINGS = "UPDATE_SETTINGS";
 

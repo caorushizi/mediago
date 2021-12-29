@@ -1,13 +1,11 @@
 import React, {
-  ComponentType,
   DragEvent as ReactDragEvent,
   ReactNode,
   useCallback,
   useEffect,
-  useRef,
   useState,
 } from "react";
-import { FixedSizeList as List, ListChildComponentProps } from "react-window";
+import { FixedSizeList as List } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { Resizable } from "re-resizable";
 import "./index.scss";
@@ -19,7 +17,6 @@ import {
   Dropdown,
   Empty,
   Form,
-  FormInstance,
   Input,
   Menu,
   Modal,
@@ -31,11 +28,8 @@ import onEvent from "renderer/utils/td-utils";
 import {
   AppstoreAddOutlined,
   BlockOutlined,
-  DownloadOutlined,
-  FolderOpenOutlined,
   PlusOutlined,
   QuestionCircleOutlined,
-  ReloadOutlined,
 } from "@ant-design/icons";
 import { helpUrl } from "renderer/utils/variables";
 import { processHeaders } from "renderer/utils/utils";
@@ -47,18 +41,20 @@ import {
   removeVideo,
   removeVideos,
   updateVideoStatus,
-  updateVideoTitle,
-  updateVideoUrl,
 } from "renderer/utils/localforge";
 import { ModalForm, ProFormText, ProFormTextArea } from "@ant-design/pro-form";
 import { isUrl } from "renderer/utils";
-import { useSelector } from "react-redux";
-import { Settings } from "renderer/store/models/settings";
+import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "renderer/store/reducers";
 import { FileDrop } from "react-file-drop";
 import ProForm from "@ant-design/pro-form";
 import useElectron from "renderer/hooks/electron";
 import { nanoid } from "nanoid";
+import { Settings } from "renderer/store/actions/settings.actions";
+import {
+  MainState,
+  updateNotifyCount,
+} from "renderer/store/actions/main.actions";
 
 type ActionButton = {
   key: string;
@@ -121,6 +117,10 @@ const DownloadList: React.FC<Props> = ({
   const [maxWidth, setMaxWidth] = useState<number>(winWidth);
   const [currentSourceItem, setCurrentSourceItem] = useState<SourceItem>();
   const settings = useSelector<AppState, Settings>((state) => state.settings);
+  const { notifyCount } = useSelector<AppState, MainState>(
+    (state) => state.main
+  );
+  const dispatch = useDispatch();
   const {
     itemContextMenu,
     addEventListener,
@@ -180,9 +180,10 @@ const DownloadList: React.FC<Props> = ({
     await removeVideo(item.url);
     await updateTableData();
   };
-  const contextMenuClearAll = () => {
+  const contextMenuClearAll = async () => {
     const keys = tableData.map((item) => item.url);
-    removeVideos(keys);
+    await removeVideos(keys);
+    await updateTableData();
   };
 
   const initData = async () => {
@@ -643,6 +644,7 @@ const DownloadList: React.FC<Props> = ({
                                 preProcessFormData(item)
                               );
                               calcMaxWidth();
+                              dispatch(updateNotifyCount(0));
                             }}
                           >
                             {item.title}
