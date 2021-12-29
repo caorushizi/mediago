@@ -1,7 +1,6 @@
 import windowManager from "main/window/windowManager";
 import { BrowserView } from "electron";
 import { log } from "main/utils";
-import { SourceUrl } from "types/common";
 import { webviewPartition, Windows } from "main/variables";
 import { nanoid } from "nanoid";
 

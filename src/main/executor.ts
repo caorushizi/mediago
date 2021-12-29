@@ -1,4 +1,3 @@
-import { M3u8DLArgs, MediaGoArgs } from "types/common";
 import semver from "semver";
 import { globWrapper, log, spawnWrapper } from "main/utils";
 import { binDir } from "main/variables";
