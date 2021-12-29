@@ -9,14 +9,12 @@ import ProForm, {
 } from "@ant-design/pro-form";
 import { FolderOpenOutlined } from "@ant-design/icons";
 import { AppState } from "renderer/store/reducers";
-import { updateSettings } from "renderer/store/actions/settings.actions";
+import {
+  Settings,
+  updateSettings,
+} from "renderer/store/actions/settings.actions";
 import { useDispatch, useSelector } from "react-redux";
 import { Box } from "@chakra-ui/react";
-import { Settings } from "renderer/store/models/settings";
-
-interface State {
-  proxyChecked: boolean;
-}
 
 interface FormData {
   exeFile: string;
