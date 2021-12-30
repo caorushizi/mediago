@@ -29,6 +29,7 @@ import onEvent from "renderer/utils/td-utils";
 import {
   AppstoreAddOutlined,
   BlockOutlined,
+  CloseOutlined,
   PlusOutlined,
   QuestionCircleOutlined,
 } from "@ant-design/icons";
@@ -52,10 +53,8 @@ import ProForm from "@ant-design/pro-form";
 import useElectron from "renderer/hooks/electron";
 import { nanoid } from "nanoid";
 import { Settings } from "renderer/store/actions/settings.actions";
-import {
-  MainState,
-  updateNotifyCount,
-} from "renderer/store/actions/main.actions";
+import { updateNotifyCount } from "renderer/store/actions/main.actions";
+import HeaderEdit from "renderer/components/HeaderEdit";
 
 type ActionButton = {
   key: string;
@@ -116,7 +115,10 @@ const DownloadList: React.FC<Props> = ({
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [favsList, setFavsList] = useState<Fav[]>([]);
   const [maxWidth, setMaxWidth] = useState<number>(winWidth);
-  const [currentSourceItem, setCurrentSourceItem] = useState<SourceItem>();
+  const [
+    currentSourceItem,
+    setCurrentSourceItem,
+  ] = useState<SourceItem | null>();
   const settings = useSelector<AppState, Settings>((state) => state.settings);
   const dispatch = useDispatch();
   const tableDataRef = useRef<SourceItem[]>([]);
@@ -603,6 +605,9 @@ const DownloadList: React.FC<Props> = ({
               minHeight={"100%"}
               minWidth={currentSourceItem ? "350px" : "100%"}
               maxWidth={currentSourceItem ? maxWidth : "100%"}
+              style={{
+                borderRight: "1px solid rgb(235, 238, 245)",
+              }}
             >
               <AutoSizer className={"new-download-list"}>
                 {({ height, width }) => (
@@ -661,14 +666,29 @@ const DownloadList: React.FC<Props> = ({
             {currentSourceItem && (
               <Box
                 p={15}
+                pt={0}
                 height={"100%"}
                 flex={1}
                 overflowY={"auto"}
                 minW={"300px"}
               >
+                <Box
+                  display={"flex"}
+                  alignItems={"center"}
+                  justifyContent={"flex-end"}
+                  h={40}
+                >
+                  <Button
+                    size={"small"}
+                    icon={<CloseOutlined />}
+                    type={"link"}
+                    onClick={() => {
+                      setCurrentSourceItem(null);
+                    }}
+                  />
+                </Box>
                 <ProForm
                   form={detailForm}
-                  size={"small"}
                   layout={"horizontal"}
                   submitter={{
                     searchConfig: {
@@ -687,31 +707,27 @@ const DownloadList: React.FC<Props> = ({
                     },
                   }}
                 >
-                  <ProForm.Group>
-                    <ProFormText
-                      name={"title"}
-                      label="视频名称"
-                      placeholder="请输入视频名称"
-                    />
-                    <ProFormText
-                      name={"url"}
-                      label="请求地址"
-                      placeholder="请输入请求地址"
-                    />
-                  </ProForm.Group>
-                  <ProForm.Group>
-                    <ProFormText
-                      name={"workspace"}
-                      label="本地路径"
-                      placeholder="请输入本地路径"
-                    />
-                    <ProFormText
-                      name={"exeFile"}
-                      label="执行程序"
-                      placeholder="请选择可执行程序"
-                    />
-                  </ProForm.Group>
-                  <ProFormTextArea label={"请求标头"} name={"headers"} />
+                  <ProFormText
+                    name={"title"}
+                    label="视频名称"
+                    placeholder="请输入视频名称"
+                  />
+                  <ProFormText
+                    name={"url"}
+                    label="请求地址"
+                    placeholder="请输入请求地址"
+                  />
+                  <ProFormText
+                    name={"workspace"}
+                    label="本地路径"
+                    placeholder="请输入本地路径"
+                  />
+                  <ProFormText
+                    name={"exeFile"}
+                    label="执行程序"
+                    placeholder="请选择可执行程序"
+                  />
+                  <HeaderEdit label={"请求标头"} name={"headers"} />
                 </ProForm>
               </Box>
             )}

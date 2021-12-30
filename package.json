@@ -11,7 +11,8 @@
     "watch": "cross-env NODE_ENV=development node script/watch.js",
     "electron": "cross-env NODE_ENV=production electron .",
     "pack": "electron-builder --dir",
-    "build": "electron-builder"
+    "build": "electron-builder",
+    "publish": "npm run dist && npm run build"
   },
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
@@ -70,6 +71,7 @@
     "dotenv": "^8.2.0",
     "electron": "16.0.4",
     "electron-builder": "^22.14.2",
+    "electron-updater": "^4.6.1",
     "esbuild": "^0.9.5",
     "eslint": "^7.5.0",
     "eslint-config-prettier": "^8.1.0",
