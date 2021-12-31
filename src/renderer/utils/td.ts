@@ -1,3 +1,5 @@
+import { version } from "../../../package.json";
+
 const onEvent = (eventId: string, mapKv: any = {}): void => {
   try {
     window.TDAPP.onEvent(eventId, "", mapKv);
@@ -9,12 +11,13 @@ const onEvent = (eventId: string, mapKv: any = {}): void => {
 
 const init = (): void => {
   const appId = import.meta.env.VITE_APP_TDID;
-  const vn = import.meta.env.VITE_APP_TDVN;
-  const vc = import.meta.env.VITE_APP_TDVC;
+  let vn = `${version}开发版`;
+  const vc = `${version}`;
+  if (process.env.NODE_ENV === "production") {
+    vn = `${version}生产版`;
+  }
   const script = document.createElement("script");
-  const src = `https://jic.talkingdata.com/app/h5/v1?appid=${appId}&vn=${vn}&vc=${vc}`;
-  script.src = src;
-  console.info("埋点地址是：", src);
+  script.src = `https://jic.talkingdata.com/app/h5/v1?appid=${appId}&vn=${vn}&vc=${vc}`;
   const headElement = document.getElementsByTagName("head")[0];
   headElement.appendChild(script);
 };

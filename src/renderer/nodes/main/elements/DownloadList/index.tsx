@@ -127,6 +127,7 @@ const DownloadList: React.FC<Props> = ({
     itemContextMenu,
     addEventListener,
     removeEventListener,
+    ipcExec,
   } = useElectron();
   const { exeFile } = settings;
   const [formRef] = Form.useForm();
@@ -166,7 +167,7 @@ const DownloadList: React.FC<Props> = ({
     item: SourceItem
   ) => {
     setCurrentSourceItem(item);
-    detailForm.setFieldsValue(preProcessFormData(item));
+    detailForm.setFieldsValue(item);
     calcMaxWidth();
   };
   const contextMenuDownload = (
@@ -191,26 +192,6 @@ const DownloadList: React.FC<Props> = ({
   const initData = async () => {
     const favs = await getFavs();
     setFavsList(favs);
-  };
-
-  // 表单数据预处理
-  const preProcessFormData = (data: SourceItem) => {
-    const formatter = (key: string, value: any) => {
-      switch (key) {
-        // case "headers":
-        //   return Object.entries(value)
-        //     .map(([key, value]) => `${key}:${value}`)
-        //     .join("\n");
-        default:
-          return value;
-      }
-    };
-
-    const result: Record<string, any> = {};
-    Object.keys(data).forEach((key) => {
-      result[key] = formatter(key, data[key as keyof SourceItem]);
-    });
-    return result;
   };
 
   // 渲染视频下载的状态
@@ -238,12 +219,6 @@ const DownloadList: React.FC<Props> = ({
   const openBrowser = () => {
     onEvent.mainPageOpenBrowserPage();
     window.electron.openBrowserWindow();
-  };
-
-  // 打开使用帮助
-  const openHelp = () => {
-    onEvent.mainPageHelp();
-    window.electron.openExternal(helpUrl);
   };
 
   // 向列表中插入一条数据并且请求详情
@@ -354,7 +329,7 @@ const DownloadList: React.FC<Props> = ({
       };
     }
 
-    const { code, msg } = await window.electron.ipcExec(exeFile, args);
+    const { code, msg } = await ipcExec(exeFile, args);
     if (code === 0) {
       await changeSourceStatus(item, SourceStatus.Success);
       onEvent.mainPageDownloadSuccess({ msg, url, exeFile });
@@ -444,23 +419,24 @@ const DownloadList: React.FC<Props> = ({
     return (
       <Box p={10} borderBottom={"1px solid #EBEEF5"}>
         <Space>
-          <Button key={"1"} onClick={newDownload}>
-            <AppstoreAddOutlined />
+          <Button
+            key={"1"}
+            onClick={newDownload}
+            icon={<AppstoreAddOutlined />}
+            size={"middle"}
+          >
             新建下载
           </Button>
           <Dropdown.Button
+            size={"middle"}
             key={"2"}
             trigger={["click"]}
             onClick={openBrowser}
             overlay={browserMenu}
+            icon={<BlockOutlined />}
           >
-            <BlockOutlined />
             打开浏览器
           </Dropdown.Button>
-          <Button key={"4"} onClick={openHelp}>
-            <QuestionCircleOutlined />
-            使用帮助
-          </Button>
         </Space>
       </Box>
     );
@@ -645,9 +621,7 @@ const DownloadList: React.FC<Props> = ({
                             className={"list-item-inner"}
                             onClick={() => {
                               setCurrentSourceItem(item);
-                              detailForm.setFieldsValue(
-                                preProcessFormData(item)
-                              );
+                              detailForm.setFieldsValue(item);
                               calcMaxWidth();
                               dispatch(updateNotifyCount(0));
                             }}
@@ -756,11 +730,6 @@ const DownloadList: React.FC<Props> = ({
                   或者
                   <Button type={"link"} onClick={openBrowser}>
                     打开浏览器
-                  </Button>
-                  <br />
-                  或者
-                  <Button type={"link"} onClick={openHelp}>
-                    查看帮助
                   </Button>
                 </span>
               }

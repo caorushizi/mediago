@@ -38,15 +38,19 @@ const BrowserWindow: FC = () => {
     browserViewGoBack,
     browserViewReload,
     browserViewLoadURL,
+    addEventListener,
+    setBrowserViewRect,
+    removeEventListener,
+    closeBrowserWindow,
   } = useElectron();
 
   useEffect(() => {
     initWebView();
-    window.electron.addEventListener("dom-ready", handleViewDOMReady);
+    addEventListener("dom-ready", handleViewDOMReady);
 
     return () => {
-      window.electron.setBrowserViewRect({ x: 0, y: 0, height: 0, width: 0 });
-      window.electron.removeEventListener("dom-ready", handleViewDOMReady);
+      setBrowserViewRect({ x: 0, y: 0, height: 0, width: 0 });
+      removeEventListener("dom-ready", handleViewDOMReady);
       resizeObserver.current?.disconnect();
     };
   }, []);
@@ -65,7 +69,7 @@ const BrowserWindow: FC = () => {
   const initWebView = () => {
     if (webviewRef.current) {
       const rect = computeRect(webviewRef.current.getBoundingClientRect());
-      window.electron.setBrowserViewRect(rect);
+      setBrowserViewRect(rect);
 
       // 监控 webview 元素的大小
       resizeObserver.current = new ResizeObserver((entries) => {
@@ -73,7 +77,7 @@ const BrowserWindow: FC = () => {
         const viewRect = computeRect(entry.contentRect);
         viewRect.x += rect.x;
         viewRect.y += rect.y;
-        window.electron.setBrowserViewRect(viewRect);
+        setBrowserViewRect(viewRect);
       });
 
       resizeObserver.current.observe(webviewRef.current);
@@ -116,7 +120,7 @@ const BrowserWindow: FC = () => {
     <div className="browser-window">
       <WindowToolBar
         onClose={() => {
-          window.electron.closeBrowserWindow();
+          closeBrowserWindow();
         }}
       >
         {title}

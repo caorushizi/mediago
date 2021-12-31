@@ -3,7 +3,6 @@ import "./index.scss";
 import { Badge, Button, Drawer, message, Tabs } from "antd";
 import WindowToolBar from "renderer/components/WindowToolBar";
 import Setting from "renderer/nodes/main/elements/Setting";
-import Comment from "renderer/components/Comment";
 import { SourceStatus, SourceType } from "renderer/types";
 import {
   getVideos,
@@ -24,6 +23,8 @@ import {
   MainState,
   updateNotifyCount,
 } from "renderer/store/actions/main.actions";
+import { QuestionCircleOutlined } from "@ant-design/icons";
+import { helpUrl } from "renderer/utils/variables";
 
 const audio = new Audio(audioSrc);
 
@@ -35,7 +36,6 @@ enum TabKey {
 const { TabPane } = Tabs;
 
 const MainPage: FC = () => {
-  const [isDrawerVisible, setIsDrawerVisible] = useState<boolean>(false);
   const [tableData, setTableData] = useState<SourceItem[]>([]);
   const [activeKey, setActiveKey] = useState<TabKey>(TabKey.HomeTab);
   const dispatch = useDispatch();
@@ -50,6 +50,7 @@ const MainPage: FC = () => {
     addEventListener,
     removeEventListener,
     closeMainWindow,
+    store,
   } = useElectron();
 
   useEffect(() => {
@@ -64,7 +65,7 @@ const MainPage: FC = () => {
   const initData = async () => {
     // 开始初始化表格数据
     const tableData = await getVideos();
-    const initialSettings = await window.electron.store.get();
+    const initialSettings = await store.get();
     dispatch(updateSettings(initialSettings));
     setTableData(tableData);
     setActiveKey(
@@ -93,15 +94,17 @@ const MainPage: FC = () => {
     dispatch(updateNotifyCount(countRef.current + 1));
   };
 
-  const handleDrawerClose = (): void => {
-    setIsDrawerVisible(false);
-  };
-
   // 首页面板切换事件
   const onTabChange = (activeKey: TabKey): void => {
     if (activeKey === TabKey.HomeTab) {
       dispatch(updateNotifyCount(0));
     }
+  };
+
+  // 打开使用帮助
+  const openHelp = () => {
+    onEvent.mainPageHelp();
+    window.electron.openExternal(helpUrl);
   };
 
   // 首页面板点击事件
@@ -176,27 +179,13 @@ const MainPage: FC = () => {
         </Tabs>
       </div>
 
-      <Drawer
-        title="评论反馈"
-        placement="right"
-        closable={false}
-        width={500}
-        onClose={handleDrawerClose}
-        visible={isDrawerVisible}
-        className="comment-drawer"
-      >
-        <Comment />
-      </Drawer>
-
       <div className="toolbar">
         <Button
-          type="link"
-          onClick={() => {
-            onEvent.mainPageOpenComment();
-            setIsDrawerVisible(true);
-          }}
+          type={"link"}
+          onClick={openHelp}
+          icon={<QuestionCircleOutlined />}
         >
-          评论反馈
+          使用帮助
         </Button>
       </div>
     </div>
