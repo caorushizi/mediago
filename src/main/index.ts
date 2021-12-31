@@ -1,10 +1,19 @@
-import { app, BrowserWindow, protocol, session } from "electron";
-import { resolve } from "path";
+import { join, extname } from "path";
+import { readFile, readFileSync } from "fs";
+import { URL } from "url";
+
+import { app, BrowserWindow, protocol } from "electron";
+import installExtension, {
+  REACT_DEVELOPER_TOOLS,
+  REDUX_DEVTOOLS,
+} from "electron-devtools-installer";
+import { autoUpdater } from "electron-updater";
+import Store from "electron-store";
+
 import { log } from "main/utils";
 import windowManager from "main/window/windowManager";
 import handleIpc from "main/handleIpc";
 import createBrowserView from "main/browserView";
-import Store from "electron-store";
 import {
   defaultScheme,
   webviewPartition,
@@ -12,9 +21,6 @@ import {
   workspace,
 } from "main/variables";
 import createSession from "main/session";
-import { URL } from "url";
-import { readFile, readFileSync } from "fs";
-import path from "path";
 
 if (require("electron-squirrel-startup")) {
   app.quit();
@@ -42,24 +48,25 @@ protocol.registerSchemesAsPrivileged([
   },
 ]);
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  autoUpdater.logger = log;
+  autoUpdater.checkForUpdatesAndNotify();
+
   protocol.registerBufferProtocol(defaultScheme, (request, callback) => {
     let pathName = new URL(request.url).pathname;
     pathName = decodeURI(pathName);
 
-    readFile(path.join(__dirname, "../renderer", pathName), (error, data) => {
+    readFile(join(__dirname, "../renderer", pathName), (error, data) => {
       if (error) {
         console.error(
           `Failed to register ${webviewPartition} protocol\n`,
           error,
           "\n"
         );
-        const data = readFileSync(
-          path.join(__dirname, "../renderer/index.html")
-        );
+        const data = readFileSync(join(__dirname, "../renderer/index.html"));
         callback({ mimeType: "text/html", data });
       } else {
-        const extension = path.extname(pathName).toLowerCase();
+        const extension = extname(pathName).toLowerCase();
         let mimeType = "";
 
         if (extension === ".js") {
@@ -90,10 +97,8 @@ app.whenReady().then(() => {
 
   if (process.env.NODE_ENV === "development") {
     try {
-      const reactTool = resolve(__dirname, "../../devtools/react");
-      session.defaultSession.loadExtension(reactTool);
-      const reduxTool = resolve(__dirname, "../../devtools/redux");
-      session.defaultSession.loadExtension(reduxTool);
+      await installExtension(REACT_DEVELOPER_TOOLS);
+      await installExtension(REDUX_DEVTOOLS);
     } catch (e) {
       log.info(e);
     }
