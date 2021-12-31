@@ -24,6 +24,7 @@
     "antd": "^4.17.2",
     "classnames": "^2.3.1",
     "connected-react-router": "^6.9.1",
+    "electron-devtools-installer": "^3.2.0",
     "electron-log": "^4.3.2",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^7.0.2",
@@ -93,6 +94,7 @@
     "productName": "在线视频下载",
     "appId": "mediago.ziying.site",
     "copyright": "caorushizi",
+    "artifactName": "media-downloader-setup-${version}.${ext}",
     "directories": {
       "output": "build"
     },
