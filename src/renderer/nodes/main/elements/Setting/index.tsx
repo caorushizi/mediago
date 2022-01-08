@@ -43,7 +43,6 @@ const Setting: FC = () => {
   const dispatch = useDispatch();
   const formRef = useRef<FormInstance<FormData>>();
   const [proxyChecked, setProxyChecked] = useState<boolean>(false);
-  console.log("settings: ", settings);
 
   useEffect(() => {
     const { useProxy } = settings;

@@ -4,9 +4,14 @@ const rimraf = require("rimraf");
 
 rimraf.sync(resolve(__dirname, "../dist"));
 
-require("dotenv").config({
-  path: resolve(__dirname, `.env.${process.env.NODE_ENV}`),
+const { parsed } = require("dotenv").config({
+  path: resolve(__dirname, `../.env.${process.env.NODE_ENV}.local`),
 });
+
+const mainDefined = Object.keys(parsed).reduce((prev, cur) => {
+  prev[`process.env.${[cur]}`] = JSON.stringify(parsed[cur]);
+  return prev;
+}, {});
 
 function buildMain() {
   return require("esbuild").build({
@@ -21,6 +26,9 @@ function buildMain() {
     external: ["electron"],
     outdir: resolve(__dirname, "../dist"),
     loader: { ".png": "file" },
+    define: {
+      ...mainDefined,
+    },
   });
 }
 

@@ -1,25 +1,28 @@
 import { version } from "../../../package.json";
 
-const onEvent = (eventId: string, mapKv: any = {}): void => {
-  try {
+const isProd = process.env.NODE_ENV === "production";
+
+class TDEvent {
+  appId?: string | boolean;
+  vn: string;
+  vc: string;
+
+  constructor() {
+    this.appId = import.meta.env.VITE_APP_TDID;
+    this.vn = isProd ? `${version}生产版` : `${version}开发版`;
+    this.vc = `${version}`;
+  }
+
+  init() {
+    const script = document.createElement("script");
+    script.src = `https://jic.talkingdata.com/app/h5/v1?appid=${this.appId}&vn=${this.vn}&vc=${this.vc}`;
+    const headElement = document.getElementsByTagName("head")[0];
+    headElement.appendChild(script);
+  }
+
+  onEvent(eventId: string, mapKv: any = {}) {
     window.TDAPP.onEvent(eventId, "", mapKv);
-    console.log(`添加埋点成功：${eventId}`, mapKv);
-  } catch (err) {
-    console.warn(`添加埋点失败：${eventId}`, err);
   }
-};
+}
 
-const init = (): void => {
-  const appId = import.meta.env.VITE_APP_TDID;
-  let vn = `${version}开发版`;
-  const vc = `${version}`;
-  if (process.env.NODE_ENV === "production") {
-    vn = `${version}生产版`;
-  }
-  const script = document.createElement("script");
-  script.src = `https://jic.talkingdata.com/app/h5/v1?appid=${appId}&vn=${vn}&vc=${vc}`;
-  const headElement = document.getElementsByTagName("head")[0];
-  headElement.appendChild(script);
-};
-
-export default { onEvent, init };
+export default new TDEvent();

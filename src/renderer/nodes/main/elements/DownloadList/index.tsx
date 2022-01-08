@@ -555,7 +555,6 @@ const DownloadList: React.FC<Props> = ({
     files: FileList | null,
     event: ReactDragEvent<HTMLDivElement>
   ) => {
-    console.log(files, event);
     if (files?.length === 1) {
       // 只有一个文件被拽入
       await setIsModalVisible(true);

@@ -5,13 +5,12 @@ const electron = require("electron");
 const reactRefresh = require("@vitejs/plugin-react-refresh");
 const path = require("path");
 const { spawn } = require("child_process");
-// const eslint = require("@rollup/plugin-eslint");
 
 let electronProcess = null;
 let manualRestart = false;
 
 require("dotenv").config({
-  path: resolve(__dirname, `.env.${process.env.NODE_ENV}`),
+  path: resolve(__dirname, `../.env.${process.env.NODE_ENV}.local`),
 });
 
 function startMain() {
@@ -71,16 +70,7 @@ function startRenderer() {
         { find: /^~/, replacement: "" },
       ],
     },
-    plugins: [
-      // {
-      //   ...eslint({
-      //     include: "**/*.+(js|jsx|ts|tsx)",
-      //   }),
-      //   enforce: "pre",
-      //   apply: "serve",
-      // },
-      reactRefresh(),
-    ],
+    plugins: [reactRefresh()],
     css: {
       preprocessorOptions: {
         less: {
@@ -120,8 +110,9 @@ function electronLog(data, color) {
 
 (async () => {
   try {
-    const [server] = await Promise.all([startRenderer(), startMain()]);
+    const server = await startRenderer();
     await server.listen();
+    await startMain();
     startElectron();
   } catch (e) {
     console.error(e);
