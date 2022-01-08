@@ -12,7 +12,8 @@
     "electron": "cross-env NODE_ENV=production electron .",
     "pack": "electron-builder --dir",
     "build": "electron-builder",
-    "publish": "npm run dist && npm run build"
+    "publish": "npm run dist && npm run build",
+    "build-debug": "npm run dist && npm run pack && ./build/win-unpacked/在线视频下载.exe"
   },
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
@@ -21,6 +22,9 @@
     "@chakra-ui/react": "^1.7.2",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
+    "@sentry/electron": "^2.5.4",
+    "@sentry/react": "^6.16.1",
+    "@sentry/tracing": "^6.16.1",
     "antd": "^4.17.2",
     "classnames": "^2.3.1",
     "connected-react-router": "^6.9.1",
@@ -107,6 +111,7 @@
     ],
     "win": {
       "icon": "assets/icon.ico",
+      "requestedExecutionLevel": "requireAdministrator",
       "target": [
         {
           "target": "nsis"

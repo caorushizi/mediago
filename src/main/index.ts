@@ -1,26 +1,26 @@
 import { join, extname } from "path";
 import { readFile, readFileSync } from "fs";
 import { URL } from "url";
-
-import { app, BrowserWindow, protocol } from "electron";
-import installExtension, {
-  REACT_DEVELOPER_TOOLS,
-  REDUX_DEVTOOLS,
-} from "electron-devtools-installer";
+import { app, BrowserWindow, protocol, crashReporter } from "electron";
 import { autoUpdater } from "electron-updater";
-import Store from "electron-store";
-
 import { log } from "main/utils";
-import windowManager from "main/window/windowManager";
-import handleIpc from "main/handleIpc";
-import createBrowserView from "main/browserView";
-import {
-  defaultScheme,
-  webviewPartition,
-  Windows,
-  workspace,
-} from "main/variables";
+import handleIpc from "main/helper/handleIpc";
+import { defaultScheme, webviewPartition } from "main/variables";
 import createSession from "main/session";
+import handleStore from "main/helper/handleStore";
+import handleExtension from "main/helper/handleExtension";
+import handleWindows from "main/helper/handleWindows";
+import * as Sentry from "@sentry/electron/dist/main";
+import { name, author } from "../../package.json";
+
+Sentry.init({ dsn: process.env.VITE_APP_SENTRY_DSN });
+
+crashReporter.start({
+  companyName: author,
+  productName: name,
+  ignoreSystemCrashHandler: true,
+  submitURL: process.env.VITE_APP_SENTRY_DSN,
+});
 
 if (require("electron-squirrel-startup")) {
   app.quit();
@@ -31,12 +31,6 @@ app.on("window-all-closed", () => {
     app.quit();
   }
 });
-
-const init = async (webviewSession: Electron.Session) => {
-  windowManager.create(Windows.MAIN_WINDOW);
-  await windowManager.create(Windows.BROWSER_WINDOW);
-  await createBrowserView(webviewSession);
-};
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -89,44 +83,17 @@ app.whenReady().then(async () => {
   const webviewSession = createSession(webviewPartition);
   app.on("activate", async () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      await init(webviewSession);
+      await handleWindows(webviewSession);
     }
   });
 
-  init(webviewSession);
-
-  if (process.env.NODE_ENV === "development") {
-    try {
-      await installExtension(REACT_DEVELOPER_TOOLS);
-      await installExtension(REDUX_DEVTOOLS);
-    } catch (e) {
-      log.info(e);
-    }
-  }
-
-  let exeFile = "";
-  if (process.platform === "win32") {
-    exeFile = "N_m3u8DL-CLI";
-  } else {
-    exeFile = "mediago";
-  }
-
-  const store = new Store<AppStore>({
-    name: "config",
-    cwd: workspace,
-    fileExtension: "json",
-    watch: true,
-    defaults: {
-      workspace: "",
-      exeFile,
-      tip: true,
-      proxy: "",
-      useProxy: false,
-    },
-  });
+  handleWindows(webviewSession);
+  handleExtension();
+  handleStore();
+  handleIpc();
 
   const setProxy = () => {
-    const proxy = store.get("proxy");
+    const proxy = global.store.get("proxy");
     if (proxy) {
       log.info("proxy 设置成功");
       webviewSession.setProxy({ proxyRules: proxy });
@@ -137,15 +104,11 @@ app.whenReady().then(async () => {
 
   setProxy();
 
-  store.onDidChange("useProxy", (newValue) => {
+  global.store.onDidChange("useProxy", (newValue) => {
     try {
       if (newValue) setProxy();
     } catch (e: any) {
       log.error("设置代理失败：", e.message);
     }
   });
-
-  global.store = store;
 });
-
-handleIpc();

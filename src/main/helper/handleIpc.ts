@@ -1,6 +1,6 @@
 import { app, dialog, ipcMain, Menu, shell } from "electron";
-import { failFn, successFn } from "./utils";
-import windowManager from "./window/windowManager";
+import { failFn, successFn } from "../utils";
+import windowManager from "../window/windowManager";
 import executor from "main/executor";
 import request from "main/request";
 import { binDir, Windows } from "main/variables";

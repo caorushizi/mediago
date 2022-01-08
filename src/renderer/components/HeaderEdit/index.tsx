@@ -19,7 +19,6 @@ interface PriceInputProps {
 // 编辑 header
 const HeaderFieldInput: FC<PriceInputProps> = ({ value, onChange }) => {
   const processHeader = useCallback((value?: Record<string, string>) => {
-    console.log("vale:", value);
     if (!value) return "";
     return Object.keys(value).map((key) => `${key}: ${value[key]}`);
   }, []);
@@ -54,8 +53,6 @@ const HeaderEdit: FC<HeaderEditProps> = ({
   name,
   placeholder,
 }) => {
-  console.log("value: ", valuePropName);
-  console.log("value: ", name);
   return (
     <Form.Item name={name} label={label} valuePropName={valuePropName}>
       <HeaderFieldInput />
