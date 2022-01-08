@@ -690,16 +690,6 @@ const DownloadList: React.FC<Props> = ({
                     label="请求地址"
                     placeholder="请输入请求地址"
                   />
-                  <ProFormText
-                    name={"workspace"}
-                    label="本地路径"
-                    placeholder="请输入本地路径"
-                  />
-                  <ProFormText
-                    name={"exeFile"}
-                    label="执行程序"
-                    placeholder="请选择可执行程序"
-                  />
                   <HeaderEdit label={"请求标头"} name={"headers"} />
                 </ProForm>
               </Box>
