@@ -51,14 +51,15 @@ const MainPage: FC = () => {
     removeEventListener,
     closeMainWindow,
     store,
+    minimize,
   } = useElectron();
 
   useEffect(() => {
     initData();
 
-    addEventListener("m3u8", handleWebViewMessage);
+    addEventListener("m3u8-notifier", handleWebViewMessage);
     return () => {
-      removeEventListener("m3u8", handleWebViewMessage);
+      removeEventListener("m3u8-notifier", handleWebViewMessage);
     };
   }, []);
 
@@ -148,6 +149,9 @@ const MainPage: FC = () => {
         color="#4090F7"
         onClose={() => {
           closeMainWindow();
+        }}
+        onMinimize={() => {
+          minimize("main");
         }}
       />
       <div className="main-window">

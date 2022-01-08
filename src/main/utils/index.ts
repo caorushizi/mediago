@@ -1,6 +1,6 @@
 import { spawn, SpawnOptions } from "child_process";
 import glob from "glob";
-import { workspace } from "main/variables";
+import { workspace } from "main/utils/variables";
 import spawnArgs from "main/utils/spawn-args";
 import log from "electron-log";
 import path from "path";
@@ -59,7 +59,7 @@ interface IpcResponse {
   data: any;
 }
 
-const successFn = (data: any): IpcResponse => ({ code: 0, msg: "", data });
+const successFn = (data: unknown): IpcResponse => ({ code: 0, msg: "", data });
 const failFn = (code: number, msg: string): IpcResponse => ({
   code,
   msg,

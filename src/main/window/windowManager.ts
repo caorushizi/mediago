@@ -1,7 +1,7 @@
 import { BrowserWindow } from "electron";
 import { IWindowListItem, IWindowManager } from "types/main";
 import windowList from "./windowList";
-import { Windows } from "../variables";
+import { Windows } from "../utils/variables";
 
 class WindowManager implements IWindowManager {
   private windowMap: Map<Windows | string, BrowserWindow> = new Map();

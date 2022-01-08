@@ -1,7 +1,10 @@
 import semver from "semver";
 import { globWrapper, log, spawnWrapper } from "main/utils";
-import { binDir } from "main/variables";
+import { binDir } from "main/utils/variables";
+import fs from "fs";
+import path from "path";
 
+// 找到可执行文件并进行参数拼接
 const execM3u8DL = async (args: M3u8DLArgs): Promise<string[]> => {
   let binNameList = await globWrapper("N_m3u8DL-CLI*.exe", {
     cwd: binDir,
@@ -12,6 +15,13 @@ const execM3u8DL = async (args: M3u8DLArgs): Promise<string[]> => {
     .sort((a, b) => (semver.gt(a, b) ? -1 : 1));
   if (binNameList.length === 0) throw new Error("没有找到 N_m3u8DL-CLI");
   const binName = `N_m3u8DL-CLI_v${binNameList[0]}`;
+
+  let binFileName = binName;
+  if (process.platform === "win32") {
+    binFileName = `${binName}.exe`;
+  }
+  const binExist = fs.existsSync(path.resolve(binDir, binFileName));
+  if (!binExist) throw new Error("没有找到 N_m3u8DL-CLI");
 
   let argsStr = Object.entries(args)
     .reduce((prev: string[], [key, value]) => {

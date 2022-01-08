@@ -13,7 +13,7 @@ const api: ElectronApi = {
   },
   isWindows: process.platform === "win32",
   isMacos: process.platform === "darwin",
-  ipcExec: (exeFile, args) => ipcRenderer.invoke("exec", exeFile, args),
+  ipcExec: (exeFile, args) => ipcRenderer.invoke("exec-command", exeFile, args),
   openBinDir: async () => {
     const binDir = await ipcRenderer.invoke("get-bin-dir");
     await shell.openPath(binDir);
@@ -47,6 +47,7 @@ const api: ElectronApi = {
   request: (options) => ipcRenderer.invoke("request", options),
   itemContextMenu: (item) =>
     ipcRenderer.send("open-download-item-context-menu", item),
+  minimize: (name) => ipcRenderer.send("window-minimize", name),
 };
 
 contextBridge.exposeInMainWorld(apiKey, api);

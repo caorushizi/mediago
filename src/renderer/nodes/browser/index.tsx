@@ -42,6 +42,7 @@ const BrowserWindow: FC = () => {
     setBrowserViewRect,
     removeEventListener,
     closeBrowserWindow,
+    minimize,
   } = useElectron();
 
   useEffect(() => {
@@ -121,6 +122,9 @@ const BrowserWindow: FC = () => {
       <WindowToolBar
         onClose={() => {
           closeBrowserWindow();
+        }}
+        onMinimize={() => {
+          minimize("");
         }}
       >
         {title}

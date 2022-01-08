@@ -1,6 +1,6 @@
 import windowManager from "main/window/windowManager";
-import { Windows } from "main/variables";
-import createBrowserView from "main/browserView";
+import { Windows } from "main/utils/variables";
+import createBrowserView from "main/utils/browserView";
 
 export default async function handleWindows(
   webviewSession: Electron.Session
