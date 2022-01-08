@@ -1,7 +1,7 @@
 import windowManager from "main/window/windowManager";
 import { BrowserView } from "electron";
 import { log } from "main/utils";
-import { webviewPartition, Windows } from "main/variables";
+import { webviewPartition, Windows } from "main/utils/variables";
 import { nanoid } from "nanoid";
 
 const createBrowserView = (session: Electron.Session): void => {
@@ -52,7 +52,7 @@ const createBrowserView = (session: Electron.Session): void => {
           headers: details.requestHeaders,
           duration: 0,
         };
-        mainWindow.send("m3u8", value);
+        mainWindow.send("m3u8-notifier", value);
         cancel = true;
       }
       callback({

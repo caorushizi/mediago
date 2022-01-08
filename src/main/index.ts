@@ -5,8 +5,8 @@ import { app, BrowserWindow, protocol, crashReporter } from "electron";
 import { autoUpdater } from "electron-updater";
 import { log } from "main/utils";
 import handleIpc from "main/helper/handleIpc";
-import { defaultScheme, webviewPartition } from "main/variables";
-import createSession from "main/session";
+import { defaultScheme, webviewPartition } from "main/utils/variables";
+import createSession from "main/utils/session";
 import handleStore from "main/helper/handleStore";
 import handleExtension from "main/helper/handleExtension";
 import handleWindows from "main/helper/handleWindows";
@@ -92,23 +92,28 @@ app.whenReady().then(async () => {
   handleStore();
   handleIpc();
 
-  const setProxy = () => {
-    const proxy = global.store.get("proxy");
-    if (proxy) {
-      log.info("proxy 设置成功");
-      webviewSession.setProxy({ proxyRules: proxy });
-    } else {
-      webviewSession.setProxy({});
+  // 设置软件代理
+  const setProxy = (isInit?: boolean) => {
+    try {
+      const proxy = global.store.get("proxy");
+      const useProxy = global.store.get("useProxy");
+      if (proxy && useProxy) {
+        log.info(
+          `[proxy] ${isInit ? "初始化" : "开启"}成功，代理地址为${proxy}`
+        );
+        webviewSession.setProxy({ proxyRules: proxy });
+      } else {
+        if (!isInit) log.info(`[proxy] 关闭成功`);
+        webviewSession.setProxy({});
+      }
+    } catch (e: any) {
+      log.error(
+        `[proxy] ${isInit ? "初始化" : ""}设置代理失败：\n${e.message}`
+      );
     }
   };
 
-  setProxy();
+  setProxy(true);
 
-  global.store.onDidChange("useProxy", (newValue) => {
-    try {
-      if (newValue) setProxy();
-    } catch (e: any) {
-      log.error("设置代理失败：", e.message);
-    }
-  });
+  global.store.onDidChange("useProxy", setProxy);
 });

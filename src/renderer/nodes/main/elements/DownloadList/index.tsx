@@ -20,6 +20,7 @@ import {
   Form,
   Input,
   Menu,
+  message,
   Modal,
   Space,
   Switch,
@@ -31,9 +32,7 @@ import {
   BlockOutlined,
   CloseOutlined,
   PlusOutlined,
-  QuestionCircleOutlined,
 } from "@ant-design/icons";
-import { helpUrl } from "renderer/utils/variables";
 import { processHeaders } from "renderer/utils/utils";
 import {
   getFavs,
@@ -44,7 +43,7 @@ import {
   removeVideos,
   updateVideoStatus,
 } from "renderer/utils/localforge";
-import { ModalForm, ProFormText, ProFormTextArea } from "@ant-design/pro-form";
+import { ModalForm, ProFormText } from "@ant-design/pro-form";
 import { isUrl } from "renderer/utils";
 import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "renderer/store/reducers";
@@ -149,7 +148,7 @@ const DownloadList: React.FC<Props> = ({
 
     return () => {
       window.removeEventListener("resize", calcMaxWidth);
-      removeEventListener("context-menu-command", contextMenuDetail);
+      removeEventListener("download-context-menu-detail", contextMenuDetail);
       removeEventListener(
         "download-context-menu-download",
         contextMenuDownload
@@ -180,12 +179,12 @@ const DownloadList: React.FC<Props> = ({
     event: Electron.IpcRendererEvent,
     item: SourceItem
   ) => {
-    await removeVideo(item.url);
+    await removeVideo(item.id);
     await updateTableData();
   };
   const contextMenuClearAll = async () => {
-    const keys = tableDataRef.current.map((item) => item.url);
-    await removeVideos(keys);
+    const ids = tableDataRef.current.map((item) => item.id);
+    await removeVideos(ids);
     await updateTableData();
   };
 
@@ -334,6 +333,7 @@ const DownloadList: React.FC<Props> = ({
       await changeSourceStatus(item, SourceStatus.Success);
       onEvent.mainPageDownloadSuccess({ msg, url, exeFile });
     } else {
+      message.error(msg);
       await changeSourceStatus(item, SourceStatus.Failed);
       onEvent.mainPageDownloadFail({ msg, url, exeFile });
     }
@@ -525,7 +525,7 @@ const DownloadList: React.FC<Props> = ({
       <Box display={"flex"}>
         {buttons.map((button) =>
           button.showTooltip ? (
-            <Tooltip title={button.tooltip}>
+            <Tooltip title={button.tooltip} placement={"left"}>
               <Box
                 pl={10}
                 key={button.key}

@@ -29,7 +29,7 @@ const updateVideoStatus = async (
   // fixme: 当数据量比较大的时候
   let videos = await localforage.getItem<SourceItem[]>(keys.videos);
   if (!Array.isArray(videos)) videos = [];
-  const findIndex = videos.findIndex((video) => source.url === video.url);
+  const findIndex = videos.findIndex((video) => source.id === video.id);
   if (findIndex >= 0) {
     videos.splice(findIndex, 1, { ...source, status });
     await localforage.setItem(keys.videos, videos);
@@ -39,7 +39,7 @@ const updateVideoStatus = async (
 const updateVideoTitle = async (source: SourceItem, title: string) => {
   let videos = await localforage.getItem<SourceItem[]>(keys.videos);
   if (!Array.isArray(videos)) videos = [];
-  const findIndex = videos.findIndex((video) => source.url === video.url);
+  const findIndex = videos.findIndex((video) => source.id === video.id);
   if (findIndex >= 0) {
     videos.splice(findIndex, 1, { ...source, title });
     await localforage.setItem(keys.videos, videos);
@@ -49,25 +49,25 @@ const updateVideoTitle = async (source: SourceItem, title: string) => {
 const updateVideoUrl = async (source: SourceItem, url: string) => {
   let videos = await localforage.getItem<SourceItem[]>(keys.videos);
   if (!Array.isArray(videos)) videos = [];
-  const findIndex = videos.findIndex((video) => source.url === video.url);
+  const findIndex = videos.findIndex((video) => source.id === video.id);
   if (findIndex >= 0) {
     videos.splice(findIndex, 1, { ...source, url });
     await localforage.setItem(keys.videos, videos);
   }
 };
 
-export const removeVideo = async (url: string) => {
+export const removeVideo = async (id: string) => {
   let videos = await localforage.getItem<SourceItem[]>(keys.videos);
   if (!Array.isArray(videos)) videos = [];
-  const favIndex = videos.findIndex((item) => item.url === url);
+  const favIndex = videos.findIndex((item) => item.id === id);
   if (favIndex >= 0) videos.splice(favIndex, 1);
   await localforage.setItem(keys.videos, videos);
   return videos;
 };
 
-const removeVideos = async (urls: (string | number)[]): Promise<void> => {
-  for (const url of urls) {
-    await removeVideo(String(url));
+const removeVideos = async (ids: string[]): Promise<void> => {
+  for (const id of ids) {
+    await removeVideo(String(id));
   }
 };
 

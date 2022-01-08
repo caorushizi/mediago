@@ -1,9 +1,9 @@
 import { app, dialog, ipcMain, Menu, shell } from "electron";
 import { failFn, successFn } from "../utils";
 import windowManager from "../window/windowManager";
-import executor from "main/executor";
-import request from "main/request";
-import { binDir, Windows } from "main/variables";
+import executor from "main/utils/executor";
+import request from "main/utils/request";
+import { binDir, Windows } from "main/utils/variables";
 
 const handleIpc = (): void => {
   ipcMain.on("close-main-window", async () => {
@@ -89,16 +89,28 @@ const handleIpc = (): void => {
     });
   });
 
-  ipcMain.handle("exec", async (event, exeFile: string, args: M3u8DLArgs) => {
-    let resp;
-    try {
-      const result = await executor(exeFile, args);
-      resp = successFn(result);
-    } catch (e: any) {
-      resp = failFn(-1, e.message);
+  ipcMain.on("window-minimize", (e, name) => {
+    let window;
+    if (name === "main") {
+      window = windowManager.get(Windows.MAIN_WINDOW);
+    } else {
+      window = windowManager.get(Windows.BROWSER_WINDOW);
     }
-    return resp;
+
+    window.minimize();
   });
+
+  ipcMain.handle(
+    "exec-command",
+    async (event, exeFile: string, args: M3u8DLArgs) => {
+      try {
+        const result = await executor(exeFile, args);
+        return successFn(result);
+      } catch (e: any) {
+        return failFn(-1, e.message);
+      }
+    }
+  );
 
   ipcMain.handle("get-bin-dir", async () => binDir);
 

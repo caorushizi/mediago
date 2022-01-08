@@ -1,5 +1,5 @@
 import Store from "electron-store";
-import { workspace } from "main/variables";
+import { workspace } from "main/utils/variables";
 
 export default function handleStore(): void {
   let exeFile = "";

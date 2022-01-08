@@ -1,6 +1,6 @@
 import { BrowserWindow } from "electron";
 import Store from "electron-store";
-import { Windows } from "main/variables";
+import { Windows } from "main/utils/variables";
 
 declare global {
   namespace NodeJS {
