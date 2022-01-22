@@ -10,7 +10,7 @@ import handleExtension from "main/helper/handleExtension";
 import handleWindows from "main/helper/handleWindows";
 import * as Sentry from "@sentry/electron/dist/main";
 import { author, name } from "../../package.json";
-import sessionList from "main/core/session";
+import { createSession, sessionList } from "main/core/session";
 import logger from "main/core/logger";
 
 Sentry.init({ dsn: process.env.VITE_APP_SENTRY_DSN });
@@ -48,6 +48,8 @@ app.whenReady().then(async () => {
     title: "发现新版本",
     body: "已经下载完成，下次打开时安装~",
   });
+
+  createSession(Sessions.PERSIST_MEDIAGO);
 
   protocol.registerBufferProtocol(defaultScheme, (request, callback) => {
     let pathName = new URL(request.url).pathname;

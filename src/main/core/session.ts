@@ -3,9 +3,8 @@ import { Sessions } from "main/utils/variables";
 
 const sessionList = new Map<Sessions, Session>();
 
-sessionList.set(
-  Sessions.PERSIST_MEDIAGO,
-  session.fromPartition(Sessions.PERSIST_MEDIAGO)
-);
+function createSession(partition: Sessions): void {
+  sessionList.set(partition, session.fromPartition(partition));
+}
 
-export default sessionList;
+export { sessionList, createSession };
