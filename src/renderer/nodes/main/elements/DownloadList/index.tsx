@@ -590,8 +590,8 @@ const DownloadList: React.FC<Props> = ({
                     height={height}
                     itemSize={35}
                     width={width}
-                    itemData={tableData}
-                    itemCount={tableData.length}
+                    itemData={tableDataRef.current}
+                    itemCount={tableDataRef.current.length}
                     itemKey={(index, data) => {
                       const item = data[index];
                       return item.id || `${item.title}-${index}`;

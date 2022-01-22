@@ -15,6 +15,7 @@ import {
 } from "renderer/store/actions/settings.actions";
 import { useDispatch, useSelector } from "react-redux";
 import { Box } from "@chakra-ui/react";
+import { version } from "../../../../../../package.json";
 
 interface FormData {
   exeFile: string;
@@ -171,6 +172,7 @@ const Setting: FC = () => {
               <Button onClick={localDir} icon={<FolderOpenOutlined />}>
                 本地存储目录
               </Button>
+              <div>当前版本：{version}</div>
             </Space>
           </ProForm.Item>
         </ProFormGroup>

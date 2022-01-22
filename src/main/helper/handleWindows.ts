@@ -1,13 +1,11 @@
-import windowManager from "main/window/windowManager";
+import windowManager from "main/core/window/windowManager";
 import { Windows } from "main/utils/variables";
-import createBrowserView from "main/utils/browserView";
+import createBrowserView from "main/core/browserView";
 
-export default async function handleWindows(
-  webviewSession: Electron.Session
-): Promise<void> {
+export default async function handleWindows(): Promise<void> {
   await Promise.all([
     windowManager.create(Windows.MAIN_WINDOW),
     await windowManager.create(Windows.BROWSER_WINDOW),
   ]);
-  await createBrowserView(webviewSession);
+  await createBrowserView();
 }

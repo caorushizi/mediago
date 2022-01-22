@@ -1,17 +1,17 @@
-import { join, extname } from "path";
+import { extname, join } from "path";
 import { readFile, readFileSync } from "fs";
 import { URL } from "url";
-import { app, BrowserWindow, protocol, crashReporter } from "electron";
+import { app, BrowserWindow, crashReporter, protocol } from "electron";
 import { autoUpdater } from "electron-updater";
-import { log } from "main/utils";
 import handleIpc from "main/helper/handleIpc";
-import { defaultScheme, webviewPartition } from "main/utils/variables";
-import createSession from "main/utils/session";
+import { defaultScheme, Sessions } from "main/utils/variables";
 import handleStore from "main/helper/handleStore";
 import handleExtension from "main/helper/handleExtension";
 import handleWindows from "main/helper/handleWindows";
 import * as Sentry from "@sentry/electron/dist/main";
-import { name, author } from "../../package.json";
+import { author, name } from "../../package.json";
+import sessionList from "main/core/session";
+import logger from "main/core/logger";
 
 Sentry.init({ dsn: process.env.VITE_APP_SENTRY_DSN });
 
@@ -43,8 +43,11 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 app.whenReady().then(async () => {
-  autoUpdater.logger = log;
-  autoUpdater.checkForUpdatesAndNotify();
+  autoUpdater.logger = logger;
+  autoUpdater.checkForUpdatesAndNotify({
+    title: "发现新版本",
+    body: "已经下载完成，下次打开时安装~",
+  });
 
   protocol.registerBufferProtocol(defaultScheme, (request, callback) => {
     let pathName = new URL(request.url).pathname;
@@ -53,7 +56,7 @@ app.whenReady().then(async () => {
     readFile(join(__dirname, "../renderer", pathName), (error, data) => {
       if (error) {
         console.error(
-          `Failed to register ${webviewPartition} protocol\n`,
+          `Failed to register ${defaultScheme} protocol\n`,
           error,
           "\n"
         );
@@ -80,14 +83,13 @@ app.whenReady().then(async () => {
     });
   });
 
-  const webviewSession = createSession(webviewPartition);
   app.on("activate", async () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      await handleWindows(webviewSession);
+      await handleWindows();
     }
   });
 
-  handleWindows(webviewSession);
+  handleWindows();
   handleExtension();
   handleStore();
   handleIpc();
@@ -95,19 +97,20 @@ app.whenReady().then(async () => {
   // 设置软件代理
   const setProxy = (isInit?: boolean) => {
     try {
+      const webviewSession = sessionList.get(Sessions.PERSIST_MEDIAGO)!;
       const proxy = global.store.get("proxy");
       const useProxy = global.store.get("useProxy");
       if (proxy && useProxy) {
-        log.info(
+        logger.info(
           `[proxy] ${isInit ? "初始化" : "开启"}成功，代理地址为${proxy}`
         );
         webviewSession.setProxy({ proxyRules: proxy });
       } else {
-        if (!isInit) log.info(`[proxy] 关闭成功`);
+        if (!isInit) logger.info(`[proxy] 关闭成功`);
         webviewSession.setProxy({});
       }
     } catch (e: any) {
-      log.error(
+      logger.error(
         `[proxy] ${isInit ? "初始化" : ""}设置代理失败：\n${e.message}`
       );
     }

@@ -1,63 +1,5 @@
-import { spawn, SpawnOptions } from "child_process";
-import glob from "glob";
-import { workspace } from "main/utils/variables";
-import spawnArgs from "main/utils/spawn-args";
-import log from "electron-log";
-import path from "path";
-import moment from "moment";
-
-// 封装 spawn 方法
-const spawnWrapper = (
-  command: string,
-  args: string,
-  options: SpawnOptions
-): Promise<void> =>
-  new Promise((resolve, reject) => {
-    const spawnCommand = spawn(command, spawnArgs(args), {
-      cwd: workspace,
-      ...options,
-    });
-
-    spawnCommand.stdout?.on("data", (data) => {
-      const value = data.toString().trim();
-      console.log(`stdout: ${value}`);
-    });
-
-    spawnCommand.stderr?.on("data", (data) => {
-      const value = data.toString().trim();
-      console.error(`stderr: ${value}`);
-    });
-
-    spawnCommand.on("close", (code) => {
-      if (code !== 0) reject(new Error(`调用 ${command} 可执行文件执行失败`));
-      else resolve();
-    });
-
-    spawnCommand.on("error", (err) => {
-      console.error(`err: ${err}`);
-    });
-  });
-
-/**
- * 获取文件目录
- */
-const globWrapper: (
-  pattern: string,
-  options: glob.IOptions
-) => Promise<string[]> = (pattern, options = {}) => {
-  return new Promise((resolve, reject) => {
-    glob(pattern, { cwd: workspace, ...options }, (err, files) => {
-      if (err) reject(err);
-      resolve(files);
-    });
-  });
-};
-
-interface IpcResponse {
-  code: number;
-  msg: string;
-  data: any;
-}
+import argsBuilder from "main/utils/args-builder";
+import request from "./request";
 
 const successFn = (data: unknown): IpcResponse => ({ code: 0, msg: "", data });
 const failFn = (code: number, msg: string): IpcResponse => ({
@@ -66,10 +8,4 @@ const failFn = (code: number, msg: string): IpcResponse => ({
   data: null,
 });
 
-const datetime = moment().format("YYYY-MM-DD");
-const logPath = path.resolve(workspace, `logs/${datetime}-mediago.log`);
-log.transports.console.format = "{h}:{i}:{s} {text}";
-log.transports.file.getFile();
-log.transports.file.resolvePath = () => logPath;
-
-export { successFn, failFn, globWrapper, spawnWrapper, log, spawnArgs };
+export { successFn, failFn, argsBuilder, request };

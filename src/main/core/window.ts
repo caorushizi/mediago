@@ -1,6 +1,8 @@
-import { IWindowListItem } from "types/main";
-import { resolve } from "path";
+import { BrowserWindow } from "electron";
+import { IWindowListItem, IWindowManager } from "types/main";
+import windowList from "./windowList";
 import { Windows } from "main/utils/variables";
+import { resolve } from "path";
 
 const windowList = new Map<Windows, IWindowListItem>();
 
@@ -24,7 +26,7 @@ windowList.set(Windows.MAIN_WINDOW, {
       },
     };
   },
-  callback(window) {
+  async callback(window) {
     if (process.env.NODE_ENV === "development") {
       window.webContents.openDevTools();
     }
@@ -59,4 +61,40 @@ windowList.set(Windows.BROWSER_WINDOW, {
   },
 });
 
-export default windowList;
+class WindowManager implements IWindowManager {
+  private windowMap: Map<Windows | string, BrowserWindow> = new Map();
+
+  private windowIdMap: Map<number, Windows | string> = new Map();
+
+  async create(name: Windows) {
+    const windowConfig: IWindowListItem = windowList.get(name)!;
+    const window = new BrowserWindow(windowConfig.options());
+    const { id } = window;
+    this.windowMap.set(name, window);
+    this.windowIdMap.set(window.id, name);
+    window.loadURL(windowConfig.url);
+    windowConfig.callback(window, this);
+    window.on("close", () => {
+      this.deleteById(id);
+    });
+    return window;
+  }
+
+  get(name: Windows) {
+    return this.windowMap.get(name)!;
+  }
+
+  has(name: Windows) {
+    return this.windowMap.has(name);
+  }
+
+  deleteById = (id: number) => {
+    const name = this.windowIdMap.get(id);
+    if (name) {
+      this.windowMap.delete(name);
+      this.windowIdMap.delete(id);
+    }
+  };
+}
+
+export default new WindowManager();

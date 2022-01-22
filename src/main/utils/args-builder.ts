@@ -1,4 +1,4 @@
-const spawnArgs = (args: string): string[] => {
+const argsBuilder = (args: string): string[] => {
   args = args || "";
   const arr = [];
 
@@ -20,13 +20,13 @@ const spawnArgs = (args: string): string[] => {
   for (let i = 0; i < args.length; i++) {
     const c = args.charAt(i);
 
-    if (c == " ") {
+    if (c === " ") {
       if (quoted) {
         quoted += c;
       } else {
         addCurrent();
       }
-    } else if (c == "'" || c == '"') {
+    } else if (c === "'" || c === '"') {
       if (quoted) {
         quoted += c;
         // only end this arg if the end quote is the same type as start quote
@@ -61,4 +61,4 @@ const spawnArgs = (args: string): string[] => {
   return arr;
 };
 
-export default spawnArgs;
+export default argsBuilder;
