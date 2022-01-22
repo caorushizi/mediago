@@ -1,9 +1,9 @@
 import { app, dialog, ipcMain, Menu, shell } from "electron";
-import { failFn, successFn } from "../utils";
-import windowManager from "../window/windowManager";
-import executor from "main/utils/executor";
-import request from "main/utils/request";
+import { failFn, successFn, request } from "main/utils";
+import windowManager from "../core/window/windowManager";
 import { binDir, Windows } from "main/utils/variables";
+import Runner from "main/core/runner";
+import { createDownloader } from "main/core/downloader";
 
 const handleIpc = (): void => {
   ipcMain.on("close-main-window", async () => {
@@ -102,9 +102,13 @@ const handleIpc = (): void => {
 
   ipcMain.handle(
     "exec-command",
-    async (event, exeFile: string, args: M3u8DLArgs) => {
+    async (event, exeFile: string, args: Record<string, string>) => {
       try {
-        const result = await executor(exeFile, args);
+        const runner = Runner.getInstance();
+        const downloader = createDownloader(exeFile);
+        downloader.handle(runner);
+        downloader.parseArgs(args);
+        const result = await runner.run({ cwd: binDir });
         return successFn(result);
       } catch (e: any) {
         return failFn(-1, e.message);

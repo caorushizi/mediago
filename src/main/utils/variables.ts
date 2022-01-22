@@ -13,12 +13,15 @@ export const appName =
     ? "media downloader dev"
     : "media downloader";
 export const workspace = path.resolve(appData, appName);
-export const webviewPartition = "persist:mediago";
 export const defaultScheme = "mediago";
 
 export enum Windows {
   MAIN_WINDOW = "MAIN_WINDOW",
   BROWSER_WINDOW = "BROWSER_WINDOW",
+}
+
+export enum Sessions {
+  PERSIST_MEDIAGO = "persist:mediago",
 }
 
 export const binDir = __bin__;

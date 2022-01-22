@@ -21,7 +21,10 @@ declare interface IWindowManager {
 declare interface IWindowListItem {
   url: string;
   options: () => Electron.BrowserWindowConstructorOptions;
-  callback: (window: BrowserWindow, windowManager: IWindowManager) => void;
+  callback: (
+    window: BrowserWindow,
+    windowManager: IWindowManager
+  ) => Promise<void>;
 }
 
 export { IWindowManager, IWindowListItem };

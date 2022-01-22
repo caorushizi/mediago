@@ -71,3 +71,9 @@ declare interface VideoDetail {
   segmentsLen: number;
   duration: number;
 }
+
+declare interface IpcResponse {
+  code: number;
+  msg: string;
+  data: any;
+}
