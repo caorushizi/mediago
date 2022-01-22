@@ -1,6 +1,5 @@
 import { BrowserWindow } from "electron";
 import { IWindowListItem, IWindowManager } from "types/main";
-import windowList from "./windowList";
 import { Windows } from "main/utils/variables";
 import { resolve } from "path";
 
@@ -61,7 +60,7 @@ windowList.set(Windows.BROWSER_WINDOW, {
   },
 });
 
-class WindowManager implements IWindowManager {
+class Window implements IWindowManager {
   private windowMap: Map<Windows | string, BrowserWindow> = new Map();
 
   private windowIdMap: Map<number, Windows | string> = new Map();
@@ -97,4 +96,6 @@ class WindowManager implements IWindowManager {
   };
 }
 
-export default new WindowManager();
+const windowManager = new Window();
+
+export { windowManager, windowList };

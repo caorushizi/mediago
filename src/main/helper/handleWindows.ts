@@ -1,4 +1,4 @@
-import windowManager from "main/core/window/windowManager";
+import { windowManager } from "main/core/window";
 import { Windows } from "main/utils/variables";
 import createBrowserView from "main/core/browserView";
 

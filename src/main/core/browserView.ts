@@ -1,8 +1,8 @@
-import windowManager from "main/core/window/windowManager";
+import { windowManager } from "main/core/window";
 import { BrowserView } from "electron";
 import { Sessions, Windows } from "main/utils/variables";
 import { nanoid } from "nanoid";
-import sessionList from "main/core/session";
+import { sessionList } from "main/core/session";
 import logger from "main/core/logger";
 
 const createBrowserView = (): void => {

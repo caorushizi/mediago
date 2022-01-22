@@ -1,6 +1,6 @@
 import { app, dialog, ipcMain, Menu, shell } from "electron";
 import { failFn, successFn, request } from "main/utils";
-import windowManager from "../core/window/windowManager";
+import { windowManager } from "../core/window";
 import { binDir, Windows } from "main/utils/variables";
 import Runner from "main/core/runner";
 import { createDownloader } from "main/core/downloader";
