@@ -87,6 +87,9 @@ const Setting: FC = () => {
         formRef={formRef}
         layout="horizontal"
         submitter={false}
+        labelCol={{ style: { width: "130px" } }}
+        labelAlign={"left"}
+        colon={false}
         initialValues={{ workspace, exeFile, tip, proxy }}
         onValuesChange={async (changedValue) => {
           if (Object.keys(changedValue).includes("tip")) {
@@ -107,7 +110,7 @@ const Setting: FC = () => {
           }
         }}
       >
-        <ProFormGroup label="基础设置">
+        <ProFormGroup label="基础设置" direction={"vertical"}>
           <ProFormText
             width="xl"
             disabled
@@ -139,7 +142,7 @@ const Setting: FC = () => {
             }}
           />
         </ProFormGroup>
-        <ProFormGroup label="下载设置">
+        <ProFormGroup label="下载设置" direction={"vertical"}>
           <ProFormSelect
             allowClear={false}
             width="xl"
@@ -159,8 +162,10 @@ const Setting: FC = () => {
               <Button onClick={localDir} icon={<FolderOpenOutlined />}>
                 本地存储目录
               </Button>
-              <div>当前版本：{version}</div>
             </Space>
+          </ProForm.Item>
+          <ProForm.Item label={"当前版本"}>
+            <div>{version}</div>
           </ProForm.Item>
         </ProFormGroup>
       </ProForm>
