@@ -16,26 +16,13 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { Box } from "@chakra-ui/react";
 import { version } from "../../../../../../package.json";
+import { downloaderOptions } from "renderer/utils/variables";
 
 interface FormData {
   exeFile: string;
   workspace: string;
   tip: boolean;
   proxy: string;
-}
-
-const downloaderOptions = [
-  {
-    value: "mediago",
-    label: "mediago",
-  },
-];
-
-if (window.electron.isWindows) {
-  downloaderOptions.push({
-    value: "N_m3u8DL-CLI",
-    label: "N_m3u8DL-CLI（推荐）",
-  });
 }
 
 // 设置页面
