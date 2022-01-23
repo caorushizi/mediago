@@ -1,20 +1,28 @@
 @import "../../../main";
 
-.new-download-list {
-  .list-item-container {
-    cursor: pointer;
+.download-list-container {
+  .new-download-list {
+    .list-item-container {
+      cursor: pointer;
 
-    .list-item-inner {
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
+      .list-item-inner {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
     }
   }
-}
 
-.favorite-menu {
-  .ant-dropdown-menu-title-content {
-    width: 100%;
+  .favorite-menu {
+    .ant-dropdown-menu-title-content {
+      width: 100%;
+    }
+  }
+
+  .ant-form {
+    .ant-form-item {
+      margin-bottom: 8px;
+    }
   }
 }
 

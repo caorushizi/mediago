@@ -15,13 +15,18 @@ import { SourceStatus, SourceType } from "renderer/types";
 import classNames from "classnames";
 import {
   Button,
+  Checkbox,
+  Col,
+  Divider,
   Dropdown,
   Empty,
   Form,
   Input,
+  InputNumber,
   Menu,
   message,
   Modal,
+  Row,
   Space,
   Switch,
   Tooltip,
@@ -31,7 +36,9 @@ import {
   AppstoreAddOutlined,
   BlockOutlined,
   CloseOutlined,
+  DownOutlined,
   PlusOutlined,
+  UpOutlined,
 } from "@ant-design/icons";
 import { processHeaders } from "renderer/utils/utils";
 import {
@@ -43,7 +50,7 @@ import {
   removeVideos,
   updateVideoStatus,
 } from "renderer/utils/localforge";
-import { ModalForm, ProFormText } from "@ant-design/pro-form";
+import { ModalForm, ProFormSelect, ProFormText } from "@ant-design/pro-form";
 import { isUrl } from "renderer/utils";
 import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "renderer/store/reducers";
@@ -54,6 +61,7 @@ import { nanoid } from "nanoid";
 import { Settings } from "renderer/store/actions/settings.actions";
 import { updateNotifyCount } from "renderer/store/actions/main.actions";
 import HeaderEdit from "renderer/components/HeaderEdit";
+import { downloaderOptions } from "renderer/utils/variables";
 
 type ActionButton = {
   key: string;
@@ -73,16 +81,6 @@ interface Props {
   workspace: string;
   updateTableData: () => Promise<void>;
 }
-
-// if (currentSourceItem) {
-//   if (key === "title") {
-//     await updateVideoTitle(currentSourceItem, row.title);
-//   } else if (key === "url") {
-//     await updateVideoUrl(currentSourceItem, row.url);
-//   }
-//   await updateTableData();
-//   setCurrentSourceItem(row);
-// }
 
 const headersPlaceholder = `[可空] 请输入一行一个Header，例如：
 Origin: https://www.sample.com
@@ -114,6 +112,8 @@ const DownloadList: React.FC<Props> = ({
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [favsList, setFavsList] = useState<Fav[]>([]);
   const [maxWidth, setMaxWidth] = useState<number>(winWidth);
+  const [expanded, setExpanded] = useState<boolean>(true);
+  const [moreOptions, setMoreOptions] = useState<boolean>(false); // todo: 初始化判断mediago
   const [
     currentSourceItem,
     setCurrentSourceItem,
@@ -565,7 +565,13 @@ const DownloadList: React.FC<Props> = ({
 
   return (
     <FileDrop onDrop={onDrop}>
-      <Box h={"100%"} w={"100%"} display={"flex"} flexDirection={"column"}>
+      <Box
+        className={"download-list-container"}
+        h={"100%"}
+        w={"100%"}
+        display={"flex"}
+        flexDirection={"column"}
+      >
         {renderToolBar()}
         {tableData.length > 0 ? (
           <Box
@@ -679,6 +685,11 @@ const DownloadList: React.FC<Props> = ({
                       await downloadFile(item);
                     },
                   }}
+                  onValuesChange={(changedFields) => {
+                    if (changedFields.hasOwnProperty("exeFile")) {
+                      setMoreOptions(changedFields.exeFile !== "mediago");
+                    }
+                  }}
                   size={"small"}
                 >
                   <ProFormText
@@ -686,12 +697,163 @@ const DownloadList: React.FC<Props> = ({
                     label="视频名称"
                     placeholder="请输入视频名称"
                   />
+                  <ProFormSelect
+                    name={"exeFile"}
+                    options={downloaderOptions}
+                    label={"下载程序"}
+                    placeholder={"请选择下载程序"}
+                  />
                   <ProFormText
                     name={"url"}
                     label="请求地址"
                     placeholder="请输入请求地址"
                   />
                   <HeaderEdit label={"请求标头"} name={"headers"} />
+                  {moreOptions && (
+                    <>
+                      <Divider plain style={{ margin: "-10px 0 5px 0" }}>
+                        <Box
+                          d={"flex"}
+                          alignItems={"center"}
+                          justifyContent={"center"}
+                          cursor={"pointer"}
+                          color={"#409EFF"}
+                          onClick={() => {
+                            setExpanded((state) => !state);
+                          }}
+                        >
+                          {expanded ? (
+                            <>
+                              <DownOutlined />
+                              <Box ml={5}>展开更多高级选项</Box>
+                            </>
+                          ) : (
+                            <>
+                              <UpOutlined />
+                              <Box ml={5}>收起</Box>
+                            </>
+                          )}
+                        </Box>
+                      </Divider>
+                      {!expanded && (
+                        <>
+                          <Form.Item>
+                            <Checkbox.Group style={{ width: "100%" }}>
+                              <Row>
+                                <Col span={8} style={{ marginBottom: "8px" }}>
+                                  <Checkbox value="A">合并后删除分片</Checkbox>
+                                </Col>
+                                <Col span={8} style={{ marginBottom: "8px" }}>
+                                  <Checkbox value="B">不写入日期</Checkbox>
+                                </Col>
+                                <Col span={8} style={{ marginBottom: "8px" }}>
+                                  <Checkbox value="C">不使用系统代理</Checkbox>
+                                </Col>
+                                <Col span={8} style={{ marginBottom: "8px" }}>
+                                  <Checkbox value="D">仅解析m3u8</Checkbox>
+                                </Col>
+                                <Col span={8} style={{ marginBottom: "8px" }}>
+                                  <Checkbox value="E">混流MP4</Checkbox>
+                                </Col>
+                                <Col span={8} style={{ marginBottom: "8px" }}>
+                                  <Checkbox value="F">下载完不合并</Checkbox>
+                                </Col>
+                                <Col span={8}>
+                                  <Checkbox value="G">使用二进制合并</Checkbox>
+                                </Col>
+                                <Col span={8}>
+                                  <Checkbox value="H">仅合并音频轨道</Checkbox>
+                                </Col>
+                                <Col span={8}>
+                                  <Checkbox value="I">关闭完整性检查</Checkbox>
+                                </Col>
+                              </Row>
+                            </Checkbox.Group>
+                          </Form.Item>
+                          <Row>
+                            <Col span={8}>
+                              <Form.Item
+                                name={""}
+                                label={"最大线程"}
+                                labelCol={{ style: { width: "86px" } }}
+                                labelAlign={"left"}
+                              >
+                                <InputNumber
+                                  placeholder="placeholder"
+                                  defaultValue={32}
+                                />
+                              </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                              <Form.Item
+                                name={""}
+                                label={"最小线程"}
+                                labelCol={{ style: { width: "86px" } }}
+                                labelAlign={"left"}
+                              >
+                                <InputNumber
+                                  placeholder="placeholder"
+                                  defaultValue={16}
+                                />
+                              </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                              <Form.Item
+                                name={""}
+                                label={"重试次数"}
+                                labelCol={{ style: { width: "86px" } }}
+                                labelAlign={"left"}
+                              >
+                                <InputNumber
+                                  placeholder="placeholder"
+                                  defaultValue={15}
+                                />
+                              </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                              <Form.Item
+                                name={""}
+                                label={"超时时长(s)"}
+                                labelCol={{ style: { width: "86px" } }}
+                                labelAlign={"left"}
+                              >
+                                <InputNumber
+                                  placeholder="placeholder"
+                                  defaultValue={10}
+                                />
+                              </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                              <Form.Item
+                                name={""}
+                                label={"停速(KB/s)"}
+                                labelCol={{ style: { width: "86px" } }}
+                                labelAlign={"left"}
+                              >
+                                <InputNumber
+                                  placeholder="placeholder"
+                                  defaultValue={0}
+                                />
+                              </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                              <Form.Item
+                                name={""}
+                                label={"限速(KB/s)"}
+                                labelCol={{ style: { width: "86px" } }}
+                                labelAlign={"left"}
+                              >
+                                <InputNumber
+                                  placeholder="placeholder"
+                                  defaultValue={0}
+                                />
+                              </Form.Item>
+                            </Col>
+                          </Row>
+                        </>
+                      )}
+                    </>
+                  )}
                 </ProForm>
               </Box>
             )}
