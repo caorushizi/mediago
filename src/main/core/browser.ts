@@ -67,3 +67,7 @@ const createBrowserView = (): void => {
 };
 
 export default createBrowserView;
+
+class Browser {
+  constructor() {}
+}

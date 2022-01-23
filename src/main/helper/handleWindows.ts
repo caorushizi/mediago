@@ -1,6 +1,6 @@
 import { windowManager } from "main/core/window";
 import { Windows } from "main/utils/variables";
-import createBrowserView from "main/core/browserView";
+import createBrowserView from "main/core/browser";
 
 export default async function handleWindows(): Promise<void> {
   await Promise.all([
