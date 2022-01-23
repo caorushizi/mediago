@@ -408,7 +408,7 @@ const DownloadList: React.FC<Props> = ({
             </Box>
           </Menu.Item>
         ))}
-        <Menu.Divider />
+        {favsList.length > 0 && <Menu.Divider />}
         <Menu.Item key="add">{renderAddFav()}</Menu.Item>
       </Menu>
     );
@@ -679,6 +679,7 @@ const DownloadList: React.FC<Props> = ({
                       await downloadFile(item);
                     },
                   }}
+                  size={"small"}
                 >
                   <ProFormText
                     name={"title"}
