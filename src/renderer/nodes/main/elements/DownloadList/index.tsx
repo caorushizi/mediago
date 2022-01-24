@@ -82,10 +82,6 @@ interface Props {
   updateTableData: () => Promise<void>;
 }
 
-const headersPlaceholder = `[可空] 请输入一行一个Header，例如：
-Origin: https://www.sample.com
-Referer: https://www.sample.com`;
-
 const colorMap = {
   ready: "#108ee9",
   downloading: "#2db7f5",
@@ -224,11 +220,12 @@ const DownloadList: React.FC<Props> = ({
   const insertUpdateTableData = async (
     item: SourceItemForm
   ): Promise<SourceItem> => {
-    const { workspace } = settings;
+    const { workspace, exeFile } = settings;
     const sourceItem: SourceItem = {
       id: nanoid(),
       status: SourceStatus.Ready,
       type: SourceType.M3u8,
+      exeFile,
       directory: workspace,
       title: item.title,
       duration: 0,
@@ -300,9 +297,10 @@ const DownloadList: React.FC<Props> = ({
   const downloadFile = async (item: SourceItem): Promise<void> => {
     await changeSourceStatus(item, SourceStatus.Downloading);
     onEvent.tableStartDownload();
-    const exeFile = await window.electron.store.get("exeFile");
+    const { title, headers, url, exeFile: formExeFile } = item;
+
+    const exeFile = formExeFile || (await window.electron.store.get("exeFile"));
     const workspace = await window.electron.store.get("workspace");
-    const { title, headers, url } = item;
 
     let args: MediaGoArgs | M3u8DLArgs;
     if (exeFile === "mediago") {
@@ -316,6 +314,22 @@ const DownloadList: React.FC<Props> = ({
         headers: headersString,
       };
     } else {
+      const {
+        checkbox,
+        maxThreads,
+        minThreads,
+        retryCount,
+        timeOut,
+        stopSpeed,
+        maxSpeed,
+      } = item;
+      const checkboxObj = Object.values(checkbox! || []).reduce(
+        (prev: Record<string, boolean>, cur) => {
+          prev[cur] = true;
+          return prev;
+        },
+        {}
+      );
       const headersString = Object.entries(headers || {})
         .map(([key, value]) => `${key}:${value}`)
         .join("|");
@@ -325,8 +339,16 @@ const DownloadList: React.FC<Props> = ({
         saveName: title, // 设定存储文件名(不包括后缀)
         headers: headersString,
         enableDelAfterDone: item.deleteSegments,
+        ...checkboxObj,
+        maxThreads,
+        minThreads,
+        retryCount,
+        timeOut,
+        stopSpeed,
+        maxSpeed,
       };
     }
+    console.log("args: ", args);
 
     const { code, msg } = await ipcExec(exeFile, args);
     if (code === 0) {
@@ -625,9 +647,11 @@ const DownloadList: React.FC<Props> = ({
                             flex={1}
                             className={"list-item-inner"}
                             onClick={() => {
+                              const { exeFile } = settings;
                               setCurrentSourceItem(item);
-                              detailForm.setFieldsValue(item);
+                              detailForm.setFieldsValue({ ...item, exeFile });
                               calcMaxWidth();
+                              setMoreOptions(exeFile !== "mediago");
                               dispatch(updateNotifyCount(0));
                             }}
                           >
@@ -737,35 +761,56 @@ const DownloadList: React.FC<Props> = ({
                       </Divider>
                       {!expanded && (
                         <>
-                          <Form.Item>
+                          <Form.Item
+                            name={"checkbox"}
+                            initialValue={["enableDelAfterDone"]}
+                          >
                             <Checkbox.Group style={{ width: "100%" }}>
                               <Row>
                                 <Col span={8} style={{ marginBottom: "8px" }}>
-                                  <Checkbox value="A">合并后删除分片</Checkbox>
+                                  <Checkbox value="enableDelAfterDone">
+                                    合并后删除分片
+                                  </Checkbox>
                                 </Col>
                                 <Col span={8} style={{ marginBottom: "8px" }}>
-                                  <Checkbox value="B">不写入日期</Checkbox>
+                                  <Checkbox value="disableDateInfo">
+                                    不写入日期
+                                  </Checkbox>
                                 </Col>
                                 <Col span={8} style={{ marginBottom: "8px" }}>
-                                  <Checkbox value="C">不使用系统代理</Checkbox>
+                                  <Checkbox value="noProxy">
+                                    不使用系统代理
+                                  </Checkbox>
                                 </Col>
                                 <Col span={8} style={{ marginBottom: "8px" }}>
-                                  <Checkbox value="D">仅解析m3u8</Checkbox>
+                                  <Checkbox value="enableParseOnly">
+                                    仅解析m3u8
+                                  </Checkbox>
                                 </Col>
                                 <Col span={8} style={{ marginBottom: "8px" }}>
-                                  <Checkbox value="E">混流MP4</Checkbox>
+                                  <Checkbox value="enableMuxFastStart">
+                                    混流MP4
+                                  </Checkbox>
                                 </Col>
                                 <Col span={8} style={{ marginBottom: "8px" }}>
-                                  <Checkbox value="F">下载完不合并</Checkbox>
+                                  <Checkbox value="noMerge">
+                                    下载完不合并
+                                  </Checkbox>
                                 </Col>
                                 <Col span={8}>
-                                  <Checkbox value="G">使用二进制合并</Checkbox>
+                                  <Checkbox value="enableBinaryMerge">
+                                    使用二进制合并
+                                  </Checkbox>
                                 </Col>
                                 <Col span={8}>
-                                  <Checkbox value="H">仅合并音频轨道</Checkbox>
+                                  <Checkbox value="enableAudioOnly">
+                                    仅合并音频轨道
+                                  </Checkbox>
                                 </Col>
                                 <Col span={8}>
-                                  <Checkbox value="I">关闭完整性检查</Checkbox>
+                                  <Checkbox value="disableIntegrityCheck">
+                                    关闭完整性检查
+                                  </Checkbox>
                                 </Col>
                               </Row>
                             </Checkbox.Group>
@@ -773,80 +818,68 @@ const DownloadList: React.FC<Props> = ({
                           <Row>
                             <Col span={8}>
                               <Form.Item
-                                name={""}
+                                name={"maxThreads"}
                                 label={"最大线程"}
                                 labelCol={{ style: { width: "86px" } }}
                                 labelAlign={"left"}
+                                initialValue={32}
                               >
-                                <InputNumber
-                                  placeholder="placeholder"
-                                  defaultValue={32}
-                                />
+                                <InputNumber placeholder="placeholder" />
                               </Form.Item>
                             </Col>
                             <Col span={8}>
                               <Form.Item
-                                name={""}
+                                name={"minThreads"}
                                 label={"最小线程"}
                                 labelCol={{ style: { width: "86px" } }}
                                 labelAlign={"left"}
+                                initialValue={16}
                               >
-                                <InputNumber
-                                  placeholder="placeholder"
-                                  defaultValue={16}
-                                />
+                                <InputNumber placeholder="placeholder" />
                               </Form.Item>
                             </Col>
                             <Col span={8}>
                               <Form.Item
-                                name={""}
+                                name={"retryCount"}
                                 label={"重试次数"}
                                 labelCol={{ style: { width: "86px" } }}
                                 labelAlign={"left"}
+                                initialValue={15}
                               >
-                                <InputNumber
-                                  placeholder="placeholder"
-                                  defaultValue={15}
-                                />
+                                <InputNumber placeholder="placeholder" />
                               </Form.Item>
                             </Col>
                             <Col span={8}>
                               <Form.Item
-                                name={""}
+                                name={"timeOut"}
                                 label={"超时时长(s)"}
                                 labelCol={{ style: { width: "86px" } }}
                                 labelAlign={"left"}
+                                initialValue={10}
                               >
-                                <InputNumber
-                                  placeholder="placeholder"
-                                  defaultValue={10}
-                                />
+                                <InputNumber placeholder="placeholder" />
                               </Form.Item>
                             </Col>
                             <Col span={8}>
                               <Form.Item
-                                name={""}
+                                name={"stopSpeed"}
                                 label={"停速(KB/s)"}
                                 labelCol={{ style: { width: "86px" } }}
                                 labelAlign={"left"}
+                                initialValue={0}
                               >
-                                <InputNumber
-                                  placeholder="placeholder"
-                                  defaultValue={0}
-                                />
+                                <InputNumber placeholder="placeholder" />
                               </Form.Item>
                             </Col>
                             <Col span={8}>
                               <Form.Item
-                                name={""}
+                                name={"maxSpeed"}
                                 label={"限速(KB/s)"}
                                 labelCol={{ style: { width: "86px" } }}
                                 labelAlign={"left"}
+                                initialValue={0}
                               >
-                                <InputNumber
-                                  placeholder="placeholder"
-                                  defaultValue={0}
-                                />
+                                <InputNumber placeholder="placeholder" />
                               </Form.Item>
                             </Col>
                           </Row>
@@ -925,13 +958,7 @@ const DownloadList: React.FC<Props> = ({
             >
               <Input placeholder="[可空] 默认当前时间戳" allowClear />
             </Form.Item>
-            <Form.Item label="请求标头" name="headers">
-              <Input.TextArea
-                rows={3}
-                placeholder={headersPlaceholder}
-                allowClear
-              />
-            </Form.Item>
+            <HeaderEdit label={"请求标头"} name={"headers"} />
             <Form.Item
               label="下载完成是否删除"
               name="delete"
