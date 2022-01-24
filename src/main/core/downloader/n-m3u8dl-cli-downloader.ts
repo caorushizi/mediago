@@ -32,7 +32,7 @@ class NM3u8dlCliDownloader extends Downloader {
       .reduce((prev: string[], [key, value]) => {
         if (key === "url") return prev;
         if (value && typeof value === "boolean") prev.push(`--${key}`);
-        if (value && typeof value === "string")
+        if (value && (typeof value === "string" || typeof value === "number"))
           prev.push(`--${key} "${value}"`);
         return prev;
       }, [])

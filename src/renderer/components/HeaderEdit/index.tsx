@@ -58,8 +58,7 @@ interface FormItem {
 const renderItem = (
   item: FormItem,
   onChange: (item: FormItem) => void,
-  onDelete: (item: FormItem) => void,
-  onInputBlur: () => void
+  onDelete: (item: FormItem) => void
 ) => {
   return (
     <Row className={"header-item-container"} key={item.id}>
@@ -79,7 +78,6 @@ const renderItem = (
           onChange={(value) => {
             onChange({ ...item, key: value });
           }}
-          onBlur={onInputBlur}
         />
       </Col>
       <Col span={14}>
@@ -88,7 +86,6 @@ const renderItem = (
           onChange={(e) => {
             onChange({ ...item, value: e.target.value });
           }}
-          onBlur={onInputBlur}
         />
       </Col>
       <Col span={1} className={"form-item-action"}>
@@ -138,16 +135,17 @@ const HeaderFieldInput: FC<HeaderFieldInputProps> = ({ value, onChange }) => {
     changeItem.value = item.value;
 
     setFormValues(copiedFormValues);
+    onChange?.(postHeader(copiedFormValues));
   };
 
   const onInputDelete = (item: FormItem) => {
     const changeItemIndex = formValues.findIndex((i) => i.id === item.id);
     if (changeItemIndex < 0) return;
 
-    const copiedFormItem = formValues.slice();
-    copiedFormItem.splice(changeItemIndex, 1);
-    setFormValues(copiedFormItem);
-    onChange?.(postHeader(copiedFormItem));
+    const copiedFormValues = formValues.slice();
+    copiedFormValues.splice(changeItemIndex, 1);
+    setFormValues(copiedFormValues);
+    onChange?.(postHeader(copiedFormValues));
   };
 
   const onInputAdd = () => {
@@ -155,26 +153,23 @@ const HeaderFieldInput: FC<HeaderFieldInputProps> = ({ value, onChange }) => {
     setFormValues(changedValue);
   };
 
-  const onInputBlur = () => {
-    onChange?.(postHeader(formValues));
-  };
-
   return (
     <Box>
       {formValues.length > 0 && (
-        <Box className={"header-field-container"}>
+        <Box className={"header-field-container"} mb={6}>
           {formValues.map((formItem) => {
-            return renderItem(
-              formItem,
-              onInputChange,
-              onInputDelete,
-              onInputBlur
-            );
+            return renderItem(formItem, onInputChange, onInputDelete);
           })}
         </Box>
       )}
-      <Box mt={6} d={"flex"} justifyContent={"flex-end"}>
-        <Button type={"link"} icon={<PlusOutlined />} onClick={onInputAdd}>
+      <Box d={"flex"} justifyContent={"space-between"} alignItems={"center"}>
+        <Box>{formValues.length <= 0 && "点击添加 header"}</Box>
+        <Button
+          size={"small"}
+          type={"link"}
+          icon={<PlusOutlined />}
+          onClick={onInputAdd}
+        >
           添加
         </Button>
       </Box>

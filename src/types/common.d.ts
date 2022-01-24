@@ -15,6 +15,15 @@ declare type SourceItem = SourceUrl & {
   deleteSegments: boolean;
   directory: string;
   createdAt: number;
+  exeFile: string;
+  // 额外字段
+  checkbox?: string[];
+  maxThreads?: number;
+  minThreads?: number;
+  retryCount?: number;
+  timeOut?: number;
+  stopSpeed?: number;
+  maxSpeed?: number;
 };
 
 declare interface Fav {
