@@ -4,6 +4,7 @@ export interface Settings {
   proxy: string;
   useProxy: boolean;
   exeFile: string;
+  statistics: boolean; // 是否允许打点统计
 }
 
 export const UPDATE_SETTINGS = "UPDATE_SETTINGS";

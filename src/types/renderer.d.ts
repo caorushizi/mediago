@@ -137,6 +137,7 @@ declare interface AppStore {
   proxy: string;
   useProxy: boolean;
   exeFile: string;
+  statistics: boolean; // 是否允许打点统计
 }
 
 declare interface Manifest {
