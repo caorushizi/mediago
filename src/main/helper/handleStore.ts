@@ -22,6 +22,7 @@ export default function handleStore(): void {
       tip: true,
       proxy: "",
       useProxy: false,
+      statistics: true,
     },
   });
 

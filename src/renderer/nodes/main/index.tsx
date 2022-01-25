@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import "./index.scss";
-import { Badge, Button, Drawer, message, Tabs } from "antd";
+import { Badge, Button, message, Tabs } from "antd";
 import WindowToolBar from "renderer/components/WindowToolBar";
 import Setting from "renderer/nodes/main/elements/Setting";
 import { SourceStatus, SourceType } from "renderer/types";
@@ -45,7 +45,7 @@ const MainPage: FC = () => {
     (state) => state.main
   );
   countRef.current = notifyCount;
-  const { workspace } = settings;
+  const { workspace, exeFile } = settings;
   const {
     addEventListener,
     removeEventListener,
@@ -80,6 +80,7 @@ const MainPage: FC = () => {
   ): Promise<void> => {
     const item: SourceItem = {
       ...source,
+      exeFile,
       status: SourceStatus.Ready,
       type: SourceType.M3u8,
       directory: settings.workspace,

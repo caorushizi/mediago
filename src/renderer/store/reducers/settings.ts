@@ -10,6 +10,7 @@ const initialState: Settings = {
   tip: true,
   proxy: "",
   useProxy: false,
+  statistics: true,
 };
 
 export default function settings(

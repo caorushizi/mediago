@@ -1,4 +1,5 @@
 import { version } from "../../../package.json";
+import store from "renderer/store";
 
 const isProd = process.env.NODE_ENV === "production";
 
@@ -21,7 +22,10 @@ class TDEvent {
   }
 
   onEvent(eventId: string, mapKv: any = {}) {
-    window.TDAPP.onEvent(eventId, "", mapKv);
+    const { settings } = store.getState();
+    if (settings.statistics) {
+      window.TDAPP.onEvent(eventId, "", mapKv);
+    }
   }
 }
 

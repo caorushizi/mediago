@@ -1,5 +1,5 @@
-import React, { FC, useEffect, useRef, useState } from "react";
-import { Button, FormInstance, Space, Switch, Tooltip } from "antd";
+import React, { FC, useRef } from "react";
+import { Button, FormInstance, Space, Switch, Tooltip, Form } from "antd";
 import "./index.scss";
 import ProForm, {
   ProFormGroup,
@@ -7,7 +7,7 @@ import ProForm, {
   ProFormSwitch,
   ProFormText,
 } from "@ant-design/pro-form";
-import { FolderOpenOutlined } from "@ant-design/icons";
+import { FolderOpenOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { AppState } from "renderer/store/reducers";
 import {
   Settings,
@@ -17,30 +17,33 @@ import { useDispatch, useSelector } from "react-redux";
 import { Box } from "@chakra-ui/react";
 import { version } from "../../../../../../package.json";
 import { downloaderOptions } from "renderer/utils/variables";
+import useElectron from "renderer/hooks/electron";
 
-interface FormData {
-  exeFile: string;
-  workspace: string;
-  tip: boolean;
-  proxy: string;
-}
+const statisticsTooltip = `
+是否允许统计用户数据
+1. 统计数据不会用于商业用途，仅仅用于优化用户体验
+2. 关闭用户统计依然会收集打开页面的次数，但不会收集任何自定义数据
+3. 软件会统计页面报错，以便排查错误，请谅解~
+`;
 
 // 设置页面
 const Setting: FC = () => {
   const settings = useSelector<AppState, Settings>((state) => state.settings);
   const dispatch = useDispatch();
-  const formRef = useRef<FormInstance<FormData>>();
-  const [proxyChecked, setProxyChecked] = useState<boolean>(false);
-
-  useEffect(() => {
-    const { useProxy } = settings;
-    setProxyChecked(useProxy);
-  }, []);
+  const formRef = useRef<FormInstance<Settings>>();
+  const {
+    store,
+    getPath,
+    showOpenDialog,
+    openConfigDir: openConfigDirElectron,
+    openBinDir: openBinDirElectron,
+    openPath,
+  } = useElectron();
 
   // 选择下载地址
   const handleSelectDir = async (): Promise<void> => {
-    const defaultPath = await window.electron.getPath("documents");
-    const { filePaths } = await window.electron.showOpenDialog({
+    const defaultPath = await getPath("documents");
+    const { filePaths } = await showOpenDialog({
       defaultPath,
       properties: ["openDirectory"],
     });
@@ -49,7 +52,7 @@ const Setting: FC = () => {
     // 返回值为空
     if (Array.isArray(filePaths) && filePaths.length <= 0) return;
     const workspaceValue = filePaths[0];
-    await window.electron.store.set("workspace", workspaceValue);
+    await store.set("workspace", workspaceValue);
     formRef.current?.setFieldsValue({
       workspace: workspaceValue || "",
     });
@@ -59,55 +62,54 @@ const Setting: FC = () => {
 
   // 打开配置文件文件夹
   const openConfigDir = async (): Promise<void> => {
-    window.electron.openConfigDir();
+    openConfigDirElectron();
   };
 
   // 打开可执行程序文件夹
   const openBinDir = () => {
-    window.electron.openBinDir();
+    openBinDirElectron();
   };
 
   // 本地存储文件夹
   const localDir = async (): Promise<void> => {
     const { workspace } = settings;
-    window.electron.openPath(workspace);
+    await openPath(workspace);
   };
 
-  // 更改代理设置
-  const toggleProxySetting = async (enableProxy: boolean): Promise<void> => {
-    setProxyChecked(enableProxy);
-    await window.electron.store.set("useProxy", enableProxy);
-  };
-
-  const { workspace, exeFile, tip, proxy } = settings;
+  const { useProxy } = settings;
 
   return (
     <Box className="setting-form">
-      <ProForm<FormData>
+      <ProForm<Settings>
         formRef={formRef}
         layout="horizontal"
         submitter={false}
         labelCol={{ style: { width: "130px" } }}
         labelAlign={"left"}
+        size={"small"}
         colon={false}
-        initialValues={{ workspace, exeFile, tip, proxy }}
+        initialValues={settings}
         onValuesChange={async (changedValue) => {
-          if (Object.keys(changedValue).includes("tip")) {
-            await window.electron.store.set("tip", changedValue["tip"]);
-          }
-          if (Object.keys(changedValue).includes("exeFile")) {
-            const value = changedValue["exeFile"];
-            await window.electron.store.set("exeFile", value);
-            dispatch(updateSettings({ exeFile: value }));
-          }
-          // 代理 onchange 事件
-          if (Object.keys(changedValue).includes("proxy")) {
-            const value = changedValue["proxy"];
-            await window.electron.store.set("proxy", value);
-            if (proxyChecked) {
-              await toggleProxySetting(false);
+          for (const key in changedValue) {
+            if (changedValue.hasOwnProperty(key)) {
+              const value = changedValue[key];
+              await store.set(key, value);
+
+              // 如果修改代理地址，关闭代理，可以手动打开
+              if (key === "proxy" && useProxy) {
+                await store.set("useProxy", false);
+                const form = formRef.current;
+                if (form) {
+                  form.setFieldsValue({
+                    ...settings,
+                    useProxy: false,
+                    proxy: value,
+                  });
+                }
+              }
             }
           }
+          dispatch(updateSettings({ ...settings, ...changedValue }));
         }}
       >
         <ProFormGroup label="基础设置" direction={"vertical"}>
@@ -128,18 +130,33 @@ const Setting: FC = () => {
             name="proxy"
             placeholder="请填写代理地址"
             label="代理设置"
-            fieldProps={{
-              addonAfter: (
-                <Tooltip title="该代理会对软件自带浏览器以及下载时生效">
-                  <Switch
-                    checked={proxyChecked}
-                    checkedChildren="代理生效"
-                    unCheckedChildren="代理关闭"
-                    onChange={toggleProxySetting}
-                  />
+          />
+          <ProFormSwitch
+            name={"useProxy"}
+            label={
+              <Box d={"flex"} flexDirection={"row"} alignItems={"center"}>
+                <Box mr={5}>代理开关</Box>
+                <Tooltip
+                  title={"该代理会对软件自带浏览器以及下载时生效"}
+                  placement={"right"}
+                >
+                  <QuestionCircleOutlined />
                 </Tooltip>
-              ),
-            }}
+              </Box>
+            }
+          >
+            <Switch />
+          </ProFormSwitch>
+          <ProFormSwitch
+            label={
+              <Box d={"flex"} flexDirection={"row"} alignItems={"center"}>
+                <Box mr={5}>允许打点统计</Box>
+                <Tooltip title={statisticsTooltip} placement={"right"}>
+                  <QuestionCircleOutlined />
+                </Tooltip>
+              </Box>
+            }
+            name="statistics"
           />
         </ProFormGroup>
         <ProFormGroup label="下载设置" direction={"vertical"}>
