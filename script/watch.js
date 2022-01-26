@@ -1,17 +1,21 @@
+const fs = require("fs");
+const { resolve, join } = require("path");
+const { spawn } = require("child_process");
+
 const { createServer } = require("vite");
 const chalk = require("chalk");
-const { resolve } = require("path");
 const electron = require("electron");
 const reactRefresh = require("@vitejs/plugin-react-refresh");
-const path = require("path");
-const { spawn } = require("child_process");
 
 let electronProcess = null;
 let manualRestart = false;
 
-require("dotenv").config({
-  path: resolve(__dirname, `../.env.${process.env.NODE_ENV}.local`),
-});
+let envPath = resolve(__dirname, `../.env.${process.env.NODE_ENV}.local`);
+if (!fs.existsSync(envPath)) {
+  envPath = resolve(__dirname, `../.env.${process.env.NODE_ENV}`);
+}
+
+require("dotenv").config({ path: envPath });
 
 function startMain() {
   return require("esbuild").build({
@@ -82,7 +86,7 @@ function startRenderer() {
 }
 
 function startElectron() {
-  let args = ["--inspect=5858", path.join(__dirname, "../dist/main/index.js")];
+  let args = ["--inspect=5858", join(__dirname, "../dist/main/index.js")];
 
   electronProcess = spawn(String(electron), args);
 

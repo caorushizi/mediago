@@ -1,12 +1,17 @@
-const { build } = require("vite");
+const fs = require("fs");
 const { resolve } = require("path");
+
+const { build } = require("vite");
 const rimraf = require("rimraf");
 
 rimraf.sync(resolve(__dirname, "../dist"));
 
-const { parsed } = require("dotenv").config({
-  path: resolve(__dirname, `../.env.${process.env.NODE_ENV}.local`),
-});
+let envPath = resolve(__dirname, `../.env.${process.env.NODE_ENV}.local`);
+if (!fs.existsSync(envPath)) {
+  envPath = resolve(__dirname, `../.env.${process.env.NODE_ENV}`);
+}
+
+const { parsed } = require("dotenv").config({ path: envPath });
 
 const mainDefined = Object.keys(parsed || {}).reduce((prev, cur) => {
   prev[`process.env.${[cur]}`] = JSON.stringify(parsed[cur]);
