@@ -12,12 +12,14 @@ import handleUpdater from "main/helper/handleUpdater";
 
 Sentry.init({ dsn: process.env.VITE_APP_SENTRY_DSN });
 
-crashReporter.start({
-  companyName: author,
-  productName: name,
-  ignoreSystemCrashHandler: true,
-  submitURL: process.env.VITE_APP_SENTRY_DSN,
-});
+if (process.env.VITE_APP_SENTRY_DSN) {
+  crashReporter.start({
+    companyName: author,
+    productName: name,
+    ignoreSystemCrashHandler: true,
+    submitURL: process.env.VITE_APP_SENTRY_DSN,
+  });
+}
 
 if (require("electron-squirrel-startup")) {
   app.quit();
