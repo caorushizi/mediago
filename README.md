@@ -22,8 +22,6 @@ m3u8 视频在线提取工具 流媒体下载 m3u8下载 桌面客户端 windows
 
 ![首页](http://static.ziying.site/Snipaste_2022-01-08_18-43-25.png)
 
-![浏览器页面](http://static.ziying.site/downloader-browser.png)
-
 ![设置页面](http://static.ziying.site/Snipaste_2022-01-08_18-43-39.png)
 
 # 使用 Vite & esBuild 构建
