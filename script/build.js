@@ -8,7 +8,7 @@ const { parsed } = require("dotenv").config({
   path: resolve(__dirname, `../.env.${process.env.NODE_ENV}.local`),
 });
 
-const mainDefined = Object.keys(parsed).reduce((prev, cur) => {
+const mainDefined = Object.keys(parsed || {}).reduce((prev, cur) => {
   prev[`process.env.${[cur]}`] = JSON.stringify(parsed[cur]);
   return prev;
 }, {});
