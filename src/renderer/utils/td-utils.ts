@@ -3,9 +3,9 @@ import tdApp from "renderer/utils/td";
 const onEvent = {
   browserPageGoBack: (): void => tdApp.onEvent("浏览器页面-点击返回按钮"),
   browserPageReload: (): void => tdApp.onEvent("浏览器页面-点击刷新按钮"),
-  mainPageDownloadFail: (kv: unknown): void =>
+  mainPageDownloadFail: (kv?: unknown): void =>
     tdApp.onEvent("下载页面-下载视频失败", kv),
-  mainPageDownloadSuccess: (kv: unknown): void =>
+  mainPageDownloadSuccess: (kv?: unknown): void =>
     tdApp.onEvent("下载页面-下载视频成功", kv),
   mainPageOpenBrowserPage: (): void => tdApp.onEvent("下载页面-打开浏览器页面"),
   mainPageNewSource: (): void => tdApp.onEvent("下载页面-新建下载"),

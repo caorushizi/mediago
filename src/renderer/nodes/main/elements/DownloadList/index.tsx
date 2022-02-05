@@ -353,11 +353,11 @@ const DownloadList: React.FC<Props> = ({
     const { code, msg } = await ipcExec(exeFile, args);
     if (code === 0) {
       await changeSourceStatus(item, SourceStatus.Success);
-      onEvent.mainPageDownloadSuccess({ msg, url, exeFile });
+      onEvent.mainPageDownloadSuccess();
     } else {
       message.error(msg);
       await changeSourceStatus(item, SourceStatus.Failed);
-      onEvent.mainPageDownloadFail({ msg, url, exeFile });
+      onEvent.mainPageDownloadFail();
     }
   };
 
