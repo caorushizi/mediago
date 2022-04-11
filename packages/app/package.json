@@ -1,0 +1,146 @@
+{
+  "name": "media-downloader",
+  "version": "1.1.5",
+  "description": "在线视频下载",
+  "author": "caorushizi",
+  "main": "dist/main/index.js",
+  "license": "MIT",
+  "homepage": "./",
+  "scripts": {
+    "dist": "cross-env NODE_ENV=production node script/build.js",
+    "watch": "cross-env NODE_ENV=development node script/watch.js",
+    "electron": "cross-env NODE_ENV=production electron .",
+    "pack": "electron-builder --dir",
+    "build": "electron-builder",
+    "publish": "npm run dist && npm run build",
+    "build-debug": "npm run dist && npm run pack && ./build/win-unpacked/在线视频下载.exe"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^4.6.2",
+    "@ant-design/pro-form": "^1.49.6",
+    "@ant-design/pro-table": "^2.59.2",
+    "@chakra-ui/react": "^1.7.2",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
+    "@sentry/electron": "^2.5.4",
+    "@sentry/react": "^6.16.1",
+    "@sentry/tracing": "^6.16.1",
+    "antd": "^4.17.2",
+    "classnames": "^2.3.1",
+    "connected-react-router": "^6.9.1",
+    "downloader": "workspace:^1.0.0",
+    "electron-devtools-installer": "^3.2.0",
+    "electron-log": "^4.3.2",
+    "electron-squirrel-startup": "^1.0.0",
+    "electron-store": "^7.0.2",
+    "framer-motion": "^4",
+    "glob": "^7.1.6",
+    "history": "^4.7.2",
+    "localforage": "^1.9.0",
+    "m3u8-parser": "^4.7.0",
+    "moment": "^2.29.1",
+    "nanoid": "^3.1.30",
+    "prop-types": "^15.7.2",
+    "qs": "^6.10.1",
+    "re-resizable": "^6.9.1",
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0",
+    "react-file-drop": "^3.1.2",
+    "react-redux": "^7.2.4",
+    "react-router": "^5.2.0",
+    "react-router-dom": "^5.2.0",
+    "react-virtualized-auto-sizer": "^1.0.6",
+    "react-window": "^1.8.6",
+    "redux": "^4.1.1",
+    "redux-devtools-extension": "^2.13.9",
+    "redux-saga": "^1.1.3",
+    "semver": "^7.3.4"
+  },
+  "devDependencies": {
+    "@rollup/plugin-eslint": "^8.0.1",
+    "@types/glob": "^7.1.3",
+    "@types/node": "^14.14.35",
+    "@types/qs": "^6.9.7",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "@types/react-router": "^5.1.16",
+    "@types/react-router-dom": "^5.1.8",
+    "@types/react-virtualized-auto-sizer": "^1.0.1",
+    "@types/react-window": "^1.8.5",
+    "@types/semver": "^7.3.4",
+    "@typescript-eslint/eslint-plugin": "^4.0.0",
+    "@typescript-eslint/parser": "^4.0.0",
+    "@vitejs/plugin-react-refresh": "^1.3.1",
+    "babel-eslint": "^10.0.0",
+    "chalk": "^4.1.2",
+    "concurrently": "^6.0.0",
+    "cross-env": "^7.0.3",
+    "dotenv": "^8.2.0",
+    "electron": "16.0.4",
+    "electron-builder": "^22.14.2",
+    "electron-updater": "^4.6.1",
+    "esbuild": "^0.9.5",
+    "eslint": "^7.5.0",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-config-react-app": "^6.0.0",
+    "eslint-plugin-flowtype": "^5.2.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-react": "^7.20.3",
+    "eslint-plugin-react-hooks": "^4.0.8",
+    "less": "^4.1.1",
+    "prettier": "2.2.1",
+    "rimraf": "^3.0.2",
+    "sass": "^1.32.8",
+    "typescript": "^4.2.4",
+    "vite": "^2.5.0"
+  },
+  "build": {
+    "productName": "在线视频下载",
+    "appId": "mediago.ziying.site",
+    "copyright": "caorushizi",
+    "artifactName": "media-downloader-setup-${version}.${ext}",
+    "directories": {
+      "output": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      ".bin/**"
+    ],
+    "win": {
+      "icon": "assets/icon.ico",
+      "requestedExecutionLevel": "requireAdministrator",
+      "target": [
+        {
+          "target": "nsis"
+        }
+      ]
+    },
+    "dmg": {
+      "contents": []
+    },
+    "mac": {
+      "icon": "build/icons/icon.icns"
+    },
+    "linux": {
+      "icon": "build/icons"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "",
+      "uninstallerIcon": "",
+      "installerHeaderIcon": "",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "",
+      "include": "",
+      "script": ""
+    }
+  }
+}
