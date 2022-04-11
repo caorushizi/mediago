@@ -1,13 +1,2 @@
 node_modules
-.DS_Store
-dist
-dist-ssr
-*.local
-.idea
-.bin
-.vscode
-
-yarn.lock
-yarn-error.log
-build
-devtools/*
+.idea/
