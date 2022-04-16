@@ -1,0 +1,33 @@
+{
+  "name": "app-main",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node script/dev.js",
+    "build": "node script/build.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "chalk": "^4.1.2",
+    "dotenv": "^8.2.0",
+    "electron": "16.0.4",
+    "esbuild": "^0.9.5",
+    "rimraf": "^3.0.2"
+  },
+  "dependencies": {
+    "@sentry/electron": "^2.5.4",
+    "electron-devtools-installer": "^3.2.0",
+    "electron-is-dev": "^2.0.0",
+    "electron-log": "^4.3.2",
+    "electron-squirrel-startup": "^1.0.0",
+    "electron-store": "^7.0.2",
+    "electron-updater": "^4.6.1",
+    "glob": "^7.1.6",
+    "moment": "^2.29.1",
+    "nanoid": "^3.1.30",
+    "qs": "^6.10.1",
+    "semver": "^7.3.4"
+  }
+}

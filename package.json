@@ -30,7 +30,8 @@
   },
   "scripts": {
     "watch": "pnpm run watch --filter media-downloader",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "pnpm -r --parallel --filter app-main --filter app-renderer run dev",
+    "start:downloader": "pnpm --filter downloader run start"
   },
   "repository": {
     "type": "git",
