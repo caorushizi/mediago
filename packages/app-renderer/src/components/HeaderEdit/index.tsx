@@ -1,5 +1,5 @@
 import "./index.scss";
-import React, { FC, useCallback, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { AutoComplete, Form, Input, Row, Col, Button } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { Box } from "@chakra-ui/react";

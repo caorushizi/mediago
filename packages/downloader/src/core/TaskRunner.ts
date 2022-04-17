@@ -1,26 +1,6 @@
 import EventEmitter from "events";
-import { nanoid } from "nanoid";
-
-async function sleep(duration = 0): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, duration);
-  });
-}
-
-export class Task {
-  id: string;
-  timestamp: number;
-  status: "pending" | "retry" = "pending";
-  retryCount = 0;
-  lastFailedTime?: number;
-  runner: () => Promise<void>;
-
-  constructor(runner: () => Promise<void>) {
-    this.id = nanoid();
-    this.timestamp = Date.now();
-    this.runner = runner;
-  }
-}
+import { sleep } from "../utils";
+import { Task } from "./Task";
 
 interface TaskOptions {
   limit?: number;
@@ -63,7 +43,9 @@ export class TaskRunner extends EventEmitter {
       await task.runner();
       // 任务执行成功
       this.log(
-        `执行 ${task.id} 任务成功，目前队列中有 ${this.queue.length} 条任务。`
+        `执行 ${task.id} 任务成功，目前队列中有 ${
+          this.queue.length + this.active.length - 1
+        } 条任务。`
       );
     } catch (err) {
       // 任务执行失败
@@ -72,6 +54,7 @@ export class TaskRunner extends EventEmitter {
       task.lastFailedTime = Date.now();
       this.queue.push(task);
       this.log(`开始执行 ${task.id} 执行失败，失败 ${task.retryCount} 次。`);
+      this.log("错误信息是：", (err as any).message);
     } finally {
       // 处理当前正在活动的任务
       const doneId = this.active.findIndex((i) => i.id === task.id);

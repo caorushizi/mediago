@@ -21,7 +21,7 @@ windowList.set(Windows.MAIN_WINDOW, {
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: true,
-        preload: resolve(__dirname, "../.electron/preload.js"),
+        preload: resolve(__dirname, "./preload.js"),
       },
     };
   },
@@ -49,7 +49,7 @@ windowList.set(Windows.BROWSER_WINDOW, {
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: true,
-        preload: resolve(__dirname, "../.electron/preload.js"),
+        preload: resolve(__dirname, "./preload.js"),
       },
     };
   },

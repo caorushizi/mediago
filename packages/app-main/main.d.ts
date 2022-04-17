@@ -1,15 +1,7 @@
-import { BrowserWindow } from "electron";
-import Store from "electron-store";
-import { Windows } from "main/utils/variables";
+import Store from "electron-store/index";
 
-declare global {
-  namespace NodeJS {
-    interface Global {
-      __bin__: string;
-      store: Store<AppStore>;
-    }
-  }
-}
+import { BrowserWindow } from "electron";
+import { Windows } from "./utils/variables";
 
 declare interface IWindowManager {
   create: (name: Windows) => Promise<BrowserWindow | null>;
@@ -28,3 +20,12 @@ declare interface IWindowListItem {
 }
 
 export { IWindowManager, IWindowListItem };
+
+declare global {
+  namespace NodeJS {
+    interface Global {
+      __bin__: string;
+      store: Store<AppStore>;
+    }
+  }
+}

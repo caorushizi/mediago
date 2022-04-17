@@ -107,7 +107,7 @@ const handleIpc = (): void => {
         const runner = Runner.getInstance();
         const downloader = createDownloader(exeFile);
         downloader.handle(runner);
-        downloader.parseArgs(args);
+        await downloader.parseArgs(args);
         const result = await runner.run({ cwd: binDir });
         return successFn(result);
       } catch (e: any) {

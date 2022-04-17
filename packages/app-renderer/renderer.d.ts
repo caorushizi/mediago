@@ -2,6 +2,8 @@ interface TdApp {
   onEvent: (eventId: string, label: string, mapKv: any) => void;
 }
 
+declare module "history";
+
 interface ElectronIs {
   readonly macos: boolean;
   readonly linux: boolean;

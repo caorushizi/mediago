@@ -10,15 +10,6 @@
     "resolveJsonModule": true,
     "typeRoots": [
       "node_modules/@types",
-      "src/types"
-    ],
-    "outDir": "./build",
-    "sourceMap": true
-  },
-  "include": [
-    "./src/**/*"
-  ],
-  "files": [
-    "./index.d.ts"
-  ]
+    ]
+  }
 }
