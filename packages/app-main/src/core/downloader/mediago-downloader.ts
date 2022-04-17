@@ -8,7 +8,7 @@ class MediagoDownloader extends Downloader {
     this.bin = process.platform === "win32" ? "mediago" : "./mediago";
   }
 
-  parseArgs(args: Record<string, string>): void {
+  async parseArgs(args: Record<string, string>): Promise<void> {
     this.args = Object.entries(args)
       .reduce((prev: string[], [key, value]) => {
         if (value) prev.push(`-${key} "${value}"`);

@@ -10,7 +10,7 @@ class Downloader {
     runner.setDownloader(this);
   }
 
-  parseArgs(args: Record<string, string>): void {
+  async parseArgs(args: Record<string, string>): Promise<void> {
     // empty
   }
 

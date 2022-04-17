@@ -7,14 +7,8 @@
   "license": "MIT",
   "homepage": "./",
   "scripts": {
-    "dev": "vite",
-    "dist": "cross-env NODE_ENV=production node script/build.js",
-    "watch": "cross-env NODE_ENV=development node script/watch.js",
-    "electron": "cross-env NODE_ENV=production electron .",
-    "pack": "electron-builder --dir",
-    "build": "electron-builder",
-    "publish": "npm run dist && npm run build",
-    "build-debug": "npm run dist && npm run pack && ./build/win-unpacked/在线视频下载.exe"
+    "dev": "cross-env NODE_ENV=development vite",
+    "dist": "cross-env NODE_ENV=production tsc && vite build"
   },
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
@@ -61,6 +55,7 @@
     "@rollup/plugin-eslint": "^8.0.1",
     "@types/glob": "^7.1.3",
     "@types/node": "^14.14.35",
+    "@types/prop-types": "^15.7.5",
     "@types/qs": "^6.9.7",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
@@ -97,52 +92,5 @@
     "sass": "^1.32.8",
     "typescript": "^4.2.4",
     "vite": "^2.5.0"
-  },
-  "build": {
-    "productName": "在线视频下载",
-    "appId": "mediago.ziying.site",
-    "copyright": "caorushizi",
-    "artifactName": "media-downloader-setup-${version}.${ext}",
-    "directories": {
-      "output": "build"
-    },
-    "files": [
-      "dist/**/*",
-      "package.json"
-    ],
-    "extraResources": [
-      ".bin/**"
-    ],
-    "win": {
-      "icon": "assets/icon.ico",
-      "requestedExecutionLevel": "requireAdministrator",
-      "target": [
-        {
-          "target": "nsis"
-        }
-      ]
-    },
-    "dmg": {
-      "contents": []
-    },
-    "mac": {
-      "icon": "build/icons/icon.icns"
-    },
-    "linux": {
-      "icon": "build/icons"
-    },
-    "nsis": {
-      "oneClick": false,
-      "allowElevation": true,
-      "allowToChangeInstallationDirectory": true,
-      "installerIcon": "",
-      "uninstallerIcon": "",
-      "installerHeaderIcon": "",
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true,
-      "shortcutName": "",
-      "include": "",
-      "script": ""
-    }
   }
 }

@@ -7,12 +7,7 @@ declare interface Manifest {
   discontinuitySequence: number;
   playlistType: string;
   custom: unknown;
-  playlists: [
-    {
-      attributes: unknown;
-      Manifest;
-    }
-  ];
+  playlists?: Playlist[];
   mediaGroups: {
     AUDIO: {
       "GROUP-ID": {
@@ -36,33 +31,41 @@ declare interface Manifest {
   targetDuration: number;
   totalDuration: number;
   discontinuityStarts: [number];
-  segments: [
-    {
-      byterange: {
-        length: number;
-        offset: number;
-      };
-      duration: number;
-      attributes: unknown;
-      discontinuity: number;
-      uri: string;
-      timeline: number;
-      key: {
-        method: string;
-        uri: string;
-        iv: string;
-      };
-      map: {
-        uri: string;
-        byterange: {
-          length: number;
-          offset: number;
-        };
-      };
-      "cue-out": string;
-      "cue-out-cont": string;
-      "cue-in": string;
-      custom: unknown;
-    }
-  ];
+  segments?: Segment[];
 }
+
+declare interface Playlist {
+  attributes: unknown;
+  uri: string;
+  timeline: number;
+}
+
+declare interface Segment {
+  byterange: {
+    length: number;
+    offset: number;
+  };
+  duration: number;
+  attributes: unknown;
+  discontinuity: number;
+  uri: string;
+  timeline: number;
+  key: {
+    method: string;
+    uri: string;
+    iv: string;
+  };
+  map: {
+    uri: string;
+    byterange: {
+      length: number;
+      offset: number;
+    };
+  };
+  "cue-out": string;
+  "cue-out-cont": string;
+  "cue-in": string;
+  custom: unknown;
+}
+
+declare module "spawn-args";

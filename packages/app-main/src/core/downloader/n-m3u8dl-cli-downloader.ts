@@ -2,7 +2,7 @@ import Downloader from "./downloader";
 import { binDir } from "../../utils/variables";
 import semver from "semver";
 import glob from "glob";
-import fs from "fs";
+import { pathExists } from "fs-extra";
 import path from "path";
 
 // N_m3u8DL-CLI 下载器
@@ -24,8 +24,8 @@ class NM3u8dlCliDownloader extends Downloader {
     }
   }
 
-  parseArgs(args: Record<string, string>): void {
-    const binExist = fs.existsSync(path.resolve(binDir, this.bin));
+  async parseArgs(args: Record<string, string>): Promise<void> {
+    const binExist = await pathExists(path.resolve(binDir, this.bin));
     if (!binExist) throw new Error("没有找到 N_m3u8DL-CLI");
 
     const argsStr = Object.entries(args)

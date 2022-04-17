@@ -1,28 +1,19 @@
-import { Parser } from "m3u8-parser";
-import { Task, TaskRunner } from "./utils/Task";
-import path from "path";
-import { isUrl, spawnRunner } from "./utils";
-import { downloader } from "./downloader";
+import { isUrl } from "./utils";
 import { nanoid } from "nanoid";
-import { ensureDir, readFile, writeFile } from "fs-extra";
-
-const prefix = "https://ukzy.ukubf3.com/";
-
-interface OutputMeta {
-  cwd: string;
-  name: string;
-  url: string;
-}
+import Workspace from "./core/Workspace";
+import { AxiosProxyConfig, AxiosRequestHeaders } from "axios";
 
 interface DownloaderOptions {
   url: string;
   name?: string;
   path?: string;
+  proxy?: AxiosProxyConfig;
+  headers?: AxiosRequestHeaders;
 }
 
-async function start(opts: DownloaderOptions) {
+async function run(opts: DownloaderOptions) {
   let { name, path: pathStr } = opts;
-  const { url } = opts;
+  const { url, proxy, headers } = opts;
   if (!name) name = nanoid(5);
   if (!pathStr) pathStr = `${__dirname}/videos`;
 
@@ -31,75 +22,18 @@ async function start(opts: DownloaderOptions) {
     return;
   }
 
-  await run({
-    name,
-    path: pathStr,
-    url,
-  });
+  const workspace = new Workspace(url, pathStr, name, proxy, headers);
+  await workspace.prepare();
+
+  await workspace.run();
+
+  process.exit(0);
 }
 
-interface CertainOptions {
-  url: string;
-  name: string;
-  path: string;
-}
-async function run(opts: CertainOptions) {
-  const { path: pathStr, url, name } = opts;
-  const videoDir = path.resolve(pathStr, name);
-  await ensureDir(videoDir);
-
-  const rawM3u8 = path.resolve(videoDir, "raw.m3u8");
-  // await downloader(url, rawM3u8);
-  const content = await readFile(rawM3u8);
-
-  const parser = new Parser();
-  parser.push(String(content));
-  parser.end();
-
-  const segments = (parser.manifest as Manifest).segments;
-
-  const runner = new TaskRunner({
-    limit: 15,
-    debug: true,
-  });
-
-  const metaList = segments.map<OutputMeta>((item, index) => {
-    return {
-      name: `${String(index).padStart(5, "0")}.ts`,
-      url: new URL(item.uri, prefix).toString(),
-      cwd: videoDir,
-    };
-  });
-
-  metaList.forEach((item) => {
-    const dest = path.resolve(item.cwd, item.name);
-    const task = new Task(() => downloader(item.url, dest));
-    runner.addTask(task);
-  });
-
-  runner.run();
-
-  runner.on("done", async () => {
-    const filelist = metaList
-      .map((item) => `file '${path.resolve(item.cwd, item.name)}'\n`)
-      .join("");
-    const filelistPath = path.resolve(videoDir, "filelist.txt");
-    await writeFile(filelistPath, filelist);
-    const outputPath = path.resolve(pathStr, `${name}.mp4`);
-    const args = `-f concat -safe 0 -i "${filelistPath}" -acodec copy -vcodec copy "${outputPath}"`;
-    console.log("args: ", args);
-
-    await spawnRunner("ffmpeg", args, { removequotes: "always" });
-
-    process.exit(0);
-  });
-}
-
-/**
- *
- */
-start({
-  url: "https://ukzy.ukubf3.com/20220403/vYigLW9d/2000kb/hls/index.m3u8",
+const params = {
+  url: "https://ukzy.ukubf3.com/20220409/WtaJj2Hy/index.m3u8",
   path: "C:\\Users\\caorushizi\\Desktop\\test-desktop",
   name: "斗罗大陆 1",
-});
+};
+
+run(params);

@@ -19,10 +19,10 @@
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "skipDefaultLibCheck": true,
     "noEmit": true,
     "typeRoots": [
-      "node_modules/@types",
-      "src/types"
+      "node_modules/@types"
     ],
     "jsx": "react",
     "baseUrl": "./src",
