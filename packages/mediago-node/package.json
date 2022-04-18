@@ -1,25 +1,31 @@
 {
-  "name": "downloader",
+  "name": "mediago-node",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "build/index.js",
   "scripts": {
     "server": "node script/server.js",
-    "start": "tsc && node build/index.js"
+    "start": "tsc && node build/index.js",
+    "build": "tsc",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
+  "trasform": {},
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
+    "@types/jest": "^27.4.1",
     "@types/lru-cache": "^7.6.1",
     "@types/node": "^14.14.35",
     "@typescript-eslint/eslint-plugin": "^4.0.0",
     "@typescript-eslint/parser": "^4.0.0",
     "eslint": "^7.5.0",
+    "jest": "^27.5.1",
     "koa": "^2.13.4",
     "koa-static": "^5.0.0",
-    "prettier": "2.2.1"
+    "prettier": "2.2.1",
+    "ts-jest": "^27.1.4"
   },
   "dependencies": {
     "axios": "^0.26.1",

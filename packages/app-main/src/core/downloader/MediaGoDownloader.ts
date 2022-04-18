@@ -1,7 +1,7 @@
-import Downloader from "./downloader";
+import Downloader from "./Downloader";
 
 // mediago 下载器
-class MediagoDownloader extends Downloader {
+class MediaGoDownloader extends Downloader {
   constructor() {
     super("mediago");
 
@@ -18,4 +18,4 @@ class MediagoDownloader extends Downloader {
   }
 }
 
-export default MediagoDownloader;
+export default MediaGoDownloader;
