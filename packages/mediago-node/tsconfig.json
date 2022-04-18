@@ -13,7 +13,9 @@
       "src/types"
     ],
     "outDir": "./build",
-    "sourceMap": true
+    "sourceMap": true,
+    "declaration": true,
+    "declarationDir": "build"
   },
   "include": [
     "./src/**/*"

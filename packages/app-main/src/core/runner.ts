@@ -1,8 +1,8 @@
-import Downloader from "./downloader/downloader";
 import { spawn, SpawnOptions } from "child_process";
 import { workspace } from "../utils/variables";
 import { argsBuilder } from "../utils";
 import logger from "../core/logger";
+import Downloader from "./downloader/Downloader";
 
 // runner
 class Runner {

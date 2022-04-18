@@ -1,4 +1,4 @@
-import Downloader from "./downloader";
+import Downloader from "./Downloader";
 import { binDir } from "../../utils/variables";
 import semver from "semver";
 import glob from "glob";
@@ -6,7 +6,7 @@ import { pathExists } from "fs-extra";
 import path from "path";
 
 // N_m3u8DL-CLI 下载器
-class NM3u8dlCliDownloader extends Downloader {
+class NM3u8DlCliDownloader extends Downloader {
   constructor() {
     super("N_m3u8DL-CLI");
 
@@ -41,4 +41,4 @@ class NM3u8dlCliDownloader extends Downloader {
   }
 }
 
-export default NM3u8dlCliDownloader;
+export default NM3u8DlCliDownloader;

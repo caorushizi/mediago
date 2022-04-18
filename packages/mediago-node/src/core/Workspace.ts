@@ -93,8 +93,9 @@ export default class Workspace {
 
         const transforms = [];
         if (cache.has(sign)) {
-          const method = `${item.key.method}-cbc`.toLowerCase() as CipherGCMTypes;
-          const iv = item.key.iv;
+          const method = `${item.key.method}-ecb`.toLowerCase() as CipherGCMTypes;
+          const iv = item.key.iv || Buffer.alloc(0);
+          console.log("iv: ", iv);
           const key = cache.get(sign) as string;
           const transform = createDecipheriv(method, key, iv);
           transforms.push(transform);

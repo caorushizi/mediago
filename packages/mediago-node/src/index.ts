@@ -11,7 +11,7 @@ interface DownloaderOptions {
   headers?: AxiosRequestHeaders;
 }
 
-async function run(opts: DownloaderOptions) {
+export async function downloader(opts: DownloaderOptions): Promise<void> {
   let { name, path: pathStr } = opts;
   const { url, proxy, headers } = opts;
   if (!name) name = nanoid(5);
@@ -29,11 +29,3 @@ async function run(opts: DownloaderOptions) {
 
   process.exit(0);
 }
-
-const params = {
-  url: "https://ukzy.ukubf3.com/20220409/WtaJj2Hy/index.m3u8",
-  path: "C:\\Users\\caorushizi\\Desktop\\test-desktop",
-  name: "斗罗大陆 1",
-};
-
-run(params);
