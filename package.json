@@ -29,8 +29,8 @@
     "typescript-tuple": "^2.2.1"
   },
   "scripts": {
-    "dev": "pnpm -r --parallel --filter app-main --filter app-renderer run dev",
-    "dist": "pnpm -r --parallel --filter app-main --filter app-renderer run dist",
+    "dev": "pnpm -F mediago-node run build && pnpm -r --parallel -F app-main -F app-renderer run dev",
+    "dist": "pnpm -F mediago-node run build && pnpm -r --parallel -F app-main -F app-renderer run dist",
     "pack": "pnpm -F app run pack",
     "build": "pnpm -F app run build"
   },

@@ -4,6 +4,7 @@ import { windowManager } from "../core/window";
 import { binDir, Windows } from "../utils/variables";
 import Runner from "../core/runner";
 import { createDownloader } from "../core/downloader";
+import { downloader as mediaNode } from "mediago-node";
 
 const handleIpc = (): void => {
   ipcMain.on("close-main-window", async () => {
@@ -104,6 +105,14 @@ const handleIpc = (): void => {
     "exec-command",
     async (event, exeFile: string, args: Record<string, string>) => {
       try {
+        if (exeFile === "mediago") {
+          await mediaNode({
+            name: args["name"],
+            path: args["path"],
+            url: args["url"],
+          });
+          return successFn("success");
+        }
         const runner = Runner.getInstance();
         const downloader = createDownloader(exeFile);
         downloader.handle(runner);
