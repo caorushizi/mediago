@@ -26,6 +26,4 @@ export async function downloader(opts: DownloaderOptions): Promise<void> {
   await workspace.prepare();
 
   await workspace.run();
-
-  process.exit(0);
 }
