@@ -105,7 +105,7 @@ const handleIpc = (): void => {
     "exec-command",
     async (event, exeFile: string, args: Record<string, string>) => {
       try {
-        if (exeFile === "mediago") {
+        if (exeFile === "mediago-node") {
           await mediaNode({
             name: args["name"],
             path: args["path"],
