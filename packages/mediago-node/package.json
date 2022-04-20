@@ -30,6 +30,7 @@
   "dependencies": {
     "axios": "^0.26.1",
     "fs-extra": "^10.0.1",
+    "lodash": "^4.17.21",
     "lru-cache": "^7.8.1",
     "m3u8-parser": "^4.7.0",
     "nanoid": "^3.1.30",

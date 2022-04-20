@@ -6,7 +6,7 @@ test("downloader", async () => {
   const params = {
     url: "https://ukzy.ukubf3.com/20220409/WtaJj2Hy/index.m3u8",
     path: "C:\\Users\\caorushizi\\Desktop\\test-desktop",
-    name: "斗罗大陆 1",
+    name: "斗罗大陆 1x",
   };
 
   await downloader(params);
