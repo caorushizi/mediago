@@ -310,12 +310,12 @@ importers:
       '@typescript-eslint/eslint-plugin': ^4.0.0
       '@typescript-eslint/parser': ^4.0.0
       axios: ^0.26.1
-      commander: ^9.2.0
       eslint: ^7.5.0
       fs-extra: ^10.0.1
       jest: ^27.5.1
       koa: ^2.13.4
       koa-static: ^5.0.0
+      lodash: ^4.17.21
       lru-cache: ^7.8.1
       m3u8-parser: ^4.7.0
       nanoid: ^3.1.30
@@ -324,8 +324,8 @@ importers:
       ts-jest: ^27.1.4
     dependencies:
       axios: 0.26.1
-      commander: 9.2.0
       fs-extra: 10.0.1
+      lodash: 4.17.21
       lru-cache: 7.8.1
       m3u8-parser: 4.7.1
       nanoid: 3.3.2
@@ -4037,11 +4037,6 @@ packages:
     resolution: {integrity: sha512-P0CysNDQ7rtVw4QIQtm+MRxV66vKFSvlsQvGYXZWR3qFU0jlMKHZZZgw8e+8DSah4UDKMqnknRDQz+xuQXQ/Zg==}
     engines: {node: '>= 6'}
     dev: true
-
-  /commander/9.2.0:
-    resolution: {integrity: sha512-e2i4wANQiSXgnrBlIatyHtP1odfUp0BbV5Y5nEGbxtIrStkEOAAzCUirvLBNXHLr7kwLvJl6V+4V3XV9x7Wd9w==}
-    engines: {node: ^12.20.0 || >=14}
-    dev: false
 
   /compare-version/0.1.2:
     resolution: {integrity: sha512-pJDh5/4wrEnXX/VWRZvruAGHkzKdr46z11OlTPN+VrATlWWhSKewNCJ1futCO5C7eJB3nPMFZA1LeYtcFboZ2A==}
