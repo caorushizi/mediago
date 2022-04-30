@@ -348,7 +348,7 @@ const DownloadList: React.FC<Props> = ({
         maxSpeed,
       };
     }
-    console.log("args: ", args);
+    console.log("args: ", exeFile, args);
 
     const { code, msg } = await ipcExec(exeFile, args);
     if (code === 0) {
@@ -406,7 +406,7 @@ const DownloadList: React.FC<Props> = ({
         {favsList.map((fav, i) => (
           <Menu.Item key={i} style={{ overflow: "hidden" }}>
             <Box
-              d={"flex"}
+              display={"flex"}
               alignItems={"center"}
               justifyContent={"space-between"}
               width={"100%"}
@@ -767,47 +767,47 @@ const DownloadList: React.FC<Props> = ({
                           >
                             <Checkbox.Group style={{ width: "100%" }}>
                               <Row>
-                                <Col span={8} style={{ marginBottom: "8px" }}>
+                                <Col span={12} style={{ marginBottom: "8px" }}>
                                   <Checkbox value="enableDelAfterDone">
                                     合并后删除分片
                                   </Checkbox>
                                 </Col>
-                                <Col span={8} style={{ marginBottom: "8px" }}>
+                                <Col span={12} style={{ marginBottom: "8px" }}>
                                   <Checkbox value="disableDateInfo">
                                     不写入日期
                                   </Checkbox>
                                 </Col>
-                                <Col span={8} style={{ marginBottom: "8px" }}>
+                                <Col span={12} style={{ marginBottom: "8px" }}>
                                   <Checkbox value="noProxy">
                                     不使用系统代理
                                   </Checkbox>
                                 </Col>
-                                <Col span={8} style={{ marginBottom: "8px" }}>
+                                <Col span={12} style={{ marginBottom: "8px" }}>
                                   <Checkbox value="enableParseOnly">
                                     仅解析m3u8
                                   </Checkbox>
                                 </Col>
-                                <Col span={8} style={{ marginBottom: "8px" }}>
+                                <Col span={12} style={{ marginBottom: "8px" }}>
                                   <Checkbox value="enableMuxFastStart">
                                     混流MP4
                                   </Checkbox>
                                 </Col>
-                                <Col span={8} style={{ marginBottom: "8px" }}>
+                                <Col span={12} style={{ marginBottom: "8px" }}>
                                   <Checkbox value="noMerge">
                                     下载完不合并
                                   </Checkbox>
                                 </Col>
-                                <Col span={8}>
+                                <Col span={12}>
                                   <Checkbox value="enableBinaryMerge">
                                     使用二进制合并
                                   </Checkbox>
                                 </Col>
-                                <Col span={8}>
+                                <Col span={12}>
                                   <Checkbox value="enableAudioOnly">
                                     仅合并音频轨道
                                   </Checkbox>
                                 </Col>
-                                <Col span={8}>
+                                <Col span={12}>
                                   <Checkbox value="disableIntegrityCheck">
                                     关闭完整性检查
                                   </Checkbox>
@@ -816,7 +816,7 @@ const DownloadList: React.FC<Props> = ({
                             </Checkbox.Group>
                           </Form.Item>
                           <Row>
-                            <Col span={8}>
+                            <Col span={12}>
                               <Form.Item
                                 name={"maxThreads"}
                                 label={"最大线程"}
@@ -827,7 +827,7 @@ const DownloadList: React.FC<Props> = ({
                                 <InputNumber placeholder="placeholder" />
                               </Form.Item>
                             </Col>
-                            <Col span={8}>
+                            <Col span={12}>
                               <Form.Item
                                 name={"minThreads"}
                                 label={"最小线程"}
@@ -838,7 +838,7 @@ const DownloadList: React.FC<Props> = ({
                                 <InputNumber placeholder="placeholder" />
                               </Form.Item>
                             </Col>
-                            <Col span={8}>
+                            <Col span={12}>
                               <Form.Item
                                 name={"retryCount"}
                                 label={"重试次数"}
@@ -849,7 +849,7 @@ const DownloadList: React.FC<Props> = ({
                                 <InputNumber placeholder="placeholder" />
                               </Form.Item>
                             </Col>
-                            <Col span={8}>
+                            <Col span={12}>
                               <Form.Item
                                 name={"timeOut"}
                                 label={"超时时长(s)"}
@@ -860,7 +860,7 @@ const DownloadList: React.FC<Props> = ({
                                 <InputNumber placeholder="placeholder" />
                               </Form.Item>
                             </Col>
-                            <Col span={8}>
+                            <Col span={12}>
                               <Form.Item
                                 name={"stopSpeed"}
                                 label={"停速(KB/s)"}
@@ -871,7 +871,7 @@ const DownloadList: React.FC<Props> = ({
                                 <InputNumber placeholder="placeholder" />
                               </Form.Item>
                             </Col>
-                            <Col span={8}>
+                            <Col span={12}>
                               <Form.Item
                                 name={"maxSpeed"}
                                 label={"限速(KB/s)"}
