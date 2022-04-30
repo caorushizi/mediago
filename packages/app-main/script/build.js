@@ -28,7 +28,7 @@ require("esbuild").build({
   platform: "node",
   sourcemap: false,
   target: ["node16.13"],
-  external: ["electron"],
+  external: ["electron", "pg-hstore"],
   outdir: resolve(__dirname, "../dist"),
   loader: { ".png": "file" },
   define: {

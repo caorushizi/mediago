@@ -1,5 +1,5 @@
-import { app, dialog, ipcMain, Menu, shell } from "electron";
-import { failFn, successFn, request } from "../utils";
+import { app, ipcMain, Menu } from "electron";
+import { failFn, successFn } from "../utils";
 import { windowManager } from "../core/window";
 import { binDir, Windows } from "../utils/variables";
 import Runner from "../core/runner";
@@ -22,10 +22,6 @@ const handleIpc = (): void => {
   ipcMain.on("close-browser-window", () => {
     const browserWindow = windowManager.get(Windows.BROWSER_WINDOW);
     browserWindow.hide();
-  });
-
-  ipcMain.on("open-url", async (event, url) => {
-    await shell.openExternal(url);
   });
 
   ipcMain.on("set-browser-view-bounds", (e, rect) => {
@@ -133,16 +129,14 @@ const handleIpc = (): void => {
 
   ipcMain.handle("get-path", (e, name) => app.getPath(name));
 
-  ipcMain.handle("show-open-dialog", (e, options: Electron.OpenDialogOptions) =>
-    dialog.showOpenDialog(options)
-  );
-
   ipcMain.handle("get-current-window", (e) => {
     const currentWindow = windowManager.get(Windows.BROWSER_WINDOW);
     return currentWindow.getBrowserView();
   });
 
-  ipcMain.handle("request", (e, options: RequestOptions) => request(options));
+  ipcMain.handle("ipc:data", (e, { path: string, params: any }) => {
+    console.log(123);
+  });
 };
 
 export default handleIpc;

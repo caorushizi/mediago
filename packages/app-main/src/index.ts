@@ -9,6 +9,7 @@ import { author, name } from "../package.json";
 import { createSession } from "./core/session";
 import handleProtocol from "./helper/handleProtocol";
 import handleUpdater from "./helper/handleUpdater";
+import "./db";
 
 Sentry.init({ dsn: process.env.VITE_APP_SENTRY_DSN });
 
