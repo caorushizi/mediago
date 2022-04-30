@@ -13,7 +13,7 @@ protocol.registerSchemesAsPrivileged([
   },
 ]);
 
-export default function handleUpdater() {
+export default function handleUpdater(): void {
   autoUpdater.logger = logger;
   autoUpdater.checkForUpdatesAndNotify({
     title: "发现新版本",

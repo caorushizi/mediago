@@ -19,7 +19,6 @@
   },
   "dependencies": {
     "@sentry/electron": "^2.5.4",
-    "mediago-node": "workspace:^1.0.0",
     "electron-devtools-installer": "^3.2.0",
     "electron-is-dev": "^2.0.0",
     "electron-log": "^4.3.2",
@@ -28,10 +27,13 @@
     "electron-updater": "^4.6.1",
     "fs-extra": "^10.0.1",
     "glob": "^7.1.6",
+    "mediago-node": "workspace:^1.0.0",
     "moment": "^2.29.1",
     "nanoid": "^3.1.30",
     "qs": "^6.10.1",
     "semver": "^7.3.4",
-    "spawn-args": "^0.2.0"
+    "sequelize": "^6.19.0",
+    "spawn-args": "^0.2.0",
+    "sqlite3": "^5.0.6"
   }
 }

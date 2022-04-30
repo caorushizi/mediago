@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer, shell } from "electron";
+import { contextBridge, dialog, ipcRenderer, shell } from "electron";
 import { resolve } from "path";
 
 const apiKey = "electron";
@@ -32,7 +32,7 @@ const api: ElectronApi = {
   closeBrowserWindow: () => ipcRenderer.send("close-browser-window"),
   getPath: (name) => ipcRenderer.invoke("get-path", name),
   showOpenDialog: (options) => {
-    return ipcRenderer.invoke("show-open-dialog", options);
+    return dialog.showOpenDialog(options);
   },
   getBrowserView: () => ipcRenderer.invoke("get-current-window"),
   addEventListener: (channel, listener) => ipcRenderer.on(channel, listener),
@@ -44,7 +44,6 @@ const api: ElectronApi = {
   browserViewGoBack: () => ipcRenderer.send("browser-view-go-back"),
   browserViewReload: () => ipcRenderer.send("browser-view-reload"),
   browserViewLoadURL: (url) => ipcRenderer.send("browser-view-load-url", url),
-  request: (options) => ipcRenderer.invoke("request", options),
   itemContextMenu: (item) =>
     ipcRenderer.send("open-download-item-context-menu", item),
   minimize: (name) => ipcRenderer.send("window-minimize", name),

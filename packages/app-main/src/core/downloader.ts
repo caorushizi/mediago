@@ -1,9 +1,50 @@
-import Downloader from "./Downloader";
-import { binDir } from "../../utils/variables";
-import semver from "semver";
+import Runner from "./runner";
 import glob from "glob";
+import { binDir } from "../utils/variables";
+import semver from "semver";
 import { pathExists } from "fs-extra";
 import path from "path";
+
+export class Downloader {
+  protected bin = ""; // 可执行文件地址
+  protected args = ""; // runner 参数
+
+  constructor(public type: string) {}
+
+  handle(runner: Runner): void {
+    runner.setDownloader(this);
+  }
+
+  async parseArgs(args: Record<string, string>): Promise<void> {
+    // empty
+  }
+
+  getBin(): string {
+    return this.bin;
+  }
+
+  getArgs(): string {
+    return this.args;
+  }
+}
+
+// mediago 下载器
+class MediaGoDownloader extends Downloader {
+  constructor() {
+    super("mediago");
+
+    this.bin = process.platform === "win32" ? "mediago" : "./mediago";
+  }
+
+  async parseArgs(args: Record<string, string>): Promise<void> {
+    this.args = Object.entries(args)
+      .reduce((prev: string[], [key, value]) => {
+        if (value) prev.push(`-${key} "${value}"`);
+        return prev;
+      }, [])
+      .join(" ");
+  }
+}
 
 // N_m3u8DL-CLI 下载器
 class NM3u8DlCliDownloader extends Downloader {
@@ -41,4 +82,14 @@ class NM3u8DlCliDownloader extends Downloader {
   }
 }
 
-export default NM3u8DlCliDownloader;
+const createDownloader = (type: string): Downloader => {
+  if (type === "mediago") {
+    return new MediaGoDownloader();
+  }
+  if (type === "N_m3u8DL-CLI") {
+    return new NM3u8DlCliDownloader();
+  }
+  throw new Error("暂不支持该下载方式");
+};
+
+export { createDownloader };

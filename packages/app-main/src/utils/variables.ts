@@ -25,3 +25,5 @@ export enum Sessions {
 }
 
 export const binDir = __bin__;
+
+export const db = path.resolve(workspace, "database.sqlite");
