@@ -1,0 +1,20 @@
+diff --git a/index.d.ts b/index.d.ts
+index d116f54d6da12d24b48e24ff3636c9066059aa58..556656f701c6a98fa6d6abc5e6269c020ffa0205 100644
+--- a/index.d.ts
++++ b/index.d.ts
+@@ -25,6 +25,7 @@ export type SplitPaneProps = {
+   pane2Style?: React.CSSProperties;
+   resizerClassName?: string;
+   step?: number;
++  children?: React.ReactNode;
+ };
+ 
+ export type SplitPaneState = {
+@@ -64,6 +65,7 @@ export type PaneProps = {
+   split?: Split;
+   style?: React.CSSProperties;
+   eleRef?: (el: HTMLDivElement) => void;
++  children?: React.ReactNode;
+ };
+ 
+ declare class Pane extends React.PureComponent<PaneProps> {}
