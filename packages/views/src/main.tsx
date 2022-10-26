@@ -8,6 +8,7 @@ import Main from "./layout/Main";
 import Download from "./pages/Download";
 import Settings from "./pages/Settings";
 import Browser from "./pages/Browser";
+import Collections from "./pages/Collections";
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Download />,
+      },
+      {
+        path: "collections",
+        element: <Collections />,
       },
       {
         path: "settings",

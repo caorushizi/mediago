@@ -1,35 +1,35 @@
-import React, { FC } from 'react'
-import { Layout, Menu } from 'antd'
-import './index.scss'
-import { Link, Outlet } from 'react-router-dom'
+import React, { FC } from "react";
+import { Layout, Menu } from "antd";
+import "./index.scss";
+import { Link, Outlet } from "react-router-dom";
 
-const { Header, Content } = Layout
+const { Header, Content } = Layout;
 
-const pages = ['/', '/settings']
+const pages = [
+  { path: "/", name: "首页" },
+  { path: "/collections", name: "收藏" },
+  { path: "/settings", name: "设置" },
+];
 
 const Main: FC = () => {
   return (
-  <Layout className={'layout-main'}>
-    <Header>
-      <Menu
-        theme="dark"
-        mode="horizontal"
-        defaultSelectedKeys={['2']}
-        items={pages.map((name, index) => {
-          const key = index + 1
+    <Layout className={"layout-main"}>
+      <Header>
+        <Menu
+          theme="dark"
+          mode="horizontal"
+          defaultSelectedKeys={["0"]}
+          items={pages.map((page, index) => ({
+            key: index,
+            label: <Link to={page.path}>{page.name}</Link>,
+          }))}
+        />
+      </Header>
+      <Content>
+        <Outlet />
+      </Content>
+    </Layout>
+  );
+};
 
-          return {
-            key,
-            label: <Link to={name}>nav {key}</Link>
-          }
-        })}
-      />
-    </Header>
-    <Content>
-      <Outlet/>
-    </Content>
-  </Layout>
-  )
-}
-
-export default Main
+export default Main;
