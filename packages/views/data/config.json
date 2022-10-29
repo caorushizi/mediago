@@ -1,0 +1,12 @@
+{
+  "download_path": "download_path",
+  "audible_alarm": true,
+  "proxy": "proxy",
+  "proxy_enable": "proxy_enable",
+  "allow_statistics": false,
+  "download_program": "download_program",
+  "program_list": [],
+  "config_path": "config_path",
+  "executable_file_path": "executable_file_path",
+  "version": "version"
+}

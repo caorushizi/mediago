@@ -4,7 +4,7 @@
   flex-direction: column;
   &.file-drag {
     &:after {
-      z-index: 100;
+      z-index: 1001;
       content: "";
       position: absolute;
       top: 0;
@@ -14,7 +14,7 @@
       background-color: rgba(0, 0, 0, 0.8);
     }
     &:before {
-      z-index: 101;
+      z-index: 1002;
       content: "";
       position: absolute;
       top: 10px;
