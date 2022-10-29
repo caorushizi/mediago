@@ -3,3 +3,8 @@ export async function wait(seconds: number): Promise<void> {
     setTimeout(resolve, seconds * 1000);
   });
 }
+
+// 判断一个字符串是不是一个 url
+export function isUrl(s: string) {
+  return new URL(s);
+}

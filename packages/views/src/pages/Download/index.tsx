@@ -3,48 +3,65 @@ import SplitPane from "react-split-pane";
 import VirtualList from "rc-virtual-list";
 import "./index.scss";
 import { useRequest, useSize } from "ahooks";
-import { Button, Form, message, Dropdown, Menu, Space, Skeleton } from "antd";
+import { Button, Dropdown, Form, Menu, message, Skeleton, Space } from "antd";
 import { useDropzone } from "react-dropzone";
 import classNames from "classnames";
-import { CloseOutlined, PlusOutlined, UserOutlined } from "@ant-design/icons";
-import type { ProFormInstance } from "@ant-design/pro-components";
-import { ModalForm, ProForm, ProFormText } from "@ant-design/pro-components";
-import { getVideoList } from "../../api";
+import {
+  AppstoreAddOutlined,
+  CloseOutlined,
+  LinkOutlined,
+} from "@ant-design/icons";
+import {
+  ProFormDependency,
+  ProFormInstance,
+  ModalForm,
+  ProForm,
+  ProFormText,
+  ProFormTextArea,
+} from "@ant-design/pro-components";
+import { getCollections, getVideoList } from "../../api";
 import { wait } from "../../utils";
-
-const menu = (
-  <Menu
-    onClick={() => {}}
-    items={[
-      {
-        label: "1st menu item",
-        key: "1",
-        icon: <UserOutlined />,
-      },
-      {
-        label: "2nd menu item",
-        key: "2",
-        icon: <UserOutlined />,
-      },
-      {
-        label: "3rd menu item",
-        key: "3",
-        icon: <UserOutlined />,
-      },
-    ]}
-  />
-);
+import dayjs from "dayjs";
 
 // 下载页
 const Download: FC = () => {
   const downloadListRef = useRef(null);
   const downloadListSize = useSize(downloadListRef);
   const [task, setTask] = useState<Video>();
-  const { getRootProps, getInputProps, isDragAccept, isDragReject } =
-    useDropzone({ accept: { "image/*": [] }, noClick: true });
+
   const formRef = useRef<ProFormInstance<Video>>();
-  const [form] = Form.useForm<{ name: string; company: string }>();
+  const [form] = Form.useForm<Video>();
+  const [formOpen, setFormOpen] = useState(false);
   const { data: videoList, error, loading } = useRequest(getVideoList);
+  const {
+    data: collections,
+    error: errors,
+    loading: loading1,
+  } = useRequest(getCollections);
+  const { getRootProps, getInputProps, isDragAccept, isDragReject } =
+    useDropzone({
+      accept: { "image/*": [] },
+      noClick: true,
+      onDrop: (files, rejectFiles) => {
+        // 默认取第一个
+        const [file] = files;
+        form.setFieldValue("url", file.path);
+        form.validateFields(["url", "name"]);
+        console.log(files, rejectFiles);
+        setFormOpen(true);
+      },
+    });
+
+  const menu = (
+    <Menu
+      onClick={() => {}}
+      items={collections?.map((item) => ({
+        label: item.title,
+        key: item.id,
+        icon: <LinkOutlined />,
+      }))}
+    />
+  );
 
   // 下载列表
   const renderList = useCallback(() => {
@@ -89,25 +106,7 @@ const Download: FC = () => {
             }}
           />
         </div>
-        <ProForm<Video>
-          // onFinish={async (values) => {
-          //   await waitTime(2000);
-          //   console.log(values);
-          //   const val1 = await formRef.current?.validateFields();
-          //   console.log("validateFields:", val1);
-          //   const val2 =
-          //     await formRef.current?.validateFieldsReturnFormatValue?.();
-          //   console.log("validateFieldsReturnFormatValue:", val2);
-          //   await message.success("提交成功");
-          // }}
-          formRef={formRef}
-          // params={task}
-          // request={async () => {
-          //   await waitTime(100);
-          //   return task;
-          // }}
-          autoFocusFirstInput
-        >
+        <ProForm<Video> formRef={formRef} autoFocusFirstInput>
           <ProFormText name="name" label="视频名称" placeholder="请输入名称" />
           <ProFormText
             name="company"
@@ -131,44 +130,76 @@ const Download: FC = () => {
     return (
       <div className={"toolbar"}>
         <Space>
-          <ModalForm<{
-            name: string;
-            company: string;
-          }>
+          <ModalForm<Video>
             title="新建表单"
+            open={formOpen}
             trigger={
               <Button type="primary">
-                <PlusOutlined />
-                新建表单
+                <AppstoreAddOutlined />
+                新建下载
               </Button>
             }
             form={form}
+            onOpenChange={(open) => {
+              setFormOpen(open);
+            }}
             autoFocusFirstInput
             modalProps={{
-              destroyOnClose: true,
-              onCancel: () => console.log("run"),
+              destroyOnClose: false,
             }}
             submitTimeout={2000}
             onFinish={async (values) => {
-              await wait(2);
-              console.log(values.name);
-              await message.success("提交成功");
+              await wait(0.2);
+              message.success("提交成功");
               return true;
+            }}
+            validateTrigger={"onBlur"}
+            onValuesChange={async (values: Video) => {
+              const name = form.getFieldValue("name");
+              const { url } = values;
+              if (!name && url) {
+                const nameStr = dayjs().format("YYYY-MM-DD-HH-mm-ss");
+                form.setFieldValue("name", nameStr);
+                await form.validateFields(["name"]);
+              }
             }}
           >
             <ProFormText
-              name="project"
-              disabled
-              label="项目名称"
-              initialValue="xxxx项目"
+              name="url"
+              label="视频链接"
+              rules={[
+                {
+                  required: true,
+                  message: "视频链接必填",
+                },
+                {
+                  validator: async (rule, value) => {
+                    return new URL(value);
+                  },
+                  message: "请输入一个正确的url",
+                },
+              ]}
             />
-            <ProFormText
-              width="xs"
-              name="mangerName"
-              disabled
-              label="商务经理"
-              initialValue="启途"
-            />
+            <ProFormDependency name={["url"]}>
+              {({ url }) => {
+                console.log("url", url);
+                return (
+                  <ProFormText
+                    name="name"
+                    label="视频名称"
+                    initialValue={url}
+                    rules={[
+                      {
+                        required: true,
+                        message: "视频名称必填",
+                      },
+                    ]}
+                  />
+                );
+              }}
+            </ProFormDependency>
+
+            <ProFormTextArea name="headers" label="请求标头" />
           </ModalForm>
           <Dropdown.Button
             onClick={() => {
@@ -176,12 +207,12 @@ const Download: FC = () => {
             }}
             overlay={menu}
           >
-            Dropdown
+            打开浏览器
           </Dropdown.Button>
         </Space>
       </div>
     );
-  }, []);
+  }, [collections, formOpen]);
 
   // 页尾
   const renderFooter = useCallback(() => {

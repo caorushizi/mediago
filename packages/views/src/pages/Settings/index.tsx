@@ -1,14 +1,19 @@
-import React, { FC, useRef } from "react";
+import React, { FC, useEffect, useRef } from "react";
 import {
   ProForm,
-  ProFormGroup,
+  ProFormDependency,
   ProFormSwitch,
   ProFormText,
   ProFormSelect,
+  ProField,
+  ProFormList,
+  ProFormItem,
 } from "@ant-design/pro-components";
 import { Button, FormInstance, Space, Switch, Tooltip } from "antd";
 import { FolderOpenOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import "./index.scss";
+import { useRequest } from "ahooks";
+import { getConfig } from "../../api";
 
 const statisticsTooltip = `
 是否允许统计用户数据
@@ -18,7 +23,14 @@ const statisticsTooltip = `
 `;
 
 const Settings: FC = () => {
-  const formRef = useRef<FormInstance>();
+  const { data: config, error, loading } = useRequest(getConfig);
+  const formRef = useRef<FormInstance<Config>>();
+
+  useEffect(() => {
+    if (config != null) {
+      formRef?.current?.setFieldsValue(config);
+    }
+  }, [config]);
 
   // 选择下载地址
   const handleSelectDir = (): void => {};
@@ -34,90 +46,77 @@ const Settings: FC = () => {
 
   return (
     <div className={"settings"}>
-      <ProForm<any>
+      <ProForm<Config>
         formRef={formRef}
         layout="horizontal"
         submitter={false}
-        labelCol={{ style: { width: "130px" } }}
-        labelAlign={"left"}
-        size={"small"}
         colon={false}
         initialValues={{}}
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 20 }}
         onValuesChange={() => {}}
       >
-        <ProFormGroup label="基础设置" direction={"vertical"}>
-          <ProFormText
-            width="xl"
-            disabled
-            name="workspace"
-            placeholder="请选择视频下载目录"
-            label={
-              <Button onClick={handleSelectDir} icon={<FolderOpenOutlined />}>
-                选择文件夹
-              </Button>
-            }
-          />
-          <ProFormSwitch label="下载完成提示" name="tip" />
-          <ProFormText
-            width="xl"
-            name="proxy"
-            placeholder="请填写代理地址"
-            label="代理设置"
-          />
-          <ProFormSwitch
-            name={"useProxy"}
-            label={
-              <div>
-                <div>代理开关</div>
-                <Tooltip
-                  title={"该代理会对软件自带浏览器以及下载时生效"}
-                  placement={"right"}
-                >
-                  <QuestionCircleOutlined />
-                </Tooltip>
-              </div>
-            }
-          >
-            <Switch />
-          </ProFormSwitch>
-          <ProFormSwitch
-            label={
-              <div>
-                <div>允许打点统计</div>
-                <Tooltip title={statisticsTooltip} placement={"right"}>
-                  <QuestionCircleOutlined />
-                </Tooltip>
-              </div>
-            }
-            name="statistics"
-          />
-        </ProFormGroup>
-        <ProFormGroup label="下载设置" direction={"vertical"}>
-          <ProFormSelect
-            allowClear={false}
-            width="xl"
-            name="exeFile"
-            label="默认下载器"
-            placeholder="请选择执行程序"
-            options={[]}
-          />
-          <ProForm.Item label={"更多操作"}>
-            <Space>
+        <ProFormText
+          disabled
+          name="download_path"
+          placeholder="请选择视频下载目录"
+          label={
+            <Button onClick={handleSelectDir} icon={<FolderOpenOutlined />}>
+              选择文件夹
+            </Button>
+          }
+        />
+        <ProFormSwitch label="下载完成提示" name="audible_alarm" />
+        <ProFormText
+          name="proxy"
+          placeholder="请填写代理地址"
+          label="代理设置"
+        />
+        <ProFormSwitch
+          name={"proxy_enable"}
+          tooltip={"该代理会对软件自带浏览器以及下载时生效"}
+          label={"代理开关"}
+        >
+          <Switch />
+        </ProFormSwitch>
+        <ProFormSwitch
+          tooltip={statisticsTooltip}
+          label={"允许打点统计"}
+          name="allow_statistics"
+        />
+        <ProFormSelect
+          allowClear={false}
+          name="download_program"
+          label="默认下载器"
+          placeholder="请选择执行程序"
+          options={[]}
+        />
+        <ProFormItem
+          label={"更多操作"}
+          // name={["executable_file_path", "download_program", "proxy_enable"]}
+          style={{ marginBottom: 0 }}
+        >
+          <Space>
+            <ProForm.Item name={"executable_file_path"}>
               <Button onClick={openConfigDir} icon={<FolderOpenOutlined />}>
-                配置文件目录
+                配置文件
               </Button>
-              <Button onClick={openBinDir} icon={<FolderOpenOutlined />}>
-                可执行程序目录
+            </ProForm.Item>
+            <ProForm.Item name={"executable_file_path"}>
+              <Button onClick={openConfigDir} icon={<FolderOpenOutlined />}>
+                配置文件
               </Button>
-              <Button onClick={localDir} icon={<FolderOpenOutlined />}>
-                本地存储目录
+            </ProForm.Item>
+            <ProForm.Item name={"executable_file_path"}>
+              <Button onClick={openConfigDir} icon={<FolderOpenOutlined />}>
+                配置文件
               </Button>
-            </Space>
-          </ProForm.Item>
-          <ProForm.Item label={"当前版本"}>
-            <div>{123}</div>
-          </ProForm.Item>
-        </ProFormGroup>
+            </ProForm.Item>
+          </Space>
+        </ProFormItem>
+        <ProForm.Item label={"当前版本"} name={"version"}>
+          <ProField mode={"read"} />
+        </ProForm.Item>
       </ProForm>
     </div>
   );

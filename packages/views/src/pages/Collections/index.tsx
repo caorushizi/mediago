@@ -1,7 +1,12 @@
 import React, { FC } from "react";
 import "./index.scss";
-import { ModalForm, ProFormText, ProList } from "@ant-design/pro-components";
-import { Button, Col, Form, message, Row, Space } from "antd";
+import {
+  ModalForm,
+  ProFormText,
+  ProList,
+  ProField,
+} from "@ant-design/pro-components";
+import { Button, Form, message, Input } from "antd";
 import { useRequest } from "ahooks";
 import { getCollections } from "../../api";
 import { PlusOutlined, StarFilled } from "@ant-design/icons";
