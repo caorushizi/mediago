@@ -45,8 +45,8 @@ const Download: FC = () => {
       onDrop: (files, rejectFiles) => {
         // 默认取第一个
         const [file] = files;
-        form.setFieldValue("url", file.path);
-        form.validateFields(["url", "name"]);
+        form.setFieldValue("url", (file as any).path);
+        // form.validateFields(["url", "name"]);
         console.log(files, rejectFiles);
         setFormOpen(true);
       },

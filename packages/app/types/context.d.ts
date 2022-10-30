@@ -1,0 +1,4 @@
+
+interface Context {
+  store: any
+}
