@@ -1,0 +1,18 @@
+{
+  "files": [
+    "src/main.ts",
+    "src/preload.ts"
+  ],
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "target": "es2015",
+    "module": "CommonJS",
+    "moduleResolution": "Node16",
+    "allowSyntheticDefaultImports": true,
+    "strictNullChecks": true
+  },
+  "include": [
+    "src",
+    "types"
+  ]
+}
