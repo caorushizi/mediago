@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/main.js",
   "scripts": {
-    "watch": "gulp dev"
+    "dev": "gulp dev"
   },
   "keywords": [],
   "author": "",

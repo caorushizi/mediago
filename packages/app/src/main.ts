@@ -1,12 +1,6 @@
 import { app, BrowserWindow } from 'electron'
 import { resolve } from 'path'
-import App from './app'
 
-new App()
-
-console.log(resolve)
-
-console.log('__dirname', __dirname)
 const createWindow = async (): Promise<void> => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
