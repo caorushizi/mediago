@@ -2,8 +2,8 @@ import { series, dest, watch } from 'gulp'
 import { createProject } from 'gulp-typescript'
 import { join } from 'path'
 import { spawn, ChildProcessWithoutNullStreams } from 'child_process'
-import * as electron from 'electron'
-import fs from 'mz/fs'
+import electron from 'electron'
+import fs from 'fs-extra'
 
 const tsProject = createProject('tsconfig.json')
 
@@ -14,8 +14,15 @@ function build (): NodeJS.WritableStream {
   return tsProject.src().pipe(tsProject()).js.pipe(dest('dist'))
 }
 
-const dev = series(build, startElectron)
-const restart = series(build, restartElectron)
+async function clean (): Promise<void> {
+  const exist = await fs.pathExists('dist')
+  if (exist === true) {
+    await fs.rm('dist', { recursive: true })
+  }
+}
+
+const dev = series(clean, build, startElectron)
+const restart = series(clean, build, restartElectron)
 
 watch(['src/**/*'], restart)
 
