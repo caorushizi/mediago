@@ -1,33 +1,12 @@
-import { app, BrowserWindow } from 'electron'
-import { resolve } from 'path'
+import 'reflect-metadata'
+import { container } from './inversify.config'
+import { TYPES } from './types'
+import { MyApp } from './interfaces'
 
-const createWindow = async (): Promise<void> => {
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    webPreferences: {
-      preload: resolve(__dirname, 'preload.js')
-    }
-  })
+const app = container.get<MyApp>(TYPES.MyApp)
 
-  await mainWindow.loadURL('http://localhost:5173')
-
-  // mainWindow.webContents.openDevTools()
-}
-
-app.whenReady().then(() => {
-  createWindow()
-
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow().then(r => r).catch(e => e)
-    }
-  })
-}).catch((e) => {
-
-})
-
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit()
+app.init().then(() => {
+  console.log('执行成功')
+}).catch(() => {
+  console.log('执行失败')
 })

@@ -1,7 +1,8 @@
 {
   "files": [
     "src/main.ts",
-    "src/preload.ts"
+    "src/preload.ts",
+    "gulpfile.ts"
   ],
   "compilerOptions": {
     "noImplicitAny": true,
@@ -9,9 +10,12 @@
     "module": "CommonJS",
     "moduleResolution": "Node16",
     "allowSyntheticDefaultImports": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
   },
   "include": [
-    "types"
+    "types",
+    "src"
   ]
 }

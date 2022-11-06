@@ -27,6 +27,10 @@
   },
   "dependencies": {
     "electron-store": "^8.1.0",
-    "mz": "^2.7.0"
+    "inversify": "^6.0.1",
+    "mz": "^2.7.0",
+    "reflect-metadata": "^0.1.13",
+    "sqlite3": "^5.1.2",
+    "typeorm": "^0.3.10"
   }
 }
