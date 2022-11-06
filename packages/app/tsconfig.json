@@ -1,14 +1,14 @@
 {
   "files": [
     "src/main.ts",
-    "src/preload.ts",
-    "gulpfile.ts"
+    "src/preload.ts"
   ],
   "compilerOptions": {
     "noImplicitAny": true,
     "target": "es2015",
     "module": "CommonJS",
     "moduleResolution": "Node16",
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strictNullChecks": true,
     "emitDecoratorMetadata": true,

@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/fs-extra": "^9.0.13",
     "@types/gulp": "^4.0.9",
     "@types/mz": "^2.7.4",
     "@types/node": "^18.11.3",
@@ -27,8 +28,8 @@
   },
   "dependencies": {
     "electron-store": "^8.1.0",
+    "fs-extra": "^10.1.0",
     "inversify": "^6.0.1",
-    "mz": "^2.7.0",
     "reflect-metadata": "^0.1.13",
     "sqlite3": "^5.1.2",
     "typeorm": "^0.3.10"
