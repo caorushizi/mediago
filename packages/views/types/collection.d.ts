@@ -1,6 +1,6 @@
 // 视频类型
 interface Collection {
-  id: string;
+  id: number;
   // 视频名称
   title: string;
   // 视频 url
