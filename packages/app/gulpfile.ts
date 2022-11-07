@@ -15,6 +15,7 @@ function build (): NodeJS.WritableStream {
 }
 
 async function clean (): Promise<void> {
+  console.log('123123123')
   const exist = await fs.pathExists('dist')
   if (exist === true) {
     await fs.rm('dist', { recursive: true })
@@ -24,7 +25,7 @@ async function clean (): Promise<void> {
 const dev = series(clean, build, startElectron)
 const restart = series(clean, build, restartElectron)
 
-watch(['src/**/*'], restart)
+watch(['src/**'], restart)
 
 function restartElectron (): void {
   console.log('watch build succeed.')
