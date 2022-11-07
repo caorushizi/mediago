@@ -1,0 +1,12 @@
+.container {
+  height: 100vh;
+  width: 100vw;
+  .inner {
+    position: relative;
+    top: 30px;
+    left: 50px;
+    height: 50vh;
+    width: 50vw;
+    background: red;
+  }
+}

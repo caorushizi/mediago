@@ -1,15 +1,15 @@
-import { BrowserWindow } from 'electron'
+import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron'
 import { resolve } from 'path'
 import { inject, injectable } from 'inversify'
-import { Config, MainWindow } from '../interfaces'
+import { Browser, Config } from '../interfaces'
 import { TYPES } from '../types'
 
 @injectable()
-export default class MainWindowImpl extends BrowserWindow implements MainWindow {
+export default class BrowserWindowImpl extends BrowserWindow implements Browser {
   constructor (
     @inject(TYPES.Config) private readonly config: Config
   ) {
-    const options: Electron.BrowserWindowConstructorOptions = {
+    const options: BrowserWindowConstructorOptions = {
       width: 800,
       height: 600,
       webPreferences: {
@@ -20,6 +20,6 @@ export default class MainWindowImpl extends BrowserWindow implements MainWindow 
   }
 
   async init (): Promise<void> {
-    await this.loadURL('http://localhost:5173')
+    await this.loadURL('http://localhost:5173/browser')
   }
 }
