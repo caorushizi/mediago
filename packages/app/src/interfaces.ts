@@ -1,9 +1,11 @@
 import { BrowserView, BrowserWindow } from 'electron'
 import Store from 'electron-store'
 import { SchemaType } from './services/configImpl'
+import { Video } from './entity/Video'
 
 export interface DB {
   init: () => Promise<void>
+  getVideoList: () => Promise<Video[]>
 }
 
 export interface MyApp {

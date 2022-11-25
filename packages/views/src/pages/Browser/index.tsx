@@ -1,10 +1,19 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useRef } from "react";
 import "./idnex.scss";
+import { useSize } from "ahooks";
 
 const Browser: FC = () => {
+  const browserInner = useRef(null);
+  const downloadListSize = useSize(browserInner);
+
+  useEffect(() => {
+    console.log("downloadListSize", downloadListSize);
+    console.log(window.myAPI);
+    window.myAPI.changeViewSize(downloadListSize);
+  }, [downloadListSize]);
   return (
     <div className="container">
-      <div className={"inner"}></div>
+      <div ref={browserInner} className={"inner"}></div>
     </div>
   );
 };

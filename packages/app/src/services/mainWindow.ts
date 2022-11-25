@@ -12,6 +12,7 @@ export default class MainWindowImpl extends BrowserWindow implements MainWindow 
     const options: Electron.BrowserWindowConstructorOptions = {
       width: 800,
       height: 600,
+      show: false,
       webPreferences: {
         preload: resolve(config.get('execDir'), 'preload/index.js')
       }

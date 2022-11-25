@@ -2,6 +2,7 @@ import { inject, injectable } from 'inversify'
 import { app, BrowserWindow, ipcMain } from 'electron'
 import { TYPES } from '../types'
 import { Browser, Config, DB, MainWindow, MyApp, View } from '../interfaces'
+import { GET_VIDEO_LIST } from '../../channels'
 
 @injectable()
 export default class CoreApp implements MyApp {
@@ -17,15 +18,18 @@ export default class CoreApp implements MyApp {
     })
     app.on('activate', () => {
       if (BrowserWindow.getAllWindows().length === 0) {
-        this.mainWindow.init().then(r => r).catch(e => e)
+        this.mainWindow
+          .init()
+          .then((r) => r)
+          .catch((e) => e)
       }
     })
   }
 
   async init (): Promise<void> {
-    await Promise.all([
-      this.db.init()
-    ])
+    await Promise.all([this.db.init()])
+    this.mainWindow.show()
+    this.browser.show()
     this.config.init()
     await this.mainWindow.init()
     await this.browser.init()
@@ -33,8 +37,17 @@ export default class CoreApp implements MyApp {
     this.browser.setBrowserView(this.browserView.view)
     console.log(this.browserView)
     await this.browserView.init()
-    ipcMain.handle('my-invokable-ipc', async (event, path: string, data: any) => {
 
+    ipcMain.on('change-window-size', (e, args) => {
+      console.log(args)
+      this.browserView.view.setBounds({
+        x: 50,
+        y: 30,
+        height: args.height,
+        width: args.width
+      })
     })
+
+    ipcMain.handle(GET_VIDEO_LIST, () => {})
   }
 }
