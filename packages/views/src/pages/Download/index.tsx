@@ -33,6 +33,7 @@ const Download: FC = () => {
   const [form] = Form.useForm<Video>();
   const [formOpen, setFormOpen] = useState(false);
   const { data: videoList, error, loading } = useRequest(getVideoList);
+  console.log("videoList", videoList);
   const {
     data: collections,
     error: errors,

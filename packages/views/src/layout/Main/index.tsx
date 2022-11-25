@@ -14,7 +14,7 @@ const pages = [
 const Main: FC = () => {
   return (
     <Layout className={"layout-main"}>
-      <Header>
+      <Header className={"layout-main-header"}>
         <Menu
           theme="dark"
           mode="horizontal"

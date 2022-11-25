@@ -27,4 +27,8 @@ export class Data extends DataSource implements DB {
   async init (): Promise<void> {
     await this.initialize()
   }
+
+  async getVideoList (): Promise<Video[]> {
+    return await this.manager.find(Video)
+  }
 }
