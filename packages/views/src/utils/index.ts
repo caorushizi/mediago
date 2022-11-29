@@ -5,6 +5,6 @@ export async function wait(seconds: number): Promise<void> {
 }
 
 // 判断一个字符串是不是一个 url
-export function isUrl(s: string) {
+export function isUrl(s: string): URL {
   return new URL(s);
 }

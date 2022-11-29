@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef } from "react";
-import "./idnex.scss";
+import "./index.scss";
 import { useSize } from "ahooks";
 
 const Browser: FC = () => {
