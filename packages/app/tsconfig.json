@@ -17,5 +17,10 @@
   "include": [
     "types",
     "src"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
   ]
 }

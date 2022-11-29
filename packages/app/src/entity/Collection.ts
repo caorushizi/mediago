@@ -1,36 +1,42 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm'
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
 
 @Entity()
 export class Collection {
   @PrimaryGeneratedColumn()
-    id: number
+  id: number;
 
   // 收藏url
   @Column()
-    title: string
+  title: string;
 
   // 描述
   @Column({
-    type: 'text'
+    type: "text",
   })
-    desc?: string
+  desc?: string;
 
   // url
   @Column({
-    type: 'text'
+    type: "text",
   })
-    url: string
+  url: string;
 
   // 是否置顶
   @Column({
-    type: 'boolean',
-    default: false
+    type: "boolean",
+    default: false,
   })
-    is_favorite: boolean
+  is_favorite: boolean;
 
   @CreateDateColumn()
-    createdDate: Date
+  createdDate: Date;
 
   @UpdateDateColumn()
-    updatedDate: Date
+  updatedDate: Date;
 }
