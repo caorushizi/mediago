@@ -3,11 +3,11 @@ import { Collection } from "../entity/Collection";
 import { DataSource, DataSourceOptions } from "typeorm";
 import { Config, DB } from "../interfaces";
 import { inject, injectable } from "inversify";
-import { TYPES } from "../types";
+import TYPES from "../types";
 import { resolve } from "path";
 
 @injectable()
-export class Data extends DataSource implements DB {
+export default class Data extends DataSource implements DB {
   constructor(@inject(TYPES.Config) private readonly config: Config) {
     const userData = config.get("userData");
     const dbConfig: DataSourceOptions = {

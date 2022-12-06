@@ -4,7 +4,7 @@ const TYPES = {
   MainWindow: Symbol.for("MainWindow"),
   Browser: Symbol.for("Browser"),
   Config: Symbol.for("Config"),
-  View: Symbol.for("View"),
+  InnerBrowser: Symbol.for("InnerBrowser"),
 };
 
-export { TYPES };
+export default TYPES;

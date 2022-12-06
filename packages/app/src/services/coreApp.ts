@@ -1,17 +1,24 @@
 import { inject, injectable } from "inversify";
 import { app, BrowserWindow, ipcMain } from "electron";
-import { TYPES } from "../types";
-import { Browser, Config, DB, MainWindow, MyApp, View } from "../interfaces";
+import TYPES from "../types";
+import {
+  Browser,
+  Config,
+  DB,
+  MainWindow,
+  MyApp,
+  InnerBrowser,
+} from "../interfaces";
 import { GET_VIDEO_LIST } from "../channels";
 
 @injectable()
 export default class CoreApp implements MyApp {
   constructor(
     @inject(TYPES.DB) private readonly db: DB,
-    @inject(TYPES.View) private readonly browserView: View,
     @inject(TYPES.MainWindow) private readonly mainWindow: MainWindow,
     @inject(TYPES.Browser) private readonly browser: Browser,
-    @inject(TYPES.Config) private readonly config: Config
+    @inject(TYPES.Config) private readonly config: Config,
+    @inject(TYPES.InnerBrowser) private readonly browserView: InnerBrowser
   ) {
     app.on("window-all-closed", () => {
       if (process.platform !== "darwin") app.quit();
@@ -34,13 +41,14 @@ export default class CoreApp implements MyApp {
     await this.mainWindow.init();
     await this.browser.init();
 
-    this.browser.setBrowserView(this.browserView.view);
-    console.log(this.browserView);
-    await this.browserView.init();
+    console.log("this.browserView", this.browserView);
+    this.browser.setBrowserView(this.browserView);
+    await this.browserView.initView(123);
+    this.browserView.setBounds({ x: 100, y: 100, width: 500, height: 500 });
+    await this.browserView.webContents.loadURL("https://www.qpgyb.com/");
 
     ipcMain.on("change-window-size", (e, args) => {
-      console.log(args);
-      this.browserView.view.setBounds({
+      this.browserView.setBounds({
         x: 50,
         y: 30,
         height: args.height,
@@ -48,6 +56,10 @@ export default class CoreApp implements MyApp {
       });
     });
 
-    ipcMain.handle(GET_VIDEO_LIST, () => {});
+    ipcMain.handle(GET_VIDEO_LIST, () => {
+      console.log("123123");
+
+      return [];
+    });
   }
 }

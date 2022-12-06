@@ -20,9 +20,8 @@ export interface Browser extends BrowserWindow {
   init: () => Promise<void>;
 }
 
-export interface View {
-  view: BrowserView;
-  init: () => Promise<void>;
+export interface InnerBrowser extends BrowserView {
+  initView: (test: number) => Promise<void>;
 }
 
 export interface Config extends Store<SchemaType> {
