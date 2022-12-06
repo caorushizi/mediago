@@ -2,7 +2,7 @@ import { BrowserWindow } from "electron";
 import { resolve } from "path";
 import { inject, injectable } from "inversify";
 import { Config, MainWindow } from "../interfaces";
-import { TYPES } from "../types";
+import TYPES from "../types";
 
 @injectable()
 export default class MainWindowImpl
@@ -17,6 +17,8 @@ export default class MainWindowImpl
       webPreferences: {
         preload: resolve(config.get("execDir"), "preload/index.js"),
       },
+      x: -1073,
+      y: 240,
     };
     super(options);
   }
