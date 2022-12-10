@@ -1,0 +1,41 @@
+@mixin text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin scrollbar($c: rgba(0, 0, 0, 0.15)) {
+  &::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $c;
+  }
+}
+
+@mixin window-common {
+  html,
+  body,
+  #root {
+    padding: 0;
+    margin: 0;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+  }
+}
+
+.ant-modal-wrap {
+  @include scrollbar;
+}
+
+* {
+  font-family: Alibaba-PuHuiTi-Regular;
+  @include scrollbar();
+}

@@ -1,37 +1,80 @@
 {
   "name": "app",
   "version": "1.0.0",
-  "description": "",
-  "main": "dist/main.js",
+  "description": "hello world ~",
+  "main": "main/index.js",
   "scripts": {
-    "dev": "gulp dev"
+    "pack": "gulp source && electron-builder --dir",
+    "build": "gulp source && electron-builder"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "@types/fs-extra": "^9.0.13",
-    "@types/gulp": "^4.0.9",
-    "@types/mz": "^2.7.4",
-    "@types/node": "^18.11.3",
-    "@typescript-eslint/eslint-plugin": "^5.0.0",
-    "electron": "^21.2.0",
-    "eslint": "^8.0.1",
-    "eslint-config-standard-with-typescript": "^23.0.0",
-    "eslint-plugin-import": "^2.25.2",
-    "eslint-plugin-n": "^15.0.0",
-    "eslint-plugin-promise": "^6.0.0",
-    "gulp": "4.0.0",
-    "gulp-typescript": "6.0.0-alpha.1",
-    "ts-node": "^10.9.1",
-    "typescript": "*"
+  "build": {
+    "productName": "在线视频下载",
+    "appId": "mediago.ziying.site",
+    "copyright": "caorushizi",
+    "artifactName": "media-downloader-setup-${version}.${ext}",
+    "directories": {
+      "output": "./build"
+    },
+    "files": [
+      {
+        "from": "dist",
+        "to": "./",
+        "filter": [
+          "**/*"
+        ]
+      },
+      "./package.json"
+    ],
+    "extraResources": [
+      ".bin/**"
+    ],
+    "win": {
+      "icon": "assets/icon.ico",
+      "requestedExecutionLevel": "requireAdministrator",
+      "target": [
+        {
+          "target": "nsis"
+        }
+      ]
+    },
+    "dmg": {
+      "contents": []
+    },
+    "mac": {
+      "icon": "build/icons/icon.icns"
+    },
+    "linux": {
+      "icon": "build/icons"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "",
+      "uninstallerIcon": "",
+      "installerHeaderIcon": "",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "",
+      "include": "",
+      "script": ""
+    }
   },
-  "dependencies": {
-    "electron-store": "^8.1.0",
-    "fs-extra": "^10.1.0",
-    "inversify": "^6.0.1",
-    "reflect-metadata": "^0.1.13",
-    "sqlite3": "^5.1.2",
-    "typeorm": "^0.3.10"
+  "devDependencies": {
+    "@types/gulp": "^4.0.9",
+    "@types/node": "^14.14.35",
+    "@typescript-eslint/eslint-plugin": "^4.0.0",
+    "@typescript-eslint/parser": "^4.0.0",
+    "asar": "^3.1.0",
+    "del": "^6.0.0",
+    "electron": "16.0.4",
+    "electron-builder": "^22.14.2",
+    "gulp": "^4.0.2",
+    "gulp-copy": "^4.0.1",
+    "prettier": ">=1.13.0",
+    "ts-node": "^10.7.0"
   }
 }
