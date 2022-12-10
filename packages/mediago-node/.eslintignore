@@ -4,3 +4,4 @@ babel.config.js
 webpack.config.js
 script/
 vite.config.ts
+build

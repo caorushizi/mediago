@@ -1,0 +1,39 @@
+{
+  "name": "app-main",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development node script/dev.js",
+    "dist": "cross-env NODE_ENV=production node script/build.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "chalk": "^4.1.2",
+    "cross-env": "^7.0.3",
+    "dotenv": "^8.2.0",
+    "electron": "16.0.4",
+    "esbuild": "^0.9.5",
+    "rimraf": "^3.0.2"
+  },
+  "dependencies": {
+    "@sentry/electron": "^2.5.4",
+    "electron-devtools-installer": "^3.2.0",
+    "electron-is-dev": "^2.0.0",
+    "electron-log": "^4.3.2",
+    "electron-squirrel-startup": "^1.0.0",
+    "electron-store": "^7.0.2",
+    "electron-updater": "^4.6.1",
+    "fs-extra": "^10.0.1",
+    "glob": "^7.1.6",
+    "mediago-node": "workspace:^1.0.0",
+    "moment": "^2.29.1",
+    "nanoid": "^3.1.30",
+    "qs": "^6.10.1",
+    "semver": "^7.3.4",
+    "sequelize": "^6.19.0",
+    "spawn-args": "^0.2.0",
+    "sqlite3": "^5.0.6"
+  }
+}
