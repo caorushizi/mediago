@@ -1,6 +1,2 @@
-.eslintrc.js
-esbuild.config.js
-babel.config.js
-webpack.config.js
-script/
-vite.config.ts
+dist
+gulpfile.ts

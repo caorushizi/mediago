@@ -1,15 +1,26 @@
 {
+  "files": [
+    "src/main.ts",
+    "src/preload.ts"
+  ],
   "compilerOptions": {
-    "target": "es2016",
-    "module": "commonjs",
+    "noImplicitAny": true,
+    "target": "es2015",
+    "module": "CommonJS",
+    "moduleResolution": "Node16",
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "baseUrl": "./src",
-    "resolveJsonModule": true,
-    "typeRoots": [
-      "node_modules/@types",
-    ]
-  }
+    "allowSyntheticDefaultImports": true,
+    "strictNullChecks": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
+  },
+  "include": [
+    "types",
+    "src"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
 }
