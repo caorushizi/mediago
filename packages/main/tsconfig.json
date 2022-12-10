@@ -8,6 +8,9 @@
     "skipLibCheck": true,
     "baseUrl": "./src",
     "resolveJsonModule": true,
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false,
+    "emitDecoratorMetadata": true,
     "typeRoots": [
       "node_modules/@types",
       "src/types"
