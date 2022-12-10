@@ -1,11 +1,11 @@
 import {defineConfig} from "vite";
 import {resolve} from "path";
-import reactRefresh from "@vitejs/plugin-react-refresh";
+import react from "@vitejs/plugin-react";
 
 export default defineConfig({
     root: __dirname,
     server: {
-        port: 7789,
+        port: 8555,
         strictPort: true,
     },
     resolve: {
@@ -15,7 +15,7 @@ export default defineConfig({
         ],
     },
     envDir: "../../",
-    plugins: [reactRefresh()],
+    plugins: [react()],
     css: {
         preprocessorOptions: {
             less: {
