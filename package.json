@@ -6,8 +6,8 @@
   "dependencies": {
   },
   "scripts": {
-    "dev": "pnpm -r --parallel -F app-main -F app-renderer run dev",
-    "dist": "pnpm -r --parallel -F app-main -F app-renderer run dist",
+    "dev": "pnpm -r --parallel -F main -F views run dev",
+    "dist": "pnpm -r --parallel -F main -F views run dist",
     "pack": "pnpm -F app run pack",
     "build": "pnpm -F app run build"
   },

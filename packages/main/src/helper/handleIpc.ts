@@ -4,7 +4,7 @@ import { windowManager } from "../core/window";
 import { binDir, Windows } from "../utils/variables";
 import Runner from "../core/runner";
 import { createDownloader } from "../core/downloader";
-import { downloader as mediaNode } from "mediago-node";
+import { downloader as mediaNode } from "downloader";
 
 const handleIpc = (): void => {
   ipcMain.on("close-main-window", async () => {

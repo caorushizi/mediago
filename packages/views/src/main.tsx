@@ -9,14 +9,6 @@ import BrowserPage from "./nodes/browser";
 import MainPage from "./nodes/main";
 import "./main.scss";
 import store from "./store";
-import * as Sentry from "@sentry/react";
-import { Integrations } from "@sentry/tracing";
-
-Sentry.init({
-  dsn: String(import.meta.env.VITE_APP_SENTRY_DSN || ""),
-  integrations: [new Integrations.BrowserTracing()],
-  tracesSampleRate: 1.0,
-});
 
 tdApp.init();
 

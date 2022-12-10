@@ -1,26 +1,13 @@
-import { app, BrowserWindow, crashReporter } from "electron";
+import { app, BrowserWindow } from "electron";
 import handleIpc from "./helper/handleIpc";
 import { Sessions } from "./utils/variables";
 import handleStore from "./helper/handleStore";
 import handleExtension from "./helper/handleExtension";
 import handleWindows from "./helper/handleWindows";
-import * as Sentry from "@sentry/electron/dist/main";
-import { author, name } from "../package.json";
 import { createSession } from "./core/session";
 import handleProtocol from "./helper/handleProtocol";
 import handleUpdater from "./helper/handleUpdater";
 import "./db";
-
-Sentry.init({ dsn: process.env.VITE_APP_SENTRY_DSN });
-
-if (process.env.VITE_APP_SENTRY_DSN) {
-  crashReporter.start({
-    companyName: author,
-    productName: name,
-    ignoreSystemCrashHandler: true,
-    submitURL: process.env.VITE_APP_SENTRY_DSN,
-  });
-}
 
 if (require("electron-squirrel-startup")) {
   app.quit();
