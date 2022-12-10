@@ -1,36 +1,31 @@
-import { app, BrowserWindow } from "electron";
-import handleIpc from "./helper/handleIpc";
-import { Sessions } from "./utils/variables";
-import handleStore from "./helper/handleStore";
-import handleExtension from "./helper/handleExtension";
-import handleWindows from "./helper/handleWindows";
-import { createSession } from "./core/session";
-import handleProtocol from "./helper/handleProtocol";
-import handleUpdater from "./helper/handleUpdater";
-import "./db";
+import "reflect-metadata";
+import { container } from "./inversify.config";
+import { TYPES } from "./types";
+import { App } from "./interfaces";
+import { app, protocol } from "electron";
+import { defaultScheme, workspace } from "./utils/variables";
+import moment from "moment";
+import path from "path";
+import logger from "electron-log";
 
-if (require("electron-squirrel-startup")) {
-  app.quit();
-}
+const start = async () => {
+  const datetime = moment().format("YYYY-MM-DD");
+  const logPath = path.resolve(workspace, `logs/${datetime}-mediago.log`);
+  logger.transports.console.format = "{h}:{i}:{s} {text}";
+  logger.transports.file.getFile();
+  logger.transports.file.resolvePath = () => logPath;
+  protocol.registerSchemesAsPrivileged([
+    {
+      scheme: defaultScheme,
+      privileges: {
+        secure: true,
+        standard: true,
+      },
+    },
+  ]);
+  await app.whenReady();
+  const mediago = container.get<App>(TYPES.App);
+  mediago.init();
+};
 
-app.whenReady().then(async () => {
-  app.on("activate", async () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      await handleWindows();
-    }
-  });
-
-  app.on("window-all-closed", () => {
-    if (process.platform !== "darwin") {
-      app.quit();
-    }
-  });
-
-  handleUpdater();
-  handleProtocol();
-  createSession(Sessions.PERSIST_MEDIAGO);
-  handleWindows();
-  handleExtension();
-  handleStore();
-  handleIpc();
-});
+void start();

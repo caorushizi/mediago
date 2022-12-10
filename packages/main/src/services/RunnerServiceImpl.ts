@@ -1,20 +1,19 @@
+import { Downloader } from "../core/downloader";
 import { spawn, SpawnOptions } from "child_process";
 import { workspace } from "../utils/variables";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../types";
+// @ts-ignore
 import argsBuilder from "spawn-args";
-import logger from "../core/logger";
-import { Downloader } from "./downloader";
+import { LoggerService, RunnerService } from "../interfaces";
+import { createDownloader } from "../utils";
 
-// runner
-class Runner {
-  private static instance: Runner;
+@injectable()
+export default class RunnerServiceImpl implements RunnerService {
+  downloader: Downloader;
 
-  private constructor(private downloader?: Downloader) {}
-
-  static getInstance(): Runner {
-    if (!Runner.instance) {
-      Runner.instance = new Runner();
-    }
-    return Runner.instance;
+  constructor(@inject(TYPES.LoggerService) private logger: LoggerService) {
+    this.downloader = createDownloader("N_m3u8DL-CLI");
   }
 
   setDownloader(downloader: Downloader): void {
@@ -26,7 +25,7 @@ class Runner {
     const args = this.downloader?.getArgs();
 
     if (!command || !args) throw new Error("请先初始化downloader");
-    logger.info("下载参数：", options.cwd, command, args);
+    this.logger.logger.info("下载参数：", options.cwd, command, args);
 
     return new Promise((resolve, reject) => {
       const spawnCommand = spawn(command, argsBuilder(args), {
@@ -57,5 +56,3 @@ class Runner {
     });
   }
 }
-
-export default Runner;
