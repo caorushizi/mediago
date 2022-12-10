@@ -8,7 +8,7 @@ const windowList = new Map<Windows, IWindowListItem>();
 windowList.set(Windows.MAIN_WINDOW, {
   url:
     process.env.NODE_ENV === "development"
-      ? "http://localhost:7789/main"
+      ? "http://localhost:8555/main"
       : "mediago://index.html/main",
   options(): Electron.BrowserWindowConstructorOptions {
     return {
@@ -38,7 +38,7 @@ windowList.set(Windows.MAIN_WINDOW, {
 windowList.set(Windows.BROWSER_WINDOW, {
   url:
     process.env.NODE_ENV === "development"
-      ? "http://localhost:7789/browser"
+      ? "http://localhost:8555/browser"
       : "mediago://index.html/browser",
   options(): Electron.BrowserWindowConstructorOptions {
     return {
