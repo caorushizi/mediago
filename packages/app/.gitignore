@@ -1,5 +1,3 @@
 node_modules
-pack
-build
-.bin
+.idea
 dist
