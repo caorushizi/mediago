@@ -10,11 +10,9 @@ import { createDownloader } from "../utils";
 
 @injectable()
 export default class RunnerServiceImpl implements RunnerService {
-  downloader: Downloader;
+  downloader?: Downloader;
 
-  constructor(@inject(TYPES.LoggerService) private logger: LoggerService) {
-    this.downloader = createDownloader("N_m3u8DL-CLI");
-  }
+  constructor(@inject(TYPES.LoggerService) private logger: LoggerService) {}
 
   setDownloader(downloader: Downloader): void {
     this.downloader = downloader;

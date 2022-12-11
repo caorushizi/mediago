@@ -15,6 +15,7 @@ export default class ConfigServiceImpl
     @inject(TYPES.LoggerService) private logger: LoggerServiceImpl
   ) {
     const exeFile = process.platform === "win32" ? "N_m3u8DL-CLI" : "mediago";
+    console.log("exeFile");
 
     super({
       name: "config",
@@ -30,6 +31,8 @@ export default class ConfigServiceImpl
         statistics: true,
       },
     });
+
+    console.log("star");
   }
   init(): void {
     this.setProxy(true);
@@ -39,8 +42,8 @@ export default class ConfigServiceImpl
 
   setProxy(isInit?: boolean): void {
     try {
-      const proxy = global.store.get("proxy");
-      const useProxy = global.store.get("useProxy");
+      const proxy = this.get("proxy");
+      const useProxy = this.get("useProxy");
       if (proxy && useProxy) {
         this.logger.logger.info(
           `[proxy] ${isInit ? "初始化" : "开启"}成功，代理地址为${proxy}`

@@ -1,4 +1,3 @@
-import { handle, on } from "../utils/ipc";
 import { binDir } from "../utils/variables";
 import { IpcMainInvokeEvent, Menu } from "electron";
 import { inject, injectable } from "inversify";
@@ -6,17 +5,16 @@ import { TYPES } from "../types";
 import { Controller, MainWindowService, RunnerService } from "../interfaces";
 import { downloader as mediaNode } from "downloader";
 import { createDownloader, failFn, successFn } from "../utils";
+import { handle, on } from "../decorator/ipc";
 
 @injectable()
-export default class DownloadController implements Controller {
+export default class DownloadControllerImpl implements Controller {
   constructor(
     @inject(TYPES.MainWindowService)
     private mainWindow: MainWindowService,
     @inject(TYPES.RunnerService)
     private runner: RunnerService
-  ) {
-    console.log(123123);
-  }
+  ) {}
   @on("open-download-item-context-menu")
   openDownloadItemContextMenu(e: IpcMainInvokeEvent, item: SourceItem) {
     const menu = Menu.buildFromTemplate([

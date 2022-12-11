@@ -11,6 +11,7 @@ import {
   LoggerService,
   MainWindowService,
   ProtocolService,
+  RunnerService,
   SessionService,
   UpdateService,
 } from "./interfaces";
@@ -24,15 +25,17 @@ import IpcHandlerServiceImpl from "./services/IpcHandlerServiceImpl";
 import ProtocolServiceImpl from "./services/ProtocolServiceImpl";
 import SessionServiceImpl from "./services/SessionServiceImpl";
 import UpdateServiceImpl from "./services/UpdateServiceImpl";
-import ConfigController from "./controller/ConfigController";
-import DownloadController from "./controller/DownloadController";
-import ViewController from "./controller/ViewController";
-import WindowController from "./controller/WindowController";
+import ConfigControllerImpl from "./controller/ConfigControllerImpl";
+import DownloadControllerImpl from "./controller/DownloadControllerImpl";
+import ViewControllerImpl from "./controller/ViewControllerImpl";
+import WindowControllerImpl from "./controller/WindowControllerImpl";
 import LoggerServiceImpl from "./services/LoggerServiceImpl";
+import RunnerServiceImpl from "./services/RunnerServiceImpl";
 
 const container = new Container({
   skipBaseClassChecks: true,
   defaultScope: "Singleton",
+  autoBindInjectable: true,
 });
 container
   .bind<MainWindowService>(TYPES.MainWindowService)
@@ -46,6 +49,7 @@ container
 container.bind<App>(TYPES.App).to(MediaGo);
 container.bind<ConfigService>(TYPES.ConfigService).to(ConfigServiceImpl);
 container.bind<DataService>(TYPES.DataService).to(DataServiceImpl);
+container.bind<RunnerService>(TYPES.RunnerService).to(RunnerServiceImpl);
 container
   .bind<IpcHandlerService>(TYPES.IpcHandlerService)
   .to(IpcHandlerServiceImpl);
@@ -55,9 +59,9 @@ container.bind<UpdateService>(TYPES.UpdateService).to(UpdateServiceImpl);
 container.bind<LoggerService>(TYPES.LoggerService).to(LoggerServiceImpl);
 
 // === controller
-container.bind<Controller>(TYPES.Controller).to(DownloadController);
-container.bind<Controller>(TYPES.Controller).to(WindowController);
-container.bind<Controller>(TYPES.Controller).to(ViewController);
-container.bind<Controller>(TYPES.Controller).to(ConfigController);
+container.bind<Controller>(TYPES.Controller).to(DownloadControllerImpl);
+container.bind<Controller>(TYPES.Controller).to(WindowControllerImpl);
+container.bind<Controller>(TYPES.Controller).to(ViewControllerImpl);
+container.bind<Controller>(TYPES.Controller).to(ConfigControllerImpl);
 
 export { container };

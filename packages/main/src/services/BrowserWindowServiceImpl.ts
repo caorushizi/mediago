@@ -19,6 +19,8 @@ export default class BrowserWindowServiceImpl
         contextIsolation: true,
         preload: resolve(__dirname, "./preload.js"),
       },
+      x: -1073,
+      y: 240,
     };
     super(options);
   }

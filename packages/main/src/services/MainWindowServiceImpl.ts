@@ -21,6 +21,8 @@ export default class MainWindowServiceImpl
         contextIsolation: true,
         preload: resolve(__dirname, "./preload.js"),
       },
+      x: -1073,
+      y: 240,
     };
     super(options);
   }
