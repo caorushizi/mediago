@@ -1,4 +1,3 @@
-import { on } from "../utils/ipc";
 import { IpcMainInvokeEvent } from "electron";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
@@ -7,21 +6,24 @@ import {
   BrowserWindowService,
   Controller,
 } from "../interfaces";
+import { on } from "../decorator/ipc";
 
 @injectable()
-export default class ViewController implements Controller {
+export default class ViewControllerImpl implements Controller {
   constructor(
     @inject(TYPES.BrowserViewService)
     private browserWindow: BrowserWindowService,
     @inject(TYPES.BrowserViewService)
     private browserView: BrowserViewService
-  ) {
-    console.log(123123);
-  }
+  ) {}
+
+  test = 123;
+
   @on("set-browser-view-bounds")
   setBrowserViewBounds(e: IpcMainInvokeEvent, rect: any) {
-    console.log("setBrowserViewBounds", this);
-    this.browserView.setBounds(rect);
+    console.log("setBrowserViewBounds", this.browserView);
+    console.log("setBrowserViewBounds", this.browserWindow);
+    this.browserView?.setBounds(rect);
   }
 
   @on("browser-view-go-back")

@@ -55,10 +55,7 @@ export interface SessionService {
   get(): Session;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface Controller {
-  // ampty
-}
+export interface Controller {}
 
 export interface LoggerService {
   logger: ElectronLog;

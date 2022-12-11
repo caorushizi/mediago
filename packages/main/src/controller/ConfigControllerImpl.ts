@@ -1,15 +1,13 @@
-import { handle } from "../utils/ipc";
 import { binDir } from "../utils/variables";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import { ConfigService, Controller } from "../interfaces";
 import { app, IpcMainInvokeEvent } from "electron";
+import { handle } from "../decorator/ipc";
 
 @injectable()
-export default class ConfigController implements Controller {
-  constructor(@inject(TYPES.ConfigService) private config: ConfigService) {
-    console.log(123123);
-  }
+export default class ConfigControllerImpl implements Controller {
+  constructor(@inject(TYPES.ConfigService) private config: ConfigService) {}
   @handle("get-bin-dir")
   getBinDir() {
     return binDir;
@@ -21,10 +19,9 @@ export default class ConfigController implements Controller {
   }
 
   @handle("get-store")
-  getStore(e: IpcMainInvokeEvent, key: string) {
-    console.log("yhis.config", this);
+  getStore = (e: IpcMainInvokeEvent, key: string): any => {
     return this.config.get(key);
-  }
+  };
 
   @handle("get-path")
   getPath(e: IpcMainInvokeEvent, name: any) {

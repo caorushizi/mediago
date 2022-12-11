@@ -23,7 +23,7 @@ function startMain() {
     platform: "node",
     sourcemap: true,
     target: ["node16.13"],
-    external: ["electron", "pg-hstore", 'aws-sdk', "nock", "mock-aws-s3"],
+    external: ["electron", "pg-hstore", 'aws-sdk', "nock", "mock-aws-s3", "sqlite3", "typeorm"],
     define: {
       // 开发环境中二进制可执行文件的路径
       __bin__: `"${resolve(__dirname, "../.bin").replace(/\\/g, "\\\\")}"`,
