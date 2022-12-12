@@ -17,12 +17,8 @@ export default class MainWindowServiceImpl
       show: false,
       frame: false,
       webPreferences: {
-        nodeIntegration: true,
-        contextIsolation: true,
         preload: resolve(__dirname, "./preload.js"),
       },
-      x: -1073,
-      y: 240,
     };
     super(options);
   }
