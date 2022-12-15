@@ -8,7 +8,6 @@ import React, {
 } from "react";
 import { FixedSizeList as List } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
-import { Resizable } from "re-resizable";
 import "./index.scss";
 import { Box } from "@chakra-ui/react";
 import classNames from "classnames";
@@ -62,6 +61,7 @@ import { updateNotifyCount } from "../../../../store/actions/main.actions";
 import HeaderEdit from "../../../../components/HeaderEdit";
 import { downloaderOptions } from "../../../../utils/variables";
 import { SourceStatus, SourceType } from "../../../../types";
+import SplitPane from "react-split-pane";
 
 type ActionButton = {
   key: string;
@@ -585,6 +585,286 @@ const DownloadList: React.FC<Props> = ({
     }
   };
 
+  const renderTaskPanel = () => {
+    return (
+      <Box
+        p={15}
+        pt={0}
+        height={"100%"}
+        flex={1}
+        overflowY={"auto"}
+        minW={"300px"}
+      >
+        <Box
+          display={"flex"}
+          alignItems={"center"}
+          justifyContent={"flex-end"}
+          h={40}
+        >
+          <Button
+            size={"small"}
+            icon={<CloseOutlined />}
+            type={"link"}
+            onClick={() => {
+              setCurrentSourceItem(null);
+            }}
+          />
+        </Box>
+        <ProForm
+          form={detailForm}
+          layout={"horizontal"}
+          submitter={{
+            searchConfig: {
+              resetText: "重置",
+              submitText: "下载",
+            },
+            resetButtonProps: {
+              style: {
+                // 隐藏重置按钮
+                display: "none",
+              },
+            },
+            onSubmit: async () => {
+              const item = detailForm.getFieldsValue();
+              await downloadFile(item);
+            },
+          }}
+          onValuesChange={(changedFields) => {
+            if (changedFields.hasOwnProperty("exeFile")) {
+              setMoreOptions(changedFields.exeFile !== "mediago");
+            }
+          }}
+          size={"small"}
+        >
+          <ProFormText
+            name={"title"}
+            label="视频名称"
+            placeholder="请输入视频名称"
+          />
+          <ProFormSelect
+            name={"exeFile"}
+            options={downloaderOptions}
+            label={"下载程序"}
+            placeholder={"请选择下载程序"}
+          />
+          <ProFormText
+            name={"url"}
+            label="请求地址"
+            placeholder="请输入请求地址"
+          />
+          <HeaderEdit label={"请求标头"} name={"headers"} />
+          {moreOptions && (
+            <>
+              <Divider plain style={{ margin: "-10px 0 5px 0" }}>
+                <Box
+                  d={"flex"}
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                  cursor={"pointer"}
+                  color={"#409EFF"}
+                  onClick={() => {
+                    setExpanded((state) => !state);
+                  }}
+                >
+                  {expanded ? (
+                    <>
+                      <DownOutlined />
+                      <Box ml={5}>展开更多高级选项</Box>
+                    </>
+                  ) : (
+                    <>
+                      <UpOutlined />
+                      <Box ml={5}>收起</Box>
+                    </>
+                  )}
+                </Box>
+              </Divider>
+              {!expanded && (
+                <>
+                  <Form.Item
+                    name={"checkbox"}
+                    initialValue={["enableDelAfterDone"]}
+                  >
+                    <Checkbox.Group style={{ width: "100%" }}>
+                      <Row>
+                        <Col span={12} style={{ marginBottom: "8px" }}>
+                          <Checkbox value="enableDelAfterDone">
+                            合并后删除分片
+                          </Checkbox>
+                        </Col>
+                        <Col span={12} style={{ marginBottom: "8px" }}>
+                          <Checkbox value="disableDateInfo">
+                            不写入日期
+                          </Checkbox>
+                        </Col>
+                        <Col span={12} style={{ marginBottom: "8px" }}>
+                          <Checkbox value="noProxy">不使用系统代理</Checkbox>
+                        </Col>
+                        <Col span={12} style={{ marginBottom: "8px" }}>
+                          <Checkbox value="enableParseOnly">
+                            仅解析m3u8
+                          </Checkbox>
+                        </Col>
+                        <Col span={12} style={{ marginBottom: "8px" }}>
+                          <Checkbox value="enableMuxFastStart">
+                            混流MP4
+                          </Checkbox>
+                        </Col>
+                        <Col span={12} style={{ marginBottom: "8px" }}>
+                          <Checkbox value="noMerge">下载完不合并</Checkbox>
+                        </Col>
+                        <Col span={12}>
+                          <Checkbox value="enableBinaryMerge">
+                            使用二进制合并
+                          </Checkbox>
+                        </Col>
+                        <Col span={12}>
+                          <Checkbox value="enableAudioOnly">
+                            仅合并音频轨道
+                          </Checkbox>
+                        </Col>
+                        <Col span={12}>
+                          <Checkbox value="disableIntegrityCheck">
+                            关闭完整性检查
+                          </Checkbox>
+                        </Col>
+                      </Row>
+                    </Checkbox.Group>
+                  </Form.Item>
+                  <Row>
+                    <Col span={12}>
+                      <Form.Item
+                        name={"maxThreads"}
+                        label={"最大线程"}
+                        labelCol={{ style: { width: "86px" } }}
+                        labelAlign={"left"}
+                        initialValue={32}
+                      >
+                        <InputNumber placeholder="placeholder" />
+                      </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                      <Form.Item
+                        name={"minThreads"}
+                        label={"最小线程"}
+                        labelCol={{ style: { width: "86px" } }}
+                        labelAlign={"left"}
+                        initialValue={16}
+                      >
+                        <InputNumber placeholder="placeholder" />
+                      </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                      <Form.Item
+                        name={"retryCount"}
+                        label={"重试次数"}
+                        labelCol={{ style: { width: "86px" } }}
+                        labelAlign={"left"}
+                        initialValue={15}
+                      >
+                        <InputNumber placeholder="placeholder" />
+                      </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                      <Form.Item
+                        name={"timeOut"}
+                        label={"超时时长(s)"}
+                        labelCol={{ style: { width: "86px" } }}
+                        labelAlign={"left"}
+                        initialValue={10}
+                      >
+                        <InputNumber placeholder="placeholder" />
+                      </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                      <Form.Item
+                        name={"stopSpeed"}
+                        label={"停速(KB/s)"}
+                        labelCol={{ style: { width: "86px" } }}
+                        labelAlign={"left"}
+                        initialValue={0}
+                      >
+                        <InputNumber placeholder="placeholder" />
+                      </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                      <Form.Item
+                        name={"maxSpeed"}
+                        label={"限速(KB/s)"}
+                        labelCol={{ style: { width: "86px" } }}
+                        labelAlign={"left"}
+                        initialValue={0}
+                      >
+                        <InputNumber placeholder="placeholder" />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                </>
+              )}
+            </>
+          )}
+        </ProForm>
+      </Box>
+    );
+  };
+
+  const renderTaskList = () => {
+    return (
+      <AutoSizer className={"new-download-list"}>
+        {({ height, width }) => (
+          <List<SourceItem[]>
+            height={height}
+            itemSize={35}
+            width={width}
+            itemData={tableDataRef.current}
+            itemCount={tableDataRef.current.length}
+            itemKey={(index, data) => {
+              const item = data[index];
+              return item.id || `${item.title}-${index}`;
+            }}
+          >
+            {({ index, style, data }) => {
+              const item = data[index];
+
+              return (
+                <Box
+                  className={classNames("list-item-container")}
+                  _hover={{ bg: "#EBEEF5" }}
+                  style={style}
+                  title={item.title}
+                  display={"flex"}
+                  flexDirection={"row"}
+                  alignItems={"center"}
+                  px={15}
+                  onContextMenu={() => {
+                    itemContextMenu(item);
+                  }}
+                >
+                  {renderStatus(item)}
+                  <Box
+                    flex={1}
+                    className={"list-item-inner"}
+                    onClick={() => {
+                      const { exeFile } = settings;
+                      setCurrentSourceItem(item);
+                      detailForm.setFieldsValue({ ...item, exeFile });
+                      calcMaxWidth();
+                      setMoreOptions(exeFile !== "mediago");
+                      dispatch(updateNotifyCount(0));
+                    }}
+                  >
+                    {item.title}
+                  </Box>
+                  {renderActionButtons(item)}
+                </Box>
+              );
+            }}
+          </List>
+        )}
+      </AutoSizer>
+    );
+  };
+
   return (
     <FileDrop onDrop={onDrop}>
       <Box
@@ -602,293 +882,17 @@ const DownloadList: React.FC<Props> = ({
             overflow={"hidden"}
             flexDirection={"row"}
           >
-            <Resizable
-              as={Box}
-              enable={{ right: true }}
-              minHeight={"100%"}
-              minWidth={currentSourceItem ? "350px" : "100%"}
-              maxWidth={currentSourceItem ? maxWidth : "100%"}
-              style={{
-                borderRight: "1px solid rgb(235, 238, 245)",
-              }}
-            >
-              <AutoSizer className={"new-download-list"}>
-                {({ height, width }) => (
-                  <List<SourceItem[]>
-                    height={height}
-                    itemSize={35}
-                    width={width}
-                    itemData={tableDataRef.current}
-                    itemCount={tableDataRef.current.length}
-                    itemKey={(index, data) => {
-                      const item = data[index];
-                      return item.id || `${item.title}-${index}`;
-                    }}
-                  >
-                    {({ index, style, data }) => {
-                      const item = data[index];
-
-                      return (
-                        <Box
-                          className={classNames("list-item-container")}
-                          _hover={{ bg: "#EBEEF5" }}
-                          style={style}
-                          title={item.title}
-                          display={"flex"}
-                          flexDirection={"row"}
-                          alignItems={"center"}
-                          px={15}
-                          onContextMenu={() => {
-                            itemContextMenu(item);
-                          }}
-                        >
-                          {renderStatus(item)}
-                          <Box
-                            flex={1}
-                            className={"list-item-inner"}
-                            onClick={() => {
-                              const { exeFile } = settings;
-                              setCurrentSourceItem(item);
-                              detailForm.setFieldsValue({ ...item, exeFile });
-                              calcMaxWidth();
-                              setMoreOptions(exeFile !== "mediago");
-                              dispatch(updateNotifyCount(0));
-                            }}
-                          >
-                            {item.title}
-                          </Box>
-                          {renderActionButtons(item)}
-                        </Box>
-                      );
-                    }}
-                  </List>
-                )}
-              </AutoSizer>
-            </Resizable>
-
-            {currentSourceItem && (
-              <Box
-                p={15}
-                pt={0}
-                height={"100%"}
-                flex={1}
-                overflowY={"auto"}
-                minW={"300px"}
+            {currentSourceItem != null ? (
+              <SplitPane
+                className={"split-pane"}
+                minSize={350}
+                split="vertical"
               >
-                <Box
-                  display={"flex"}
-                  alignItems={"center"}
-                  justifyContent={"flex-end"}
-                  h={40}
-                >
-                  <Button
-                    size={"small"}
-                    icon={<CloseOutlined />}
-                    type={"link"}
-                    onClick={() => {
-                      setCurrentSourceItem(null);
-                    }}
-                  />
-                </Box>
-                <ProForm
-                  form={detailForm}
-                  layout={"horizontal"}
-                  submitter={{
-                    searchConfig: {
-                      resetText: "重置",
-                      submitText: "下载",
-                    },
-                    resetButtonProps: {
-                      style: {
-                        // 隐藏重置按钮
-                        display: "none",
-                      },
-                    },
-                    onSubmit: async () => {
-                      const item = detailForm.getFieldsValue();
-                      await downloadFile(item);
-                    },
-                  }}
-                  onValuesChange={(changedFields) => {
-                    if (changedFields.hasOwnProperty("exeFile")) {
-                      setMoreOptions(changedFields.exeFile !== "mediago");
-                    }
-                  }}
-                  size={"small"}
-                >
-                  <ProFormText
-                    name={"title"}
-                    label="视频名称"
-                    placeholder="请输入视频名称"
-                  />
-                  <ProFormSelect
-                    name={"exeFile"}
-                    options={downloaderOptions}
-                    label={"下载程序"}
-                    placeholder={"请选择下载程序"}
-                  />
-                  <ProFormText
-                    name={"url"}
-                    label="请求地址"
-                    placeholder="请输入请求地址"
-                  />
-                  <HeaderEdit label={"请求标头"} name={"headers"} />
-                  {moreOptions && (
-                    <>
-                      <Divider plain style={{ margin: "-10px 0 5px 0" }}>
-                        <Box
-                          d={"flex"}
-                          alignItems={"center"}
-                          justifyContent={"center"}
-                          cursor={"pointer"}
-                          color={"#409EFF"}
-                          onClick={() => {
-                            setExpanded((state) => !state);
-                          }}
-                        >
-                          {expanded ? (
-                            <>
-                              <DownOutlined />
-                              <Box ml={5}>展开更多高级选项</Box>
-                            </>
-                          ) : (
-                            <>
-                              <UpOutlined />
-                              <Box ml={5}>收起</Box>
-                            </>
-                          )}
-                        </Box>
-                      </Divider>
-                      {!expanded && (
-                        <>
-                          <Form.Item
-                            name={"checkbox"}
-                            initialValue={["enableDelAfterDone"]}
-                          >
-                            <Checkbox.Group style={{ width: "100%" }}>
-                              <Row>
-                                <Col span={12} style={{ marginBottom: "8px" }}>
-                                  <Checkbox value="enableDelAfterDone">
-                                    合并后删除分片
-                                  </Checkbox>
-                                </Col>
-                                <Col span={12} style={{ marginBottom: "8px" }}>
-                                  <Checkbox value="disableDateInfo">
-                                    不写入日期
-                                  </Checkbox>
-                                </Col>
-                                <Col span={12} style={{ marginBottom: "8px" }}>
-                                  <Checkbox value="noProxy">
-                                    不使用系统代理
-                                  </Checkbox>
-                                </Col>
-                                <Col span={12} style={{ marginBottom: "8px" }}>
-                                  <Checkbox value="enableParseOnly">
-                                    仅解析m3u8
-                                  </Checkbox>
-                                </Col>
-                                <Col span={12} style={{ marginBottom: "8px" }}>
-                                  <Checkbox value="enableMuxFastStart">
-                                    混流MP4
-                                  </Checkbox>
-                                </Col>
-                                <Col span={12} style={{ marginBottom: "8px" }}>
-                                  <Checkbox value="noMerge">
-                                    下载完不合并
-                                  </Checkbox>
-                                </Col>
-                                <Col span={12}>
-                                  <Checkbox value="enableBinaryMerge">
-                                    使用二进制合并
-                                  </Checkbox>
-                                </Col>
-                                <Col span={12}>
-                                  <Checkbox value="enableAudioOnly">
-                                    仅合并音频轨道
-                                  </Checkbox>
-                                </Col>
-                                <Col span={12}>
-                                  <Checkbox value="disableIntegrityCheck">
-                                    关闭完整性检查
-                                  </Checkbox>
-                                </Col>
-                              </Row>
-                            </Checkbox.Group>
-                          </Form.Item>
-                          <Row>
-                            <Col span={12}>
-                              <Form.Item
-                                name={"maxThreads"}
-                                label={"最大线程"}
-                                labelCol={{ style: { width: "86px" } }}
-                                labelAlign={"left"}
-                                initialValue={32}
-                              >
-                                <InputNumber placeholder="placeholder" />
-                              </Form.Item>
-                            </Col>
-                            <Col span={12}>
-                              <Form.Item
-                                name={"minThreads"}
-                                label={"最小线程"}
-                                labelCol={{ style: { width: "86px" } }}
-                                labelAlign={"left"}
-                                initialValue={16}
-                              >
-                                <InputNumber placeholder="placeholder" />
-                              </Form.Item>
-                            </Col>
-                            <Col span={12}>
-                              <Form.Item
-                                name={"retryCount"}
-                                label={"重试次数"}
-                                labelCol={{ style: { width: "86px" } }}
-                                labelAlign={"left"}
-                                initialValue={15}
-                              >
-                                <InputNumber placeholder="placeholder" />
-                              </Form.Item>
-                            </Col>
-                            <Col span={12}>
-                              <Form.Item
-                                name={"timeOut"}
-                                label={"超时时长(s)"}
-                                labelCol={{ style: { width: "86px" } }}
-                                labelAlign={"left"}
-                                initialValue={10}
-                              >
-                                <InputNumber placeholder="placeholder" />
-                              </Form.Item>
-                            </Col>
-                            <Col span={12}>
-                              <Form.Item
-                                name={"stopSpeed"}
-                                label={"停速(KB/s)"}
-                                labelCol={{ style: { width: "86px" } }}
-                                labelAlign={"left"}
-                                initialValue={0}
-                              >
-                                <InputNumber placeholder="placeholder" />
-                              </Form.Item>
-                            </Col>
-                            <Col span={12}>
-                              <Form.Item
-                                name={"maxSpeed"}
-                                label={"限速(KB/s)"}
-                                labelCol={{ style: { width: "86px" } }}
-                                labelAlign={"left"}
-                                initialValue={0}
-                              >
-                                <InputNumber placeholder="placeholder" />
-                              </Form.Item>
-                            </Col>
-                          </Row>
-                        </>
-                      )}
-                    </>
-                  )}
-                </ProForm>
-              </Box>
+                {renderTaskList()}
+                {renderTaskPanel()}
+              </SplitPane>
+            ) : (
+              renderTaskList()
             )}
           </Box>
         ) : (
