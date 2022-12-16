@@ -9,7 +9,6 @@ import React, {
 import { FixedSizeList as List } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import "./index.scss";
-import { Box } from "@chakra-ui/react";
 import classNames from "classnames";
 import {
   Button,
@@ -198,7 +197,14 @@ const DownloadList: React.FC<Props> = ({
     const status = item.status;
     return (
       <Tooltip title={titleMap[status]} placement={"right"}>
-        <Box h={8} w={8} borderRadius={4} mr={8} bg={colorMap[status]} />
+        <div
+          style={{
+            height: "8px",
+            width: "8px",
+            borderRadius: "4px",
+            background: colorMap[status],
+          }}
+        />
       </Tooltip>
     );
   };
@@ -408,17 +414,20 @@ const DownloadList: React.FC<Props> = ({
       <Menu className={"favorite-menu"} style={{ width: 250 }}>
         {favsList.map((fav, i) => (
           <Menu.Item key={i} style={{ overflow: "hidden" }}>
-            <Box
-              display={"flex"}
-              alignItems={"center"}
-              justifyContent={"space-between"}
-              width={"100%"}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
             >
-              <Box
-                flex={1}
-                overflow={"hidden"}
-                whiteSpace={"nowrap"}
-                textOverflow={"ellipsis"}
+              <div
+                style={{
+                  flex: 1,
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
+                  textOverflow: "ellipsis",
+                }}
                 onClick={() => {
                   onEvent.favPageOpenLink();
                   window.electron.openBrowserWindow(fav.url);
@@ -426,11 +435,11 @@ const DownloadList: React.FC<Props> = ({
                 title={fav.title}
               >
                 {fav.title}
-              </Box>
+              </div>
               <Button type="link" danger onClick={() => handleDelete(fav)}>
                 删除
               </Button>
-            </Box>
+            </div>
           </Menu.Item>
         ))}
         {favsList.length > 0 && <Menu.Divider />}
@@ -442,7 +451,12 @@ const DownloadList: React.FC<Props> = ({
   // 渲染页面上方的按钮
   const renderToolBar = () => {
     return (
-      <Box p={10} borderBottom={"1px solid #EBEEF5"}>
+      <div
+        style={{
+          padding: "10px",
+          borderBottom: "1px solid #EBEEF5",
+        }}
+      >
         <Space>
           <Button
             key={"1"}
@@ -463,7 +477,7 @@ const DownloadList: React.FC<Props> = ({
             打开浏览器
           </Dropdown.Button>
         </Space>
-      </Box>
+      </div>
     );
   };
 
@@ -547,31 +561,31 @@ const DownloadList: React.FC<Props> = ({
         break;
     }
     return (
-      <Box display={"flex"}>
+      <div style={{ display: "flex" }}>
         {buttons.map((button) =>
           button.showTooltip ? (
             <Tooltip title={button.tooltip} placement={"left"}>
-              <Box
-                pl={10}
+              <div
+                style={{ paddingLeft: "10px" }}
                 key={button.key}
                 onClick={button.cb}
                 title={button.title}
               >
                 {button.text}
-              </Box>
+              </div>
             </Tooltip>
           ) : (
-            <Box
-              pl={10}
+            <div
+              style={{ paddingLeft: "10px" }}
               key={button.key}
               onClick={button.cb}
               title={button.title}
             >
               {button.text}
-            </Box>
+            </div>
           )
         )}
-      </Box>
+      </div>
     );
   };
 
@@ -590,19 +604,23 @@ const DownloadList: React.FC<Props> = ({
 
   const renderTaskPanel = () => {
     return (
-      <Box
-        p={15}
-        pt={0}
-        height={"100%"}
-        flex={1}
-        overflowY={"auto"}
-        minW={"300px"}
+      <div
+        style={{
+          padding: "15px",
+          paddingTop: 0,
+          height: "100%",
+          flex: "1",
+          overflowY: "auto",
+          minWidth: "300px",
+        }}
       >
-        <Box
-          display={"flex"}
-          alignItems={"center"}
-          justifyContent={"flex-end"}
-          h={40}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyItems: "flex-end",
+            height: "40px",
+          }}
         >
           <Button
             size={"small"}
@@ -612,7 +630,7 @@ const DownloadList: React.FC<Props> = ({
               setCurrentSourceItem(null);
             }}
           />
-        </Box>
+        </div>
         <ProForm
           form={detailForm}
           layout={"horizontal"}
@@ -659,11 +677,13 @@ const DownloadList: React.FC<Props> = ({
           {moreOptions && (
             <>
               <Divider plain style={{ margin: "-10px 0 5px 0" }}>
-                <Box
-                  d={"flex"}
-                  alignItems={"center"}
-                  justifyContent={"center"}
-                  cursor={"pointer"}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyItems: "flex-end",
+                    cursor: "pointer",
+                  }}
                   color={"#409EFF"}
                   onClick={() => {
                     setExpanded((state) => !state);
@@ -672,15 +692,15 @@ const DownloadList: React.FC<Props> = ({
                   {expanded ? (
                     <>
                       <DownOutlined />
-                      <Box ml={5}>展开更多高级选项</Box>
+                      <div style={{ marginLeft: "5px" }}>展开更多高级选项</div>
                     </>
                   ) : (
                     <>
                       <UpOutlined />
-                      <Box ml={5}>收起</Box>
+                      <div style={{ marginLeft: "5px" }}>收起</div>
                     </>
                   )}
-                </Box>
+                </div>
               </Divider>
               {!expanded && (
                 <>
@@ -807,7 +827,7 @@ const DownloadList: React.FC<Props> = ({
             </>
           )}
         </ProForm>
-      </Box>
+      </div>
     );
   };
 
@@ -830,22 +850,26 @@ const DownloadList: React.FC<Props> = ({
               const item = data[index];
 
               return (
-                <Box
+                <div
                   className={classNames("list-item-container")}
-                  _hover={{ bg: "#EBEEF5" }}
-                  style={style}
+                  // _hover={{ bg: "#EBEEF5" }}
+                  style={{
+                    ...style,
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    padding: "0 15px",
+                  }}
                   title={item.title}
-                  display={"flex"}
-                  flexDirection={"row"}
-                  alignItems={"center"}
-                  px={15}
                   onContextMenu={() => {
                     itemContextMenu(item);
                   }}
                 >
                   {renderStatus(item)}
-                  <Box
-                    flex={1}
+                  <div
+                    style={{
+                      flex: 1,
+                    }}
                     className={"list-item-inner"}
                     onClick={() => {
                       const { exeFile } = settings;
@@ -857,9 +881,9 @@ const DownloadList: React.FC<Props> = ({
                     }}
                   >
                     {item.title}
-                  </Box>
+                  </div>
                   {renderActionButtons(item)}
-                </Box>
+                </div>
               );
             }}
           </List>
@@ -870,20 +894,24 @@ const DownloadList: React.FC<Props> = ({
 
   return (
     <FileDrop onDrop={onDrop}>
-      <Box
+      <div
         className={"download-list-container"}
-        h={"100%"}
-        w={"100%"}
-        display={"flex"}
-        flexDirection={"column"}
+        style={{
+          height: "100%",
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+        }}
       >
         {renderToolBar()}
         {tableData.length > 0 ? (
-          <Box
-            flex={1}
-            display={"flex"}
-            overflow={"hidden"}
-            flexDirection={"row"}
+          <div
+            style={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "row",
+              overflow: "hidden",
+            }}
           >
             {currentSourceItem != null ? (
               <SplitPane
@@ -897,15 +925,17 @@ const DownloadList: React.FC<Props> = ({
             ) : (
               renderTaskList()
             )}
-          </Box>
+          </div>
         ) : (
-          <Box
-            flex={1}
-            display={"flex"}
-            overflow={"hidden"}
-            flexDirection={"row"}
-            alignItems={"center"}
-            justifyContent={"center"}
+          <div
+            style={{
+              flex: 1,
+              display: "flex",
+              overflow: "hidden",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
             <Empty
               image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
@@ -926,7 +956,7 @@ const DownloadList: React.FC<Props> = ({
                 </span>
               }
             />
-          </Box>
+          </div>
         )}
 
         {/*新建下载窗口*/}
@@ -977,7 +1007,7 @@ const DownloadList: React.FC<Props> = ({
             </Form.Item>
           </Form>
         </Modal>
-      </Box>
+      </div>
     </FileDrop>
   );
 };
