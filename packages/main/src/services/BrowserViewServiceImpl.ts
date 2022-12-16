@@ -1,9 +1,10 @@
-import { BrowserView } from "electron";
+import { BrowserView, OnBeforeSendHeadersListenerDetails } from "electron";
 import {
   BrowserViewService,
   BrowserWindowService,
   LoggerService,
   MainWindowService,
+  VideoRepostory,
 } from "../interfaces";
 import { Sessions } from "../utils/variables";
 import { inject, injectable } from "inversify";
@@ -11,6 +12,7 @@ import { TYPES } from "../types";
 import isDev from "electron-is-dev";
 import { nanoid } from "nanoid";
 import SessionServiceImpl from "./SessionServiceImpl";
+import { Video } from "../entity";
 
 @injectable()
 export default class BrowserViewServiceImpl implements BrowserViewService {
@@ -26,7 +28,9 @@ export default class BrowserViewServiceImpl implements BrowserViewService {
     @inject(TYPES.SessionService)
     private session: SessionServiceImpl,
     @inject(TYPES.LoggerService)
-    private logger: LoggerService
+    private logger: LoggerService,
+    @inject(TYPES.VideoRepository)
+    private videoRepository: VideoRepostory
   ) {
     const view = new BrowserView({
       webPreferences: {
@@ -37,6 +41,39 @@ export default class BrowserViewServiceImpl implements BrowserViewService {
     browserWindow.setBrowserView(view);
     view.setBounds({ x: 0, y: 0, height: 0, width: 0 });
     this.view = view;
+
+    this.beforeSendHandlerListener = this.beforeSendHandlerListener.bind(this);
+  }
+
+  async beforeSendHandlerListener(
+    details: OnBeforeSendHeadersListenerDetails,
+    callback: (beforeSendResponse: Electron.BeforeSendResponse) => void
+  ): Promise<void> {
+    const m3u8Reg = /\.m3u8$/;
+    let cancel = false;
+    const myURL = new URL(details.url);
+    if (m3u8Reg.test(myURL.pathname)) {
+      this.logger.logger.info("在窗口中捕获 m3u8 链接: ", details.url);
+      const video: Video = {
+        name: this.view.webContents.getTitle(),
+        url: details.url,
+      };
+      const res = await this.videoRepository.insertVideo(video);
+      console.log("res:", res);
+      const value: SourceUrl = {
+        id: nanoid(),
+        title: this.view.webContents.getTitle(),
+        url: details.url,
+        headers: details.requestHeaders,
+        duration: 0,
+      };
+      this.mainWindow.webContents.send("m3u8-notifier", value);
+      cancel = true;
+    }
+    callback({
+      cancel,
+      requestHeaders: details.requestHeaders,
+    });
   }
 
   init(): void {
@@ -58,31 +95,7 @@ export default class BrowserViewServiceImpl implements BrowserViewService {
       .get()
       .webRequest.onBeforeSendHeaders(
         this.filter,
-        (
-          details,
-          callback: (beforeSendResponse: Electron.BeforeSendResponse) => void
-        ) => {
-          const m3u8Reg = /\.m3u8$/;
-          let cancel = false;
-          const myURL = new URL(details.url);
-          if (m3u8Reg.test(myURL.pathname)) {
-            this.logger.logger.info("在窗口中捕获 m3u8 链接: ", details.url);
-            const { webContents: mainWindow } = this.mainWindow;
-            const value: SourceUrl = {
-              id: nanoid(),
-              title: this.view.webContents.getTitle(),
-              url: details.url,
-              headers: details.requestHeaders,
-              duration: 0,
-            };
-            mainWindow.send("m3u8-notifier", value);
-            cancel = true;
-          }
-          callback({
-            cancel,
-            requestHeaders: details.requestHeaders,
-          });
-        }
+        this.beforeSendHandlerListener
       );
   }
 

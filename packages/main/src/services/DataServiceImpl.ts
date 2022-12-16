@@ -22,8 +22,4 @@ export default class DataServiceImpl extends DataSource implements DataService {
   async init(): Promise<void> {
     await this.initialize();
   }
-
-  async getVideoList(): Promise<Video[]> {
-    return await this.manager.find(Video);
-  }
 }

@@ -9,7 +9,7 @@ import {
 @Entity()
 export class Video {
   @PrimaryGeneratedColumn()
-  id: number;
+  id?: number;
 
   // 视频名称
   @Column({
@@ -24,8 +24,8 @@ export class Video {
   url: string;
 
   @CreateDateColumn()
-  createdDate: Date;
+  createdDate?: Date;
 
   @UpdateDateColumn()
-  updatedDate: Date;
+  updatedDate?: Date;
 }

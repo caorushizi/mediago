@@ -1,8 +1,9 @@
-import { BrowserWindow, BrowserView, Session } from "electron";
+import { BrowserWindow, Session } from "electron";
 import Store from "electron-store";
 import { ElectronLog } from "electron-log";
 import { SpawnOptions } from "child_process";
 import { DataSource } from "typeorm";
+import { Video } from "./entity";
 
 export interface MainWindowService extends BrowserWindow {
   init(): void;
@@ -38,9 +39,7 @@ export interface IpcHandlerService {
 }
 
 export interface DataService extends DataSource {
-  // empty
   init(): void;
-  getVideoList(): void;
 }
 
 export interface ProtocolService {
@@ -68,4 +67,8 @@ export interface RunnerService {
   run(options: SpawnOptions): void;
 }
 
-export interface VideoService {}
+export interface VideoRepository {
+  getVideoList(): Promise<Video[]>;
+
+  insertVideo(video: Video): Promise<Video>;
+}
