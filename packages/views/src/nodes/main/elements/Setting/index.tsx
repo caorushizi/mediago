@@ -1,12 +1,13 @@
 import React, { FC, useRef } from "react";
 import { Button, FormInstance, Space, Switch, Tooltip, Form } from "antd";
 import "./index.scss";
-import ProForm, {
+import {
+  ProForm,
   ProFormGroup,
   ProFormSelect,
   ProFormSwitch,
   ProFormText,
-} from "@ant-design/pro-form";
+} from "@ant-design/pro-components";
 import { FolderOpenOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { AppState } from "../../../../store/reducers";
 import {

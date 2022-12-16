@@ -3,7 +3,7 @@ import { IpcMainInvokeEvent, Menu } from "electron";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import { Controller, MainWindowService, RunnerService } from "../interfaces";
-import { downloader as mediaNode } from "downloader";
+// import { downloader as mediaNode } from "downloader";
 import { createDownloader, failFn, successFn } from "../utils";
 import { handle, on } from "../decorator/ipc";
 
@@ -15,8 +15,9 @@ export default class DownloadControllerImpl implements Controller {
     @inject(TYPES.RunnerService)
     private runner: RunnerService
   ) {}
+
   @on("open-download-item-context-menu")
-  openDownloadItemContextMenu(e: IpcMainInvokeEvent, item: SourceItem) {
+  openDownloadItemContextMenu(e: IpcMainInvokeEvent, item: SourceItem): void {
     const menu = Menu.buildFromTemplate([
       {
         label: "详情",
@@ -55,15 +56,15 @@ export default class DownloadControllerImpl implements Controller {
     event: IpcMainInvokeEvent,
     exeFile: string,
     args: Record<string, string>
-  ) {
+  ): Promise<any> {
     try {
       if (exeFile === "mediago") {
-        await mediaNode({
-          name: args["name"],
-          path: args["path"],
-          url: args["url"],
-        });
-        return successFn("success");
+        // await mediaNode({
+        //   name: args["name"],
+        //   path: args["path"],
+        //   url: args["url"],
+        // });
+        // return successFn("success");
       }
       const downloader = createDownloader(exeFile);
       // downloader.handle(this.runner);

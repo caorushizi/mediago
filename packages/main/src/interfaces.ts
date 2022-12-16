@@ -55,7 +55,9 @@ export interface SessionService {
   get(): Session;
 }
 
-export interface Controller {}
+export interface Controller {
+  [key: string | symbol]: any;
+}
 
 export interface LoggerService {
   logger: ElectronLog;

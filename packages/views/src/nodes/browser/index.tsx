@@ -2,7 +2,7 @@ import React, { FC, useEffect, useRef, useState } from "react";
 import "./index.scss";
 import { Spin } from "antd";
 import tdApp from "../../utils/td";
-import "antd/dist/antd.css";
+import "antd/dist/reset.css";
 import { insertFav, isFavFunc, removeFav } from "../../utils/localforge";
 import WindowToolBar from "../../components/WindowToolBar";
 import SearchBar from "./elements/SearchBar";

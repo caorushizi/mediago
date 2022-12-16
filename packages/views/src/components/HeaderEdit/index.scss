@@ -1,32 +1,66 @@
-$border-color: rgb(217, 217, 217);
+$border-color: #d9d9d9;
 
 .header-edit {
-  * {
-    user-select: none;
-  }
-
   .header-field-container {
-    border: 1px solid $border-color;
+    margin-bottom: 6px;
 
     .header-item-container {
-      border-bottom: 1px solid $border-color;
+      margin-top: -1px;
+
+      &.is-first {
+        margin-top: 0;
+      }
 
       &:last-child {
         border-bottom: 0;
       }
 
       .ant-select {
+        &.ant-select-focused {
+          z-index: 1;
+        }
+
+        &:hover {
+          z-index: 1;
+        }
+
         .ant-select-selector {
           border-radius: 0;
-          border: 0;
-          border-right: 1px solid rgb(217, 217, 217);
         }
       }
 
       .ant-input {
+        &:hover,
+        &:focus {
+          z-index: 1;
+        }
+
+        margin-left: -1px;
         border-radius: 0;
-        border: 0;
-        margin-left: 1px;
+      }
+
+      &.is-first {
+        .ant-select {
+          .ant-select-selector {
+            border-top-left-radius: 6px;
+          }
+        }
+
+        .ant-input {
+          border-top-right-radius: 6px;
+        }
+      }
+
+      &.is-last {
+        .ant-select {
+          .ant-select-selector {
+            border-bottom-left-radius: 6px;
+          }
+        }
+
+        .ant-input {
+          border-bottom-right-radius: 6px;
+        }
       }
 
       .form-item-action {
@@ -35,5 +69,12 @@ $border-color: rgb(217, 217, 217);
         justify-content: center;
       }
     }
+  }
+
+  .action-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
   }
 }

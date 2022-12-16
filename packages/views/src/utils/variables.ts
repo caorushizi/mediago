@@ -8,7 +8,6 @@ interface Option {
 
 const downloaderOptions: Option[] = [];
 
-console.log("electron", window.electron);
 if (window.electron.isWindows) {
   downloaderOptions.push({
     value: "N_m3u8DL-CLI",

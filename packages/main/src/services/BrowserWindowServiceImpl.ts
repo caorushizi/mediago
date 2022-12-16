@@ -21,7 +21,7 @@ export default class BrowserWindowServiceImpl
     super(options);
   }
 
-  init() {
+  init(): void {
     const url = isDev
       ? "http://localhost:8555/browser"
       : "mediago://index.html/browser";
