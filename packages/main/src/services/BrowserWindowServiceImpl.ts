@@ -27,6 +27,6 @@ export default class BrowserWindowServiceImpl
       : "mediago://index.html/browser";
 
     void this.loadURL(url);
-    isDev && this.webContents.openDevTools();
+    // isDev && this.webContents.openDevTools();
   }
 }

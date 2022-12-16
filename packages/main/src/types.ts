@@ -14,6 +14,7 @@ const TYPES = {
   RunnerService: Symbol.for("RunnerService"),
   Controller: Symbol.for("Controller"),
   App: Symbol.for("App"),
+  VideoRepository: Symbol.for("VideoRepository"),
 };
 
 export { TYPES };

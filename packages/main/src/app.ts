@@ -4,13 +4,14 @@ import {
   BrowserViewService,
   BrowserWindowService,
   ConfigService,
+  DataService,
+  IpcHandlerService,
   MainWindowService,
   ProtocolService,
   UpdateService,
 } from "./interfaces";
 import { app } from "electron";
 import { TYPES } from "./types";
-import IpcHandlerServiceImpl from "./services/IpcHandlerServiceImpl";
 
 @injectable()
 export default class MediaGo implements App {
@@ -28,7 +29,9 @@ export default class MediaGo implements App {
     @inject(TYPES.ConfigService)
     private config: ConfigService,
     @inject(TYPES.IpcHandlerService)
-    private ipcHandler: IpcHandlerServiceImpl
+    private ipcHandler: IpcHandlerService,
+    @inject(TYPES.DataService)
+    protected dataServices: DataService
   ) {}
 
   async init(): Promise<void> {
@@ -49,5 +52,6 @@ export default class MediaGo implements App {
 
     this.protocolService.create();
     this.updateService.init();
+    this.dataServices.init();
   }
 }
