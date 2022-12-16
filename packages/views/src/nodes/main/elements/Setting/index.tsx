@@ -15,7 +15,6 @@ import {
   updateSettings,
 } from "../../../../store/actions/settings.actions";
 import { useDispatch, useSelector } from "react-redux";
-import { Box } from "@chakra-ui/react";
 import { version } from "../../../../../package.json";
 import { downloaderOptions } from "../../../../utils/variables";
 import useElectron from "../../../../hooks/electron";
@@ -80,7 +79,7 @@ const Setting: FC = () => {
   const { useProxy } = settings;
 
   return (
-    <Box className="setting-form">
+    <div className="setting-form">
       <ProForm<Settings>
         formRef={formRef}
         layout="horizontal"
@@ -135,27 +134,39 @@ const Setting: FC = () => {
           <ProFormSwitch
             name={"useProxy"}
             label={
-              <Box d={"flex"} flexDirection={"row"} alignItems={"center"}>
-                <Box mr={5}>代理开关</Box>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <div style={{ marginRight: "5px" }}>代理开关</div>
                 <Tooltip
                   title={"该代理会对软件自带浏览器以及下载时生效"}
                   placement={"right"}
                 >
                   <QuestionCircleOutlined />
                 </Tooltip>
-              </Box>
+              </div>
             }
           >
             <Switch />
           </ProFormSwitch>
           <ProFormSwitch
             label={
-              <Box d={"flex"} flexDirection={"row"} alignItems={"center"}>
-                <Box mr={5}>允许打点统计</Box>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <div style={{ marginRight: "5px" }}>允许打点统计</div>
                 <Tooltip title={statisticsTooltip} placement={"right"}>
                   <QuestionCircleOutlined />
                 </Tooltip>
-              </Box>
+              </div>
             }
             name="statistics"
           />
@@ -187,7 +198,7 @@ const Setting: FC = () => {
           </ProForm.Item>
         </ProFormGroup>
       </ProForm>
-    </Box>
+    </div>
   );
 };
 
