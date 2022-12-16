@@ -81,6 +81,7 @@ const Setting: FC = () => {
   return (
     <div className="setting-form">
       <ProForm<Settings>
+        className={"setting-form-inner"}
         formRef={formRef}
         layout="horizontal"
         submitter={false}
