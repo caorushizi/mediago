@@ -2,8 +2,8 @@ import "./index.scss";
 import React, { FC, useEffect, useState } from "react";
 import { AutoComplete, Form, Input, Row, Col, Button } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-import { Box } from "@chakra-ui/react";
 import { nanoid } from "nanoid";
+import classNames from "classnames";
 
 export interface HeaderEditProps {
   label: string;
@@ -54,49 +54,6 @@ interface FormItem {
   key: string;
   value: string;
 }
-
-const renderItem = (
-  item: FormItem,
-  onChange: (item: FormItem) => void,
-  onDelete: (item: FormItem) => void
-) => {
-  return (
-    <Row className={"header-item-container"} key={item.id}>
-      <Col span={8}>
-        <AutoComplete
-          value={item.key}
-          style={{ width: "100%" }}
-          options={options}
-          dropdownMatchSelectWidth={false}
-          filterOption={(inputValue, option) => {
-            if (!option) return false;
-            return (
-              option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !==
-              -1
-            );
-          }}
-          onChange={(value) => {
-            onChange({ ...item, key: value });
-          }}
-        />
-      </Col>
-      <Col span={14}>
-        <Input
-          value={item.value}
-          onChange={(e) => {
-            onChange({ ...item, value: e.target.value });
-          }}
-        />
-      </Col>
-      <Col span={1} className={"form-item-action"}>
-        <DeleteOutlined
-          style={{ color: "#F56C6C", cursor: "pointer" }}
-          onClick={() => onDelete(item)}
-        />
-      </Col>
-    </Row>
-  );
-};
 
 // 编辑 header
 const HeaderFieldInput: FC<HeaderFieldInputProps> = ({ value, onChange }) => {
@@ -153,17 +110,70 @@ const HeaderFieldInput: FC<HeaderFieldInputProps> = ({ value, onChange }) => {
     setFormValues(changedValue);
   };
 
+  // 渲染表单项
+  const renderItem = (
+    item: FormItem,
+    index: number,
+    onChange: (item: FormItem) => void,
+    onDelete: (item: FormItem) => void
+  ) => {
+    return (
+      <Row
+        className={classNames("header-item-container", {
+          "is-first": index === 0,
+          "is-last": index === formValues.length - 1,
+        })}
+        key={item.id}
+      >
+        <Col span={8}>
+          <AutoComplete
+            value={item.key}
+            options={options}
+            allowClear={true}
+            dropdownMatchSelectWidth={false}
+            placeholder={"请填写请求标头"}
+            filterOption={(inputValue, option) => {
+              if (!option) return false;
+              return (
+                option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !==
+                -1
+              );
+            }}
+            onChange={(value) => {
+              onChange({ ...item, key: value });
+            }}
+          />
+        </Col>
+        <Col span={14}>
+          <Input
+            value={item.value}
+            placeholder={"填写请求标头的值"}
+            onChange={(e) => {
+              onChange({ ...item, value: e.target.value });
+            }}
+          />
+        </Col>
+        <Col span={2} className={"form-item-action"}>
+          <DeleteOutlined
+            style={{ color: "#F56C6C", cursor: "pointer" }}
+            onClick={() => onDelete(item)}
+          />
+        </Col>
+      </Row>
+    );
+  };
+
   return (
-    <Box>
+    <div>
       {formValues.length > 0 && (
-        <Box className={"header-field-container"} mb={6}>
-          {formValues.map((formItem) => {
-            return renderItem(formItem, onInputChange, onInputDelete);
+        <div className={"header-field-container"}>
+          {formValues.map((formItem, index) => {
+            return renderItem(formItem, index, onInputChange, onInputDelete);
           })}
-        </Box>
+        </div>
       )}
-      <Box d={"flex"} justifyContent={"space-between"} alignItems={"center"}>
-        <Box>{formValues.length <= 0 && "点击添加 header"}</Box>
+      <div className={"action-button"}>
+        <div>{formValues.length <= 0 && "点击添加 header"}</div>
         <Button
           size={"small"}
           type={"link"}
@@ -172,8 +182,8 @@ const HeaderFieldInput: FC<HeaderFieldInputProps> = ({ value, onChange }) => {
         >
           添加
         </Button>
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 };
 

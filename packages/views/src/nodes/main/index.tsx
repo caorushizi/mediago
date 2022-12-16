@@ -28,8 +28,6 @@ enum TabKey {
   SettingTab = "3",
 }
 
-const { TabPane } = Tabs;
-
 const MainPage: FC = () => {
   const [tableData, setTableData] = useState<SourceItem[]>([]);
   const [activeKey, setActiveKey] = useState<TabKey>(TabKey.HomeTab);
@@ -157,26 +155,30 @@ const MainPage: FC = () => {
           className="main-window-tabs"
           onChange={(value) => onTabChange(value as TabKey)}
           onTabClick={(key) => onTabClick(key as TabKey)}
-        >
-          <TabPane
-            tab={
-              <Badge className="download-item" count={notifyCount}>
-                下载
-              </Badge>
-            }
-            key={TabKey.HomeTab}
-          >
-            <NewDownloadList
-              workspace={workspace}
-              tableData={tableData}
-              changeSourceStatus={changeSourceStatus}
-              updateTableData={updateTableData}
-            />
-          </TabPane>
-          <TabPane tab="设置" key={TabKey.SettingTab}>
-            <Setting />
-          </TabPane>
-        </Tabs>
+          items={[
+            {
+              label: (
+                <Badge className="download-item" count={notifyCount}>
+                  下载
+                </Badge>
+              ),
+              key: TabKey.HomeTab,
+              children: (
+                <NewDownloadList
+                  workspace={workspace}
+                  tableData={tableData}
+                  changeSourceStatus={changeSourceStatus}
+                  updateTableData={updateTableData}
+                />
+              ),
+            },
+            {
+              label: "设置",
+              key: TabKey.SettingTab,
+              children: <Setting />,
+            },
+          ]}
+        />
       </div>
 
       <div className="toolbar">

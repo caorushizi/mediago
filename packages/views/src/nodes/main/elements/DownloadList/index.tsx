@@ -48,12 +48,16 @@ import {
   removeVideos,
   updateVideoStatus,
 } from "../../../../utils/localforge";
-import { ModalForm, ProFormSelect, ProFormText } from "@ant-design/pro-form";
+import {
+  ModalForm,
+  ProFormSelect,
+  ProFormText,
+} from "@ant-design/pro-components";
 import { isUrl } from "../../../../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "../../../../store/reducers";
 import { FileDrop } from "react-file-drop";
-import ProForm from "@ant-design/pro-form";
+import { ProForm } from "@ant-design/pro-components";
 import useElectron from "../../../../hooks/electron";
 import { nanoid } from "nanoid";
 import { Settings } from "../../../../store/actions/settings.actions";
@@ -234,7 +238,7 @@ const DownloadList: React.FC<Props> = ({
       deleteSegments: item.delete,
     };
     if (item.headers) {
-      sourceItem.headers = processHeaders(item.headers);
+      // sourceItem.headers = processHeaders(item.headers);
     }
     await insertVideo(sourceItem);
     await updateTableData();
@@ -348,7 +352,6 @@ const DownloadList: React.FC<Props> = ({
         maxSpeed,
       };
     }
-    console.log("args: ", exeFile, args);
 
     const { code, msg } = await ipcExec(exeFile, args);
     if (code === 0) {
@@ -929,7 +932,7 @@ const DownloadList: React.FC<Props> = ({
         {/*新建下载窗口*/}
         <Modal
           title="新建下载"
-          visible={isModalVisible}
+          open={isModalVisible}
           onCancel={handleCancel}
           footer={[
             <Button key="back" onClick={handleDownload}>

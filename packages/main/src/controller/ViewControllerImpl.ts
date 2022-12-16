@@ -20,25 +20,23 @@ export default class ViewControllerImpl implements Controller {
   test = 123;
 
   @on("set-browser-view-bounds")
-  setBrowserViewBounds(e: IpcMainInvokeEvent, rect: any) {
-    console.log("setBrowserViewBounds", this.browserView);
-    console.log("setBrowserViewBounds", this.browserWindow);
+  setBrowserViewBounds(e: IpcMainInvokeEvent, rect: any): void {
     this.browserView?.setBounds(rect);
   }
 
   @on("browser-view-go-back")
-  browserViewGoBack() {
+  browserViewGoBack(): void {
     const canGoBack = this.browserView.webContents.canGoBack();
     if (canGoBack) this.browserView.webContents.goBack();
   }
 
   @on("browser-view-reload")
-  browserViewReload() {
+  browserViewReload(): void {
     this.browserView.webContents.reload();
   }
 
   @on("browser-view-load-url")
-  browserViewLoadUrl(e: IpcMainInvokeEvent, url: string) {
+  browserViewLoadUrl(e: IpcMainInvokeEvent, url: string): void {
     void this.browserView.webContents.loadURL(url || "https://baidu.com");
   }
 }

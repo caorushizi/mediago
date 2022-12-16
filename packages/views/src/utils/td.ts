@@ -1,7 +1,7 @@
 import { version } from "../../package.json";
 import store from "../store";
 
-const isProd = process.env.NODE_ENV === "production";
+const isDev = process.env.NODE_ENV === "development";
 
 class TDEvent {
   appId?: string | boolean;
@@ -10,7 +10,7 @@ class TDEvent {
 
   constructor() {
     this.appId = import.meta.env.VITE_APP_TDID;
-    this.vn = isProd ? `${version}生产版` : `${version}开发版`;
+    this.vn = isDev ? `${version}开发版` : `${version}生产版`;
     this.vc = `${version}`;
   }
 
@@ -22,9 +22,12 @@ class TDEvent {
   }
 
   onEvent(eventId: string, mapKv: any = {}) {
+    if (!window.TDAPP && isDev) {
+      console.warn("TDAPP 没有初始化");
+    }
     const { settings } = store.getState();
     if (settings.statistics) {
-      window.TDAPP.onEvent(eventId, "", mapKv);
+      window.TDAPP?.onEvent(eventId, "", mapKv);
     }
   }
 }

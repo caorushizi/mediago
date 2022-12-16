@@ -12,12 +12,11 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
-    "@ant-design/pro-form": "^1.49.6",
-    "@ant-design/pro-table": "^2.59.2",
+    "@ant-design/pro-components": "^2.3.47",
     "@chakra-ui/react": "^1.7.2",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
-    "antd": "^4.17.2",
+    "antd": "^5.0.7",
     "classnames": "^2.3.1",
     "connected-react-router": "^6.9.1",
     "framer-motion": "^4",
@@ -74,6 +73,6 @@
     "rimraf": "^3.0.2",
     "sass": "^1.32.8",
     "typescript": "^4.2.4",
-    "vite": "^3.1.0"
+    "vite": "^4.0.0"
   }
 }

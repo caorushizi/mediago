@@ -1,5 +1,5 @@
 import { Controller, IpcHandlerService } from "../interfaces";
-import { inject, injectable, multiInject } from "inversify";
+import { injectable, multiInject } from "inversify";
 import { TYPES } from "../types";
 import { ipcMain } from "electron";
 
@@ -8,32 +8,32 @@ export default class IpcHandlerServiceImpl implements IpcHandlerService {
   constructor(
     @multiInject(TYPES.Controller) private controllers: Controller[]
   ) {}
-  init(): void {
-    for (const controller of this.controllers) {
-      for (const method of Object.getOwnPropertyNames(controller)) {
-        // @ts-ignore
-        const fun = controller[method];
-        if (typeof fun === "function") {
-          const ipcChannel = Reflect.getMetadata(
-            "ipc-channel",
-            // @ts-ignore
-            controller.__proto__,
-            method
-          );
-          const ipcMethod = Reflect.getMetadata(
-            "ipc-method",
-            // @ts-ignore
-            controller.__proto__,
-            method
-          );
-          if (ipcMethod && ipcChannel) {
-            if (ipcChannel && ipcMethod) {
-              // @ts-ignore
-              ipcMain[ipcMethod](ipcChannel, fun.bind(controller.__proto__));
-            }
-          }
-        }
-      }
+
+  private registerIpc(controller: Controller, property: string | symbol) {
+    const fun = controller[property];
+    const channel: string = Reflect.getMetadata(
+      "ipc-channel",
+      controller,
+      property
+    );
+    const method: "on" | "handle" = Reflect.getMetadata(
+      "ipc-method",
+      controller,
+      property
+    );
+    if (typeof fun === "function" && method && channel) {
+      ipcMain[method](channel, fun.bind(controller));
     }
+  }
+
+  private bindIpcMethods(controller: Controller) {
+    const Class = Object.getPrototypeOf(controller);
+    Object.getOwnPropertyNames(Class).forEach((property) =>
+      this.registerIpc(controller, property as never)
+    );
+  }
+
+  init(): void {
+    this.controllers.forEach((controller) => this.bindIpcMethods(controller));
   }
 }

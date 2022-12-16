@@ -15,7 +15,6 @@ export default class ConfigServiceImpl
     @inject(TYPES.LoggerService) private logger: LoggerServiceImpl
   ) {
     const exeFile = process.platform === "win32" ? "N_m3u8DL-CLI" : "mediago";
-    console.log("exeFile");
 
     super({
       name: "config",
@@ -31,8 +30,6 @@ export default class ConfigServiceImpl
         statistics: true,
       },
     });
-
-    console.log("star");
   }
   init(): void {
     this.setProxy(true);

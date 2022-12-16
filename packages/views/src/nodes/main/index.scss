@@ -51,8 +51,12 @@
     .ant-tabs-content {
       padding: 0;
       height: 100%;
-      overflow: auto;
-      @include scrollbar;
+      .ant-tabs-tabpane {
+        padding: 0;
+        height: 100%;
+        overflow: auto;
+        @include scrollbar;
+      }
     }
   }
 

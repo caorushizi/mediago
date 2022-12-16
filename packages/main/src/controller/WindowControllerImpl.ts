@@ -17,12 +17,12 @@ export default class WindowControllerImpl implements Controller {
     private mainWindow: MainWindowService
   ) {}
   @on("close-main-window")
-  closeMainWindow() {
+  closeMainWindow(): void {
     app.quit();
   }
 
   @on("open-browser-window")
-  openBrowserWindow(e: IpcMainInvokeEvent, url: string) {
+  openBrowserWindow(e: IpcMainInvokeEvent, url: string): void {
     // 开始计算主窗口的位置
     const browserView = this.browserWindow.getBrowserView();
     void browserView?.webContents.loadURL(url || "https://baidu.com");
@@ -30,12 +30,12 @@ export default class WindowControllerImpl implements Controller {
   }
 
   @on("close-browser-window")
-  closeBrowserWindow() {
+  closeBrowserWindow(): void {
     this.browserWindow.hide();
   }
 
   @on("window-minimize")
-  windowMinimize(e: IpcMainInvokeEvent, name: string) {
+  windowMinimize(e: IpcMainInvokeEvent, name: string): void {
     if (name === "main") {
       this.mainWindow.minimize();
     } else {
@@ -44,7 +44,7 @@ export default class WindowControllerImpl implements Controller {
   }
 
   @handle("get-current-window")
-  getCurrentWindow(e: IpcMainInvokeEvent) {
+  getCurrentWindow(e: IpcMainInvokeEvent): any {
     return this.browserWindow.getBrowserView();
   }
 }
