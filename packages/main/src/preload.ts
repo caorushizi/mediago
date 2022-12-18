@@ -45,6 +45,7 @@ const api: ElectronApi = {
   itemContextMenu: (item) =>
     ipcRenderer.send("open-download-item-context-menu", item),
   minimize: (name) => ipcRenderer.send("window-minimize", name),
+  getVideoList: () => ipcRenderer.invoke("get-video-list"),
 };
 
 contextBridge.exposeInMainWorld(apiKey, api);

@@ -64,8 +64,18 @@ const HeaderFieldInput: FC<HeaderFieldInputProps> = ({ value, onChange }) => {
     setFormValues(values);
   }, []);
 
-  const processHeader = (value?: Record<string, string>) => {
+  const processHeader = (value?: Record<string, string> | string) => {
     if (!value) return [];
+    if (typeof value === "string") {
+      return value.split("\n").map((item) => {
+        const [key, value] = item.split(": ");
+        return {
+          id: nanoid(),
+          key,
+          value,
+        };
+      });
+    }
     return Object.entries(value).map(([key, value]) => ({
       id: nanoid(),
       key,

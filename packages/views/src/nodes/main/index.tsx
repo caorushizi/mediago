@@ -58,7 +58,8 @@ const MainPage: FC = () => {
 
   const initData = async () => {
     // 开始初始化表格数据
-    const tableData = await getVideos();
+    const tableData = await window.electron.getVideoList();
+    console.log("tableData: ", tableData);
     const initialSettings = await store.get();
     dispatch(updateSettings(initialSettings));
     setTableData(tableData);
@@ -125,8 +126,8 @@ const MainPage: FC = () => {
       await audio.play();
     }
     await updateVideoStatus(source, status);
-    const tableData = await getVideos();
-
+    const tableData = await window.electron.getVideoList();
+    console.log(tableData);
     setTableData(tableData);
   };
 

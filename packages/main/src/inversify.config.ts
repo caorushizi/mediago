@@ -33,6 +33,7 @@ import WindowControllerImpl from "./controller/WindowControllerImpl";
 import LoggerServiceImpl from "./services/LoggerServiceImpl";
 import RunnerServiceImpl from "./services/RunnerServiceImpl";
 import VideoRepositoryImpl from "./repository/VideoRepositoryImpl";
+import VideoControllerImpl from "./controller/VideoControllerImpl";
 
 const container = new Container({
   skipBaseClassChecks: true,
@@ -65,6 +66,7 @@ container.bind<Controller>(TYPES.Controller).to(DownloadControllerImpl);
 container.bind<Controller>(TYPES.Controller).to(WindowControllerImpl);
 container.bind<Controller>(TYPES.Controller).to(ViewControllerImpl);
 container.bind<Controller>(TYPES.Controller).to(ConfigControllerImpl);
+container.bind<Controller>(TYPES.Controller).to(VideoControllerImpl);
 
 // === repository
 container.bind<VideoRepository>(TYPES.VideoRepository).to(VideoRepositoryImpl);
