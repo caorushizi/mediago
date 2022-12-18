@@ -1,6 +1,6 @@
 declare interface SourceUrl {
   id: string;
-  title: string;
+  name: string;
   duration: number;
   url: string;
   headers?: Record<string, string>;
@@ -32,7 +32,7 @@ declare interface Fav {
 }
 
 declare interface SourceItemForm {
-  title: string;
+  name: string;
   url: string;
   headers?: string;
   delete: boolean;
@@ -125,6 +125,7 @@ interface ElectronApi {
   browserViewLoadURL: (url?: string) => void;
   itemContextMenu: (item: SourceItem) => void;
   minimize: (name: string) => void;
+  getVideoList: () => Promise<Video[]>;
 }
 
 declare interface AppStore {

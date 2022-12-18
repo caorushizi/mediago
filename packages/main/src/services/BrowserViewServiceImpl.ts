@@ -4,7 +4,7 @@ import {
   BrowserWindowService,
   LoggerService,
   MainWindowService,
-  VideoRepostory,
+  VideoRepository,
 } from "../interfaces";
 import { Sessions } from "../utils/variables";
 import { inject, injectable } from "inversify";
@@ -13,6 +13,7 @@ import isDev from "electron-is-dev";
 import { nanoid } from "nanoid";
 import SessionServiceImpl from "./SessionServiceImpl";
 import { Video } from "../entity";
+import { processHeaders } from "../utils";
 
 @injectable()
 export default class BrowserViewServiceImpl implements BrowserViewService {
@@ -30,7 +31,7 @@ export default class BrowserViewServiceImpl implements BrowserViewService {
     @inject(TYPES.LoggerService)
     private logger: LoggerService,
     @inject(TYPES.VideoRepository)
-    private videoRepository: VideoRepostory
+    private videoRepository: VideoRepository
   ) {
     const view = new BrowserView({
       webPreferences: {
@@ -57,17 +58,11 @@ export default class BrowserViewServiceImpl implements BrowserViewService {
       const video: Video = {
         name: this.view.webContents.getTitle(),
         url: details.url,
+        headers: processHeaders(details.requestHeaders),
       };
       const res = await this.videoRepository.insertVideo(video);
       console.log("res:", res);
-      const value: SourceUrl = {
-        id: nanoid(),
-        title: this.view.webContents.getTitle(),
-        url: details.url,
-        headers: details.requestHeaders,
-        duration: 0,
-      };
-      this.mainWindow.webContents.send("m3u8-notifier", value);
+      this.mainWindow.webContents.send("m3u8-notifier", video);
       cancel = true;
     }
     callback({

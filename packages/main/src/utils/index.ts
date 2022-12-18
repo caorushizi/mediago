@@ -21,6 +21,13 @@ const createDownloader = (type: string): Downloader => {
   throw new Error("暂不支持该下载方式");
 };
 
-export { createDownloader };
+const processHeaders = (headers: Record<string, string>): string => {
+  return Object.entries(headers).reduce((prev, cur) => {
+    const [key, value] = cur;
+    return prev + `${key}: ${value}\n`;
+  }, "");
+};
+
+export { createDownloader, processHeaders };
 
 export { successFn, failFn };

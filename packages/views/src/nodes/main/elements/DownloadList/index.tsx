@@ -237,7 +237,7 @@ const DownloadList: React.FC<Props> = ({
       type: SourceType.M3u8,
       exeFile,
       directory: workspace,
-      title: item.title,
+      name: item.name,
       duration: 0,
       url: item.url,
       createdAt: Date.now(),
@@ -307,7 +307,7 @@ const DownloadList: React.FC<Props> = ({
   const downloadFile = async (item: SourceItem): Promise<void> => {
     await changeSourceStatus(item, SourceStatus.Downloading);
     onEvent.tableStartDownload();
-    const { title, headers, url, exeFile: formExeFile } = item;
+    const { name, headers, url, exeFile: formExeFile } = item;
 
     const exeFile = formExeFile || (await window.electron.store.get("exeFile"));
     const workspace = await window.electron.store.get("workspace");
@@ -320,7 +320,7 @@ const DownloadList: React.FC<Props> = ({
       args = {
         url,
         path: workspace, // 设定程序工作目录
-        name: title, // 设定存储文件名(不包括后缀)
+        name: name, // 设定存储文件名(不包括后缀)
         headers: headersString,
       };
     } else {
@@ -333,7 +333,7 @@ const DownloadList: React.FC<Props> = ({
         stopSpeed,
         maxSpeed,
       } = item;
-      const checkboxObj = Object.values(checkbox! || []).reduce(
+      const checkboxObj = Object.values(checkbox || []).reduce(
         (prev: Record<string, boolean>, cur) => {
           prev[cur] = true;
           return prev;
@@ -346,7 +346,7 @@ const DownloadList: React.FC<Props> = ({
       args = {
         url,
         workDir: workspace, // 设定程序工作目录
-        saveName: title, // 设定存储文件名(不包括后缀)
+        saveName: name, // 设定存储文件名(不包括后缀)
         headers: headersString,
         enableDelAfterDone: item.deleteSegments,
         ...checkboxObj,
@@ -658,7 +658,7 @@ const DownloadList: React.FC<Props> = ({
           size={"small"}
         >
           <ProFormText
-            name={"title"}
+            name={"name"}
             label="视频名称"
             placeholder="请输入视频名称"
           />
@@ -843,7 +843,7 @@ const DownloadList: React.FC<Props> = ({
             itemCount={tableDataRef.current.length}
             itemKey={(index, data) => {
               const item = data[index];
-              return item.id || `${item.title}-${index}`;
+              return item.id || `${item.name}-${index}`;
             }}
           >
             {({ index, style, data }) => {
@@ -860,7 +860,7 @@ const DownloadList: React.FC<Props> = ({
                     alignItems: "center",
                     padding: "0 15px",
                   }}
-                  title={item.title}
+                  title={item.name}
                   onContextMenu={() => {
                     itemContextMenu(item);
                   }}
@@ -880,7 +880,7 @@ const DownloadList: React.FC<Props> = ({
                       dispatch(updateNotifyCount(0));
                     }}
                   >
-                    {item.title}
+                    {item.name}
                   </div>
                   {renderActionButtons(item)}
                 </div>

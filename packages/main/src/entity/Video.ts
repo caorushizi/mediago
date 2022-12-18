@@ -23,6 +23,12 @@ export class Video {
   })
   url: string;
 
+  // 请求标头
+  @Column({
+    type: "text",
+  })
+  headers: string;
+
   @CreateDateColumn()
   createdDate?: Date;
 

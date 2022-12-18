@@ -15,7 +15,6 @@ export default class VideoRepositoryImpl implements VideoRepository {
   }
 
   async insertVideo(item: Video): Promise<Video> {
-    console.log(123123123123);
     const result = await this.repository.insert(item);
     return result.raw;
   }
