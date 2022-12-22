@@ -24,6 +24,15 @@
       margin-bottom: 8px;
     }
   }
+
+  .task-panel-wrapper{
+    padding: 0 15px 15px;
+    height: 100%;
+    flex:1;
+    overflow-y: auto;
+    min-width: 300px;
+    @include scrollbar()
+  }
 }
 
 .file-drop {
