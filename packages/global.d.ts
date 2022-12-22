@@ -27,6 +27,7 @@ declare type SourceItem = SourceUrl & {
 };
 
 declare interface Fav {
+  id: string;
   url: string;
   title: string;
 }
@@ -126,6 +127,13 @@ interface ElectronApi {
   itemContextMenu: (item: SourceItem) => void;
   minimize: (name: string) => void;
   getVideoList: () => Promise<Video[]>;
+  addVideo: (video: Video) => Promise<Video>;
+  updateVideo: (id: string, video: Partial<Video>) => Promise<void>;
+  removeVideo: (id?: string) => Promise<void>;
+  getCollectionList: () => Promise<Collection[]>;
+  addCollection: (video: Collection) => Promise<Collection>;
+  updateCollection: (id: string, video: Partial<Collection>) => Promise<void>;
+  removeCollection: (id?: string) => Promise<void>;
 }
 
 declare interface AppStore {

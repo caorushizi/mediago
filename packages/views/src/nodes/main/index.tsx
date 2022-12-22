@@ -4,13 +4,8 @@ import { Badge, Button, message, Tabs } from "antd";
 import WindowToolBar from "../../components/WindowToolBar";
 import Setting from "../../nodes/main/elements/Setting";
 import { SourceStatus, SourceType } from "../../types";
-import {
-  getVideos,
-  insertVideo,
-  updateVideoStatus,
-} from "../../utils/localforge";
 import audioSrc from "../../assets/tip.mp3";
-import onEvent from "../../utils/td-utils";
+import { onEvent, helpUrl } from "../../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { Settings, updateSettings } from "../../store/actions/settings.actions";
 import { AppState } from "../../store/reducers";
@@ -18,7 +13,6 @@ import useElectron from "../../hooks/electron";
 import NewDownloadList from "../../nodes/main/elements/DownloadList";
 import { MainState, updateNotifyCount } from "../../store/actions/main.actions";
 import { QuestionCircleOutlined } from "@ant-design/icons";
-import { helpUrl } from "../../utils/variables";
 import { IpcRendererEvent } from "electron";
 
 const audio = new Audio(audioSrc);
@@ -81,9 +75,9 @@ const MainPage: FC = () => {
       createdAt: Date.now(),
       deleteSegments: true,
     };
-    const sourceItem = await insertVideo(item);
+    const sourceItem = await window.electron.addVideo(item);
     if (!sourceItem) return;
-    const tableData = await getVideos();
+    const tableData = await window.electron.getVideoList();
 
     setTableData(tableData);
 
@@ -125,7 +119,7 @@ const MainPage: FC = () => {
     if (status === SourceStatus.Success && settings.tip) {
       await audio.play();
     }
-    await updateVideoStatus(source, status);
+    await window.electron.updateVideo(source.id, { status });
     const tableData = await window.electron.getVideoList();
     console.log(tableData);
     setTableData(tableData);
@@ -133,7 +127,7 @@ const MainPage: FC = () => {
 
   // 更新表格的数据
   const updateTableData = async (): Promise<void> => {
-    const videos = await getVideos();
+    const videos = await window.electron.getVideoList();
 
     setTableData(videos);
   };

@@ -16,7 +16,7 @@ import {
 } from "../../../../store/actions/settings.actions";
 import { useDispatch, useSelector } from "react-redux";
 import { version } from "../../../../../package.json";
-import { downloaderOptions } from "../../../../utils/variables";
+import { downloaderOptions } from "../../../../utils";
 import useElectron from "../../../../hooks/electron";
 
 const statisticsTooltip = `

@@ -28,7 +28,7 @@ import {
   Switch,
   Tooltip,
 } from "antd";
-import onEvent from "../../../../utils/td-utils";
+import { onEvent, isUrl, downloaderOptions } from "../../../../utils";
 import {
   AppstoreAddOutlined,
   BlockOutlined,
@@ -37,22 +37,11 @@ import {
   PlusOutlined,
   UpOutlined,
 } from "@ant-design/icons";
-import { processHeaders } from "../../../../utils/utils";
-import {
-  getFavs,
-  insertFav,
-  insertVideo,
-  removeFav,
-  removeVideo,
-  removeVideos,
-  updateVideoStatus,
-} from "../../../../utils/localforge";
 import {
   ModalForm,
   ProFormSelect,
   ProFormText,
 } from "@ant-design/pro-components";
-import { isUrl } from "../../../../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "../../../../store/reducers";
 import { FileDrop } from "react-file-drop";
@@ -62,7 +51,6 @@ import { nanoid } from "nanoid";
 import { Settings } from "../../../../store/actions/settings.actions";
 import { updateNotifyCount } from "../../../../store/actions/main.actions";
 import HeaderEdit from "../../../../components/HeaderEdit";
-import { downloaderOptions } from "../../../../utils/variables";
 import { SourceStatus, SourceType } from "../../../../types";
 import SplitPane from "react-split-pane";
 
@@ -178,17 +166,16 @@ const DownloadList: React.FC<Props> = ({
     event: Electron.IpcRendererEvent,
     item: SourceItem
   ) => {
-    await removeVideo(item.id);
+    await window.electron.removeVideo(item.id);
     await updateTableData();
   };
   const contextMenuClearAll = async () => {
-    const ids = tableDataRef.current.map((item) => item.id);
-    await removeVideos(ids);
+    await window.electron.removeVideo();
     await updateTableData();
   };
 
   const initData = async () => {
-    const favs = await getFavs();
+    const favs = await window.electron.getCollectionList();
     setFavsList(favs);
   };
 
@@ -246,7 +233,7 @@ const DownloadList: React.FC<Props> = ({
     if (item.headers) {
       // sourceItem.headers = processHeaders(item.headers);
     }
-    await insertVideo(sourceItem);
+    await window.electron.addVideo(sourceItem);
     await updateTableData();
     setIsModalVisible(false);
     return sourceItem;
@@ -271,8 +258,8 @@ const DownloadList: React.FC<Props> = ({
         }
         onFinish={async (fav) => {
           onEvent.favPageAddFav();
-          await insertFav(fav);
-          const favs = await getFavs();
+          await window.electron.addCollection(fav);
+          const favs = await window.electron.getCollectionList();
           setFavsList(favs);
           return true;
         }}
@@ -399,8 +386,8 @@ const DownloadList: React.FC<Props> = ({
       title: "确认要删除这个收藏吗？",
       onOk: async () => {
         onEvent.favPageDeleteLink();
-        await removeFav(fav);
-        const favs = await getFavs();
+        await window.electron.removeCollection(fav.id);
+        const favs = await window.electron.getCollectionList();
         setFavsList(favs);
       },
       okText: "删除",
@@ -541,7 +528,9 @@ const DownloadList: React.FC<Props> = ({
             "如果下载过程中将主程序关闭，那么主程序将无法接收到下载成功的消息，可以通过重置状态将状态改为未下载状态",
           cb: async () => {
             onEvent.tableReNewStatus();
-            await updateVideoStatus(row, SourceStatus.Ready);
+            await window.electron.updateVideo(row.id, {
+              status: SourceStatus.Ready,
+            });
             await updateTableData();
           },
         });

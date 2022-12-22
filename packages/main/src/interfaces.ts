@@ -3,7 +3,7 @@ import Store from "electron-store";
 import { ElectronLog } from "electron-log";
 import { SpawnOptions } from "child_process";
 import { DataSource } from "typeorm";
-import { Video } from "./entity";
+import { Collection, Video } from "./entity";
 
 export interface MainWindowService extends BrowserWindow {
   init(): void;
@@ -70,5 +70,23 @@ export interface RunnerService {
 export interface VideoRepository {
   getVideoList(): Promise<Video[]>;
 
+  findById(id: number): Promise<Video | null>;
+
   insertVideo(video: Video): Promise<Video>;
+
+  updateVideo(id: number, video: Partial<Video>): Promise<void>;
+
+  removeVideo(id?: number): Promise<void>;
+}
+
+export interface CollectionRepository {
+  getCollectionList(): Promise<Collection[]>;
+
+  findById(id: number): Promise<Collection | null>;
+
+  insertCollection(video: Collection): Promise<Collection>;
+
+  updateCollection(id: number, video: Partial<Collection>): Promise<void>;
+
+  removeCollection(id?: number): Promise<void>;
 }

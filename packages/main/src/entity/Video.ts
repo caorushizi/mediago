@@ -6,6 +6,13 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
+export enum VideoStatus {
+  Ready = "ready",
+  Downloading = "downloading",
+  Failed = "failed",
+  Success = "success",
+}
+
 @Entity()
 export class Video {
   @PrimaryGeneratedColumn()
@@ -28,6 +35,11 @@ export class Video {
     type: "text",
   })
   headers: string;
+
+  @Column({
+    type: "text",
+  })
+  status: VideoStatus;
 
   @CreateDateColumn()
   createdDate?: Date;

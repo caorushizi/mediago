@@ -1,15 +1,11 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import "./index.scss";
 import { Spin } from "antd";
-import tdApp from "../../utils/td";
+import { onEvent } from "../../utils";
 import "antd/dist/reset.css";
-import { insertFav, isFavFunc, removeFav } from "../../utils/localforge";
 import WindowToolBar from "../../components/WindowToolBar";
 import SearchBar from "./elements/SearchBar";
-import onEvent from "../../utils/td-utils";
 import useElectron from "../../hooks/electron";
-
-tdApp.init();
 
 const computeRect = ({
   left,
@@ -60,7 +56,9 @@ const BrowserWindow: FC = () => {
     e: Electron.IpcRendererEvent,
     { url, title }: { url: string; title: string }
   ): Promise<void> => {
-    const isFav = await isFavFunc(url);
+    // todo: 添加收藏
+    // const isFav = await isFavFunc(url);
+    const isFav = false;
     setUrl(url);
     setTitle(title);
     setIsFav(isFav);
@@ -108,12 +106,13 @@ const BrowserWindow: FC = () => {
   };
 
   const handleClickFav = async () => {
-    const isFav = await isFavFunc(url);
-    if (isFav) {
-      await removeFav({ title, url });
-    } else {
-      await insertFav({ title, url });
-    }
+    // todo: 添加收藏取消收藏
+    // const isFav = await isFavFunc(url);
+    // if (isFav) {
+    //   await removeFav({ title, url });
+    // } else {
+    //   await insertFav({ title, url });
+    // }
     setIsFav((fav) => !fav);
   };
 

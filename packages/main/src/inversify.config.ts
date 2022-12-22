@@ -4,6 +4,7 @@ import {
   App,
   BrowserViewService,
   BrowserWindowService,
+  CollectionRepository,
   ConfigService,
   Controller,
   DataService,
@@ -34,6 +35,8 @@ import LoggerServiceImpl from "./services/LoggerServiceImpl";
 import RunnerServiceImpl from "./services/RunnerServiceImpl";
 import VideoRepositoryImpl from "./repository/VideoRepositoryImpl";
 import VideoControllerImpl from "./controller/VideoControllerImpl";
+import CollectionControllerImpl from "./controller/CollectionControllerImpl";
+import CollectionRepositoryImpl from "./repository/CollectionRepositoryImpl";
 
 const container = new Container({
   skipBaseClassChecks: true,
@@ -67,8 +70,12 @@ container.bind<Controller>(TYPES.Controller).to(WindowControllerImpl);
 container.bind<Controller>(TYPES.Controller).to(ViewControllerImpl);
 container.bind<Controller>(TYPES.Controller).to(ConfigControllerImpl);
 container.bind<Controller>(TYPES.Controller).to(VideoControllerImpl);
+container.bind<Controller>(TYPES.Controller).to(CollectionControllerImpl);
 
 // === repository
 container.bind<VideoRepository>(TYPES.VideoRepository).to(VideoRepositoryImpl);
+container
+  .bind<CollectionRepository>(TYPES.CollectionRepository)
+  .to(CollectionRepositoryImpl);
 
 export { container };
