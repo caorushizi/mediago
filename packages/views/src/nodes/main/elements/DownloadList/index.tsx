@@ -604,16 +604,7 @@ const DownloadList: React.FC<Props> = ({
 
   const renderTaskPanel = () => {
     return (
-      <div
-        style={{
-          padding: "15px",
-          paddingTop: 0,
-          height: "100%",
-          flex: "1",
-          overflowY: "auto",
-          minWidth: "300px",
-        }}
-      >
+      <div className={"task-panel-wrapper"}>
         <div
           style={{
             display: "flex",
