@@ -17,12 +17,10 @@
     "chalk": "^4.1.2",
     "cross-env": "^7.0.3",
     "dotenv": "^8.2.0",
-    "electron": "16.0.4",
     "esbuild": "^0.9.5",
     "rimraf": "^3.0.2"
   },
   "dependencies": {
-    "downloader": "workspace:^1.0.0",
     "electron-is-dev": "^2.0.0",
     "electron-log": "^4.3.2",
     "electron-squirrel-startup": "^1.0.0",
@@ -33,7 +31,6 @@
     "inversify": "^6.0.1",
     "moment": "^2.29.1",
     "nanoid": "^3.1.30",
-    "qs": "^6.10.1",
     "reflect-metadata": "^0.1.13",
     "semver": "^7.3.4",
     "spawn-args": "^0.2.0",

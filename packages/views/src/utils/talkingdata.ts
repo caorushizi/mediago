@@ -1,4 +1,37 @@
-import tdApp from "../utils/td";
+import { version } from "../../package.json";
+import store from "../store";
+
+const isDev = process.env.NODE_ENV === "development";
+
+class TDEvent {
+  appId?: string | boolean;
+  vn: string;
+  vc: string;
+
+  constructor() {
+    this.appId = import.meta.env.VITE_APP_TDID;
+    this.vn = isDev ? `${version}开发版` : `${version}生产版`;
+    this.vc = `${version}`;
+  }
+
+  init() {
+    const script = document.createElement("script");
+    script.src = `https://jic.talkingdata.com/app/h5/v1?appid=${this.appId}&vn=${this.vn}&vc=${this.vc}`;
+    const headElement = document.getElementsByTagName("head")[0];
+    headElement.appendChild(script);
+  }
+
+  onEvent(eventId: string, mapKv: any = {}) {
+    if (!window.TDAPP && isDev) {
+      console.warn("TDAPP 没有初始化");
+    }
+    const { settings } = store.getState();
+    if (settings.statistics) {
+      window.TDAPP?.onEvent(eventId, "", mapKv);
+    }
+  }
+}
+const tdApp = new TDEvent();
 
 const onEvent = {
   browserPageGoBack: (): void => tdApp.onEvent("浏览器页面-点击返回按钮"),
@@ -21,4 +54,4 @@ const onEvent = {
   addSourceAddSource: (): void => tdApp.onEvent("新建下载-添加资源"),
 };
 
-export default onEvent;
+export { tdApp, onEvent };

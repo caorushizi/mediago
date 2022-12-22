@@ -1,5 +1,6 @@
 import { contextBridge, dialog, ipcRenderer, shell } from "electron";
 import { resolve } from "path";
+import { Video } from "./entity";
 
 const apiKey = "electron";
 const api: ElectronApi = {
@@ -46,6 +47,16 @@ const api: ElectronApi = {
     ipcRenderer.send("open-download-item-context-menu", item),
   minimize: (name) => ipcRenderer.send("window-minimize", name),
   getVideoList: () => ipcRenderer.invoke("get-video-list"),
+  addVideo: (video: Video) => ipcRenderer.invoke("add-video", video),
+  updateVideo: (id: string, video: Partial<Video>) =>
+    ipcRenderer.invoke("update-video", id, video),
+  removeVideo: (id?: string) => ipcRenderer.invoke("remove-video", id),
+  getCollectionList: () => ipcRenderer.invoke("get-collection-list"),
+  addCollection: (video: Video) => ipcRenderer.invoke("add-collection", video),
+  updateCollection: (id: string, video: Partial<Video>) =>
+    ipcRenderer.invoke("update-collection", id, video),
+  removeCollection: (id?: string) =>
+    ipcRenderer.invoke("remove-collection", id),
 };
 
 contextBridge.exposeInMainWorld(apiKey, api);

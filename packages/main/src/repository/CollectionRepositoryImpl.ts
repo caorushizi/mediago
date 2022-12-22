@@ -1,37 +1,40 @@
 import { inject, injectable } from "inversify";
-import { Video } from "../entity";
+import { Collection } from "../entity";
 import { Repository } from "typeorm/repository/Repository";
-import { DataService, VideoRepository } from "../interfaces";
+import { CollectionRepository, DataService } from "../interfaces";
 import { TYPES } from "../types";
 
 @injectable()
-export default class VideoRepositoryImpl implements VideoRepository {
-  private repository: Repository<Video>;
+export default class CollectionRepositoryImpl implements CollectionRepository {
+  private repository: Repository<Collection>;
   constructor(
     @inject(TYPES.DataService)
     private dataSource: DataService
   ) {
-    this.repository = this.dataSource.getRepository(Video);
+    this.repository = this.dataSource.getRepository(Collection);
   }
 
-  async insertVideo(item: Video): Promise<Video> {
+  async insertCollection(item: Collection): Promise<Collection> {
     const result = await this.repository.insert(item);
     return result.raw;
   }
 
-  async getVideoList(): Promise<Video[]> {
+  async getCollectionList(): Promise<Collection[]> {
     return await this.repository.find();
   }
 
-  async updateVideo(id: number, video: Partial<Video>): Promise<void> {
+  async updateCollection(
+    id: number,
+    video: Partial<Collection>
+  ): Promise<void> {
     await this.repository.update({ id: id }, { ...video });
   }
 
-  async findById(id: number): Promise<Video | null> {
+  async findById(id: number): Promise<Collection | null> {
     return await this.repository.findOne({ where: { id } });
   }
 
-  async removeVideo(id?: number): Promise<void> {
+  async removeCollection(id?: number): Promise<void> {
     if (id) {
       const video = await this.repository.findOne({ where: { id } });
       if (video) {
