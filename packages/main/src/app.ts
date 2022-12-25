@@ -35,6 +35,7 @@ export default class MediaGo implements App {
   ) {}
 
   async init (): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     if (require('electron-squirrel-startup')) {
       app.quit()
     }

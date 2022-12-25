@@ -34,6 +34,7 @@
   ],
   "files": [
     "./renderer.d.ts",
-    "../global.d.ts"
+    "../global.d.ts",
+    "./vite.config.ts"
   ]
 }
