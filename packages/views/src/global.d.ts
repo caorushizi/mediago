@@ -144,3 +144,13 @@ declare interface AppStore {
   exeFile: string;
   statistics: boolean; // 是否允许打点统计
 }
+
+declare interface Video {
+  id?: string;
+  name: string;
+  url: string;
+  headers?: string;
+  status: "ready" | "downloading" | "failed" | "success";
+  createdDate?: Date;
+  updatedDate?: Date;
+}

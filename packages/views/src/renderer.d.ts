@@ -1,19 +1,19 @@
 interface TdApp {
-  onEvent: (eventId: string, label: string, mapKv: any) => void
+  onEvent: (eventId: string, label: string, mapKv: any) => void;
 }
 
-declare module 'history';
+declare module "history";
 
 interface ElectronIs {
-  readonly macos: boolean
-  readonly linux: boolean
-  readonly windows: boolean
-  readonly main: boolean
-  readonly renderer: boolean
-  readonly usingAsar: boolean
-  readonly development: boolean
-  readonly macAppStore: boolean
-  readonly windowsStore: boolean
+  readonly macos: boolean;
+  readonly linux: boolean;
+  readonly windows: boolean;
+  readonly main: boolean;
+  readonly renderer: boolean;
+  readonly usingAsar: boolean;
+  readonly development: boolean;
+  readonly macAppStore: boolean;
+  readonly windowsStore: boolean;
 }
 
 // M3u8DL 全部参数
@@ -48,93 +48,93 @@ declare interface M3u8DLArgs {
 
 // mediago 全部参数
 declare interface MediaGoArgs {
-  path: string
-  name: string
-  url: string
-  headers?: string
+  path: string;
+  name: string;
+  url: string;
+  headers?: string;
 }
 
 interface IpcRendererResp {
-  code: number
-  msg: string
-  data: any
+  code: number;
+  msg: string;
+  data: any;
 }
 
 interface BrowserViewRect {
-  x: number
-  y: number
-  height: number
-  width: number
+  x: number;
+  y: number;
+  height: number;
+  width: number;
 }
 
 declare interface Window {
-  electron: Readonly<ElectronApi>
-  TDAPP: TdApp
+  electron: Readonly<ElectronApi>;
+  TDAPP: TdApp;
 }
 
 declare interface Manifest {
-  allowCache: boolean
-  endList: boolean
-  mediaSequence: number
-  discontinuitySequence: number
-  playlistType: string
-  custom: Record<string, unknown>
+  allowCache: boolean;
+  endList: boolean;
+  mediaSequence: number;
+  discontinuitySequence: number;
+  playlistType: string;
+  custom: Record<string, unknown>;
   playlists: [
     {
-      attributes: Record<string, unknown>
-      Manifest: Manifest
+      attributes: Record<string, unknown>;
+      Manifest: Manifest;
     }
-  ]
+  ];
   mediaGroups: {
     AUDIO: {
-      'GROUP-ID': {
+      "GROUP-ID": {
         NAME: {
-          default: boolean
-          autoselect: boolean
-          language: string
-          uri: string
-          instreamId: string
-          characteristics: string
-          forced: boolean
-        }
-      }
-    }
-    VIDEO: Record<string, unknown>
-    'CLOSED-CAPTIONS': Record<string, unknown>
-    SUBTITLES: Record<string, unknown>
-  }
-  dateTimeString: string
-  dateTimeObject: Date
-  targetDuration: number
-  totalDuration: number
-  discontinuityStarts: [number]
+          default: boolean;
+          autoselect: boolean;
+          language: string;
+          uri: string;
+          instreamId: string;
+          characteristics: string;
+          forced: boolean;
+        };
+      };
+    };
+    VIDEO: Record<string, unknown>;
+    "CLOSED-CAPTIONS": Record<string, unknown>;
+    SUBTITLES: Record<string, unknown>;
+  };
+  dateTimeString: string;
+  dateTimeObject: Date;
+  targetDuration: number;
+  totalDuration: number;
+  discontinuityStarts: [number];
   segments: [
     {
       byterange: {
-        length: number
-        offset: number
-      }
-      duration: number
-      attributes: Record<string, unknown>
-      discontinuity: number
-      uri: string
-      timeline: number
+        length: number;
+        offset: number;
+      };
+      duration: number;
+      attributes: Record<string, unknown>;
+      discontinuity: number;
+      uri: string;
+      timeline: number;
       key: {
-        method: string
-        uri: string
-        iv: string
-      }
+        method: string;
+        uri: string;
+        iv: string;
+      };
       map: {
-        uri: string
+        uri: string;
         byterange: {
-          length: number
-          offset: number
-        }
-      }
-      'cue-out': string
-      'cue-out-cont': string
-      'cue-in': string
-      custom: Record<string, unknown>
+          length: number;
+          offset: number;
+        };
+      };
+      "cue-out": string;
+      "cue-out-cont": string;
+      "cue-in": string;
+      custom: Record<string, unknown>;
     }
-  ]
+  ];
 }

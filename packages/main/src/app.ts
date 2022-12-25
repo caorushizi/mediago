@@ -1,4 +1,4 @@
-import { inject, injectable } from 'inversify'
+import { inject, injectable } from "inversify";
 import {
   App,
   BrowserViewService,
@@ -8,14 +8,14 @@ import {
   IpcHandlerService,
   MainWindowService,
   ProtocolService,
-  UpdateService
-} from './interfaces'
-import { app } from 'electron'
-import { TYPES } from './types'
+  UpdateService,
+} from "./interfaces";
+import { app } from "electron";
+import { TYPES } from "./types";
 
 @injectable()
 export default class MediaGo implements App {
-  constructor (
+  constructor(
     @inject(TYPES.BrowserWindowService)
     private readonly browserWindow: BrowserWindowService,
     @inject(TYPES.MainWindowService)
@@ -34,25 +34,25 @@ export default class MediaGo implements App {
     protected dataServices: DataService
   ) {}
 
-  async init (): Promise<void> {
+  async init(): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    if (require('electron-squirrel-startup')) {
-      app.quit()
+    if (require("electron-squirrel-startup")) {
+      app.quit();
     }
 
-    app.on('window-all-closed', () => {
-      if (process.platform !== 'darwin') {
-        app.quit()
+    app.on("window-all-closed", () => {
+      if (process.platform !== "darwin") {
+        app.quit();
       }
-    })
+    });
 
-    this.mainWindow.init()
-    this.browserWindow.init()
-    this.browserView.init()
-    this.ipcHandler.init()
+    this.mainWindow.init();
+    this.browserWindow.init();
+    this.browserView.init();
+    this.ipcHandler.init();
 
-    this.protocolService.create()
-    this.updateService.init()
-    this.dataServices.init()
+    this.protocolService.create();
+    this.updateService.init();
+    this.dataServices.init();
   }
 }
