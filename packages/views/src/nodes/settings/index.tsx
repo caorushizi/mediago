@@ -1,5 +1,5 @@
 import React, { FC, useRef } from "react";
-import { Button, FormInstance, Space, Switch, Tooltip, Form } from "antd";
+import { Button, FormInstance, Space, Switch, Tooltip } from "antd";
 import "./index.scss";
 import {
   ProForm,
@@ -9,15 +9,12 @@ import {
   ProFormText,
 } from "@ant-design/pro-components";
 import { FolderOpenOutlined, QuestionCircleOutlined } from "@ant-design/icons";
-import { AppState } from "../../../../store/reducers";
-import {
-  Settings,
-  updateSettings,
-} from "../../../../store/actions/settings.actions";
+import { AppState } from "../../store/reducers";
+import { Settings, updateSettings } from "../../store/actions/settings.actions";
 import { useDispatch, useSelector } from "react-redux";
-import { version } from "../../../../../package.json";
-import { downloaderOptions } from "../../../../utils";
-import useElectron from "../../../../hooks/electron";
+import { version } from "../../../package.json";
+import { downloaderOptions } from "../../utils";
+import useElectron from "../../hooks/electron";
 
 const statisticsTooltip = `
 是否允许统计用户数据

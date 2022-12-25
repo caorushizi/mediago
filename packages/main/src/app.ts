@@ -16,8 +16,6 @@ import { TYPES } from "./types";
 @injectable()
 export default class MediaGo implements App {
   constructor(
-    @inject(TYPES.BrowserWindowService)
-    private readonly browserWindow: BrowserWindowService,
     @inject(TYPES.MainWindowService)
     private readonly mainWindow: MainWindowService,
     @inject(TYPES.BrowserViewService)
@@ -47,7 +45,6 @@ export default class MediaGo implements App {
     });
 
     this.mainWindow.init();
-    this.browserWindow.init();
     this.browserView.init();
     this.ipcHandler.init();
 

@@ -17,10 +17,9 @@ export default class ViewControllerImpl implements Controller {
     private readonly browserView: BrowserViewService
   ) {}
 
-  test = 123;
-
   @on("set-browser-view-bounds")
   setBrowserViewBounds(e: IpcMainInvokeEvent, rect: any): void {
+    console.log("rect: ", rect);
     this.browserView?.setBounds(rect);
   }
 

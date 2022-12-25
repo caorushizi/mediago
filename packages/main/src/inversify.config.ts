@@ -3,7 +3,6 @@ import { TYPES } from "./types";
 import {
   App,
   BrowserViewService,
-  BrowserWindowService,
   CollectionRepository,
   ConfigService,
   Controller,
@@ -18,7 +17,6 @@ import {
   VideoRepository,
 } from "./interfaces";
 import MainWindowServiceImpl from "./services/MainWindowServiceImpl";
-import BrowserWindowServiceImpl from "./services/BrowserWindowServiceImpl";
 import MediaGo from "./app";
 import BrowserViewServiceImpl from "./services/BrowserViewServiceImpl";
 import ConfigServiceImpl from "./services/ConfigServiceImpl";
@@ -46,9 +44,6 @@ const container = new Container({
 container
   .bind<MainWindowService>(TYPES.MainWindowService)
   .to(MainWindowServiceImpl);
-container
-  .bind<BrowserWindowService>(TYPES.BrowserWindowService)
-  .to(BrowserWindowServiceImpl);
 container
   .bind<BrowserViewService>(TYPES.BrowserViewService)
   .to(BrowserViewServiceImpl);

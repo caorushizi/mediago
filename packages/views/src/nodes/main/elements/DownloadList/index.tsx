@@ -12,37 +12,18 @@ import "./index.scss";
 import classNames from "classnames";
 import {
   Button,
-  Checkbox,
-  Col,
-  Divider,
-  Dropdown,
   Empty,
   Form,
   Input,
-  InputNumber,
-  Menu,
   message,
   Modal,
-  Row,
   Space,
   Switch,
   Tooltip,
 } from "antd";
-import { downloaderOptions, isUrl, onEvent } from "../../../../utils";
-import {
-  AppstoreAddOutlined,
-  BlockOutlined,
-  CloseOutlined,
-  DownOutlined,
-  PlusOutlined,
-  UpOutlined,
-} from "@ant-design/icons";
-import {
-  ModalForm,
-  ProForm,
-  ProFormSelect,
-  ProFormText,
-} from "@ant-design/pro-components";
+import { isUrl, onEvent } from "../../../../utils";
+import { AppstoreAddOutlined, PlusOutlined } from "@ant-design/icons";
+import { ModalForm, ProFormText } from "@ant-design/pro-components";
 import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "../../../../store/reducers";
 import { FileDrop } from "react-file-drop";
@@ -92,7 +73,6 @@ const DownloadList: React.FC<Props> = ({
   updateTableData,
 }) => {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [favsList, setFavsList] = useState<Fav[]>([]);
   const [, setMaxWidth] = useState<number>(winWidth);
   const [expanded, setExpanded] = useState<boolean>(true);
   const [moreOptions, setMoreOptions] = useState<boolean>(false); // todo: 初始化判断mediago
@@ -196,12 +176,6 @@ const DownloadList: React.FC<Props> = ({
     setIsModalVisible(true);
   };
 
-  // 打开浏览器
-  const openBrowser = () => {
-    onEvent.mainPageOpenBrowserPage();
-    window.electron.openBrowserWindow();
-  };
-
   // 向列表中插入一条数据并且请求详情
   const insertUpdateTableData = async (
     item: SourceItemForm
@@ -216,57 +190,6 @@ const DownloadList: React.FC<Props> = ({
     await updateTableData();
     setIsModalVisible(false);
     return video;
-  };
-
-  // 渲染添加按钮
-  const renderAddFav = () => {
-    return (
-      <ModalForm<Fav>
-        width={500}
-        layout="horizontal"
-        title="添加收藏"
-        trigger={
-          <Button
-            type="link"
-            style={{ padding: 0 }}
-            size={"small"}
-            icon={<PlusOutlined />}
-          >
-            添加收藏
-          </Button>
-        }
-        onFinish={async (fav) => {
-          onEvent.favPageAddFav();
-          await window.electron.addCollection(fav);
-          const favs = await window.electron.getCollectionList();
-          setFavsList(favs);
-          return true;
-        }}
-      >
-        <ProFormText
-          required
-          name="title"
-          label="链接名称"
-          placeholder="请输入链接名称"
-          rules={[{ required: true, message: "请输入链接名称" }]}
-        />
-        <ProFormText
-          required
-          name="url"
-          label="链接地址"
-          placeholder="请输入链接地址"
-          rules={[
-            { required: true, message: "请输入链接地址" },
-            {
-              validator(rule, value: string, callback) {
-                if (!isUrl(value)) callback("请输入正确的 url 格式");
-                else callback();
-              },
-            },
-          ]}
-        />
-      </ModalForm>
-    );
   };
 
   // 下载文件
@@ -375,49 +298,6 @@ const DownloadList: React.FC<Props> = ({
     });
   };
 
-  const browserMenu = () => {
-    return (
-      <Menu className={"favorite-menu"} style={{ width: 250 }}>
-        {favsList.map((fav, i) => (
-          <Menu.Item key={i} style={{ overflow: "hidden" }}>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <div
-                style={{
-                  flex: 1,
-                  overflow: "hidden",
-                  whiteSpace: "nowrap",
-                  textOverflow: "ellipsis",
-                }}
-                onClick={() => {
-                  onEvent.favPageOpenLink();
-                  window.electron.openBrowserWindow(fav.url);
-                }}
-                title={fav.title}
-              >
-                {fav.title}
-              </div>
-              <Button
-                type="link"
-                danger
-                onClick={async () => await handleDelete(fav)}
-              >
-                删除
-              </Button>
-            </div>
-          </Menu.Item>
-        ))}
-        {favsList.length > 0 && <Menu.Divider />}
-        <Menu.Item key="add">{renderAddFav()}</Menu.Item>
-      </Menu>
-    );
-  };
-
   // 渲染页面上方的按钮
   const renderToolBar = () => {
     return (
@@ -436,16 +316,6 @@ const DownloadList: React.FC<Props> = ({
           >
             新建下载
           </Button>
-          <Dropdown.Button
-            size={"middle"}
-            key={"2"}
-            trigger={["click"]}
-            onClick={openBrowser}
-            overlay={browserMenu}
-            icon={<BlockOutlined />}
-          >
-            打开浏览器
-          </Dropdown.Button>
         </Space>
       </div>
     );
@@ -453,7 +323,7 @@ const DownloadList: React.FC<Props> = ({
 
   // 打开所在文件夹
   const openDirectory = () => {
-    window.electron.openPath(workspace);
+    void window.electron.openPath(workspace);
   };
 
   // 渲染操作按钮
@@ -574,226 +444,6 @@ const DownloadList: React.FC<Props> = ({
     }
   };
 
-  const renderTaskPanel = () => {
-    return (
-      <div className={"task-panel-wrapper"}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyItems: "flex-end",
-            height: "40px",
-          }}
-        >
-          <Button
-            size={"small"}
-            icon={<CloseOutlined />}
-            type={"link"}
-            onClick={() => {
-              setCurrentSourceItem(null);
-            }}
-          />
-        </div>
-        <ProForm
-          form={detailForm}
-          layout={"horizontal"}
-          submitter={{
-            searchConfig: {
-              resetText: "重置",
-              submitText: "下载",
-            },
-            resetButtonProps: {
-              style: {
-                // 隐藏重置按钮
-                display: "none",
-              },
-            },
-            onSubmit: async () => {
-              const item = detailForm.getFieldsValue();
-              await downloadFile(item);
-            },
-          }}
-          onValuesChange={(changedFields) => {
-            if (changedFields.hasOwnProperty("exeFile")) {
-              setMoreOptions(changedFields.exeFile !== "mediago");
-            }
-          }}
-          size={"small"}
-        >
-          <ProFormText
-            name={"name"}
-            label="视频名称"
-            placeholder="请输入视频名称"
-          />
-          <ProFormSelect
-            name={"exeFile"}
-            options={downloaderOptions}
-            label={"下载程序"}
-            placeholder={"请选择下载程序"}
-          />
-          <ProFormText
-            name={"url"}
-            label="请求地址"
-            placeholder="请输入请求地址"
-          />
-          <HeaderEdit label={"请求标头"} name={"headers"} />
-          {moreOptions && (
-            <>
-              <Divider plain style={{ margin: "-10px 0 5px 0" }}>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyItems: "flex-end",
-                    cursor: "pointer",
-                  }}
-                  color={"#409EFF"}
-                  onClick={() => {
-                    setExpanded((state) => !state);
-                  }}
-                >
-                  {expanded ? (
-                    <>
-                      <DownOutlined />
-                      <div style={{ marginLeft: "5px" }}>展开更多高级选项</div>
-                    </>
-                  ) : (
-                    <>
-                      <UpOutlined />
-                      <div style={{ marginLeft: "5px" }}>收起</div>
-                    </>
-                  )}
-                </div>
-              </Divider>
-              {!expanded && (
-                <>
-                  <Form.Item
-                    name={"checkbox"}
-                    initialValue={["enableDelAfterDone"]}
-                  >
-                    <Checkbox.Group style={{ width: "100%" }}>
-                      <Row>
-                        <Col span={12} style={{ marginBottom: "8px" }}>
-                          <Checkbox value="enableDelAfterDone">
-                            合并后删除分片
-                          </Checkbox>
-                        </Col>
-                        <Col span={12} style={{ marginBottom: "8px" }}>
-                          <Checkbox value="disableDateInfo">
-                            不写入日期
-                          </Checkbox>
-                        </Col>
-                        <Col span={12} style={{ marginBottom: "8px" }}>
-                          <Checkbox value="noProxy">不使用系统代理</Checkbox>
-                        </Col>
-                        <Col span={12} style={{ marginBottom: "8px" }}>
-                          <Checkbox value="enableParseOnly">
-                            仅解析m3u8
-                          </Checkbox>
-                        </Col>
-                        <Col span={12} style={{ marginBottom: "8px" }}>
-                          <Checkbox value="enableMuxFastStart">
-                            混流MP4
-                          </Checkbox>
-                        </Col>
-                        <Col span={12} style={{ marginBottom: "8px" }}>
-                          <Checkbox value="noMerge">下载完不合并</Checkbox>
-                        </Col>
-                        <Col span={12}>
-                          <Checkbox value="enableBinaryMerge">
-                            使用二进制合并
-                          </Checkbox>
-                        </Col>
-                        <Col span={12}>
-                          <Checkbox value="enableAudioOnly">
-                            仅合并音频轨道
-                          </Checkbox>
-                        </Col>
-                        <Col span={12}>
-                          <Checkbox value="disableIntegrityCheck">
-                            关闭完整性检查
-                          </Checkbox>
-                        </Col>
-                      </Row>
-                    </Checkbox.Group>
-                  </Form.Item>
-                  <Row>
-                    <Col span={12}>
-                      <Form.Item
-                        name={"maxThreads"}
-                        label={"最大线程"}
-                        labelCol={{ style: { width: "86px" } }}
-                        labelAlign={"left"}
-                        initialValue={32}
-                      >
-                        <InputNumber placeholder="placeholder" />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item
-                        name={"minThreads"}
-                        label={"最小线程"}
-                        labelCol={{ style: { width: "86px" } }}
-                        labelAlign={"left"}
-                        initialValue={16}
-                      >
-                        <InputNumber placeholder="placeholder" />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item
-                        name={"retryCount"}
-                        label={"重试次数"}
-                        labelCol={{ style: { width: "86px" } }}
-                        labelAlign={"left"}
-                        initialValue={15}
-                      >
-                        <InputNumber placeholder="placeholder" />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item
-                        name={"timeOut"}
-                        label={"超时时长(s)"}
-                        labelCol={{ style: { width: "86px" } }}
-                        labelAlign={"left"}
-                        initialValue={10}
-                      >
-                        <InputNumber placeholder="placeholder" />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item
-                        name={"stopSpeed"}
-                        label={"停速(KB/s)"}
-                        labelCol={{ style: { width: "86px" } }}
-                        labelAlign={"left"}
-                        initialValue={0}
-                      >
-                        <InputNumber placeholder="placeholder" />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item
-                        name={"maxSpeed"}
-                        label={"限速(KB/s)"}
-                        labelCol={{ style: { width: "86px" } }}
-                        labelAlign={"left"}
-                        initialValue={0}
-                      >
-                        <InputNumber placeholder="placeholder" />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                </>
-              )}
-            </>
-          )}
-        </ProForm>
-      </div>
-    );
-  };
-
   const renderTaskList = () => {
     return (
       <AutoSizer className={"new-download-list"}>
@@ -898,11 +548,6 @@ const DownloadList: React.FC<Props> = ({
                   没有数据，请
                   <Button type={"link"} onClick={newDownload}>
                     新建下载
-                  </Button>
-                  <br />
-                  或者
-                  <Button type={"link"} onClick={openBrowser}>
-                    打开浏览器
                   </Button>
                 </span>
               }

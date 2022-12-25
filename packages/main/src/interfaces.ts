@@ -9,10 +9,6 @@ export interface MainWindowService extends BrowserWindow {
   init: () => void;
 }
 
-export interface BrowserWindowService extends BrowserWindow {
-  init: () => void;
-}
-
 export interface BrowserViewService {
   webContents: Electron.WebContents;
   init: () => void;

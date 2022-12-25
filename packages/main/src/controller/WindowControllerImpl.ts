@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { app, IpcMainInvokeEvent } from "electron";
 import { TYPES } from "../types";
 import {
-  BrowserWindowService,
+  BrowserViewService,
   Controller,
   MainWindowService,
 } from "../interfaces";
@@ -11,10 +11,10 @@ import { handle, on } from "../decorator/ipc";
 @injectable()
 export default class WindowControllerImpl implements Controller {
   constructor(
-    @inject(TYPES.BrowserWindowService)
-    private readonly browserWindow: BrowserWindowService,
     @inject(TYPES.MainWindowService)
-    private readonly mainWindow: MainWindowService
+    private readonly mainWindow: MainWindowService,
+    @inject(TYPES.BrowserViewService)
+    private readonly browserView: BrowserViewService
   ) {}
 
   @on("close-main-window")
@@ -22,30 +22,24 @@ export default class WindowControllerImpl implements Controller {
     app.quit();
   }
 
-  @on("open-browser-window")
-  openBrowserWindow(e: IpcMainInvokeEvent, url: string): void {
+  @on("open-url")
+  openUrl(e: IpcMainInvokeEvent, url: string): void {
     // 开始计算主窗口的位置
-    const browserView = this.browserWindow.getBrowserView();
-    void browserView?.webContents.loadURL(url || "https://baidu.com");
-    this.browserWindow.show();
+    void this.browserView.webContents.loadURL(
+      url != null ? url : "https://baidu.com"
+    );
   }
 
   @on("close-browser-window")
-  closeBrowserWindow(): void {
-    this.browserWindow.hide();
-  }
+  closeBrowserWindow(): void {}
 
   @on("window-minimize")
   windowMinimize(e: IpcMainInvokeEvent, name: string): void {
     if (name === "main") {
       this.mainWindow.minimize();
-    } else {
-      this.browserWindow.minimize();
     }
   }
 
   @handle("get-current-window")
-  getCurrentWindow(e: IpcMainInvokeEvent): any {
-    return this.browserWindow.getBrowserView();
-  }
+  getCurrentWindow(e: IpcMainInvokeEvent): any {}
 }
