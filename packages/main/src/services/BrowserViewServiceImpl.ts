@@ -12,6 +12,7 @@ import isDev from "electron-is-dev";
 import SessionServiceImpl from "./SessionServiceImpl";
 import { Video } from "../entity";
 import { processHeaders } from "../utils";
+import { VideoStatus } from "../entity/Video";
 
 @injectable()
 export default class BrowserViewServiceImpl implements BrowserViewService {
@@ -54,11 +55,11 @@ export default class BrowserViewServiceImpl implements BrowserViewService {
       const video: Video = {
         name: this.view.webContents.getTitle(),
         url: details.url,
+        status: VideoStatus.Ready,
         headers: processHeaders(details.requestHeaders),
       };
       const res = await this.videoRepository.insertVideo(video);
-      console.log("res:", res);
-      this.mainWindow.webContents.send("m3u8-notifier", video);
+      this.mainWindow.webContents.send("m3u8-notifier", res);
       cancel = true;
     }
     callback({

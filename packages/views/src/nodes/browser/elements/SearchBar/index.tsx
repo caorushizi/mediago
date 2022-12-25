@@ -20,6 +20,7 @@ interface Props {
   className: string;
   isFav: boolean;
   handleClickFav: () => void;
+  isHomePage: boolean;
 }
 
 const SearchBar: React.FC<Props> = (props) => {
@@ -33,6 +34,7 @@ const SearchBar: React.FC<Props> = (props) => {
     handleEnter,
     isFav,
     handleClickFav,
+    isHomePage,
   } = props;
 
   // 搜索框变化
@@ -58,9 +60,11 @@ const SearchBar: React.FC<Props> = (props) => {
       <div className="btn">
         <HomeOutlined className="icon home" onClick={onGoBackHome} />
       </div>
-      <div className="btn" onClick={handleClickFav}>
-        {isFav ? <StarFilled /> : <StarOutlined />}
-      </div>
+      {isHomePage && (
+        <div className="btn" onClick={handleClickFav}>
+          {isFav ? <StarFilled /> : <StarOutlined />}
+        </div>
+      )}
       <input
         className="search-inner"
         placeholder="请在此输入网址"

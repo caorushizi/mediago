@@ -21,9 +21,10 @@ $playlist-width: 200px;
 
     .webview-inner {
       flex: 1;
-      overflow: hidden;
       display: flex;
       flex-direction: row;
+      overflow: auto;
+      @include scrollbar();
 
       #videoView {
         flex: 1;
@@ -39,7 +40,12 @@ $playlist-width: 200px;
         margin: 30px auto;
         display: grid;
         grid-template-columns: 1fr 1fr 1fr 1fr;
+        align-items: center;
+        justify-items: center;
+        justify-content: center;
+        align-content: center;
         .favorite-item {
+          cursor: pointer;
           width: 80px;
           height: 80px;
           margin: 1px;
@@ -47,6 +53,18 @@ $playlist-width: 200px;
           flex-direction: column;
           align-items: center;
           justify-content: center;
+          font-size: 14px;
+          &:hover {
+            background: #ebeef5;
+            border-radius: 4px;
+          }
+          .item-avatar {
+            vertical-align: middle;
+          }
+          .item-name {
+            margin-top: 3px;
+            color: #606266;
+          }
         }
       }
     }

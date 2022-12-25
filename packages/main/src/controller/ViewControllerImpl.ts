@@ -19,7 +19,6 @@ export default class ViewControllerImpl implements Controller {
 
   @on("set-browser-view-bounds")
   setBrowserViewBounds(e: IpcMainInvokeEvent, rect: any): void {
-    console.log("rect: ", rect);
     this.browserView?.setBounds(rect);
   }
 

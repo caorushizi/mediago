@@ -133,6 +133,7 @@ importers:
       eslint-plugin-react: ^7.31.11
       history: ^4.10.1
       less: ^4.1.2
+      localforage: ^1.10.0
       moment: ^2.29.1
       nanoid: ^3.1.30
       prettier: '>=1.13.0'
@@ -160,6 +161,7 @@ importers:
       classnames: 2.3.2
       connected-react-router: 6.9.3_zv4eeuh64if75wiits5txdvcey
       history: 4.10.1
+      localforage: 1.10.0
       moment: 2.29.4
       nanoid: 3.3.4
       react: 17.0.2
@@ -4928,6 +4930,10 @@ packages:
     dev: true
     optional: true
 
+  /immediate/3.0.6:
+    resolution: {integrity: sha512-XXOFtyqDjNDAQxVfYxuF7g9Il/IbWmmlQg2MYKOH8ExIT1qg6xc4zyS3HaEEATgs1btfzxq15ciUiY7gjSXRGQ==}
+    dev: false
+
   /immutable/4.2.1:
     resolution: {integrity: sha512-7WYV7Q5BTs0nlQm7tl92rDYYoyELLKHoDMBKhrxEoiV4mrfVdRz8hzPiYOzH7yWjzoVEamxRuAqhxL2PLRwZYQ==}
 
@@ -5565,6 +5571,12 @@ packages:
       type-check: 0.4.0
     dev: true
 
+  /lie/3.1.1:
+    resolution: {integrity: sha512-RiNhHysUjhrDQntfYSfY4MU24coXXdEOgw9WGcKHNeEwffDYbF//u87M1EWaMGzuFoSbqW0C9C6lEEhDOAswfw==}
+    dependencies:
+      immediate: 3.0.6
+    dev: false
+
   /liftoff/3.1.0:
     resolution: {integrity: sha512-DlIPlJUkCV0Ips2zf2pJP0unEoT1kwYhiiPUGF3s/jtxTCjziNLoiVVh+jqWOWeFi6mmwQ5fNxvAUyPad4Dfog==}
     engines: {node: '>= 0.8'}
@@ -5591,6 +5603,12 @@ packages:
       pinkie-promise: 2.0.1
       strip-bom: 2.0.0
     dev: true
+
+  /localforage/1.10.0:
+    resolution: {integrity: sha512-14/H1aX7hzBBmmh7sGPd+AOMkkIrHM3Z1PAyGgZigA1H1p5O5ANnMyWzvpAETtG68/dC4pC0ncy3+PPGzXZHPg==}
+    dependencies:
+      lie: 3.1.1
+    dev: false
 
   /locate-path/3.0.0:
     resolution: {integrity: sha512-7AO748wWnIhNqAuaty2ZWHkQHRSNfPVIsPIfwEOWO22AmaoVrWavlOcMR5nzTLNYvp36X220/maaRsrec1G65A==}
