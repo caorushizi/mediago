@@ -1,14 +1,14 @@
 import {
   MainState,
   MainUnionType,
-  UPDATE_NOTIFY_COUNT,
-} from "../actions/main.actions";
+  UPDATE_NOTIFY_COUNT
+} from '../actions/main.actions'
 
 const initialState: MainState = {
-  notifyCount: 0,
-};
+  notifyCount: 0
+}
 
-export default function main(
+export default function main (
   state = initialState,
   action: MainUnionType
 ): MainState {
@@ -16,9 +16,9 @@ export default function main(
     case UPDATE_NOTIFY_COUNT:
       return {
         ...state,
-        notifyCount: action.payload,
-      };
+        notifyCount: action.payload
+      }
     default:
-      return state;
+      return state
   }
 }

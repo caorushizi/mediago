@@ -1,31 +1,31 @@
-import Store from "electron-store/index";
+import Store from 'electron-store/index'
 
-import { BrowserWindow } from "electron";
-import { Windows } from "./utils/variables";
+import { BrowserWindow } from 'electron'
+import { Windows } from './utils/variables'
 
 declare interface IWindowManager {
-  create: (name: Windows) => Promise<BrowserWindow | null>;
-  get: (name: Windows) => BrowserWindow | null;
-  has: (name: Windows) => boolean;
-  deleteById: (id: number) => void;
+  create: (name: Windows) => Promise<BrowserWindow | null>
+  get: (name: Windows) => BrowserWindow | null
+  has: (name: Windows) => boolean
+  deleteById: (id: number) => void
 }
 
 declare interface IWindowListItem {
-  url: string;
-  options: () => Electron.BrowserWindowConstructorOptions;
+  url: string
+  options: () => Electron.BrowserWindowConstructorOptions
   callback: (
     window: BrowserWindow,
     windowManager: IWindowManager
-  ) => Promise<void>;
+  ) => Promise<void>
 }
 
-export { IWindowManager, IWindowListItem };
+export { IWindowManager, IWindowListItem }
 
 declare global {
   namespace NodeJS {
     interface Global {
-      __bin__: string;
-      store: Store<AppStore>;
+      __bin__: string
+      store: Store<AppStore>
     }
   }
 }

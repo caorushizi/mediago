@@ -1,24 +1,24 @@
-import RunnerServiceImpl from "../../services/RunnerServiceImpl";
+import RunnerServiceImpl from '../../services/RunnerServiceImpl'
 
 export class Downloader {
-  protected bin = ""; // 可执行文件地址
-  protected args = ""; // runner 参数
+  protected bin = '' // 可执行文件地址
+  protected args = '' // runner 参数
 
-  constructor(public type: string) {}
+  constructor (public type: string) {}
 
-  handle(runner: RunnerServiceImpl): void {
-    runner.setDownloader(this);
+  handle (runner: RunnerServiceImpl): void {
+    runner.setDownloader(this)
   }
 
-  async parseArgs(args: Record<string, string>): Promise<void> {
+  async parseArgs (args: Record<string, string>): Promise<void> {
     // empty
   }
 
-  getBin(): string {
-    return this.bin;
+  getBin (): string {
+    return this.bin
   }
 
-  getArgs(): string {
-    return this.args;
+  getArgs (): string {
+    return this.args
   }
 }

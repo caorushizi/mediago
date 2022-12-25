@@ -1,21 +1,21 @@
-import React, { FC, PropsWithChildren } from "react";
-import "./index.scss";
-import { CloseOutlined, MinusOutlined } from "@ant-design/icons";
-import useElectron from "../../hooks/electron";
+import React, { FC, PropsWithChildren } from 'react'
+import './index.scss'
+import { CloseOutlined, MinusOutlined } from '@ant-design/icons'
+import useElectron from '../../hooks/electron'
 
 interface Props {
-  color?: string;
-  onClose?: () => void;
-  onMinimize?: () => void;
+  color?: string
+  onClose?: () => void
+  onMinimize?: () => void
 }
 
 const WindowToolBar: FC<PropsWithChildren<Props>> = ({
   onClose,
   onMinimize,
-  color = "#fff",
-  children,
+  color = '#fff',
+  children
 }) => {
-  const { isMacos, isWindows } = useElectron();
+  const { isMacos, isWindows } = useElectron()
 
   return (
     <div className="window-tool-bar" style={{ background: color }}>
@@ -37,7 +37,7 @@ const WindowToolBar: FC<PropsWithChildren<Props>> = ({
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default WindowToolBar;
+export default WindowToolBar

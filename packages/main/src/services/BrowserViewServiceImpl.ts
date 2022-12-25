@@ -1,112 +1,111 @@
-import { BrowserView, OnBeforeSendHeadersListenerDetails } from "electron";
+import { BrowserView, OnBeforeSendHeadersListenerDetails } from 'electron'
 import {
   BrowserViewService,
   BrowserWindowService,
   LoggerService,
   MainWindowService,
-  VideoRepository,
-} from "../interfaces";
-import { Sessions } from "../utils/variables";
-import { inject, injectable } from "inversify";
-import { TYPES } from "../types";
-import isDev from "electron-is-dev";
-import { nanoid } from "nanoid";
-import SessionServiceImpl from "./SessionServiceImpl";
-import { Video } from "../entity";
-import { processHeaders } from "../utils";
+  VideoRepository
+} from '../interfaces'
+import { Sessions } from '../utils/variables'
+import { inject, injectable } from 'inversify'
+import { TYPES } from '../types'
+import isDev from 'electron-is-dev'
+import SessionServiceImpl from './SessionServiceImpl'
+import { Video } from '../entity'
+import { processHeaders } from '../utils'
 
 @injectable()
 export default class BrowserViewServiceImpl implements BrowserViewService {
-  private filter = { urls: ["*://*/*"] };
-  private readonly view: BrowserView;
-  webContents: Electron.WebContents;
+  private readonly filter = { urls: ['*://*/*'] }
+  private readonly view: BrowserView
+  webContents: Electron.WebContents
 
-  constructor(
+  constructor (
     @inject(TYPES.BrowserWindowService)
-    private browserWindow: BrowserWindowService,
+    private readonly browserWindow: BrowserWindowService,
     @inject(TYPES.MainWindowService)
-    private mainWindow: MainWindowService,
+    private readonly mainWindow: MainWindowService,
     @inject(TYPES.SessionService)
-    private session: SessionServiceImpl,
+    private readonly session: SessionServiceImpl,
     @inject(TYPES.LoggerService)
-    private logger: LoggerService,
+    private readonly logger: LoggerService,
     @inject(TYPES.VideoRepository)
-    private videoRepository: VideoRepository
+    private readonly videoRepository: VideoRepository
   ) {
     const view = new BrowserView({
       webPreferences: {
-        partition: Sessions.PERSIST_MEDIAGO,
-      },
-    });
-    this.webContents = view.webContents;
-    browserWindow.setBrowserView(view);
-    view.setBounds({ x: 0, y: 0, height: 0, width: 0 });
-    this.view = view;
+        partition: Sessions.PERSIST_MEDIAGO
+      }
+    })
+    this.webContents = view.webContents
+    browserWindow.setBrowserView(view)
+    view.setBounds({ x: 0, y: 0, height: 0, width: 0 })
+    this.view = view
 
-    this.beforeSendHandlerListener = this.beforeSendHandlerListener.bind(this);
+    this.beforeSendHandlerListener = this.beforeSendHandlerListener.bind(this)
   }
 
-  async beforeSendHandlerListener(
+  async beforeSendHandlerListener (
     details: OnBeforeSendHeadersListenerDetails,
     callback: (beforeSendResponse: Electron.BeforeSendResponse) => void
   ): Promise<void> {
-    const m3u8Reg = /\.m3u8$/;
-    let cancel = false;
-    const myURL = new URL(details.url);
+    const m3u8Reg = /\.m3u8$/
+    let cancel = false
+    const myURL = new URL(details.url)
     if (m3u8Reg.test(myURL.pathname)) {
-      this.logger.logger.info("在窗口中捕获 m3u8 链接: ", details.url);
+      this.logger.logger.info('在窗口中捕获 m3u8 链接: ', details.url)
       const video: Video = {
         name: this.view.webContents.getTitle(),
         url: details.url,
-        headers: processHeaders(details.requestHeaders),
-      };
-      const res = await this.videoRepository.insertVideo(video);
-      console.log("res:", res);
-      this.mainWindow.webContents.send("m3u8-notifier", video);
-      cancel = true;
+        headers: processHeaders(details.requestHeaders)
+      }
+      const res = await this.videoRepository.insertVideo(video)
+      console.log('res:', res)
+      this.mainWindow.webContents.send('m3u8-notifier', video)
+      cancel = true
     }
     callback({
       cancel,
-      requestHeaders: details.requestHeaders,
-    });
+      requestHeaders: details.requestHeaders
+    })
   }
 
-  init(): void {
-    isDev && this.view.webContents.openDevTools();
+  init (): void {
+    isDev && this.view.webContents.openDevTools()
 
-    this.view.webContents.on("dom-ready", () => {
-      const title = this.view.webContents.getTitle();
-      const url = this.view.webContents.getURL();
+    this.view.webContents.on('dom-ready', () => {
+      const title = this.view.webContents.getTitle()
+      const url = this.view.webContents.getURL()
 
-      this.browserWindow.webContents.send("dom-ready", { title, url });
+      this.browserWindow.webContents.send('dom-ready', { title, url })
 
       this.view.webContents.setWindowOpenHandler((details) => {
-        void this.view.webContents.loadURL(details.url);
-        return { action: "deny" };
-      });
-    });
+        void this.view.webContents.loadURL(details.url)
+        return { action: 'deny' }
+      })
+    })
 
     this.session
       .get()
       .webRequest.onBeforeSendHeaders(
         this.filter,
         this.beforeSendHandlerListener
-      );
+      )
   }
 
-  getBounds(): Electron.Rectangle {
-    return this.view.getBounds();
+  getBounds (): Electron.Rectangle {
+    return this.view.getBounds()
   }
 
-  setAutoResize(options: Electron.AutoResizeOptions): void {
-    this.view.setAutoResize(options);
+  setAutoResize (options: Electron.AutoResizeOptions): void {
+    this.view.setAutoResize(options)
   }
 
-  setBackgroundColor(color: string): void {
-    this.view.setBackgroundColor(color);
+  setBackgroundColor (color: string): void {
+    this.view.setBackgroundColor(color)
   }
 
-  setBounds(bounds: Electron.Rectangle): void {
-    this.view.setBounds(bounds);
+  setBounds (bounds: Electron.Rectangle): void {
+    this.view.setBounds(bounds)
   }
 }

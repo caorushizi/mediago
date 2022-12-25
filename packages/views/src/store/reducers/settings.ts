@@ -1,19 +1,19 @@
 import {
   Settings,
   SettingsUnionType,
-  UPDATE_SETTINGS,
-} from "../actions/settings.actions";
+  UPDATE_SETTINGS
+} from '../actions/settings.actions'
 
 const initialState: Settings = {
-  workspace: "",
-  exeFile: "",
+  workspace: '',
+  exeFile: '',
   tip: true,
-  proxy: "",
+  proxy: '',
   useProxy: false,
-  statistics: true,
-};
+  statistics: true
+}
 
-export default function settings(
+export default function settings (
   state = initialState,
   action: SettingsUnionType
 ): Settings {
@@ -21,9 +21,9 @@ export default function settings(
     case UPDATE_SETTINGS:
       return {
         ...state,
-        ...action.payload,
-      };
+        ...action.payload
+      }
     default:
-      return state;
+      return state
   }
 }
