@@ -1,14 +1,14 @@
-import { BrowserWindow, BrowserWindowConstructorOptions } from "electron";
-import { MainWindowService } from "../interfaces";
-import { resolve } from "path";
-import isDev from "electron-is-dev";
-import { injectable } from "inversify";
+import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron'
+import { MainWindowService } from '../interfaces'
+import { resolve } from 'path'
+import isDev from 'electron-is-dev'
+import { injectable } from 'inversify'
 
 @injectable()
 export default class MainWindowServiceImpl
   extends BrowserWindow
   implements MainWindowService {
-  constructor() {
+  constructor () {
     const options: BrowserWindowConstructorOptions = {
       width: 800,
       minWidth: 800,
@@ -17,22 +17,22 @@ export default class MainWindowServiceImpl
       show: false,
       frame: false,
       webPreferences: {
-        preload: resolve(__dirname, "./preload.js"),
-      },
-    };
-    super(options);
+        preload: resolve(__dirname, './preload.js')
+      }
+    }
+    super(options)
   }
 
-  init() {
+  init () {
     const url = isDev
-      ? "http://localhost:8555/main"
-      : "mediago://index.html/main";
-    void this.loadURL(url);
+      ? 'http://localhost:8555/main'
+      : 'mediago://index.html/main'
+    void this.loadURL(url)
 
-    isDev && this.webContents.openDevTools();
+    isDev && this.webContents.openDevTools()
 
-    this.once("ready-to-show", () => {
-      this.show();
-    });
+    this.once('ready-to-show', () => {
+      this.show()
+    })
   }
 }

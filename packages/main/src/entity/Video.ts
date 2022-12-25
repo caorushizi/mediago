@@ -3,47 +3,47 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  UpdateDateColumn,
-} from "typeorm";
+  UpdateDateColumn
+} from 'typeorm'
 
 export enum VideoStatus {
-  Ready = "ready",
-  Downloading = "downloading",
-  Failed = "failed",
-  Success = "success",
+  Ready = 'ready',
+  Downloading = 'downloading',
+  Failed = 'failed',
+  Success = 'success',
 }
 
 @Entity()
 export class Video {
   @PrimaryGeneratedColumn()
-  id?: number;
+    id?: number
 
   // 视频名称
   @Column({
-    type: "text",
+    type: 'text'
   })
-  name: string;
+    name: string
 
   // 视频url
   @Column({
-    type: "text",
+    type: 'text'
   })
-  url: string;
+    url: string
 
   // 请求标头
   @Column({
-    type: "text",
+    type: 'text'
   })
-  headers: string;
+    headers: string
 
   @Column({
-    type: "text",
+    type: 'text'
   })
-  status: VideoStatus;
+    status: VideoStatus
 
   @CreateDateColumn()
-  createdDate?: Date;
+    createdDate?: Date
 
   @UpdateDateColumn()
-  updatedDate?: Date;
+    updatedDate?: Date
 }
