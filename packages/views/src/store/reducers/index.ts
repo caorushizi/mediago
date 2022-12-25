@@ -1,15 +1,15 @@
-import { CombinedState, combineReducers, Reducer } from 'redux'
-import { connectRouter, RouterState } from 'connected-react-router'
-import { History } from 'history'
-import settings from './settings'
-import main from './main'
-import { Settings } from '../actions/settings.actions'
-import { MainState } from '../actions/main.actions'
+import { CombinedState, combineReducers, Reducer } from "redux";
+import { connectRouter, RouterState } from "connected-react-router";
+import { History } from "history";
+import settings from "./settings";
+import main from "./main";
+import { Settings } from "../actions/settings.actions";
+import { MainState } from "../actions/main.actions";
 
 export interface AppState {
-  router: RouterState
-  settings: Settings
-  main: MainState
+  router: RouterState;
+  settings: Settings;
+  main: MainState;
 }
 
 const createRootReducer = (
@@ -18,8 +18,8 @@ const createRootReducer = (
   return combineReducers({
     router: connectRouter(history),
     settings,
-    main
-  })
-}
+    main,
+  });
+};
 
-export default createRootReducer
+export default createRootReducer;

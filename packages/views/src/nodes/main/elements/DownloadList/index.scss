@@ -25,13 +25,13 @@
     }
   }
 
-  .task-panel-wrapper{
+  .task-panel-wrapper {
     padding: 0 15px 15px;
     height: 100%;
-    flex:1;
+    flex: 1;
     overflow-y: auto;
     min-width: 300px;
-    @include scrollbar()
+    @include scrollbar();
   }
 }
 

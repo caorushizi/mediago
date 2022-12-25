@@ -1,25 +1,25 @@
-import React, { ChangeEvent } from 'react'
-import './index.scss'
+import React, { ChangeEvent } from "react";
+import "./index.scss";
 import {
   ArrowLeftOutlined,
   ArrowRightOutlined,
   HomeOutlined,
   ReloadOutlined,
   StarFilled,
-  StarOutlined
-} from '@ant-design/icons'
-import classNames from 'classnames'
+  StarOutlined,
+} from "@ant-design/icons";
+import classNames from "classnames";
 
 interface Props {
-  onGoBack: () => void
-  onReload: () => void
-  onGoBackHome: () => void
-  handleEnter: () => void
-  url: string
-  onUrlChange: (url: string) => void
-  className: string
-  isFav: boolean
-  handleClickFav: () => void
+  onGoBack: () => void;
+  onReload: () => void;
+  onGoBackHome: () => void;
+  handleEnter: () => void;
+  url: string;
+  onUrlChange: (url: string) => void;
+  className: string;
+  isFav: boolean;
+  handleClickFav: () => void;
 }
 
 const SearchBar: React.FC<Props> = (props) => {
@@ -32,23 +32,23 @@ const SearchBar: React.FC<Props> = (props) => {
     className,
     handleEnter,
     isFav,
-    handleClickFav
-  } = props
+    handleClickFav,
+  } = props;
 
   // 搜索框变化
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-    onUrlChange(e.target.value)
-  }
+    onUrlChange(e.target.value);
+  };
 
   // 搜索框键盘事件
   const handleEnterPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleEnter()
+    if (e.key === "Enter") {
+      handleEnter();
     }
-  }
+  };
 
   return (
-    <div className={classNames('search-bar', className)}>
+    <div className={classNames("search-bar", className)}>
       <div className="btn">
         <ArrowLeftOutlined className="icon" onClick={onGoBack} />
       </div>
@@ -73,7 +73,7 @@ const SearchBar: React.FC<Props> = (props) => {
         <ArrowRightOutlined className="button" onClick={handleEnter} />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SearchBar
+export default SearchBar;
