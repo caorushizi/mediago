@@ -7,7 +7,7 @@ import WindowToolBar from '../../components/WindowToolBar'
 import SearchBar from './elements/SearchBar'
 import useElectron from '../../hooks/electron'
 
-const computeRect = ({
+const computeRect: FC = ({
   left,
   top,
   width,
