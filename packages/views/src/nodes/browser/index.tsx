@@ -1,12 +1,19 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import "./index.scss";
 import { Avatar } from "antd";
-import { isUrl, onEvent } from "../../utils";
+import { extractColorByName, isUrl, onEvent } from "../../utils";
 import "antd/dist/reset.css";
 import SearchBar from "./elements/SearchBar";
 import useElectron from "../../hooks/electron";
 import { useRequest } from "ahooks";
 import { ModalForm, ProFormText } from "@ant-design/pro-components";
+import { useDispatch, useSelector } from "react-redux";
+import { AppState } from "../../store/reducers";
+import {
+  BrowserState,
+  setBrowserView,
+} from "../../store/actions/browser.actions";
+import { getFavList } from "../../assets/api";
 
 interface DivRect {
   left: number;
@@ -21,10 +28,6 @@ const computeRect = ({ left, top, width, height }: DivRect) => ({
   height: Math.floor(height),
 });
 
-const getFavList = async (): Promise<any[]> => {
-  return await window.electron.getCollectionList();
-};
-
 const BrowserWindow: FC = () => {
   const [url, setUrl] = useState<string>("");
   const [title, setTitle] = useState<string>("");
@@ -37,8 +40,11 @@ const BrowserWindow: FC = () => {
     browserViewLoadURL,
     addEventListener,
   } = useElectron();
-  const [showBrowserView, setShowBrowserView] = useState(false);
-  const { data, error, loading } = useRequest(getFavList);
+  const { data, run } = useRequest(getFavList);
+  const dispatch = useDispatch();
+  const browserState = useSelector<AppState, BrowserState>(
+    (state) => state.browser
+  );
 
   useEffect(() => {
     if (webviewRef.current != null) {
@@ -50,8 +56,6 @@ const BrowserWindow: FC = () => {
         const rect = computeRect(webviewRef.current.getBoundingClientRect());
         window.electron.setBrowserViewRect(rect);
         const entry = entries[0];
-        console.log("rect: ", rect);
-        console.log("viewRect: ", entry.contentRect);
         const viewRect = computeRect(entry.contentRect);
         viewRect.x += rect.x;
         viewRect.y += rect.y;
@@ -67,7 +71,7 @@ const BrowserWindow: FC = () => {
       window.electron.removeEventListener("dom-ready", handleViewDOMReady);
       resizeObserver.current?.disconnect();
     };
-  }, [showBrowserView]);
+  }, [browserState.showBrowserView]);
 
   const handleViewDOMReady = (
     e: Electron.IpcRendererEvent,
@@ -93,7 +97,8 @@ const BrowserWindow: FC = () => {
   };
 
   const onGoBackHome = (): void => {
-    browserViewLoadURL();
+    dispatch(setBrowserView(false));
+    setUrl("");
   };
 
   const onUrlChange = (url: string): void => {
@@ -124,16 +129,18 @@ const BrowserWindow: FC = () => {
               className={"favorite-item"}
               key={index}
               onClick={() => {
-                setShowBrowserView(true);
-                console.log("item: ", item);
-                console.log("url: ", item.url);
+                dispatch(setBrowserView(true));
                 window.electron.browserViewLoadURL(item.url);
               }}
             >
-              <Avatar style={{ verticalAlign: "middle" }} size="large">
+              <Avatar
+                className={"item-avatar"}
+                size="large"
+                style={{ background: extractColorByName(item.id) }}
+              >
                 {item?.title[0]}
               </Avatar>
-              <div>{item.title}</div>
+              <div className={"item-name"}>{item.title}</div>
             </div>
           );
         })}
@@ -151,8 +158,7 @@ const BrowserWindow: FC = () => {
           onFinish={async (fav) => {
             onEvent.favPageAddFav();
             await window.electron.addCollection(fav);
-            const favs = await window.electron.getCollectionList();
-            setFavsList(favs);
+            run();
             return true;
           }}
         >
@@ -196,9 +202,10 @@ const BrowserWindow: FC = () => {
           onGoBackHome={onGoBackHome}
           handleEnter={handleEnter}
           handleClickFav={handleClickFav}
+          isHomePage={browserState.showBrowserView}
         />
         <div className="webview-inner">
-          {showBrowserView ? (
+          {browserState.showBrowserView ? (
             <div id="videoView" ref={webviewRef}></div>
           ) : (
             renderFavItem()

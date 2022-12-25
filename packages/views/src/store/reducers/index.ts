@@ -3,13 +3,16 @@ import { connectRouter, RouterState } from "connected-react-router";
 import { History } from "history";
 import settings from "./settings";
 import main from "./main";
+import browser from "./browser";
 import { Settings } from "../actions/settings.actions";
 import { MainState } from "../actions/main.actions";
+import { BrowserState } from "../actions/browser.actions";
 
 export interface AppState {
   router: RouterState;
   settings: Settings;
   main: MainState;
+  browser: BrowserState;
 }
 
 const createRootReducer = (
@@ -19,6 +22,7 @@ const createRootReducer = (
     router: connectRouter(history),
     settings,
     main,
+    browser,
   });
 };
 
