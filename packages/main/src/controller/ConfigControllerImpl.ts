@@ -10,6 +10,7 @@ export default class ConfigControllerImpl implements Controller {
   constructor(
     @inject(TYPES.ConfigService) private readonly config: ConfigService
   ) {}
+
   @handle("get-bin-dir")
   getBinDir(): string {
     return binDir;

@@ -84,3 +84,41 @@
 .Resizer.disabled:hover {
   border-color: transparent;
 }
+
+.main-layout {
+  height: 100vh;
+  width: 100vw;
+  .main-header {
+    -webkit-app-region: drag;
+    padding-right: 0;
+    background: #4090f7;
+  }
+  .main-sider {
+    position: relative;
+    .sider-collapsed {
+      position: absolute;
+      top: 50%;
+      right: 0;
+      border: 1px solid #dcdfe6;
+      height: 50px;
+      width: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 5px 0 0 5px;
+      border-right: 0;
+      cursor: pointer;
+      color: #606266;
+      transform: translateY(-50%);
+    }
+  }
+  .main-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    border-top: 1px solid #dcdfe6;
+    padding: 0 12px;
+    font-size: 20px;
+  }
+}

@@ -1,18 +1,15 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import "./index.scss";
-import { Badge, Button, message, Tabs } from "antd";
-import WindowToolBar from "../../components/WindowToolBar";
-import Setting from "../../nodes/main/elements/Setting";
+import { message } from "antd";
 import { VideoStatus, VideoType } from "../../types";
 import audioSrc from "../../assets/tip.mp3";
-import { onEvent, helpUrl } from "../../utils";
+import { onEvent } from "../../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { Settings, updateSettings } from "../../store/actions/settings.actions";
 import { AppState } from "../../store/reducers";
 import useElectron from "../../hooks/electron";
 import NewDownloadList from "../../nodes/main/elements/DownloadList";
-import { MainState, updateNotifyCount } from "../../store/actions/main.actions";
-import { QuestionCircleOutlined } from "@ant-design/icons";
+import { updateNotifyCount } from "../../store/actions/main.actions";
 import { IpcRendererEvent } from "electron";
 
 const audio = new Audio(audioSrc);
@@ -28,18 +25,9 @@ const MainPage: FC = () => {
   const dispatch = useDispatch();
   const settings = useSelector<AppState, Settings>((state) => state.settings);
   const countRef = useRef(0);
-  const { notifyCount } = useSelector<AppState, MainState>(
-    (state) => state.main
-  );
-  countRef.current = notifyCount;
+
   const { workspace, exeFile } = settings;
-  const {
-    addEventListener,
-    removeEventListener,
-    closeMainWindow,
-    store,
-    minimize,
-  } = useElectron();
+  const { addEventListener, removeEventListener, store } = useElectron();
 
   useEffect(() => {
     initData();
@@ -91,12 +79,6 @@ const MainPage: FC = () => {
     }
   };
 
-  // 打开使用帮助
-  const openHelp = () => {
-    onEvent.mainPageHelp();
-    window.electron.openExternal(helpUrl);
-  };
-
   // 首页面板点击事件
   const onTabClick = async (activeKey: TabKey): Promise<void> => {
     if (!settings.workspace) {
@@ -134,56 +116,13 @@ const MainPage: FC = () => {
 
   return (
     <div className="main-window">
-      <WindowToolBar
-        color="#4090F7"
-        onClose={() => {
-          closeMainWindow();
-        }}
-        onMinimize={() => {
-          minimize("main");
-        }}
-      />
       <div className="main-window">
-        <Tabs
-          activeKey={activeKey}
-          tabPosition="top"
-          className="main-window-tabs"
-          onChange={(value) => onTabChange(value as TabKey)}
-          onTabClick={async (key) => await onTabClick(key as TabKey)}
-          items={[
-            {
-              label: (
-                <Badge className="download-item" count={notifyCount}>
-                  下载
-                </Badge>
-              ),
-              key: TabKey.HomeTab,
-              children: (
-                <NewDownloadList
-                  workspace={workspace}
-                  tableData={tableData}
-                  changeVideoStatus={changeVideoStatus}
-                  updateTableData={updateTableData}
-                />
-              ),
-            },
-            {
-              label: "设置",
-              key: TabKey.SettingTab,
-              children: <Setting />,
-            },
-          ]}
+        <NewDownloadList
+          workspace={workspace}
+          tableData={tableData}
+          changeVideoStatus={changeVideoStatus}
+          updateTableData={updateTableData}
         />
-      </div>
-
-      <div className="toolbar">
-        <Button
-          type={"link"}
-          onClick={openHelp}
-          icon={<QuestionCircleOutlined />}
-        >
-          使用帮助
-        </Button>
       </div>
     </div>
   );

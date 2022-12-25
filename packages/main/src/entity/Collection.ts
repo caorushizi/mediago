@@ -15,24 +15,11 @@ export class Collection {
   @Column()
   title: string;
 
-  // 描述
-  @Column({
-    type: "text",
-  })
-  desc?: string;
-
   // url
   @Column({
     type: "text",
   })
   url: string;
-
-  // 是否置顶
-  @Column({
-    type: "boolean",
-    default: false,
-  })
-  is_favorite: boolean;
 
   @CreateDateColumn()
   createdDate: Date;

@@ -1,8 +1,5 @@
-import { IpcHandlerService } from "./interfaces";
-
 const TYPES = {
   MainWindowService: Symbol.for("MainWindowService"),
-  BrowserWindowService: Symbol.for("BrowserWindowService"),
   BrowserViewService: Symbol.for("BrowserViewService"),
   ConfigService: Symbol.for("ConfigService"),
   SessionService: Symbol.for("SessionService"),

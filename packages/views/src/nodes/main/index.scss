@@ -3,63 +3,12 @@
 @include window-common;
 
 .main-window {
-  height: 100vh;
+  height: 100%;
   width: 100%;
   overflow: auto;
   display: flex;
   flex-direction: column;
   position: relative;
-
-  .main-window-tabs {
-    height: 100%;
-
-    .ant-tabs-nav {
-      margin: 0;
-      height: 40px;
-      background: #4090f7;
-      -webkit-app-region: drag;
-
-      .ant-tabs-nav-wrap {
-        padding: 0 20px;
-      }
-
-      .ant-tabs-tab-btn {
-        -webkit-app-region: no-drag;
-        color: #fff;
-        font-size: 16px;
-        user-select: none;
-
-        .download-item {
-          font-size: 16px;
-          color: #fff;
-        }
-      }
-
-      .ant-tabs-tab-active {
-        .ant-tabs-tab-btn {
-          color: #fff;
-        }
-      }
-
-      .ant-tabs-ink-bar {
-        height: 2px;
-        background: #fff;
-        transform: translateY(-2px);
-      }
-    }
-
-    .ant-tabs-content {
-      padding: 0;
-      height: 100%;
-
-      .ant-tabs-tabpane {
-        padding: 0;
-        height: 100%;
-        overflow: auto;
-        @include scrollbar;
-      }
-    }
-  }
 
   .float-icon {
     position: absolute;
@@ -71,13 +20,6 @@
   }
 
   .toolbar {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-    border-top: 1px solid #dcdfe6;
-    padding: 0 12px;
-    font-size: 20px;
   }
 }
 

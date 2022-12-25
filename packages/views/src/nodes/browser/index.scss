@@ -6,13 +6,12 @@ $playlist-width: 200px;
 
 .browser-window {
   height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
 
   .webview-container {
     flex: 1;
-    width: 100vw;
-    max-height: 100vh;
     display: flex;
     overflow: hidden;
     flex-direction: column;
@@ -33,6 +32,22 @@ $playlist-width: 200px;
         align-items: center;
         justify-content: center;
         background: #f2f6fc;
+      }
+
+      .favorite-list {
+        width: 80%;
+        margin: 30px auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        .favorite-item {
+          width: 80px;
+          height: 80px;
+          margin: 1px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        }
       }
     }
   }

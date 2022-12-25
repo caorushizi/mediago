@@ -1,7 +1,6 @@
 import { BrowserView, OnBeforeSendHeadersListenerDetails } from "electron";
 import {
   BrowserViewService,
-  BrowserWindowService,
   LoggerService,
   MainWindowService,
   VideoRepository,
@@ -21,8 +20,6 @@ export default class BrowserViewServiceImpl implements BrowserViewService {
   webContents: Electron.WebContents;
 
   constructor(
-    @inject(TYPES.BrowserWindowService)
-    private readonly browserWindow: BrowserWindowService,
     @inject(TYPES.MainWindowService)
     private readonly mainWindow: MainWindowService,
     @inject(TYPES.SessionService)
@@ -38,8 +35,8 @@ export default class BrowserViewServiceImpl implements BrowserViewService {
       },
     });
     this.webContents = view.webContents;
-    browserWindow.setBrowserView(view);
-    view.setBounds({ x: 0, y: 0, height: 0, width: 0 });
+    mainWindow.setBrowserView(view);
+    view.setBounds({ x: 0, y: 0, height: 100, width: 100 });
     this.view = view;
 
     this.beforeSendHandlerListener = this.beforeSendHandlerListener.bind(this);
@@ -77,7 +74,7 @@ export default class BrowserViewServiceImpl implements BrowserViewService {
       const title = this.view.webContents.getTitle();
       const url = this.view.webContents.getURL();
 
-      this.browserWindow.webContents.send("dom-ready", { title, url });
+      this.mainWindow.webContents.send("dom-ready", { title, url });
 
       this.view.webContents.setWindowOpenHandler((details) => {
         void this.view.webContents.loadURL(details.url);
