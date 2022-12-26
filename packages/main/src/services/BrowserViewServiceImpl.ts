@@ -13,6 +13,7 @@ import SessionServiceImpl from "./SessionServiceImpl";
 import { Video } from "../entity";
 import { processHeaders } from "../utils";
 import { VideoStatus } from "../entity/Video";
+import path from "path";
 
 @injectable()
 export default class BrowserViewServiceImpl implements BrowserViewService {
@@ -68,7 +69,7 @@ export default class BrowserViewServiceImpl implements BrowserViewService {
     });
   }
 
-  init(): void {
+  async init(): Promise<void> {
     isDev && this.view.webContents.openDevTools();
 
     this.view.webContents.on("dom-ready", () => {
@@ -89,6 +90,10 @@ export default class BrowserViewServiceImpl implements BrowserViewService {
         this.filter,
         this.beforeSendHandlerListener
       );
+
+    const extensionPath = path.resolve(__dirname, "../../extension/");
+    console.log("extensionPath", extensionPath);
+    void this.session.get().loadExtension(extensionPath);
   }
 
   getBounds(): Electron.Rectangle {

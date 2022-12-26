@@ -1,18 +1,12 @@
 import { IpcMainInvokeEvent } from "electron";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
-import {
-  BrowserViewService,
-  BrowserWindowService,
-  Controller,
-} from "../interfaces";
+import { BrowserViewService, Controller } from "../interfaces";
 import { on } from "../decorator/ipc";
 
 @injectable()
 export default class ViewControllerImpl implements Controller {
   constructor(
-    @inject(TYPES.BrowserViewService)
-    private readonly browserWindow: BrowserWindowService,
     @inject(TYPES.BrowserViewService)
     private readonly browserView: BrowserViewService
   ) {}
