@@ -20,7 +20,11 @@ export default class VideoRepositoryImpl implements VideoRepository {
   }
 
   async getVideoList(): Promise<Video[]> {
-    return await this.repository.find();
+    return await this.repository.find({
+      order: {
+        createdDate: "DESC",
+      },
+    });
   }
 
   async updateVideo(id: number, video: Partial<Video>): Promise<void> {

@@ -1,7 +1,6 @@
 import React, { FC, PropsWithChildren } from "react";
 import "./index.scss";
 import { CloseOutlined, MinusOutlined } from "@ant-design/icons";
-import useElectron from "../../hooks/electron";
 
 interface Props {
   color?: string;
@@ -9,14 +8,14 @@ interface Props {
   onMinimize?: () => void;
 }
 
+const { isMacos, isWindows } = window.electron;
+
 const WindowToolBar: FC<PropsWithChildren<Props>> = ({
   onClose,
   onMinimize,
   color = "#fff",
   children,
 }) => {
-  const { isMacos, isWindows } = useElectron();
-
   return (
     <div className="window-tool-bar" style={{ background: color }}>
       <div className="window-tool-bar-left">
