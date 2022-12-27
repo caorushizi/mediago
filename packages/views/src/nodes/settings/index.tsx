@@ -14,7 +14,6 @@ import { Settings, updateSettings } from "../../store/actions/settings.actions";
 import { useDispatch, useSelector } from "react-redux";
 import { version } from "../../../package.json";
 import { downloaderOptions } from "../../utils";
-import useElectron from "../../hooks/electron";
 
 const statisticsTooltip = `
 是否允许统计用户数据
@@ -23,19 +22,20 @@ const statisticsTooltip = `
 3. 软件会统计页面报错，以便排查错误，请谅解~
 `;
 
+const {
+  store,
+  getPath,
+  showOpenDialog,
+  openConfigDir: openConfigDirElectron,
+  openBinDir: openBinDirElectron,
+  openPath,
+} = window.electron;
+
 // 设置页面
 const Setting: FC = () => {
   const settings = useSelector<AppState, Settings>((state) => state.settings);
   const dispatch = useDispatch();
   const formRef = useRef<FormInstance<Settings>>();
-  const {
-    store,
-    getPath,
-    showOpenDialog,
-    openConfigDir: openConfigDirElectron,
-    openBinDir: openBinDirElectron,
-    openPath,
-  } = useElectron();
 
   // 选择下载地址
   const handleSelectDir = async (): Promise<void> => {

@@ -3,7 +3,6 @@ import React, {
   FC,
   ReactNode,
   useEffect,
-  useRef,
   useState,
 } from "react";
 import "./index.scss";
@@ -18,15 +17,13 @@ import {
   Switch,
   Tooltip,
 } from "antd";
-import { VideoStatus, VideoType } from "../../types";
+import { VideoStatus } from "../../types";
 import audioSrc from "../../assets/tip.mp3";
 import { onEvent } from "../../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { Settings, updateSettings } from "../../store/actions/settings.actions";
 import { AppState } from "../../store/reducers";
-import useElectron from "../../hooks/electron";
 import { updateNotifyCount } from "../../store/actions/main.actions";
-import { IpcRendererEvent } from "electron";
 import { useRequest } from "ahooks";
 import { getVideoList } from "../../assets/api";
 import { FileDrop } from "react-file-drop";
@@ -61,38 +58,25 @@ const titleMap = {
   success: "下载成功",
 };
 
+const {
+  store,
+  itemContextMenu,
+  addEventListener,
+  removeEventListener,
+  ipcExec,
+} = window.electron;
+
 const MainPage: FC = () => {
   const { data, run } = useRequest(getVideoList);
   const dispatch = useDispatch();
   const settings = useSelector<AppState, Settings>((state) => state.settings);
-  const countRef = useRef(0);
 
   const { workspace, exeFile } = settings;
-  const { store } = useElectron();
 
   const initData = async () => {
     // 开始初始化表格数据
     const initialSettings = await store.get();
     dispatch(updateSettings(initialSettings));
-  };
-
-  const handleWebViewMessage = async (
-    e: IpcRendererEvent,
-    source: SourceUrl
-  ): Promise<void> => {
-    const item: SourceItem = {
-      ...source,
-      exeFile,
-      status: VideoStatus.Ready,
-      type: VideoType.M3u8,
-      directory: settings.workspace,
-      createdAt: Date.now(),
-      deleteSegments: true,
-    };
-    const sourceItem = await window.electron.addVideo(item);
-    if (!sourceItem) return;
-    run();
-    dispatch(updateNotifyCount(countRef.current + 1));
   };
 
   // 切换视频源的 status
@@ -113,22 +97,18 @@ const MainPage: FC = () => {
   };
 
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const { itemContextMenu, addEventListener, removeEventListener, ipcExec } =
-    useElectron();
   const [formRef] = Form.useForm();
   const [detailForm] = Form.useForm();
 
   useEffect(() => {
-    initData();
+    void initData();
 
-    addEventListener("m3u8-notifier", handleWebViewMessage);
     addEventListener("download-context-menu-detail", contextMenuDetail);
     addEventListener("download-context-menu-download", contextMenuDownload);
     addEventListener("download-context-menu-delete", contextMenuDelete);
     addEventListener("download-context-menu-clear-all", contextMenuClearAll);
 
     return () => {
-      removeEventListener("m3u8-notifier", handleWebViewMessage);
       removeEventListener("download-context-menu-detail", contextMenuDetail);
       removeEventListener(
         "download-context-menu-download",
@@ -142,32 +122,26 @@ const MainPage: FC = () => {
     };
   }, []);
 
-  const contextMenuDetail = (
-    e: Electron.IpcRendererEvent,
-    item: SourceItem
-  ) => {
+  const contextMenuDetail = (e: any, item: SourceItem): void => {
     detailForm.setFieldsValue(item);
   };
-  const contextMenuDownload = (
-    e: Electron.IpcRendererEvent,
-    item: SourceItem
-  ) => {
+  const contextMenuDownload = (e: any, item: SourceItem): void => {
     downloadFile(item);
   };
   const contextMenuDelete = async (
-    event: Electron.IpcRendererEvent,
+    event: any,
     item: SourceItem
-  ) => {
+  ): Promise<void> => {
     await window.electron.removeVideo(item.id);
     await updateTableData();
   };
-  const contextMenuClearAll = async () => {
+  const contextMenuClearAll = async (): Promise<void> => {
     await window.electron.removeVideo();
     await updateTableData();
   };
 
   // 渲染视频下载的状态
-  const renderStatus = (item: SourceItem) => {
+  const renderStatus = (item: SourceItem): ReactNode => {
     const status = item.status;
     return (
       <Tooltip title={titleMap[status]} placement={"right"}>
@@ -189,7 +163,7 @@ const MainPage: FC = () => {
   };
 
   // 新建下载
-  const newDownload = () => {
+  const newDownload = (): void => {
     onEvent.mainPageNewSource();
     setIsModalVisible(true);
   };
@@ -301,7 +275,7 @@ const MainPage: FC = () => {
   };
 
   // 渲染页面上方的按钮
-  const renderToolBar = () => {
+  const renderToolBar = (): ReactNode => {
     return (
       <div
         style={{

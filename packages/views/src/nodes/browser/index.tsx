@@ -1,10 +1,9 @@
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, ReactNode, useEffect, useRef, useState } from "react";
 import "./index.scss";
 import { Avatar } from "antd";
 import { extractColorByName, isUrl, onEvent } from "../../utils";
 import "antd/dist/reset.css";
 import SearchBar from "./elements/SearchBar";
-import useElectron from "../../hooks/electron";
 import { useRequest } from "ahooks";
 import { ModalForm, ProFormText } from "@ant-design/pro-components";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,18 +27,20 @@ const computeRect = ({ left, top, width, height }: DivRect) => ({
   height: Math.floor(height),
 });
 
+const {
+  browserViewGoBack,
+  browserViewReload,
+  browserViewLoadURL,
+  addEventListener,
+} = window.electron;
+
 const BrowserWindow: FC = () => {
   const [url, setUrl] = useState<string>("");
   const [title, setTitle] = useState<string>("");
   const [isFav, setIsFav] = useState<boolean>(false);
   const webviewRef = useRef<HTMLDivElement>(null);
   const resizeObserver = useRef<ResizeObserver>();
-  const {
-    browserViewGoBack,
-    browserViewReload,
-    browserViewLoadURL,
-    addEventListener,
-  } = useElectron();
+
   const { data, run } = useRequest(getFavList);
   const dispatch = useDispatch();
   const browserState = useSelector<AppState, BrowserState>(
@@ -74,7 +75,7 @@ const BrowserWindow: FC = () => {
   }, [browserState.showBrowserView]);
 
   const handleViewDOMReady = (
-    e: Electron.IpcRendererEvent,
+    e: any,
     { url, title }: { url: string; title: string }
   ): void => {
     // todo: 添加收藏
@@ -120,7 +121,7 @@ const BrowserWindow: FC = () => {
     setIsFav((fav) => !fav);
   };
 
-  const renderFavItem = () => {
+  const renderFavItem = (): ReactNode => {
     return (
       <div className="favorite-list">
         {data?.map((item, index) => {
