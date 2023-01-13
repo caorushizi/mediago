@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import { resolve } from 'path'
 import react from '@vitejs/plugin-react'
 
-export default defineConfig({
+export default defineConfig({ 
   root: __dirname,
   server: {
     port: 8555,

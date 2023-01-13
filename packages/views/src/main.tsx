@@ -11,8 +11,8 @@ import "./main.scss";
 import store from "./store";
 import { Badge, Button, Layout, Menu } from "antd";
 import {
-  ChromeOutlined,
-  DownloadOutlined,
+  ChromeOutlined, 
+  DownloadOutlined,      
   LeftOutlined,
   QuestionCircleOutlined,
   RightOutlined,
