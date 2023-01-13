@@ -1,6 +1,24 @@
-<script setup lang="ts">
+<script lang="ts">
 import { RouterLink, RouterView } from "vue-router";
 import HelloWorld from "./components/HelloWorld.vue";
+
+export default {
+  components: {
+    HelloWorld,
+    RouterLink,
+    RouterView,
+  },
+  data() {
+    return {
+      test: 1,
+    };
+  },
+  methods: {
+    onclick() {
+      alert(123);
+    },
+  },
+};
 </script>
 
 <template>
@@ -15,9 +33,10 @@ import HelloWorld from "./components/HelloWorld.vue";
 
     <div class="wrapper">
       <HelloWorld msg="You did it!" />
+      <div @click="onclick">{{ test }}</div>
 
       <nav>
-        <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/">Home1</RouterLink>
         <RouterLink to="/about">About</RouterLink>
       </nav>
     </div>
