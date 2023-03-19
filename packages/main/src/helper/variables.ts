@@ -9,6 +9,7 @@ export const defaultScheme = "mediago";
 export const download = app.getPath("downloads");
 export const MAIN_WINDOW = "MAIN_WINDOW";
 export const PERSIST_MEDIAGO = "persist:mediago";
+export const PERSIST_WEBVIEW = "persist:webview";
 export const db = path.resolve(workspace, "app.db");
 
 if (!isDev) {
