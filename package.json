@@ -1,22 +1,15 @@
 {
-  "name": "m3u8-downloader",
-  "version": "1.0.0",
-  "description": "m3u8 视频在线提取工具 流媒体下载 m3u8下载 桌面客户端 windows mac。 可以直接在线获取 m3u8 链接地址，无需使用使用网络抓包，无需安装浏览器插件，可以直接带出请求标头……",
+  "name": "electron-template",
+  "version": "0.1.0",
+  "description": "electron-template",
   "main": "index.js",
   "scripts": {
     "dev": "pnpm -r --parallel -F main -F renderer run dev",
-    "dist": "pnpm -r --parallel -F main -F renderer run dist",
-    "pack": "pnpm -F app run pack",
-    "build": "pnpm -F app run build"
+    "build": "pnpm -r --parallel -F main -F renderer run build",
+    "pack": "pnpm -F main run pack",
+    "release": "pnpm run build && pnpm -F main run release"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/caorushizi/m3u8-downloader.git"
-  },
+  "keywords": [],
   "author": "",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/caorushizi/m3u8-downloader/issues"
-  },
-  "homepage": "https://github.com/caorushizi/m3u8-downloader#readme"
+  "license": "MIT"
 }

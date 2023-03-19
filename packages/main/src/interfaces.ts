@@ -1,40 +1,18 @@
-import { BrowserWindow, Session } from "electron";
-import Store from "electron-store";
+import { type BrowserWindow, type Session } from "electron";
 import { ElectronLog } from "electron-log";
-import { SpawnOptions } from "child_process";
-import { DataSource } from "typeorm";
-import { Collection, Video } from "./entity";
+import Store from "electron-store";
+import { EntityManager } from "typeorm";
+import { AppStore } from "types";
 
 export interface MainWindowService extends BrowserWindow {
   init: () => void;
-}
-
-export interface BrowserViewService {
-  webContents: Electron.WebContents;
-  init: () => void;
-  getBounds: () => Electron.Rectangle;
-
-  setAutoResize: (options: Electron.AutoResizeOptions) => void;
-
-  setBackgroundColor: (color: string) => void;
-
-  setBounds: (bounds: Electron.Rectangle) => void;
 }
 
 export interface App {
   init: () => void;
 }
 
-export interface ConfigService extends Store<AppStore> {
-  init: () => void;
-  setProxy: (isInit?: boolean) => void;
-}
-
 export interface IpcHandlerService {
-  init: () => void;
-}
-
-export interface DataService extends DataSource {
   init: () => void;
 }
 
@@ -50,37 +28,26 @@ export interface SessionService {
   get: () => Session;
 }
 
+export interface DatabaseService {
+  manager: EntityManager;
+  init: () => void;
+}
+
 export type Controller = Record<string | symbol, any>;
 
 export interface LoggerService {
   logger: ElectronLog;
   init: () => void;
+  info: (...args: any[]) => void;
+  error: (...args: any[]) => void;
+  warn: (...args: any[]) => void;
+  debug: (...args: any[]) => void;
 }
 
-export interface RunnerService {
-  run: (options: SpawnOptions) => void;
+export interface StoreService extends Store<AppStore> {
+  init: () => void;
 }
 
-export interface VideoRepository {
-  getVideoList: () => Promise<Video[]>;
-
-  findById: (id: number) => Promise<Video | null>;
-
-  insertVideo: (video: Video) => Promise<Video>;
-
-  updateVideo: (id: number, video: Partial<Video>) => Promise<void>;
-
-  removeVideo: (id?: number) => Promise<void>;
-}
-
-export interface CollectionRepository {
-  getCollectionList: () => Promise<Collection[]>;
-
-  findById: (id: number) => Promise<Collection | null>;
-
-  insertCollection: (video: Collection) => Promise<Collection>;
-
-  updateCollection: (id: number, video: Partial<Collection>) => Promise<void>;
-
-  removeCollection: (id?: number) => Promise<void>;
+export interface UserRepository {
+  init: () => void;
 }

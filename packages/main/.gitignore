@@ -1,5 +1,4 @@
 .bin
 node_modules
 build
-.electron
 dist
