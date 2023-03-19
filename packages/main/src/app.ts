@@ -7,6 +7,7 @@ import {
   ProtocolService,
   UpdateService,
   UserRepository,
+  WebviewService,
   type App,
 } from "./interfaces";
 import { TYPES } from "./types";
@@ -25,7 +26,9 @@ export default class ElectronApp implements App {
     @inject(TYPES.DatabaseService)
     private readonly dataService: DatabaseService,
     @inject(TYPES.UserRepository)
-    private readonly userRepo: UserRepository
+    private readonly userRepo: UserRepository,
+    @inject(TYPES.WebviewService)
+    private readonly webview: WebviewService
   ) {
     // empty
   }
@@ -42,6 +45,7 @@ export default class ElectronApp implements App {
     this.ipcHandler.init();
     this.updateService.init();
     await this.dataService.init();
+    this.webview.init();
 
     this.userRepo.init();
   }

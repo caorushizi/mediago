@@ -11,8 +11,6 @@ import { TYPES } from "../types";
 import { LoggerService, MainWindowService } from "../interfaces";
 import { PERSIST_WEBVIEW } from "helper/variables";
 
-const filter = { urls: ["*://*/*"] };
-
 @injectable()
 export default class MainWindowServiceImpl
   extends BrowserWindow
@@ -31,10 +29,11 @@ export default class MainWindowServiceImpl
       frame: true,
       webPreferences: {
         preload: resolve(__dirname, "./preload.js"),
-        webviewTag: true,
       },
     };
     super(options);
+
+    this.beforeSendHandlerListener = this.beforeSendHandlerListener.bind(this);
   }
 
   init(): void {
@@ -46,10 +45,6 @@ export default class MainWindowServiceImpl
     this.once("ready-to-show", () => {
       this.show();
     });
-
-    session
-      .fromPartition(PERSIST_WEBVIEW)
-      .webRequest.onBeforeSendHeaders(filter, this.beforeSendHandlerListener);
   }
 
   async beforeSendHandlerListener(
@@ -58,11 +53,9 @@ export default class MainWindowServiceImpl
   ): Promise<void> {
     const m3u8Reg = /\.m3u8$/;
     let cancel = false;
-    console.log("123", details.url);
-
     const myURL = new URL(details.url);
     if (m3u8Reg.test(myURL.pathname)) {
-      this.logger.logger.info("在窗口中捕获 m3u8 链接: ", details.url);
+      this.logger.info("在窗口中捕获 m3u8 链接: ", details.url);
       // TODO: 这里处理请求
       cancel = true;
     }

@@ -10,6 +10,8 @@ const TYPES = {
   Controller: Symbol.for("Controller"),
   App: Symbol.for("App"),
   UserRepository: Symbol.for("UserRepository"),
+  FavoriteRepository: Symbol.for("FavoriteRepository"),
+  WebviewService: Symbol.for("WebviewService"),
 };
 
 export { TYPES };

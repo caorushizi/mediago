@@ -39,7 +39,11 @@
               background: #f2f6fc;
             }
             .card-text {
+              width: 100%;
               margin-top: 6px;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              overflow: hidden;
             }
           }
         }

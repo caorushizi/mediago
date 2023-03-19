@@ -18,9 +18,38 @@ export default class FavoriteRepositoryImpl implements FavoriteRepository {
     // empty
   }
 
-  init() {
-    const user = new Favorite();
-    user.title = "caorushizi";
-    this.dataService.manager.save(user);
+  async findFavorites(): Promise<Favorite[]> {
+    return await this.dataService.manager.find(Favorite, {
+      order: {
+        createdDate: "desc",
+      },
+    });
+  }
+
+  async addFavorite(favorite: Favorite): Promise<Favorite> {
+    const exist = await this.dataService.manager.findOne(Favorite, {
+      where: {
+        url: favorite.url,
+      },
+    });
+
+    if (exist) {
+      return exist;
+    }
+
+    const item = new Favorite();
+    item.title = favorite.title;
+    item.url = favorite.url;
+    item.icon = favorite.icon;
+    return await this.dataService.manager.save(item);
+  }
+
+  async removeFavorite(url: string): Promise<void> {
+    await this.dataService.manager
+      .createQueryBuilder()
+      .delete()
+      .from(Favorite)
+      .where("url = :url", { url })
+      .execute();
   }
 }
