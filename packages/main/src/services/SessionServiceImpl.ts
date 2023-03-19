@@ -1,11 +1,11 @@
-import { Session, session } from "electron";
-import { Sessions } from "../utils/variables";
+import { session, type Session } from "electron";
 import { injectable } from "inversify";
-import { SessionService } from "../interfaces";
+import { PERSIST_MEDIAGO } from "../helper/variables";
+import { type SessionService } from "../interfaces";
 
 @injectable()
 export default class SessionServiceImpl implements SessionService {
-  partition = Sessions.PERSIST_MEDIAGO;
+  partition = PERSIST_MEDIAGO;
   session: Session;
 
   constructor() {
