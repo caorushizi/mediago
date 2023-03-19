@@ -209,12 +209,11 @@ const SourceExtract: React.FC = () => {
           <List
             grid={{
               gutter: 16,
-              xs: 1,
               sm: 2,
-              md: 4,
-              lg: 4,
-              xl: 6,
-              xxl: 3,
+              md: 5,
+              lg: 5,
+              xl: 7,
+              xxl: 7,
             }}
             className="list-container"
             itemLayout="vertical"

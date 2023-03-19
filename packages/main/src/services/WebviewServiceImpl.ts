@@ -98,6 +98,7 @@ export default class WebviewServiceImpl implements WebviewService {
   }
 
   async goBack() {
+    // FIXME: 回退的时候会显示最后一个页面
     if (this.webContents.canGoBack()) {
       this.webContents.goBack();
       return true;
