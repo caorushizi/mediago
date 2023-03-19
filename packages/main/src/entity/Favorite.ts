@@ -15,15 +15,21 @@ export class Favorite {
 
   @Column({
     type: "text",
-    nullable: true,
+    nullable: false,
   })
   title: string;
 
   @Column({
     type: "text",
-    nullable: true,
+    nullable: false,
   })
   url: string;
+
+  @Column({
+    type: "text",
+    nullable: true,
+  })
+  icon?: string;
 
   @CreateDateColumn()
   createdDate: Date;

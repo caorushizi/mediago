@@ -1,8 +1,11 @@
 import HomeController from "controller/HomeController";
+import WebviewController from "controller/WebviewController";
 import { Container } from "inversify";
+import FavoriteRepositoryImpl from "repository/favoriteRepositoryImpl";
 import UserRepositoryImpl from "repository/userRepositoryImpl";
 import DatabaseServiceImpl from "services/DatabaseServiceImpl";
 import StoreServiceImpl from "services/StoreServiceImpl";
+import WebviewServiceImpl from "services/WebviewServiceImpl";
 import ElectronApp from "./app";
 import {
   App,
@@ -16,6 +19,8 @@ import {
   UpdateService,
   UserRepository,
   DatabaseService,
+  FavoriteRepository,
+  WebviewService,
 } from "./interfaces";
 import IpcHandlerServiceImpl from "./services/IpcHandlerServiceImpl";
 import LoggerServiceImpl from "./services/LoggerServiceImpl";
@@ -43,11 +48,16 @@ container.bind<UpdateService>(TYPES.UpdateService).to(UpdateServiceImpl);
 container.bind<LoggerService>(TYPES.LoggerService).to(LoggerServiceImpl);
 container.bind<StoreService>(TYPES.StoreService).to(StoreServiceImpl);
 container.bind<DatabaseService>(TYPES.DatabaseService).to(DatabaseServiceImpl);
+container.bind<WebviewService>(TYPES.WebviewService).to(WebviewServiceImpl);
 
 // === controller
 container.bind<Controller>(TYPES.Controller).to(HomeController);
+container.bind<Controller>(TYPES.Controller).to(WebviewController);
 
 // === repository
 container.bind<UserRepository>(TYPES.UserRepository).to(UserRepositoryImpl);
+container
+  .bind<FavoriteRepository>(TYPES.FavoriteRepository)
+  .to(FavoriteRepositoryImpl);
 
 export { container };

@@ -1,7 +1,15 @@
+import { IpcMainEvent } from "electron";
+import { Favorite } from "entity/Favorite";
 import { db, workspace } from "helper/variables";
 import { inject, injectable } from "inversify";
+import { IndexData } from "main";
 import { handle, on } from "../helper/decorator";
-import { StoreService, LoggerService, type Controller } from "../interfaces";
+import {
+  StoreService,
+  LoggerService,
+  type Controller,
+  FavoriteRepository,
+} from "../interfaces";
 import { TYPES } from "../types";
 
 @injectable()
@@ -10,7 +18,9 @@ export default class HomeController implements Controller {
     @inject(TYPES.LoggerService)
     private readonly logger: LoggerService,
     @inject(TYPES.StoreService)
-    private readonly store: StoreService
+    private readonly store: StoreService,
+    @inject(TYPES.FavoriteRepository)
+    private readonly favoriteRepository: FavoriteRepository
   ) {
     // empty
   }
@@ -25,8 +35,18 @@ export default class HomeController implements Controller {
     };
   }
 
-  @on("webview-hidden")
-  webviewHidden() {
-    //  empty
+  @handle("get-favorites")
+  getFavorites() {
+    return this.favoriteRepository.findFavorites();
+  }
+
+  @handle("add-favorite")
+  addFavorite(e: IpcMainEvent, favorite: Favorite) {
+    return this.favoriteRepository.addFavorite(favorite);
+  }
+
+  @handle("remove-favorite")
+  removeFavorite(e: IpcMainEvent, url: string): Promise<void> {
+    return this.favoriteRepository.removeFavorite(url);
   }
 }

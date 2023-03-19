@@ -7,32 +7,52 @@ import {
   StarOutlined,
   UserOutlined,
 } from "@ant-design/icons";
+import { useRequest } from "ahooks";
 import { Avatar, Button, Input, List, Space } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PageContainer from "../../components/PageContainer";
+import useElectron from "../../hooks/electron";
 import { isUrl } from "../../utils/url";
 import "./index.scss";
 
-const data = [
-  {
-    title: "Title 1",
-  },
-];
+interface DivRect {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+
+const computeRect = ({ left, top, width, height }: DivRect) => ({
+  x: Math.floor(left),
+  y: Math.floor(top),
+  width: Math.floor(width),
+  height: Math.floor(height),
+});
 
 const SourceExtract: React.FC = () => {
+  const {
+    getFavorites,
+    addFavorite,
+    removeFavorite,
+    setWebviewBounds,
+    webviewLoadURL,
+    rendererEvent,
+    removeEventListener,
+    webviewGoBack,
+    webviewReload,
+    webwiewGoHome,
+  } = useElectron();
   const [url, setUrl] = useState<string>("");
   const [inputVal, setInputVal] = useState("");
   const [sourceList, setSourceList] = useState([]);
-  const [isFavorite, setIsFavorite] = useState(false);
+  const { data, run } = useRequest(getFavorites);
+  const webviewRef = useRef<HTMLDivElement>(null);
+  const resizeObserver = useRef<ResizeObserver>();
+  const [title, setTitle] = useState("");
 
-  const onInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!inputVal) {
-      return;
-    }
-    if (e.key !== "Enter") {
-      return;
-    }
+  const isFavorite = (data || []).findIndex((item) => item.url === url) >= 0;
 
+  const goto = async () => {
     let finalUrl = inputVal;
     if (!/^https?:\/\//.test(inputVal)) {
       finalUrl = `http://${inputVal}`;
@@ -41,36 +61,133 @@ const SourceExtract: React.FC = () => {
       finalUrl = `https://baidu.com/s?word=${inputVal}`;
     }
 
-    console.log("isUrl: ", finalUrl);
+    await webviewLoadURL(finalUrl);
     setUrl(finalUrl);
     setInputVal(finalUrl);
   };
 
-  console.log("url: ", url);
+  const onInputKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!inputVal) {
+      return;
+    }
+    if (e.key !== "Enter") {
+      return;
+    }
+
+    await goto();
+  };
+
+  const onClickAddFavorite = async () => {
+    if (isFavorite) {
+      await removeFavorite(url);
+    } else {
+      const u = new URL(url);
+
+      await addFavorite({
+        url,
+        title: title || url,
+        icon: u.origin ? `${u.origin}/favicon.ico` : "",
+      });
+    }
+    run();
+  };
+
+  const onClickGoBack = async () => {
+    const back = await webviewGoBack();
+    console.log("back: ", back);
+
+    if (!back) {
+      setUrl("");
+      setInputVal("");
+    }
+  };
+
+  const onClickGoHome = async () => {
+    await webwiewGoHome();
+    setUrl("");
+    setInputVal("");
+  };
+
+  const onClickReload = () => {
+    webviewReload();
+  };
+
+  const onClickEnter = async () => {
+    if (!inputVal) {
+      return;
+    }
+
+    await goto();
+  };
+
+  const onClickLoadURL = async (item: { url: string }) => {
+    await webviewLoadURL(item.url);
+    setUrl(item.url);
+    setInputVal(item.url);
+  };
+
+  const onDomReady = (e: any, data: { url: string; title: string }) => {
+    if (data.url) {
+      document.title = data.title;
+      setUrl(data.url);
+      setInputVal(data.url);
+      setTitle(data.title);
+    }
+  };
+
+  useEffect(() => {
+    console.log("webviewRef.current", webviewRef.current);
+
+    if (webviewRef.current != null) {
+      console.log("123123");
+
+      // 监控 webview 元素的大小
+      resizeObserver.current = new ResizeObserver((entries) => {
+        if (!webviewRef.current) {
+          return;
+        }
+
+        const rect = computeRect(webviewRef.current?.getBoundingClientRect());
+        console.log("rect", rect);
+
+        const entry = entries[0];
+        const viewRect = computeRect(entry.contentRect);
+        viewRect.x += rect.x;
+        viewRect.y += rect.y;
+        setWebviewBounds(viewRect);
+      });
+
+      resizeObserver.current.observe(webviewRef.current);
+    }
+    rendererEvent("webview-dom-ready", onDomReady);
+    const prevTitle = document.title;
+
+    return () => {
+      resizeObserver.current?.disconnect();
+      setWebviewBounds({ x: 0, y: 0, height: 0, width: 0 });
+      removeEventListener("webview-dom-ready", onDomReady);
+      document.title = prevTitle;
+    };
+  }, [!!url]);
 
   return (
     <PageContainer className="source-extract">
       <Space.Compact className="action-bar" block>
-        <Button type="text">
-          <ArrowLeftOutlined />
-        </Button>
-        <Button type="text">
-          <ReloadOutlined />
-        </Button>
         {url && (
-          <Button
-            type="text"
-            onClick={() => {
-              setUrl("");
-            }}
-          >
-            <HomeOutlined />
-          </Button>
-        )}
-        {url && (
-          <Button type="text">
-            {isFavorite ? <StarFilled /> : <StarOutlined />}
-          </Button>
+          <>
+            <Button type="text" onClick={onClickGoBack}>
+              <ArrowLeftOutlined />
+            </Button>
+            <Button type="text" onClick={onClickReload}>
+              <ReloadOutlined />
+            </Button>
+            <Button type="text" onClick={onClickGoHome}>
+              <HomeOutlined />
+            </Button>
+            <Button type="text" onClick={onClickAddFavorite}>
+              {isFavorite ? <StarFilled /> : <StarOutlined />}
+            </Button>
+          </>
         )}
         <Input
           value={inputVal}
@@ -78,19 +195,14 @@ const SourceExtract: React.FC = () => {
           onKeyDown={onInputKeyDown}
           placeholder="请输入网址链接……"
         />
-        <Button type="text">
+        <Button type="text" onClick={onClickEnter}>
           <ArrowRightOutlined />
         </Button>
       </Space.Compact>
       <div className="source-extract-content">
         {url ? (
           <div className="webview-container">
-            <webview
-              className="webview-inner"
-              src={url}
-              // eslint-disable-next-line react/no-unknown-property
-              partition="persist:webview"
-            />
+            <div className="webview-inner" ref={webviewRef} />
             {sourceList.length > 0 && <div className="webview-sider">123</div>}
           </div>
         ) : (
@@ -111,12 +223,17 @@ const SourceExtract: React.FC = () => {
               <List.Item className="list-item">
                 <div
                   className="list-tem-card"
-                  onClick={() => {
-                    setUrl("https://baidu.com");
-                  }}
+                  onClick={() => onClickLoadURL(item)}
                 >
-                  <Avatar size={52} icon={<UserOutlined />} />
-                  <div className="card-text">123</div>
+                  {item.icon ? (
+                    <Avatar
+                      size={52}
+                      src={<img src={item.icon} alt="avatar" />}
+                    />
+                  ) : (
+                    <Avatar size={52} icon={<UserOutlined />} />
+                  )}
+                  <div className="card-text">{item.title}</div>
                 </div>
               </List.Item>
             )}

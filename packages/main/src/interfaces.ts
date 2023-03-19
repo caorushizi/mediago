@@ -1,6 +1,7 @@
 import { type BrowserWindow, type Session } from "electron";
 import { ElectronLog } from "electron-log";
 import Store from "electron-store";
+import { Favorite } from "entity/Favorite";
 import { EntityManager } from "typeorm";
 import { AppStore } from "types";
 
@@ -53,5 +54,20 @@ export interface UserRepository {
 }
 
 export interface FavoriteRepository {
+  findFavorites: () => Promise<Favorite[]>;
+  addFavorite: (favorite: Favorite) => Promise<Favorite>;
+  removeFavorite: (url: string) => Promise<void>;
+}
+
+export interface WebviewService {
+  webContents: Electron.WebContents;
   init: () => void;
+  getBounds: () => Electron.Rectangle;
+  setAutoResize: (options: Electron.AutoResizeOptions) => void;
+  setBackgroundColor: (color: string) => void;
+  setBounds: (bounds: Electron.Rectangle) => void;
+  loadURL: (url?: string) => void;
+  goBack: () => Promise<boolean>;
+  reload: () => Promise<void>;
+  goHome: () => Promise<void>;
 }
