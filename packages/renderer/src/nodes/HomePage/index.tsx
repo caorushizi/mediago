@@ -3,13 +3,19 @@ import React, { FC } from "react";
 import { Button } from "antd";
 import useElectron from "../../hooks/electron";
 import "./index.scss";
+import PageContainer from "../../components/PageContainer";
 
 const HomePage: FC = () => {
   const { index } = useElectron();
   const { data } = useRequest(index);
 
   return (
-    <div className="home-page">
+    <PageContainer
+      title="下载列表"
+      titleExtra="所有的视频将会在这里展示"
+      rightExtra={<Button>新建下载</Button>}
+      className="home-page"
+    >
       <div>
         <ul>
           <li>{data?.binPath}</li>
@@ -19,7 +25,7 @@ const HomePage: FC = () => {
         </ul>
       </div>
       <Button>按钮</Button>
-    </div>
+    </PageContainer>
   );
 };
 

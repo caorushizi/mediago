@@ -6,6 +6,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import App from "./App";
 import "./index.scss";
 import HomePage from "./nodes/HomePage";
+import SettingPage from "./nodes/SettingPage";
+import SourceExtract from "./nodes/SourceExtract";
 import store from "./store";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
@@ -15,7 +17,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         <Routes>
           <Route path="/" element={<App />}>
             <Route index element={<HomePage />} />
-            <Route path="*" element={<HomePage />} />
+            <Route path="source-extract" index element={<SourceExtract />} />
+            <Route path="settings" index element={<SettingPage />} />
+            <Route path="*" element={<div>404</div>} />
           </Route>
         </Routes>
       </BrowserRouter>

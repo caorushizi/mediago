@@ -51,3 +51,7 @@ export interface StoreService extends Store<AppStore> {
 export interface UserRepository {
   init: () => void;
 }
+
+export interface FavoriteRepository {
+  init: () => void;
+}

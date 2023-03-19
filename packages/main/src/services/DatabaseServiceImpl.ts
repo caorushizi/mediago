@@ -4,6 +4,7 @@ import { DataSource, EntityManager } from "typeorm";
 import { TYPES } from "../types";
 import { DatabaseService, LoggerService } from "../interfaces";
 import { User } from "../entity/User";
+import { Favorite } from "entity/Favorite";
 
 @injectable()
 export default class DatabaseServiceImpl implements DatabaseService {
@@ -18,7 +19,7 @@ export default class DatabaseServiceImpl implements DatabaseService {
       database: db,
       synchronize: true,
       logging: false,
-      entities: [User],
+      entities: [User, Favorite],
       migrations: [],
       subscribers: [],
     });

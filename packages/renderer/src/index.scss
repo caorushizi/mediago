@@ -1,0 +1,24 @@
+html,
+body {
+  height: 100vh;
+  width: 100vw;
+}
+
+@mixin scrollbar($c: rgba(0, 0, 0, 0.15)) {
+  &::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $c;
+  }
+}
+
+* {
+  @include scrollbar();
+}

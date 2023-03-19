@@ -1,0 +1,49 @@
+.source-extract {
+  .source-extract-inner {
+    display: flex;
+    flex-direction: column;
+    .source-extract-content {
+      flex: 1;
+      margin-top: 15px;
+      overflow: auto;
+      .webview-container {
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        .webview-inner {
+          height: 100%;
+          width: 100%;
+        }
+        .webview-sider {
+          width: 150px;
+        }
+      }
+      .list-container {
+        padding: 30px;
+        flex: 1;
+        .list-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          .list-tem-card {
+            height: 100px;
+            width: 100px;
+            padding: 10px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            &:hover {
+              background: #f2f6fc;
+            }
+            .card-text {
+              margin-top: 6px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
