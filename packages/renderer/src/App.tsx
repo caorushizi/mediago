@@ -3,10 +3,8 @@ import { Link, Outlet } from "react-router-dom";
 import { Layout, Menu, MenuProps } from "antd";
 import "./App.scss";
 import {
-  AppstoreOutlined,
-  CalendarOutlined,
-  LinkOutlined,
-  MailOutlined,
+  DownloadOutlined,
+  ProfileOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
 
@@ -29,19 +27,19 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem(<Link to="/">下载列表</Link>, "home", <MailOutlined />),
+  getItem(<Link to="/">下载列表</Link>, "home", <DownloadOutlined />),
   getItem(
     <Link to="/source-extract">素材提取</Link>,
     "source",
-    <CalendarOutlined />
+    <ProfileOutlined />
   ),
-  getItem(<Link to="/settings">设置</Link>, "settings", <CalendarOutlined />),
+  getItem(<Link to="/settings">设置</Link>, "settings", <SettingOutlined />),
 ];
 
 const App: FC = () => {
   return (
     <Layout className="container">
-      <Header className="container-header">Header</Header>
+      <Header className="container-header">Media Downloader</Header>
       <Layout>
         <Sider className="container-sider" theme="light">
           <Menu
@@ -56,7 +54,7 @@ const App: FC = () => {
           <Content className="container-inner">
             <Outlet />
           </Content>
-          <Footer className="container-footer">Footer</Footer>
+          <Footer className="container-footer">media-downloader</Footer>
         </Layout>
       </Layout>
     </Layout>

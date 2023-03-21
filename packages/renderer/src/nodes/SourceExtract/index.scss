@@ -1,10 +1,13 @@
 .source-extract {
   .source-extract-inner {
+    padding: 0;
     display: flex;
     flex-direction: column;
+    .action-bar {
+      padding: 10px 5px;
+    }
     .source-extract-content {
       flex: 1;
-      margin-top: 15px;
       overflow: auto;
       .webview-container {
         height: 100%;
@@ -15,7 +18,13 @@
           width: 100%;
         }
         .webview-sider {
-          width: 150px;
+          width: 200px;
+          padding: 0 10px 0 5px;
+          .list-item {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
         }
       }
       .list-container {

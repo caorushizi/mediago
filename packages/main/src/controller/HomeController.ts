@@ -3,7 +3,7 @@ import { Favorite } from "entity/Favorite";
 import { db, workspace } from "helper/variables";
 import { inject, injectable } from "inversify";
 import { IndexData } from "main";
-import { handle, on } from "../helper/decorator";
+import { handle } from "../helper/decorator";
 import {
   StoreService,
   LoggerService,
