@@ -44,7 +44,7 @@ const SourceExtract: React.FC = () => {
   } = useElectron();
   const [url, setUrl] = useState<string>("");
   const [inputVal, setInputVal] = useState("");
-  const [sourceList, setSourceList] = useState([]);
+  const [sourceList, setSourceList] = useState<string[]>([]);
   const { data, run } = useRequest(getFavorites);
   const webviewRef = useRef<HTMLDivElement>(null);
   const resizeObserver = useRef<ResizeObserver>();
@@ -135,6 +135,11 @@ const SourceExtract: React.FC = () => {
     }
   };
 
+  const receiveLinkMessage = (e: any, url: string) => {
+    console.log(url);
+    setSourceList([...sourceList, url]);
+  };
+
   useEffect(() => {
     console.log("webviewRef.current", webviewRef.current);
 
@@ -159,16 +164,26 @@ const SourceExtract: React.FC = () => {
 
       resizeObserver.current.observe(webviewRef.current);
     }
-    rendererEvent("webview-dom-ready", onDomReady);
-    const prevTitle = document.title;
 
     return () => {
       resizeObserver.current?.disconnect();
       setWebviewBounds({ x: 0, y: 0, height: 0, width: 0 });
-      removeEventListener("webview-dom-ready", onDomReady);
-      document.title = prevTitle;
     };
   }, [!!url]);
+
+  useEffect(() => {
+    const prevTitle = document.title;
+
+    rendererEvent("webview-link-message", receiveLinkMessage);
+    rendererEvent("webview-dom-ready", onDomReady);
+
+    return () => {
+      document.title = prevTitle;
+
+      removeEventListener("webview-link-message", receiveLinkMessage);
+      removeEventListener("webview-dom-ready", onDomReady);
+    };
+  }, []);
 
   return (
     <PageContainer className="source-extract">
@@ -203,7 +218,20 @@ const SourceExtract: React.FC = () => {
         {url ? (
           <div className="webview-container">
             <div className="webview-inner" ref={webviewRef} />
-            {sourceList.length > 0 && <div className="webview-sider">123</div>}
+            {sourceList.length > 0 && (
+              <div className="webview-sider">
+                <List
+                  size="small"
+                  bordered
+                  dataSource={sourceList}
+                  renderItem={(item) => (
+                    <List.Item>
+                      <div className="list-item">{item}</div>
+                    </List.Item>
+                  )}
+                />
+              </div>
+            )}
           </div>
         ) : (
           <List

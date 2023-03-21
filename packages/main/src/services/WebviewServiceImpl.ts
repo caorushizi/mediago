@@ -43,16 +43,15 @@ export default class WebviewServiceImpl implements WebviewService {
     callback: (beforeSendResponse: Electron.BeforeSendResponse) => void
   ): Promise<void> {
     const m3u8Reg = /\.m3u8$/;
-    let cancel = false;
-    const myURL = new URL(details.url);
-    if (m3u8Reg.test(myURL.pathname)) {
-      this.logger.info("在窗口中捕获 m3u8 链接: ", details.url);
-      cancel = true;
+    const detailsUrl = new URL(details.url);
+    if (m3u8Reg.test(detailsUrl.pathname)) {
+      this.logger.info("在窗口中捕获 m3u8 链接: ", detailsUrl.origin);
+      this.mainWindow.webContents.send(
+        "webview-link-message",
+        detailsUrl.toString()
+      );
     }
-    callback({
-      cancel,
-      requestHeaders: details.requestHeaders,
-    });
+    callback({});
   }
 
   async init(): Promise<void> {

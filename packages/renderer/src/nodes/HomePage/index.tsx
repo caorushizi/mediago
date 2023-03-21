@@ -24,7 +24,6 @@ const HomePage: FC = () => {
           <li>{data?.platform}</li>
         </ul>
       </div>
-      <Button>按钮</Button>
     </PageContainer>
   );
 };

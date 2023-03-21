@@ -1,14 +1,19 @@
 .container {
   height: 100vh;
   width: 100vw;
+  overflow: hidden;
   .container-header {
-    background-color: #7dbcea;
-  }
-  .container-sider {
-  }
-  .container-inner {
+    background-color: rgb(64, 144, 247);
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 0 20px;
   }
   .container-footer {
-    background-color: #7dbcea;
+    padding: 5px;
+    background: #fff;
+    overflow: hidden;
+    text-align: right;
+    border-top: #efefef solid 1px;
   }
 }
