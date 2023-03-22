@@ -46,7 +46,5 @@ export default class ElectronApp implements App {
     this.updateService.init();
     await this.dataService.init();
     this.webview.init();
-
-    this.userRepo.init();
   }
 }

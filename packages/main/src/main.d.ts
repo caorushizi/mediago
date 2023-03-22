@@ -20,3 +20,8 @@ declare interface ElectronAPI {
   webviewReload: () => Promise<void>;
   webwiewGoHome: () => Promise<void>;
 }
+
+declare interface LinkMessage {
+  url: string;
+  title: string;
+}

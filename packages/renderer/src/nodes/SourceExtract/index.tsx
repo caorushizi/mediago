@@ -2,6 +2,7 @@ import {
   ArrowLeftOutlined,
   ArrowRightOutlined,
   HomeOutlined,
+  PlayCircleOutlined,
   ReloadOutlined,
   StarFilled,
   StarOutlined,
@@ -44,7 +45,7 @@ const SourceExtract: React.FC = () => {
   } = useElectron();
   const [url, setUrl] = useState<string>("");
   const [inputVal, setInputVal] = useState("");
-  const [sourceList, setSourceList] = useState<string[]>([]);
+  const [sourceList, setSourceList] = useState<LinkMessage[]>([]);
   const { data, run } = useRequest(getFavorites);
   const webviewRef = useRef<HTMLDivElement>(null);
   const resizeObserver = useRef<ResizeObserver>();
@@ -135,7 +136,7 @@ const SourceExtract: React.FC = () => {
     }
   };
 
-  const receiveLinkMessage = (e: any, url: string) => {
+  const receiveLinkMessage = (e: any, url: LinkMessage) => {
     console.log(url);
     setSourceList([...sourceList, url]);
   };
@@ -172,15 +173,19 @@ const SourceExtract: React.FC = () => {
   }, [!!url]);
 
   useEffect(() => {
-    const prevTitle = document.title;
-
     rendererEvent("webview-link-message", receiveLinkMessage);
+
+    return () => {
+      removeEventListener("webview-link-message", receiveLinkMessage);
+    };
+  }, [sourceList]);
+
+  useEffect(() => {
+    const prevTitle = document.title;
     rendererEvent("webview-dom-ready", onDomReady);
 
     return () => {
       document.title = prevTitle;
-
-      removeEventListener("webview-link-message", receiveLinkMessage);
       removeEventListener("webview-dom-ready", onDomReady);
     };
   }, []);
@@ -226,7 +231,12 @@ const SourceExtract: React.FC = () => {
                   dataSource={sourceList}
                   renderItem={(item) => (
                     <List.Item>
-                      <div className="list-item">{item}</div>
+                      <div className="list-item">
+                        <PlayCircleOutlined />
+                        {item.title}
+                        <Button type="link">立即下载</Button>
+                        <Button type="link">添加</Button>
+                      </div>
                     </List.Item>
                   )}
                 />
