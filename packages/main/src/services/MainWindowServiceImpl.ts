@@ -37,10 +37,9 @@ export default class MainWindowServiceImpl
     const url = isDev ? "http://localhost:8555/" : "mediago://index.html/";
     void this.loadURL(url);
 
-    isDev && this.webContents.openDevTools();
-
     this.once("ready-to-show", () => {
       this.show();
+      isDev && this.webContents.openDevTools();
     });
   }
 }

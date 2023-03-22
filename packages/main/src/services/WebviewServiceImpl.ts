@@ -12,6 +12,7 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import isDev from "electron-is-dev";
 import { PERSIST_WEBVIEW } from "helper/variables";
+import { LinkMessage } from "main";
 
 const filter = { urls: ["*://*/*"] };
 
@@ -46,10 +47,15 @@ export default class WebviewServiceImpl implements WebviewService {
     const detailsUrl = new URL(details.url);
     if (m3u8Reg.test(detailsUrl.pathname)) {
       this.logger.info("在窗口中捕获 m3u8 链接: ", detailsUrl.origin);
-      this.mainWindow.webContents.send(
-        "webview-link-message",
-        detailsUrl.toString()
-      );
+      const webContents = details.webContents;
+      // FIXME: title 名称
+      const linkMessage: LinkMessage = {
+        url: detailsUrl.toString(),
+        title: webContents?.getTitle() || "没有获取到名称",
+      };
+      console.log("data: ", linkMessage);
+
+      this.mainWindow.webContents.send("webview-link-message", linkMessage);
     }
     callback({});
   }

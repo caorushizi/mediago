@@ -24,3 +24,8 @@ declare interface Favorite {
   url: string;
   icon?: string;
 }
+
+declare interface LinkMessage {
+  url: string;
+  title: string;
+}
