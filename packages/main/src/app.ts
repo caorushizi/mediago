@@ -1,8 +1,9 @@
-import { app } from "electron";
+import { app, session } from "electron";
 import { inject, injectable } from "inversify";
 import {
   DatabaseService,
   IpcHandlerService,
+  LoggerService,
   MainWindowService,
   ProtocolService,
   UpdateService,
@@ -11,6 +12,8 @@ import {
   type App,
 } from "./interfaces";
 import { TYPES } from "./types";
+import isDev from "electron-is-dev";
+import path from "path";
 
 @injectable()
 export default class ElectronApp implements App {
@@ -28,10 +31,10 @@ export default class ElectronApp implements App {
     @inject(TYPES.UserRepository)
     private readonly userRepo: UserRepository,
     @inject(TYPES.WebviewService)
-    private readonly webview: WebviewService
-  ) {
-    // empty
-  }
+    private readonly webview: WebviewService,
+    @inject(TYPES.LoggerService)
+    private readonly logger: LoggerService
+  ) {}
 
   async init(): Promise<void> {
     app.on("window-all-closed", () => {
@@ -46,5 +49,18 @@ export default class ElectronApp implements App {
     this.updateService.init();
     await this.dataService.init();
     this.webview.init();
+
+    if (isDev) {
+      try {
+        await session.defaultSession.loadExtension(
+          path.resolve(__dirname, "../../extensions/react-dev-tool")
+        );
+        await session.defaultSession.loadExtension(
+          path.resolve(__dirname, "../../extensions/redux-dev-tool")
+        );
+      } catch (e) {
+        this.logger.debug("加载插件出错");
+      }
+    }
   }
 }

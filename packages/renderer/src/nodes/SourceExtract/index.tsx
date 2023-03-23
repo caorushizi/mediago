@@ -2,6 +2,7 @@ import {
   ArrowLeftOutlined,
   ArrowRightOutlined,
   HomeOutlined,
+  LinkOutlined,
   PlayCircleOutlined,
   ReloadOutlined,
   StarFilled,
@@ -15,6 +16,7 @@ import PageContainer from "../../components/PageContainer";
 import useElectron from "../../hooks/electron";
 import { isUrl } from "../../utils/url";
 import "./index.scss";
+import defaultIcon from "../../assets/default.png";
 
 interface DivRect {
   left: number;
@@ -262,14 +264,7 @@ const SourceExtract: React.FC = () => {
                   className="list-tem-card"
                   onClick={() => onClickLoadURL(item)}
                 >
-                  {item.icon ? (
-                    <Avatar
-                      size={52}
-                      src={<img src={item.icon} alt="avatar" />}
-                    />
-                  ) : (
-                    <Avatar size={52} icon={<UserOutlined />} />
-                  )}
+                  <Avatar size={52} src={item.icon} icon={<LinkOutlined />} />
                   <div className="card-text">{item.title}</div>
                 </div>
               </List.Item>

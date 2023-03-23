@@ -18,12 +18,10 @@ export default class HomeController implements Controller {
     @inject(TYPES.LoggerService)
     private readonly logger: LoggerService,
     @inject(TYPES.StoreService)
-    private readonly store: StoreService,
+    private readonly storeService: StoreService,
     @inject(TYPES.FavoriteRepository)
     private readonly favoriteRepository: FavoriteRepository
-  ) {
-    // empty
-  }
+  ) {}
 
   @handle("index")
   async index(): Promise<IndexData> {
@@ -48,5 +46,10 @@ export default class HomeController implements Controller {
   @handle("remove-favorite")
   removeFavorite(e: IpcMainEvent, url: string): Promise<void> {
     return this.favoriteRepository.removeFavorite(url);
+  }
+
+  @handle("get-app-store")
+  getAppStore() {
+    return this.storeService.store;
   }
 }

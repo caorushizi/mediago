@@ -1,10 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "./store";
 
+interface AppStore {
+  count: number;
+  downloadList: string[];
+}
+
 export const counterSlice = createSlice({
-  name: "counter",
+  name: "app",
   initialState: {
     count: 0,
+    downloadList: [],
+    local: "",
+    promptTone: true,
   },
   reducers: {
     increase(state) {
@@ -12,6 +20,10 @@ export const counterSlice = createSlice({
     },
     decrease(state) {
       state.count++;
+    },
+    setAppStore(state, { payload }) {
+      state.local = payload.local;
+      state.promptTone = payload.promptTone;
     },
   },
 });

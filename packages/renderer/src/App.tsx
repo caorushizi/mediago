@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { Layout, Menu, MenuProps } from "antd";
 import "./App.scss";
@@ -7,6 +7,7 @@ import {
   ProfileOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
+import useElectron from "./hooks/electron";
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -37,6 +38,17 @@ const items: MenuItem[] = [
 ];
 
 const App: FC = () => {
+  const { getAppStore } = useElectron();
+
+  const initApp = async () => {
+    const store = await getAppStore();
+    console.log("store", store);
+  };
+
+  useEffect(() => {
+    initApp();
+  }, []);
+
   return (
     <Layout className="container">
       <Header className="container-header">Media Downloader</Header>
