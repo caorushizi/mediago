@@ -1,8 +1,9 @@
 import Store from "electron-store";
 import { inject, injectable } from "inversify";
+import { AppStore } from "main";
 import { download, workspace } from "../helper/variables";
 import { StoreService } from "../interfaces";
-import { AppStore, TYPES } from "../types";
+import { TYPES } from "../types";
 import LoggerServiceImpl from "./LoggerServiceImpl";
 import SessionServiceImpl from "./SessionServiceImpl";
 
@@ -24,6 +25,7 @@ export default class StoreServiceImpl
       watch: true,
       defaults: {
         local: download,
+        promptTone: true,
       },
     });
   }

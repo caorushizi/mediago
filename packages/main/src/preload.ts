@@ -17,6 +17,7 @@ const api: ElectronAPI = {
   removeEventListener: (channel, listener) =>
     ipcRenderer.removeListener(channel, listener),
   webwiewGoHome: () => ipcRenderer.invoke("webview-go-home"),
+  getAppStore: () => ipcRenderer.invoke("get-app-store"),
 };
 
 contextBridge.exposeInMainWorld(apiKey, api);

@@ -17,6 +17,7 @@ declare interface ElectronAPI {
   webviewGoBack: () => Promise<boolean>;
   webviewReload: () => Promise<void>;
   webwiewGoHome: () => Promise<void>;
+  getAppStore: () => Promise<AppStore>;
 }
 
 declare interface Favorite {
@@ -28,4 +29,15 @@ declare interface Favorite {
 declare interface LinkMessage {
   url: string;
   title: string;
+}
+
+declare interface AppStore {
+  // 本地存储地址
+  local: string;
+  // 下载完成提示音
+  promptTone: boolean;
+  // 代理地址
+  proxy?: string;
+  // 是否开启代理
+  useProxy?: boolean;
 }

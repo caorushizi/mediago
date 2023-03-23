@@ -15,7 +15,3 @@ const TYPES = {
 };
 
 export { TYPES };
-
-export interface AppStore {
-  local: string;
-}

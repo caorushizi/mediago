@@ -71,11 +71,11 @@ const SettingPage: React.FC = () => {
           <ProFormText
             width="xl"
             disabled
-            name="workspace"
+            name="local"
             placeholder="请选择视频下载目录"
             label={renderButtonLable()}
           />
-          <ProFormSwitch label="下载完成提示" name="tip" />
+          <ProFormSwitch label="下载完成提示" name="promptTone" />
           <ProFormText
             width="xl"
             name="proxy"
@@ -83,7 +83,6 @@ const SettingPage: React.FC = () => {
             label="代理设置"
           />
           <ProFormSwitch name="useProxy" label={renderTooltipLable()} />
-          <ProFormSwitch name="statistics" label={renderTooltipLable()} />
         </ProFormGroup>
         <ProFormGroup title="下载设置" direction={"vertical"}>
           <ProFormSelect
