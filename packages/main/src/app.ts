@@ -13,7 +13,10 @@ import {
 } from "./interfaces";
 import { TYPES } from "./types";
 import isDev from "electron-is-dev";
-import path from "path";
+import installExtension, {
+  REDUX_DEVTOOLS,
+  REACT_DEVELOPER_TOOLS,
+} from "electron-devtools-installer";
 
 @injectable()
 export default class ElectronApp implements App {
@@ -52,14 +55,10 @@ export default class ElectronApp implements App {
 
     if (isDev) {
       try {
-        await session.defaultSession.loadExtension(
-          path.resolve(__dirname, "../../extensions/react-dev-tool")
-        );
-        await session.defaultSession.loadExtension(
-          path.resolve(__dirname, "../../extensions/redux-dev-tool")
-        );
+        await installExtension(REDUX_DEVTOOLS);
+        await installExtension(REACT_DEVELOPER_TOOLS);
       } catch (e) {
-        this.logger.debug("加载插件出错");
+        this.logger.debug("加载插件出错", e);
       }
     }
   }

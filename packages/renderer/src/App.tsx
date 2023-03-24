@@ -8,6 +8,7 @@ import {
   SettingOutlined,
 } from "@ant-design/icons";
 import useElectron from "./hooks/electron";
+import { useDispatch } from "react-redux";
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -39,6 +40,7 @@ const items: MenuItem[] = [
 
 const App: FC = () => {
   const { getAppStore } = useElectron();
+  const dispatch = useDispatch();
 
   const initApp = async () => {
     const store = await getAppStore();
@@ -51,7 +53,7 @@ const App: FC = () => {
 
   return (
     <Layout className="container">
-      <Header className="container-header">Media Downloader</Header>
+      {/* <Header className="container-header">Media Downloader</Header> */}
       <Layout>
         <Sider className="container-sider" theme="light">
           <Menu

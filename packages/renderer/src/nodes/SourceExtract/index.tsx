@@ -97,7 +97,6 @@ const SourceExtract: React.FC = () => {
 
   const onClickGoBack = async () => {
     const back = await webviewGoBack();
-    console.log("back: ", back);
 
     if (!back) {
       setUrl("");
@@ -144,11 +143,7 @@ const SourceExtract: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log("webviewRef.current", webviewRef.current);
-
     if (webviewRef.current != null) {
-      console.log("123123");
-
       // 监控 webview 元素的大小
       resizeObserver.current = new ResizeObserver((entries) => {
         if (!webviewRef.current) {
@@ -156,7 +151,6 @@ const SourceExtract: React.FC = () => {
         }
 
         const rect = computeRect(webviewRef.current?.getBoundingClientRect());
-        console.log("rect", rect);
 
         const entry = entries[0];
         const viewRect = computeRect(entry.contentRect);
