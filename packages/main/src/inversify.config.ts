@@ -15,7 +15,6 @@ import {
   LoggerService,
   MainWindowService,
   ProtocolService,
-  SessionService,
   UpdateService,
   UserRepository,
   DatabaseService,
@@ -26,7 +25,6 @@ import IpcHandlerServiceImpl from "./services/IpcHandlerServiceImpl";
 import LoggerServiceImpl from "./services/LoggerServiceImpl";
 import MainWindowServiceImpl from "./services/MainWindowServiceImpl";
 import ProtocolServiceImpl from "./services/ProtocolServiceImpl";
-import SessionServiceImpl from "./services/SessionServiceImpl";
 import UpdateServiceImpl from "./services/UpdateServiceImpl";
 import { TYPES } from "./types";
 
@@ -43,7 +41,6 @@ container
   .bind<IpcHandlerService>(TYPES.IpcHandlerService)
   .to(IpcHandlerServiceImpl);
 container.bind<ProtocolService>(TYPES.ProtocolService).to(ProtocolServiceImpl);
-container.bind<SessionService>(TYPES.SessionService).to(SessionServiceImpl);
 container.bind<UpdateService>(TYPES.UpdateService).to(UpdateServiceImpl);
 container.bind<LoggerService>(TYPES.LoggerService).to(LoggerServiceImpl);
 container.bind<StoreService>(TYPES.StoreService).to(StoreServiceImpl);

@@ -18,6 +18,8 @@ declare interface ElectronAPI {
   webviewReload: () => Promise<void>;
   webwiewGoHome: () => Promise<void>;
   getAppStore: () => Promise<AppStore>;
+  onSelectDownloadDir: () => Promise<string>;
+  setAppStore: (key: keyof AppStore, val: any) => Promise<void>;
 }
 
 declare interface Favorite {

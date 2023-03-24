@@ -2,36 +2,35 @@ import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "./store";
 
 interface AppStore {
-  count: number;
-  downloadList: string[];
   local: string;
   promptTone: boolean;
+  proxy: string;
+  useProxy: boolean;
 }
 
 const initialState: AppStore = {
-  count: 0,
-  downloadList: [],
   local: "",
   promptTone: true,
+  proxy: "",
+  useProxy: false,
 };
 
 export const counterSlice = createSlice({
   name: "app",
   initialState,
   reducers: {
-    increase(state) {
-      state.count--;
-    },
-    decrease(state) {
-      state.count++;
-    },
     setAppStore(state, { payload }) {
-      state.local = payload.local;
-      state.promptTone = payload.promptTone;
+      const { local, promptTone } = payload;
+      if (local) {
+        state.local = payload.local;
+      }
+      if (promptTone != null) {
+        state.promptTone = payload.promptTone;
+      }
     },
   },
 });
 
-export const { increase, decrease } = counterSlice.actions;
-export const selectCount = (state: RootState) => state.app.count;
+export const { setAppStore } = counterSlice.actions;
+export const selectStore = (state: RootState) => state.app;
 export default counterSlice.reducer;

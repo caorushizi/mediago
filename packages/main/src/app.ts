@@ -6,6 +6,7 @@ import {
   LoggerService,
   MainWindowService,
   ProtocolService,
+  StoreService,
   UpdateService,
   UserRepository,
   WebviewService,
@@ -36,7 +37,9 @@ export default class ElectronApp implements App {
     @inject(TYPES.WebviewService)
     private readonly webview: WebviewService,
     @inject(TYPES.LoggerService)
-    private readonly logger: LoggerService
+    private readonly logger: LoggerService,
+    @inject(TYPES.StoreService)
+    private readonly storeService: StoreService
   ) {}
 
   async init(): Promise<void> {
@@ -52,11 +55,12 @@ export default class ElectronApp implements App {
     this.updateService.init();
     await this.dataService.init();
     this.webview.init();
+    this.storeService.init();
 
     if (isDev) {
       try {
-        await installExtension(REDUX_DEVTOOLS);
-        await installExtension(REACT_DEVELOPER_TOOLS);
+        installExtension(REDUX_DEVTOOLS);
+        installExtension(REACT_DEVELOPER_TOOLS);
       } catch (e) {
         this.logger.debug("加载插件出错", e);
       }

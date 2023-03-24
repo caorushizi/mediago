@@ -25,10 +25,6 @@ export interface UpdateService {
   init: () => void;
 }
 
-export interface SessionService {
-  get: () => Session;
-}
-
 export interface DatabaseService {
   manager: EntityManager;
   init: () => void;
@@ -47,6 +43,7 @@ export interface LoggerService {
 
 export interface StoreService extends Store<AppStore> {
   init: () => void;
+  setProxy: (useProxy: boolean, isInit?: boolean) => Promise<void>;
 }
 
 export interface UserRepository {

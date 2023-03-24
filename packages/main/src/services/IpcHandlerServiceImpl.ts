@@ -7,9 +7,7 @@ import { TYPES } from "../types";
 export default class IpcHandlerServiceImpl implements IpcHandlerService {
   constructor(
     @multiInject(TYPES.Controller) private readonly controllers: Controller[]
-  ) {
-    // empty
-  }
+  ) {}
 
   private registerIpc(controller: Controller, property: string | symbol): void {
     const fun = controller[property];
@@ -33,7 +31,13 @@ export default class IpcHandlerServiceImpl implements IpcHandlerService {
           }
           return this.success(res);
         } catch (e: any) {
-          return this.error(e.message);
+          if (e instanceof Error) {
+            return this.error(e.message);
+          } else if (typeof e === "string") {
+            return this.error(e);
+          } else {
+            return this.error(String(e));
+          }
         }
       });
     }

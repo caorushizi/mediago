@@ -20,6 +20,8 @@ declare interface ElectronAPI {
   webviewReload: () => Promise<void>;
   webwiewGoHome: () => Promise<void>;
   getAppStore: () => Promise<AppStore>;
+  onSelectDownloadDir: () => Promise<string>;
+  setAppStore: (key: keyof AppStore, val: any) => Promise<void>;
 }
 
 declare interface LinkMessage {
@@ -33,7 +35,7 @@ declare interface AppStore {
   // 下载完成提示音
   promptTone: boolean;
   // 代理地址
-  proxy?: string;
+  proxy: string;
   // 是否开启代理
-  useProxy?: boolean;
+  useProxy: boolean;
 }

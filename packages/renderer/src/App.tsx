@@ -9,6 +9,7 @@ import {
 } from "@ant-design/icons";
 import useElectron from "./hooks/electron";
 import { useDispatch } from "react-redux";
+import { setAppStore } from "./appSlice";
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -44,7 +45,7 @@ const App: FC = () => {
 
   const initApp = async () => {
     const store = await getAppStore();
-    console.log("store", store);
+    dispatch(setAppStore(store));
   };
 
   useEffect(() => {
