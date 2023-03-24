@@ -4,16 +4,20 @@ import { RootState } from "./store";
 interface AppStore {
   count: number;
   downloadList: string[];
+  local: string;
+  promptTone: boolean;
 }
+
+const initialState: AppStore = {
+  count: 0,
+  downloadList: [],
+  local: "",
+  promptTone: true,
+};
 
 export const counterSlice = createSlice({
   name: "app",
-  initialState: {
-    count: 0,
-    downloadList: [],
-    local: "",
-    promptTone: true,
-  },
+  initialState,
   reducers: {
     increase(state) {
       state.count--;

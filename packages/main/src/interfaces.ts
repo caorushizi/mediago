@@ -2,8 +2,8 @@ import { type BrowserWindow, type Session } from "electron";
 import { ElectronLog } from "electron-log";
 import Store from "electron-store";
 import { Favorite } from "entity/Favorite";
+import { AppStore } from "main";
 import { EntityManager } from "typeorm";
-import { AppStore } from "types";
 
 export interface MainWindowService extends BrowserWindow {
   init: () => void;

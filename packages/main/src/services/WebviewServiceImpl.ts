@@ -95,6 +95,9 @@ export default class WebviewServiceImpl implements WebviewService {
   }
 
   setBounds(bounds: Electron.Rectangle): void {
+    if (process.platform === "darwin") {
+      bounds.y = bounds.y + 30;
+    }
     this.view.setBounds(bounds);
   }
 
