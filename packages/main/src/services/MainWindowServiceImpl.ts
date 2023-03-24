@@ -1,9 +1,4 @@
-import {
-  BrowserWindow,
-  BrowserWindowConstructorOptions,
-  OnBeforeSendHeadersListenerDetails,
-  session,
-} from "electron";
+import { BrowserWindow, BrowserWindowConstructorOptions } from "electron";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import { resolve } from "path";

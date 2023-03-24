@@ -18,6 +18,8 @@ const api: ElectronAPI = {
     ipcRenderer.removeListener(channel, listener),
   webwiewGoHome: () => ipcRenderer.invoke("webview-go-home"),
   getAppStore: () => ipcRenderer.invoke("get-app-store"),
+  onSelectDownloadDir: () => ipcRenderer.invoke("select-download-dir"),
+  setAppStore: (key, val) => ipcRenderer.invoke("set-app-store", key, val),
 };
 
 contextBridge.exposeInMainWorld(apiKey, api);

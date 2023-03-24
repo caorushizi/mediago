@@ -1,11 +1,11 @@
 import Store from "electron-store";
+import { session } from "electron/main";
 import { inject, injectable } from "inversify";
 import { AppStore } from "main";
-import { download, workspace } from "../helper/variables";
+import { download, PERSIST_WEBVIEW, workspace } from "../helper/variables";
 import { StoreService } from "../interfaces";
 import { TYPES } from "../types";
 import LoggerServiceImpl from "./LoggerServiceImpl";
-import SessionServiceImpl from "./SessionServiceImpl";
 
 @injectable()
 export default class StoreServiceImpl
@@ -13,8 +13,6 @@ export default class StoreServiceImpl
   implements StoreService
 {
   constructor(
-    @inject(TYPES.SessionService)
-    private readonly session: SessionServiceImpl,
     @inject(TYPES.LoggerService)
     private readonly logger: LoggerServiceImpl
   ) {
@@ -26,11 +24,43 @@ export default class StoreServiceImpl
       defaults: {
         local: download,
         promptTone: true,
+        proxy: "",
+        useProxy: false,
       },
     });
   }
 
   init(): void {
     this.logger.info("开始初始化 store...");
+
+    const useProxy = this.get("useProxy");
+    this.setProxy(useProxy, true);
+  }
+
+  async setProxy(useProxy: boolean, isInit?: boolean): Promise<void> {
+    try {
+      let proxy = this.get("proxy");
+      if (useProxy) {
+        console.log("proxy: ", typeof proxy);
+
+        if (!proxy) {
+          return Promise.reject("请先设置代理地址");
+        }
+        if (!/https?:\/\//.test(proxy)) {
+          proxy = `http://${proxy}`;
+        }
+        session.fromPartition(PERSIST_WEBVIEW).setProxy({ proxyRules: proxy });
+        this.logger.info(
+          `[proxy] ${isInit ? "初始化" : "开启"}成功，代理地址为${proxy}`
+        );
+      } else {
+        session.fromPartition(PERSIST_WEBVIEW).setProxy({});
+        if (!isInit) this.logger.info("[proxy] 关闭成功");
+      }
+    } catch (e: any) {
+      this.logger.error(
+        `[proxy] ${isInit ? "初始化" : ""}设置代理失败：\n${e.message}`
+      );
+    }
   }
 }

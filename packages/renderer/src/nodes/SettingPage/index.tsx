@@ -8,52 +8,78 @@ import {
   ProFormSwitch,
 } from "@ant-design/pro-components";
 import "./index.scss";
-import { Button, FormInstance, Space, Switch, Tooltip } from "antd";
+import { Button, FormInstance, message, Space, Tooltip } from "antd";
 import { FolderOpenOutlined, QuestionCircleOutlined } from "@ant-design/icons";
-
-interface Settings {
-  workapce: string;
-}
-
-const renderTooltipLable = () => {
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-      }}
-    >
-      <div style={{ marginRight: "5px" }}>代理开关</div>
-      <Tooltip
-        title={"该代理会对软件自带浏览器以及下载时生效"}
-        placement={"right"}
-      >
-        <QuestionCircleOutlined />
-      </Tooltip>
-    </div>
-  );
-};
-
-const renderButtonLable = () => {
-  return (
-    <Button
-      onClick={() => {
-        // empty
-      }}
-      icon={<FolderOpenOutlined />}
-    >
-      选择文件夹
-    </Button>
-  );
-};
+import { selectStore, setAppStore } from "../../appSlice";
+import { useDispatch, useSelector } from "react-redux";
+import useElectron from "../../hooks/electron";
 
 const SettingPage: React.FC = () => {
-  const formRef = useRef<FormInstance<Settings>>();
-  const settings = {};
+  const { onSelectDownloadDir, setAppStore: ipcSetAppStore } = useElectron();
+  const dispatch = useDispatch();
+  const formRef = useRef<FormInstance<AppStore>>();
+  const settings = useSelector(selectStore);
+  console.log("setting: ", settings);
+
+  const onSelectDir = async () => {
+    const local = await onSelectDownloadDir();
+    if (local) {
+      dispatch(setAppStore({ local }));
+      formRef.current?.setFieldValue("local", local);
+    }
+  };
+
+  const renderButtonLable = () => {
+    return (
+      <Button onClick={onSelectDir} icon={<FolderOpenOutlined />}>
+        选择文件夹
+      </Button>
+    );
+  };
+
+  const renderTooltipLable = () => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
+        <div style={{ marginRight: "5px" }}>代理开关</div>
+        <Tooltip
+          title={"该代理会对软件自带浏览器以及下载时生效"}
+          placement={"right"}
+        >
+          <QuestionCircleOutlined />
+        </Tooltip>
+      </div>
+    );
+  };
+
+  const onFormValueChange = async (values: Partial<AppStore>) => {
+    try {
+      console.log("values", values);
+      if (values.promptTone != null) {
+        // 提示音
+        await ipcSetAppStore("promptTone", values.promptTone);
+      }
+      if (values.proxy != null) {
+        // proxy
+        await ipcSetAppStore("proxy", values.proxy);
+      }
+      if (values.useProxy != null) {
+        // use proxy
+        await ipcSetAppStore("useProxy", values.useProxy);
+      }
+    } catch (e: any) {
+      message.error(e.message);
+    }
+  };
+
   return (
     <PageContainer title="设置">
-      <ProForm<Settings>
+      <ProForm<AppStore>
         className={"setting-form-inner"}
         formRef={formRef}
         layout="horizontal"
@@ -63,9 +89,7 @@ const SettingPage: React.FC = () => {
         size={"small"}
         colon={false}
         initialValues={settings}
-        onValuesChange={async () => {
-          // empty
-        }}
+        onValuesChange={onFormValueChange}
       >
         <ProFormGroup title="基础设置" direction={"vertical"}>
           <ProFormText
@@ -82,7 +106,23 @@ const SettingPage: React.FC = () => {
             placeholder="请填写代理地址"
             label="代理设置"
           />
-          <ProFormSwitch name="useProxy" label={renderTooltipLable()} />
+          <ProFormSwitch
+            name="useProxy"
+            label={renderTooltipLable()}
+            rules={[
+              ({ getFieldValue, setFieldValue }) => ({
+                validator(_, value) {
+                  if (getFieldValue("proxy") === "") {
+                    console.log(123123123);
+
+                    setFieldValue("useProxy", false);
+                    return Promise.reject("请先输入代理地址");
+                  }
+                  return ipcSetAppStore("useProxy", value);
+                },
+              }),
+            ]}
+          />
         </ProFormGroup>
         <ProFormGroup title="下载设置" direction={"vertical"}>
           <ProFormSelect
