@@ -1,3 +1,4 @@
+import { DownloadStatus } from "interfaces";
 import {
   Column,
   CreateDateColumn,
@@ -24,6 +25,13 @@ export class Video {
     nullable: false,
   })
   url: string;
+
+  @Column({
+    type: "text",
+    nullable: false,
+    default: DownloadStatus.Ready,
+  })
+  status: DownloadStatus;
 
   @CreateDateColumn()
   createdDate: Date;

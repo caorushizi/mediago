@@ -5,6 +5,7 @@ import { Container } from "inversify";
 import FavoriteRepositoryImpl from "repository/favoriteRepositoryImpl";
 import VideoRepositoryImpl from "repository/videoRepositoryImpl";
 import DatabaseServiceImpl from "services/DatabaseServiceImpl";
+import DownloadServiceImpl from "services/DownloadServiceImpl";
 import StoreServiceImpl from "services/StoreServiceImpl";
 import WebviewServiceImpl from "services/WebviewServiceImpl";
 import ElectronApp from "./app";
@@ -47,6 +48,9 @@ container.bind<LoggerService>(TYPES.LoggerService).to(LoggerServiceImpl);
 container.bind<StoreService>(TYPES.StoreService).to(StoreServiceImpl);
 container.bind<DatabaseService>(TYPES.DatabaseService).to(DatabaseServiceImpl);
 container.bind<WebviewService>(TYPES.WebviewService).to(WebviewServiceImpl);
+container
+  .bind<DownloadServiceImpl>(TYPES.DownloadService)
+  .to(DownloadServiceImpl);
 
 // === controller
 container.bind<Controller>(TYPES.Controller).to(HomeController);

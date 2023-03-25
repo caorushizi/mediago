@@ -12,6 +12,7 @@ const TYPES = {
   VideoRepository: Symbol.for("VideoRepository"),
   FavoriteRepository: Symbol.for("FavoriteRepository"),
   WebviewService: Symbol.for("WebviewService"),
+  DownloadService: Symbol.for("DownloadService"),
 };
 
 export { TYPES };

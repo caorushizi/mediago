@@ -3,8 +3,9 @@ import { ElectronLog } from "electron-log";
 import Store from "electron-store";
 import { Favorite } from "entity/Favorite";
 import { Video } from "entity/Video";
+import EventEmitter from "events";
 import { AppStore } from "main";
-import { DataSource, EntityManager } from "typeorm";
+import { DataSource, EntityManager, UpdateResult } from "typeorm";
 
 export interface MainWindowService extends BrowserWindow {
   init: () => void;
@@ -70,6 +71,11 @@ export interface VideoResponse {
 export interface VideoRepository {
   addVideo: (video: DownloadItem) => Promise<Video>;
   findVideos: (pagiantion: DownloadItemPagination) => Promise<VideoResponse>;
+  findVideo: (id: number) => Promise<Video | null>;
+  changeVideoStatus: (
+    id: number,
+    status: DownloadStatus
+  ) => Promise<UpdateResult>;
 }
 
 export interface FavoriteRepository {
@@ -89,4 +95,27 @@ export interface WebviewService {
   goBack: () => Promise<boolean>;
   reload: () => Promise<void>;
   goHome: () => Promise<void>;
+}
+
+export enum DownloadStatus {
+  Ready = "ready",
+  Downloading = "downloading",
+  Success = "success",
+  Failed = "failed",
+}
+
+export interface DownloadService {
+  addTask: (task: Task) => Promise<void>;
+}
+
+export type Task = {
+  id: number;
+  result: Promise<void>;
+};
+
+export interface DownloadProgress {
+  id: number;
+  cur: string;
+  total: string;
+  speed: string;
 }
