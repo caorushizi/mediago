@@ -53,8 +53,6 @@ export default class WebviewServiceImpl implements WebviewService {
         url: detailsUrl.toString(),
         title: webContents?.getTitle() || "没有获取到名称",
       };
-      console.log("data: ", linkMessage);
-
       this.mainWindow.webContents.send("webview-link-message", linkMessage);
     }
     callback({});

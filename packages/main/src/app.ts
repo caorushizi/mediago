@@ -1,4 +1,4 @@
-import { app, session } from "electron";
+import { app } from "electron";
 import { inject, injectable } from "inversify";
 import {
   DatabaseService,
@@ -13,11 +13,6 @@ import {
   type App,
 } from "./interfaces";
 import { TYPES } from "./types";
-import isDev from "electron-is-dev";
-import installExtension, {
-  REDUX_DEVTOOLS,
-  REACT_DEVELOPER_TOOLS,
-} from "electron-devtools-installer";
 
 @injectable()
 export default class ElectronApp implements App {
@@ -56,14 +51,5 @@ export default class ElectronApp implements App {
     await this.dataService.init();
     this.webview.init();
     this.storeService.init();
-
-    if (isDev) {
-      try {
-        installExtension(REDUX_DEVTOOLS);
-        installExtension(REACT_DEVELOPER_TOOLS);
-      } catch (e) {
-        this.logger.debug("加载插件出错", e);
-      }
-    }
   }
 }

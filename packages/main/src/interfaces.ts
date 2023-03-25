@@ -43,7 +43,11 @@ export interface LoggerService {
 
 export interface StoreService extends Store<AppStore> {
   init: () => void;
-  setProxy: (useProxy: boolean, isInit?: boolean) => Promise<void>;
+  setProxy: (
+    useProxy: boolean,
+    proxy: string,
+    isInit?: boolean
+  ) => Promise<void>;
 }
 
 export interface UserRepository {
