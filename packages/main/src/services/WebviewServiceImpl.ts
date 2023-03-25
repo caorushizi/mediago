@@ -1,6 +1,7 @@
 import {
   BrowserView,
-  OnBeforeSendHeadersListenerDetails,
+  HeadersReceivedResponse,
+  OnHeadersReceivedListenerDetails,
   session,
 } from "electron";
 import {
@@ -35,20 +36,23 @@ export default class WebviewServiceImpl implements WebviewService {
     });
     this.view = view;
     this.webContents = this.view.webContents;
+    this.webContents.setAudioMuted(true);
 
-    this.beforeSendHandlerListener = this.beforeSendHandlerListener.bind(this);
+    this.onHeadersReceived = this.onHeadersReceived.bind(this);
   }
 
-  async beforeSendHandlerListener(
-    details: OnBeforeSendHeadersListenerDetails,
-    callback: (beforeSendResponse: Electron.BeforeSendResponse) => void
+  async onHeadersReceived(
+    details: OnHeadersReceivedListenerDetails,
+    callback: (headersReceivedResponse: HeadersReceivedResponse) => void
   ): Promise<void> {
+    const { url } = details;
+
     const m3u8Reg = /\.m3u8$/;
-    const detailsUrl = new URL(details.url);
+    const detailsUrl = new URL(url);
+
     if (m3u8Reg.test(detailsUrl.pathname)) {
-      this.logger.info("在窗口中捕获 m3u8 链接: ", detailsUrl.origin);
+      this.logger.info("在窗口中捕获 m3u8 链接: ", detailsUrl.toString());
       const webContents = details.webContents;
-      // FIXME: title 名称
       const linkMessage: LinkMessage = {
         url: detailsUrl.toString(),
         title: webContents?.getTitle() || "没有获取到名称",
@@ -77,7 +81,7 @@ export default class WebviewServiceImpl implements WebviewService {
 
     session
       .fromPartition(PERSIST_WEBVIEW)
-      .webRequest.onBeforeSendHeaders(filter, this.beforeSendHandlerListener);
+      .webRequest.onHeadersReceived(filter, this.onHeadersReceived);
   }
 
   getBounds(): Electron.Rectangle {

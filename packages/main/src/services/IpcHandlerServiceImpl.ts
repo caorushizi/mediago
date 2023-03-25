@@ -1,12 +1,15 @@
 import { ipcMain } from "electron";
-import { injectable, multiInject } from "inversify";
-import { Controller, IpcHandlerService } from "../interfaces";
+import { inject, injectable, multiInject } from "inversify";
+import { Controller, IpcHandlerService, LoggerService } from "../interfaces";
 import { TYPES } from "../types";
 
 @injectable()
 export default class IpcHandlerServiceImpl implements IpcHandlerService {
   constructor(
-    @multiInject(TYPES.Controller) private readonly controllers: Controller[]
+    @multiInject(TYPES.Controller)
+    private readonly controllers: Controller[],
+    @inject(TYPES.LoggerService)
+    private readonly logger: LoggerService
   ) {}
 
   private registerIpc(controller: Controller, property: string | symbol): void {
@@ -31,6 +34,7 @@ export default class IpcHandlerServiceImpl implements IpcHandlerService {
           }
           return this.success(res);
         } catch (e: any) {
+          this.logger.error("处理 ipc 事件时异常： ", e);
           if (e instanceof Error) {
             return this.error(e.message);
           } else if (typeof e === "string") {

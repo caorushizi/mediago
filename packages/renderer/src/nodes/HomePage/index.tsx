@@ -1,5 +1,5 @@
-import React, { FC, useState } from "react";
-import { Avatar, Button, List } from "antd";
+import React, { FC } from "react";
+import { Button, List } from "antd";
 import "./index.scss";
 import PageContainer from "../../components/PageContainer";
 import { usePagination } from "ahooks";
@@ -7,7 +7,9 @@ import useElectron from "../../hooks/electron";
 
 const HomePage: FC = () => {
   const { getDownloadItems } = useElectron();
-  const { data, loading, pagination } = usePagination(getDownloadItems);
+  const { data, loading, pagination } = usePagination(getDownloadItems, {
+    defaultPageSize: 50,
+  });
 
   console.log("loading: ", loading);
   console.log("datra: ", data);
@@ -23,8 +25,13 @@ const HomePage: FC = () => {
         pagination={pagination}
         dataSource={data?.list}
         loading={loading}
-        renderItem={(item, index) => (
-          <List.Item>
+        renderItem={(item) => (
+          <List.Item
+            actions={[
+              <a key="list-loadmore-edit">edit</a>,
+              <a key="list-loadmore-more">more</a>,
+            ]}
+          >
             <List.Item.Meta title={item.name} description={item.url} />
           </List.Item>
         )}

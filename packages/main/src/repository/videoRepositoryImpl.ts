@@ -24,11 +24,12 @@ export default class VideoRepositoryImpl implements VideoRepository {
     return await this.dataService.manager.save(item);
   }
 
-  async findVideos({ page = 0, pageSize = 10 }) {
+  async findVideos({ current = 0, pageSize = 50 }) {
     const items = await this.dataService.appDataSource
       .getRepository(Video)
       .createQueryBuilder("video")
-      .skip(page)
+      .orderBy("createdDate", "DESC")
+      .skip((current - 1) * pageSize)
       .take(pageSize)
       .getMany();
     const count = await this.dataService.appDataSource

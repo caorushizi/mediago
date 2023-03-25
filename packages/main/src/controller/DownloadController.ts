@@ -24,6 +24,9 @@ export default class DownloadController implements Controller {
 
   @handle("add-download-item")
   async addDownloadItem(e: IpcMainEvent, video: DownloadItem) {
+    const { name, url } = video;
+    console.log("name: ", name, url);
+
     return await this.videoRepository.addVideo(video);
   }
 
