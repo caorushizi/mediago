@@ -11,6 +11,7 @@ export default defineConfig({
   },
   plugins: [react(), splitVendorChunkPlugin()],
   envDir: "../../",
+  envPrefix: "APP",
   build: {
     outDir: path.resolve(__dirname, "../main/build/renderer"),
     emptyOutDir: true,

@@ -4,7 +4,7 @@ import { ElectronAPI } from "./main";
 
 const apiKey = "electron";
 const api: ElectronAPI = {
-  index: () => ipcRenderer.invoke("index"),
+  getEnvPath: () => ipcRenderer.invoke("get-env-path"),
   getFavorites: () => ipcRenderer.invoke("get-favorites"),
   addFavorite: (favorite: Favorite) =>
     ipcRenderer.invoke("add-favorite", favorite),
@@ -20,6 +20,7 @@ const api: ElectronAPI = {
   getAppStore: () => ipcRenderer.invoke("get-app-store"),
   onSelectDownloadDir: () => ipcRenderer.invoke("select-download-dir"),
   setAppStore: (key, val) => ipcRenderer.invoke("set-app-store", key, val),
+  openDir: (dir) => ipcRenderer.invoke("open-dir", dir),
 };
 
 contextBridge.exposeInMainWorld(apiKey, api);

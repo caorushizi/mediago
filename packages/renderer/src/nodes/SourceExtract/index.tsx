@@ -138,7 +138,6 @@ const SourceExtract: React.FC = () => {
   };
 
   const receiveLinkMessage = (e: any, url: LinkMessage) => {
-    console.log(url);
     setSourceList([...sourceList, url]);
   };
 

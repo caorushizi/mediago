@@ -1,14 +1,15 @@
 import { type Favorite } from "entity/Favorite";
 
-declare interface IndexData {
+declare interface EnvPath {
   binPath: string;
   dbPath: string;
   workspace: string;
   platform: string;
+  local: string;
 }
 
 declare interface ElectronAPI {
-  index: () => Promise<IndexData>;
+  getEnvPath: () => Promise<EnvPath>;
   rendererEvent: (channel: string, listener: any) => void;
   removeEventListener: (channel: string, listener: any) => void;
   getFavorites: () => Promise<Favorite>;
@@ -22,6 +23,7 @@ declare interface ElectronAPI {
   getAppStore: () => Promise<AppStore>;
   onSelectDownloadDir: () => Promise<string>;
   setAppStore: (key: keyof AppStore, val: any) => Promise<void>;
+  openDir: (dir: string) => Promise<void>;
 }
 
 declare interface LinkMessage {

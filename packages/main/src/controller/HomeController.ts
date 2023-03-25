@@ -1,8 +1,8 @@
-import { dialog, IpcMainEvent } from "electron";
+import { dialog, IpcMainEvent, shell } from "electron";
 import { Favorite } from "entity/Favorite";
 import { db, workspace } from "helper/variables";
 import { inject, injectable } from "inversify";
-import { AppStore, IndexData } from "main";
+import { AppStore, EnvPath } from "main";
 import { handle } from "../helper/decorator";
 import {
   StoreService,
@@ -26,13 +26,14 @@ export default class HomeController implements Controller {
     private readonly mainWindow: MainWindowService
   ) {}
 
-  @handle("index")
-  async index(): Promise<IndexData> {
+  @handle("get-env-path")
+  async getEnvPath(): Promise<EnvPath> {
     return {
       binPath: __bin__,
       dbPath: db,
       workspace: workspace,
       platform: process.platform,
+      local: this.storeService.get("local"),
     };
   }
 
@@ -72,12 +73,20 @@ export default class HomeController implements Controller {
 
   @handle("set-app-store")
   async setAppStore(e: IpcMainEvent, key: keyof AppStore, val: any) {
-    console.log("key", key, val);
-
     if (key === "useProxy") {
-      await this.storeService.setProxy(val);
+      const proxy = this.storeService.get("proxy");
+      await this.storeService.setProxy(val, proxy);
+    } else if (key === "proxy") {
+      if (this.storeService.get("useProxy")) {
+        this.storeService.setProxy(true, val);
+      }
     }
 
     this.storeService.set(key, val);
+  }
+
+  @handle("open-dir")
+  async openDir(e: IpcMainEvent, dir: string) {
+    await shell.openPath(dir);
   }
 }

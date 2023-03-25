@@ -34,12 +34,16 @@ export default class StoreServiceImpl
     this.logger.info("开始初始化 store...");
 
     const useProxy = this.get("useProxy");
-    this.setProxy(useProxy, true);
+    const proxy = this.get("proxy");
+    this.setProxy(useProxy, proxy, true);
   }
 
-  async setProxy(useProxy: boolean, isInit?: boolean): Promise<void> {
+  async setProxy(
+    useProxy: boolean,
+    proxy: string,
+    isInit?: boolean
+  ): Promise<void> {
     try {
-      let proxy = this.get("proxy");
       if (useProxy) {
         console.log("proxy: ", typeof proxy);
 

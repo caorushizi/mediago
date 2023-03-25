@@ -2,7 +2,6 @@ import React, { useRef } from "react";
 import PageContainer from "../../components/PageContainer";
 import {
   ProForm,
-  ProFormSelect,
   ProFormText,
   ProFormGroup,
   ProFormSwitch,
@@ -13,12 +12,22 @@ import { FolderOpenOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { selectStore, setAppStore } from "../../appSlice";
 import { useDispatch, useSelector } from "react-redux";
 import useElectron from "../../hooks/electron";
+import { useRequest } from "ahooks";
+
+const version = import.meta.env.APP_VERSION;
 
 const SettingPage: React.FC = () => {
-  const { onSelectDownloadDir, setAppStore: ipcSetAppStore } = useElectron();
+  const {
+    onSelectDownloadDir,
+    setAppStore: ipcSetAppStore,
+    getEnvPath,
+    openDir,
+  } = useElectron();
   const dispatch = useDispatch();
   const formRef = useRef<FormInstance<AppStore>>();
   const settings = useSelector(selectStore);
+  const { data: envPath } = useRequest(getEnvPath);
+
   console.log("setting: ", settings);
 
   const onSelectDir = async () => {
@@ -59,19 +68,16 @@ const SettingPage: React.FC = () => {
 
   const onFormValueChange = async (values: Partial<AppStore>) => {
     try {
-      console.log("values", values);
       if (values.promptTone != null) {
-        // 提示音
         await ipcSetAppStore("promptTone", values.promptTone);
       }
       if (values.proxy != null) {
-        // proxy
         await ipcSetAppStore("proxy", values.proxy);
       }
       if (values.useProxy != null) {
-        // use proxy
         await ipcSetAppStore("useProxy", values.useProxy);
       }
+      dispatch(setAppStore(values));
     } catch (e: any) {
       message.error(e.message);
     }
@@ -111,50 +117,34 @@ const SettingPage: React.FC = () => {
             label={renderTooltipLable()}
             rules={[
               ({ getFieldValue, setFieldValue }) => ({
-                validator(_, value) {
+                validator() {
                   if (getFieldValue("proxy") === "") {
-                    console.log(123123123);
-
                     setFieldValue("useProxy", false);
                     return Promise.reject("请先输入代理地址");
                   }
-                  return ipcSetAppStore("useProxy", value);
+                  return Promise.resolve();
                 },
               }),
             ]}
           />
         </ProFormGroup>
         <ProFormGroup title="下载设置" direction={"vertical"}>
-          <ProFormSelect
-            allowClear={false}
-            width="xl"
-            name="exeFile"
-            label="默认下载器"
-            placeholder="请选择执行程序"
-            options={[]}
-          />
           <ProFormText label="更多操作">
             <Space>
               <Button
-                onClick={() => {
-                  // empty
-                }}
+                onClick={() => envPath?.workspace && openDir(envPath.workspace)}
                 icon={<FolderOpenOutlined />}
               >
                 配置文件目录
               </Button>
               <Button
-                onClick={() => {
-                  // empty
-                }}
+                onClick={() => envPath?.binPath && openDir(envPath.binPath)}
                 icon={<FolderOpenOutlined />}
               >
                 可执行程序目录
               </Button>
               <Button
-                onClick={() => {
-                  // empty
-                }}
+                onClick={() => openDir(settings.local)}
                 icon={<FolderOpenOutlined />}
               >
                 本地存储目录
@@ -162,7 +152,7 @@ const SettingPage: React.FC = () => {
             </Space>
           </ProFormText>
           <ProFormText label="当前版本">
-            <div>1.0.0</div>
+            <div>{version}</div>
           </ProFormText>
         </ProFormGroup>
       </ProForm>
