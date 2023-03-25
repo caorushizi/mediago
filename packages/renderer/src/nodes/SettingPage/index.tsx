@@ -9,7 +9,7 @@ import {
 import "./index.scss";
 import { Button, FormInstance, message, Space, Tooltip } from "antd";
 import { FolderOpenOutlined, QuestionCircleOutlined } from "@ant-design/icons";
-import { selectStore, setAppStore } from "../../appSlice";
+import { selectStore, setAppStore } from "../../store/appSlice";
 import { useDispatch, useSelector } from "react-redux";
 import useElectron from "../../hooks/electron";
 import { useRequest } from "ahooks";
