@@ -3,6 +3,7 @@ import { inject, injectable } from "inversify";
 import {
   DatabaseService,
   DownloadItem,
+  DownloadStatus,
   LoggerService,
   VideoRepository,
 } from "../interfaces";
@@ -39,5 +40,22 @@ export default class VideoRepositoryImpl implements VideoRepository {
       total: count,
       list: items,
     };
+  }
+
+  async findVideo(id: number) {
+    console.log("id", id);
+
+    return this.dataService.appDataSource.getRepository(Video).findOneBy({
+      id,
+    });
+  }
+
+  async changeVideoStatus(id: number, status: DownloadStatus) {
+    return this.dataService.appDataSource
+      .createQueryBuilder()
+      .update(Video)
+      .set({ status })
+      .where("id = :id", { id })
+      .execute();
   }
 }

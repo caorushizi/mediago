@@ -10,6 +10,7 @@ declare interface DownloadItem {
   id: number;
   name: string;
   url: string;
+  status: string;
 }
 
 declare interface VideoResponse {
@@ -42,6 +43,7 @@ declare interface ElectronAPI {
   getDownloadItems: (
     pagination: DownloadItemPagination
   ) => Promise<VideoResponse>;
+  startDownload: (vid: number) => Promise<void>;
 }
 
 declare interface Favorite {
@@ -64,4 +66,11 @@ declare interface AppStore {
   proxy?: string;
   // 是否开启代理
   useProxy?: boolean;
+}
+
+declare interface DownloadProgress {
+  id: number;
+  cur: string;
+  total: string;
+  speed: string;
 }

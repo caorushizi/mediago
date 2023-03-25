@@ -3,7 +3,12 @@ import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import { resolve } from "path";
 import { TYPES } from "../types";
-import { LoggerService, MainWindowService } from "../interfaces";
+import {
+  DownloadProgress,
+  LoggerService,
+  MainWindowService,
+} from "../interfaces";
+import { event } from "helper/utils";
 
 @injectable()
 export default class MainWindowServiceImpl
@@ -32,9 +37,16 @@ export default class MainWindowServiceImpl
     const url = isDev ? "http://localhost:8555/" : "mediago://index.html/";
     void this.loadURL(url);
 
-    this.once("ready-to-show", () => {
-      this.show();
-      isDev && this.webContents.openDevTools();
-    });
+    this.once("ready-to-show", this.readyToShow);
+    event.on("download-progress", this.onDownloadProgress);
   }
+
+  readyToShow = () => {
+    this.show();
+    isDev && this.webContents.openDevTools();
+  };
+
+  onDownloadProgress = (progress: DownloadProgress) => {
+    this.webContents.send("download-progress", progress);
+  };
 }

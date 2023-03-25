@@ -262,7 +262,7 @@ const SourceExtract: React.FC = () => {
                       <Space>
                         <PlayCircleOutlined />
                         <div className="title">{item.title}</div>
-                        <Button type="link" icon={<CloudDownloadOutlined />} />
+                        {/* <Button type="link" icon={<CloudDownloadOutlined />} /> */}
                         <Button
                           type="link"
                           onClick={() => onAddDownloadItem(item)}
