@@ -1,6 +1,8 @@
 import {
   ArrowLeftOutlined,
   ArrowRightOutlined,
+  CloudDownloadOutlined,
+  FileAddOutlined,
   HomeOutlined,
   LinkOutlined,
   PlayCircleOutlined,
@@ -225,13 +227,13 @@ const SourceExtract: React.FC = () => {
                   bordered
                   dataSource={sourceList}
                   renderItem={(item) => (
-                    <List.Item>
-                      <div className="list-item">
+                    <List.Item className="list-item" title={item.title}>
+                      <Space>
                         <PlayCircleOutlined />
-                        {item.title}
-                        <Button type="link">立即下载</Button>
-                        <Button type="link">添加</Button>
-                      </div>
+                        <div className="title">{item.title}</div>
+                        <Button type="link" icon={<CloudDownloadOutlined />} />
+                        <Button type="link" icon={<FileAddOutlined />} />
+                      </Space>
                     </List.Item>
                   )}
                 />

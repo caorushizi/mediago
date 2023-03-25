@@ -18,12 +18,22 @@
           width: 100%;
         }
         .webview-sider {
-          width: 200px;
+          width: 300px;
           padding: 0 10px 0 5px;
           .list-item {
-            // overflow: hidden;
-            // white-space: nowrap;
-            // text-overflow: ellipsis;
+            .title {
+              cursor: default;
+              // text-overflow: ellipsis;
+              // overflow: hidden;
+              // white-space: nowrap;
+              display: -webkit-box; //设置盒子模型，-webkit-box是移动端弹性盒模型
+              -webkit-line-clamp: 1; //设置显示几行
+              overflow: hidden; // 超出部分隐藏
+              text-overflow: ellipsis; //隐藏部门用省略号显示
+              /* autoprefixer: off */ //这行必须要用
+              -webkit-box-orient: vertical; //设置父容器里的子容器的排列方式 垂直方向排列
+              /* autoprefixer: on */ //这行必须设置
+            }
           }
         }
       }

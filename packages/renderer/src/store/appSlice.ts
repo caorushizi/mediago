@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { RootState } from "./store";
+import { RootState } from ".";
 
 interface AppStore {
   local: string;
@@ -15,7 +15,7 @@ const initialState: AppStore = {
   useProxy: false,
 };
 
-export const counterSlice = createSlice({
+export const appSlice = createSlice({
   name: "app",
   initialState,
   reducers: {
@@ -37,6 +37,6 @@ export const counterSlice = createSlice({
   },
 });
 
-export const { setAppStore } = counterSlice.actions;
+export const { setAppStore } = appSlice.actions;
 export const selectStore = (state: RootState) => state.app;
-export default counterSlice.reducer;
+export default appSlice.reducer;

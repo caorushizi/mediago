@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from "react";
 import { Link, Outlet } from "react-router-dom";
-import { Layout, Menu, MenuProps } from "antd";
+import { Avatar, Badge, Layout, Menu, MenuProps } from "antd";
 import "./App.scss";
 import {
   DownloadOutlined,
@@ -9,7 +9,7 @@ import {
 } from "@ant-design/icons";
 import useElectron from "./hooks/electron";
 import { useDispatch } from "react-redux";
-import { setAppStore } from "./appSlice";
+import { setAppStore } from "./store/appSlice";
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -17,27 +17,15 @@ type MenuItem = Required<MenuProps>["items"][number];
 
 function getItem(
   label: React.ReactNode,
-  key?: React.Key | null,
-  icon?: React.ReactNode,
-  children?: MenuItem[]
+  key: React.Key,
+  icon?: React.ReactNode
 ): MenuItem {
   return {
     key,
     icon,
-    children,
     label,
-  } as MenuItem;
+  };
 }
-
-const items: MenuItem[] = [
-  getItem(<Link to="/">下载列表</Link>, "home", <DownloadOutlined />),
-  getItem(
-    <Link to="/source-extract">素材提取</Link>,
-    "source",
-    <ProfileOutlined />
-  ),
-  getItem(<Link to="/settings">设置</Link>, "settings", <SettingOutlined />),
-];
 
 const App: FC = () => {
   const { getAppStore } = useElectron();
@@ -47,6 +35,31 @@ const App: FC = () => {
     const store = await getAppStore();
     dispatch(setAppStore(store));
   };
+
+  const items: MenuItem[] = [
+    getItem(
+      <Link to="/">
+        <DownloadOutlined />
+        <span>下载列表</span>
+        <Badge size="small" dot offset={[0, -8]}></Badge>
+      </Link>,
+      "home"
+    ),
+    getItem(
+      <Link to="/source-extract">
+        <ProfileOutlined />
+        <span>素材提取</span>
+      </Link>,
+      "source"
+    ),
+    getItem(
+      <Link to="/settings">
+        <SettingOutlined />
+        <span>设置</span>
+      </Link>,
+      "settings"
+    ),
+  ];
 
   useEffect(() => {
     initApp();
