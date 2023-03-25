@@ -6,6 +6,22 @@ declare interface EnvPath {
   local: string;
 }
 
+declare interface DownloadItem {
+  id: number;
+  name: string;
+  url: string;
+}
+
+declare interface VideoResponse {
+  total: number;
+  list: DownloadItem[];
+}
+
+declare interface DownloadItemPagination {
+  page?: number;
+  pageSize?: number;
+}
+
 declare interface ElectronAPI {
   getEnvPath: () => Promise<EnvPath>;
   rendererEvent: (channel: string, listener: any) => void;
@@ -22,6 +38,10 @@ declare interface ElectronAPI {
   onSelectDownloadDir: () => Promise<string>;
   setAppStore: (key: keyof AppStore, val: any) => Promise<void>;
   openDir: (dir: string) => Promise<void>;
+  addDownloadItem: (DownloadItem) => Promise<DownloadItem>;
+  getDownloadItems: (
+    pagination: DownloadItemPagination
+  ) => Promise<VideoResponse>;
 }
 
 declare interface Favorite {

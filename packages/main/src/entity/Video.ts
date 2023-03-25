@@ -7,9 +7,9 @@ import {
 } from "typeorm";
 
 @Entity({
-  name: "user",
+  name: "video",
 })
-export class User {
+export class Video {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -18,6 +18,12 @@ export class User {
     nullable: true,
   })
   name: string;
+
+  @Column({
+    type: "text",
+    nullable: false,
+  })
+  url: string;
 
   @CreateDateColumn()
   createdDate: Date;

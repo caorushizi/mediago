@@ -8,7 +8,6 @@ import {
   ProtocolService,
   StoreService,
   UpdateService,
-  UserRepository,
   WebviewService,
   type App,
 } from "./interfaces";
@@ -27,8 +26,6 @@ export default class ElectronApp implements App {
     private readonly ipcHandler: IpcHandlerService,
     @inject(TYPES.DatabaseService)
     private readonly dataService: DatabaseService,
-    @inject(TYPES.UserRepository)
-    private readonly userRepo: UserRepository,
     @inject(TYPES.WebviewService)
     private readonly webview: WebviewService,
     @inject(TYPES.LoggerService)

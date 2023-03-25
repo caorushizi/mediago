@@ -1,4 +1,10 @@
+import { Video } from "electron";
 import { type Favorite } from "entity/Favorite";
+import {
+  DownloadItem,
+  DownloadItemPagination,
+  VideoResponse,
+} from "interfaces";
 
 declare interface EnvPath {
   binPath: string;
@@ -24,6 +30,10 @@ declare interface ElectronAPI {
   onSelectDownloadDir: () => Promise<string>;
   setAppStore: (key: keyof AppStore, val: any) => Promise<void>;
   openDir: (dir: string) => Promise<void>;
+  addDownloadItem: (video: DownloadItem) => Promise<Video>;
+  getDownloadItems: (
+    pagiantion: DownloadItemPagination
+  ) => Promise<VideoResponse>;
 }
 
 declare interface LinkMessage {

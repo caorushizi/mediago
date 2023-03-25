@@ -21,6 +21,9 @@ const api: ElectronAPI = {
   onSelectDownloadDir: () => ipcRenderer.invoke("select-download-dir"),
   setAppStore: (key, val) => ipcRenderer.invoke("set-app-store", key, val),
   openDir: (dir) => ipcRenderer.invoke("open-dir", dir),
+  addDownloadItem: (video) => ipcRenderer.invoke("add-download-item", video),
+  getDownloadItems: (pagiantion) =>
+    ipcRenderer.invoke("get-download-items", pagiantion),
 };
 
 contextBridge.exposeInMainWorld(apiKey, api);

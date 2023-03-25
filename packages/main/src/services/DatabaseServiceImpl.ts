@@ -3,12 +3,13 @@ import { inject, injectable } from "inversify";
 import { DataSource, EntityManager } from "typeorm";
 import { TYPES } from "../types";
 import { DatabaseService, LoggerService } from "../interfaces";
-import { User } from "../entity/User";
+import { Video } from "../entity/Video";
 import { Favorite } from "entity/Favorite";
 
 @injectable()
 export default class DatabaseServiceImpl implements DatabaseService {
   appDataSource: DataSource;
+
   constructor(
     @inject(TYPES.LoggerService)
     private readonly logger: LoggerService
@@ -19,7 +20,7 @@ export default class DatabaseServiceImpl implements DatabaseService {
       database: db,
       synchronize: true,
       logging: false,
-      entities: [User, Favorite],
+      entities: [Video, Favorite],
       migrations: [],
       subscribers: [],
     });

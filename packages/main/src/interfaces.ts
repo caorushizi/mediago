@@ -1,9 +1,10 @@
-import { type BrowserWindow, type Session } from "electron";
+import { type BrowserWindow } from "electron";
 import { ElectronLog } from "electron-log";
 import Store from "electron-store";
 import { Favorite } from "entity/Favorite";
+import { Video } from "entity/Video";
 import { AppStore } from "main";
-import { EntityManager } from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 
 export interface MainWindowService extends BrowserWindow {
   init: () => void;
@@ -27,6 +28,7 @@ export interface UpdateService {
 
 export interface DatabaseService {
   manager: EntityManager;
+  appDataSource: DataSource;
   init: () => void;
 }
 
@@ -50,8 +52,24 @@ export interface StoreService extends Store<AppStore> {
   ) => Promise<void>;
 }
 
-export interface UserRepository {
-  init: () => void;
+export interface DownloadItem {
+  name: string;
+  url: string;
+}
+
+export interface DownloadItemPagination {
+  current?: number;
+  pageSize?: number;
+}
+
+export interface VideoResponse {
+  total: number;
+  list: DownloadItem[];
+}
+
+export interface VideoRepository {
+  addVideo: (video: DownloadItem) => Promise<Video>;
+  findVideos: (pagiantion: DownloadItemPagination) => Promise<VideoResponse>;
 }
 
 export interface FavoriteRepository {
