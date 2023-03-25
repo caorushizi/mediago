@@ -9,7 +9,6 @@ import {
   ReloadOutlined,
   StarFilled,
   StarOutlined,
-  UserOutlined,
 } from "@ant-design/icons";
 import { useRequest } from "ahooks";
 import { Avatar, Button, Input, List, Space } from "antd";
@@ -18,7 +17,7 @@ import PageContainer from "../../components/PageContainer";
 import useElectron from "../../hooks/electron";
 import { isUrl } from "../../utils/url";
 import "./index.scss";
-import defaultIcon from "../../assets/default.png";
+// import Hls, { ManifestLoadedData, LevelLoadedData } from "hls.js";
 
 interface DivRect {
   left: number;
@@ -54,6 +53,7 @@ const SourceExtract: React.FC = () => {
   const { data, run } = useRequest(getFavorites);
   const webviewRef = useRef<HTMLDivElement>(null);
   const resizeObserver = useRef<ResizeObserver>();
+  const downloadList = useRef<LinkMessage[]>([]);
   const [title, setTitle] = useState("");
 
   const isFavorite = (data || []).findIndex((item) => item.url === url) >= 0;
@@ -140,8 +140,31 @@ const SourceExtract: React.FC = () => {
     }
   };
 
-  const receiveLinkMessage = (e: any, url: LinkMessage) => {
-    setSourceList([...sourceList, url]);
+  const receiveLinkMessage = (e: any, msg: LinkMessage) => {
+    // const hls = new Hls();
+    // hls.loadSource(msg.url);
+
+    // TODO: 获取文件的清晰度还有播放列表
+    // hls.on(Hls.Events.MANIFEST_LOADED, (event, data: ManifestLoadedData) => {
+    //   console.log("=========");
+    //   console.log(Hls.Events.MANIFEST_LOADED);
+    //   console.log(msg.url);
+    //   console.log(data);
+    //   console.log("=========");
+    // });
+    // hls.on(Hls.Events.LEVEL_LOADED, (event, data: LevelLoadedData) => {
+    //   console.log("hls.levels", hls.levels);
+    //   console.log("=========");
+    //   console.log(Hls.Events.LEVEL_LOADED);
+    //   console.log(msg.url);
+    //   console.log(data);
+    //   console.log("=========");
+    // });
+
+    downloadList.current.unshift(msg);
+    console.log("downloadList.current", downloadList.current);
+
+    setSourceList([...downloadList.current]);
   };
 
   useEffect(() => {
@@ -176,7 +199,7 @@ const SourceExtract: React.FC = () => {
     return () => {
       removeEventListener("webview-link-message", receiveLinkMessage);
     };
-  }, [sourceList]);
+  }, []);
 
   useEffect(() => {
     const prevTitle = document.title;
@@ -188,11 +211,10 @@ const SourceExtract: React.FC = () => {
     };
   }, []);
 
-  const onAddDownloadItem = () => {
-    // empty
+  const onAddDownloadItem = (item: LinkMessage) => {
     addDownloadItem({
-      name: "123",
-      url: "12312312312",
+      name: item.title,
+      url: item.url,
     });
   };
 
@@ -243,7 +265,7 @@ const SourceExtract: React.FC = () => {
                         <Button type="link" icon={<CloudDownloadOutlined />} />
                         <Button
                           type="link"
-                          onClick={onAddDownloadItem}
+                          onClick={() => onAddDownloadItem(item)}
                           icon={<FileAddOutlined />}
                         />
                       </Space>
