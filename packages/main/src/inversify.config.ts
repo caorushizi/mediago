@@ -1,8 +1,9 @@
+import DownloadController from "controller/DownloadController";
 import HomeController from "controller/HomeController";
 import WebviewController from "controller/WebviewController";
 import { Container } from "inversify";
 import FavoriteRepositoryImpl from "repository/favoriteRepositoryImpl";
-import UserRepositoryImpl from "repository/userRepositoryImpl";
+import VideoRepositoryImpl from "repository/videoRepositoryImpl";
 import DatabaseServiceImpl from "services/DatabaseServiceImpl";
 import StoreServiceImpl from "services/StoreServiceImpl";
 import WebviewServiceImpl from "services/WebviewServiceImpl";
@@ -16,7 +17,7 @@ import {
   MainWindowService,
   ProtocolService,
   UpdateService,
-  UserRepository,
+  VideoRepository,
   DatabaseService,
   FavoriteRepository,
   WebviewService,
@@ -50,9 +51,10 @@ container.bind<WebviewService>(TYPES.WebviewService).to(WebviewServiceImpl);
 // === controller
 container.bind<Controller>(TYPES.Controller).to(HomeController);
 container.bind<Controller>(TYPES.Controller).to(WebviewController);
+container.bind<Controller>(TYPES.Controller).to(DownloadController);
 
 // === repository
-container.bind<UserRepository>(TYPES.UserRepository).to(UserRepositoryImpl);
+container.bind<VideoRepository>(TYPES.VideoRepository).to(VideoRepositoryImpl);
 container
   .bind<FavoriteRepository>(TYPES.FavoriteRepository)
   .to(FavoriteRepositoryImpl);

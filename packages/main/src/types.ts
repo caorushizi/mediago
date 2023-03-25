@@ -1,4 +1,5 @@
 const TYPES = {
+  App: Symbol.for("App"),
   MainWindowService: Symbol.for("MainWindowService"),
   StoreService: Symbol.for("StoreService"),
   SessionService: Symbol.for("SessionService"),
@@ -8,8 +9,7 @@ const TYPES = {
   LoggerService: Symbol.for("LoggerService"),
   IpcHandlerService: Symbol.for("IpcHandlerService"),
   Controller: Symbol.for("Controller"),
-  App: Symbol.for("App"),
-  UserRepository: Symbol.for("UserRepository"),
+  VideoRepository: Symbol.for("VideoRepository"),
   FavoriteRepository: Symbol.for("FavoriteRepository"),
   WebviewService: Symbol.for("WebviewService"),
 };

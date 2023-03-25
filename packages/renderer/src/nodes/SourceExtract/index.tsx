@@ -46,6 +46,7 @@ const SourceExtract: React.FC = () => {
     webviewGoBack,
     webviewReload,
     webwiewGoHome,
+    addDownloadItem,
   } = useElectron();
   const [url, setUrl] = useState<string>("");
   const [inputVal, setInputVal] = useState("");
@@ -187,6 +188,14 @@ const SourceExtract: React.FC = () => {
     };
   }, []);
 
+  const onAddDownloadItem = () => {
+    // empty
+    addDownloadItem({
+      name: "123",
+      url: "12312312312",
+    });
+  };
+
   return (
     <PageContainer className="source-extract">
       <Space.Compact className="action-bar" block>
@@ -232,7 +241,11 @@ const SourceExtract: React.FC = () => {
                         <PlayCircleOutlined />
                         <div className="title">{item.title}</div>
                         <Button type="link" icon={<CloudDownloadOutlined />} />
-                        <Button type="link" icon={<FileAddOutlined />} />
+                        <Button
+                          type="link"
+                          onClick={onAddDownloadItem}
+                          icon={<FileAddOutlined />}
+                        />
                       </Space>
                     </List.Item>
                   )}
