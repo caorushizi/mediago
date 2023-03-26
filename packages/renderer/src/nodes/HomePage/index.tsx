@@ -7,6 +7,8 @@ import useElectron from "../../hooks/electron";
 import { DownloadStatus } from "../../types";
 import { ProList } from "@ant-design/pro-components";
 import { SyncOutlined } from "@ant-design/icons";
+import { useSelector } from "react-redux";
+import { selectStore } from "../../store/appSlice";
 
 enum DownloadFilter {
   list = "list",
@@ -19,7 +21,9 @@ const HomePage: FC = () => {
     startDownload,
     rendererEvent,
     removeEventListener,
+    openDir,
   } = useElectron();
+  const appStore = useSelector(selectStore);
   const [filter, setFilter] = useState(DownloadFilter.list);
   const { data, loading, pagination, refresh } = usePagination(
     ({ current, pageSize }) => {
@@ -72,20 +76,23 @@ const HomePage: FC = () => {
     };
   }, []);
 
+  const onStartDownload = async (item: DownloadItem) => {
+    await startDownload(item.id);
+    message.success("添加任务成功");
+    refresh();
+  };
+
+  const onOpenDir = async () => {
+    await openDir(appStore.local);
+  };
+
   const renderActionButtons = (
     dom: ReactNode,
     item: DownloadItem
   ): ReactNode => {
     if (item.status === DownloadStatus.Ready) {
       return [
-        <a
-          key="download"
-          onClick={async () => {
-            await startDownload(item.id);
-            message.success("添加任务成功");
-            refresh();
-          }}
-        >
+        <a key="download" onClick={() => onStartDownload(item)}>
           开始下载
         </a>,
       ];
@@ -94,12 +101,20 @@ const HomePage: FC = () => {
       return [];
     }
     if (item.status === DownloadStatus.Failed) {
-      return [<a key="redownload">重新下载</a>];
+      return [
+        <a key="redownload" onClick={() => onStartDownload(item)}>
+          重新下载
+        </a>,
+      ];
     }
     if (item.status === DownloadStatus.Watting) {
       return ["等待下载"];
     }
-    return [<a key="redownload">打开位置</a>];
+    return [
+      <a key="redownload" onClick={onOpenDir}>
+        打开位置
+      </a>,
+    ];
   };
 
   const renderTitle = (dom: ReactNode, item: DownloadItem): ReactNode => {
@@ -124,7 +139,7 @@ const HomePage: FC = () => {
   };
 
   const renderDescription = (dom: ReactNode, item: DownloadItem): ReactNode => {
-    if (progress[item.id]) {
+    if (progress[item.id] && filter === DownloadFilter.list) {
       const curProgress = progress[item.id];
       const { cur, total, speed } = curProgress;
       const percent = Math.round((Number(cur) / Number(total)) * 100);

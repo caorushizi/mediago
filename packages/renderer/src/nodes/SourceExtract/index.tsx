@@ -12,7 +12,7 @@ import {
 } from "@ant-design/icons";
 import { useRequest } from "ahooks";
 import { Avatar, Button, Input, List, Space } from "antd";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import PageContainer from "../../components/PageContainer";
 import useElectron from "../../hooks/electron";
@@ -144,30 +144,10 @@ const SourceExtract: React.FC = () => {
   };
 
   const receiveLinkMessage = (e: any, msg: LinkMessage) => {
-    // const hls = new Hls();
-    // hls.loadSource(msg.url);
+    console.log("receive: =============", msg);
+    // downloadList.current.unshift(msg);
 
-    // TODO: 获取文件的清晰度还有播放列表
-    // hls.on(Hls.Events.MANIFEST_LOADED, (event, data: ManifestLoadedData) => {
-    //   console.log("=========");
-    //   console.log(Hls.Events.MANIFEST_LOADED);
-    //   console.log(msg.url);
-    //   console.log(data);
-    //   console.log("=========");
-    // });
-    // hls.on(Hls.Events.LEVEL_LOADED, (event, data: LevelLoadedData) => {
-    //   console.log("hls.levels", hls.levels);
-    //   console.log("=========");
-    //   console.log(Hls.Events.LEVEL_LOADED);
-    //   console.log(msg.url);
-    //   console.log(data);
-    //   console.log("=========");
-    // });
-
-    downloadList.current.unshift(msg);
-    console.log("downloadList.current", downloadList.current);
-
-    setSourceList([...downloadList.current]);
+    // setSourceList([msg, ...downloadList.current]);
   };
 
   useEffect(() => {
@@ -205,6 +185,7 @@ const SourceExtract: React.FC = () => {
       document.title = prevTitle;
       removeEventListener("webview-dom-ready", onDomReady);
       removeEventListener("webview-link-message", receiveLinkMessage);
+      console.log("remove: removeremoveremoveremove");
     };
   }, []);
 
@@ -216,8 +197,34 @@ const SourceExtract: React.FC = () => {
     });
   };
 
-  return (
-    <PageContainer className="source-extract">
+  const renderWebviewSider = () => {
+    return (
+      <div className="webview-sider">
+        <List
+          size="small"
+          bordered
+          dataSource={sourceList}
+          renderItem={(item) => (
+            <List.Item className="list-item" title={item.title}>
+              <Space>
+                <PlayCircleOutlined />
+                <div className="title">{item.title}</div>
+                {/* <Button type="link" icon={<CloudDownloadOutlined />} /> */}
+                <Button
+                  type="link"
+                  onClick={() => onAddDownloadItem(item)}
+                  icon={<FileAddOutlined />}
+                />
+              </Space>
+            </List.Item>
+          )}
+        />
+      </div>
+    );
+  };
+
+  const renderToolbar = () => {
+    return (
       <Space.Compact className="action-bar" block>
         {url && (
           <>
@@ -245,44 +252,21 @@ const SourceExtract: React.FC = () => {
           <ArrowRightOutlined />
         </Button>
       </Space.Compact>
+    );
+  };
+
+  return (
+    <PageContainer className="source-extract">
+      {renderToolbar()}
       <div className="source-extract-content">
         {url ? (
           <div className="webview-container">
             <div className="webview-inner" ref={webviewRef} />
-            {sourceList.length > 0 && (
-              <div className="webview-sider">
-                <List
-                  size="small"
-                  bordered
-                  dataSource={sourceList}
-                  renderItem={(item) => (
-                    <List.Item className="list-item" title={item.title}>
-                      <Space>
-                        <PlayCircleOutlined />
-                        <div className="title">{item.title}</div>
-                        {/* <Button type="link" icon={<CloudDownloadOutlined />} /> */}
-                        <Button
-                          type="link"
-                          onClick={() => onAddDownloadItem(item)}
-                          icon={<FileAddOutlined />}
-                        />
-                      </Space>
-                    </List.Item>
-                  )}
-                />
-              </div>
-            )}
+            {sourceList.length > 0 && renderWebviewSider()}
           </div>
         ) : (
           <List
-            grid={{
-              gutter: 16,
-              sm: 2,
-              md: 5,
-              lg: 5,
-              xl: 7,
-              xxl: 7,
-            }}
+            grid={{ gutter: 16, lg: 5, xl: 7, xxl: 7 }}
             className="list-container"
             itemLayout="vertical"
             dataSource={data}

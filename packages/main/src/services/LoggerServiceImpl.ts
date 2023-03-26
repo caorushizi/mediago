@@ -2,7 +2,7 @@ import logger, { ElectronLog } from "electron-log";
 import { injectable } from "inversify";
 import dayjs from "dayjs";
 import path from "path";
-import { workspace } from "../helper/variables";
+import { appName, workspace } from "../helper";
 import { LoggerService } from "../interfaces";
 
 @injectable()
@@ -11,7 +11,7 @@ export default class LoggerServiceImpl implements LoggerService {
 
   constructor() {
     const datetime = dayjs().format("YYYY-MM-DD");
-    const logPath = path.resolve(workspace, `logs/${datetime}-mediago.log`);
+    const logPath = path.resolve(workspace, `logs/${datetime}-${appName}.log`);
     logger.transports.console.format = "{h}:{i}:{s} {text}";
     logger.transports.file.getFile();
     logger.transports.file.resolvePath = () => logPath;
