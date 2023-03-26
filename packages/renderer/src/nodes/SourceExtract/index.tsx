@@ -144,10 +144,8 @@ const SourceExtract: React.FC = () => {
   };
 
   const receiveLinkMessage = (e: any, msg: LinkMessage) => {
-    console.log("receive: =============", msg);
-    // downloadList.current.unshift(msg);
-
-    // setSourceList([msg, ...downloadList.current]);
+    downloadList.current.unshift(msg);
+    setSourceList([...downloadList.current]);
   };
 
   useEffect(() => {

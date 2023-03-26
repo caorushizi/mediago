@@ -15,9 +15,9 @@ export const spawnDownload = (
   return new Promise((resolve, reject) => {
     const downloader = spawn(downloaderPath, [
       url,
-      "--workDir",
+      "--save-dir",
       local,
-      "--saveName",
+      "--save-name",
       name,
     ]);
 
@@ -33,6 +33,7 @@ export const spawnDownload = (
           const progress: DownloadProgress = { id, cur, total, speed };
           event.emit("download-progress", progress);
         }
+        console.log("str: ", item);
       });
     });
 
@@ -43,8 +44,8 @@ export const spawnDownload = (
         if (item.trim() == "") {
           return;
         }
-        console.log(item);
       });
+      console.log(str);
     });
 
     downloader.on("close", (code) => {
