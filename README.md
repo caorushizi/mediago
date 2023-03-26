@@ -11,27 +11,28 @@ m3u8 视频在线提取工具 流媒体下载 m3u8下载 桌面客户端 windows
 
 ## 安装要求
 
-运行代码需要 node 和 yarn，node需要在官网下载安装，yarn可以通过`npm i -g yarn`安装。
+运行代码需要 node 和 pnpm，node需要在官网下载安装，pnpm 可以通过`npm i -g pnpm`安装。
 
 ## 运行代码
 
-开发环境 `yarn run watch`
+安装依赖 `pnpm i`
 
-打包运行 `yarn run publish`
+开发环境 `pnpm run dev`
+
+打包运行 `pnpm run release`
 
 ## 下载链接
 
 - [v1.1.3 windows](https://github.com/caorushizi/m3u8-downloader/releases/download/1.1.3/media-downloader-setup-1.1.3.exe)
 - [v1.0.3 windows](http://static.ziying.site/media-downloader-1.0.3%20Setup.exe)
-- [v1.0.2 windows](http://static.ziying.site/media-downloader-1.0.2%20Setup.exe)
-- [v1.0.1 windows](http://static.ziying.site/media-downloader-1.0.1%20Setup.exe)
-- [v1.0.0 windows](http://static.ziying.site/media-downloader-1.0.0%20Setup.exe)
 
 ## 软件截图
 
-![首页](http://static.ziying.site/Snipaste_2022-01-08_18-43-25.png)
+![首页](./screenshot/home-page.png)
 
-![设置页面](http://static.ziying.site/Snipaste_2022-01-08_18-43-39.png)
+![设置页面](./screenshot/setting-page.png)
+
+![资源提取](./screenshot/browser-page.png)
 
 ## 技术栈
 
