@@ -28,11 +28,11 @@ m3u8 视频在线提取工具 流媒体下载 m3u8下载 桌面客户端 windows
 
 ## 软件截图
 
-![首页](./screenshot/home-page.png)
+![首页](https://raw.githubusercontent.com/caorushizi/m3u8-downloader/master/screenshot/home-page.png)
 
-![设置页面](./screenshot/setting-page.png)
+![设置页面](https://raw.githubusercontent.com/caorushizi/m3u8-downloader/master/screenshot/setting-page.png)
 
-![资源提取](./screenshot/browser-page.png)
+![资源提取](https://raw.githubusercontent.com/caorushizi/m3u8-downloader/master/screenshot/browser-page.png)
 
 ## 技术栈
 
