@@ -9,6 +9,7 @@ import { ProList } from "@ant-design/pro-components";
 import { SyncOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { selectStore } from "../../store/appSlice";
+import { tdApp } from "../../utils";
 
 enum DownloadFilter {
   list = "list",
@@ -49,16 +50,16 @@ const HomePage: FC = () => {
   };
 
   const onDownloadSuccess = () => {
+    tdApp.downloadSuccess();
     refresh();
   };
 
   const onDownloadFailed = () => {
+    tdApp.downloadFailed();
     refresh();
   };
 
   const onDownloadStart = () => {
-    console.log("downloadStart: ");
-
     refresh();
   };
 
@@ -77,6 +78,7 @@ const HomePage: FC = () => {
   }, []);
 
   const onStartDownload = async (item: DownloadItem) => {
+    tdApp.startDownload();
     await startDownload(item.id);
     message.success("添加任务成功");
     refresh();

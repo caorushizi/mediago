@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setAppStore } from "./store/appSlice";
 import { useAsyncEffect } from "ahooks";
 import { clearCount, selectCount } from "./store/downloadSlice";
+import { tdApp } from "./utils";
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -67,6 +68,7 @@ const App: FC = () => {
     ),
   ];
   const openHelpUrl = () => {
+    tdApp.openHelpPage();
     const url =
       "https://blog.ziying.site/post/media-downloader-how-to-use/?form=client";
     openUrl(url);

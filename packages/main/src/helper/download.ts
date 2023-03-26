@@ -13,11 +13,19 @@ export const spawnDownload = (
   name: string
 ): Promise<void> => {
   return new Promise((resolve, reject) => {
+    // const downloader = spawn(downloaderPath, [
+    //   url,
+    //   "--save-dir",
+    //   local,
+    //   "--save-name",
+    //   name,
+    // ]);
+
     const downloader = spawn(downloaderPath, [
       url,
-      "--save-dir",
+      "--workDir",
       local,
-      "--save-name",
+      "--saveName",
       name,
     ]);
 

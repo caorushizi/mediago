@@ -31,8 +31,6 @@ export default class StoreServiceImpl
   }
 
   init(): void {
-    this.logger.info("开始初始化 store...");
-
     const useProxy = this.get("useProxy");
     const proxy = this.get("proxy");
     this.setProxy(useProxy, proxy, true);
