@@ -10,7 +10,7 @@ export default defineConfig({
     strictPort: true,
   },
   plugins: [react(), splitVendorChunkPlugin()],
-  envDir: "../../",
+  envDir: "../..",
   envPrefix: "APP",
   build: {
     outDir: path.resolve(__dirname, "../main/build/renderer"),

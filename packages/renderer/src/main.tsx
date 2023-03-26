@@ -14,8 +14,10 @@ import "dayjs/locale/zh-cn";
 import zhCN from "antd/locale/zh_CN";
 import "antd/dist/reset.css";
 import "./index.scss";
+import { tdApp } from "./utils";
 
 dayjs.locale("zh-cn");
+tdApp.init();
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
