@@ -48,8 +48,6 @@ export const spawnDownload = (
     });
 
     downloader.on("close", (code) => {
-      console.log("test: ", code);
-
       if (code === 0) {
         resolve();
       } else {

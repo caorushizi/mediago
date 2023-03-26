@@ -10,7 +10,10 @@ import { TYPES } from "../types";
 import LoggerServiceImpl from "./LoggerServiceImpl";
 
 @injectable()
-export default class DownloadServiceImpl implements DownloadService {
+export default class DownloadServiceImpl
+  extends EventEmitter
+  implements DownloadService
+{
   private queue: Task[] = [];
 
   private active: Task[] = [];
@@ -24,7 +27,9 @@ export default class DownloadServiceImpl implements DownloadService {
     private readonly logger: LoggerServiceImpl,
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository
-  ) {}
+  ) {
+    super();
+  }
 
   async addTask(task: Task) {
     this.queue.push(task);
@@ -33,17 +38,24 @@ export default class DownloadServiceImpl implements DownloadService {
 
   async execute(task: Task) {
     try {
-      this.log(`running ${task.id}`);
-      await task.result;
-      this.log(`task ${task.id} finished`);
+      await this.videoRepository.changeVideoStatus(
+        task.id,
+        DownloadStatus.Downloading
+      );
+      this.emit("download-start", task.id);
+
+      this.log(`taskId: ${task.id} start`);
+      this.log("123123", task.id, ...task.params);
+      await task.process(task.id, ...task.params);
+      this.log(`taskId: ${task.id} success`);
 
       await this.videoRepository.changeVideoStatus(
         task.id,
         DownloadStatus.Success
       );
-      // this.emit("download-success", task.id);
+      this.emit("download-success", task.id);
     } catch (err) {
-      this.log(`${task.id} failed`);
+      this.log(`taskId: ${task.id} failed`);
       // 传输失败
       // TODO: 下载失败的任务
       await this.videoRepository.changeVideoStatus(
@@ -74,9 +86,9 @@ export default class DownloadServiceImpl implements DownloadService {
     }
   }
 
-  log(msg: string) {
+  log(...args: any[]) {
     if (this.debug) {
-      this.logger.info(`[TaskRunner] ${msg}`);
+      this.logger.info(`[DownloadService] `, ...args);
     }
   }
 }

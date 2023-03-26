@@ -2,12 +2,14 @@ import { app } from "electron";
 import { inject, injectable } from "inversify";
 import {
   DatabaseService,
+  DownloadStatus,
   IpcHandlerService,
   LoggerService,
   MainWindowService,
   ProtocolService,
   StoreService,
   UpdateService,
+  VideoRepository,
   WebviewService,
   type App,
 } from "./interfaces";
@@ -31,7 +33,9 @@ export default class ElectronApp implements App {
     @inject(TYPES.LoggerService)
     private readonly logger: LoggerService,
     @inject(TYPES.StoreService)
-    private readonly storeService: StoreService
+    private readonly storeService: StoreService,
+    @inject(TYPES.VideoRepository)
+    private readonly videoRepository: VideoRepository
   ) {}
 
   async init(): Promise<void> {
@@ -48,5 +52,13 @@ export default class ElectronApp implements App {
     await this.dataService.init();
     this.webview.init();
     this.storeService.init();
+
+    // 重启后如果还有 downloading 状态的数据， 全部重置为失败
+    const videos = await this.videoRepository.findWattingAndDownloadingVideos();
+    const videoIds = videos.map((video) => video.id);
+    await this.videoRepository.changeVideoStatus(
+      videoIds,
+      DownloadStatus.Failed
+    );
   }
 }

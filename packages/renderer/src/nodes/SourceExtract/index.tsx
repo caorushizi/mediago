@@ -13,8 +13,10 @@ import {
 import { useRequest } from "ahooks";
 import { Avatar, Button, Input, List, Space } from "antd";
 import React, { useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
 import PageContainer from "../../components/PageContainer";
 import useElectron from "../../hooks/electron";
+import { increase } from "../../store/downloadSlice";
 import { isUrl } from "../../utils/url";
 import "./index.scss";
 // import Hls, { ManifestLoadedData, LevelLoadedData } from "hls.js";
@@ -47,6 +49,7 @@ const SourceExtract: React.FC = () => {
     webwiewGoHome,
     addDownloadItem,
   } = useElectron();
+  const dispatch = useDispatch();
   const [url, setUrl] = useState<string>("");
   const [inputVal, setInputVal] = useState("");
   const [sourceList, setSourceList] = useState<LinkMessage[]>([]);
@@ -194,24 +197,19 @@ const SourceExtract: React.FC = () => {
   }, [!!url]);
 
   useEffect(() => {
-    rendererEvent("webview-link-message", receiveLinkMessage);
-
-    return () => {
-      removeEventListener("webview-link-message", receiveLinkMessage);
-    };
-  }, []);
-
-  useEffect(() => {
     const prevTitle = document.title;
     rendererEvent("webview-dom-ready", onDomReady);
+    rendererEvent("webview-link-message", receiveLinkMessage);
 
     return () => {
       document.title = prevTitle;
       removeEventListener("webview-dom-ready", onDomReady);
+      removeEventListener("webview-link-message", receiveLinkMessage);
     };
   }, []);
 
   const onAddDownloadItem = (item: LinkMessage) => {
+    dispatch(increase());
     addDownloadItem({
       name: item.title,
       url: item.url,

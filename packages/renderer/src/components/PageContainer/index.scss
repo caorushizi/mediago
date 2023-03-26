@@ -11,11 +11,12 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    height: 60px;
 
     .page-container-header-title {
       display: flex;
       flex-direction: row;
-      align-items: flex-end;
+      align-items: baseline;
 
       .title-text {
         font-size: 20px;

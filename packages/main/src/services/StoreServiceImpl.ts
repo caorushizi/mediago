@@ -45,8 +45,6 @@ export default class StoreServiceImpl
   ): Promise<void> {
     try {
       if (useProxy) {
-        console.log("proxy: ", typeof proxy);
-
         if (!proxy) {
           return Promise.reject("请先设置代理地址");
         }

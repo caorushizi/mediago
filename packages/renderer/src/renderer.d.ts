@@ -19,8 +19,9 @@ declare interface VideoResponse {
 }
 
 declare interface DownloadItemPagination {
-  page?: number;
+  current?: number;
   pageSize?: number;
+  filter?: string;
 }
 
 declare interface ElectronAPI {
@@ -44,6 +45,7 @@ declare interface ElectronAPI {
     pagination: DownloadItemPagination
   ) => Promise<VideoResponse>;
   startDownload: (vid: number) => Promise<void>;
+  openUrl: (url: string) => Promise<void>;
 }
 
 declare interface Favorite {

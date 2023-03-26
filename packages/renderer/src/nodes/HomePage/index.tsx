@@ -1,10 +1,17 @@
-import React, { FC, useEffect, useState } from "react";
-import { Button, List, message, Progress } from "antd";
+import React, { FC, ReactNode, useEffect, useRef, useState } from "react";
+import { message, Progress, Radio, RadioChangeEvent, Space, Tag } from "antd";
 import "./index.scss";
 import PageContainer from "../../components/PageContainer";
 import { usePagination } from "ahooks";
 import useElectron from "../../hooks/electron";
 import { DownloadStatus } from "../../types";
+import { ProList } from "@ant-design/pro-components";
+import { SyncOutlined } from "@ant-design/icons";
+
+enum DownloadFilter {
+  list = "list",
+  done = "done",
+}
 
 const HomePage: FC = () => {
   const {
@@ -13,104 +20,165 @@ const HomePage: FC = () => {
     rendererEvent,
     removeEventListener,
   } = useElectron();
-  const { data, loading, pagination } = usePagination(getDownloadItems, {
-    defaultPageSize: 50,
-  });
+  const [filter, setFilter] = useState(DownloadFilter.list);
+  const { data, loading, pagination, refresh } = usePagination(
+    ({ current, pageSize }) => {
+      return getDownloadItems({
+        current,
+        pageSize,
+        filter,
+      });
+    },
+    {
+      defaultPageSize: 50,
+      refreshDeps: [filter],
+    }
+  );
   const [progress, setProgress] = useState<Record<number, DownloadProgress>>(
     {}
   );
+  const curProgress = useRef<Record<string, DownloadProgress>>({});
 
-  const onDownloadProgress = (e: any, progress: DownloadProgress) => {
-    console.log("progress: ", progress);
-    setProgress({
-      [progress.id]: progress,
-    });
+  const onDownloadProgress = (e: any, p: DownloadProgress) => {
+    curProgress.current[p.id] = p;
+    setProgress({ ...curProgress.current });
+  };
+
+  const onDownloadSuccess = () => {
+    refresh();
+  };
+
+  const onDownloadFailed = () => {
+    refresh();
+  };
+
+  const onDownloadStart = () => {
+    console.log("downloadStart: ");
+
+    refresh();
   };
 
   useEffect(() => {
     rendererEvent("download-progress", onDownloadProgress);
+    rendererEvent("download-success", onDownloadSuccess);
+    rendererEvent("download-failed", onDownloadFailed);
+    rendererEvent("download-start", onDownloadStart);
 
     return () => {
       removeEventListener("download-progress", onDownloadProgress);
+      removeEventListener("download-success", onDownloadSuccess);
+      removeEventListener("download-failed", onDownloadFailed);
+      removeEventListener("download-start", onDownloadStart);
     };
   }, []);
 
-  const renderActionButtons = (item: DownloadItem) => {
+  const renderActionButtons = (
+    dom: ReactNode,
+    item: DownloadItem
+  ): ReactNode => {
     if (item.status === DownloadStatus.Ready) {
       return [
-        <Button
-          size="small"
-          type="link"
+        <a
           key="download"
           onClick={async () => {
             await startDownload(item.id);
             message.success("添加任务成功");
+            refresh();
           }}
         >
           开始下载
-        </Button>,
-        <Button size="small" type="link" key="redownload">
-          打开位置
-        </Button>,
+        </a>,
       ];
     }
     if (item.status === DownloadStatus.Downloading) {
-      return [
-        <Button size="small" type="link" key="reset">
-          重置状态
-        </Button>,
-      ];
+      return [];
     }
     if (item.status === DownloadStatus.Failed) {
-      return [
-        <Button size="small" type="link" key="redownload">
-          重新下载
-        </Button>,
-      ];
+      return [<a key="redownload">重新下载</a>];
     }
-    return [
-      <Button size="small" type="link" key="redownload">
-        打开位置
-      </Button>,
-      <Button size="small" type="link" key="redownload">
-        打开位置
-      </Button>,
-    ];
+    if (item.status === DownloadStatus.Watting) {
+      return ["等待下载"];
+    }
+    return [<a key="redownload">打开位置</a>];
   };
 
-  const renderTitle = (item: DownloadItem) => {
-    return item.name;
+  const renderTitle = (dom: ReactNode, item: DownloadItem): ReactNode => {
+    let tag = null;
+    if (item.status === DownloadStatus.Downloading) {
+      tag = (
+        <Tag color="processing" icon={<SyncOutlined spin />}>
+          下载中
+        </Tag>
+      );
+    } else if (item.status === DownloadStatus.Success) {
+      tag = <Tag color="success">下载成功</Tag>;
+    } else if (item.status === DownloadStatus.Failed) {
+      tag = <Tag color="error">下载失败</Tag>;
+    }
+    return (
+      <Space>
+        {item.name}
+        {tag}
+      </Space>
+    );
   };
 
-  const renderDescription = (item: DownloadItem) => {
+  const renderDescription = (dom: ReactNode, item: DownloadItem): ReactNode => {
     if (progress[item.id]) {
       const curProgress = progress[item.id];
-      const { cur, total } = curProgress;
+      const { cur, total, speed } = curProgress;
       const percent = Math.round((Number(cur) / Number(total)) * 100);
 
-      return <Progress percent={percent} />;
+      return (
+        <Space.Compact className="download-progress" block>
+          <Progress percent={percent} />
+          <div className="progress-speed">{speed}</div>
+        </Space.Compact>
+      );
     }
-    return item.url;
+    return <div className="description">{item.url}</div>;
+  };
+
+  const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>(
+    []
+  );
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: (keys: (string | number)[]) => setSelectedRowKeys(keys),
+  };
+
+  const onFilterChange = (e: RadioChangeEvent) => {
+    setFilter(e.target.value);
   };
 
   return (
     <PageContainer
       title="下载列表"
-      rightExtra={<Button>新建下载</Button>}
+      titleExtra={
+        <Radio.Group size="small" value={filter} onChange={onFilterChange}>
+          <Radio.Button value="list">下载列表</Radio.Button>
+          <Radio.Button value="done">下载完成</Radio.Button>
+        </Radio.Group>
+      }
       className="home-page"
     >
-      <List<DownloadItem>
-        pagination={pagination}
-        dataSource={data?.list}
+      <ProList<DownloadItem>
         loading={loading}
-        renderItem={(item) => (
-          <List.Item actions={renderActionButtons(item)}>
-            <List.Item.Meta
-              title={renderTitle(item)}
-              description={renderDescription(item)}
-            />
-          </List.Item>
-        )}
+        pagination={pagination}
+        metas={{
+          title: {
+            render: renderTitle,
+          },
+          description: {
+            render: renderDescription,
+          },
+          actions: {
+            render: renderActionButtons,
+          },
+        }}
+        rowKey="id"
+        rowSelection={rowSelection}
+        dataSource={data?.list}
       />
     </PageContainer>
   );
