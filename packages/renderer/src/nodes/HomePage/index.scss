@@ -1,0 +1,23 @@
+.home-page {
+  .home-page-inner {
+    padding-bottom: 10px;
+    .ant-pro-card-body {
+      padding: 0;
+    }
+    .description {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .download-progress {
+      .ant-progress {
+        align-items: center;
+        margin-bottom: 0px;
+      }
+      .progress-speed {
+        line-height: 25px;
+        min-width: max-content;
+      }
+    }
+  }
+}

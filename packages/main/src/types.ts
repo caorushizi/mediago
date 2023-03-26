@@ -1,18 +1,18 @@
 const TYPES = {
+  App: Symbol.for("App"),
   MainWindowService: Symbol.for("MainWindowService"),
-  BrowserViewService: Symbol.for("BrowserViewService"),
-  ConfigService: Symbol.for("ConfigService"),
+  StoreService: Symbol.for("StoreService"),
   SessionService: Symbol.for("SessionService"),
-  DataService: Symbol.for("DataService"),
+  DatabaseService: Symbol.for("DatabaseService"),
   ProtocolService: Symbol.for("ProtocolService"),
   UpdateService: Symbol.for("UpdateService"),
   LoggerService: Symbol.for("LoggerService"),
   IpcHandlerService: Symbol.for("IpcHandlerService"),
-  RunnerService: Symbol.for("RunnerService"),
   Controller: Symbol.for("Controller"),
-  App: Symbol.for("App"),
   VideoRepository: Symbol.for("VideoRepository"),
-  CollectionRepository: Symbol.for("CollectionRepository"),
+  FavoriteRepository: Symbol.for("FavoriteRepository"),
+  WebviewService: Symbol.for("WebviewService"),
+  DownloadService: Symbol.for("DownloadService"),
 };
 
 export { TYPES };

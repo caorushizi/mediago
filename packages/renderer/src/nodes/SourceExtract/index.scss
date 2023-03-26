@@ -1,0 +1,72 @@
+.source-extract {
+  .source-extract-inner {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    .action-bar {
+      padding: 10px 5px;
+    }
+    .source-extract-content {
+      flex: 1;
+      overflow: auto;
+      .webview-container {
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        .webview-inner {
+          height: 100%;
+          width: 100%;
+        }
+        .webview-sider {
+          width: 300px;
+          padding: 0 10px 0 5px;
+          .list-item {
+            .title {
+              cursor: default;
+              // text-overflow: ellipsis;
+              // overflow: hidden;
+              // white-space: nowrap;
+              display: -webkit-box; //设置盒子模型，-webkit-box是移动端弹性盒模型
+              -webkit-line-clamp: 1; //设置显示几行
+              overflow: hidden; // 超出部分隐藏
+              text-overflow: ellipsis; //隐藏部门用省略号显示
+              /* autoprefixer: off */ //这行必须要用
+              -webkit-box-orient: vertical; //设置父容器里的子容器的排列方式 垂直方向排列
+              /* autoprefixer: on */ //这行必须设置
+            }
+          }
+        }
+      }
+      .list-container {
+        padding: 30px;
+        flex: 1;
+        .list-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          .list-tem-card {
+            height: 100px;
+            width: 100px;
+            padding: 10px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            &:hover {
+              background: #f2f6fc;
+            }
+            .card-text {
+              width: 100%;
+              margin-top: 6px;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              overflow: hidden;
+            }
+          }
+        }
+      }
+    }
+  }
+}
