@@ -1,11 +1,11 @@
-import isDev from "electron-is-dev";
 import { protocol } from "electron";
-import { defaultScheme } from "../utils/variables";
-import { URL } from "url";
-import { extname, join } from "path";
+import isDev from "electron-is-dev";
 import { pathExists, readFile } from "fs-extra";
-import { ProtocolService } from "../interfaces";
 import { injectable } from "inversify";
+import { extname, join } from "path";
+import { URL } from "url";
+import { defaultScheme } from "../helper/variables";
+import { ProtocolService } from "../interfaces";
 
 @injectable()
 export default class ProtocolServiceImpl implements ProtocolService {

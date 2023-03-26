@@ -1,50 +1,41 @@
+import { DownloadStatus } from "interfaces";
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 
-export enum VideoStatus {
-  Ready = "ready",
-  Downloading = "downloading",
-  Failed = "failed",
-  Success = "success",
-}
-
-@Entity()
+@Entity({
+  name: "video",
+})
 export class Video {
   @PrimaryGeneratedColumn()
-  id?: number;
+  id: number;
 
-  // 视频名称
-  @Column({
-    type: "text",
-  })
-  name: string;
-
-  // 视频url
-  @Column({
-    type: "text",
-  })
-  url: string;
-
-  // 请求标头
   @Column({
     type: "text",
     nullable: true,
   })
-  headers?: string;
+  name: string;
 
   @Column({
     type: "text",
+    nullable: false,
   })
-  status: VideoStatus;
+  url: string;
+
+  @Column({
+    type: "text",
+    nullable: false,
+    default: DownloadStatus.Ready,
+  })
+  status: DownloadStatus;
 
   @CreateDateColumn()
-  createdDate?: Date;
+  createdDate: Date;
 
   @UpdateDateColumn()
-  updatedDate?: Date;
+  updatedDate: Date;
 }

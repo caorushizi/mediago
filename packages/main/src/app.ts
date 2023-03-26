@@ -1,55 +1,64 @@
+import { app } from "electron";
 import { inject, injectable } from "inversify";
 import {
-  App,
-  BrowserViewService,
-  BrowserWindowService,
-  ConfigService,
-  DataService,
+  DatabaseService,
+  DownloadStatus,
   IpcHandlerService,
+  LoggerService,
   MainWindowService,
   ProtocolService,
+  StoreService,
   UpdateService,
+  VideoRepository,
+  WebviewService,
+  type App,
 } from "./interfaces";
-import { app } from "electron";
 import { TYPES } from "./types";
 
 @injectable()
-export default class MediaGo implements App {
+export default class ElectronApp implements App {
   constructor(
     @inject(TYPES.MainWindowService)
     private readonly mainWindow: MainWindowService,
-    @inject(TYPES.BrowserViewService)
-    private readonly browserView: BrowserViewService,
     @inject(TYPES.ProtocolService)
     private readonly protocolService: ProtocolService,
     @inject(TYPES.UpdateService)
     private readonly updateService: UpdateService,
-    @inject(TYPES.ConfigService)
-    private readonly config: ConfigService,
     @inject(TYPES.IpcHandlerService)
     private readonly ipcHandler: IpcHandlerService,
-    @inject(TYPES.DataService)
-    protected dataServices: DataService
+    @inject(TYPES.DatabaseService)
+    private readonly dataService: DatabaseService,
+    @inject(TYPES.WebviewService)
+    private readonly webview: WebviewService,
+    @inject(TYPES.LoggerService)
+    private readonly logger: LoggerService,
+    @inject(TYPES.StoreService)
+    private readonly storeService: StoreService,
+    @inject(TYPES.VideoRepository)
+    private readonly videoRepository: VideoRepository
   ) {}
 
   async init(): Promise<void> {
-    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    if (require("electron-squirrel-startup")) {
-      app.quit();
-    }
-
     app.on("window-all-closed", () => {
       if (process.platform !== "darwin") {
         app.quit();
       }
     });
 
-    this.mainWindow.init();
-    this.browserView.init();
-    this.ipcHandler.init();
-
     this.protocolService.create();
+    await this.mainWindow.init();
+    this.ipcHandler.init();
     this.updateService.init();
-    this.dataServices.init();
+    await this.dataService.init();
+    this.webview.init();
+    this.storeService.init();
+
+    // 重启后如果还有 downloading 状态的数据， 全部重置为失败
+    const videos = await this.videoRepository.findWattingAndDownloadingVideos();
+    const videoIds = videos.map((video) => video.id);
+    await this.videoRepository.changeVideoStatus(
+      videoIds,
+      DownloadStatus.Failed
+    );
   }
 }

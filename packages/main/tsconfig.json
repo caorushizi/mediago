@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es2016",
-    "module": "commonjs",
+    "target": "ES2015",
+    "module": "CommonJS",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
@@ -9,17 +9,11 @@
     "baseUrl": "./src",
     "resolveJsonModule": true,
     "experimentalDecorators": true,
-    "strictPropertyInitialization": false,
     "emitDecoratorMetadata": true,
-    "typeRoots": [
-      "node_modules/@types",
-      "src/types"
-    ]
+    "moduleResolution": "node",
+    "strictPropertyInitialization": false,
+    "typeRoots": ["node_modules/@types"],
+    "outDir": "build/main"
   },
-  "include": [
-    "./src/**/*"
-  ],
-  "files": [
-    "../views/src/global.d.ts"
-  ]
+  "include": ["./src/**/*"]
 }

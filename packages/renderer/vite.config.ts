@@ -1,19 +1,19 @@
-import { fileURLToPath, URL } from "node:url";
-
 import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue";
-import vueJsx from "@vitejs/plugin-vue-jsx";
+import { splitVendorChunkPlugin } from "vite";
+import react from "@vitejs/plugin-react-swc";
+import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
-    strictPort: true,
     port: 8555,
+    strictPort: true,
   },
-  plugins: [vue(), vueJsx()],
-  resolve: {
-    alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
-    },
+  plugins: [react(), splitVendorChunkPlugin()],
+  envDir: "../..",
+  envPrefix: "APP",
+  build: {
+    outDir: path.resolve(__dirname, "../main/build/renderer"),
+    emptyOutDir: true,
   },
 });

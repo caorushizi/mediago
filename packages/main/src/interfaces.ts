@@ -1,40 +1,21 @@
-import { BrowserWindow, Session } from "electron";
-import Store from "electron-store";
+import { type BrowserWindow } from "electron";
 import { ElectronLog } from "electron-log";
-import { SpawnOptions } from "child_process";
-import { DataSource } from "typeorm";
-import { Collection, Video } from "./entity";
+import Store from "electron-store";
+import { Favorite } from "entity/Favorite";
+import { Video } from "entity/Video";
+import EventEmitter from "events";
+import { AppStore } from "main";
+import { DataSource, EntityManager, UpdateResult } from "typeorm";
 
 export interface MainWindowService extends BrowserWindow {
   init: () => void;
-}
-
-export interface BrowserViewService {
-  webContents: Electron.WebContents;
-  init: () => void;
-  getBounds: () => Electron.Rectangle;
-
-  setAutoResize: (options: Electron.AutoResizeOptions) => void;
-
-  setBackgroundColor: (color: string) => void;
-
-  setBounds: (bounds: Electron.Rectangle) => void;
 }
 
 export interface App {
   init: () => void;
 }
 
-export interface ConfigService extends Store<AppStore> {
-  init: () => void;
-  setProxy: (isInit?: boolean) => void;
-}
-
 export interface IpcHandlerService {
-  init: () => void;
-}
-
-export interface DataService extends DataSource {
   init: () => void;
 }
 
@@ -46,8 +27,10 @@ export interface UpdateService {
   init: () => void;
 }
 
-export interface SessionService {
-  get: () => Session;
+export interface DatabaseService {
+  manager: EntityManager;
+  appDataSource: DataSource;
+  init: () => void;
 }
 
 export type Controller = Record<string | symbol, any>;
@@ -55,32 +38,93 @@ export type Controller = Record<string | symbol, any>;
 export interface LoggerService {
   logger: ElectronLog;
   init: () => void;
+  info: (...args: any[]) => void;
+  error: (...args: any[]) => void;
+  warn: (...args: any[]) => void;
+  debug: (...args: any[]) => void;
 }
 
-export interface RunnerService {
-  run: (options: SpawnOptions) => void;
+export interface StoreService extends Store<AppStore> {
+  init: () => void;
+  setProxy: (
+    useProxy: boolean,
+    proxy: string,
+    isInit?: boolean
+  ) => Promise<void>;
+}
+
+export interface DownloadItem {
+  name: string;
+  url: string;
+}
+
+export enum DownloadFilter {
+  list = "list",
+  done = "done",
+}
+
+export interface DownloadItemPagination {
+  current?: number;
+  pageSize?: number;
+  filter?: DownloadFilter;
+}
+
+export interface VideoResponse {
+  total: number;
+  list: DownloadItem[];
 }
 
 export interface VideoRepository {
-  getVideoList: () => Promise<Video[]>;
-
-  findById: (id: number) => Promise<Video | null>;
-
-  insertVideo: (video: Video) => Promise<Video>;
-
-  updateVideo: (id: number, video: Partial<Video>) => Promise<void>;
-
-  removeVideo: (id?: number) => Promise<void>;
+  addVideo: (video: DownloadItem) => Promise<Video>;
+  findVideos: (pagiantion: DownloadItemPagination) => Promise<VideoResponse>;
+  findVideo: (id: number) => Promise<Video | null>;
+  changeVideoStatus: (
+    id: number | number[],
+    status: DownloadStatus
+  ) => Promise<UpdateResult>;
+  findWattingAndDownloadingVideos: () => Promise<Video[]>;
 }
 
-export interface CollectionRepository {
-  getCollectionList: () => Promise<Collection[]>;
+export interface FavoriteRepository {
+  findFavorites: () => Promise<Favorite[]>;
+  addFavorite: (favorite: Favorite) => Promise<Favorite>;
+  removeFavorite: (url: string) => Promise<void>;
+}
 
-  findById: (id: number) => Promise<Collection | null>;
+export interface WebviewService {
+  webContents: Electron.WebContents;
+  init: () => void;
+  getBounds: () => Electron.Rectangle;
+  setAutoResize: (options: Electron.AutoResizeOptions) => void;
+  setBackgroundColor: (color: string) => void;
+  setBounds: (bounds: Electron.Rectangle) => void;
+  loadURL: (url?: string) => void;
+  goBack: () => Promise<boolean>;
+  reload: () => Promise<void>;
+  goHome: () => Promise<void>;
+}
 
-  insertCollection: (video: Collection) => Promise<Collection>;
+export enum DownloadStatus {
+  Ready = "ready",
+  Watting = "watting",
+  Downloading = "downloading",
+  Success = "success",
+  Failed = "failed",
+}
 
-  updateCollection: (id: number, video: Partial<Collection>) => Promise<void>;
+export interface DownloadService extends EventEmitter {
+  addTask: (task: Task) => Promise<void>;
+}
 
-  removeCollection: (id?: number) => Promise<void>;
+export type Task = {
+  id: number;
+  params: string[];
+  process: (...args: any[]) => Promise<void>;
+};
+
+export interface DownloadProgress {
+  id: number;
+  cur: string;
+  total: string;
+  speed: string;
 }

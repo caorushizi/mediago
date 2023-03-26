@@ -1,19 +1,11 @@
 import "reflect-metadata";
+import { app, protocol } from "electron";
+import { defaultScheme } from "./helper/variables";
+import { type App } from "./interfaces";
 import { container } from "./inversify.config";
 import { TYPES } from "./types";
-import { App } from "./interfaces";
-import { app, protocol } from "electron";
-import { defaultScheme, workspace } from "./utils/variables";
-import moment from "moment";
-import path from "path";
-import logger from "electron-log";
 
-const start = async () => {
-  const datetime = moment().format("YYYY-MM-DD");
-  const logPath = path.resolve(workspace, `logs/${datetime}-mediago.log`);
-  logger.transports.console.format = "{h}:{i}:{s} {text}";
-  logger.transports.file.getFile();
-  logger.transports.file.resolvePath = () => logPath;
+const start = async (): Promise<void> => {
   protocol.registerSchemesAsPrivileged([
     {
       scheme: defaultScheme,
