@@ -28,8 +28,6 @@ const SettingPage: React.FC = () => {
   const settings = useSelector(selectStore);
   const { data: envPath } = useRequest(getEnvPath);
 
-  console.log("setting: ", settings);
-
   const onSelectDir = async () => {
     const local = await onSelectDownloadDir();
     if (local) {

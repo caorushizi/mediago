@@ -45,7 +45,6 @@ export default class DownloadServiceImpl
       this.emit("download-start", task.id);
 
       this.log(`taskId: ${task.id} start`);
-      this.log("123123", task.id, ...task.params);
       await task.process(task.id, ...task.params);
       this.log(`taskId: ${task.id} success`);
 
