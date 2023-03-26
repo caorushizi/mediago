@@ -58,9 +58,15 @@ export interface DownloadItem {
   url: string;
 }
 
+export enum DownloadFilter {
+  list = "list",
+  done = "done",
+}
+
 export interface DownloadItemPagination {
   current?: number;
   pageSize?: number;
+  filter?: DownloadFilter;
 }
 
 export interface VideoResponse {
@@ -73,9 +79,10 @@ export interface VideoRepository {
   findVideos: (pagiantion: DownloadItemPagination) => Promise<VideoResponse>;
   findVideo: (id: number) => Promise<Video | null>;
   changeVideoStatus: (
-    id: number,
+    id: number | number[],
     status: DownloadStatus
   ) => Promise<UpdateResult>;
+  findWattingAndDownloadingVideos: () => Promise<Video[]>;
 }
 
 export interface FavoriteRepository {
@@ -99,18 +106,20 @@ export interface WebviewService {
 
 export enum DownloadStatus {
   Ready = "ready",
+  Watting = "watting",
   Downloading = "downloading",
   Success = "success",
   Failed = "failed",
 }
 
-export interface DownloadService {
+export interface DownloadService extends EventEmitter {
   addTask: (task: Task) => Promise<void>;
 }
 
 export type Task = {
   id: number;
-  result: Promise<void>;
+  params: string[];
+  process: (...args: any[]) => Promise<void>;
 };
 
 export interface DownloadProgress {

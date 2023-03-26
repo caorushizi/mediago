@@ -46,7 +46,6 @@
     "fs-extra": "^11.1.0",
     "iconv-lite": "^0.6.3",
     "inversify": "^6.0.1",
-    "nanoid": "^4.0.1",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.3.12"
   }

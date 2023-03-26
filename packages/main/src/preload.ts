@@ -25,6 +25,7 @@ const api: ElectronAPI = {
   getDownloadItems: (pagiantion) =>
     ipcRenderer.invoke("get-download-items", pagiantion),
   startDownload: (vid: number) => ipcRenderer.invoke("start-download", vid),
+  openUrl: (url: string) => ipcRenderer.invoke("open-url", url),
 };
 
 contextBridge.exposeInMainWorld(apiKey, api);

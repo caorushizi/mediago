@@ -89,4 +89,9 @@ export default class HomeController implements Controller {
   async openDir(e: IpcMainEvent, dir: string) {
     await shell.openPath(dir);
   }
+
+  @handle("open-url")
+  async openUrl(e: IpcMainEvent, url: string) {
+    await shell.openExternal(url);
+  }
 }

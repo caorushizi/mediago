@@ -1,12 +1,19 @@
-import { BrowserWindow, BrowserWindowConstructorOptions } from "electron";
+import {
+  BrowserWindow,
+  BrowserWindowConstructorOptions,
+  Notification,
+} from "electron";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import { resolve } from "path";
 import { TYPES } from "../types";
 import {
   DownloadProgress,
+  DownloadService,
   LoggerService,
   MainWindowService,
+  StoreService,
+  VideoRepository,
 } from "../interfaces";
 import { event } from "helper/utils";
 
@@ -17,7 +24,13 @@ export default class MainWindowServiceImpl
 {
   constructor(
     @inject(TYPES.LoggerService)
-    private readonly logger: LoggerService
+    private readonly logger: LoggerService,
+    @inject(TYPES.DownloadService)
+    private readonly downloadService: DownloadService,
+    @inject(TYPES.VideoRepository)
+    private readonly videoRepository: VideoRepository,
+    @inject(TYPES.StoreService)
+    private readonly storeService: StoreService
   ) {
     const options: BrowserWindowConstructorOptions = {
       width: 1100,
@@ -39,6 +52,9 @@ export default class MainWindowServiceImpl
 
     this.once("ready-to-show", this.readyToShow);
     event.on("download-progress", this.onDownloadProgress);
+    this.downloadService.on("download-success", this.onDownloadSuccess);
+    this.downloadService.on("download-failed", this.onDownloadFailed);
+    this.downloadService.on("download-start", this.onDownloadStart);
   }
 
   readyToShow = () => {
@@ -48,5 +64,37 @@ export default class MainWindowServiceImpl
 
   onDownloadProgress = (progress: DownloadProgress) => {
     this.webContents.send("download-progress", progress);
+  };
+
+  onDownloadSuccess = async (id: number) => {
+    const promptTone = this.storeService.get("promptTone");
+    if (promptTone) {
+      const video = await this.videoRepository.findVideo(id);
+
+      new Notification({
+        title: "下载成功",
+        body: `${video?.name} 下载成功`,
+      }).show();
+    }
+
+    this.webContents.send("download-success", id);
+  };
+
+  onDownloadFailed = async (id: number) => {
+    const promptTone = this.storeService.get("promptTone");
+    if (promptTone) {
+      const video = await this.videoRepository.findVideo(id);
+
+      new Notification({
+        title: "下载失败",
+        body: `${video?.name} 下载失败`,
+      }).show();
+    }
+
+    this.webContents.send("download-failed", id);
+  };
+
+  onDownloadStart = async (id: number) => {
+    this.webContents.send("download-start", id);
   };
 }

@@ -1,15 +1,18 @@
-import React, { FC, useEffect } from "react";
+import React, { FC } from "react";
 import { Link, Outlet } from "react-router-dom";
-import { Avatar, Badge, Layout, Menu, MenuProps } from "antd";
+import { Badge, Button, Layout, Menu, MenuProps } from "antd";
 import "./App.scss";
 import {
   DownloadOutlined,
   ProfileOutlined,
+  QuestionCircleOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
 import useElectron from "./hooks/electron";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setAppStore } from "./store/appSlice";
+import { useAsyncEffect } from "ahooks";
+import { clearCount, selectCount } from "./store/downloadSlice";
 
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -28,20 +31,23 @@ function getItem(
 }
 
 const App: FC = () => {
-  const { getAppStore } = useElectron();
+  const { getAppStore, openUrl } = useElectron();
   const dispatch = useDispatch();
-
-  const initApp = async () => {
-    const store = await getAppStore();
-    dispatch(setAppStore(store));
-  };
+  const count = useSelector(selectCount);
 
   const items: MenuItem[] = [
     getItem(
-      <Link to="/">
+      <Link
+        to="/"
+        onClick={() => {
+          dispatch(clearCount());
+        }}
+      >
         <DownloadOutlined />
         <span>下载列表</span>
-        <Badge size="small" dot offset={[0, -8]}></Badge>
+        {count > 0 && (
+          <Badge size="small" count={count} offset={[5, -3]}></Badge>
+        )}
       </Link>,
       "home"
     ),
@@ -60,9 +66,15 @@ const App: FC = () => {
       "settings"
     ),
   ];
+  const openHelpUrl = () => {
+    const url =
+      "https://blog.ziying.site/post/media-downloader-how-to-use/?form=client";
+    openUrl(url);
+  };
 
-  useEffect(() => {
-    initApp();
+  useAsyncEffect(async () => {
+    const store = await getAppStore();
+    dispatch(setAppStore(store));
   }, []);
 
   return (
@@ -82,7 +94,16 @@ const App: FC = () => {
           <Content className="container-inner">
             <Outlet />
           </Content>
-          <Footer className="container-footer">media-downloader</Footer>
+          <Footer className="container-footer">
+            <Button
+              size="small"
+              type={"link"}
+              onClick={openHelpUrl}
+              icon={<QuestionCircleOutlined />}
+            >
+              使用帮助
+            </Button>
+          </Footer>
         </Layout>
       </Layout>
     </Layout>

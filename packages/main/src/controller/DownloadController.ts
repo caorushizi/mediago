@@ -13,7 +13,6 @@ import {
   DownloadStatus,
 } from "../interfaces";
 import { TYPES } from "../types";
-import { nanoid } from "nanoid";
 import { spawnDownload } from "helper";
 
 @injectable()
@@ -51,12 +50,10 @@ export default class DownloadController implements Controller {
 
     const task: Task = {
       id: vid,
-      result: spawnDownload(vid, url, local, name),
+      params: [url, local, name],
+      process: spawnDownload,
     };
+    await this.videoRepository.changeVideoStatus(vid, DownloadStatus.Watting);
     this.downloadService.addTask(task);
-    await this.videoRepository.changeVideoStatus(
-      vid,
-      DownloadStatus.Downloading
-    );
   }
 }
