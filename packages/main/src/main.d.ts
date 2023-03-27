@@ -36,6 +36,7 @@ declare interface ElectronAPI {
   ) => Promise<VideoResponse>;
   startDownload: (vid: number) => Promise<void>;
   openUrl: (url: string) => Promise<void>;
+  stopDownload: (id: number) => Promise<void>;
 }
 
 declare interface LinkMessage {
