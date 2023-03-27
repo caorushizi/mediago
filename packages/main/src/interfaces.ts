@@ -108,12 +108,14 @@ export enum DownloadStatus {
   Ready = "ready",
   Watting = "watting",
   Downloading = "downloading",
+  Stopped = "stopped",
   Success = "success",
   Failed = "failed",
 }
 
 export interface DownloadService extends EventEmitter {
   addTask: (task: Task) => Promise<void>;
+  stopTask: (id: number) => Promise<void>;
 }
 
 export type Task = {

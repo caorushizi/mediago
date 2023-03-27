@@ -1,12 +1,25 @@
 import React, { FC, ReactNode, useEffect, useRef, useState } from "react";
-import { message, Progress, Radio, RadioChangeEvent, Space, Tag } from "antd";
+import {
+  Button,
+  message,
+  Progress,
+  Radio,
+  RadioChangeEvent,
+  Space,
+  Tag,
+} from "antd";
 import "./index.scss";
 import PageContainer from "../../components/PageContainer";
 import { usePagination } from "ahooks";
 import useElectron from "../../hooks/electron";
 import { DownloadStatus } from "../../types";
 import { ProList } from "@ant-design/pro-components";
-import { SyncOutlined } from "@ant-design/icons";
+import {
+  FolderOpenOutlined,
+  PauseCircleOutlined,
+  PlayCircleOutlined,
+  SyncOutlined,
+} from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { selectStore } from "../../store/appSlice";
 import { tdApp } from "../../utils";
@@ -23,6 +36,7 @@ const HomePage: FC = () => {
     rendererEvent,
     removeEventListener,
     openDir,
+    stopDownload,
   } = useElectron();
   const appStore = useSelector(selectStore);
   const [filter, setFilter] = useState(DownloadFilter.list);
@@ -88,34 +102,70 @@ const HomePage: FC = () => {
     await openDir(appStore.local);
   };
 
+  const onClickStopDownload = async (item: DownloadItem) => {
+    await stopDownload(item.id);
+    refresh();
+  };
+
   const renderActionButtons = (
     dom: ReactNode,
     item: DownloadItem
   ): ReactNode => {
     if (item.status === DownloadStatus.Ready) {
       return [
-        <a key="download" onClick={() => onStartDownload(item)}>
-          开始下载
-        </a>,
+        <Button
+          type="text"
+          key="download"
+          icon={<PlayCircleOutlined />}
+          title="下载"
+          onClick={() => onStartDownload(item)}
+        />,
       ];
     }
     if (item.status === DownloadStatus.Downloading) {
-      return [];
+      return [
+        <Button
+          type="text"
+          key="stop"
+          title="暂停"
+          icon={<PauseCircleOutlined />}
+          onClick={() => onClickStopDownload(item)}
+        />,
+      ];
     }
     if (item.status === DownloadStatus.Failed) {
       return [
-        <a key="redownload" onClick={() => onStartDownload(item)}>
-          重新下载
-        </a>,
+        <Button
+          type="text"
+          key="redownload"
+          title="重新下载"
+          icon={<PlayCircleOutlined />}
+          onClick={() => onStartDownload(item)}
+        />,
       ];
     }
     if (item.status === DownloadStatus.Watting) {
       return ["等待下载"];
     }
+    if (item.status === DownloadStatus.Stopped) {
+      return [
+        <Button
+          type="text"
+          key="restart"
+          icon={<PlayCircleOutlined />}
+          title="继续下载"
+          onClick={() => onStartDownload(item)}
+        />,
+      ];
+    }
     return [
-      <a key="redownload" onClick={onOpenDir}>
-        打开位置
-      </a>,
+      <Button
+        type="text"
+        key="redownload"
+        onClick={() => onOpenDir()}
+        title="打开文件位置"
+        icon={<FolderOpenOutlined />}
+      />,
     ];
   };
 
@@ -131,6 +181,8 @@ const HomePage: FC = () => {
       tag = <Tag color="success">下载成功</Tag>;
     } else if (item.status === DownloadStatus.Failed) {
       tag = <Tag color="error">下载失败</Tag>;
+    } else if (item.status === DownloadStatus.Stopped) {
+      tag = <Tag color="default">下载暂停</Tag>;
     }
     return (
       <Space>

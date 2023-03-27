@@ -56,4 +56,9 @@ export default class DownloadController implements Controller {
     await this.videoRepository.changeVideoStatus(vid, DownloadStatus.Watting);
     this.downloadService.addTask(task);
   }
+
+  @handle("stop-download")
+  async stopDownload(e: IpcMainEvent, id: number) {
+    this.downloadService.stopTask(id);
+  }
 }

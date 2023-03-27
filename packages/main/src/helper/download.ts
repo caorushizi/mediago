@@ -8,6 +8,7 @@ const progressReg = /Progress:\s(\d+)\/(\d+)\s\(.+?\).+?\((.+?\/s).*?\)/g;
 
 export const spawnDownload = (
   id: number,
+  abortSignal: AbortController,
   url: string,
   local: string,
   name: string
@@ -21,13 +22,13 @@ export const spawnDownload = (
     //   name,
     // ]);
 
-    const downloader = spawn(downloaderPath, [
-      url,
-      "--workDir",
-      local,
-      "--saveName",
-      name,
-    ]);
+    const downloader = spawn(
+      downloaderPath,
+      [url, "--workDir", local, "--saveName", name],
+      {
+        signal: abortSignal.signal,
+      }
+    );
 
     downloader.stdout.on("data", (data) => {
       const str = iconv.decode(Buffer.from(data), "gbk");
@@ -41,26 +42,18 @@ export const spawnDownload = (
           const progress: DownloadProgress = { id, cur, total, speed };
           event.emit("download-progress", progress);
         }
-        console.log("str: ", item);
       });
     });
 
-    // TODO: 错误处理
-    downloader.stderr.on("data", (data) => {
-      const str = iconv.decode(Buffer.from(data), "gbk");
-      str.split("\n").forEach((item) => {
-        if (item.trim() == "") {
-          return;
-        }
-      });
-      console.log(str);
+    downloader.on("error", (err) => {
+      reject(err);
     });
 
     downloader.on("close", (code) => {
       if (code === 0) {
         resolve();
       } else {
-        reject();
+        reject(new Error("未知错误"));
       }
     });
   });

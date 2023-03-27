@@ -22,6 +22,7 @@ const handleApi: ElectronAPI = {
   openUrl: (url: string) => ipcRenderer.invoke("open-url", url),
   rendererEvent: (c, l) => ipcRenderer.on(c, l),
   removeEventListener: (c, l) => ipcRenderer.removeListener(c, l),
+  stopDownload: (id) => ipcRenderer.invoke("stop-download", id),
 };
 
 contextBridge.exposeInMainWorld(apiKey, handleApi);

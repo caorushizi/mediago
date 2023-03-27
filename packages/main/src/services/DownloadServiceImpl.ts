@@ -22,6 +22,8 @@ export default class DownloadServiceImpl
 
   private debug = process.env.DOWNLOAD_DEBUG;
 
+  private signal: Record<number, AbortController> = {};
+
   constructor(
     @inject(TYPES.LoggerService)
     private readonly logger: LoggerServiceImpl,
@@ -36,6 +38,13 @@ export default class DownloadServiceImpl
     this.runTask();
   }
 
+  async stopTask(id: number) {
+    if (this.signal[id]) {
+      this.log(`taskId: ${id} stop`);
+      this.signal[id].abort();
+    }
+  }
+
   async execute(task: Task) {
     try {
       await this.videoRepository.changeVideoStatus(
@@ -45,7 +54,10 @@ export default class DownloadServiceImpl
       this.emit("download-start", task.id);
 
       this.log(`taskId: ${task.id} start`);
-      await task.process(task.id, ...task.params);
+      const controller = new AbortController();
+      this.signal[task.id] = controller;
+      await task.process(task.id, controller, ...task.params);
+      delete this.signal[task.id];
       this.log(`taskId: ${task.id} success`);
 
       await this.videoRepository.changeVideoStatus(
@@ -53,15 +65,23 @@ export default class DownloadServiceImpl
         DownloadStatus.Success
       );
       this.emit("download-success", task.id);
-    } catch (err) {
+    } catch (err: any) {
       this.log(`taskId: ${task.id} failed`);
-      // 传输失败
-      // TODO: 下载失败的任务
-      await this.videoRepository.changeVideoStatus(
-        task.id,
-        DownloadStatus.Failed
-      );
-      // this.emit("download-failed", task.id);
+      if (err.name === "AbortError") {
+        // 下载暂停
+        await this.videoRepository.changeVideoStatus(
+          task.id,
+          DownloadStatus.Stopped
+        );
+        this.emit("download-stop", task.id);
+      } else {
+        // 下载失败
+        await this.videoRepository.changeVideoStatus(
+          task.id,
+          DownloadStatus.Failed
+        );
+        this.emit("download-failed", task.id, err);
+      }
     } finally {
       // 处理当前正在活动的任务
       const doneId = this.active.findIndex((i) => i.id === task.id);

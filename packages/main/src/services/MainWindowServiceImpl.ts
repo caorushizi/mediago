@@ -55,6 +55,7 @@ export default class MainWindowServiceImpl
     this.downloadService.on("download-success", this.onDownloadSuccess);
     this.downloadService.on("download-failed", this.onDownloadFailed);
     this.downloadService.on("download-start", this.onDownloadStart);
+    this.downloadService.on("download-stop", this.onDownloadStart);
   }
 
   readyToShow = () => {
@@ -80,7 +81,7 @@ export default class MainWindowServiceImpl
     this.webContents.send("download-success", id);
   };
 
-  onDownloadFailed = async (id: number) => {
+  onDownloadFailed = async (id: number, err: any) => {
     const promptTone = this.storeService.get("promptTone");
     if (promptTone) {
       const video = await this.videoRepository.findVideo(id);
@@ -90,11 +91,15 @@ export default class MainWindowServiceImpl
         body: `${video?.name} 下载失败`,
       }).show();
     }
-
+    this.logger.error("下载失败：", err);
     this.webContents.send("download-failed", id);
   };
 
   onDownloadStart = async (id: number) => {
     this.webContents.send("download-start", id);
+  };
+
+  onDownloadStop = async (id: number) => {
+    this.webContents.send("download-stop", id);
   };
 }
