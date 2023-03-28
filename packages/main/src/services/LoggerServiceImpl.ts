@@ -18,10 +18,6 @@ export default class LoggerServiceImpl implements LoggerService {
     this.logger = logger;
   }
 
-  init(): void {
-    // empty
-  }
-
   info(...args: any[]) {
     return this.logger.info(...args);
   }
