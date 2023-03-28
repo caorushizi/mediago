@@ -37,7 +37,6 @@ export type Controller = Record<string | symbol, any>;
 
 export interface LoggerService {
   logger: ElectronLog;
-  init: () => void;
   info: (...args: any[]) => void;
   error: (...args: any[]) => void;
   warn: (...args: any[]) => void;

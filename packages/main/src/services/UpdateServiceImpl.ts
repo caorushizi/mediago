@@ -8,9 +8,7 @@ import isDev from "electron-is-dev";
 export default class UpdateServiceImpl implements UpdateService {
   constructor(
     @inject(TYPES.LoggerService) private readonly logger: LoggerService
-  ) {
-    // empty
-  }
+  ) {}
 
   init(): void {
     if (isDev) return;
