@@ -181,9 +181,8 @@ const SourceExtract: React.FC = () => {
 
     return () => {
       document.title = prevTitle;
-      removeEventListener("webview-dom-ready", onDomReady);
-      removeEventListener("webview-link-message", receiveLinkMessage);
-      console.log("remove: removeremoveremoveremove");
+      removeEventListener("webview-dom-ready");
+      removeEventListener("webview-link-message");
     };
   }, []);
 

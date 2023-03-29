@@ -10,8 +10,6 @@ class TDEvent {
   }
 
   init() {
-    console.log("开始插入打点脚本……");
-
     const script = document.createElement("script");
     script.src = `https://jic.talkingdata.com/app/h5/v1?appid=${this.appId}&vn=${this.vn}&vc=${this.vc}`;
     const headElement = document.getElementsByTagName("head")[0];

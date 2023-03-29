@@ -79,4 +79,8 @@ export default class VideoRepositoryImpl implements VideoRepository {
       },
     });
   }
+
+  async deleteDownloadItem(id: number) {
+    return await this.dataService.appDataSource.getRepository(Video).delete(id);
+  }
 }

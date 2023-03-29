@@ -1,5 +1,7 @@
-import { contextBridge, ipcRenderer } from "electron/renderer";
+import { contextBridge, ipcRenderer } from "electron";
 import { ElectronAPI } from "./main";
+
+const apiFunctions: Record<string, any> = {};
 
 const apiKey = "electron";
 const handleApi: ElectronAPI = {
@@ -20,9 +22,19 @@ const handleApi: ElectronAPI = {
   getDownloadItems: (p) => ipcRenderer.invoke("get-download-items", p),
   startDownload: (vid: number) => ipcRenderer.invoke("start-download", vid),
   openUrl: (url: string) => ipcRenderer.invoke("open-url", url),
-  rendererEvent: (c, l) => ipcRenderer.on(c, l),
-  removeEventListener: (c, l) => ipcRenderer.removeListener(c, l),
   stopDownload: (id) => ipcRenderer.invoke("stop-download", id),
+  onDownloadListContextMenu: (id) =>
+    ipcRenderer.invoke("on-download-list-context-menu", id),
+  deleteDownloadItem: (id) => ipcRenderer.invoke("delete-download-item", id),
+  rendererEvent: (channel, listener) => {
+    apiFunctions[channel] = listener;
+    ipcRenderer.on(channel, listener);
+  },
+  removeEventListener: (channel) => {
+    const fun = apiFunctions[channel];
+    ipcRenderer.removeListener(channel, fun);
+    delete apiFunctions[channel];
+  },
 };
 
 contextBridge.exposeInMainWorld(apiKey, handleApi);

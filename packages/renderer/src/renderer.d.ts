@@ -26,8 +26,6 @@ declare interface DownloadItemPagination {
 
 declare interface ElectronAPI {
   getEnvPath: () => Promise<EnvPath>;
-  rendererEvent: (channel: string, listener: any) => void;
-  removeEventListener: (channel: string, listener: any) => void;
   addFavorite: (favorite: Favorite) => Promise<Favorite>;
   removeFavorite: (url: string) => Promise<void>;
   getFavorites: () => Promise<Favorite[]>;
@@ -47,6 +45,10 @@ declare interface ElectronAPI {
   startDownload: (vid: number) => Promise<void>;
   openUrl: (url: string) => Promise<void>;
   stopDownload: (id: number) => Promise<void>;
+  onDownloadListContextMenu: (id: number) => Promise<void>;
+  deleteDownloadItem: (id: number) => Promise<void>;
+  rendererEvent: (channel: string, listener: any) => void;
+  removeEventListener: (channel: string) => void;
 }
 
 declare interface Favorite {
