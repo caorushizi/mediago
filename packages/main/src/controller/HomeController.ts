@@ -1,4 +1,11 @@
-import { dialog, IpcMainEvent, shell } from "electron";
+import {
+  dialog,
+  IpcMainEvent,
+  Menu,
+  MenuItem,
+  MenuItemConstructorOptions,
+  shell,
+} from "electron";
 import { Favorite } from "entity/Favorite";
 import { db, workspace } from "helper/variables";
 import { inject, injectable } from "inversify";
@@ -10,6 +17,7 @@ import {
   type Controller,
   FavoriteRepository,
   MainWindowService,
+  VideoRepository,
 } from "../interfaces";
 import { TYPES } from "../types";
 
@@ -23,7 +31,9 @@ export default class HomeController implements Controller {
     @inject(TYPES.FavoriteRepository)
     private readonly favoriteRepository: FavoriteRepository,
     @inject(TYPES.MainWindowService)
-    private readonly mainWindow: MainWindowService
+    private readonly mainWindow: MainWindowService,
+    @inject(TYPES.VideoRepository)
+    private readonly videoRepository: VideoRepository
   ) {}
 
   @handle("get-env-path")
@@ -93,5 +103,45 @@ export default class HomeController implements Controller {
   @handle("open-url")
   async openUrl(e: IpcMainEvent, url: string) {
     await shell.openExternal(url);
+  }
+
+  @handle("on-download-list-context-menu")
+  async downloadListContextMenu(e: IpcMainEvent, id: number) {
+    const send = (action: string) => {
+      this.mainWindow.webContents.send("download-item-event", {
+        action,
+        payload: id,
+      });
+    };
+    const template: Array<MenuItemConstructorOptions | MenuItem> = [
+      {
+        label: "选择",
+        click: () => {
+          send("select");
+        },
+      },
+      {
+        label: "下载",
+        click: () => {
+          send("download");
+        },
+      },
+      {
+        label: "刷新",
+        click: () => {
+          send("refresh");
+        },
+      },
+      { type: "separator" },
+      {
+        label: "删除",
+        click: () => {
+          send("delete");
+        },
+      },
+    ];
+
+    const menu = Menu.buildFromTemplate(template);
+    menu.popup();
   }
 }

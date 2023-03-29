@@ -61,4 +61,9 @@ export default class DownloadController implements Controller {
   async stopDownload(e: IpcMainEvent, id: number) {
     this.downloadService.stopTask(id);
   }
+
+  @handle("delete-download-item")
+  async deleteDownloadItem(e: IpcMainEvent, id: number) {
+    return await this.videoRepository.deleteDownloadItem(id);
+  }
 }

@@ -37,6 +37,8 @@ const HomePage: FC = () => {
     removeEventListener,
     openDir,
     stopDownload,
+    onDownloadListContextMenu,
+    deleteDownloadItem,
   } = useElectron();
   const appStore = useSelector(selectStore);
   const [filter, setFilter] = useState(DownloadFilter.list);
@@ -77,23 +79,42 @@ const HomePage: FC = () => {
     refresh();
   };
 
+  const onDownloadMenuEvent = async (
+    e: any,
+    params: { action: string; payload: number }
+  ) => {
+    const { action, payload } = params;
+
+    if (action === "select") {
+      setSelectedRowKeys((keys) => [...keys, payload]);
+    } else if (action === "download") {
+      onStartDownload(payload);
+    } else if (action === "refresh") {
+      refresh();
+    } else if (action === "delete") {
+      await deleteDownloadItem(payload);
+    }
+  };
+
   useEffect(() => {
     rendererEvent("download-progress", onDownloadProgress);
     rendererEvent("download-success", onDownloadSuccess);
     rendererEvent("download-failed", onDownloadFailed);
     rendererEvent("download-start", onDownloadStart);
+    rendererEvent("download-item-event", onDownloadMenuEvent);
 
     return () => {
-      removeEventListener("download-progress", onDownloadProgress);
-      removeEventListener("download-success", onDownloadSuccess);
-      removeEventListener("download-failed", onDownloadFailed);
-      removeEventListener("download-start", onDownloadStart);
+      removeEventListener("download-progress");
+      removeEventListener("download-success");
+      removeEventListener("download-failed");
+      removeEventListener("download-start");
+      removeEventListener("download-item-event");
     };
   }, []);
 
-  const onStartDownload = async (item: DownloadItem) => {
+  const onStartDownload = async (id: number) => {
     tdApp.startDownload();
-    await startDownload(item.id);
+    await startDownload(id);
     message.success("添加任务成功");
     refresh();
   };
@@ -118,7 +139,7 @@ const HomePage: FC = () => {
           key="download"
           icon={<PlayCircleOutlined />}
           title="下载"
-          onClick={() => onStartDownload(item)}
+          onClick={() => onStartDownload(item.id)}
         />,
       ];
     }
@@ -140,7 +161,7 @@ const HomePage: FC = () => {
           key="redownload"
           title="重新下载"
           icon={<PlayCircleOutlined />}
-          onClick={() => onStartDownload(item)}
+          onClick={() => onStartDownload(item.id)}
         />,
       ];
     }
@@ -154,7 +175,7 @@ const HomePage: FC = () => {
           key="restart"
           icon={<PlayCircleOutlined />}
           title="继续下载"
-          onClick={() => onStartDownload(item)}
+          onClick={() => onStartDownload(item.id)}
         />,
       ];
     }
@@ -199,7 +220,7 @@ const HomePage: FC = () => {
       const percent = Math.round((Number(cur) / Number(total)) * 100);
 
       return (
-        <Space.Compact className="download-progress" block>
+        <Space.Compact className="download-progress description" block>
           <Progress percent={percent} />
           <div className="progress-speed">{speed}</div>
         </Space.Compact>
@@ -213,6 +234,7 @@ const HomePage: FC = () => {
   );
   const rowSelection = {
     selectedRowKeys,
+    alwaysShowAlert: true,
     onChange: (keys: (string | number)[]) => setSelectedRowKeys(keys),
   };
 
@@ -229,6 +251,7 @@ const HomePage: FC = () => {
           <Radio.Button value="done">下载完成</Radio.Button>
         </Radio.Group>
       }
+      rightExtra={<Button onClick={() => refresh()}>刷新</Button>}
       className="home-page"
     >
       <ProList<DownloadItem>
@@ -245,9 +268,50 @@ const HomePage: FC = () => {
             render: renderActionButtons,
           },
         }}
+        onRow={(record) => {
+          return {
+            onContextMenu: (event) => {
+              onDownloadListContextMenu(record.id);
+            },
+          };
+        }}
         rowKey="id"
         rowSelection={rowSelection}
         dataSource={data?.list}
+        tableAlertOptionRender={({
+          selectedRowKeys,
+          selectedRows,
+          onCleanSelected,
+        }) => {
+          if (selectedRowKeys.length === 0) {
+            return null;
+          }
+
+          return (
+            <>
+              <Button type="link" onClick={() => setSelectedRowKeys([])}>
+                取消
+              </Button>
+              <Button type="link">下载</Button>
+            </>
+          );
+        }}
+        tableAlertRender={({
+          selectedRowKeys,
+          selectedRows,
+          onCleanSelected,
+        }) => {
+          return (
+            <>
+              <Button type="link" onClick={onCleanSelected}>
+                全选
+              </Button>
+              {selectedRows.length !== 0 && (
+                <span>已选择 {selectedRows.length} 项</span>
+              )}
+            </>
+          );
+        }}
       />
     </PageContainer>
   );

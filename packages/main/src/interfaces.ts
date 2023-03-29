@@ -5,7 +5,7 @@ import { Favorite } from "entity/Favorite";
 import { Video } from "entity/Video";
 import EventEmitter from "events";
 import { AppStore } from "main";
-import { DataSource, EntityManager, UpdateResult } from "typeorm";
+import { DataSource, EntityManager, UpdateResult, DeleteResult } from "typeorm";
 
 export interface MainWindowService extends BrowserWindow {
   init: () => void;
@@ -82,6 +82,7 @@ export interface VideoRepository {
     status: DownloadStatus
   ) => Promise<UpdateResult>;
   findWattingAndDownloadingVideos: () => Promise<Video[]>;
+  deleteDownloadItem: (id: number) => Promise<DeleteResult>;
 }
 
 export interface FavoriteRepository {
