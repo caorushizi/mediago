@@ -93,6 +93,7 @@ const HomePage: FC = () => {
       refresh();
     } else if (action === "delete") {
       await deleteDownloadItem(payload);
+      refresh();
     }
   };
 
@@ -229,17 +230,25 @@ const HomePage: FC = () => {
     return <div className="description">{item.url}</div>;
   };
 
-  const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>(
-    []
-  );
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const rowSelection = {
     selectedRowKeys,
     alwaysShowAlert: true,
-    onChange: (keys: (string | number)[]) => setSelectedRowKeys(keys),
+    onChange: (keys: React.Key[]) => setSelectedRowKeys(keys),
   };
 
   const onFilterChange = (e: RadioChangeEvent) => {
     setFilter(e.target.value);
+  };
+
+  const onBatchDownload = async () => {
+    for (const id of selectedRowKeys) {
+      await startDownload(+id);
+    }
+
+    message.success("添加任务成功");
+    refresh();
+    setSelectedRowKeys([]);
   };
 
   return (
@@ -289,10 +298,24 @@ const HomePage: FC = () => {
 
           return (
             <>
-              <Button type="link" onClick={() => setSelectedRowKeys([])}>
+              <Button
+                type="link"
+                onClick={async () => {
+                  for (const id of selectedRowKeys) {
+                    await deleteDownloadItem(+id);
+                  }
+                  setSelectedRowKeys([]);
+                  refresh();
+                }}
+              >
+                删除
+              </Button>
+              <Button type="link" onClick={() => onCleanSelected()}>
                 取消
               </Button>
-              <Button type="link">下载</Button>
+              <Button type="link" onClick={onBatchDownload}>
+                下载
+              </Button>
             </>
           );
         }}
@@ -303,9 +326,19 @@ const HomePage: FC = () => {
         }) => {
           return (
             <>
-              <Button type="link" onClick={onCleanSelected}>
-                全选
-              </Button>
+              {data?.list.length !== 0 && (
+                <Button
+                  type="link"
+                  onClick={() => {
+                    const ids = data?.list.map((item) => item.id);
+                    if (ids) {
+                      setSelectedRowKeys(ids);
+                    }
+                  }}
+                >
+                  全选
+                </Button>
+              )}
               {selectedRows.length !== 0 && (
                 <span>已选择 {selectedRows.length} 项</span>
               )}
