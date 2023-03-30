@@ -58,13 +58,41 @@ export default class HomeController implements Controller {
   }
 
   @handle("remove-favorite")
-  removeFavorite(e: IpcMainEvent, url: string): Promise<void> {
-    return this.favoriteRepository.removeFavorite(url);
+  removeFavorite(e: IpcMainEvent, id: number): Promise<void> {
+    return this.favoriteRepository.removeFavorite(id);
   }
 
   @handle("get-app-store")
   getAppStore() {
     return this.storeService.store;
+  }
+
+  @handle("on-favorite-item-context-menu")
+  async onFavoriteItemContextMenu(e: IpcMainEvent, id: number) {
+    const send = (action: string) => {
+      this.mainWindow.webContents.send("favorite-item-event", {
+        action,
+        payload: id,
+      });
+    };
+    const template: Array<MenuItemConstructorOptions | MenuItem> = [
+      {
+        label: "打开",
+        click: () => {
+          send("open");
+        },
+      },
+      { type: "separator" },
+      {
+        label: "删除",
+        click: () => {
+          send("delete");
+        },
+      },
+    ];
+
+    const menu = Menu.buildFromTemplate(template);
+    menu.popup();
   }
 
   @handle("select-download-dir")

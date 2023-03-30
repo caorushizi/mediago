@@ -8,7 +8,7 @@ const handleApi: ElectronAPI = {
   getEnvPath: () => ipcRenderer.invoke("get-env-path"),
   getFavorites: () => ipcRenderer.invoke("get-favorites"),
   addFavorite: (favorite) => ipcRenderer.invoke("add-favorite", favorite),
-  removeFavorite: (url: string) => ipcRenderer.invoke("remove-favorite", url),
+  removeFavorite: (id) => ipcRenderer.invoke("remove-favorite", id),
   setWebviewBounds: (rect) => ipcRenderer.invoke("set-webview-bounds", rect),
   webviewGoBack: () => ipcRenderer.invoke("webview-go-back"),
   webviewReload: () => ipcRenderer.invoke("webview-reload"),
@@ -20,11 +20,13 @@ const handleApi: ElectronAPI = {
   openDir: (dir) => ipcRenderer.invoke("open-dir", dir),
   addDownloadItem: (video) => ipcRenderer.invoke("add-download-item", video),
   getDownloadItems: (p) => ipcRenderer.invoke("get-download-items", p),
-  startDownload: (vid: number) => ipcRenderer.invoke("start-download", vid),
+  startDownload: (vid) => ipcRenderer.invoke("start-download", vid),
   openUrl: (url: string) => ipcRenderer.invoke("open-url", url),
   stopDownload: (id) => ipcRenderer.invoke("stop-download", id),
   onDownloadListContextMenu: (id) =>
     ipcRenderer.invoke("on-download-list-context-menu", id),
+  onFavoriteItemContextMenu: (id) =>
+    ipcRenderer.invoke("on-favorite-item-context-menu", id),
   deleteDownloadItem: (id) => ipcRenderer.invoke("delete-download-item", id),
   rendererEvent: (channel, listener) => {
     apiFunctions[channel] = listener;

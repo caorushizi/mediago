@@ -18,7 +18,7 @@ declare interface ElectronAPI {
   getEnvPath: () => Promise<EnvPath>;
   getFavorites: () => Promise<Favorite>;
   addFavorite: (favorite: Favorite) => Promise<Favorite>;
-  removeFavorite: (url: string) => Promise<void>;
+  removeFavorite: (id: number) => Promise<void>;
   setWebviewBounds: (rect: Electron.Rectangle) => void;
   webviewLoadURL: (url?: string) => void;
   webviewGoBack: () => Promise<boolean>;
@@ -36,6 +36,7 @@ declare interface ElectronAPI {
   openUrl: (url: string) => Promise<void>;
   stopDownload: (id: number) => Promise<void>;
   onDownloadListContextMenu: (id: number) => Promise<void>;
+  onFavoriteItemContextMenu: (id: number) => Promise<void>;
   deleteDownloadItem: (id: number) => Promise<void>;
   rendererEvent: (channel: string, listener: any) => void;
   removeEventListener: (channel: string) => void;

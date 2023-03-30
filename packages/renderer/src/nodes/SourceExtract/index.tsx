@@ -1,7 +1,6 @@
 import {
   ArrowLeftOutlined,
   ArrowRightOutlined,
-  CloudDownloadOutlined,
   FileAddOutlined,
   HomeOutlined,
   LinkOutlined,
@@ -11,15 +10,15 @@ import {
   StarOutlined,
 } from "@ant-design/icons";
 import { useRequest } from "ahooks";
-import { Avatar, Button, Input, List, Space } from "antd";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Avatar, Button, Input, List, message, Space } from "antd";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import PageContainer from "../../components/PageContainer";
 import useElectron from "../../hooks/electron";
 import { increase } from "../../store/downloadSlice";
+import { requestImage } from "../../utils";
 import { isUrl } from "../../utils/url";
 import "./index.scss";
-// import Hls, { ManifestLoadedData, LevelLoadedData } from "hls.js";
 
 interface DivRect {
   left: number;
@@ -48,6 +47,7 @@ const SourceExtract: React.FC = () => {
     webviewReload,
     webwiewGoHome,
     addDownloadItem,
+    onFavoriteItemContextMenu,
   } = useElectron();
   const dispatch = useDispatch();
   const [url, setUrl] = useState<string>("");
@@ -88,14 +88,27 @@ const SourceExtract: React.FC = () => {
 
   const onClickAddFavorite = async () => {
     if (isFavorite) {
-      await removeFavorite(url);
+      const favorite = data?.find((item) => item.url === url);
+      if (favorite) {
+        await removeFavorite(favorite.id);
+      }
     } else {
-      const u = new URL(url);
+      let iconUrl = "";
+      try {
+        const urlObject = new URL(url);
+        const fetchUrl = urlObject.origin
+          ? `${urlObject.origin}/favicon.ico`
+          : "";
+        await requestImage(fetchUrl);
+        iconUrl = fetchUrl;
+      } catch (e) {
+        // empty
+      }
 
       await addFavorite({
         url,
         title: title || url,
-        icon: u.origin ? `${u.origin}/favicon.ico` : "",
+        icon: iconUrl,
       });
     }
     run();
@@ -128,7 +141,11 @@ const SourceExtract: React.FC = () => {
     await goto();
   };
 
-  const onClickLoadURL = async (item: { url: string }) => {
+  const onClickLoadItem = async (id: number) => {
+    const item = data?.find((item) => item.id === id);
+    if (!item) {
+      return message.error("参数错误");
+    }
     await webviewLoadURL(item.url);
     setUrl(item.url);
     setInputVal(item.url);
@@ -174,15 +191,35 @@ const SourceExtract: React.FC = () => {
     };
   }, [!!url]);
 
+  const onFavoriteEvent = async (
+    e: any,
+    {
+      action,
+      payload,
+    }: {
+      action: string;
+      payload: number;
+    }
+  ) => {
+    if (action === "open") {
+      onClickLoadItem(payload);
+    } else if (action === "delete") {
+      await removeFavorite(payload);
+      run();
+    }
+  };
+
   useEffect(() => {
     const prevTitle = document.title;
     rendererEvent("webview-dom-ready", onDomReady);
     rendererEvent("webview-link-message", receiveLinkMessage);
+    rendererEvent("favorite-item-event", onFavoriteEvent);
 
     return () => {
       document.title = prevTitle;
       removeEventListener("webview-dom-ready");
       removeEventListener("webview-link-message");
+      removeEventListener("favorite-item-event");
     };
   }, []);
 
@@ -268,12 +305,22 @@ const SourceExtract: React.FC = () => {
             itemLayout="vertical"
             dataSource={data}
             renderItem={(item) => (
-              <List.Item className="list-item">
+              <List.Item
+                className="list-item"
+                onContextMenu={() => {
+                  onFavoriteItemContextMenu(item.id);
+                }}
+              >
                 <div
                   className="list-tem-card"
-                  onClick={() => onClickLoadURL(item)}
+                  onClick={() => onClickLoadItem(item.id)}
                 >
-                  <Avatar size={52} src={item.icon} icon={<LinkOutlined />} />
+                  {item.icon ? (
+                    <Avatar size={52} src={item.icon} icon={<LinkOutlined />} />
+                  ) : (
+                    <Avatar size={52} icon={<LinkOutlined />} />
+                  )}
+
                   <div className="card-text">{item.title}</div>
                 </div>
               </List.Item>

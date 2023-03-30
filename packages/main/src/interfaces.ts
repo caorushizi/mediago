@@ -88,7 +88,7 @@ export interface VideoRepository {
 export interface FavoriteRepository {
   findFavorites: () => Promise<Favorite[]>;
   addFavorite: (favorite: Favorite) => Promise<Favorite>;
-  removeFavorite: (url: string) => Promise<void>;
+  removeFavorite: (id: number) => Promise<void>;
 }
 
 export interface WebviewService {
