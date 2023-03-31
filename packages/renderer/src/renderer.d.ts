@@ -29,7 +29,7 @@ declare interface ElectronAPI {
   addFavorite: (favorite: Omit<Favorite, "id">) => Promise<Favorite>;
   removeFavorite: (id: number) => Promise<void>;
   getFavorites: () => Promise<Favorite[]>;
-  setWebviewBounds: (bounds: any) => void;
+  setWebviewBounds: (bounds: any) => Promise<void>;
   webviewLoadURL: (url?: string) => Promise<void>;
   webviewGoBack: () => Promise<boolean>;
   webviewReload: () => Promise<void>;
@@ -49,7 +49,7 @@ declare interface ElectronAPI {
   onFavoriteItemContextMenu: (id: number) => Promise<void>;
   deleteDownloadItem: (id: number) => Promise<void>;
   rendererEvent: (channel: string, listener: any) => void;
-  removeEventListener: (channel: string) => void;
+  removeEventListener: (channel: string, listener: any) => void;
 }
 
 declare interface Favorite {

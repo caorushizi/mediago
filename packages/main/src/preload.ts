@@ -1,6 +1,8 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { ElectronAPI } from "./main";
 
+const isDev = process.env.NODE_ENV === "development";
+
 const apiFunctions: Record<string, any> = {};
 
 const apiKey = "electron";
@@ -28,14 +30,22 @@ const handleApi: ElectronAPI = {
   onFavoriteItemContextMenu: (id) =>
     ipcRenderer.invoke("on-favorite-item-context-menu", id),
   deleteDownloadItem: (id) => ipcRenderer.invoke("delete-download-item", id),
-  rendererEvent: (channel, listener) => {
-    apiFunctions[channel] = listener;
+  rendererEvent: (channel, eventName, listener) => {
+    const key = `${channel}-${eventName}`;
+    if (isDev && apiFunctions[key]) {
+      throw new Error("请修改变量名");
+    }
+    apiFunctions[key] = listener;
     ipcRenderer.on(channel, listener);
   },
-  removeEventListener: (channel) => {
-    const fun = apiFunctions[channel];
+  removeEventListener: (channel, eventName) => {
+    const key = `${channel}-${eventName}`;
+    if (isDev && !key) {
+      throw new Error("没有注册该事件");
+    }
+    const fun = apiFunctions[key];
     ipcRenderer.removeListener(channel, fun);
-    delete apiFunctions[channel];
+    delete apiFunctions[key];
   },
 };
 

@@ -19,8 +19,8 @@ declare interface ElectronAPI {
   getFavorites: () => Promise<Favorite>;
   addFavorite: (favorite: Favorite) => Promise<Favorite>;
   removeFavorite: (id: number) => Promise<void>;
-  setWebviewBounds: (rect: Electron.Rectangle) => void;
-  webviewLoadURL: (url?: string) => void;
+  setWebviewBounds: (rect: Electron.Rectangle) => Promise<void>;
+  webviewLoadURL: (url?: string) => Promise<void>;
   webviewGoBack: () => Promise<boolean>;
   webviewReload: () => Promise<void>;
   webwiewGoHome: () => Promise<void>;
@@ -38,8 +38,8 @@ declare interface ElectronAPI {
   onDownloadListContextMenu: (id: number) => Promise<void>;
   onFavoriteItemContextMenu: (id: number) => Promise<void>;
   deleteDownloadItem: (id: number) => Promise<void>;
-  rendererEvent: (channel: string, listener: any) => void;
-  removeEventListener: (channel: string) => void;
+  rendererEvent: (channel: string, eventName: string, listener: any) => void;
+  removeEventListener: (channel: string, eventName: string) => void;
 }
 
 declare interface LinkMessage {

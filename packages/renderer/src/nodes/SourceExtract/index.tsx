@@ -50,16 +50,23 @@ const SourceExtract: React.FC = () => {
     onFavoriteItemContextMenu,
   } = useElectron();
   const dispatch = useDispatch();
-  const [url, setUrl] = useState<string>("");
   const [inputVal, setInputVal] = useState("");
   const [sourceList, setSourceList] = useState<LinkMessage[]>([]);
-  const { data, run } = useRequest(getFavorites);
+  const { data: favoriteList = [], refresh } = useRequest(getFavorites);
   const webviewRef = useRef<HTMLDivElement>(null);
+  const currentUrlRef = useRef("");
+  const currentTitleRef = useRef("");
   const resizeObserver = useRef<ResizeObserver>();
-  const downloadList = useRef<LinkMessage[]>([]);
-  const [title, setTitle] = useState("");
 
-  const isFavorite = (data || []).findIndex((item) => item.url === url) >= 0;
+  const curIsFavorite = favoriteList.find(
+    (item) => item.url === currentUrlRef.current
+  );
+
+  const loadUrl = async (url: string) => {
+    await webviewLoadURL(url);
+    currentUrlRef.current = url;
+    setInputVal(url);
+  };
 
   const goto = async () => {
     let finalUrl = inputVal;
@@ -70,9 +77,7 @@ const SourceExtract: React.FC = () => {
       finalUrl = `https://baidu.com/s?word=${inputVal}`;
     }
 
-    await webviewLoadURL(finalUrl);
-    setUrl(finalUrl);
-    setInputVal(finalUrl);
+    await loadUrl(finalUrl);
   };
 
   const onInputKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -87,15 +92,12 @@ const SourceExtract: React.FC = () => {
   };
 
   const onClickAddFavorite = async () => {
-    if (isFavorite) {
-      const favorite = data?.find((item) => item.url === url);
-      if (favorite) {
-        await removeFavorite(favorite.id);
-      }
+    if (curIsFavorite) {
+      await removeFavorite(curIsFavorite.id);
     } else {
       let iconUrl = "";
       try {
-        const urlObject = new URL(url);
+        const urlObject = new URL(currentUrlRef.current);
         const fetchUrl = urlObject.origin
           ? `${urlObject.origin}/favicon.ico`
           : "";
@@ -106,26 +108,26 @@ const SourceExtract: React.FC = () => {
       }
 
       await addFavorite({
-        url,
-        title: title || url,
+        url: currentUrlRef.current,
+        title: currentTitleRef.current || currentUrlRef.current,
         icon: iconUrl,
       });
     }
-    run();
+    refresh();
   };
 
   const onClickGoBack = async () => {
     const back = await webviewGoBack();
 
     if (!back) {
-      setUrl("");
+      currentUrlRef.current = "";
       setInputVal("");
     }
   };
 
   const onClickGoHome = async () => {
     await webwiewGoHome();
-    setUrl("");
+    currentUrlRef.current = "";
     setInputVal("");
   };
 
@@ -141,28 +143,21 @@ const SourceExtract: React.FC = () => {
     await goto();
   };
 
-  const onClickLoadItem = async (id: number) => {
-    const item = data?.find((item) => item.id === id);
-    if (!item) {
-      return message.error("参数错误");
-    }
-    await webviewLoadURL(item.url);
-    setUrl(item.url);
-    setInputVal(item.url);
+  const onClickLoadItem = async (item: Favorite) => {
+    await loadUrl(item.url);
   };
 
   const onDomReady = (e: any, data: { url: string; title: string }) => {
     if (data.url) {
       document.title = data.title;
-      setUrl(data.url);
+      currentUrlRef.current = data.url;
+      currentTitleRef.current = data.title;
       setInputVal(data.url);
-      setTitle(data.title);
     }
   };
 
   const receiveLinkMessage = (e: any, msg: LinkMessage) => {
-    downloadList.current.unshift(msg);
-    setSourceList([...downloadList.current]);
+    setSourceList((list) => [msg, ...list]);
   };
 
   useEffect(() => {
@@ -189,7 +184,7 @@ const SourceExtract: React.FC = () => {
       resizeObserver.current?.disconnect();
       setWebviewBounds({ x: 0, y: 0, height: 0, width: 0 });
     };
-  }, [!!url]);
+  }, [!!currentUrlRef.current]);
 
   const onFavoriteEvent = async (
     e: any,
@@ -202,10 +197,13 @@ const SourceExtract: React.FC = () => {
     }
   ) => {
     if (action === "open") {
-      onClickLoadItem(payload);
+      const item = favoriteList.find((item) => item.id === payload);
+      if (item) {
+        onClickLoadItem(item);
+      }
     } else if (action === "delete") {
       await removeFavorite(payload);
-      run();
+      refresh();
     }
   };
 
@@ -217,9 +215,9 @@ const SourceExtract: React.FC = () => {
 
     return () => {
       document.title = prevTitle;
-      removeEventListener("webview-dom-ready");
-      removeEventListener("webview-link-message");
-      removeEventListener("favorite-item-event");
+      removeEventListener("webview-dom-ready", onDomReady);
+      removeEventListener("webview-link-message", receiveLinkMessage);
+      removeEventListener("favorite-item-event", onFavoriteEvent);
     };
   }, []);
 
@@ -260,7 +258,7 @@ const SourceExtract: React.FC = () => {
   const renderToolbar = () => {
     return (
       <Space.Compact className="action-bar" block>
-        {url && (
+        {currentUrlRef.current && (
           <>
             <Button type="text" onClick={onClickGoBack}>
               <ArrowLeftOutlined />
@@ -272,7 +270,7 @@ const SourceExtract: React.FC = () => {
               <HomeOutlined />
             </Button>
             <Button type="text" onClick={onClickAddFavorite}>
-              {isFavorite ? <StarFilled /> : <StarOutlined />}
+              {curIsFavorite ? <StarFilled /> : <StarOutlined />}
             </Button>
           </>
         )}
@@ -293,7 +291,7 @@ const SourceExtract: React.FC = () => {
     <PageContainer className="source-extract">
       {renderToolbar()}
       <div className="source-extract-content">
-        {url ? (
+        {currentUrlRef.current ? (
           <div className="webview-container">
             <div className="webview-inner" ref={webviewRef} />
             {sourceList.length > 0 && renderWebviewSider()}
@@ -303,7 +301,7 @@ const SourceExtract: React.FC = () => {
             grid={{ gutter: 16, lg: 5, xl: 7, xxl: 7 }}
             className="list-container"
             itemLayout="vertical"
-            dataSource={data}
+            dataSource={favoriteList}
             renderItem={(item) => (
               <List.Item
                 className="list-item"
@@ -313,14 +311,13 @@ const SourceExtract: React.FC = () => {
               >
                 <div
                   className="list-tem-card"
-                  onClick={() => onClickLoadItem(item.id)}
+                  onClick={() => onClickLoadItem(item)}
                 >
                   {item.icon ? (
                     <Avatar size={52} src={item.icon} icon={<LinkOutlined />} />
                   ) : (
                     <Avatar size={52} icon={<LinkOutlined />} />
                   )}
-
                   <div className="card-text">{item.title}</div>
                 </div>
               </List.Item>
