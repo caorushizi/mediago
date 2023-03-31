@@ -105,11 +105,11 @@ const HomePage: FC = () => {
     rendererEvent("download-item-event", onDownloadMenuEvent);
 
     return () => {
-      removeEventListener("download-progress");
-      removeEventListener("download-success");
-      removeEventListener("download-failed");
-      removeEventListener("download-start");
-      removeEventListener("download-item-event");
+      removeEventListener("download-progress", onDownloadProgress);
+      removeEventListener("download-success", onDownloadSuccess);
+      removeEventListener("download-failed", onDownloadFailed);
+      removeEventListener("download-start", onDownloadStart);
+      removeEventListener("download-item-event", onDownloadMenuEvent);
     };
   }, []);
 

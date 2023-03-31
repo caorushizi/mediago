@@ -104,16 +104,18 @@ export default class WebviewServiceImpl implements WebviewService {
   }
 
   async loadURL(url?: string) {
+    const canGoBack = this.webContents.canGoBack();
     await this.webContents.loadURL(url || "");
+    if (!canGoBack) {
+      this.webContents.goToIndex(0);
+    }
   }
 
   async goBack() {
-    // FIXME: 回退的时候会显示最后一个页面
     if (this.webContents.canGoBack()) {
       this.webContents.goBack();
       return true;
     } else {
-      await this.goHome();
       return false;
     }
   }
