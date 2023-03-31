@@ -19,6 +19,7 @@
     "classnames": "^2.3.2",
     "dayjs": "^1.11.7",
     "match-sorter": "^6.3.1",
+    "nanoid": "^4.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.5",

@@ -102,6 +102,7 @@ importers:
       eslint-plugin-promise: ^6.0.0
       eslint-plugin-react: ^7.32.2
       match-sorter: ^6.3.1
+      nanoid: ^4.0.2
       prettier: 2.8.3
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -121,6 +122,7 @@ importers:
       classnames: 2.3.2
       dayjs: 1.11.7
       match-sorter: 6.3.1
+      nanoid: 4.0.2
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-redux: 8.0.5_3xleytyzprlgycb2ded54tx72i
@@ -4355,6 +4357,12 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
     dev: true
+
+  /nanoid/4.0.2:
+    resolution: {integrity: sha512-7ZtY5KTCNheRGfEFxnedV5zFiORN1+Y1N6zvPTnHQd8ENUvfaDBeuJDZb2bN/oXwXxu3qkTXDzy57W5vAmDTBw==}
+    engines: {node: ^14 || ^16 || >=18}
+    hasBin: true
+    dev: false
 
   /napi-build-utils/1.0.2:
     resolution: {integrity: sha512-ONmRUqK7zj7DWX0D9ADe03wbwOBZxNAfF20PlGfCWQcD3+/MakShIHrMqx9YwPTfxDdF1zLeL+RGZiR9kGMLdg==}
