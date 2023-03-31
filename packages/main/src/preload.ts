@@ -30,19 +30,13 @@ const handleApi: ElectronAPI = {
   onFavoriteItemContextMenu: (id) =>
     ipcRenderer.invoke("on-favorite-item-context-menu", id),
   deleteDownloadItem: (id) => ipcRenderer.invoke("delete-download-item", id),
-  rendererEvent: (channel, eventName, listener) => {
-    const key = `${channel}-${eventName}`;
-    if (isDev && apiFunctions[key]) {
-      throw new Error("请修改变量名");
-    }
+  rendererEvent: (channel, funcId, listener) => {
+    const key = `${channel}-${funcId}`;
     apiFunctions[key] = listener;
     ipcRenderer.on(channel, listener);
   },
-  removeEventListener: (channel, eventName) => {
-    const key = `${channel}-${eventName}`;
-    if (isDev && !key) {
-      throw new Error("没有注册该事件");
-    }
+  removeEventListener: (channel, funcId) => {
+    const key = `${channel}-${funcId}`;
     const fun = apiFunctions[key];
     ipcRenderer.removeListener(channel, fun);
     delete apiFunctions[key];

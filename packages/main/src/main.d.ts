@@ -38,8 +38,8 @@ declare interface ElectronAPI {
   onDownloadListContextMenu: (id: number) => Promise<void>;
   onFavoriteItemContextMenu: (id: number) => Promise<void>;
   deleteDownloadItem: (id: number) => Promise<void>;
-  rendererEvent: (channel: string, eventName: string, listener: any) => void;
-  removeEventListener: (channel: string, eventName: string) => void;
+  rendererEvent: (channel: string, funcId: string, listener: any) => void;
+  removeEventListener: (channel: string, funcId: string) => void;
 }
 
 declare interface LinkMessage {
