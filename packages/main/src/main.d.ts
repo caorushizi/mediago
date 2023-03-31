@@ -38,6 +38,7 @@ declare interface ElectronAPI {
   onDownloadListContextMenu: (id: number) => Promise<void>;
   onFavoriteItemContextMenu: (id: number) => Promise<void>;
   deleteDownloadItem: (id: number) => Promise<void>;
+  convertToAudio: (id: number) => Promise<void>;
   rendererEvent: (channel: string, funcId: string, listener: any) => void;
   removeEventListener: (channel: string, funcId: string) => void;
 }

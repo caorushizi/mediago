@@ -1,8 +1,6 @@
 import { contextBridge, ipcRenderer } from "electron";
 import { ElectronAPI } from "./main";
 
-const isDev = process.env.NODE_ENV === "development";
-
 const apiFunctions: Record<string, any> = {};
 
 const apiKey = "electron";
@@ -30,6 +28,7 @@ const handleApi: ElectronAPI = {
   onFavoriteItemContextMenu: (id) =>
     ipcRenderer.invoke("on-favorite-item-context-menu", id),
   deleteDownloadItem: (id) => ipcRenderer.invoke("delete-download-item", id),
+  convertToAudio: (id) => ipcRenderer.invoke("convert-to-audio", id),
   rendererEvent: (channel, funcId, listener) => {
     const key = `${channel}-${funcId}`;
     apiFunctions[key] = listener;

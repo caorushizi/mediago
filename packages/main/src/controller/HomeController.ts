@@ -7,9 +7,11 @@ import {
   shell,
 } from "electron";
 import { Favorite } from "entity/Favorite";
+import { convertToAudio } from "helper";
 import { db, workspace } from "helper/variables";
 import { inject, injectable } from "inversify";
 import { AppStore, EnvPath } from "main";
+import path from "path";
 import { handle } from "../helper/decorator";
 import {
   StoreService,
@@ -20,6 +22,7 @@ import {
   VideoRepository,
 } from "../interfaces";
 import { TYPES } from "../types";
+import fs from "fs-extra";
 
 @injectable()
 export default class HomeController implements Controller {
@@ -171,5 +174,20 @@ export default class HomeController implements Controller {
 
     const menu = Menu.buildFromTemplate(template);
     menu.popup();
+  }
+
+  @handle("convert-to-audio")
+  async convertToAudio(e: IpcMainEvent, id: number) {
+    const video = await this.videoRepository.findVideo(id);
+    const local = this.storeService.get("local");
+    const input = path.join(local, `${video?.name}.mp4`);
+    const output = path.join(local, `${video?.name}.mp3`);
+
+    const exist = await fs.exists(input);
+    if (exist) {
+      return await convertToAudio(input, output);
+    } else {
+      return Promise.reject("未找到文件，可能是文件已经删除");
+    }
   }
 }

@@ -258,7 +258,7 @@ const SourceExtract: React.FC = () => {
   const renderToolbar = () => {
     return (
       <Space.Compact className="action-bar" block>
-        {currentUrlRef.current && (
+        {inputVal && (
           <>
             <Button type="text" onClick={onClickGoBack}>
               <ArrowLeftOutlined />
@@ -275,6 +275,7 @@ const SourceExtract: React.FC = () => {
           </>
         )}
         <Input
+          key="url-input"
           value={inputVal}
           onChange={(e) => setInputVal(e.target.value)}
           onKeyDown={onInputKeyDown}
@@ -291,7 +292,7 @@ const SourceExtract: React.FC = () => {
     <PageContainer className="source-extract">
       {renderToolbar()}
       <div className="source-extract-content">
-        {currentUrlRef.current ? (
+        {inputVal ? (
           <div className="webview-container">
             <div className="webview-inner" ref={webviewRef} />
             {sourceList.length > 0 && renderWebviewSider()}

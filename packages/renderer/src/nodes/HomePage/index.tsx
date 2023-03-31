@@ -16,6 +16,7 @@ import { DownloadStatus } from "../../types";
 import { ProList } from "@ant-design/pro-components";
 import {
   FolderOpenOutlined,
+  LoadingOutlined,
   PauseCircleOutlined,
   PlayCircleOutlined,
   SyncOutlined,
@@ -39,6 +40,7 @@ const HomePage: FC = () => {
     stopDownload,
     onDownloadListContextMenu,
     deleteDownloadItem,
+    convertToAudio,
   } = useElectron();
   const appStore = useSelector(selectStore);
   const [filter, setFilter] = useState(DownloadFilter.list);
@@ -55,14 +57,16 @@ const HomePage: FC = () => {
       refreshDeps: [filter],
     }
   );
+  const [converting, setConverting] = useState<Record<number, boolean>>({});
   const [progress, setProgress] = useState<Record<number, DownloadProgress>>(
     {}
   );
-  const curProgress = useRef<Record<string, DownloadProgress>>({});
 
-  const onDownloadProgress = (e: any, p: DownloadProgress) => {
-    curProgress.current[p.id] = p;
-    setProgress({ ...curProgress.current });
+  const onDownloadProgress = (e: any, progress: DownloadProgress) => {
+    setProgress((curProgress) => ({
+      ...curProgress,
+      [progress.id]: progress,
+    }));
   };
 
   const onDownloadSuccess = () => {
@@ -129,6 +133,24 @@ const HomePage: FC = () => {
     refresh();
   };
 
+  const onClickConvertToAudio = async (item: DownloadItem) => {
+    setConverting((curConverting) => ({
+      ...curConverting,
+      [item.id]: true,
+    }));
+    try {
+      await convertToAudio(item.id);
+      message.success("转换成功");
+    } catch (e: any) {
+      message.error(e.message);
+    } finally {
+      setConverting((curConverting) => ({
+        ...curConverting,
+        [item.id]: false,
+      }));
+    }
+  };
+
   const renderActionButtons = (
     dom: ReactNode,
     item: DownloadItem
@@ -180,13 +202,23 @@ const HomePage: FC = () => {
         />,
       ];
     }
+
+    const curConverting = converting[item.id];
     return [
       <Button
         type="text"
         key="redownload"
-        onClick={() => onOpenDir()}
-        title="打开文件位置"
         icon={<FolderOpenOutlined />}
+        title="打开文件位置"
+        onClick={() => onOpenDir()}
+      />,
+      <Button
+        type="text"
+        key="more"
+        icon={<SyncOutlined />}
+        title="转换为音频"
+        loading={curConverting}
+        onClick={() => onClickConvertToAudio(item)}
       />,
     ];
   };
@@ -287,11 +319,7 @@ const HomePage: FC = () => {
         rowKey="id"
         rowSelection={rowSelection}
         dataSource={data?.list}
-        tableAlertOptionRender={({
-          selectedRowKeys,
-          selectedRows,
-          onCleanSelected,
-        }) => {
+        tableAlertOptionRender={({ selectedRowKeys, onCleanSelected }) => {
           if (selectedRowKeys.length === 0) {
             return null;
           }
@@ -319,11 +347,7 @@ const HomePage: FC = () => {
             </>
           );
         }}
-        tableAlertRender={({
-          selectedRowKeys,
-          selectedRows,
-          onCleanSelected,
-        }) => {
+        tableAlertRender={({ selectedRows }) => {
           return (
             <>
               {data?.list.length !== 0 && (
