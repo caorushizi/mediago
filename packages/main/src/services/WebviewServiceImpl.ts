@@ -15,8 +15,6 @@ import isDev from "electron-is-dev";
 import { PERSIST_WEBVIEW } from "helper/variables";
 import { LinkMessage } from "main";
 
-const filter = { urls: ["*://*/*"] };
-
 @injectable()
 export default class WebviewServiceImpl implements WebviewService {
   private readonly filter = { urls: ["*://*/*"] };
@@ -47,10 +45,10 @@ export default class WebviewServiceImpl implements WebviewService {
   ): Promise<void> {
     const { url } = details;
 
-    const m3u8Reg = /\.m3u8$/;
+    const sourceReg = /\.m3u8$/;
     const detailsUrl = new URL(url);
 
-    if (m3u8Reg.test(detailsUrl.pathname)) {
+    if (sourceReg.test(detailsUrl.pathname)) {
       this.logger.info("在窗口中捕获 m3u8 链接: ", detailsUrl.toString());
       const webContents = details.webContents;
       const linkMessage: LinkMessage = {
@@ -81,7 +79,7 @@ export default class WebviewServiceImpl implements WebviewService {
 
     session
       .fromPartition(PERSIST_WEBVIEW)
-      .webRequest.onHeadersReceived(filter, this.onHeadersReceived);
+      .webRequest.onHeadersReceived(this.filter, this.onHeadersReceived);
   }
 
   getBounds(): Electron.Rectangle {
@@ -107,7 +105,7 @@ export default class WebviewServiceImpl implements WebviewService {
     const canGoBack = this.webContents.canGoBack();
     await this.webContents.loadURL(url || "");
     if (!canGoBack) {
-      this.webContents.goToIndex(0);
+      this.webContents.clearHistory();
     }
   }
 
