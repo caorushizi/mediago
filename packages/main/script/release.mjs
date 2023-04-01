@@ -24,9 +24,10 @@ dotenv.config({ path: env });
  */
 const options = {
   productName: process.env.APP_NAME,
+  buildVersion: process.env.APP_VERSION,
   appId: process.env.APP_ID,
   copyright: process.env.APP_COPYRIGHT,
-  artifactName: "${productName}-setup-${version}.${ext}",
+  artifactName: "${productName}-setup-${buildVersion}.${ext}",
   directories: {
     output: "./dist",
   },
