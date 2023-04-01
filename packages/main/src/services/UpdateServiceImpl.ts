@@ -15,6 +15,9 @@ export default class UpdateServiceImpl implements UpdateService {
 
     autoUpdater.disableWebInstaller = true;
     autoUpdater.logger = this.logger.logger;
-    autoUpdater.checkForUpdatesAndNotify();
+    autoUpdater.checkForUpdatesAndNotify({
+      title: "自动更新完成",
+      body: "下次重启时将会自动安装",
+    });
   }
 }
