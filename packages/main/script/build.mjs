@@ -8,9 +8,12 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const mainResolve = (r) => resolve(__dirname, "..", r);
 const rootResolve = (r) => resolve(__dirname, "../../..", r);
 
-const env = existsSync(rootResolve(".env.development.local"))
-  ? rootResolve(".env.development.local")
-  : rootResolve(".env.development");
+const nodeEnv = process.env.NODE_ENV;
+console.log("当前的环境是： ", nodeEnv);
+
+const env = existsSync(rootResolve(`.env.${nodeEnv}.local`))
+  ? rootResolve(`.env.${nodeEnv}.local`)
+  : rootResolve(`.env.${nodeEnv}`);
 dotenv.config({ path: env });
 
 rmSync(mainResolve("build/main"), { recursive: true, force: true });
