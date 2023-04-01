@@ -1,14 +1,15 @@
 import builder from "electron-builder";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import dotenv from "dotenv";
+import semver from "semver";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-// const mainResolve = (r) => resolve(__dirname, "..", r);
+const mainResolve = (r) => resolve(__dirname, "..", r);
 const rootResolve = (r) => resolve(__dirname, "../../..", r);
-const Platform = builder.Platform;
 
+const packageJson = JSON.parse(readFileSync(mainResolve("./package.json")));
 const nodeEnv = process.env.NODE_ENV;
 console.log("当前的环境是： ", nodeEnv);
 
@@ -16,6 +17,11 @@ const env = existsSync(rootResolve(`.env.${nodeEnv}.local`))
   ? rootResolve(`.env.${nodeEnv}.local`)
   : rootResolve(`.env.${nodeEnv}`);
 dotenv.config({ path: env });
+
+if (semver.neq(process.env.APP_VERSION, packageJson.version)) {
+  console.log("请先同步构建版本和发布版本");
+  process.exit(0);
+}
 
 // Let's get that intellisense working
 /**
@@ -92,7 +98,7 @@ const target =
     : builder.DEFAULT_TARGET;
 try {
   await builder.build({
-    targets: Platform.WINDOWS.createTarget(target),
+    targets: builder.Platform.WINDOWS.createTarget(target),
     config: options,
   });
 } catch (e) {
