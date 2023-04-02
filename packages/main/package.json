@@ -1,6 +1,6 @@
 {
   "name": "main",
-  "version": "2.0.0",
+  "version": "2.0.0-beta.1",
   "description": "electron-template main",
   "main": "main/index.js",
   "scripts": {

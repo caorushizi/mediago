@@ -88,7 +88,7 @@ const options = {
     provider: "github",
     repo: "m3u8-downloader",
     owner: "caorushizi",
-    releaseType: "draft",
+    releaseType: "prerelease",
   },
 };
 
