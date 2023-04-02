@@ -14,7 +14,12 @@ console.log("当前的环境是： ", nodeEnv);
 const env = existsSync(rootResolve(`.env.${nodeEnv}.local`))
   ? rootResolve(`.env.${nodeEnv}.local`)
   : rootResolve(`.env.${nodeEnv}`);
-dotenv.config({ path: env });
+const { parsed } = dotenv.config({ path: env });
+
+const mainDefined = Object.keys(parsed || {}).reduce((prev, cur) => {
+  prev[`process.env.${[cur]}`] = JSON.stringify(parsed[cur]);
+  return prev;
+}, {});
 
 rmSync(mainResolve("build/main"), { recursive: true, force: true });
 rmSync(mainResolve("build/Release"), { recursive: true, force: true });
@@ -26,6 +31,9 @@ esbuild.build({
   sourcemap: false,
   target: ["node16.13"],
   external: ["electron", "nock", "aws-sdk", "mock-aws-s3"],
+  define: {
+    ...mainDefined,
+  },
   outdir: mainResolve("build/main"),
   loader: { ".png": "file" },
   minify: true,
