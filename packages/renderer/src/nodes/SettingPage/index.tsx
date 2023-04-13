@@ -66,14 +66,10 @@ const SettingPage: React.FC = () => {
 
   const onFormValueChange = async (values: Partial<AppStore>) => {
     try {
-      if (values.promptTone != null) {
-        await ipcSetAppStore("promptTone", values.promptTone);
-      }
-      if (values.proxy != null) {
-        await ipcSetAppStore("proxy", values.proxy);
-      }
-      if (values.useProxy != null) {
-        await ipcSetAppStore("useProxy", values.useProxy);
+      for (const key of Object.keys(values)) {
+        if (values[key] != null) {
+          await ipcSetAppStore(key, values[key]);
+        }
       }
       dispatch(setAppStore(values));
     } catch (e: any) {
@@ -127,6 +123,7 @@ const SettingPage: React.FC = () => {
           />
         </ProFormGroup>
         <ProFormGroup title="下载设置" direction={"vertical"}>
+          <ProFormSwitch label="下载完成删除分片" name="deleteSegments" />
           <ProFormText label="更多操作">
             <Space>
               <Button

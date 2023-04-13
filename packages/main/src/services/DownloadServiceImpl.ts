@@ -56,7 +56,11 @@ export default class DownloadServiceImpl
       this.log(`taskId: ${task.id} start`);
       const controller = new AbortController();
       this.signal[task.id] = controller;
-      await task.process(task.id, controller, ...task.params);
+      await task.process({
+        ...task.params,
+        id: task.id,
+        abortSignal: controller,
+      });
       delete this.signal[task.id];
       this.log(`taskId: ${task.id} success`);
 

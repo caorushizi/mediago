@@ -74,6 +74,8 @@ declare interface AppStore {
   proxy?: string;
   // 是否开启代理
   useProxy?: boolean;
+  // 下载完成后删除原始文件
+  deleteSegments?: boolean;
 }
 
 declare interface DownloadProgress {
@@ -81,4 +83,8 @@ declare interface DownloadProgress {
   cur: string;
   total: string;
   speed: string;
+}
+
+interface ObjectConstructor {
+  keys<T>(o: T): (keyof T)[];
 }

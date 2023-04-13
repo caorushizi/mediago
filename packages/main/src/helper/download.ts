@@ -2,17 +2,13 @@ import { spawn } from "child_process";
 import { downloaderPath } from "./variables";
 import iconv from "iconv-lite";
 import { event } from "./utils";
-import { DownloadProgress } from "interfaces";
+import { DownloadParams, DownloadProgress } from "interfaces";
 
 const progressReg = /Progress:\s(\d+)\/(\d+)\s\(.+?\).+?\((.+?\/s).*?\)/g;
 
-export const spawnDownload = (
-  id: number,
-  abortSignal: AbortController,
-  url: string,
-  local: string,
-  name: string
-): Promise<void> => {
+export const spawnDownload = (params: DownloadParams): Promise<void> => {
+  const { id, abortSignal, url, local, name, deleteSegments } = params;
+
   return new Promise((resolve, reject) => {
     // const downloader = spawn(downloaderPath, [
     //   url,
@@ -22,13 +18,15 @@ export const spawnDownload = (
     //   name,
     // ]);
 
-    const downloader = spawn(
-      downloaderPath,
-      [url, "--workDir", local, "--saveName", name],
-      {
-        signal: abortSignal.signal,
-      }
-    );
+    const spawnParams = [url, "--workDir", local, "--saveName", name];
+
+    if (deleteSegments) {
+      spawnParams.push("--enableDelAfterDone");
+    }
+
+    const downloader = spawn(downloaderPath, spawnParams, {
+      signal: abortSignal.signal,
+    });
 
     downloader.stdout.on("data", (data) => {
       const str = iconv.decode(Buffer.from(data), "gbk");

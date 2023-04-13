@@ -120,8 +120,8 @@ export interface DownloadService extends EventEmitter {
 
 export type Task = {
   id: number;
-  params: string[];
-  process: (...args: any[]) => Promise<void>;
+  params: Omit<DownloadParams, "id" | "abortSignal">;
+  process: (params: DownloadParams) => Promise<void>;
 };
 
 export interface DownloadProgress {
@@ -129,4 +129,13 @@ export interface DownloadProgress {
   cur: string;
   total: string;
   speed: string;
+}
+
+export interface DownloadParams {
+  id: number;
+  url: string;
+  local: string;
+  name: string;
+  abortSignal: AbortController;
+  deleteSegments?: boolean;
 }
