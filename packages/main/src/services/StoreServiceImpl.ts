@@ -26,6 +26,7 @@ export default class StoreServiceImpl
         promptTone: true,
         proxy: "",
         useProxy: false,
+        deleteSegments: true,
       },
     });
   }

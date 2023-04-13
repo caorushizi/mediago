@@ -1,18 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from ".";
 
-interface AppStore {
-  local: string;
-  promptTone: boolean;
-  proxy: string;
-  useProxy: boolean;
-}
-
 const initialState: AppStore = {
   local: "",
   promptTone: true,
   proxy: "",
   useProxy: false,
+  deleteSegments: true,
 };
 
 export const appSlice = createSlice({

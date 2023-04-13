@@ -48,9 +48,17 @@ export default class DownloadController implements Controller {
     const { name, url } = video;
     const local = this.storeService.get("local");
 
+    // 从配置中添加参数
+    const deleteSegments = this.storeService.get("deleteSegments");
+
     const task: Task = {
       id: vid,
-      params: [url, local, name],
+      params: {
+        url,
+        local,
+        name,
+        deleteSegments,
+      },
       process: spawnDownload,
     };
     await this.videoRepository.changeVideoStatus(vid, DownloadStatus.Watting);
