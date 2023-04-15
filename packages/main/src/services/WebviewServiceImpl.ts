@@ -64,8 +64,6 @@ export default class WebviewServiceImpl implements WebviewService {
   }
 
   async init(): Promise<void> {
-    isDev && this.view.webContents.openDevTools();
-
     this.view.webContents.on("dom-ready", () => {
       const title = this.view.webContents.getTitle();
       const url = this.view.webContents.getURL();
@@ -97,10 +95,12 @@ export default class WebviewServiceImpl implements WebviewService {
 
   show() {
     this.curWindow.setBrowserView(this.view);
+    isDev && this.view.webContents.openDevTools();
   }
 
   hide() {
     this.curWindow.setBrowserView(null);
+    isDev && this.view.webContents.closeDevTools();
   }
 
   setBounds(bounds: Electron.Rectangle): void {

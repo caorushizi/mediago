@@ -198,7 +198,6 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     return () => {
       resizeObserver.current?.disconnect();
       webviewHide();
-      // setWebviewBounds({ x: 0, y: 0, height: 0, width: 0 });
     };
   }, [!!currentUrlRef.current]);
 
