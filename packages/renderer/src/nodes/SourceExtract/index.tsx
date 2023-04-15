@@ -1,10 +1,11 @@
 import {
   ArrowLeftOutlined,
   ArrowRightOutlined,
-  CloudDownloadOutlined,
-  FileAddOutlined,
+  DownloadOutlined,
   HomeOutlined,
+  ImportOutlined,
   LinkOutlined,
+  PlusOutlined,
   ReloadOutlined,
   StarFilled,
   StarOutlined,
@@ -57,6 +58,8 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     onFavoriteItemContextMenu,
     webviewHide,
     webviewShow,
+    downloadNow,
+    combineToHomePage,
   } = useElectron();
   const dispatch = useDispatch();
   const [inputVal, setInputVal] = useState("");
@@ -166,7 +169,9 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   };
 
   const receiveLinkMessage = (e: any, msg: LinkMessage) => {
-    setSourceList((list) => [msg, ...list]);
+    if (!sourceList.find((item) => item.url === msg.url)) {
+      setSourceList((list) => [msg, ...list]);
+    }
   };
 
   useEffect(() => {
@@ -240,29 +245,54 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     });
   };
 
-  const genExtra = (item: LinkMessage) => {
-    return (
-      <Space>
-        <Button type="link" title="立即下载" icon={<CloudDownloadOutlined />} />
-        <Button
-          type="link"
-          title="添加到下载列表"
-          onClick={() => onAddDownloadItem(item)}
-          icon={<FileAddOutlined />}
-        />
-      </Space>
-    );
+  const onDownloadNow = (item: LinkMessage) => {
+    dispatch(increase());
+    downloadNow({
+      name: item.title,
+      url: item.url,
+    });
   };
 
   // 渲染收藏夹
   const renderWebviewSider = () => {
     return (
       <div className="webview-sider">
-        <Collapse className="webview-sider-inner">
-          {sourceList.map((item, index) => {
+        <Collapse className="webview-sider-inner" bordered={false} size="small">
+          {sourceList.map((item) => {
             return (
-              <AntDPanel header={item.title} key={index} extra={genExtra(item)}>
-                <div>{123}</div>
+              <AntDPanel
+                className="sider-list-container"
+                header={item.title}
+                key={item.url}
+                extra={
+                  <Space>
+                    <Button
+                      type="link"
+                      title="添加到下载列表"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onAddDownloadItem(item);
+                      }}
+                      icon={<PlusOutlined />}
+                    />
+                    <Button
+                      type="link"
+                      title="立即下载"
+                      icon={<DownloadOutlined />}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onDownloadNow(item);
+                      }}
+                    />
+                  </Space>
+                }
+              >
+                <div className="sider-list">
+                  <div className="sider-item">视频名： {item.title}</div>
+                  <div className="sider-item">视频链接： {item.url}</div>
+                </div>
               </AntDPanel>
             );
           })}
@@ -271,22 +301,31 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     );
   };
 
+  // 合并到主页
+  const onCombineToHome = () => {
+    combineToHomePage();
+  };
+
   // 渲染工具栏
   const renderToolbar = () => {
     return (
       <Space.Compact className="action-bar" block>
         {inputVal && (
           <>
-            <Button type="text" onClick={onClickGoBack}>
+            <Button title="回退" type="text" onClick={onClickGoBack}>
               <ArrowLeftOutlined />
             </Button>
-            <Button type="text" onClick={onClickReload}>
+            <Button title="刷新" type="text" onClick={onClickReload}>
               <ReloadOutlined />
             </Button>
-            <Button type="text" onClick={onClickGoHome}>
+            <Button title="首页" type="text" onClick={onClickGoHome}>
               <HomeOutlined />
             </Button>
-            <Button type="text" onClick={onClickAddFavorite}>
+            <Button
+              type="text"
+              title={curIsFavorite ? "取消收藏" : "收藏"}
+              onClick={onClickAddFavorite}
+            >
               {curIsFavorite ? <StarFilled /> : <StarOutlined />}
             </Button>
           </>
@@ -298,9 +337,14 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
           onKeyDown={onInputKeyDown}
           placeholder="请输入网址链接……"
         />
-        <Button type="text" onClick={onClickEnter}>
+        <Button title="访问" type="text" onClick={onClickEnter}>
           <ArrowRightOutlined />
         </Button>
+        {page && (
+          <Button type="text" title="合并到主窗口" onClick={onCombineToHome}>
+            <ImportOutlined />
+          </Button>
+        )}
       </Space.Compact>
     );
   };
@@ -309,19 +353,19 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   const renderBrowserPanel = () => {
     return (
       <div className="webview-container">
-        {sourceList.length > 0 ? (
-          <PanelGroup autoSaveId="example" direction="horizontal">
-            <Panel minSize={50}>
-              <div className="webview-inner" ref={webviewRef} />
-            </Panel>
-            <PanelResizeHandle className="divider">
-              <div className="handle" />
-            </PanelResizeHandle>
-            <Panel minSize={30}>{renderWebviewSider()}</Panel>
-          </PanelGroup>
-        ) : (
-          <div className="webview-inner" ref={webviewRef} />
-        )}
+        <PanelGroup autoSaveId="example" direction="horizontal">
+          <Panel minSize={50}>
+            <div className="webview-inner" ref={webviewRef} />
+          </Panel>
+          {sourceList.length > 0 && (
+            <>
+              <PanelResizeHandle className="divider">
+                <div className="handle" />
+              </PanelResizeHandle>
+              <Panel minSize={30}>{renderWebviewSider()}</Panel>
+            </>
+          )}
+        </PanelGroup>
       </div>
     );
   };

@@ -51,6 +51,13 @@ export default class BrowserWindowServiceImpl
       e.preventDefault();
       this.hide();
     });
+
+    this.storeService.onDidChange("openInNewWindow", (newValue) => {
+      // 向所有窗口发送通知
+      if (newValue === false) {
+        this.hideWindow();
+      }
+    });
   }
 
   readyToShow = () => {
@@ -65,5 +72,10 @@ export default class BrowserWindowServiceImpl
 
     this.show();
     isDev && this.webContents.openDevTools();
+  };
+
+  hideWindow = () => {
+    this.hide();
+    isDev && this.webContents.closeDevTools();
   };
 }

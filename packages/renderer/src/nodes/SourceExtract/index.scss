@@ -35,6 +35,19 @@
                 white-space: nowrap;
               }
             }
+            .sider-list-container {
+              .sider-list {
+                .sider-item {
+                  font-size: 12px;
+                  color: #666;
+                  word-break: break-all;
+                  margin-top: 5px;
+                  &:first-child {
+                    margin-top: -5px;
+                  }
+                }
+              }
+            }
           }
         }
         .divider {

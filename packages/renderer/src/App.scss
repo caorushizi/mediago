@@ -9,6 +9,13 @@
     font-weight: bold;
     padding: 0 20px;
   }
+  .container-sider {
+    .like-item {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+  }
   .container-footer {
     padding: 5px;
     background: #fff;

@@ -71,9 +71,12 @@ export default class ElectronApp implements App {
     );
 
     if (isDev) {
-      installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS])
-        .then((name) => console.log(`Added Extension:  ${name}`))
-        .catch((err) => console.log("An error occurred: ", err));
+      try {
+        await installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS]);
+        this.logger.info("devtools installed");
+      } catch (err) {
+        this.logger.error("devtools install error", err);
+      }
     }
   }
 }

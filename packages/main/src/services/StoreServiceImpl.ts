@@ -3,9 +3,8 @@ import { session } from "electron/main";
 import { inject, injectable } from "inversify";
 import { AppStore } from "main";
 import { download, PERSIST_WEBVIEW, workspace } from "../helper/variables";
-import { StoreService } from "../interfaces";
+import { LoggerService, StoreService } from "../interfaces";
 import { TYPES } from "../types";
-import LoggerServiceImpl from "./LoggerServiceImpl";
 
 @injectable()
 export default class StoreServiceImpl
@@ -14,7 +13,7 @@ export default class StoreServiceImpl
 {
   constructor(
     @inject(TYPES.LoggerService)
-    private readonly logger: LoggerServiceImpl
+    private readonly logger: LoggerService,
   ) {
     super({
       name: "config",
