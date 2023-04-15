@@ -49,7 +49,7 @@ export default class BrowserWindowServiceImpl
     this.once("ready-to-show", this.readyToShow);
     this.on("close", (e: Event) => {
       e.preventDefault();
-      this.hide();
+      this.hideWindow();
     });
 
     this.storeService.onDidChange("openInNewWindow", (newValue) => {
@@ -76,6 +76,11 @@ export default class BrowserWindowServiceImpl
 
   hideWindow = () => {
     this.hide();
-    isDev && this.webContents.closeDevTools();
+
+    // 关闭开发者工具
+    if (isDev) {
+      this.webContents.closeDevTools();
+      this.getBrowserView()?.webContents.closeDevTools();
+    }
   };
 }

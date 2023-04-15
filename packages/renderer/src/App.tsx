@@ -66,16 +66,17 @@ const App: FC = () => {
               type="text"
               style={{ marginLeft: "auto" }}
               icon={<ExportOutlined />}
-              onClick={(e) => {
+              onClick={async (e) => {
                 e.stopPropagation();
                 e.preventDefault();
 
                 dispatch(setAppStore({ openInNewWindow: true }));
-                ipcSetAppStore("openInNewWindow", true);
-                showBrowserWindow();
                 if (location.pathname === "/source-extract") {
                   navigate("/");
                 }
+                // FIXME: 有可能 webview 还没有完全隐藏
+                await ipcSetAppStore("openInNewWindow", true);
+                await showBrowserWindow();
               }}
             />
           )}
