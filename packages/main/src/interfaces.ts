@@ -11,6 +11,11 @@ export interface MainWindowService extends BrowserWindow {
   init: () => void;
 }
 
+export interface BrowserWindowService extends BrowserWindow {
+  init: () => void;
+  showWindow: () => void;
+}
+
 export interface App {
   init: () => void;
 }
@@ -102,6 +107,8 @@ export interface WebviewService {
   goBack: () => Promise<boolean>;
   reload: () => Promise<void>;
   goHome: () => Promise<void>;
+  hide: () => void;
+  show: () => void;
 }
 
 export enum DownloadStatus {

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import PageContainer from "../../components/PageContainer";
 import {
   ProForm,
@@ -27,6 +27,10 @@ const SettingPage: React.FC = () => {
   const formRef = useRef<FormInstance<AppStore>>();
   const settings = useSelector(selectStore);
   const { data: envPath } = useRequest(getEnvPath);
+
+  useEffect(() => {
+    formRef.current?.setFieldsValue(settings);
+  }, [settings]);
 
   const onSelectDir = async () => {
     const local = await onSelectDownloadDir();
@@ -99,6 +103,7 @@ const SettingPage: React.FC = () => {
             placeholder="请选择视频下载目录"
             label={renderButtonLable()}
           />
+          <ProFormSwitch label="新窗口打开浏览器" name="openInNewWindow" />
           <ProFormSwitch label="下载完成提示" name="promptTone" />
           <ProFormText
             width="xl"

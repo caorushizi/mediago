@@ -4,6 +4,7 @@ import WebviewController from "controller/WebviewController";
 import { Container } from "inversify";
 import FavoriteRepositoryImpl from "repository/favoriteRepositoryImpl";
 import VideoRepositoryImpl from "repository/videoRepositoryImpl";
+import BrowserWindowServiceImpl from "services/BrowserWindowServiceImpl";
 import DatabaseServiceImpl from "services/DatabaseServiceImpl";
 import DownloadServiceImpl from "services/DownloadServiceImpl";
 import StoreServiceImpl from "services/StoreServiceImpl";
@@ -22,6 +23,7 @@ import {
   DatabaseService,
   FavoriteRepository,
   WebviewService,
+  BrowserWindowService,
 } from "./interfaces";
 import IpcHandlerServiceImpl from "./services/IpcHandlerServiceImpl";
 import LoggerServiceImpl from "./services/LoggerServiceImpl";
@@ -38,6 +40,9 @@ const container = new Container({
 container
   .bind<MainWindowService>(TYPES.MainWindowService)
   .to(MainWindowServiceImpl);
+container
+  .bind<BrowserWindowService>(TYPES.BrowserWindowService)
+  .to(BrowserWindowServiceImpl);
 container.bind<App>(TYPES.App).to(ElectronApp);
 container
   .bind<IpcHandlerService>(TYPES.IpcHandlerService)

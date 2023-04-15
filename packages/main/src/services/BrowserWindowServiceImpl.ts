@@ -1,0 +1,69 @@
+import {
+  BrowserWindow,
+  BrowserWindowConstructorOptions,
+  Event,
+} from "electron";
+import isDev from "electron-is-dev";
+import { inject, injectable } from "inversify";
+import { resolve } from "path";
+import { TYPES } from "../types";
+import {
+  BrowserWindowService,
+  LoggerService,
+  StoreService,
+} from "../interfaces";
+
+@injectable()
+export default class BrowserWindowServiceImpl
+  extends BrowserWindow
+  implements BrowserWindowService
+{
+  private ready = false;
+
+  constructor(
+    @inject(TYPES.LoggerService)
+    private readonly logger: LoggerService,
+    @inject(TYPES.StoreService)
+    private readonly storeService: StoreService
+  ) {
+    const options: BrowserWindowConstructorOptions = {
+      width: 1100,
+      minWidth: 1100,
+      height: 680,
+      minHeight: 680,
+      show: false,
+      frame: true,
+      webPreferences: {
+        preload: resolve(__dirname, "./preload.js"),
+      },
+    };
+    super(options);
+  }
+
+  init(): void {
+    const url = isDev
+      ? "http://localhost:8555/browser"
+      : "mediago://index.html/browser";
+    void this.loadURL(url);
+
+    this.once("ready-to-show", this.readyToShow);
+    this.on("close", (e: Event) => {
+      e.preventDefault();
+      this.hide();
+    });
+  }
+
+  readyToShow = () => {
+    this.ready = true;
+  };
+
+  showWindow = () => {
+    if (!this.ready) {
+      this.logger.error("BrowserWindow is not ready to show.");
+      return;
+    }
+
+    this.show();
+    isDev && this.webContents.openDevTools();
+  };
+}

@@ -1,13 +1,7 @@
 import { IpcMainEvent } from "electron";
 import { inject, injectable } from "inversify";
 import { handle } from "../helper/decorator";
-import {
-  StoreService,
-  LoggerService,
-  type Controller,
-  FavoriteRepository,
-  WebviewService,
-} from "../interfaces";
+import { LoggerService, type Controller, WebviewService } from "../interfaces";
 import { TYPES } from "../types";
 
 @injectable()
@@ -15,10 +9,6 @@ export default class WebviewController implements Controller {
   constructor(
     @inject(TYPES.LoggerService)
     private readonly logger: LoggerService,
-    @inject(TYPES.StoreService)
-    private readonly store: StoreService,
-    @inject(TYPES.FavoriteRepository)
-    private readonly favoriteRepository: FavoriteRepository,
     @inject(TYPES.WebviewService)
     private readonly webview: WebviewService
   ) {}
@@ -41,6 +31,16 @@ export default class WebviewController implements Controller {
   @handle("webview-reload")
   async webviewReload() {
     await this.webview.reload();
+  }
+
+  @handle("webview-show")
+  async webviewShow() {
+    this.webview.show();
+  }
+
+  @handle("webview-hide")
+  async webviewHide() {
+    this.webview.hide();
   }
 
   @handle("webview-go-home")

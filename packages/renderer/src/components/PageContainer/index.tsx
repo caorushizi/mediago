@@ -8,6 +8,7 @@ interface PageContainerProps {
   rightExtra?: React.ReactNode | null;
   title?: string;
   className?: string;
+  extraClassName?: string;
 }
 
 const PageContainer: FC<PageContainerProps> = ({
@@ -16,9 +17,10 @@ const PageContainer: FC<PageContainerProps> = ({
   rightExtra,
   title,
   className,
+  extraClassName,
 }) => {
   return (
-    <div className={classNames("page-container", className)}>
+    <div className={classNames("page-container", className, extraClassName)}>
       {title && (
         <div className="page-container-header">
           <div className="page-container-header-title">

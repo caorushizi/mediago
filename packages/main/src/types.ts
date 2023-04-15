@@ -13,6 +13,7 @@ const TYPES = {
   FavoriteRepository: Symbol.for("FavoriteRepository"),
   WebviewService: Symbol.for("WebviewService"),
   DownloadService: Symbol.for("DownloadService"),
+  BrowserWindowService: Symbol.for("BrowserWindowService"),
 };
 
 export { TYPES };
