@@ -1,6 +1,7 @@
 import { app } from "electron";
 import { inject, injectable } from "inversify";
 import {
+  BrowserWindowService,
   DatabaseService,
   DownloadStatus,
   IpcHandlerService,
@@ -14,6 +15,11 @@ import {
   type App,
 } from "./interfaces";
 import { TYPES } from "./types";
+import installExtension, {
+  REDUX_DEVTOOLS,
+  REACT_DEVELOPER_TOOLS,
+} from "electron-devtools-installer";
+import isDev from "electron-is-dev";
 
 @injectable()
 export default class ElectronApp implements App {
@@ -35,7 +41,9 @@ export default class ElectronApp implements App {
     @inject(TYPES.StoreService)
     private readonly storeService: StoreService,
     @inject(TYPES.VideoRepository)
-    private readonly videoRepository: VideoRepository
+    private readonly videoRepository: VideoRepository,
+    @inject(TYPES.BrowserWindowService)
+    private readonly browserWindow: BrowserWindowService
   ) {}
 
   async init(): Promise<void> {
@@ -46,7 +54,8 @@ export default class ElectronApp implements App {
     });
 
     this.protocolService.create();
-    await this.mainWindow.init();
+    this.mainWindow.init();
+    this.browserWindow.init();
     this.ipcHandler.init();
     this.updateService.init();
     await this.dataService.init();
@@ -60,5 +69,11 @@ export default class ElectronApp implements App {
       videoIds,
       DownloadStatus.Failed
     );
+
+    if (isDev) {
+      installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS])
+        .then((name) => console.log(`Added Extension:  ${name}`))
+        .catch((err) => console.log("An error occurred: ", err));
+    }
   }
 }

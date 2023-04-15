@@ -41,6 +41,7 @@ const HomePage: FC = () => {
     onDownloadListContextMenu,
     deleteDownloadItem,
     convertToAudio,
+    showBrowserWindow,
   } = useElectron();
   const appStore = useSelector(selectStore);
   const [filter, setFilter] = useState(DownloadFilter.list);
@@ -292,7 +293,14 @@ const HomePage: FC = () => {
           <Radio.Button value="done">下载完成</Radio.Button>
         </Radio.Group>
       }
-      rightExtra={<Button onClick={() => refresh()}>刷新</Button>}
+      rightExtra={
+        <Space>
+          <Button type="primary" onClick={() => showBrowserWindow()}>
+            打开浏览器
+          </Button>
+          <Button onClick={() => refresh()}>刷新</Button>
+        </Space>
+      }
       className="home-page"
     >
       <ProList<DownloadItem>

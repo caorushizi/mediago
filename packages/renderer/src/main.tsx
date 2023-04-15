@@ -12,7 +12,6 @@ import store from "./store";
 import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
 import zhCN from "antd/locale/zh_CN";
-import "antd/dist/reset.css";
 import "./index.scss";
 import { tdApp } from "./utils";
 
@@ -31,6 +30,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
               <Route path="settings" index element={<SettingPage />} />
               <Route path="*" element={<div>404</div>} />
             </Route>
+            <Route path="/browser" element={<SourceExtract page={true} />} />
           </Routes>
         </BrowserRouter>
       </ConfigProvider>

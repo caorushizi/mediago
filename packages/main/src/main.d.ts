@@ -41,6 +41,9 @@ declare interface ElectronAPI {
   convertToAudio: (id: number) => Promise<void>;
   rendererEvent: (channel: string, funcId: string, listener: any) => void;
   removeEventListener: (channel: string, funcId: string) => void;
+  showBrowserWindow: () => Promise<void>;
+  webviewHide: () => Promise<void>;
+  webviewShow: () => Promise<void>;
 }
 
 declare interface LinkMessage {
@@ -59,4 +62,6 @@ declare interface AppStore {
   useProxy: boolean;
   // 下载完成后删除原始文件
   deleteSegments: boolean;
+  // 新窗口打开浏览器
+  openInNewWindow: boolean;
 }

@@ -5,6 +5,7 @@ import {
   session,
 } from "electron";
 import {
+  BrowserWindowService,
   LoggerService,
   MainWindowService,
   WebviewService,
@@ -25,7 +26,9 @@ export default class WebviewServiceImpl implements WebviewService {
     @inject(TYPES.MainWindowService)
     private readonly mainWindow: MainWindowService,
     @inject(TYPES.LoggerService)
-    private readonly logger: LoggerService
+    private readonly logger: LoggerService,
+    @inject(TYPES.BrowserWindowService)
+    private readonly browserWindow: BrowserWindowService
   ) {
     const view = new BrowserView({
       webPreferences: {
@@ -55,21 +58,19 @@ export default class WebviewServiceImpl implements WebviewService {
         url: detailsUrl.toString(),
         title: webContents?.getTitle() || "没有获取到名称",
       };
-      this.mainWindow.webContents.send("webview-link-message", linkMessage);
+      this.curWindow.webContents.send("webview-link-message", linkMessage);
     }
     callback({});
   }
 
   async init(): Promise<void> {
-    this.mainWindow.setBrowserView(this.view);
-    this.view.setBounds({ x: 0, y: 0, height: 0, width: 0 });
     isDev && this.view.webContents.openDevTools();
 
     this.view.webContents.on("dom-ready", () => {
       const title = this.view.webContents.getTitle();
       const url = this.view.webContents.getURL();
 
-      this.mainWindow.webContents.send("webview-dom-ready", { title, url });
+      this.curWindow.webContents.send("webview-dom-ready", { title, url });
 
       this.view.webContents.setWindowOpenHandler((details) => {
         void this.view.webContents.loadURL(details.url);
@@ -92,6 +93,14 @@ export default class WebviewServiceImpl implements WebviewService {
 
   setBackgroundColor(color: string): void {
     this.view.setBackgroundColor(color);
+  }
+
+  show() {
+    this.curWindow.setBrowserView(this.view);
+  }
+
+  hide() {
+    this.curWindow.setBrowserView(null);
   }
 
   setBounds(bounds: Electron.Rectangle): void {
@@ -124,5 +133,12 @@ export default class WebviewServiceImpl implements WebviewService {
 
   async goHome() {
     this.webContents.clearHistory();
+  }
+
+  get curWindow() {
+    if (this.browserWindow.isVisible()) {
+      return this.browserWindow;
+    }
+    return this.mainWindow;
   }
 }

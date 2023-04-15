@@ -20,6 +20,7 @@ import {
   FavoriteRepository,
   MainWindowService,
   VideoRepository,
+  BrowserWindowService,
 } from "../interfaces";
 import { TYPES } from "../types";
 import fs from "fs-extra";
@@ -36,7 +37,9 @@ export default class HomeController implements Controller {
     @inject(TYPES.MainWindowService)
     private readonly mainWindow: MainWindowService,
     @inject(TYPES.VideoRepository)
-    private readonly videoRepository: VideoRepository
+    private readonly videoRepository: VideoRepository,
+    @inject(TYPES.BrowserWindowService)
+    private readonly browserWindow: BrowserWindowService
   ) {}
 
   @handle("get-env-path")
@@ -189,5 +192,10 @@ export default class HomeController implements Controller {
     } else {
       return Promise.reject("未找到文件，可能是文件已经删除");
     }
+  }
+
+  @handle("show-browser-window")
+  async showBrowserWindow() {
+    this.browserWindow.showWindow();
   }
 }

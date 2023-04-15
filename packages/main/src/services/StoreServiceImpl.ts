@@ -27,6 +27,7 @@ export default class StoreServiceImpl
         proxy: "",
         useProxy: false,
         deleteSegments: true,
+        openInNewWindow: false,
       },
     });
   }

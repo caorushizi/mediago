@@ -1,4 +1,9 @@
 .source-extract {
+  &.is-page {
+    padding-left: 10px;
+    height: 100vh;
+    width: 100vw;
+  }
   .source-extract-inner {
     padding: 0;
     display: flex;
@@ -18,22 +23,38 @@
           width: 100%;
         }
         .webview-sider {
-          width: 300px;
-          padding: 0 10px 0 5px;
-          .list-item {
-            .title {
-              cursor: default;
-              // text-overflow: ellipsis;
-              // overflow: hidden;
-              // white-space: nowrap;
-              display: -webkit-box; //设置盒子模型，-webkit-box是移动端弹性盒模型
-              -webkit-line-clamp: 1; //设置显示几行
-              overflow: hidden; // 超出部分隐藏
-              text-overflow: ellipsis; //隐藏部门用省略号显示
-              /* autoprefixer: off */ //这行必须要用
-              -webkit-box-orient: vertical; //设置父容器里的子容器的排列方式 垂直方向排列
-              /* autoprefixer: on */ //这行必须设置
+          height: 100%;
+          padding: 0 10px 10px 5px;
+          overflow: auto;
+          .webview-sider-inner {
+            .ant-collapse-header {
+              align-items: center;
+              .ant-collapse-header-text {
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+              }
             }
+          }
+        }
+        .divider {
+          position: relative;
+          width: 6px;
+          background-color: #ddd;
+          cursor: ew-resize;
+          .handle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            margin-top: -6px;
+            margin-left: -3px;
+            background-color: transparent;
+            border-right: 6px solid #aaa;
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+            transform: translateX(-50%);
           }
         }
       }

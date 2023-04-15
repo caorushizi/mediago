@@ -40,6 +40,9 @@ const handleApi: ElectronAPI = {
     ipcRenderer.removeListener(channel, fun);
     delete apiFunctions[key];
   },
+  showBrowserWindow: () => ipcRenderer.invoke("show-browser-window"),
+  webviewHide: () => ipcRenderer.invoke("webview-hide"),
+  webviewShow: () => ipcRenderer.invoke("webview-show"),
 };
 
 contextBridge.exposeInMainWorld(apiKey, handleApi);

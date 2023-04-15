@@ -1,16 +1,16 @@
 import {
   ArrowLeftOutlined,
   ArrowRightOutlined,
+  CloudDownloadOutlined,
   FileAddOutlined,
   HomeOutlined,
   LinkOutlined,
-  PlayCircleOutlined,
   ReloadOutlined,
   StarFilled,
   StarOutlined,
 } from "@ant-design/icons";
 import { useRequest } from "ahooks";
-import { Avatar, Button, Input, List, message, Space } from "antd";
+import { Avatar, Button, Collapse, Input, List, Space } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import PageContainer from "../../components/PageContainer";
@@ -18,7 +18,10 @@ import useElectron from "../../hooks/electron";
 import { increase } from "../../store/downloadSlice";
 import { requestImage } from "../../utils";
 import { isUrl } from "../../utils/url";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "./index.scss";
+
+const { Panel: AntDPanel } = Collapse;
 
 interface DivRect {
   left: number;
@@ -34,7 +37,11 @@ const computeRect = ({ left, top, width, height }: DivRect) => ({
   height: Math.floor(height),
 });
 
-const SourceExtract: React.FC = () => {
+interface SourceExtractProps {
+  page?: boolean;
+}
+
+const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   const {
     getFavorites,
     addFavorite,
@@ -48,6 +55,8 @@ const SourceExtract: React.FC = () => {
     webwiewGoHome,
     addDownloadItem,
     onFavoriteItemContextMenu,
+    webviewHide,
+    webviewShow,
   } = useElectron();
   const dispatch = useDispatch();
   const [inputVal, setInputVal] = useState("");
@@ -178,11 +187,13 @@ const SourceExtract: React.FC = () => {
       });
 
       resizeObserver.current.observe(webviewRef.current);
+      webviewShow();
     }
 
     return () => {
       resizeObserver.current?.disconnect();
-      setWebviewBounds({ x: 0, y: 0, height: 0, width: 0 });
+      webviewHide();
+      // setWebviewBounds({ x: 0, y: 0, height: 0, width: 0 });
     };
   }, [!!currentUrlRef.current]);
 
@@ -229,32 +240,38 @@ const SourceExtract: React.FC = () => {
     });
   };
 
+  const genExtra = (item: LinkMessage) => {
+    return (
+      <Space>
+        <Button type="link" title="立即下载" icon={<CloudDownloadOutlined />} />
+        <Button
+          type="link"
+          title="添加到下载列表"
+          onClick={() => onAddDownloadItem(item)}
+          icon={<FileAddOutlined />}
+        />
+      </Space>
+    );
+  };
+
+  // 渲染收藏夹
   const renderWebviewSider = () => {
     return (
       <div className="webview-sider">
-        <List
-          size="small"
-          bordered
-          dataSource={sourceList}
-          renderItem={(item) => (
-            <List.Item className="list-item" title={item.title}>
-              <Space>
-                <PlayCircleOutlined />
-                <div className="title">{item.title}</div>
-                {/* <Button type="link" icon={<CloudDownloadOutlined />} /> */}
-                <Button
-                  type="link"
-                  onClick={() => onAddDownloadItem(item)}
-                  icon={<FileAddOutlined />}
-                />
-              </Space>
-            </List.Item>
-          )}
-        />
+        <Collapse className="webview-sider-inner">
+          {sourceList.map((item, index) => {
+            return (
+              <AntDPanel header={item.title} key={index} extra={genExtra(item)}>
+                <div>{123}</div>
+              </AntDPanel>
+            );
+          })}
+        </Collapse>
       </div>
     );
   };
 
+  // 渲染工具栏
   const renderToolbar = () => {
     return (
       <Space.Compact className="action-bar" block>
@@ -288,43 +305,66 @@ const SourceExtract: React.FC = () => {
     );
   };
 
+  // 渲染浏览器面板
+  const renderBrowserPanel = () => {
+    return (
+      <div className="webview-container">
+        {sourceList.length > 0 ? (
+          <PanelGroup autoSaveId="example" direction="horizontal">
+            <Panel minSize={50}>
+              <div className="webview-inner" ref={webviewRef} />
+            </Panel>
+            <PanelResizeHandle className="divider">
+              <div className="handle" />
+            </PanelResizeHandle>
+            <Panel minSize={30}>{renderWebviewSider()}</Panel>
+          </PanelGroup>
+        ) : (
+          <div className="webview-inner" ref={webviewRef} />
+        )}
+      </div>
+    );
+  };
+
+  const renderFavoriteList = () => {
+    return (
+      <List
+        grid={{ gutter: 16, lg: 5, xl: 7, xxl: 7 }}
+        className="list-container"
+        itemLayout="vertical"
+        dataSource={favoriteList}
+        renderItem={(item) => (
+          <List.Item
+            className="list-item"
+            onContextMenu={() => {
+              onFavoriteItemContextMenu(item.id);
+            }}
+          >
+            <div
+              className="list-tem-card"
+              onClick={() => onClickLoadItem(item)}
+            >
+              {item.icon ? (
+                <Avatar size={52} src={item.icon} icon={<LinkOutlined />} />
+              ) : (
+                <Avatar size={52} icon={<LinkOutlined />} />
+              )}
+              <div className="card-text">{item.title}</div>
+            </div>
+          </List.Item>
+        )}
+      />
+    );
+  };
+
   return (
-    <PageContainer className="source-extract">
+    <PageContainer
+      className={"source-extract"}
+      extraClassName={page ? "is-page" : ""}
+    >
       {renderToolbar()}
       <div className="source-extract-content">
-        {inputVal ? (
-          <div className="webview-container">
-            <div className="webview-inner" ref={webviewRef} />
-            {sourceList.length > 0 && renderWebviewSider()}
-          </div>
-        ) : (
-          <List
-            grid={{ gutter: 16, lg: 5, xl: 7, xxl: 7 }}
-            className="list-container"
-            itemLayout="vertical"
-            dataSource={favoriteList}
-            renderItem={(item) => (
-              <List.Item
-                className="list-item"
-                onContextMenu={() => {
-                  onFavoriteItemContextMenu(item.id);
-                }}
-              >
-                <div
-                  className="list-tem-card"
-                  onClick={() => onClickLoadItem(item)}
-                >
-                  {item.icon ? (
-                    <Avatar size={52} src={item.icon} icon={<LinkOutlined />} />
-                  ) : (
-                    <Avatar size={52} icon={<LinkOutlined />} />
-                  )}
-                  <div className="card-text">{item.title}</div>
-                </div>
-              </List.Item>
-            )}
-          />
-        )}
+        {inputVal ? renderBrowserPanel() : renderFavoriteList()}
       </div>
     </PageContainer>
   );

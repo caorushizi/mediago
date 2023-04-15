@@ -7,26 +7,19 @@ const initialState: AppStore = {
   proxy: "",
   useProxy: false,
   deleteSegments: true,
+  openInNewWindow: false,
 };
 
 export const appSlice = createSlice({
   name: "app",
   initialState,
   reducers: {
-    setAppStore(state, { payload }) {
-      const { local, promptTone, proxy, useProxy } = payload;
-      if (local) {
-        state.local = payload.local;
-      }
-      if (promptTone != null) {
-        state.promptTone = payload.promptTone;
-      }
-      if (proxy != null) {
-        state.proxy = proxy;
-      }
-      if (useProxy != null) {
-        state.useProxy = useProxy;
-      }
+    setAppStore(state, { payload }: { payload: Partial<AppStore> }) {
+      Object.keys(payload).forEach((key) => {
+        if (payload[key] != null) {
+          state[key] = payload[key] as never;
+        }
+      });
     },
   },
 });
