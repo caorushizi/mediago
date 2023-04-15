@@ -1,6 +1,7 @@
 import {
   BrowserWindow,
   BrowserWindowConstructorOptions,
+  Menu,
   Notification,
 } from "electron";
 import isDev from "electron-is-dev";
@@ -47,6 +48,8 @@ export default class MainWindowServiceImpl
   }
 
   init(): void {
+    Menu.setApplicationMenu(null);
+
     const url = isDev ? "http://localhost:8555/" : "mediago://index.html/";
     void this.loadURL(url);
 
