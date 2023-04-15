@@ -14,6 +14,7 @@ import {
 } from "../interfaces";
 import { TYPES } from "../types";
 import { spawnDownload } from "helper";
+import MainWindowServiceImpl from "services/MainWindowServiceImpl";
 
 @injectable()
 export default class DownloadController implements Controller {
@@ -25,12 +26,26 @@ export default class DownloadController implements Controller {
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
     @inject(TYPES.DownloadService)
-    private readonly downloadService: DownloadService
+    private readonly downloadService: DownloadService,
+    @inject(TYPES.MainWindowService)
+    private readonly mainWindow: MainWindowServiceImpl
   ) {}
 
   @handle("add-download-item")
   async addDownloadItem(e: IpcMainEvent, video: DownloadItem) {
-    return await this.videoRepository.addVideo(video);
+    const item = await this.videoRepository.addVideo(video);
+    // 这里向页面发送消息，通知页面更新
+    this.mainWindow.webContents.send("download-item-notifier", item);
+    return item;
+  }
+
+  @handle("download-now")
+  async downloadNow(e: IpcMainEvent, video: DownloadItem) {
+    // 添加下载项
+    const item = await this.addDownloadItem(e, video);
+    // 开始下载
+    await this.startDownload(e, item.id);
+    return item;
   }
 
   @handle("get-download-items")

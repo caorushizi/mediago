@@ -44,6 +44,8 @@ declare interface ElectronAPI {
   showBrowserWindow: () => Promise<void>;
   webviewHide: () => Promise<void>;
   webviewShow: () => Promise<void>;
+  downloadNow: (video: DownloadItem) => Promise<void>;
+  combineToHomePage: () => Promise<void>;
 }
 
 declare interface LinkMessage {

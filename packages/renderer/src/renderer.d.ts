@@ -38,7 +38,7 @@ declare interface ElectronAPI {
   onSelectDownloadDir: () => Promise<string>;
   setAppStore: (key: keyof AppStore, val: any) => Promise<void>;
   openDir: (dir: string) => Promise<void>;
-  addDownloadItem: (DownloadItem) => Promise<DownloadItem>;
+  addDownloadItem: (video: Partial<DownloadItem>) => Promise<DownloadItem>;
   getDownloadItems: (
     pagination: DownloadItemPagination
   ) => Promise<VideoResponse>;
@@ -54,6 +54,8 @@ declare interface ElectronAPI {
   showBrowserWindow: () => Promise<void>;
   webviewHide: () => Promise<void>;
   webviewShow: () => Promise<void>;
+  downloadNow: (video: Partial<DownloadItem>) => Promise<void>;
+  combineToHomePage: () => Promise<void>;
 }
 
 declare interface Favorite {

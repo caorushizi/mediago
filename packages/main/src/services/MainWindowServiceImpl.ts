@@ -56,6 +56,11 @@ export default class MainWindowServiceImpl
     this.downloadService.on("download-failed", this.onDownloadFailed);
     this.downloadService.on("download-start", this.onDownloadStart);
     this.downloadService.on("download-stop", this.onDownloadStart);
+
+    this.storeService.onDidAnyChange((store) => {
+      // 向所有窗口发送通知
+      this.webContents.send("store-change", store);
+    });
   }
 
   readyToShow = () => {

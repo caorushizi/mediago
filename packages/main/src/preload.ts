@@ -43,6 +43,8 @@ const handleApi: ElectronAPI = {
   showBrowserWindow: () => ipcRenderer.invoke("show-browser-window"),
   webviewHide: () => ipcRenderer.invoke("webview-hide"),
   webviewShow: () => ipcRenderer.invoke("webview-show"),
+  downloadNow: (video) => ipcRenderer.invoke("download-now", video),
+  combineToHomePage: () => ipcRenderer.invoke("combine-to-home-page"),
 };
 
 contextBridge.exposeInMainWorld(apiKey, handleApi);

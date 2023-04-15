@@ -15,15 +15,15 @@ import useElectron from "../../hooks/electron";
 import { DownloadStatus } from "../../types";
 import { ProList } from "@ant-design/pro-components";
 import {
+  DownloadOutlined,
   FolderOpenOutlined,
-  LoadingOutlined,
   PauseCircleOutlined,
-  PlayCircleOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectStore } from "../../store/appSlice";
 import { tdApp } from "../../utils";
+import { increase } from "../../store/downloadSlice";
 
 enum DownloadFilter {
   list = "list",
@@ -43,6 +43,7 @@ const HomePage: FC = () => {
     convertToAudio,
     showBrowserWindow,
   } = useElectron();
+  const dispatch = useDispatch();
   const appStore = useSelector(selectStore);
   const [filter, setFilter] = useState(DownloadFilter.list);
   const { data, loading, pagination, refresh } = usePagination(
@@ -102,12 +103,18 @@ const HomePage: FC = () => {
     }
   };
 
+  const onReceiveDownloadItem = () => {
+    dispatch(increase());
+    refresh();
+  };
+
   useEffect(() => {
     rendererEvent("download-progress", onDownloadProgress);
     rendererEvent("download-success", onDownloadSuccess);
     rendererEvent("download-failed", onDownloadFailed);
     rendererEvent("download-start", onDownloadStart);
     rendererEvent("download-item-event", onDownloadMenuEvent);
+    rendererEvent("download-item-notifier", onReceiveDownloadItem);
 
     return () => {
       removeEventListener("download-progress", onDownloadProgress);
@@ -115,6 +122,7 @@ const HomePage: FC = () => {
       removeEventListener("download-failed", onDownloadFailed);
       removeEventListener("download-start", onDownloadStart);
       removeEventListener("download-item-event", onDownloadMenuEvent);
+      removeEventListener("download-item-notifier", onReceiveDownloadItem);
     };
   }, []);
 
@@ -161,7 +169,7 @@ const HomePage: FC = () => {
         <Button
           type="text"
           key="download"
-          icon={<PlayCircleOutlined />}
+          icon={<DownloadOutlined />}
           title="下载"
           onClick={() => onStartDownload(item.id)}
         />,
@@ -184,7 +192,7 @@ const HomePage: FC = () => {
           type="text"
           key="redownload"
           title="重新下载"
-          icon={<PlayCircleOutlined />}
+          icon={<DownloadOutlined />}
           onClick={() => onStartDownload(item.id)}
         />,
       ];
@@ -197,7 +205,7 @@ const HomePage: FC = () => {
         <Button
           type="text"
           key="restart"
-          icon={<PlayCircleOutlined />}
+          icon={<DownloadOutlined />}
           title="继续下载"
           onClick={() => onStartDownload(item.id)}
         />,
@@ -295,9 +303,11 @@ const HomePage: FC = () => {
       }
       rightExtra={
         <Space>
-          <Button type="primary" onClick={() => showBrowserWindow()}>
-            打开浏览器
-          </Button>
+          {appStore.openInNewWindow && (
+            <Button type="primary" onClick={() => showBrowserWindow()}>
+              打开浏览器
+            </Button>
+          )}
           <Button onClick={() => refresh()}>刷新</Button>
         </Space>
       }

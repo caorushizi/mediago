@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Badge, Button, Layout, Menu, MenuProps } from "antd";
 import "./App.scss";
@@ -26,6 +26,8 @@ const App: FC = () => {
     openUrl,
     setAppStore: ipcSetAppStore,
     showBrowserWindow,
+    rendererEvent,
+    removeEventListener,
   } = useElectron();
   const location = useLocation();
   const navigate = useNavigate();
@@ -33,13 +35,13 @@ const App: FC = () => {
   const [showExport, setShowExport] = useState(false);
   const count = useSelector(selectCount);
   const appStore = useSelector(selectStore);
-  console.log("appStore", appStore);
 
   const items: MenuItem[] = [
     {
       label: (
         <Link
           to="/"
+          className="like-item"
           onClick={() => {
             dispatch(clearCount());
           }}
@@ -55,13 +57,14 @@ const App: FC = () => {
     },
     {
       label: (
-        <Link to="/source-extract">
+        <Link to="/source-extract" className="like-item">
           <ProfileOutlined />
           <span>素材提取</span>
           {showExport && (
             <Button
               title="在新窗口中打开"
               type="text"
+              style={{ marginLeft: "auto" }}
               icon={<ExportOutlined />}
               onClick={(e) => {
                 e.stopPropagation();
@@ -70,7 +73,6 @@ const App: FC = () => {
                 dispatch(setAppStore({ openInNewWindow: true }));
                 ipcSetAppStore("openInNewWindow", true);
                 showBrowserWindow();
-                console.log(location.pathname);
                 if (location.pathname === "/source-extract") {
                   navigate("/");
                 }
@@ -89,7 +91,7 @@ const App: FC = () => {
     },
     {
       label: (
-        <Link to="/settings">
+        <Link to="/settings" className="like-item">
           <SettingOutlined />
           <span>设置</span>
         </Link>
@@ -97,6 +99,19 @@ const App: FC = () => {
       key: "settings",
     },
   ];
+
+  // 监听store变化
+  const onStoreChange = (event: any, store: AppStore) => {
+    dispatch(setAppStore(store));
+  };
+
+  useEffect(() => {
+    rendererEvent("store-change", onStoreChange);
+
+    return () => {
+      removeEventListener("store-change", onStoreChange);
+    };
+  }, []);
 
   const finalItems = items.filter((item) =>
     appStore.openInNewWindow ? item?.key !== "source" : true
@@ -111,7 +126,6 @@ const App: FC = () => {
 
   useAsyncEffect(async () => {
     const store = await ipcGetAppStore();
-    console.log(store);
     dispatch(setAppStore(store));
   }, []);
 

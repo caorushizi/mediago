@@ -198,4 +198,12 @@ export default class HomeController implements Controller {
   async showBrowserWindow() {
     this.browserWindow.showWindow();
   }
+
+  @handle("combine-to-home-page")
+  async combineToHomePage() {
+    // 关闭浏览器窗口
+    this.browserWindow.hideWindow();
+    // 修改设置中的属性
+    this.storeService.set("openInNewWindow", false);
+  }
 }
