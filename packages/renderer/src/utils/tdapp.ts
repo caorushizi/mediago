@@ -5,7 +5,7 @@ class TDEvent {
 
   constructor() {
     this.appId = import.meta.env.APP_TD_APPID;
-    this.vn = import.meta.env.APP_NAME;
+    this.vn = import.meta.env.APP_VERSION;
     this.vc = import.meta.env.APP_VERSION;
   }
 
