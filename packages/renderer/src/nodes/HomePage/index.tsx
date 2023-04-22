@@ -63,6 +63,7 @@ const HomePage: FC = () => {
   const [progress, setProgress] = useState<Record<number, DownloadProgress>>(
     {}
   );
+  const [messageApi, contextHolder] = message.useMessage();
 
   const onDownloadProgress = (e: any, progress: DownloadProgress) => {
     setProgress((curProgress) => ({
@@ -129,7 +130,7 @@ const HomePage: FC = () => {
   const onStartDownload = async (id: number) => {
     tdApp.startDownload();
     await startDownload(id);
-    message.success("添加任务成功");
+    messageApi.success("添加任务成功");
     refresh();
   };
 
@@ -149,9 +150,9 @@ const HomePage: FC = () => {
     }));
     try {
       await convertToAudio(item.id);
-      message.success("转换成功");
+      messageApi.success("转换成功");
     } catch (e: any) {
-      message.error(e.message);
+      messageApi.error(e.message);
     } finally {
       setConverting((curConverting) => ({
         ...curConverting,
@@ -287,7 +288,7 @@ const HomePage: FC = () => {
       await startDownload(+id);
     }
 
-    message.success("添加任务成功");
+    messageApi.success("添加任务成功");
     refresh();
     setSelectedRowKeys([]);
   };
@@ -313,6 +314,7 @@ const HomePage: FC = () => {
       }
       className="home-page"
     >
+      {contextHolder}
       <ProList<DownloadItem>
         loading={loading}
         pagination={pagination}

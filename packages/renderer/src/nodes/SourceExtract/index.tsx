@@ -1,6 +1,7 @@
 import {
   ArrowLeftOutlined,
   ArrowRightOutlined,
+  CloseOutlined,
   DownloadOutlined,
   HomeOutlined,
   ImportOutlined,
@@ -11,16 +12,26 @@ import {
   StarOutlined,
 } from "@ant-design/icons";
 import { useRequest } from "ahooks";
-import { Avatar, Button, Collapse, Input, List, Space } from "antd";
+import {
+  Avatar,
+  Button,
+  Collapse,
+  Form,
+  Input,
+  List,
+  message,
+  Space,
+} from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import PageContainer from "../../components/PageContainer";
 import useElectron from "../../hooks/electron";
 import { increase } from "../../store/downloadSlice";
-import { requestImage } from "../../utils";
+import { getFavIcon } from "../../utils";
 import { isUrl } from "../../utils/url";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "./index.scss";
+import { ModalForm, ProFormText } from "@ant-design/pro-components";
 
 const { Panel: AntDPanel } = Collapse;
 
@@ -63,12 +74,15 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   } = useElectron();
   const dispatch = useDispatch();
   const [inputVal, setInputVal] = useState("");
+  const [hoverId, setHoverId] = useState<number>(-1);
   const [sourceList, setSourceList] = useState<LinkMessage[]>([]);
   const { data: favoriteList = [], refresh } = useRequest(getFavorites);
   const webviewRef = useRef<HTMLDivElement>(null);
   const currentUrlRef = useRef("");
   const currentTitleRef = useRef("");
   const resizeObserver = useRef<ResizeObserver>();
+  const [favoriteAddForm] = Form.useForm<Favorite>();
+  const [messageApi, contextHolder] = message.useMessage();
 
   const curIsFavorite = favoriteList.find(
     (item) => item.url === currentUrlRef.current
@@ -107,22 +121,11 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     if (curIsFavorite) {
       await removeFavorite(curIsFavorite.id);
     } else {
-      let iconUrl = "";
-      try {
-        const urlObject = new URL(currentUrlRef.current);
-        const fetchUrl = urlObject.origin
-          ? `${urlObject.origin}/favicon.ico`
-          : "";
-        await requestImage(fetchUrl);
-        iconUrl = fetchUrl;
-      } catch (e) {
-        // empty
-      }
-
+      const icon = await getFavIcon(currentUrlRef.current);
       await addFavorite({
         url: currentUrlRef.current,
         title: currentTitleRef.current || currentUrlRef.current,
-        icon: iconUrl,
+        icon,
       });
     }
     refresh();
@@ -369,33 +372,127 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     );
   };
 
+  // 渲染收藏 item
+  const renderFavoriteItem = (item: Favorite | "add") => {
+    if (item === "add") {
+      return (
+        <ModalForm<Favorite>
+          title="添加快捷方式"
+          width={500}
+          trigger={
+            <List.Item className="list-item">
+              <div className="list-tem-card">
+                <PlusOutlined style={{ fontSize: "20px" }} />
+              </div>
+            </List.Item>
+          }
+          form={favoriteAddForm}
+          autoFocusFirstInput
+          modalProps={{
+            destroyOnClose: true,
+          }}
+          submitTimeout={2000}
+          onFinish={async (values) => {
+            try {
+              const icon = await getFavIcon(values.url);
+              await addFavorite({
+                url: values.url,
+                title: values.title,
+                icon,
+              });
+              favoriteAddForm.resetFields();
+              refresh();
+            } catch (err: any) {
+              messageApi.error(err.message);
+            }
+          }}
+        >
+          <ProFormText
+            name="title"
+            label="站点名称"
+            rules={[
+              {
+                required: true,
+                message: "请输入站点名称",
+              },
+            ]}
+          />
+          <ProFormText
+            name="url"
+            label="站点网址"
+            rules={[
+              {
+                required: true,
+                message: "请输入站点网址",
+              },
+              {
+                pattern: /^https?:\/\/.+/,
+                message: "请输入正确的网址",
+              },
+            ]}
+          />
+        </ModalForm>
+      );
+    }
+
+    return (
+      <List.Item
+        className="list-item"
+        onContextMenu={() => {
+          onFavoriteItemContextMenu(item.id);
+        }}
+      >
+        <div
+          className="list-tem-card"
+          onClick={() => onClickLoadItem(item)}
+          onMouseLeave={() => {
+            setHoverId(-1);
+          }}
+          onMouseOver={() => {
+            setHoverId(item.id);
+          }}
+        >
+          {hoverId === item.id && (
+            <Button
+              style={{
+                position: "absolute",
+                right: -1,
+                top: 2,
+                color: "gray",
+              }}
+              type="link"
+              size="small"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                removeFavorite(item.id);
+                refresh();
+              }}
+            >
+              <CloseOutlined />
+            </Button>
+          )}
+          {item.icon ? (
+            <Avatar size="small" src={item.icon} icon={<LinkOutlined />} />
+          ) : (
+            <Avatar size="small" icon={<LinkOutlined />} />
+          )}
+          <div className="card-text" title={item.title}>
+            {item.title}
+          </div>
+        </div>
+      </List.Item>
+    );
+  };
+
   const renderFavoriteList = () => {
     return (
-      <List
+      <List<Favorite | "add">
         grid={{ gutter: 16, lg: 5, xl: 7, xxl: 7 }}
         className="list-container"
         itemLayout="vertical"
-        dataSource={favoriteList}
-        renderItem={(item) => (
-          <List.Item
-            className="list-item"
-            onContextMenu={() => {
-              onFavoriteItemContextMenu(item.id);
-            }}
-          >
-            <div
-              className="list-tem-card"
-              onClick={() => onClickLoadItem(item)}
-            >
-              {item.icon ? (
-                <Avatar size={52} src={item.icon} icon={<LinkOutlined />} />
-              ) : (
-                <Avatar size={52} icon={<LinkOutlined />} />
-              )}
-              <div className="card-text">{item.title}</div>
-            </div>
-          </List.Item>
-        )}
+        dataSource={[...favoriteList, "add"]}
+        renderItem={renderFavoriteItem}
       />
     );
   };
@@ -405,6 +502,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
       className={"source-extract"}
       extraClassName={page ? "is-page" : ""}
     >
+      {contextHolder}
       {renderToolbar()}
       <div className="source-extract-content">
         {inputVal ? renderBrowserPanel() : renderFavoriteList()}
