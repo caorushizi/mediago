@@ -106,7 +106,7 @@ export interface WebviewService {
   setAutoResize: (options: Electron.AutoResizeOptions) => void;
   setBackgroundColor: (color: string) => void;
   setBounds: (bounds: Electron.Rectangle) => void;
-  loadURL: (url?: string) => void;
+  loadURL: (url?: string) => Promise<void>;
   goBack: () => Promise<boolean>;
   reload: () => Promise<void>;
   goHome: () => Promise<void>;
