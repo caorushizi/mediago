@@ -27,6 +27,7 @@ const SettingPage: React.FC = () => {
   const formRef = useRef<FormInstance<AppStore>>();
   const settings = useSelector(selectStore);
   const { data: envPath } = useRequest(getEnvPath);
+  const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
     formRef.current?.setFieldsValue(settings);
@@ -77,7 +78,7 @@ const SettingPage: React.FC = () => {
       }
       dispatch(setAppStore(values));
     } catch (e: any) {
-      message.error(e.message);
+      messageApi.error(e.message);
     }
   };
 
@@ -95,6 +96,7 @@ const SettingPage: React.FC = () => {
         initialValues={settings}
         onValuesChange={onFormValueChange}
       >
+        {contextHolder}
         <ProFormGroup title="基础设置" direction={"vertical"}>
           <ProFormText
             width="xl"

@@ -79,8 +79,9 @@
           flex-direction: column;
           align-items: center;
           .list-tem-card {
-            height: 100px;
-            width: 100px;
+            position: relative;
+            height: 80px;
+            width: 80px;
             padding: 10px;
             cursor: pointer;
             display: flex;

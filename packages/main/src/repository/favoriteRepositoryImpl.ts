@@ -32,7 +32,7 @@ export default class FavoriteRepositoryImpl implements FavoriteRepository {
     });
 
     if (exist) {
-      return exist;
+      throw new Error("网址已经存在");
     }
 
     const item = new Favorite();
