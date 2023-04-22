@@ -15,11 +15,6 @@ import {
   type App,
 } from "./interfaces";
 import { TYPES } from "./types";
-import installExtension, {
-  REDUX_DEVTOOLS,
-  REACT_DEVELOPER_TOOLS,
-} from "electron-devtools-installer";
-import isDev from "electron-is-dev";
 
 @injectable()
 export default class ElectronApp implements App {
@@ -43,7 +38,9 @@ export default class ElectronApp implements App {
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
     @inject(TYPES.BrowserWindowService)
-    private readonly browserWindow: BrowserWindowService
+    private readonly browserWindow: BrowserWindowService,
+    @inject(TYPES.DevToolsService)
+    private readonly devTools: BrowserWindowService
   ) {}
 
   async init(): Promise<void> {
@@ -58,10 +55,16 @@ export default class ElectronApp implements App {
     this.browserWindow.init();
     this.ipcHandler.init();
     this.updateService.init();
-    await this.dataService.init();
     this.webview.init();
     this.storeService.init();
+    this.devTools.init();
+    await this.dataService.init();
 
+    this.resetDownloadStatus();
+  }
+
+  // 如果重启后还有正在下载的视频，就将状态改成下载失败
+  async resetDownloadStatus(): Promise<void> {
     // 重启后如果还有 downloading 状态的数据， 全部重置为失败
     const videos = await this.videoRepository.findWattingAndDownloadingVideos();
     const videoIds = videos.map((video) => video.id);
@@ -69,14 +72,5 @@ export default class ElectronApp implements App {
       videoIds,
       DownloadStatus.Failed
     );
-
-    if (isDev) {
-      try {
-        await installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS]);
-        this.logger.info("devtools installed");
-      } catch (err) {
-        this.logger.error("devtools install error", err);
-      }
-    }
   }
 }

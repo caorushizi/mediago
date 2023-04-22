@@ -36,6 +36,7 @@ export default class WebviewServiceImpl implements WebviewService {
       },
     });
     this.view = view;
+    this.view.setBackgroundColor("#fff");
     this.webContents = this.view.webContents;
     this.webContents.setAudioMuted(true);
 
@@ -69,11 +70,19 @@ export default class WebviewServiceImpl implements WebviewService {
       const url = this.view.webContents.getURL();
 
       this.curWindow.webContents.send("webview-dom-ready", { title, url });
+    });
 
-      this.view.webContents.setWindowOpenHandler((details) => {
-        void this.view.webContents.loadURL(details.url);
-        return { action: "deny" };
-      });
+    this.view.webContents.setWindowOpenHandler(({ url }) => {
+      if (url === "about:blank") {
+        // 兼容一些网站跳转到 about:blank
+        this.view.webContents.once("will-redirect", async (event, url) => {
+          this.loadURL(url, true);
+        });
+      } else {
+        this.loadURL(url, true);
+      }
+
+      return { action: "deny" };
     });
 
     session
@@ -110,10 +119,14 @@ export default class WebviewServiceImpl implements WebviewService {
     this.view.setBounds(bounds);
   }
 
-  async loadURL(url?: string) {
+  async loadURL(url?: string, isNewWindow?: boolean) {
     const canGoBack = this.webContents.canGoBack();
-    await this.webContents.loadURL(url || "");
-    if (!canGoBack) {
+    try {
+      await this.webContents.loadURL(url || "");
+    } catch (err: any) {
+      this.logger.error("加载 url 时出现错误: ", err);
+    }
+    if (!canGoBack && !isNewWindow) {
       this.webContents.clearHistory();
     }
   }

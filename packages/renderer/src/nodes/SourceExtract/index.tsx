@@ -402,6 +402,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
               });
               favoriteAddForm.resetFields();
               refresh();
+              return true;
             } catch (err: any) {
               messageApi.error(err.message);
             }
@@ -410,6 +411,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
           <ProFormText
             name="title"
             label="站点名称"
+            placeholder="请输入站点名称"
             rules={[
               {
                 required: true,
@@ -420,6 +422,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
           <ProFormText
             name="url"
             label="站点网址"
+            placeholder="请输入站点网址"
             rules={[
               {
                 required: true,

@@ -6,6 +6,7 @@ import FavoriteRepositoryImpl from "repository/favoriteRepositoryImpl";
 import VideoRepositoryImpl from "repository/videoRepositoryImpl";
 import BrowserWindowServiceImpl from "services/BrowserWindowServiceImpl";
 import DatabaseServiceImpl from "services/DatabaseServiceImpl";
+import DevToolsServiceImpl from "services/DevToolsServiceImpl";
 import DownloadServiceImpl from "services/DownloadServiceImpl";
 import StoreServiceImpl from "services/StoreServiceImpl";
 import WebviewServiceImpl from "services/WebviewServiceImpl";
@@ -24,6 +25,7 @@ import {
   FavoriteRepository,
   WebviewService,
   BrowserWindowService,
+  DevToolsService,
 } from "./interfaces";
 import IpcHandlerServiceImpl from "./services/IpcHandlerServiceImpl";
 import LoggerServiceImpl from "./services/LoggerServiceImpl";
@@ -56,6 +58,7 @@ container.bind<WebviewService>(TYPES.WebviewService).to(WebviewServiceImpl);
 container
   .bind<DownloadServiceImpl>(TYPES.DownloadService)
   .to(DownloadServiceImpl);
+container.bind<DevToolsService>(TYPES.DevToolsService).to(DevToolsServiceImpl);
 
 // === controller
 container.bind<Controller>(TYPES.Controller).to(HomeController);
