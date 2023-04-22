@@ -263,6 +263,7 @@ const HomePage: FC = () => {
     }
     if (item.status === DownloadStatus.Failed) {
       return [
+        renderEditForm(item),
         <Button
           type="text"
           key="redownload"
