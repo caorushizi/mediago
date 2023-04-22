@@ -59,6 +59,7 @@ export interface StoreService extends Store<AppStore> {
 }
 
 export interface DownloadItem {
+  id?: number;
   name: string;
   url: string;
 }
@@ -81,6 +82,7 @@ export interface VideoResponse {
 
 export interface VideoRepository {
   addVideo: (video: DownloadItem) => Promise<Video>;
+  editVideo: (video: DownloadItem) => Promise<Video>;
   findVideos: (pagiantion: DownloadItemPagination) => Promise<VideoResponse>;
   findVideo: (id: number) => Promise<Video | null>;
   changeVideoStatus: (
@@ -146,4 +148,8 @@ export interface DownloadParams {
   name: string;
   abortSignal: AbortController;
   deleteSegments?: boolean;
+}
+
+export interface DevToolsService {
+  init: () => Promise<void>;
 }

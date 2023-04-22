@@ -1,6 +1,7 @@
 import React, { FC, ReactNode, useEffect, useRef, useState } from "react";
 import {
   Button,
+  Form,
   message,
   Progress,
   Radio,
@@ -13,11 +14,19 @@ import PageContainer from "../../components/PageContainer";
 import { usePagination } from "ahooks";
 import useElectron from "../../hooks/electron";
 import { DownloadStatus } from "../../types";
-import { ProList } from "@ant-design/pro-components";
+import {
+  ModalForm,
+  ProForm,
+  ProFormSelect,
+  ProFormText,
+  ProList,
+} from "@ant-design/pro-components";
 import {
   DownloadOutlined,
+  EditOutlined,
   FolderOpenOutlined,
   PauseCircleOutlined,
+  PlusOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
@@ -42,6 +51,8 @@ const HomePage: FC = () => {
     deleteDownloadItem,
     convertToAudio,
     showBrowserWindow,
+    addDownloadItem,
+    editDownloadItem,
   } = useElectron();
   const dispatch = useDispatch();
   const appStore = useSelector(selectStore);
@@ -64,6 +75,8 @@ const HomePage: FC = () => {
     {}
   );
   const [messageApi, contextHolder] = message.useMessage();
+  const [addVideoForm] = Form.useForm<DownloadItem>();
+  const [editVideoForm] = Form.useForm<DownloadItem>();
 
   const onDownloadProgress = (e: any, progress: DownloadProgress) => {
     setProgress((curProgress) => ({
@@ -161,12 +174,73 @@ const HomePage: FC = () => {
     }
   };
 
+  const renderEditForm = (item: DownloadItem) => {
+    return (
+      <ModalForm<DownloadItem>
+        key="edit"
+        title="编辑下载"
+        width={500}
+        onOpenChange={() => {
+          editVideoForm.setFieldsValue(item);
+        }}
+        trigger={<Button type="text" icon={<EditOutlined />} />}
+        form={editVideoForm}
+        autoFocusFirstInput
+        modalProps={{
+          destroyOnClose: true,
+        }}
+        submitTimeout={2000}
+        onFinish={async (values) => {
+          try {
+            await editDownloadItem({
+              id: item.id,
+              name: values.name,
+              url: values.url,
+            });
+            refresh();
+            return true;
+          } catch (err: any) {
+            messageApi.error(err.message);
+          }
+        }}
+      >
+        <ProFormText
+          name="name"
+          label="标题"
+          placeholder="请输入标题"
+          rules={[
+            {
+              required: true,
+              message: "请输入站点名称",
+            },
+          ]}
+        />
+        <ProFormText
+          name="url"
+          label="网址"
+          placeholder="请输入网址"
+          rules={[
+            {
+              required: true,
+              message: "请输入站点网址",
+            },
+            {
+              pattern: /^https?:\/\/.+/,
+              message: "请输入正确的网址",
+            },
+          ]}
+        />
+      </ModalForm>
+    );
+  };
+
   const renderActionButtons = (
     dom: ReactNode,
     item: DownloadItem
   ): ReactNode => {
     if (item.status === DownloadStatus.Ready) {
       return [
+        renderEditForm(item),
         <Button
           type="text"
           key="download"
@@ -203,6 +277,7 @@ const HomePage: FC = () => {
     }
     if (item.status === DownloadStatus.Stopped) {
       return [
+        renderEditForm(item),
         <Button
           type="text"
           key="restart"
@@ -310,6 +385,52 @@ const HomePage: FC = () => {
             </Button>
           )}
           <Button onClick={() => refresh()}>刷新</Button>
+          <ModalForm<DownloadItem>
+            title="新建下载"
+            width={500}
+            trigger={<Button>新建下载</Button>}
+            form={addVideoForm}
+            autoFocusFirstInput
+            modalProps={{
+              destroyOnClose: true,
+            }}
+            submitTimeout={2000}
+            onFinish={async (values) => {
+              await addDownloadItem({
+                name: values.name,
+                url: values.url,
+              });
+              refresh();
+              return true;
+            }}
+          >
+            <ProFormText
+              name="name"
+              label="标题"
+              placeholder="请输入标题"
+              rules={[
+                {
+                  required: true,
+                  message: "请输入站点名称",
+                },
+              ]}
+            />
+            <ProFormText
+              name="url"
+              label="网址"
+              placeholder="请输入网址"
+              rules={[
+                {
+                  required: true,
+                  message: "请输入站点网址",
+                },
+                {
+                  pattern: /^https?:\/\/.+/,
+                  message: "请输入正确的网址",
+                },
+              ]}
+            />
+          </ModalForm>
         </Space>
       }
       className="home-page"

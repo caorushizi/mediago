@@ -28,6 +28,19 @@ export default class VideoRepositoryImpl implements VideoRepository {
     return await this.dataService.manager.save(item);
   }
 
+  // 编辑视频
+  async editVideo(video: DownloadItem) {
+    const item = await this.dataService.appDataSource
+      .getRepository(Video)
+      .findOneBy({ id: video.id });
+    if (!item) {
+      throw new Error("视频不存在");
+    }
+    item.name = video.name;
+    item.url = video.url;
+    return await this.dataService.manager.save(item);
+  }
+
   async findVideos({
     current = 0,
     pageSize = 50,

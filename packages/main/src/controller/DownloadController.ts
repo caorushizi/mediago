@@ -39,6 +39,12 @@ export default class DownloadController implements Controller {
     return item;
   }
 
+  @handle("edit-download-item")
+  async editDownloadItem(e: IpcMainEvent, video: DownloadItem) {
+    const item = await this.videoRepository.editVideo(video);
+    return item;
+  }
+
   @handle("download-now")
   async downloadNow(e: IpcMainEvent, video: DownloadItem) {
     // 添加下载项
