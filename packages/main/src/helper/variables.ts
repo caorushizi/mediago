@@ -14,6 +14,9 @@ export const download = app.getPath("downloads");
 export const PERSIST_MEDIAGO = "persist:mediago";
 export const PERSIST_WEBVIEW = "persist:webview";
 export const db = path.resolve(workspace, "app.db");
-// export const downloaderPath = path.resolve(__bin__, "N_m3u8DL-RE.exe");
-export const downloaderPath = path.resolve(__bin__, "N_m3u8DL-CLI_v3.0.2.exe");
+export const macDownloaderPath = path.resolve(__bin__, "N_m3u8DL-RE");
+export const winDownloaderPath = path.resolve(
+  __bin__,
+  "N_m3u8DL-CLI_v3.0.2.exe"
+);
 export const ffmpegPath = path.resolve(__bin__, "ffmpeg.exe");
