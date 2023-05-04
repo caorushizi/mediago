@@ -1,25 +1,13 @@
 import { spawn } from "child_process";
-import { cpSync, existsSync } from "node:fs";
+import { cpSync } from "node:fs";
 import electron from "electron";
 import * as esbuild from "esbuild";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
 import chokidar from "chokidar";
-import dotenv from "dotenv";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const mainResolve = (r) => resolve(__dirname, "..", r);
-const rootResolve = (r) => resolve(__dirname, "../../..", r);
+import { loadDotEnvRuntime, mainResolve } from "./utils.mjs";
 
 let electronProcess = null;
 
-const nodeEnv = process.env.NODE_ENV;
-console.log("当前的环境是： ", nodeEnv);
-
-const env = existsSync(rootResolve(`.env.${nodeEnv}.local`))
-  ? rootResolve(`.env.${nodeEnv}.local`)
-  : rootResolve(`.env.${nodeEnv}`);
-dotenv.config({ path: env });
+loadDotEnvRuntime();
 
 async function copySource() {
   const oldSqlite3Path = mainResolve(

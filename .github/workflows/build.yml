@@ -1,0 +1,49 @@
+# build.yml
+
+# Workflow's name
+name: Build
+
+# Workflow's trigger
+on:
+  push:
+    branches:
+      - master
+
+# Workflow's jobs
+jobs:
+  # job's id
+  release:
+    # job's name
+    name: build and release electron app
+
+    # the type of machine to run the job on
+    runs-on: ${{ matrix.os }}
+
+    # create a build matrix for jobs
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+
+    # create steps
+    steps:
+      # step1: check out repository
+      - name: Check out git repository
+        uses: actions/checkout@v3
+
+      # step2: install node env
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16.x"
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 6.0.2
+          run_install: true
+
+      - name: Build  & release app
+        run: pnpm run release
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          APP_TD_APPID: ${{ secrets.APP_TD_APPID }}
