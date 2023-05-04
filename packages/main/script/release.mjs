@@ -97,8 +97,12 @@ const target =
     ? builder.DIR_TARGET
     : builder.DEFAULT_TARGET;
 try {
+  const targets =
+    process.platform === "win32"
+      ? builder.Platform.WINDOWS.createTarget(target)
+      : builder.Platform.MAC.createTarget(target);
   await builder.build({
-    targets: builder.Platform.WINDOWS.createTarget(target),
+    targets,
     config: options,
   });
 } catch (e) {
