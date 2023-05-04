@@ -1,25 +1,8 @@
 import * as esbuild from "esbuild";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
-import { existsSync, rmSync } from "node:fs";
-import dotenv from "dotenv";
+import { rmSync } from "node:fs";
+import { mainResolve, loadDotEnvDefined } from "./utils.mjs";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const mainResolve = (r) => resolve(__dirname, "..", r);
-const rootResolve = (r) => resolve(__dirname, "../../..", r);
-
-const nodeEnv = process.env.NODE_ENV;
-console.log("当前的环境是： ", nodeEnv);
-
-const env = existsSync(rootResolve(`.env.${nodeEnv}.local`))
-  ? rootResolve(`.env.${nodeEnv}.local`)
-  : rootResolve(`.env.${nodeEnv}`);
-const { parsed } = dotenv.config({ path: env });
-
-const mainDefined = Object.keys(parsed || {}).reduce((prev, cur) => {
-  prev[`process.env.${[cur]}`] = JSON.stringify(parsed[cur]);
-  return prev;
-}, {});
+const mainDefined = loadDotEnvDefined();
 
 rmSync(mainResolve("build/main"), { recursive: true, force: true });
 rmSync(mainResolve("build/Release"), { recursive: true, force: true });

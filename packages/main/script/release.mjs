@@ -1,22 +1,10 @@
 import builder from "electron-builder";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
-import { existsSync, readFileSync } from "node:fs";
-import dotenv from "dotenv";
+import { readFileSync } from "node:fs";
 import semver from "semver";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const mainResolve = (r) => resolve(__dirname, "..", r);
-const rootResolve = (r) => resolve(__dirname, "../../..", r);
+import { mainResolve, loadDotEnvRuntime } from "./utils.mjs";
 
 const packageJson = JSON.parse(readFileSync(mainResolve("./package.json")));
-const nodeEnv = process.env.NODE_ENV;
-console.log("当前的环境是： ", nodeEnv);
-
-const env = existsSync(rootResolve(`.env.${nodeEnv}.local`))
-  ? rootResolve(`.env.${nodeEnv}.local`)
-  : rootResolve(`.env.${nodeEnv}`);
-dotenv.config({ path: env });
+loadDotEnvRuntime();
 
 if (semver.neq(process.env.APP_VERSION, packageJson.version)) {
   console.log("请先同步构建版本和发布版本");
