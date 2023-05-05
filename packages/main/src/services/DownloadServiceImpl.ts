@@ -20,7 +20,7 @@ export default class DownloadServiceImpl
 
   private limit = 2;
 
-  private debug = process.env.DOWNLOAD_DEBUG;
+  private debug = process.env.APP_DOWNLOAD_DEBUG;
 
   private signal: Record<number, AbortController> = {};
 
