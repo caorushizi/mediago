@@ -3,18 +3,25 @@ import dotenv from "dotenv";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+export const mainResolve = (r) => resolve(__dirname, "..", r);
+export const rootResolve = (r) => resolve(__dirname, "../../..", r);
 const nodeEnv = process.env.NODE_ENV;
 console.log("当前的环境是： ", nodeEnv);
 
 function loadEnv(path) {
   const result = {};
 
-  const _loadEnv = () => {
+  const _loadEnv = (path) => {
     if (!existsSync(path)) {
       return null;
     }
 
-    const parsed = dotenv.parse({ path });
+    const { error, parsed } = dotenv.config({ path });
+    if (error != null) {
+      return null;
+    }
+
     Object.keys(parsed).forEach((key) => {
       result[key] = parsed[key];
     });
@@ -32,10 +39,6 @@ function loadDotEnv() {
 
   return { ...env, ...envMode };
 }
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-export const mainResolve = (r) => resolve(__dirname, "..", r);
-export const rootResolve = (r) => resolve(__dirname, "../../..", r);
 
 export function loadDotEnvRuntime() {
   const env = loadDotEnv();
