@@ -44,7 +44,9 @@ export function loadDotEnvRuntime() {
   const env = loadDotEnv();
 
   Object.keys(env).forEach((key) => {
-    process.env[key] = env[key];
+    if (!process.env[key]) {
+      process.env[key] = env[key];
+    }
   });
 }
 
@@ -52,6 +54,7 @@ export function loadDotEnvDefined() {
   const env = loadDotEnv();
 
   return Object.keys(env).reduce((prev, cur) => {
+    if (!cur.startsWith("APP_")) return prev;
     prev[`process.env.${[cur]}`] = JSON.stringify(env[cur]);
     return prev;
   }, {});
