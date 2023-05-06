@@ -9,6 +9,8 @@ m3u8 视频在线提取工具 流媒体下载 m3u8下载 桌面客户端 windows
 
 以下指南将帮助你在本地机器上安装和运行该项目，进行开发和测试。关于如何将该项目部署到在线环境，请参考部署小节。
 
+【使用帮助】[blog.ziying.site](https://ziying.site/post/media-downloader-how-to-use/?from=github)
+
 ## 安装要求
 
 运行代码需要 node 和 pnpm，node需要在官网下载安装，pnpm 可以通过`npm i -g pnpm`安装。
