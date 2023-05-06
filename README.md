@@ -23,8 +23,10 @@ m3u8 视频在线提取工具 流媒体下载 m3u8下载 桌面客户端 windows
 
 ## 下载链接
 
-- [v1.1.3 windows](https://github.com/caorushizi/m3u8-downloader/releases/download/1.1.3/media-downloader-setup-1.1.3.exe)
-- [v1.0.3 windows](http://static.ziying.site/media-downloader-1.0.3%20Setup.exe)
+- 【2023.04.01 v2.0.0-beta.4 windows】 [media-downloader-windows-v2.0.0-beta.4.exe](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.0-beta.4/media-downloader-setup-2.0.0-beta.4.exe)
+- 【2023.04.01 v2.0.0-beta.4 macos】 [media-downloader-windows-v2.0.0-beta.4.dmg](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.0-beta.4/media-downloader-setup-2.0.0-beta.4.dmg)
+- 【2023.04.01 v2.0.0-beta.1】 [media-downloader-windows-v2.0.0.exe](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.0-beta.1/media-downloader-setup-2.0.0-beta.1.exe)
+- 【2022.01.08 v1.1.5】 [media-downloader-windows-v1.1.5.exe](https://github.com/caorushizi/m3u8-downloader/releases/download/1.1.5/media-downloader-setup-1.1.5.exe)
 
 ## 软件截图
 
