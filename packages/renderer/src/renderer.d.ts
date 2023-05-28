@@ -51,7 +51,7 @@ declare interface ElectronAPI {
   convertToAudio: (id: number) => Promise<void>;
   rendererEvent: (channel: string, listener: any) => void;
   removeEventListener: (channel: string, listener: any) => void;
-  showBrowserWindow: () => Promise<void>;
+  showBrowserWindow: (store: BrowserStore) => Promise<void>;
   webviewHide: () => Promise<void>;
   webviewShow: () => Promise<void>;
   downloadNow: (video: Partial<DownloadItem>) => Promise<void>;
@@ -71,6 +71,11 @@ declare interface LinkMessage {
   title: string;
 }
 
+declare interface UrlDetail {
+  url: string;
+  title: string;
+}
+
 declare interface AppStore {
   // 本地存储地址
   local: string;
@@ -84,6 +89,11 @@ declare interface AppStore {
   deleteSegments?: boolean;
   // 新窗口打开浏览器
   openInNewWindow?: boolean;
+}
+
+declare interface BrowserStore {
+  addressBarVal: string;
+  sourceList: LinkMessage[];
 }
 
 declare interface DownloadProgress {

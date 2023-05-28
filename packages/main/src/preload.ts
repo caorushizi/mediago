@@ -40,7 +40,8 @@ const handleApi: ElectronAPI = {
     ipcRenderer.removeListener(channel, fun);
     delete apiFunctions[key];
   },
-  showBrowserWindow: () => ipcRenderer.invoke("show-browser-window"),
+  showBrowserWindow: (store) =>
+    ipcRenderer.invoke("show-browser-window", store),
   webviewHide: () => ipcRenderer.invoke("webview-hide"),
   webviewShow: () => ipcRenderer.invoke("webview-show"),
   downloadNow: (video) => ipcRenderer.invoke("download-now", video),

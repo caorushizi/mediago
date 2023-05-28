@@ -12,6 +12,7 @@ import {
   LoggerService,
   StoreService,
 } from "../interfaces";
+import { BrowserStore } from "main";
 
 @injectable()
 export default class BrowserWindowServiceImpl
@@ -64,12 +65,13 @@ export default class BrowserWindowServiceImpl
     this.ready = true;
   };
 
-  showWindow = () => {
+  showWindow = (store: BrowserStore) => {
     if (!this.ready) {
       this.logger.error("BrowserWindow is not ready to show.");
       return;
     }
 
+    this.webContents.send("browser-window-store", store);
     this.show();
     isDev && this.webContents.openDevTools();
   };

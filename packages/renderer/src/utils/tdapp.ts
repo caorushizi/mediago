@@ -17,7 +17,11 @@ class TDEvent {
   }
 
   onEvent(eventId: string, mapKv: Record<string, string> = {}) {
-    window.TDAPP.onEvent(eventId, "", mapKv);
+    try {
+      window.TDAPP?.onEvent(eventId, "", mapKv);
+    } catch (e) {
+      // empty
+    }
   }
 
   downloadFailed = () => this.onEvent("下载页面-下载视频失败");

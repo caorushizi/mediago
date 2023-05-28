@@ -3,7 +3,7 @@ import "vite/client";
 declare global {
   interface Window {
     electron: ElectronAPI;
-    TDAPP: {
+    TDAPP?: {
       onEvent: (
         eventId: string,
         label: "",

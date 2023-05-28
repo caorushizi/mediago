@@ -15,6 +15,7 @@ import { selectStore, setAppStore } from "./store/appSlice";
 import { useAsyncEffect } from "ahooks";
 import { clearCount, selectCount } from "./store/downloadSlice";
 import { tdApp } from "./utils";
+import { selectBrowserStore } from "./store/browserSlice";
 
 const { Footer, Sider, Content } = Layout;
 
@@ -35,6 +36,7 @@ const App: FC = () => {
   const [showExport, setShowExport] = useState(false);
   const count = useSelector(selectCount);
   const appStore = useSelector(selectStore);
+  const browserStore = useSelector(selectBrowserStore);
 
   const items: MenuItem[] = [
     {
@@ -76,7 +78,7 @@ const App: FC = () => {
                 }
                 // FIXME: 有可能 webview 还没有完全隐藏
                 await ipcSetAppStore("openInNewWindow", true);
-                await showBrowserWindow();
+                await showBrowserWindow(browserStore);
               }}
             />
           )}

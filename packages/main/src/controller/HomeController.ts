@@ -10,7 +10,7 @@ import { Favorite } from "entity/Favorite";
 import { convertToAudio } from "helper";
 import { db, workspace } from "helper/variables";
 import { inject, injectable } from "inversify";
-import { AppStore, EnvPath } from "main";
+import { AppStore, BrowserStore, EnvPath } from "main";
 import path from "path";
 import { handle } from "../helper/decorator";
 import {
@@ -195,8 +195,8 @@ export default class HomeController implements Controller {
   }
 
   @handle("show-browser-window")
-  async showBrowserWindow() {
-    this.browserWindow.showWindow();
+  async showBrowserWindow(event: IpcMainEvent, store: BrowserStore) {
+    this.browserWindow.showWindow(store);
   }
 
   @handle("combine-to-home-page")

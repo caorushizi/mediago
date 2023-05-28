@@ -4,7 +4,7 @@ import Store from "electron-store";
 import { Favorite } from "entity/Favorite";
 import { Video } from "entity/Video";
 import EventEmitter from "events";
-import { AppStore } from "main";
+import { AppStore, BrowserStore } from "main";
 import { DataSource, EntityManager, UpdateResult, DeleteResult } from "typeorm";
 
 export interface MainWindowService extends BrowserWindow {
@@ -13,7 +13,7 @@ export interface MainWindowService extends BrowserWindow {
 
 export interface BrowserWindowService extends BrowserWindow {
   init: () => void;
-  showWindow: () => void;
+  showWindow: (store: BrowserStore) => void;
   hideWindow: () => void;
 }
 
