@@ -14,6 +14,11 @@ declare interface EnvPath {
   local: string;
 }
 
+declare interface BrowserWindowInitialVal {
+  addressBarVal?: string;
+  sourceList?: LinkMessage[];
+}
+
 declare interface ElectronAPI {
   getEnvPath: () => Promise<EnvPath>;
   getFavorites: () => Promise<Favorite>;
@@ -41,7 +46,7 @@ declare interface ElectronAPI {
   convertToAudio: (id: number) => Promise<void>;
   rendererEvent: (channel: string, funcId: string, listener: any) => void;
   removeEventListener: (channel: string, funcId: string) => void;
-  showBrowserWindow: () => Promise<void>;
+  showBrowserWindow: (initialVal: BrowserStore) => Promise<void>;
   webviewHide: () => Promise<void>;
   webviewShow: () => Promise<void>;
   downloadNow: (video: DownloadItem) => Promise<void>;
@@ -67,4 +72,9 @@ declare interface AppStore {
   deleteSegments: boolean;
   // 新窗口打开浏览器
   openInNewWindow: boolean;
+}
+
+declare interface BrowserStore {
+  addressBarVal: string;
+  sourceList: LinkMessage[];
 }

@@ -14,13 +14,7 @@ import PageContainer from "../../components/PageContainer";
 import { usePagination } from "ahooks";
 import useElectron from "../../hooks/electron";
 import { DownloadStatus } from "../../types";
-import {
-  ModalForm,
-  ProForm,
-  ProFormSelect,
-  ProFormText,
-  ProList,
-} from "@ant-design/pro-components";
+import { ModalForm, ProFormText, ProList } from "@ant-design/pro-components";
 import {
   DownloadOutlined,
   EditOutlined,
@@ -33,6 +27,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectStore } from "../../store/appSlice";
 import { tdApp } from "../../utils";
 import { increase } from "../../store/downloadSlice";
+import {
+  selectAddressBarVal,
+  selectBrowserStore,
+  selectSourceList,
+} from "../../store/browserSlice";
 
 enum DownloadFilter {
   list = "list",
@@ -77,6 +76,8 @@ const HomePage: FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [addVideoForm] = Form.useForm<DownloadItem>();
   const [editVideoForm] = Form.useForm<DownloadItem>();
+
+  const browserStore = useSelector(selectBrowserStore);
 
   const onDownloadProgress = (e: any, progress: DownloadProgress) => {
     setProgress((curProgress) => ({
@@ -381,7 +382,10 @@ const HomePage: FC = () => {
       rightExtra={
         <Space>
           {appStore.openInNewWindow && (
-            <Button type="primary" onClick={() => showBrowserWindow()}>
+            <Button
+              type="primary"
+              onClick={() => showBrowserWindow(browserStore)}
+            >
               打开浏览器
             </Button>
           )}
