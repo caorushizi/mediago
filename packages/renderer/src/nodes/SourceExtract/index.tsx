@@ -321,7 +321,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   // 渲染工具栏
   const renderToolbar = () => {
     return (
-      <Space.Compact className="action-bar" block size="small">
+      <Space.Compact className="action-bar" block>
         <Button title="首页" type="text" onClick={onClickGoHome}>
           <HomeOutlined />
         </Button>
