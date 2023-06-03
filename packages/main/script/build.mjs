@@ -4,8 +4,8 @@ import { mainResolve, loadDotEnvDefined } from "./utils.mjs";
 
 const mainDefined = loadDotEnvDefined();
 
-rmSync(mainResolve("build/main"), { recursive: true, force: true });
-rmSync(mainResolve("build/Release"), { recursive: true, force: true });
+rmSync(mainResolve("build"), { recursive: true, force: true });
+rmSync(mainResolve("dist"), { recursive: true, force: true });
 
 esbuild.build({
   entryPoints: [mainResolve("src/index.ts"), mainResolve("src/preload.ts")],
