@@ -47,18 +47,28 @@ const options = {
     ],
   },
   dmg: {
-    contents: [],
+    contents: [
+      {
+        x: 410,
+        y: 150,
+        type: "link",
+        path: "/Applications",
+      },
+      {
+        x: 130,
+        y: 150,
+        type: "file",
+      },
+    ],
   },
   mac: {
-    icon: "../icons/icon.icns",
+    icon: "../assets/icon.icns",
     target: {
       target: "default",
       arch: ["x64", "arm64"],
     },
   },
-  linux: {
-    icon: "../build/icons",
-  },
+  linux: {},
   nsis: {
     oneClick: false,
     allowElevation: true,

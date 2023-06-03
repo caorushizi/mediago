@@ -49,7 +49,11 @@ watcher.on("change", async () => {
   await ctx.rebuild();
   console.log("watch build succeed.");
   if (electronProcess && electronProcess.kill) {
-    process.kill(electronProcess.pid);
+    if (process.platform === "darwin") {
+      spawn("kill", ["-9", electronProcess.pid]);
+    } else {
+      process.kill(electronProcess.pid);
+    }
     electronProcess = null;
     startElectron();
   }
