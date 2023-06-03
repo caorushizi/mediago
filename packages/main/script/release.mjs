@@ -11,6 +11,15 @@ if (semver.neq(process.env.APP_VERSION, packageJson.version)) {
   process.exit(0);
 }
 
+const extraResources = [];
+if (process.platform === "win32") {
+  // windows
+  extraResources.push("bin/ffmpeg.exe", "bin/N_m3u8DL-CLI_v3.0.2.exe");
+} else {
+  // mac
+  extraResources.push("bin/N_m3u8DL-RE");
+}
+
 // Let's get that intellisense working
 /**
  * @type {import('electron-builder').Configuration}
@@ -32,12 +41,12 @@ const options = {
       filter: ["**/*"],
     },
     "./package.json",
-    {
-      from: "./node_modules/better-sqlite3/build/Release",
-      to: "./build/Release",
-    },
+    // {
+    //   from: "./node_modules/better-sqlite3/build/Release",
+    //   to: "./build/Release",
+    // },
   ],
-  extraResources: ["bin/**/*"],
+  extraResources,
   win: {
     icon: "../assets/icon.ico",
     target: [

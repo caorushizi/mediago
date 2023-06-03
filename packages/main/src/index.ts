@@ -18,6 +18,12 @@ const start = async (): Promise<void> => {
   await app.whenReady();
   const mediago = container.get<App>(TYPES.App);
   mediago.init();
+
+  app.on("window-all-closed", () => {
+    if (process.platform !== "darwin") {
+      app.quit();
+    }
+  });
 };
 
 void start();

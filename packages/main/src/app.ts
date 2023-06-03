@@ -44,12 +44,6 @@ export default class ElectronApp implements App {
   ) {}
 
   async init(): Promise<void> {
-    app.on("window-all-closed", () => {
-      if (process.platform !== "darwin") {
-        app.quit();
-      }
-    });
-
     this.protocolService.create();
     this.mainWindow.init();
     this.browserWindow.init();
