@@ -45,7 +45,8 @@ const handleApi: ElectronAPI = {
   webviewHide: () => ipcRenderer.invoke("webview-hide"),
   webviewShow: () => ipcRenderer.invoke("webview-show"),
   downloadNow: (video) => ipcRenderer.invoke("download-now", video),
-  combineToHomePage: () => ipcRenderer.invoke("combine-to-home-page"),
+  combineToHomePage: (store) =>
+    ipcRenderer.invoke("combine-to-home-page", store),
   editDownloadItem: (video) => ipcRenderer.invoke("edit-download-item", video),
 };
 

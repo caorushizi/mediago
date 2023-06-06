@@ -55,7 +55,7 @@ declare interface ElectronAPI {
   webviewHide: () => Promise<void>;
   webviewShow: () => Promise<void>;
   downloadNow: (video: Partial<DownloadItem>) => Promise<void>;
-  combineToHomePage: () => Promise<void>;
+  combineToHomePage: (store: BrowserStore) => Promise<void>;
   editDownloadItem: (video: Partial<DownloadItem>) => Promise<void>;
 }
 

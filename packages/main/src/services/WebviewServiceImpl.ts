@@ -39,14 +39,12 @@ export default class WebviewServiceImpl implements WebviewService {
     this.view.setBackgroundColor("#fff");
     this.webContents = this.view.webContents;
     this.webContents.setAudioMuted(true);
-
-    this.onHeadersReceived = this.onHeadersReceived.bind(this);
   }
 
-  async onHeadersReceived(
+  onHeadersReceived = async (
     details: OnHeadersReceivedListenerDetails,
     callback: (headersReceivedResponse: HeadersReceivedResponse) => void
-  ): Promise<void> {
+  ): Promise<void> => {
     const { url } = details;
 
     const sourceReg = /\.m3u8$/;
@@ -62,7 +60,7 @@ export default class WebviewServiceImpl implements WebviewService {
       this.curWindow.webContents.send("webview-link-message", linkMessage);
     }
     callback({});
-  }
+  };
 
   async init(): Promise<void> {
     this.view.webContents.on("dom-ready", () => {

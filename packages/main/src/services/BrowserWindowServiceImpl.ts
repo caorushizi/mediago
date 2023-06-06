@@ -11,8 +11,11 @@ import {
   BrowserWindowService,
   LoggerService,
   StoreService,
+  WebviewService,
 } from "../interfaces";
 import { BrowserStore } from "main";
+import _ from "lodash";
+import { event } from "helper/utils";
 
 @injectable()
 export default class BrowserWindowServiceImpl
@@ -59,7 +62,14 @@ export default class BrowserWindowServiceImpl
         this.hideWindow();
       }
     });
+
+    this.on("resized", this.handleResize);
   }
+
+  handleResize = () => {
+    const bounds = this.getBounds();
+    this.storeService.set("browserBounds", _.omit(bounds, ["x", "y"]));
+  };
 
   readyToShow = () => {
     this.ready = true;
@@ -74,11 +84,19 @@ export default class BrowserWindowServiceImpl
     this.webContents.send("browser-window-store", store);
     this.show();
     isDev && this.webContents.openDevTools();
+
+    const browserBounds = this.storeService.get("browserBounds");
+    if (browserBounds) {
+      this.setBounds(browserBounds);
+    }
   };
 
-  hideWindow = () => {
+  hideWindow = (store?: BrowserStore) => {
     this.hide();
 
+    if (store) {
+      event.emit("browser-window-restore", store);
+    }
     // 关闭开发者工具
     if (isDev) {
       this.webContents.closeDevTools();

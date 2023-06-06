@@ -17,6 +17,7 @@ import {
   VideoRepository,
 } from "../interfaces";
 import { event } from "helper/utils";
+import _ from "lodash";
 
 @injectable()
 export default class MainWindowServiceImpl
@@ -64,11 +65,28 @@ export default class MainWindowServiceImpl
       // 向所有窗口发送通知
       this.webContents.send("store-change", store);
     });
+
+    // 处理当前窗口改变大小
+    this.on("resized", this.handleResize);
+
+    event.on("browser-window-restore", (store) => {
+      this.webContents.send("browser-window-restore", store);
+    });
   }
+
+  handleResize = () => {
+    const bounds = this.getBounds();
+    this.storeService.set("mainBounds", _.omit(bounds, ["x", "y"]));
+  };
 
   readyToShow = () => {
     this.show();
     isDev && this.webContents.openDevTools();
+
+    const mainBounds = this.storeService.get("mainBounds");
+    if (mainBounds) {
+      this.setBounds(mainBounds);
+    }
   };
 
   onDownloadProgress = (progress: DownloadProgress) => {
