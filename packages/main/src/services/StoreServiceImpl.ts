@@ -13,7 +13,7 @@ export default class StoreServiceImpl
 {
   constructor(
     @inject(TYPES.LoggerService)
-    private readonly logger: LoggerService,
+    private readonly logger: LoggerService
   ) {
     super({
       name: "config",

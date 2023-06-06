@@ -16,6 +16,7 @@
     "@electron/rebuild": "^3.2.10",
     "@rushstack/eslint-patch": "^1.2.0",
     "@types/fs-extra": "^11.0.1",
+    "@types/lodash": "^4.14.195",
     "@types/node": "^18.11.18",
     "@typescript-eslint/eslint-plugin": "5.50.0",
     "@typescript-eslint/parser": "5.50.0",
@@ -49,6 +50,7 @@
     "fs-extra": "^11.1.0",
     "iconv-lite": "^0.6.3",
     "inversify": "^6.0.1",
+    "lodash": "^4.17.21",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.3.12"
   }

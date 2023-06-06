@@ -36,6 +36,7 @@ import {
   addSource,
   restore,
   selectAddressBarVal,
+  selectBrowserStore,
   selectSourceList,
   setAddressBarVal,
 } from "../../store/browserSlice";
@@ -89,6 +90,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   const urlDetail = useRef<UrlDetail>({ title: "", url: "" });
   const addressBarVal = useSelector(selectAddressBarVal);
   const sourceList = useSelector(selectSourceList);
+  const browserStore = useSelector(selectBrowserStore);
 
   const curIsFavorite = favoriteList.find(
     (item) => item.url === urlDetail.current.url
@@ -180,7 +182,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     dispatch(addSource(msg));
   };
 
-  useEffect(() => {
+  const initWebview = () => {
     if (webviewRef.current != null) {
       // 监控 webview 元素的大小
       resizeObserver.current = new ResizeObserver((entries) => {
@@ -200,6 +202,10 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
       resizeObserver.current.observe(webviewRef.current);
       webviewShow();
     }
+  };
+
+  useEffect(() => {
+    initWebview();
 
     return () => {
       resizeObserver.current?.disconnect();
@@ -231,6 +237,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   // 重新设置 store 数据
   const restoreStore = (e: any, store: BrowserStore) => {
     dispatch(restore(store));
+    initWebview();
   };
 
   useEffect(() => {
@@ -315,7 +322,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
 
   // 合并到主页
   const onCombineToHome = () => {
-    combineToHomePage();
+    combineToHomePage(browserStore);
   };
 
   // 渲染工具栏

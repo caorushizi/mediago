@@ -1,4 +1,4 @@
-import { Video } from "electron";
+import { Video, Rectangle } from "electron";
 import { type Favorite } from "entity/Favorite";
 import {
   DownloadItem,
@@ -50,7 +50,7 @@ declare interface ElectronAPI {
   webviewHide: () => Promise<void>;
   webviewShow: () => Promise<void>;
   downloadNow: (video: DownloadItem) => Promise<void>;
-  combineToHomePage: () => Promise<void>;
+  combineToHomePage: (initialVal: BrowserStore) => Promise<void>;
   editDownloadItem: (video: DownloadItem) => Promise<void>;
 }
 
@@ -72,6 +72,8 @@ declare interface AppStore {
   deleteSegments: boolean;
   // 新窗口打开浏览器
   openInNewWindow: boolean;
+  mainBounds?: Rectangle;
+  browserBounds?: Rectangle;
 }
 
 declare interface BrowserStore {
