@@ -114,6 +114,10 @@ export interface WebviewService {
   show: () => void;
 }
 
+export interface WebService {
+  init: () => void;
+}
+
 export enum DownloadStatus {
   Ready = "ready",
   Watting = "watting",

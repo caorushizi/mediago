@@ -15,6 +15,7 @@ const TYPES = {
   DownloadService: Symbol.for("DownloadService"),
   BrowserWindowService: Symbol.for("BrowserWindowService"),
   DevToolsService: Symbol.for("DevToolsService"),
+  WebService: Symbol.for("WebService"),
 };
 
 export { TYPES };

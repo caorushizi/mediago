@@ -13,6 +13,7 @@ import {
   VideoRepository,
   WebviewService,
   type App,
+  WebService,
 } from "./interfaces";
 import { TYPES } from "./types";
 
@@ -40,7 +41,9 @@ export default class ElectronApp implements App {
     @inject(TYPES.BrowserWindowService)
     private readonly browserWindow: BrowserWindowService,
     @inject(TYPES.DevToolsService)
-    private readonly devTools: BrowserWindowService
+    private readonly devTools: BrowserWindowService,
+    @inject(TYPES.WebService)
+    private readonly webService: WebService
   ) {}
 
   async init(): Promise<void> {
@@ -53,6 +56,7 @@ export default class ElectronApp implements App {
     this.storeService.init();
     this.devTools.init();
     await this.dataService.init();
+    this.webService.init();
 
     this.resetDownloadStatus();
   }
