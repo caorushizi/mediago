@@ -43,13 +43,16 @@ export default class ElectronApp implements App {
     @inject(TYPES.DevToolsService)
     private readonly devTools: BrowserWindowService,
     @inject(TYPES.WebService)
-    private readonly webService: WebService
+    private readonly webService: WebService,
+    @inject(TYPES.PlayerWindowService)
+    private readonly playerWindow: BrowserWindowService
   ) {}
 
   async init(): Promise<void> {
     this.protocolService.create();
     this.mainWindow.init();
     this.browserWindow.init();
+    this.playerWindow.init();
     this.ipcHandler.init();
     this.updateService.init();
     this.webview.init();

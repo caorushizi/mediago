@@ -27,6 +27,7 @@ import {
   BrowserWindowService,
   DevToolsService,
   WebService,
+  PlayerWindowService,
 } from "./interfaces";
 import IpcHandlerServiceImpl from "./services/IpcHandlerServiceImpl";
 import LoggerServiceImpl from "./services/LoggerServiceImpl";
@@ -35,6 +36,7 @@ import ProtocolServiceImpl from "./services/ProtocolServiceImpl";
 import UpdateServiceImpl from "./services/UpdateServiceImpl";
 import { TYPES } from "./types";
 import WebServiceImpl from "services/WebServiceImpl";
+import PlayerWindowServiceImpl from "services/PlayerWindowServiceImpl";
 
 const container = new Container({
   skipBaseClassChecks: true,
@@ -62,6 +64,9 @@ container
   .to(DownloadServiceImpl);
 container.bind<DevToolsService>(TYPES.DevToolsService).to(DevToolsServiceImpl);
 container.bind<WebService>(TYPES.WebService).to(WebServiceImpl);
+container
+  .bind<PlayerWindowService>(TYPES.PlayerWindowService)
+  .to(PlayerWindowServiceImpl);
 
 // === controller
 container.bind<Controller>(TYPES.Controller).to(HomeController);

@@ -20,18 +20,13 @@ import {
   EditOutlined,
   FolderOpenOutlined,
   PauseCircleOutlined,
-  PlusOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { selectStore } from "../../store/appSlice";
 import { tdApp } from "../../utils";
 import { increase } from "../../store/downloadSlice";
-import {
-  selectAddressBarVal,
-  selectBrowserStore,
-  selectSourceList,
-} from "../../store/browserSlice";
+import { selectBrowserStore } from "../../store/browserSlice";
 
 enum DownloadFilter {
   list = "list",
