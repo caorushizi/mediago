@@ -13,6 +13,7 @@ export interface MainWindowService extends BrowserWindow {
 
 export interface PlayerWindowService extends BrowserWindow {
   init: () => void;
+  openWindow: (id: number) => void;
 }
 
 export interface BrowserWindowService extends BrowserWindow {
@@ -95,6 +96,7 @@ export interface VideoRepository {
   ) => Promise<UpdateResult>;
   findWattingAndDownloadingVideos: () => Promise<Video[]>;
   deleteDownloadItem: (id: number) => Promise<DeleteResult>;
+  findAllVideos(): Promise<Video[]>;
 }
 
 export interface FavoriteRepository {

@@ -20,6 +20,7 @@ import {
   EditOutlined,
   FolderOpenOutlined,
   PauseCircleOutlined,
+  PlayCircleOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
@@ -47,6 +48,7 @@ const HomePage: FC = () => {
     showBrowserWindow,
     addDownloadItem,
     editDownloadItem,
+    openPlayerWindow,
   } = useElectron();
   const dispatch = useDispatch();
   const appStore = useSelector(selectStore);
@@ -285,8 +287,16 @@ const HomePage: FC = () => {
       ];
     }
 
+    // 下载成功
     const curConverting = converting[item.id];
     return [
+      <Button
+        type="text"
+        key="redownload"
+        icon={<PlayCircleOutlined />}
+        title="播放视频"
+        onClick={() => openPlayerWindow(item.id)}
+      />,
       <Button
         type="text"
         key="redownload"

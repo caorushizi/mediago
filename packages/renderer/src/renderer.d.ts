@@ -57,6 +57,7 @@ declare interface ElectronAPI {
   downloadNow: (video: Partial<DownloadItem>) => Promise<void>;
   combineToHomePage: (store: BrowserStore) => Promise<void>;
   editDownloadItem: (video: Partial<DownloadItem>) => Promise<void>;
+  openPlayerWindow: (videoId: number) => Promise<void>;
 }
 
 declare interface Favorite {
