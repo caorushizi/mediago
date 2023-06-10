@@ -4,6 +4,11 @@ body {
   width: 100vw;
 }
 
+#root {
+  height: 100vh;
+  width: 100vw;
+}
+
 @mixin scrollbar($c: rgba(0, 0, 0, 0.15)) {
   &::-webkit-scrollbar {
     height: 8px;

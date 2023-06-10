@@ -1,15 +1,24 @@
-import { BrowserWindow, BrowserWindowConstructorOptions, Menu } from "electron";
+import {
+  BrowserWindow,
+  BrowserWindowConstructorOptions,
+  Menu,
+  Event,
+} from "electron";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import { resolve } from "path";
-import { PlayerWindowService } from "../interfaces";
+import { PlayerWindowService, VideoRepository } from "../interfaces";
+import { TYPES } from "types";
 
 @injectable()
 export default class PlayerWindowServiceImpl
   extends BrowserWindow
   implements PlayerWindowService
 {
-  constructor() {
+  constructor(
+    @inject(TYPES.VideoRepository)
+    private readonly videoRepository: VideoRepository
+  ) {
     const options: BrowserWindowConstructorOptions = {
       width: 1100,
       minWidth: 1100,
@@ -33,10 +42,24 @@ export default class PlayerWindowServiceImpl
     void this.loadURL(url);
 
     this.once("ready-to-show", this.readyToShow);
+    this.on("close", this.closeWindow);
   }
+
+  closeWindow = (e: Event) => {
+    e.preventDefault();
+    this.hide();
+  };
 
   readyToShow = () => {
     this.show();
     isDev && this.webContents.openDevTools();
+  };
+
+  openWindow = async (id: number) => {
+    const video = await this.videoRepository.findVideo(id);
+    if (!video) throw new Error("video not found");
+
+    this.webContents.send("open-player-window", video.id);
+    this.show();
   };
 }

@@ -1,4 +1,4 @@
-import { StoreService, WebService } from "../interfaces";
+import { StoreService, VideoRepository, WebService } from "../interfaces";
 import { inject, injectable } from "inversify";
 import Koa, { Context } from "koa";
 import Router from "@koa/router";
@@ -16,7 +16,9 @@ export default class WebServiceImpl implements WebService {
 
   constructor(
     @inject(TYPES.StoreService)
-    private readonly storeService: StoreService
+    private readonly storeService: StoreService,
+    @inject(TYPES.VideoRepository)
+    private readonly videoRepository: VideoRepository
   ) {
     this.app = new Koa();
     this.router = new Router();
@@ -49,11 +51,23 @@ export default class WebServiceImpl implements WebService {
       cwd: local,
     });
     const baseUrl = "http://localhost:3000/video/";
+    const videoList = await this.videoRepository.findAllVideos();
 
-    ctx.body = mp4Files.map((file) => ({
-      name: file,
-      url: `${baseUrl}${file}`,
-    }));
+    const res = mp4Files
+      .map((file) => {
+        const name = file.split(".").shift();
+
+        const video = videoList.find((video) => video.name === name);
+        if (!video) return null;
+
+        return {
+          id: video.id,
+          name: video.name,
+          url: `${baseUrl}${file}`,
+        };
+      })
+      .filter(Boolean);
+    ctx.body = res;
   };
 
   private serveVideo = async (ctx: Context) => {
