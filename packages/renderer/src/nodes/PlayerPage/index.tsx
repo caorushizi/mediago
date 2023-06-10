@@ -4,8 +4,7 @@ import "xgplayer/dist/index.min.css";
 import "./index.scss";
 import axios from "axios";
 import { useAsyncEffect, useRequest, useToggle } from "ahooks";
-import { List, Typography, Space, Button, Tooltip } from "antd";
-import { LikeOutlined, SyncOutlined } from "@ant-design/icons";
+import { List, Space, Button } from "antd";
 import useElectron from "../../hooks/electron";
 
 interface Video {
