@@ -7,7 +7,7 @@ import range from "koa-range";
 import { TYPES } from "types";
 import { glob } from "glob";
 import send from "koa-send";
-import path from "path";
+import cors from "@koa/cors";
 
 @injectable()
 export default class WebServiceImpl implements WebService {
@@ -27,8 +27,8 @@ export default class WebServiceImpl implements WebService {
     this.router.get("/api/video-list", this.videoList);
     this.router.get("/video/:filename", this.serveVideo);
     const local = this.storeService.get("local");
-    console.log(local);
 
+    this.app.use(cors());
     this.app.use(range);
     this.app.use(serve(local));
     this.app.use(this.router.routes());
@@ -49,8 +49,6 @@ export default class WebServiceImpl implements WebService {
       cwd: local,
     });
     const baseUrl = "http://localhost:3000/video/";
-
-    console.log(mp4Files);
 
     ctx.body = mp4Files.map((file) => ({
       name: file,
