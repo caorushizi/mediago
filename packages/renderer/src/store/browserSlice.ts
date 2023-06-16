@@ -6,6 +6,7 @@ const initialState: BrowserStore = {
   mode: PageMode.Default,
   url: "",
   sourceList: [],
+  title: "",
 };
 
 export const browserSlice = createSlice({
@@ -18,6 +19,12 @@ export const browserSlice = createSlice({
       }
       if (action.payload.url) {
         state.url = action.payload.url;
+      }
+      if (action.payload.sourceList) {
+        state.sourceList = action.payload.sourceList;
+      }
+      if (action.payload.title) {
+        state.title = action.payload.title;
       }
     },
     setUrl(state, action) {

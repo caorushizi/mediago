@@ -11,18 +11,14 @@ import {
   BrowserWindowService,
   LoggerService,
   StoreService,
-  WebviewService,
 } from "../interfaces";
 import { BrowserStore } from "main";
 import _ from "lodash";
-import { event } from "helper/utils";
 
 @injectable()
-export default class BrowserWindowServiceImpl
-  extends BrowserWindow
-  implements BrowserWindowService
-{
-  private ready = false;
+export default class BrowserWindowServiceImpl implements BrowserWindowService {
+  window: BrowserWindow | null = null;
+  private options: BrowserWindowConstructorOptions;
 
   constructor(
     @inject(TYPES.LoggerService)
@@ -30,7 +26,7 @@ export default class BrowserWindowServiceImpl
     @inject(TYPES.StoreService)
     private readonly storeService: StoreService
   ) {
-    const options: BrowserWindowConstructorOptions = {
+    this.options = {
       width: 1100,
       minWidth: 1100,
       height: 680,
@@ -41,66 +37,61 @@ export default class BrowserWindowServiceImpl
         preload: resolve(__dirname, "./preload.js"),
       },
     };
-    super(options);
   }
 
-  init(): void {
+  get show() {
+    return !!this.window && !this.window.isDestroyed();
+  }
+
+  init(): void {}
+
+  private create() {
+    const window = new BrowserWindow(this.options);
+
     const url = isDev
       ? "http://localhost:8555/browser"
       : "mediago://index.html/browser";
-    void this.loadURL(url);
-
-    this.once("ready-to-show", this.readyToShow);
-    this.on("close", (e: Event) => {
-      e.preventDefault();
-      this.hideWindow();
-    });
+    void window.loadURL(url);
 
     this.storeService.onDidChange("openInNewWindow", (newValue) => {
       // 向所有窗口发送通知
       if (newValue === false) {
-        this.hideWindow();
+        if (window && !window.isDestroyed()) {
+          window.close();
+        }
       }
     });
 
-    this.on("resized", this.handleResize);
+    window.on("resized", this.handleResize);
+
+    return window;
   }
 
   handleResize = () => {
-    const bounds = this.getBounds();
+    if (!this.window) return;
+
+    const bounds = this.window.getBounds();
     this.storeService.set("browserBounds", _.omit(bounds, ["x", "y"]));
   };
 
-  readyToShow = () => {
-    this.ready = true;
-  };
-
   showWindow = (store: BrowserStore) => {
-    if (!this.ready) {
-      this.logger.error("BrowserWindow is not ready to show.");
-      return;
+    if (!this.window || this.window.isDestroyed()) {
+      this.window = this.create();
     }
 
-    this.webContents.send("browser-window-store", store);
-    this.show();
-    isDev && this.webContents.openDevTools();
+    this.window.webContents.send("browser-window-store", store);
+    this.window.show();
+    isDev && this.window.webContents.openDevTools();
 
     const browserBounds = this.storeService.get("browserBounds");
     if (browserBounds) {
-      this.setBounds(browserBounds);
+      this.window.setBounds(browserBounds);
     }
   };
 
-  hideWindow = (store?: BrowserStore) => {
-    this.hide();
+  hideWindow = () => {
+    if (!this.window) return;
 
-    if (store) {
-      event.emit("browser-window-restore", store);
-    }
-    // 关闭开发者工具
-    if (isDev) {
-      this.webContents.closeDevTools();
-      this.getBrowserView()?.webContents.closeDevTools();
-    }
+    this.window.close();
   };
 }

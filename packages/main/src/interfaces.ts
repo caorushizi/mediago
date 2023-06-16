@@ -11,15 +11,17 @@ export interface MainWindowService extends BrowserWindow {
   init: () => void;
 }
 
-export interface PlayerWindowService extends BrowserWindow {
+export interface PlayerWindowService {
   init: () => void;
   openWindow: (id: number) => void;
 }
 
-export interface BrowserWindowService extends BrowserWindow {
+export interface BrowserWindowService {
+  show: boolean;
+  window: BrowserWindow | null;
   init: () => void;
   showWindow: (store: BrowserStore) => void;
-  hideWindow: (store: BrowserStore) => void;
+  hideWindow: () => void;
 }
 
 export interface App {

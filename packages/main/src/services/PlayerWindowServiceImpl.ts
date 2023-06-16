@@ -1,9 +1,4 @@
-import {
-  BrowserWindow,
-  BrowserWindowConstructorOptions,
-  Menu,
-  Event,
-} from "electron";
+import { BrowserWindow, BrowserWindowConstructorOptions, Menu } from "electron";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import { resolve } from "path";
@@ -11,15 +6,15 @@ import { PlayerWindowService, VideoRepository } from "../interfaces";
 import { TYPES } from "types";
 
 @injectable()
-export default class PlayerWindowServiceImpl
-  extends BrowserWindow
-  implements PlayerWindowService
-{
+export default class PlayerWindowServiceImpl implements PlayerWindowService {
+  private options: BrowserWindowConstructorOptions;
+  private window: BrowserWindow | null = null;
+
   constructor(
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository
   ) {
-    const options: BrowserWindowConstructorOptions = {
+    this.options = {
       width: 1100,
       minWidth: 1100,
       height: 680,
@@ -30,36 +25,32 @@ export default class PlayerWindowServiceImpl
         preload: resolve(__dirname, "./preload.js"),
       },
     };
-    super(options);
   }
 
-  init(): void {
+  init(): void {}
+
+  create(): BrowserWindow {
+    const window = new BrowserWindow(this.options);
+
     Menu.setApplicationMenu(null);
 
     const url = isDev
       ? "http://localhost:8555/player"
       : "mediago://index.html/player";
-    void this.loadURL(url);
-
-    this.once("ready-to-show", this.readyToShow);
-    this.on("close", this.closeWindow);
+    void window.loadURL(url);
+    return window;
   }
 
-  closeWindow = (e: Event) => {
-    e.preventDefault();
-    this.hide();
-  };
-
-  readyToShow = () => {
-    // this.show();
-    isDev && this.webContents.openDevTools();
-  };
-
   openWindow = async (id: number) => {
+    if (!this.window || this.window.isDestroyed()) {
+      this.window = this.create();
+    }
+
     const video = await this.videoRepository.findVideo(id);
     if (!video) throw new Error("video not found");
 
-    this.webContents.send("open-player-window", video.id);
-    this.show();
+    isDev && this.window.webContents.openDevTools();
+    this.window.webContents.send("open-player-window", video.id);
+    this.window.show();
   };
 }

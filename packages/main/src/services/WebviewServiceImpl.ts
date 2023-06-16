@@ -19,7 +19,7 @@ import { LinkMessage } from "main";
 @injectable()
 export default class WebviewServiceImpl implements WebviewService {
   private readonly filter = { urls: ["*://*/*"] };
-  private readonly view: BrowserView;
+  private _view: BrowserView;
   webContents: Electron.WebContents;
 
   constructor(
@@ -29,16 +29,22 @@ export default class WebviewServiceImpl implements WebviewService {
     private readonly logger: LoggerService,
     @inject(TYPES.BrowserWindowService)
     private readonly browserWindow: BrowserWindowService
-  ) {
-    const view = new BrowserView({
+  ) {}
+
+  private create(): void {
+    this._view = new BrowserView({
       webPreferences: {
         partition: PERSIST_WEBVIEW,
       },
     });
-    this.view = view;
-    this.view.setBackgroundColor("#fff");
-    this.webContents = this.view.webContents;
+    this._view.setBackgroundColor("#fff");
+    this.webContents = this._view.webContents;
     this.webContents.setAudioMuted(true);
+  }
+
+  get view(): BrowserView {
+    if (!this._view) this.create();
+    return this._view;
   }
 
   onHeadersReceived = async (
@@ -147,8 +153,8 @@ export default class WebviewServiceImpl implements WebviewService {
   }
 
   get curWindow() {
-    if (this.browserWindow.isVisible()) {
-      return this.browserWindow;
+    if (this.browserWindow.window && this.browserWindow.show) {
+      return this.browserWindow.window;
     }
     return this.mainWindow;
   }

@@ -96,6 +96,7 @@ declare interface BrowserStore {
   mode: PageMode;
   url: string;
   sourceList: LinkMessage[];
+  title: string;
 }
 
 declare interface DownloadProgress {

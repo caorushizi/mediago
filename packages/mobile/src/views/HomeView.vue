@@ -30,7 +30,6 @@ onMounted(async () => {
 })
 
 function itemClick(item: VideoData) {
-  console.log('item: ', item.url)
   if (!player.value) return
 
   player.value.src = item.url
