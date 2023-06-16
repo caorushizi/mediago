@@ -51,7 +51,7 @@ export default class PlayerWindowServiceImpl
   };
 
   readyToShow = () => {
-    this.show();
+    // this.show();
     isDev && this.webContents.openDevTools();
   };
 
