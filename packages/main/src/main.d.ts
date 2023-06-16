@@ -52,6 +52,7 @@ declare interface ElectronAPI {
   downloadNow: (video: DownloadItem) => Promise<void>;
   combineToHomePage: (initialVal: BrowserStore) => Promise<void>;
   editDownloadItem: (video: DownloadItem) => Promise<void>;
+  openPlayerWindow: (videoId: number) => Promise<void>;
 }
 
 declare interface LinkMessage {

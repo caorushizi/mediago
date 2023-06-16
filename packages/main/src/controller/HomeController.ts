@@ -21,6 +21,7 @@ import {
   MainWindowService,
   VideoRepository,
   BrowserWindowService,
+  PlayerWindowService,
 } from "../interfaces";
 import { TYPES } from "../types";
 import fs from "fs-extra";
@@ -39,7 +40,9 @@ export default class HomeController implements Controller {
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
     @inject(TYPES.BrowserWindowService)
-    private readonly browserWindow: BrowserWindowService
+    private readonly browserWindow: BrowserWindowService,
+    @inject(TYPES.PlayerWindowService)
+    private readonly playerWindow: PlayerWindowService
   ) {}
 
   @handle("get-env-path")
@@ -205,5 +208,11 @@ export default class HomeController implements Controller {
     this.browserWindow.hideWindow(store);
     // 修改设置中的属性
     this.storeService.set("openInNewWindow", false);
+  }
+
+  @handle("open-player-window")
+  async openPlayerWindow(event: IpcMainEvent, id: number) {
+    // 打开播放器窗口
+    this.playerWindow.openWindow(id);
   }
 }

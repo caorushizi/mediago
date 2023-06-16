@@ -11,6 +11,11 @@ export interface MainWindowService extends BrowserWindow {
   init: () => void;
 }
 
+export interface PlayerWindowService extends BrowserWindow {
+  init: () => void;
+  openWindow: (id: number) => void;
+}
+
 export interface BrowserWindowService extends BrowserWindow {
   init: () => void;
   showWindow: (store: BrowserStore) => void;
@@ -91,6 +96,7 @@ export interface VideoRepository {
   ) => Promise<UpdateResult>;
   findWattingAndDownloadingVideos: () => Promise<Video[]>;
   deleteDownloadItem: (id: number) => Promise<DeleteResult>;
+  findAllVideos(): Promise<Video[]>;
 }
 
 export interface FavoriteRepository {
@@ -112,6 +118,10 @@ export interface WebviewService {
   goHome: () => Promise<void>;
   hide: () => void;
   show: () => void;
+}
+
+export interface WebService {
+  init: () => void;
 }
 
 export enum DownloadStatus {

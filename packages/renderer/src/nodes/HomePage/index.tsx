@@ -20,18 +20,14 @@ import {
   EditOutlined,
   FolderOpenOutlined,
   PauseCircleOutlined,
-  PlusOutlined,
+  PlayCircleOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { selectStore } from "../../store/appSlice";
 import { tdApp } from "../../utils";
 import { increase } from "../../store/downloadSlice";
-import {
-  selectAddressBarVal,
-  selectBrowserStore,
-  selectSourceList,
-} from "../../store/browserSlice";
+import { selectBrowserStore } from "../../store/browserSlice";
 
 enum DownloadFilter {
   list = "list",
@@ -52,6 +48,7 @@ const HomePage: FC = () => {
     showBrowserWindow,
     addDownloadItem,
     editDownloadItem,
+    openPlayerWindow,
   } = useElectron();
   const dispatch = useDispatch();
   const appStore = useSelector(selectStore);
@@ -290,8 +287,16 @@ const HomePage: FC = () => {
       ];
     }
 
+    // 下载成功
     const curConverting = converting[item.id];
     return [
+      <Button
+        type="text"
+        key="redownload"
+        icon={<PlayCircleOutlined />}
+        title="播放视频"
+        onClick={() => openPlayerWindow(item.id)}
+      />,
       <Button
         type="text"
         key="redownload"
