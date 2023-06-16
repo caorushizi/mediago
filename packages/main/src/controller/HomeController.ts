@@ -203,9 +203,9 @@ export default class HomeController implements Controller {
   }
 
   @handle("combine-to-home-page")
-  async combineToHomePage(event: IpcMainEvent, store: BrowserStore) {
+  async combineToHomePage() {
     // 关闭浏览器窗口
-    this.browserWindow.hideWindow(store);
+    this.browserWindow.hideWindow();
     // 修改设置中的属性
     this.storeService.set("openInNewWindow", false);
   }

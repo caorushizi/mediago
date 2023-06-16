@@ -13,9 +13,12 @@ interface Video {
   name: string;
 }
 
+const port = import.meta.env.APP_SERVER_PORT;
+const videoList = `http://localhost:${port}/api/video-list`;
+
 // 获取视频列表
 const getVideoList = async (): Promise<Video[]> =>
-  axios.get("http://localhost:3000/api/video-list").then((res) => res.data);
+  axios.get(videoList).then((res) => res.data);
 
 // 播放器页面
 const PlayerPage: FC = () => {

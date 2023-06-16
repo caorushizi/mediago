@@ -22,7 +22,7 @@ import {
   message,
   Space,
 } from "antd";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PageContainer from "../../components/PageContainer";
 import useElectron from "../../hooks/electron";
@@ -34,9 +34,7 @@ import { ModalForm, ProFormText } from "@ant-design/pro-components";
 import {
   addSource,
   restore,
-  selectUrl,
   selectBrowserStore,
-  selectSourceList,
   setUrl,
   setBrowserStore,
 } from "../../store/browserSlice";
@@ -74,16 +72,12 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   const [favoriteAddForm] = Form.useForm<Favorite>();
   const [messageApi, contextHolder] = message.useMessage();
   const [hoverId, setHoverId] = useState<number>(-1);
-  const urlDetail = useRef<UrlDetail>({ title: "", url: "" });
   const store = useSelector(selectBrowserStore);
 
-  const curIsFavorite = favoriteList.find(
-    (item) => item.url === urlDetail.current.url
-  );
+  const curIsFavorite = favoriteList.find((item) => item.url === store.url);
 
   const loadUrl = async (url: string) => {
     await webviewLoadURL(url);
-    urlDetail.current.url = url;
     dispatch(
       setBrowserStore({
         url: url,
@@ -112,10 +106,10 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     if (curIsFavorite) {
       await removeFavorite(curIsFavorite.id);
     } else {
-      const icon = await getFavIcon(urlDetail.current.url);
+      const icon = await getFavIcon(store.url);
       await addFavorite({
-        url: urlDetail.current.url,
-        title: urlDetail.current.title || urlDetail.current.url,
+        url: store.url,
+        title: store.title || store.url,
         icon,
       });
     }
@@ -126,7 +120,6 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     const back = await webviewGoBack();
 
     if (!back) {
-      urlDetail.current.url = "";
       dispatch(
         setBrowserStore({
           url: "",
@@ -138,7 +131,6 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
 
   const onClickGoHome = async () => {
     await webwiewGoHome();
-    urlDetail.current.url = "";
     dispatch(
       setBrowserStore({
         url: "",
@@ -166,10 +158,10 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   const onDomReady = (e: unknown, data: UrlDetail) => {
     if (data.url) {
       document.title = data.title;
-      urlDetail.current = data;
       dispatch(
         setBrowserStore({
           url: data.url,
+          title: data.title,
         })
       );
     }

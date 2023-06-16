@@ -25,24 +25,7 @@ const WebView: FC<WebViewProps> = ({ className }) => {
   const webviewRef = useRef<HTMLDivElement>(null);
   const resizeObserver = useRef<ResizeObserver>();
 
-  const {
-    getFavorites,
-    addFavorite,
-    removeFavorite,
-    setWebviewBounds,
-    webviewLoadURL,
-    rendererEvent,
-    removeEventListener,
-    webviewGoBack,
-    webviewReload,
-    webwiewGoHome,
-    addDownloadItem,
-    onFavoriteItemContextMenu,
-    webviewHide,
-    webviewShow,
-    downloadNow,
-    combineToHomePage,
-  } = useElectron();
+  const { setWebviewBounds, webviewHide, webviewShow } = useElectron();
 
   useEffect(() => {
     if (webviewRef.current != null) {

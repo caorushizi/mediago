@@ -13,6 +13,7 @@ import cors from "@koa/cors";
 export default class WebServiceImpl implements WebService {
   private readonly app: Koa;
   private readonly router: Router;
+  private readonly baseUrl: string;
 
   constructor(
     @inject(TYPES.StoreService)
@@ -22,6 +23,9 @@ export default class WebServiceImpl implements WebService {
   ) {
     this.app = new Koa();
     this.router = new Router();
+    this.baseUrl = `http://${this.getIPAdress()}:${
+      process.env.APP_SERVER_PORT
+    }/video/`;
   }
 
   async init(): Promise<void> {
@@ -36,7 +40,26 @@ export default class WebServiceImpl implements WebService {
     this.app.use(this.router.routes());
     this.app.use(this.router.allowedMethods());
 
-    this.app.listen(process.env.SERVER_PORT);
+    this.app.listen(process.env.APP_SERVER_PORT);
+  }
+
+  private getIPAdress() {
+    const interfaces = require("os").networkInterfaces(); //服务器本机地址
+    let IPAdress = "";
+    for (var devName in interfaces) {
+      var iface = interfaces[devName];
+      for (var i = 0; i < iface.length; i++) {
+        var alias = iface[i];
+        if (
+          alias.family === "IPv4" &&
+          alias.address !== "127.0.0.1" &&
+          !alias.internal
+        ) {
+          IPAdress = alias.address;
+        }
+      }
+    }
+    return IPAdress;
   }
 
   private home = (ctx: Context) => {
@@ -50,7 +73,6 @@ export default class WebServiceImpl implements WebService {
     const mp4Files = await glob("*.mp4", {
       cwd: local,
     });
-    const baseUrl = "http://localhost:3000/video/";
     const videoList = await this.videoRepository.findAllVideos();
 
     const res = mp4Files
@@ -63,7 +85,7 @@ export default class WebServiceImpl implements WebService {
         return {
           id: video.id,
           name: video.name,
-          url: `${baseUrl}${file}`,
+          url: `${this.baseUrl}${file}`,
         };
       })
       .filter(Boolean);
