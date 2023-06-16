@@ -15,7 +15,7 @@ declare interface EnvPath {
 }
 
 declare interface BrowserWindowInitialVal {
-  addressBarVal?: string;
+  url?: string;
   sourceList?: LinkMessage[];
 }
 
@@ -78,6 +78,6 @@ declare interface AppStore {
 }
 
 declare interface BrowserStore {
-  addressBarVal: string;
+  url: string;
   sourceList: LinkMessage[];
 }
