@@ -27,38 +27,30 @@ import { useDispatch, useSelector } from "react-redux";
 import PageContainer from "../../components/PageContainer";
 import useElectron from "../../hooks/electron";
 import { increase } from "../../store/downloadSlice";
-import { getFavIcon } from "../../utils";
-import { isUrl } from "../../utils/url";
+import { generateUrl, getFavIcon } from "../../utils";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "./index.scss";
 import { ModalForm, ProFormText } from "@ant-design/pro-components";
 import {
   addSource,
   restore,
-  selectAddressBarVal,
+  selectUrl,
   selectBrowserStore,
   selectSourceList,
-  setAddressBarVal,
+  setUrl,
+  setBrowserStore,
 } from "../../store/browserSlice";
+import WebView from "../../components/WebView";
 
 const { Panel: AntDPanel } = Collapse;
 
-interface DivRect {
-  left: number;
-  top: number;
-  width: number;
-  height: number;
-}
-
-const computeRect = ({ left, top, width, height }: DivRect) => ({
-  x: Math.floor(left),
-  y: Math.floor(top),
-  width: Math.floor(width),
-  height: Math.floor(height),
-});
-
 interface SourceExtractProps {
   page?: boolean;
+}
+
+export enum PageMode {
+  Default = "default",
+  Browser = "browser",
 }
 
 const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
@@ -66,7 +58,6 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     getFavorites,
     addFavorite,
     removeFavorite,
-    setWebviewBounds,
     webviewLoadURL,
     rendererEvent,
     removeEventListener,
@@ -75,22 +66,16 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     webwiewGoHome,
     addDownloadItem,
     onFavoriteItemContextMenu,
-    webviewHide,
-    webviewShow,
     downloadNow,
     combineToHomePage,
   } = useElectron();
   const dispatch = useDispatch();
   const { data: favoriteList = [], refresh } = useRequest(getFavorites);
-  const webviewRef = useRef<HTMLDivElement>(null);
-  const resizeObserver = useRef<ResizeObserver>();
   const [favoriteAddForm] = Form.useForm<Favorite>();
   const [messageApi, contextHolder] = message.useMessage();
   const [hoverId, setHoverId] = useState<number>(-1);
   const urlDetail = useRef<UrlDetail>({ title: "", url: "" });
-  const addressBarVal = useSelector(selectAddressBarVal);
-  const sourceList = useSelector(selectSourceList);
-  const browserStore = useSelector(selectBrowserStore);
+  const store = useSelector(selectBrowserStore);
 
   const curIsFavorite = favoriteList.find(
     (item) => item.url === urlDetail.current.url
@@ -99,23 +84,21 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   const loadUrl = async (url: string) => {
     await webviewLoadURL(url);
     urlDetail.current.url = url;
-    dispatch(setAddressBarVal(url));
+    dispatch(
+      setBrowserStore({
+        url: url,
+        mode: PageMode.Browser,
+      })
+    );
   };
 
   const goto = async () => {
-    let finalUrl = addressBarVal;
-    if (!/^https?:\/\//.test(addressBarVal)) {
-      finalUrl = `http://${addressBarVal}`;
-    }
-    if (!isUrl(finalUrl)) {
-      finalUrl = `https://baidu.com/s?word=${addressBarVal}`;
-    }
-
-    await loadUrl(finalUrl);
+    const link = generateUrl(store.url);
+    await loadUrl(link);
   };
 
   const onInputKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!addressBarVal) {
+    if (!store.url) {
       return;
     }
     if (e.key !== "Enter") {
@@ -144,14 +127,24 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
 
     if (!back) {
       urlDetail.current.url = "";
-      dispatch(setAddressBarVal(""));
+      dispatch(
+        setBrowserStore({
+          url: "",
+          mode: PageMode.Default,
+        })
+      );
     }
   };
 
   const onClickGoHome = async () => {
     await webwiewGoHome();
     urlDetail.current.url = "";
-    dispatch(setAddressBarVal(""));
+    dispatch(
+      setBrowserStore({
+        url: "",
+        mode: PageMode.Default,
+      })
+    );
   };
 
   const onClickReload = () => {
@@ -159,7 +152,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   };
 
   const onClickEnter = async () => {
-    if (!addressBarVal) {
+    if (!store.url) {
       return;
     }
 
@@ -174,44 +167,17 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     if (data.url) {
       document.title = data.title;
       urlDetail.current = data;
-      dispatch(setAddressBarVal(data.url));
+      dispatch(
+        setBrowserStore({
+          url: data.url,
+        })
+      );
     }
   };
 
   const receiveLinkMessage = (e: unknown, msg: LinkMessage) => {
     dispatch(addSource(msg));
   };
-
-  const initWebview = () => {
-    if (webviewRef.current != null) {
-      // 监控 webview 元素的大小
-      resizeObserver.current = new ResizeObserver((entries) => {
-        if (!webviewRef.current) {
-          return;
-        }
-
-        const rect = computeRect(webviewRef.current?.getBoundingClientRect());
-
-        const entry = entries[0];
-        const viewRect = computeRect(entry.contentRect);
-        viewRect.x += rect.x;
-        viewRect.y += rect.y;
-        setWebviewBounds(viewRect);
-      });
-
-      resizeObserver.current.observe(webviewRef.current);
-      webviewShow();
-    }
-  };
-
-  useEffect(() => {
-    initWebview();
-
-    return () => {
-      resizeObserver.current?.disconnect();
-      webviewHide();
-    };
-  }, [!!urlDetail.current.url, addressBarVal]);
 
   const onFavoriteEvent = async (
     e: unknown,
@@ -237,7 +203,6 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   // 重新设置 store 数据
   const restoreStore = (e: any, store: BrowserStore) => {
     dispatch(restore(store));
-    initWebview();
   };
 
   useEffect(() => {
@@ -277,7 +242,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     return (
       <div className="webview-sider">
         <Collapse className="webview-sider-inner" bordered={false} size="small">
-          {sourceList.map((item) => {
+          {store.sourceList.map((item) => {
             return (
               <AntDPanel
                 className="sider-list-container"
@@ -322,18 +287,23 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
 
   // 合并到主页
   const onCombineToHome = () => {
-    combineToHomePage(browserStore);
+    combineToHomePage(store);
   };
 
   // 渲染工具栏
   const renderToolbar = () => {
     return (
       <Space.Compact className="action-bar" block>
-        <Button title="首页" type="text" onClick={onClickGoHome}>
+        <Button
+          disabled={store.mode === PageMode.Default}
+          title="首页"
+          type="text"
+          onClick={onClickGoHome}
+        >
           <HomeOutlined />
         </Button>
         <Button
-          disabled={!addressBarVal}
+          disabled={store.mode === PageMode.Default}
           title="回退"
           type="text"
           onClick={onClickGoBack}
@@ -341,7 +311,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
           <ArrowLeftOutlined />
         </Button>
         <Button
-          disabled={!addressBarVal}
+          disabled={store.mode === PageMode.Default}
           title="刷新"
           type="text"
           onClick={onClickReload}
@@ -353,19 +323,19 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
           type="text"
           title={curIsFavorite ? "取消收藏" : "收藏"}
           onClick={onClickAddFavorite}
-          disabled={!addressBarVal}
+          disabled={store.mode === PageMode.Default}
         >
           {curIsFavorite ? <StarFilled /> : <StarOutlined />}
         </Button>
         <Input
           key="url-input"
-          value={addressBarVal}
-          onChange={(e) => dispatch(setAddressBarVal(e.target.value))}
+          value={store.url}
+          onChange={(e) => dispatch(setUrl(e.target.value))}
           onKeyDown={onInputKeyDown}
           placeholder="请输入网址链接……"
         />
         <Button
-          disabled={!addressBarVal}
+          disabled={store.mode === PageMode.Default}
           title="访问"
           type="text"
           onClick={onClickEnter}
@@ -387,14 +357,14 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
       <div className="webview-container">
         <PanelGroup autoSaveId="example" direction="horizontal">
           <Panel minSize={50}>
-            <div className="webview-inner" ref={webviewRef} />
+            <WebView className="webview-inner" />
           </Panel>
-          {sourceList.length > 0 && (
+          {store.sourceList.length > 0 && (
             <>
               <PanelResizeHandle className="divider">
                 <div className="handle" />
               </PanelResizeHandle>
-              <Panel minSize={30}>{renderWebviewSider()}</Panel>
+              <Panel minSize={20}>{renderWebviewSider()}</Panel>
             </>
           )}
         </PanelGroup>
@@ -538,7 +508,9 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
       {contextHolder}
       {renderToolbar()}
       <div className="source-extract-content">
-        {addressBarVal ? renderBrowserPanel() : renderFavoriteList()}
+        {store.mode === PageMode.Browser
+          ? renderBrowserPanel()
+          : renderFavoriteList()}
       </div>
     </PageContainer>
   );

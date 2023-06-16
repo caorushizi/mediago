@@ -93,7 +93,8 @@ declare interface AppStore {
 }
 
 declare interface BrowserStore {
-  addressBarVal: string;
+  mode: PageMode;
+  url: string;
   sourceList: LinkMessage[];
 }
 

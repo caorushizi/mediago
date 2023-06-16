@@ -1,8 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from ".";
+import { PageMode } from "../nodes/SourceExtract";
 
 const initialState: BrowserStore = {
-  addressBarVal: "",
+  mode: PageMode.Default,
+  url: "",
   sourceList: [],
 };
 
@@ -10,8 +12,16 @@ export const browserSlice = createSlice({
   name: "browser",
   initialState,
   reducers: {
-    setAddressBarVal(state, action) {
-      state.addressBarVal = action.payload;
+    setBrowserStore(state, action) {
+      if (action.payload.mode) {
+        state.mode = action.payload.mode;
+      }
+      if (action.payload.url) {
+        state.url = action.payload.url;
+      }
+    },
+    setUrl(state, action) {
+      state.url = action.payload;
     },
     addSource(state, action) {
       if (state.sourceList.find((item) => item.url === action.payload.url)) {
@@ -30,9 +40,9 @@ export const browserSlice = createSlice({
   },
 });
 
-export const { setAddressBarVal, addSource, restore } = browserSlice.actions;
-export const selectAddressBarVal = (state: RootState) =>
-  state.browser.addressBarVal;
+export const { setUrl, setBrowserStore, addSource, restore } =
+  browserSlice.actions;
+export const selectUrl = (state: RootState) => state.browser.url;
 export const selectSourceList = (state: RootState) => state.browser.sourceList;
 export const selectBrowserStore = (state: RootState) => state.browser;
 export default browserSlice.reducer;

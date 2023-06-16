@@ -1,3 +1,5 @@
+import { isUrl } from "./url";
+
 export { http } from "./http";
 export { tdApp } from "./tdapp";
 
@@ -30,4 +32,15 @@ export const getFavIcon = async (url: string) => {
     // empty
   }
   return iconUrl;
+};
+
+export const generateUrl = (url: string) => {
+  let result = url;
+  if (!/^https?:\/\//.test(url)) {
+    result = `http://${url}`;
+  }
+  if (!isUrl(result)) {
+    result = `https://baidu.com/s?word=${url}`;
+  }
+  return result;
 };
