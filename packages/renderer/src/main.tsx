@@ -7,6 +7,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import App from "./App";
 import HomePage from "./nodes/HomePage";
 import SettingPage from "./nodes/SettingPage";
+import PlayerPage from "./nodes/PlayerPage";
 import SourceExtract from "./nodes/SourceExtract";
 import store from "./store";
 import dayjs from "dayjs";
@@ -31,6 +32,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
               <Route path="*" element={<div>404</div>} />
             </Route>
             <Route path="/browser" element={<SourceExtract page={true} />} />
+            <Route path="/player" element={<PlayerPage />} />
           </Routes>
         </BrowserRouter>
       </ConfigProvider>

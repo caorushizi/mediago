@@ -48,6 +48,8 @@ const handleApi: ElectronAPI = {
   combineToHomePage: (store) =>
     ipcRenderer.invoke("combine-to-home-page", store),
   editDownloadItem: (video) => ipcRenderer.invoke("edit-download-item", video),
+  openPlayerWindow: (videoId) =>
+    ipcRenderer.invoke("open-player-window", videoId),
 };
 
 contextBridge.exposeInMainWorld(apiKey, handleApi);

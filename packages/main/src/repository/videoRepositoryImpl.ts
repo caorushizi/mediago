@@ -41,11 +41,21 @@ export default class VideoRepositoryImpl implements VideoRepository {
     return await this.dataService.manager.save(item);
   }
 
-  async findVideos({
-    current = 0,
-    pageSize = 50,
-    filter = DownloadFilter.list,
-  }: DownloadItemPagination) {
+  // 查找所有视频
+  async findAllVideos() {
+    return await this.dataService.appDataSource.getRepository(Video).find({
+      order: {
+        createdDate: "DESC",
+      },
+    });
+  }
+
+  async findVideos(pagination: DownloadItemPagination) {
+    const {
+      current = 0,
+      pageSize = 50,
+      filter = DownloadFilter.list,
+    } = pagination;
     const filterCondition =
       filter === DownloadFilter.done
         ? DownloadStatus.Success
