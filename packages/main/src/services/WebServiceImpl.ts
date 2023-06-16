@@ -36,7 +36,7 @@ export default class WebServiceImpl implements WebService {
     this.app.use(this.router.routes());
     this.app.use(this.router.allowedMethods());
 
-    this.app.listen(3000);
+    this.app.listen(process.env.SERVER_PORT);
   }
 
   private home = (ctx: Context) => {
