@@ -8,6 +8,7 @@ import { TYPES } from "types";
 import { glob } from "glob";
 import send from "koa-send";
 import cors from "@koa/cors";
+import { getLocalIP } from "helper";
 
 @injectable()
 export default class WebServiceImpl implements WebService {
@@ -23,10 +24,8 @@ export default class WebServiceImpl implements WebService {
   ) {
     this.app = new Koa();
     this.router = new Router();
-    this.baseUrl = `http://${this.getIPAdress()}:${
-      process.env.APP_SERVER_PORT
-    }/video/`;
-    console.log(this.baseUrl);
+    this.baseUrl = `http://${getLocalIP()}:${process.env.APP_SERVER_PORT
+      }/video/`;
   }
 
   async init(): Promise<void> {
@@ -42,25 +41,6 @@ export default class WebServiceImpl implements WebService {
     this.app.use(this.router.allowedMethods());
 
     this.app.listen(process.env.APP_SERVER_PORT);
-  }
-
-  private getIPAdress() {
-    const interfaces = require("os").networkInterfaces(); //服务器本机地址
-    let IPAdress = "";
-    for (var devName in interfaces) {
-      var iface = interfaces[devName];
-      for (var i = 0; i < iface.length; i++) {
-        var alias = iface[i];
-        if (
-          alias.family === "IPv4" &&
-          alias.address !== "127.0.0.1" &&
-          !alias.internal
-        ) {
-          IPAdress = alias.address;
-        }
-      }
-    }
-    return IPAdress;
   }
 
   private home = (ctx: Context) => {

@@ -50,6 +50,7 @@ const handleApi: ElectronAPI = {
   editDownloadItem: (video) => ipcRenderer.invoke("edit-download-item", video),
   openPlayerWindow: (videoId) =>
     ipcRenderer.invoke("open-player-window", videoId),
+  getLocalIP: () => ipcRenderer.invoke("get-local-ip"),
 };
 
 contextBridge.exposeInMainWorld(apiKey, handleApi);

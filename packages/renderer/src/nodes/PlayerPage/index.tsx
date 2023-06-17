@@ -13,9 +13,13 @@ interface Video {
   name: string;
 }
 
-const port = import.meta.env.APP_SERVER_PORT;
-const videoList = `http://localhost:${port}/api/video-list`;
-
+const { getLocalIP } = useElectron();
+const localIP = getLocalIP();
+const port =
+  import.meta.env.NODE_ENV === "development"
+    ? import.meta.env.APP_SERVER_PORT
+    : 8556;
+const videoList = `http://${localIP}:${port}/api/video-list`;
 // 获取视频列表
 const getVideoList = async (): Promise<Video[]> =>
   axios.get(videoList).then((res) => res.data);
@@ -27,7 +31,7 @@ const PlayerPage: FC = () => {
   const [showButton, setShowButton] = useState(false);
   const playerRef = useRef<HTMLDivElement>(null);
   const player = useRef<Player>();
-  const { data: videoList, loading, refresh } = useRequest(getVideoList);
+  const { data: videoList, refresh } = useRequest(getVideoList);
   const playedVideoId = useRef<number>();
 
   useAsyncEffect(async () => {
