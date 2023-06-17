@@ -8,6 +8,8 @@ import {
   RadioChangeEvent,
   Space,
   Tag,
+  Popover,
+  QRCode,
 } from "antd";
 import "./index.scss";
 import PageContainer from "../../components/PageContainer";
@@ -22,6 +24,7 @@ import {
   PauseCircleOutlined,
   PlayCircleOutlined,
   SyncOutlined,
+  MobileOutlined,
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { selectStore } from "../../store/appSlice";
@@ -393,6 +396,26 @@ const HomePage: FC = () => {
             >
               打开浏览器
             </Button>
+          )}
+          {filter === DownloadFilter.done && (
+            <Popover
+              placement="topRight"
+              title={"浏览器扫码观看(需要在同一个 WIFI 下)"}
+              content={
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <QRCode value="http://172.18.112.1:5173/" />
+                </div>
+              }
+              trigger="click"
+            >
+              <Button icon={<MobileOutlined />}>手机上播放</Button>
+            </Popover>
           )}
           <Button onClick={() => refresh()}>刷新</Button>
           <ModalForm<DownloadItem>
