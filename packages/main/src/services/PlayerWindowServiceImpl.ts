@@ -27,8 +27,6 @@ export default class PlayerWindowServiceImpl implements PlayerWindowService {
     };
   }
 
-  init(): void {}
-
   create(): BrowserWindow {
     const window = new BrowserWindow(this.options);
 

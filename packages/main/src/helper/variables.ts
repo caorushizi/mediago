@@ -20,3 +20,4 @@ export const winDownloaderPath = path.resolve(
   "N_m3u8DL-CLI_v3.0.2.exe"
 );
 export const ffmpegPath = path.resolve(__bin__, "ffmpeg.exe");
+export const mobilePath = path.resolve(app.getAppPath(), "../mobile");
