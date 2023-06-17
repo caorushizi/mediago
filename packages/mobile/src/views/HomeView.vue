@@ -17,7 +17,7 @@ const list = ref<VideoData[]>([])
 
 onMounted(async () => {
   if (videoRef.value) {
-    const res = await axios.get('http://localhost:3000/api/video-list')
+    const res = await axios.get('http://192.168.1.10:8433/api/video-list')
     list.value = res.data
 
     player.value = new Player({

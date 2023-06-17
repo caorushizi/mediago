@@ -26,6 +26,7 @@ export default class WebServiceImpl implements WebService {
     this.baseUrl = `http://${this.getIPAdress()}:${
       process.env.APP_SERVER_PORT
     }/video/`;
+    console.log(this.baseUrl);
   }
 
   async init(): Promise<void> {

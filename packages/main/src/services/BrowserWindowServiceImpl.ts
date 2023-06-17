@@ -39,11 +39,11 @@ export default class BrowserWindowServiceImpl implements BrowserWindowService {
     };
   }
 
+  init(): void {}
+
   get show() {
     return !!this.window && !this.window.isDestroyed();
   }
-
-  init(): void {}
 
   private create() {
     const window = new BrowserWindow(this.options);
