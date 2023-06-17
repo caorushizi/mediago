@@ -1,4 +1,5 @@
 import { fileURLToPath, URL } from 'node:url'
+import path from 'path'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -24,5 +25,9 @@ export default defineConfig({
   server: {
     host: true,
     port: 8556
+  },
+  build: {
+    outDir: path.resolve(__dirname, "../main/build/mobile"),
+    emptyOutDir: true,
   }
 })

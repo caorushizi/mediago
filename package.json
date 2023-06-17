@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "pnpm -r --parallel -F main -F renderer -F mobile run dev",
-    "build": "pnpm -r --parallel -F main -F renderer run build",
+    "build": "pnpm -r --parallel -F main -F renderer -F mobile run build",
     "pack": "pnpm -F main run pack",
     "release": "pnpm run build && pnpm -F main run release"
   },
