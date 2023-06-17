@@ -12,7 +12,7 @@ import { db, workspace } from "helper/variables";
 import { inject, injectable } from "inversify";
 import { AppStore, BrowserStore, EnvPath } from "main";
 import path from "path";
-import { handle } from "../helper/decorator";
+import { handle, getLocalIP } from "../helper";
 import {
   StoreService,
   LoggerService,
@@ -43,7 +43,7 @@ export default class HomeController implements Controller {
     private readonly browserWindow: BrowserWindowService,
     @inject(TYPES.PlayerWindowService)
     private readonly playerWindow: PlayerWindowService
-  ) {}
+  ) { }
 
   @handle("get-env-path")
   async getEnvPath(): Promise<EnvPath> {
@@ -214,5 +214,11 @@ export default class HomeController implements Controller {
   async openPlayerWindow(event: IpcMainEvent, id: number) {
     // 打开播放器窗口
     this.playerWindow.openWindow(id);
+  }
+
+
+  @handle("get-local-ip")
+  async getLocalIp() {
+    return getLocalIP();
   }
 }

@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-// import { NavBar } from 'vant'
+import { RouterView } from 'vue-router'
 </script>
 
 <template>
-  <van-nav-bar title="标题" />
+  <van-nav-bar title="视频播放" />
   <RouterView />
 </template>
 

@@ -13,7 +13,7 @@ import {
 } from "antd";
 import "./index.scss";
 import PageContainer from "../../components/PageContainer";
-import { usePagination } from "ahooks";
+import { useAsyncEffect, usePagination } from "ahooks";
 import useElectron from "../../hooks/electron";
 import { DownloadStatus } from "../../types";
 import { ModalForm, ProFormText, ProList } from "@ant-design/pro-components";
@@ -52,6 +52,7 @@ const HomePage: FC = () => {
     addDownloadItem,
     editDownloadItem,
     openPlayerWindow,
+    getLocalIP,
   } = useElectron();
   const dispatch = useDispatch();
   const appStore = useSelector(selectStore);
@@ -76,8 +77,16 @@ const HomePage: FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [addVideoForm] = Form.useForm<DownloadItem>();
   const [editVideoForm] = Form.useForm<DownloadItem>();
+  const [baseUrl, setBaseUrl] = useState("");
 
   const browserStore = useSelector(selectBrowserStore);
+
+  useAsyncEffect(async () => {
+    const isDev = import.meta.env.NODE_ENV === "development";
+    const localIP = await getLocalIP();
+    const port = isDev ? import.meta.env.APP_SERVER_PORT : 8556;
+    setBaseUrl(`http://${localIP}:${port}/`);
+  }, []);
 
   const onDownloadProgress = (e: any, progress: DownloadProgress) => {
     setProgress((curProgress) => ({
@@ -400,7 +409,7 @@ const HomePage: FC = () => {
           {filter === DownloadFilter.done && (
             <Popover
               placement="topRight"
-              title={"浏览器扫码观看(需要在同一个 WIFI 下)"}
+              title={"扫码观看(需要连接相同 WIFI)"}
               content={
                 <div
                   style={{
@@ -409,7 +418,7 @@ const HomePage: FC = () => {
                     justifyContent: "center",
                   }}
                 >
-                  <QRCode value="http://172.18.112.1:5173/" />
+                  <QRCode value={baseUrl} />
                 </div>
               }
               trigger="click"
