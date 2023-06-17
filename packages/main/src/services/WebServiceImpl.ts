@@ -24,8 +24,9 @@ export default class WebServiceImpl implements WebService {
   ) {
     this.app = new Koa();
     this.router = new Router();
-    this.baseUrl = `http://${getLocalIP()}:${process.env.APP_SERVER_PORT
-      }/video/`;
+    this.baseUrl = `http://${getLocalIP()}:${
+      process.env.APP_SERVER_PORT
+    }/video/`;
   }
 
   async init(): Promise<void> {

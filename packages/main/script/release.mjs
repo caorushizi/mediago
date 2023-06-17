@@ -11,7 +11,7 @@ if (semver.neq(process.env.APP_VERSION, packageJson.version)) {
   process.exit(0);
 }
 
-const extraResources = [];
+const extraResources = ["build/mobile/**/*"];
 if (process.platform === "win32") {
   // windows
   extraResources.push("bin/ffmpeg.exe", "bin/N_m3u8DL-CLI_v3.0.2.exe");
