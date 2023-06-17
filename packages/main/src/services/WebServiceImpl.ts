@@ -8,7 +8,8 @@ import { TYPES } from "types";
 import { glob } from "glob";
 import send from "koa-send";
 import cors from "@koa/cors";
-import { getLocalIP } from "helper";
+import { getLocalIP, mobilePath } from "helper";
+import path from "path";
 
 @injectable()
 export default class WebServiceImpl implements WebService {
@@ -30,7 +31,6 @@ export default class WebServiceImpl implements WebService {
   }
 
   async init(): Promise<void> {
-    this.router.get("/", this.home);
     this.router.get("/api/video-list", this.videoList);
     this.router.get("/video/:filename", this.serveVideo);
     const local = this.storeService.get("local");
@@ -38,17 +38,20 @@ export default class WebServiceImpl implements WebService {
     this.app.use(cors());
     this.app.use(range);
     this.app.use(serve(local));
+    if (process.env.NODE_ENV === "production") {
+      this.app.use(serve(mobilePath));
+    }
+    this.app.use(async (ctx, next) => {
+      await next();
+      if (ctx.status === 404 && !path.extname(ctx.path)) {
+        await send(ctx, "index.html", { root: mobilePath });
+      }
+    });
     this.app.use(this.router.routes());
     this.app.use(this.router.allowedMethods());
 
     this.app.listen(process.env.APP_SERVER_PORT);
   }
-
-  private home = (ctx: Context) => {
-    ctx.body = {
-      test: 1,
-    };
-  };
 
   private videoList = async (ctx: Context) => {
     const local = this.storeService.get("local");

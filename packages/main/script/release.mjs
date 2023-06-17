@@ -11,7 +11,12 @@ if (semver.neq(process.env.APP_VERSION, packageJson.version)) {
   process.exit(0);
 }
 
-const extraResources = ["build/mobile/**/*"];
+const extraResources = [
+  {
+    from: "build/mobile",
+    to: "mobile",
+  },
+];
 if (process.platform === "win32") {
   // windows
   extraResources.push("bin/ffmpeg.exe", "bin/N_m3u8DL-CLI_v3.0.2.exe");
@@ -41,10 +46,10 @@ const options = {
       filter: ["**/*"],
     },
     "./package.json",
-    // {
-    //   from: "./node_modules/better-sqlite3/build/Release",
-    //   to: "./build/Release",
-    // },
+    {
+      from: "./node_modules/better-sqlite3/build/Release",
+      to: "./build/Release",
+    },
   ],
   extraResources,
   win: {

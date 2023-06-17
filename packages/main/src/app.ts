@@ -1,11 +1,8 @@
-import { app } from "electron";
 import { inject, injectable } from "inversify";
 import {
-  BrowserWindowService,
   DatabaseService,
   DownloadStatus,
   IpcHandlerService,
-  LoggerService,
   MainWindowService,
   ProtocolService,
   StoreService,
@@ -14,6 +11,7 @@ import {
   WebviewService,
   type App,
   WebService,
+  DevToolsService,
 } from "./interfaces";
 import { TYPES } from "./types";
 
@@ -32,27 +30,19 @@ export default class ElectronApp implements App {
     private readonly dataService: DatabaseService,
     @inject(TYPES.WebviewService)
     private readonly webview: WebviewService,
-    @inject(TYPES.LoggerService)
-    private readonly logger: LoggerService,
     @inject(TYPES.StoreService)
     private readonly storeService: StoreService,
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
-    @inject(TYPES.BrowserWindowService)
-    private readonly browserWindow: BrowserWindowService,
     @inject(TYPES.DevToolsService)
-    private readonly devTools: BrowserWindowService,
+    private readonly devTools: DevToolsService,
     @inject(TYPES.WebService)
-    private readonly webService: WebService,
-    @inject(TYPES.PlayerWindowService)
-    private readonly playerWindow: BrowserWindowService
+    private readonly webService: WebService
   ) {}
 
   async init(): Promise<void> {
     this.protocolService.create();
     this.mainWindow.init();
-    this.browserWindow.init();
-    this.playerWindow.init();
     this.ipcHandler.init();
     this.updateService.init();
     this.webview.init();
