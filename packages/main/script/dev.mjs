@@ -7,6 +7,7 @@ import { loadDotEnvRuntime, mainResolve } from "./utils.mjs";
 
 let electronProcess = null;
 
+process.env.NODE_ENV = "development";
 loadDotEnvRuntime();
 
 async function copySource() {

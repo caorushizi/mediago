@@ -17,18 +17,17 @@ const list = ref<VideoData[]>([])
 onMounted(async () => {
   let baseUrl = location.href
   if (import.meta.env.MODE === 'development') {
-    baseUrl = `http://${location.hostname}:8433`
+    baseUrl = `http://${location.hostname}:8433/`
   }
-  const res = await axios.get(`${baseUrl}/api/video-list`)
-  list.value = res.data
-
+  const res = await axios.get(`${baseUrl}api/video-list`)
   if (videoRef.value) {
     const options: IPlayerOptions = {
       el: videoRef.value,
       fluid: true,
       videoInit: true
     }
-    if (Array.isArray(list.value) && list.value.length > 0) {
+    if (Array.isArray(res.data) && res.data.length > 0) {
+      list.value = res.data
       options.src = list.value[0].url
     }
     player.value = new Player(options)

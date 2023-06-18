@@ -3,7 +3,7 @@ import Player from "xgplayer";
 import "xgplayer/dist/index.min.css";
 import "./index.scss";
 import axios from "axios";
-import { useAsyncEffect, useRequest, useToggle } from "ahooks";
+import { useAsyncEffect, useToggle } from "ahooks";
 import { List, Space, Button } from "antd";
 import useElectron from "../../hooks/electron";
 
@@ -13,32 +13,38 @@ interface Video {
   name: string;
 }
 
-const { getLocalIP } = useElectron();
-const localIP = getLocalIP();
 const port =
-  import.meta.env.NODE_ENV === "development"
+  import.meta.env.MODE !== "development"
     ? import.meta.env.APP_SERVER_PORT
     : 8556;
-const videoList = `http://${localIP}:${port}/api/video-list`;
-// 获取视频列表
-const getVideoList = async (): Promise<Video[]> =>
-  axios.get(videoList).then((res) => res.data);
 
 // 播放器页面
 const PlayerPage: FC = () => {
-  const { rendererEvent, removeEventListener } = useElectron();
+  const { rendererEvent, removeEventListener, getLocalIP } = useElectron();
   const [showVideoList, { toggle }] = useToggle();
   const [showButton, setShowButton] = useState(false);
+  const [videoList, setVideoList] = useState<Video[]>([]);
   const playerRef = useRef<HTMLDivElement>(null);
   const player = useRef<Player>();
-  const { data: videoList, refresh } = useRequest(getVideoList);
   const playedVideoId = useRef<number>();
+
+  // 获取视频列表
+  const getVideoList = async (): Promise<Video[]> => {
+    const localIP = await getLocalIP();
+
+    const videoListUrl = `http://${localIP}:${port}/api/video-list`;
+    const res = await axios.get(videoListUrl);
+    return res.data;
+  };
 
   useAsyncEffect(async () => {
     if (!playerRef.current) return;
-    if (!Array.isArray(videoList) || !videoList.length) return;
     if (player.current) return;
 
+    const videoList = await getVideoList();
+    setVideoList(videoList);
+
+    if (!Array.isArray(videoList) || videoList.length === 0) return;
     let src = videoList[0].url;
     if (playedVideoId.current) {
       const video = videoList.find((item) => item.id === playedVideoId.current);
@@ -57,16 +63,26 @@ const PlayerPage: FC = () => {
         urlList: videoList.map((item) => item.url),
       },
     });
-  }, [videoList]);
+  }, []);
 
   // 打开播放器窗口的时候播放的视频id
-  const openPlayerWindow = (e: any, videoId: number) => {
+  const openPlayerWindow = async (e: any, videoId: number) => {
     playedVideoId.current = videoId;
 
     if (!player.current) return;
 
+    const videoList = await getVideoList();
+    setVideoList(videoList);
     const vc = videoList?.find((item) => item.id === videoId)?.url || "";
     player.current.src = vc;
+  };
+
+  const refresh = async () => {
+    if (!player.current) return;
+
+    const videoList = await getVideoList();
+
+    setVideoList(videoList);
   };
 
   useEffect(() => {
