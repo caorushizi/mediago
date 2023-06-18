@@ -14,6 +14,7 @@ import {
   DevToolsService,
 } from "./interfaces";
 import { TYPES } from "./types";
+import { app } from "electron";
 
 @injectable()
 export default class ElectronApp implements App {
@@ -50,6 +51,10 @@ export default class ElectronApp implements App {
     this.devTools.init();
     await this.dataService.init();
     this.webService.init();
+
+    app.on("activate", () => {
+      this.mainWindow.init();
+    });
 
     this.resetDownloadStatus();
   }
