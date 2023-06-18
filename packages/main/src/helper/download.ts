@@ -73,7 +73,6 @@ const macSpawnDownload = (params: DownloadParams): Promise<void> => {
       "--save-name",
       name,
     ];
-    console.log("spawnParams", spawnParams);
 
     if (deleteSegments) {
       spawnParams.push("--del-after-done");
@@ -85,7 +84,6 @@ const macSpawnDownload = (params: DownloadParams): Promise<void> => {
 
     downloader.stdout.on("data", (data) => {
       const str = String(Buffer.from(data));
-      console.log("str", str);
       str.split("\n").forEach((item) => {
         if (item.trim() == "") {
           return;
