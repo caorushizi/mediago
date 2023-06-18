@@ -304,14 +304,14 @@ const HomePage: FC = () => {
     return [
       <Button
         type="text"
-        key="redownload"
+        key="play-video"
         icon={<PlayCircleOutlined />}
         title="播放视频"
         onClick={() => openPlayerWindow(item.id)}
       />,
       <Button
         type="text"
-        key="redownload"
+        key="open-file"
         icon={<FolderOpenOutlined />}
         title="打开文件位置"
         onClick={() => onOpenDir()}

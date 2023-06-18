@@ -1,17 +1,17 @@
-import os from 'os';
+import os from "os";
 
 export function getLocalIP() {
   const interfaces = os.networkInterfaces();
-  let localIP = '';
+  let localIP = "";
 
   // 遍历网络接口
   for (const key in interfaces) {
     const iface = interfaces[key];
-    if(!iface) continue;
+    if (!iface) continue;
 
     // 过滤出 IPv4 地址且非回环地址
-    const filteredIface = iface.filter(details =>
-      details.family === 'IPv4' && !details.internal
+    const filteredIface = iface.filter(
+      (details) => details.family === "IPv4" && !details.internal
     );
 
     if (filteredIface.length > 0) {
@@ -22,8 +22,6 @@ export function getLocalIP() {
 
   return localIP;
 }
-
-
 
 export { sleep } from "./utils";
 export * from "./variables";
