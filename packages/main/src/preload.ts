@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from "electron";
+import { contextBridge, ipcRenderer, shell } from "electron";
 import { ElectronAPI } from "./main";
 
 const apiFunctions: Record<string, any> = {};
@@ -51,6 +51,7 @@ const handleApi: ElectronAPI = {
   openPlayerWindow: (videoId) =>
     ipcRenderer.invoke("open-player-window", videoId),
   getLocalIP: () => ipcRenderer.invoke("get-local-ip"),
+  openBrowser: (url: string) => shell.openExternal(url),
 };
 
 contextBridge.exposeInMainWorld(apiKey, handleApi);

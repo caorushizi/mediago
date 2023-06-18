@@ -43,7 +43,7 @@ export default class HomeController implements Controller {
     private readonly browserWindow: BrowserWindowService,
     @inject(TYPES.PlayerWindowService)
     private readonly playerWindow: PlayerWindowService
-  ) { }
+  ) {}
 
   @handle("get-env-path")
   async getEnvPath(): Promise<EnvPath> {
@@ -215,7 +215,6 @@ export default class HomeController implements Controller {
     // 打开播放器窗口
     this.playerWindow.openWindow(id);
   }
-
 
   @handle("get-local-ip")
   async getLocalIp() {

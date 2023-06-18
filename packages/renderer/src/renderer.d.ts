@@ -59,6 +59,7 @@ declare interface ElectronAPI {
   editDownloadItem: (video: Partial<DownloadItem>) => Promise<void>;
   openPlayerWindow: (videoId: number) => Promise<void>;
   getLocalIP: () => Promise<string>;
+  openBrowser: (url: string) => Promise<void>;
 }
 
 declare interface Favorite {

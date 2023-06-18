@@ -13,10 +13,7 @@ interface Video {
   name: string;
 }
 
-const port =
-  import.meta.env.MODE !== "development"
-    ? import.meta.env.APP_SERVER_PORT
-    : 8556;
+const port = import.meta.env.APP_SERVER_PORT;
 
 // 播放器页面
 const PlayerPage: FC = () => {
