@@ -7,7 +7,9 @@ import EventEmitter from "events";
 import { AppStore, BrowserStore } from "main";
 import { DataSource, EntityManager, UpdateResult, DeleteResult } from "typeorm";
 
-export interface MainWindowService extends BrowserWindow {
+export interface MainWindowService {
+  show: boolean;
+  window: BrowserWindow | null;
   init: () => void;
 }
 

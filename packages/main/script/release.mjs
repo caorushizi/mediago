@@ -22,7 +22,7 @@ if (process.platform === "win32") {
   extraResources.push("bin/ffmpeg.exe", "bin/N_m3u8DL-CLI_v3.0.2.exe");
 } else {
   // mac
-  extraResources.push("bin/N_m3u8DL-RE");
+  extraResources.push("bin/N_m3u8DL-RE", "bin/ffmpeg");
 }
 
 // Let's get that intellisense working

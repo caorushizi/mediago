@@ -63,7 +63,7 @@ export default class WebviewServiceImpl implements WebviewService {
         url: detailsUrl.toString(),
         title: webContents?.getTitle() || "没有获取到名称",
       };
-      this.curWindow.webContents.send("webview-link-message", linkMessage);
+      this.curWindow?.webContents.send("webview-link-message", linkMessage);
     }
     callback({});
   };
@@ -73,7 +73,7 @@ export default class WebviewServiceImpl implements WebviewService {
       const title = this.view.webContents.getTitle();
       const url = this.view.webContents.getURL();
 
-      this.curWindow.webContents.send("webview-dom-ready", { title, url });
+      this.curWindow?.webContents.send("webview-dom-ready", { title, url });
     });
 
     this.view.webContents.setWindowOpenHandler(({ url }) => {
@@ -107,12 +107,12 @@ export default class WebviewServiceImpl implements WebviewService {
   }
 
   show() {
-    this.curWindow.setBrowserView(this.view);
+    this.curWindow?.setBrowserView(this.view);
     isDev && this.view.webContents.openDevTools();
   }
 
   hide() {
-    this.curWindow.setBrowserView(null);
+    this.curWindow?.setBrowserView(null);
     isDev && this.view.webContents.closeDevTools();
   }
 
@@ -156,6 +156,9 @@ export default class WebviewServiceImpl implements WebviewService {
     if (this.browserWindow.window && this.browserWindow.show) {
       return this.browserWindow.window;
     }
-    return this.mainWindow;
+    if(this.mainWindow.window && this.mainWindow.show){
+      return this.mainWindow.window;
+    }
+    return null;
   }
 }

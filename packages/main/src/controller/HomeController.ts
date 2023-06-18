@@ -79,7 +79,9 @@ export default class HomeController implements Controller {
   @handle("on-favorite-item-context-menu")
   async onFavoriteItemContextMenu(e: IpcMainEvent, id: number) {
     const send = (action: string) => {
-      this.mainWindow.webContents.send("favorite-item-event", {
+      const window = this.mainWindow.window;
+      if (!window) return;
+      window.webContents.send("favorite-item-event", {
         action,
         payload: id,
       });
@@ -106,7 +108,10 @@ export default class HomeController implements Controller {
 
   @handle("select-download-dir")
   async selectDownloadDir(): Promise<string> {
-    const result = await dialog.showOpenDialog(this.mainWindow, {
+    const window = this.mainWindow.window;
+    if (!window) return Promise.reject("未找到主窗口");
+
+    const result = await dialog.showOpenDialog(window, {
       properties: ["openDirectory"],
     });
 
@@ -145,7 +150,10 @@ export default class HomeController implements Controller {
   @handle("on-download-list-context-menu")
   async downloadListContextMenu(e: IpcMainEvent, id: number) {
     const send = (action: string) => {
-      this.mainWindow.webContents.send("download-item-event", {
+      const window = this.mainWindow.window;
+      if (!window) return;
+
+      window.webContents.send("download-item-event", {
         action,
         payload: id,
       });
