@@ -82,9 +82,9 @@ const HomePage: FC = () => {
   const browserStore = useSelector(selectBrowserStore);
 
   useAsyncEffect(async () => {
-    const isDev = import.meta.env.NODE_ENV === "development";
+    const isDev = import.meta.env.MODE === "development";
     const localIP = await getLocalIP();
-    const port = isDev ? import.meta.env.APP_SERVER_PORT : 8556;
+    const port = isDev ? 8556 : import.meta.env.APP_SERVER_PORT;
     setBaseUrl(`http://${localIP}:${port}/`);
   }, []);
 

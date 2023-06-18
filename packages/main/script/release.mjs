@@ -84,9 +84,9 @@ const options = {
   },
   linux: {},
   nsis: {
-    oneClick: false,
+    oneClick: true,
     allowElevation: true,
-    allowToChangeInstallationDirectory: true,
+    allowToChangeInstallationDirectory: false,
     installerIcon: "",
     uninstallerIcon: "",
     installerHeaderIcon: "",

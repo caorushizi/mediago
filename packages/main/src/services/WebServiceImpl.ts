@@ -39,14 +39,13 @@ export default class WebServiceImpl implements WebService {
     this.app.use(range);
     this.app.use(serve(local));
     if (process.env.NODE_ENV === "production") {
-      this.app.use(serve(mobilePath));
+      this.app.use(
+        serve(mobilePath, {
+          extensions: ["html", "js", "css"],
+          index: "index.html",
+        })
+      );
     }
-    this.app.use(async (ctx, next) => {
-      await next();
-      if (ctx.status === 404 && !path.extname(ctx.path)) {
-        await send(ctx, "index.html", { root: mobilePath });
-      }
-    });
     this.app.use(this.router.routes());
     this.app.use(this.router.allowedMethods());
 

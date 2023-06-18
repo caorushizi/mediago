@@ -15,6 +15,7 @@ esbuild.build({
   target: ["node16.13"],
   external: ["electron", "nock", "aws-sdk", "mock-aws-s3"],
   define: {
+    "process.env.NODE_ENV": '"production"',
     ...mainDefined,
   },
   outdir: mainResolve("build/main"),

@@ -17,13 +17,13 @@ export const browserSlice = createSlice({
       if (action.payload.mode) {
         state.mode = action.payload.mode;
       }
-      if (action.payload.url) {
+      if (action.payload.url != null) {
         state.url = action.payload.url;
       }
       if (action.payload.sourceList) {
         state.sourceList = action.payload.sourceList;
       }
-      if (action.payload.title) {
+      if (action.payload.title !== null) {
         state.title = action.payload.title;
       }
     },
