@@ -326,12 +326,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
           onKeyDown={onInputKeyDown}
           placeholder="请输入网址链接……"
         />
-        <Button
-          disabled={store.mode === PageMode.Default}
-          title="访问"
-          type="text"
-          onClick={onClickEnter}
-        >
+        <Button title="访问" type="text" onClick={onClickEnter}>
           <ArrowRightOutlined />
         </Button>
         {page && (
