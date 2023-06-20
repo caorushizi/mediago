@@ -35,7 +35,7 @@ export default class DownloadController implements Controller {
   async addDownloadItem(e: IpcMainEvent, video: DownloadItem) {
     const item = await this.videoRepository.addVideo(video);
     // 这里向页面发送消息，通知页面更新
-    this.mainWindow.webContents.send("download-item-notifier", item);
+    this.mainWindow.window?.webContents.send("download-item-notifier", item);
     return item;
   }
 
