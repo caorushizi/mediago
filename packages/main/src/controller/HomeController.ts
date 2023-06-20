@@ -28,6 +28,8 @@ import fs from "fs-extra";
 
 @injectable()
 export default class HomeController implements Controller {
+  private sharedState: Record<string, any> = {};
+
   constructor(
     @inject(TYPES.LoggerService)
     private readonly logger: LoggerService,
@@ -206,8 +208,8 @@ export default class HomeController implements Controller {
   }
 
   @handle("show-browser-window")
-  async showBrowserWindow(event: IpcMainEvent, store: BrowserStore) {
-    this.browserWindow.showWindow(store);
+  async showBrowserWindow() {
+    this.browserWindow.showWindow();
   }
 
   @handle("combine-to-home-page")
@@ -227,5 +229,15 @@ export default class HomeController implements Controller {
   @handle("get-local-ip")
   async getLocalIp() {
     return getLocalIP();
+  }
+
+  @handle("get-shared-state")
+  async getSharedState() {
+    return this.sharedState;
+  }
+
+  @handle("set-shared-state")
+  async setSharedState(event: IpcMainEvent, state: any) {
+    this.sharedState = state;
   }
 }

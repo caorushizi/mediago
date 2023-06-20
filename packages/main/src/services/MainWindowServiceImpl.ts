@@ -68,10 +68,6 @@ export default class MainWindowServiceImpl implements MainWindowService {
     // 处理当前窗口改变大小
     window.on("resized", this.handleResize);
 
-    event.on("browser-window-restore", (store) => {
-      window.webContents.send("browser-window-restore", store);
-    });
-
     return window;
   }
 

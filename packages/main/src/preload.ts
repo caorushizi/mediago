@@ -40,8 +40,7 @@ const handleApi: ElectronAPI = {
     ipcRenderer.removeListener(channel, fun);
     delete apiFunctions[key];
   },
-  showBrowserWindow: (store) =>
-    ipcRenderer.invoke("show-browser-window", store),
+  showBrowserWindow: () => ipcRenderer.invoke("show-browser-window"),
   webviewHide: () => ipcRenderer.invoke("webview-hide"),
   webviewShow: () => ipcRenderer.invoke("webview-show"),
   downloadNow: (video) => ipcRenderer.invoke("download-now", video),
@@ -52,6 +51,8 @@ const handleApi: ElectronAPI = {
     ipcRenderer.invoke("open-player-window", videoId),
   getLocalIP: () => ipcRenderer.invoke("get-local-ip"),
   openBrowser: (url: string) => shell.openExternal(url),
+  getSharedState: () => ipcRenderer.invoke("get-shared-state"),
+  setSharedState: (state) => ipcRenderer.invoke("set-shared-state", state),
 };
 
 contextBridge.exposeInMainWorld(apiKey, handleApi);

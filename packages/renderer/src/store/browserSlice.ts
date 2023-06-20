@@ -1,6 +1,9 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from ".";
 import { PageMode } from "../nodes/SourceExtract";
+import useElectron from "../hooks/electron";
+
+const { setSharedState } = useElectron();
 
 const initialState: BrowserStore = {
   mode: PageMode.Default,
@@ -13,42 +16,38 @@ export const browserSlice = createSlice({
   name: "browser",
   initialState,
   reducers: {
-    setBrowserStore(state, action) {
-      if (action.payload.mode) {
-        state.mode = action.payload.mode;
-      }
-      if (action.payload.url != null) {
-        state.url = action.payload.url;
-      }
-      if (action.payload.sourceList) {
-        state.sourceList = action.payload.sourceList;
-      }
-      if (action.payload.title !== null) {
-        state.title = action.payload.title;
-      }
-    },
-    setUrl(state, action) {
-      state.url = action.payload;
-    },
-    addSource(state, action) {
-      if (state.sourceList.find((item) => item.url === action.payload.url)) {
-        return;
-      }
-
-      state.sourceList = [action.payload, ...state.sourceList];
-    },
-    restore(state, { payload }: { payload: Partial<BrowserStore> }) {
+    setBrowserStore(state, action: PayloadAction<Partial<BrowserStore>>) {
+      const { payload } = action;
       Object.keys(payload).forEach((key) => {
         if (payload[key] != null) {
           state[key] = payload[key] as never;
         }
       });
+      // FIXME: 异步函数
+      setSharedState({
+        mode: state.mode,
+        url: state.url,
+        sourceList: [...state.sourceList],
+        title: state.title,
+      });
+    },
+    addSource(state, { payload }: PayloadAction<LinkMessage>) {
+      if (state.sourceList.find((item) => item.url === payload.url)) {
+        return;
+      }
+      state.sourceList = [payload, ...state.sourceList];
+      // FIXME: 异步函数
+      setSharedState({
+        mode: state.mode,
+        url: state.url,
+        sourceList: [...state.sourceList],
+        title: state.title,
+      });
     },
   },
 });
 
-export const { setUrl, setBrowserStore, addSource, restore } =
-  browserSlice.actions;
+export const { setBrowserStore, addSource } = browserSlice.actions;
 export const selectUrl = (state: RootState) => state.browser.url;
 export const selectSourceList = (state: RootState) => state.browser.sourceList;
 export const selectBrowserStore = (state: RootState) => state.browser;

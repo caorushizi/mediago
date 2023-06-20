@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from ".";
 
 const initialState: AppStore = {
@@ -14,7 +14,7 @@ export const appSlice = createSlice({
   name: "app",
   initialState,
   reducers: {
-    setAppStore(state, { payload }: { payload: Partial<AppStore> }) {
+    setAppStore(state, { payload }: PayloadAction<Partial<AppStore>>) {
       Object.keys(payload).forEach((key) => {
         if (payload[key] != null) {
           state[key] = payload[key] as never;
