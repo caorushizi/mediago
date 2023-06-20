@@ -15,7 +15,6 @@ import { selectStore, setAppStore } from "./store/appSlice";
 import { useAsyncEffect } from "ahooks";
 import { clearCount, selectCount } from "./store/downloadSlice";
 import { tdApp } from "./utils";
-import { restore, selectBrowserStore } from "./store/browserSlice";
 
 const { Footer, Sider, Content } = Layout;
 
@@ -36,7 +35,6 @@ const App: FC = () => {
   const [showExport, setShowExport] = useState(false);
   const count = useSelector(selectCount);
   const appStore = useSelector(selectStore);
-  const browserStore = useSelector(selectBrowserStore);
 
   const items: MenuItem[] = [
     {
@@ -78,7 +76,7 @@ const App: FC = () => {
                 }
                 // FIXME: 有可能 webview 还没有完全隐藏
                 await ipcSetAppStore("openInNewWindow", true);
-                await showBrowserWindow({ ...browserStore });
+                await showBrowserWindow();
               }}
             />
           )}
@@ -104,22 +102,15 @@ const App: FC = () => {
   ];
 
   // 监听store变化
-  const onStoreChange = (event: any, store: AppStore) => {
+  const onAppStoreChange = (event: any, store: AppStore) => {
     dispatch(setAppStore(store));
   };
 
-  // 重新设置 store 数据
-  const restoreStore = (e: any, store: BrowserStore) => {
-    dispatch(restore(store));
-  };
-
   useEffect(() => {
-    rendererEvent("store-change", onStoreChange);
-    rendererEvent("browser-window-restore", restoreStore);
+    rendererEvent("store-change", onAppStoreChange);
 
     return () => {
-      removeEventListener("store-change", onStoreChange);
-      removeEventListener("browser-window-restore", restoreStore);
+      removeEventListener("store-change", onAppStoreChange);
     };
   }, []);
 

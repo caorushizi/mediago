@@ -399,10 +399,7 @@ const HomePage: FC = () => {
       rightExtra={
         <Space>
           {appStore.openInNewWindow && (
-            <Button
-              type="primary"
-              onClick={() => showBrowserWindow(browserStore)}
-            >
+            <Button type="primary" onClick={() => showBrowserWindow()}>
               打开浏览器
             </Button>
           )}

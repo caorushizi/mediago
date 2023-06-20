@@ -51,7 +51,7 @@ declare interface ElectronAPI {
   convertToAudio: (id: number) => Promise<void>;
   rendererEvent: (channel: string, listener: any) => void;
   removeEventListener: (channel: string, listener: any) => void;
-  showBrowserWindow: (store: BrowserStore) => Promise<void>;
+  showBrowserWindow: () => Promise<void>;
   webviewHide: () => Promise<void>;
   webviewShow: () => Promise<void>;
   downloadNow: (video: Partial<DownloadItem>) => Promise<void>;
@@ -60,6 +60,8 @@ declare interface ElectronAPI {
   openPlayerWindow: (videoId: number) => Promise<void>;
   getLocalIP: () => Promise<string>;
   openBrowser: (url: string) => Promise<void>;
+  getSharedState: () => Promise<any>;
+  setSharedState: (state: any) => Promise<void>;
 }
 
 declare interface Favorite {

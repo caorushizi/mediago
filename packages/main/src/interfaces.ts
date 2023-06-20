@@ -20,7 +20,7 @@ export interface PlayerWindowService {
 export interface BrowserWindowService {
   show: boolean;
   window: BrowserWindow | null;
-  showWindow: (store: BrowserStore) => void;
+  showWindow: () => void;
   hideWindow: () => void;
 }
 

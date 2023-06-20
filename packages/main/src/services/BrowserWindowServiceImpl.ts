@@ -1,18 +1,9 @@
-import {
-  BrowserWindow,
-  BrowserWindowConstructorOptions,
-  Event,
-} from "electron";
+import { BrowserWindow, BrowserWindowConstructorOptions } from "electron";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import { resolve } from "path";
 import { TYPES } from "../types";
-import {
-  BrowserWindowService,
-  LoggerService,
-  StoreService,
-} from "../interfaces";
-import { BrowserStore } from "main";
+import { BrowserWindowService, StoreService } from "../interfaces";
 import _ from "lodash";
 
 @injectable()
@@ -21,8 +12,6 @@ export default class BrowserWindowServiceImpl implements BrowserWindowService {
   private options: BrowserWindowConstructorOptions;
 
   constructor(
-    @inject(TYPES.LoggerService)
-    private readonly logger: LoggerService,
     @inject(TYPES.StoreService)
     private readonly storeService: StoreService
   ) {
@@ -72,12 +61,11 @@ export default class BrowserWindowServiceImpl implements BrowserWindowService {
     this.storeService.set("browserBounds", _.omit(bounds, ["x", "y"]));
   };
 
-  showWindow = (store: BrowserStore) => {
+  showWindow = () => {
     if (!this.window || this.window.isDestroyed()) {
       this.window = this.create();
     }
 
-    this.window.webContents.send("browser-window-store", store);
     this.window.show();
     isDev && this.window.webContents.openDevTools();
 

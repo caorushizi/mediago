@@ -11,7 +11,7 @@ import {
   StarFilled,
   StarOutlined,
 } from "@ant-design/icons";
-import { useRequest } from "ahooks";
+import { useAsyncEffect, useRequest } from "ahooks";
 import {
   Avatar,
   Button,
@@ -33,9 +33,7 @@ import "./index.scss";
 import { ModalForm, ProFormText } from "@ant-design/pro-components";
 import {
   addSource,
-  restore,
   selectBrowserStore,
-  setUrl,
   setBrowserStore,
 } from "../../store/browserSlice";
 import WebView from "../../components/WebView";
@@ -66,6 +64,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     onFavoriteItemContextMenu,
     downloadNow,
     combineToHomePage,
+    getSharedState,
   } = useElectron();
   const dispatch = useDispatch();
   const { data: favoriteList = [], refresh } = useRequest(getFavorites);
@@ -192,24 +191,22 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     }
   };
 
-  // 重新设置 store 数据
-  const restoreStore = (e: any, store: BrowserStore) => {
-    dispatch(restore(store));
-  };
+  useAsyncEffect(async () => {
+    const state = await getSharedState();
+    dispatch(setBrowserStore(state));
+  }, []);
 
   useEffect(() => {
     const prevTitle = document.title;
     rendererEvent("webview-dom-ready", onDomReady);
     rendererEvent("webview-link-message", receiveLinkMessage);
     rendererEvent("favorite-item-event", onFavoriteEvent);
-    rendererEvent("browser-window-store", restoreStore);
 
     return () => {
       document.title = prevTitle;
       removeEventListener("webview-dom-ready", onDomReady);
       removeEventListener("webview-link-message", receiveLinkMessage);
       removeEventListener("favorite-item-event", onFavoriteEvent);
-      removeEventListener("browser-window-store", restoreStore);
     };
   }, []);
 
@@ -322,7 +319,10 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
         <Input
           key="url-input"
           value={store.url}
-          onChange={(e) => dispatch(setUrl(e.target.value))}
+          onChange={(e) => {
+            const url = e.target.value;
+            dispatch(setBrowserStore({ url }));
+          }}
           onKeyDown={onInputKeyDown}
           placeholder="请输入网址链接……"
         />
