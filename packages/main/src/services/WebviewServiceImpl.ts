@@ -156,7 +156,7 @@ export default class WebviewServiceImpl implements WebviewService {
     if (this.browserWindow.window && this.browserWindow.show) {
       return this.browserWindow.window;
     }
-    if(this.mainWindow.window && this.mainWindow.show){
+    if (this.mainWindow.window && this.mainWindow.show) {
       return this.mainWindow.window;
     }
     return null;

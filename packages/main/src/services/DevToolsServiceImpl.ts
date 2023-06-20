@@ -18,6 +18,10 @@ export default class DevToolsServiceImpl implements DevToolsService {
     if (!isDev) {
       return;
     }
+    // 开发环境中可以通过设置环境变量来控制是否加载开发者工具
+    if (!process.env.LOAD_DEVTOOLS) {
+      return;
+    }
 
     try {
       this.logger.debug("当前环境为开发环境，开始加载开发者工具");
