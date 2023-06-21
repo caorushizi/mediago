@@ -1,6 +1,6 @@
 # media-downloader
 
-m3u8 视频在线提取工具 流媒体下载 m3u8下载 桌面客户端 windows mac。
+m3u8 视频在线提取工具 流媒体下载 m3u8 下载 桌面客户端 windows mac。
 可以直接在线获取 m3u8 链接地址，无需使用使用网络抓包，无需安装浏览器插件，可以直接带出请求标头……
 
 模板： <https://github.com/caorushizi/electron-template>
@@ -13,7 +13,7 @@ m3u8 视频在线提取工具 流媒体下载 m3u8下载 桌面客户端 windows
 
 ## 安装要求
 
-运行代码需要 node 和 pnpm，node需要在官网下载安装，pnpm 可以通过`npm i -g pnpm`安装。
+运行代码需要 node 和 pnpm，node 需要在官网下载安装，pnpm 可以通过`npm i -g pnpm`安装。
 
 ## 运行代码
 
@@ -25,7 +25,7 @@ m3u8 视频在线提取工具 流媒体下载 m3u8下载 桌面客户端 windows
 
 ## 下载链接
 
-### v2.0.0-beta.5 添加视频播放功能，支持移动设备播放
+v2.0.0-beta.5 添加视频播放功能，支持移动设备播放
 
 - 【2023.06.18 v2.0.0-beta.5 windows】[media-downloader-setup-2.0.0-beta.5.exe](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.0-beta.5/media-downloader-setup-2.0.0-beta.5.exe)
 - 【2023.06.18 v2.0.0-beta.5 macos】[media-downloader-windows-v2.0.0-beta.5.dmg](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.0-beta.5/media-downloader-setup-2.0.0-beta.5.dmg)
