@@ -79,6 +79,7 @@ declare interface AppStore {
   openInNewWindow: boolean;
   mainBounds?: Rectangle;
   browserBounds?: Rectangle;
+  blockAds: boolean;
 }
 
 declare interface BrowserStore {

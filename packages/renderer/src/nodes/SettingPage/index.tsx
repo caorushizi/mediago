@@ -128,6 +128,7 @@ const SettingPage: React.FC = () => {
               }),
             ]}
           />
+          <ProFormSwitch label="开启广告过滤" name="blockAds" />
         </ProFormGroup>
         <ProFormGroup title="下载设置" direction={"vertical"}>
           <ProFormSwitch label="下载完成删除分片" name="deleteSegments" />

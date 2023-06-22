@@ -9,7 +9,6 @@ import { glob } from "glob";
 import send from "koa-send";
 import cors from "@koa/cors";
 import { getLocalIP, mobilePath } from "helper";
-import path from "path";
 
 @injectable()
 export default class WebServiceImpl implements WebService {

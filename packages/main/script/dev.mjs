@@ -34,7 +34,13 @@ const ctx = await esbuild.context({
   platform: "node",
   sourcemap: true,
   target: ["node16.13"],
-  external: ["electron", "mock-aws-s3", "aws-sdk", "nock"],
+  external: [
+    "electron",
+    "mock-aws-s3",
+    "aws-sdk",
+    "nock",
+    "@cliqz/adblocker-electron-preload",
+  ],
   define: {
     // 开发环境中二进制可执行文件的路径
     __bin__: `"${mainResolve("bin").replace(/\\/g, "\\\\")}"`,

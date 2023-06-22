@@ -10,7 +10,7 @@ import { Favorite } from "entity/Favorite";
 import { convertToAudio } from "helper";
 import { db, workspace } from "helper/variables";
 import { inject, injectable } from "inversify";
-import { AppStore, BrowserStore, EnvPath } from "main";
+import { AppStore, EnvPath } from "main";
 import path from "path";
 import { handle, getLocalIP } from "../helper";
 import {
@@ -22,6 +22,7 @@ import {
   VideoRepository,
   BrowserWindowService,
   PlayerWindowService,
+  WebviewService,
 } from "../interfaces";
 import { TYPES } from "../types";
 import fs from "fs-extra";
@@ -44,7 +45,9 @@ export default class HomeController implements Controller {
     @inject(TYPES.BrowserWindowService)
     private readonly browserWindow: BrowserWindowService,
     @inject(TYPES.PlayerWindowService)
-    private readonly playerWindow: PlayerWindowService
+    private readonly playerWindow: PlayerWindowService,
+    @inject(TYPES.WebviewService)
+    private readonly webviewService: WebviewService
   ) {}
 
   @handle("get-env-path")
@@ -127,13 +130,19 @@ export default class HomeController implements Controller {
 
   @handle("set-app-store")
   async setAppStore(e: IpcMainEvent, key: keyof AppStore, val: any) {
+    // useProxy
     if (key === "useProxy") {
       const proxy = this.storeService.get("proxy");
-      await this.storeService.setProxy(val, proxy);
-    } else if (key === "proxy") {
-      if (this.storeService.get("useProxy")) {
-        this.storeService.setProxy(true, val);
-      }
+      this.webviewService.setProxy(val, proxy);
+    }
+    // proxy
+    if (key === "proxy") {
+      const useProxy = this.storeService.get("useProxy");
+      useProxy && this.webviewService.setProxy(true, val);
+    }
+    // block
+    if (key === "blockAds") {
+      this.webviewService.setBlocking(val);
     }
 
     this.storeService.set(key, val);
