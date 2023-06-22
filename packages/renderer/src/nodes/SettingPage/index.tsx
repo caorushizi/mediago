@@ -91,7 +91,6 @@ const SettingPage: React.FC = () => {
         submitter={false}
         labelCol={{ style: { width: "130px" } }}
         labelAlign={"left"}
-        size={"small"}
         colon={false}
         initialValues={settings}
         onValuesChange={onFormValueChange}

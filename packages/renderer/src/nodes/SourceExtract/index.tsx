@@ -230,7 +230,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   const renderWebviewSider = () => {
     return (
       <div className="webview-sider">
-        <Collapse className="webview-sider-inner" bordered={false} size="small">
+        <Collapse className="webview-sider-inner" bordered={false}>
           {store.sourceList.map((item) => {
             return (
               <AntDPanel
@@ -451,7 +451,6 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
                 color: "gray",
               }}
               type="link"
-              size="small"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -463,9 +462,9 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
             </Button>
           )}
           {item.icon ? (
-            <Avatar size="small" src={item.icon} icon={<LinkOutlined />} />
+            <Avatar src={item.icon} icon={<LinkOutlined />} />
           ) : (
-            <Avatar size="small" icon={<LinkOutlined />} />
+            <Avatar icon={<LinkOutlined />} />
           )}
           <div className="card-text" title={item.title}>
             {item.title}
