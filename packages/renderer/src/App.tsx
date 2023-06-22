@@ -48,9 +48,7 @@ const App: FC = () => {
         >
           <DownloadOutlined />
           <span>下载列表</span>
-          {count > 0 && (
-            <Badge size="small" count={count} offset={[5, -3]}></Badge>
-          )}
+          {count > 0 && <Badge count={count} offset={[5, -3]}></Badge>}
         </Link>
       ),
       key: "home",
@@ -149,7 +147,6 @@ const App: FC = () => {
           </Content>
           <Footer className="container-footer">
             <Button
-              size="small"
               type={"link"}
               onClick={openHelpUrl}
               icon={<QuestionCircleOutlined />}

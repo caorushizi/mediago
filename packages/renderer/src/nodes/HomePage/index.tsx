@@ -391,7 +391,7 @@ const HomePage: FC = () => {
     <PageContainer
       title="下载列表"
       titleExtra={
-        <Radio.Group size="small" value={filter} onChange={onFilterChange}>
+        <Radio.Group value={filter} onChange={onFilterChange}>
           <Radio.Button value="list">下载列表</Radio.Button>
           <Radio.Button value="done">下载完成</Radio.Button>
         </Radio.Group>

@@ -22,7 +22,7 @@ tdApp.init();
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
     <Provider store={store}>
-      <ConfigProvider locale={zhCN}>
+      <ConfigProvider locale={zhCN} componentSize="small">
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<App />}>
