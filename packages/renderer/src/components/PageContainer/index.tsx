@@ -1,6 +1,9 @@
 import classNames from "classnames";
 import React, { FC } from "react";
 import "./index.scss";
+import { Space, Typography } from "antd";
+
+const { Text } = Typography;
 
 interface PageContainerProps {
   children: React.ReactNode | null;
@@ -23,10 +26,10 @@ const PageContainer: FC<PageContainerProps> = ({
     <div className={classNames("page-container", className, extraClassName)}>
       {title && (
         <div className="page-container-header">
-          <div className="page-container-header-title">
-            <div className="title-text">{title}</div>
+          <Space>
+            <Text style={{ fontSize: 18, fontWeight: 600 }}>{title}</Text>
             <div className="title-extra">{titleExtra}</div>
-          </div>
+          </Space>
           <div className="page-container-header-right">{rightExtra}</div>
         </div>
       )}

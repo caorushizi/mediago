@@ -16,7 +16,7 @@ import { useAsyncEffect } from "ahooks";
 import { clearCount, selectCount } from "./store/downloadSlice";
 import { tdApp } from "./utils";
 
-const { Footer, Sider, Content } = Layout;
+const { Footer, Sider, Content, Header } = Layout;
 
 type MenuItem = Required<MenuProps>["items"][number];
 

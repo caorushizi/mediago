@@ -4,6 +4,7 @@ import {
   Menu,
   MenuItem,
   MenuItemConstructorOptions,
+  nativeTheme,
   shell,
 } from "electron";
 import { Favorite } from "entity/Favorite";
@@ -143,6 +144,11 @@ export default class HomeController implements Controller {
     // block
     if (key === "blockAds") {
       this.webviewService.setBlocking(val);
+    }
+    // theme
+    if (key === "theme") {
+      console.log("theme", val);
+      nativeTheme.themeSource = val;
     }
 
     this.storeService.set(key, val);

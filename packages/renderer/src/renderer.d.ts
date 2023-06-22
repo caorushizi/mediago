@@ -94,6 +94,10 @@ declare interface AppStore {
   deleteSegments?: boolean;
   // 新窗口打开浏览器
   openInNewWindow?: boolean;
+  // 是否阻止广告
+  blockAds?: boolean;
+  // 主题
+  theme?: AppTheme;
 }
 
 declare interface BrowserStore {

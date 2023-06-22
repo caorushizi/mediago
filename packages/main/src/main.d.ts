@@ -80,6 +80,8 @@ declare interface AppStore {
   mainBounds?: Rectangle;
   browserBounds?: Rectangle;
   blockAds: boolean;
+  // 主题
+  theme: "system" | "light" | "dark";
 }
 
 declare interface BrowserStore {
