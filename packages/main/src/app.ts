@@ -11,9 +11,10 @@ import {
   type App,
   WebService,
   DevToolsService,
+  StoreService,
 } from "./interfaces";
-import { TYPES } from "./types";
-import { app } from "electron";
+import { AppTheme, TYPES } from "./types";
+import { app, nativeTheme } from "electron";
 
 @injectable()
 export default class ElectronApp implements App {
@@ -35,7 +36,9 @@ export default class ElectronApp implements App {
     @inject(TYPES.DevToolsService)
     private readonly devTools: DevToolsService,
     @inject(TYPES.WebService)
-    private readonly webService: WebService
+    private readonly webService: WebService,
+    @inject(TYPES.StoreService)
+    private readonly storeService: StoreService
   ) {}
 
   private async seriveInit(): Promise<void> {
@@ -55,7 +58,13 @@ export default class ElectronApp implements App {
       this.mainWindow.init();
     });
 
+    this.initAppTheme();
     this.resetDownloadStatus();
+  }
+
+  initAppTheme(): void {
+    const theme = this.storeService.get("theme");
+    nativeTheme.themeSource = theme;
   }
 
   // 如果重启后还有正在下载的视频，就将状态改成下载失败

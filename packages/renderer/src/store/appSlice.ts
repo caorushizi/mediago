@@ -1,5 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from ".";
+import { AppTheme } from "../types";
 
 const initialState: AppStore = {
   local: "",
@@ -8,6 +9,7 @@ const initialState: AppStore = {
   useProxy: false,
   deleteSegments: true,
   openInNewWindow: false,
+  theme: AppTheme.System,
 };
 
 export const appSlice = createSlice({

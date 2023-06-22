@@ -6,3 +6,9 @@ export enum DownloadStatus {
   Watting = "watting",
   Stopped = "stopped",
 }
+
+export enum AppTheme {
+  System = "system",
+  Light = "light",
+  Dark = "dark",
+}

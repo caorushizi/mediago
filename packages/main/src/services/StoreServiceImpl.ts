@@ -3,6 +3,7 @@ import { injectable } from "inversify";
 import { AppStore } from "main";
 import { download, workspace } from "../helper/variables";
 import { StoreService } from "../interfaces";
+import { AppTheme } from "types";
 
 @injectable()
 export default class StoreServiceImpl
@@ -23,6 +24,7 @@ export default class StoreServiceImpl
         deleteSegments: true,
         openInNewWindow: false,
         blockAds: true,
+        theme: AppTheme.System,
       },
     });
   }

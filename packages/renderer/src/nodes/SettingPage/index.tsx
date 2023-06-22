@@ -5,6 +5,7 @@ import {
   ProFormText,
   ProFormGroup,
   ProFormSwitch,
+  ProFormSelect,
 } from "@ant-design/pro-components";
 import "./index.scss";
 import { Button, FormInstance, message, Space, Tooltip } from "antd";
@@ -13,6 +14,7 @@ import { selectStore, setAppStore } from "../../store/appSlice";
 import { useDispatch, useSelector } from "react-redux";
 import useElectron from "../../hooks/electron";
 import { useRequest } from "ahooks";
+import { AppTheme } from "../../types";
 
 const version = import.meta.env.APP_VERSION;
 
@@ -128,6 +130,16 @@ const SettingPage: React.FC = () => {
             ]}
           />
           <ProFormSwitch label="开启广告过滤" name="blockAds" />
+          <ProFormSelect
+            name="theme"
+            label="主题"
+            valueEnum={{
+              [AppTheme.System]: "跟随系统",
+              [AppTheme.Dark]: "深色",
+              [AppTheme.Light]: "浅色",
+            }}
+            placeholder="请选择主题色"
+          />
         </ProFormGroup>
         <ProFormGroup title="下载设置" direction={"vertical"}>
           <ProFormSwitch label="下载完成删除分片" name="deleteSegments" />

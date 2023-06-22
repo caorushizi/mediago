@@ -1,4 +1,4 @@
-const TYPES = {
+export const TYPES = {
   App: Symbol.for("App"),
   MainWindowService: Symbol.for("MainWindowService"),
   StoreService: Symbol.for("StoreService"),
@@ -19,4 +19,8 @@ const TYPES = {
   PlayerWindowService: Symbol.for("PlayerWindowService"),
 };
 
-export { TYPES };
+export enum AppTheme {
+  System = "system",
+  Light = "light",
+  Dark = "dark",
+}

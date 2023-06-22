@@ -237,6 +237,9 @@ export default class WebviewServiceImpl implements WebviewService {
       this.logger.error("关闭 blocker 失败，未初始化");
       return;
     }
+    if (!this.blocker.isBlockingEnabled(this.session)) {
+      return;
+    }
     this.blocker.disableBlockingInSession(this.session);
     this.logger.info("关闭 blocker 成功");
   }

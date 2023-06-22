@@ -4,7 +4,7 @@ import Store from "electron-store";
 import { Favorite } from "entity/Favorite";
 import { Video } from "entity/Video";
 import EventEmitter from "events";
-import { AppStore, BrowserStore } from "main";
+import { AppStore } from "main";
 import { DataSource, EntityManager, UpdateResult, DeleteResult } from "typeorm";
 
 export interface MainWindowService {
