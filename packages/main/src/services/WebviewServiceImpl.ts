@@ -2,6 +2,8 @@ import {
   BrowserView,
   HeadersReceivedResponse,
   OnHeadersReceivedListenerDetails,
+  OnResponseStartedListenerDetails,
+  WebContents,
   session,
 } from "electron";
 import {
@@ -21,9 +23,7 @@ import fetch from "cross-fetch";
 
 @injectable()
 export default class WebviewServiceImpl implements WebviewService {
-  private readonly filter = { urls: ["*://*/*"] };
   private _view: BrowserView;
-  webContents: Electron.WebContents;
   private blocker?: ElectronBlocker;
 
   constructor(
@@ -37,7 +37,7 @@ export default class WebviewServiceImpl implements WebviewService {
     private readonly storeService: StoreService
   ) {
     // 初始化 blocker
-    this.initBlocker();
+    // this.initBlocker();
   }
 
   private create(): void {
@@ -46,9 +46,9 @@ export default class WebviewServiceImpl implements WebviewService {
         partition: PERSIST_WEBVIEW,
       },
     });
+    const webContents = this._view.webContents;
     this._view.setBackgroundColor("#fff");
-    this.webContents = this._view.webContents;
-    this.webContents.setAudioMuted(true);
+    webContents.setAudioMuted(true);
 
     const useProxy = this.storeService.get("useProxy");
     const proxy = this.storeService.get("proxy");
@@ -60,10 +60,7 @@ export default class WebviewServiceImpl implements WebviewService {
     return this._view;
   }
 
-  onHeadersReceived = async (
-    details: OnHeadersReceivedListenerDetails,
-    callback: (headersReceivedResponse: HeadersReceivedResponse) => void
-  ): Promise<void> => {
+  onHeadersReceived = (details: OnResponseStartedListenerDetails): void => {
     const { url } = details;
 
     const sourceReg = /\.m3u8$/;
@@ -78,7 +75,6 @@ export default class WebviewServiceImpl implements WebviewService {
       };
       this.curWindow?.webContents.send("webview-link-message", linkMessage);
     }
-    callback({});
   };
 
   async init(): Promise<void> {
@@ -102,8 +98,8 @@ export default class WebviewServiceImpl implements WebviewService {
       return { action: "deny" };
     });
 
-    this.session.webRequest.onHeadersReceived(
-      this.filter,
+    this.session.webRequest.onResponseStarted(
+      { urls: ["<all_urls>"] },
       this.onHeadersReceived
     );
   }
@@ -138,20 +134,20 @@ export default class WebviewServiceImpl implements WebviewService {
   }
 
   async loadURL(url?: string, isNewWindow?: boolean) {
-    const canGoBack = this.webContents.canGoBack();
+    const canGoBack = this.view.webContents.canGoBack();
     try {
-      await this.webContents.loadURL(url || "");
+      await this.view.webContents.loadURL(url || "");
     } catch (err: any) {
       this.logger.error("加载 url 时出现错误: ", err);
     }
     if (!canGoBack && !isNewWindow) {
-      this.webContents.clearHistory();
+      this.view.webContents.clearHistory();
     }
   }
 
   async goBack() {
-    if (this.webContents.canGoBack()) {
-      this.webContents.goBack();
+    if (this.view.webContents.canGoBack()) {
+      this.view.webContents.goBack();
       return true;
     } else {
       return false;
@@ -159,11 +155,11 @@ export default class WebviewServiceImpl implements WebviewService {
   }
 
   async reload() {
-    this.webContents.reload();
+    this.view.webContents.reload();
   }
 
   async goHome() {
-    this.webContents.clearHistory();
+    this.view.webContents.clearHistory();
   }
 
   get curWindow() {

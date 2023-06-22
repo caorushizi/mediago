@@ -1,13 +1,13 @@
 import builder from "electron-builder";
 import { readFileSync } from "node:fs";
 import semver from "semver";
-import { mainResolve, loadDotEnvRuntime } from "./utils.mjs";
+import { mainResolve, loadDotEnvRuntime, log } from "./utils.mjs";
 
 const packageJson = JSON.parse(readFileSync(mainResolve("./package.json")));
 loadDotEnvRuntime();
 
 if (semver.neq(process.env.APP_VERSION, packageJson.version)) {
-  console.log("请先同步构建版本和发布版本");
+  log("请先同步构建版本和发布版本");
   process.exit(0);
 }
 
@@ -118,5 +118,5 @@ try {
     config: options,
   });
 } catch (e) {
-  console.log(e);
+  log(e);
 }

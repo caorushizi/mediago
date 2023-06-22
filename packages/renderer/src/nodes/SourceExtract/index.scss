@@ -92,6 +92,11 @@
             &:hover {
               background: #f2f6fc;
             }
+            @media (prefers-color-scheme: dark) {
+              &:hover {
+                background: #595959;
+              }
+            }
             .card-text {
               width: 100%;
               margin-top: 6px;

@@ -9,7 +9,7 @@ body {
   width: 100vw;
 }
 
-@mixin scrollbar($c: rgba(0, 0, 0, 0.15)) {
+@mixin scrollbar() {
   &::-webkit-scrollbar {
     height: 8px;
     width: 8px;
@@ -20,7 +20,12 @@ body {
   }
 
   &::-webkit-scrollbar-thumb {
-    background: $c;
+    background: rgba(0, 0, 0, 0.15);
+  }
+  @media (prefers-color-scheme: dark) {
+    &::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+    }
   }
 }
 

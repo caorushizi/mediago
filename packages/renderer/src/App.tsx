@@ -16,7 +16,7 @@ import { useAsyncEffect } from "ahooks";
 import { clearCount, selectCount } from "./store/downloadSlice";
 import { tdApp } from "./utils";
 
-const { Footer, Sider, Content, Header } = Layout;
+const { Footer, Sider, Content } = Layout;
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -48,7 +48,9 @@ const App: FC = () => {
         >
           <DownloadOutlined />
           <span>下载列表</span>
-          {count > 0 && <Badge count={count} offset={[5, -3]}></Badge>}
+          {count > 0 && (
+            <Badge count={count} offset={[5, 1]} size="small"></Badge>
+          )}
         </Link>
       ),
       key: "home",
@@ -130,7 +132,6 @@ const App: FC = () => {
 
   return (
     <Layout className="container">
-      {/* <Header className="container-header">Media Downloader</Header> */}
       <Layout>
         <Sider className="container-sider" theme="light">
           <Menu

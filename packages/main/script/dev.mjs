@@ -3,7 +3,7 @@ import { cpSync } from "node:fs";
 import electron from "electron";
 import * as esbuild from "esbuild";
 import chokidar from "chokidar";
-import { loadDotEnvRuntime, mainResolve } from "./utils.mjs";
+import { loadDotEnvRuntime, mainResolve, log } from "./utils.mjs";
 
 let electronProcess = null;
 
@@ -54,7 +54,7 @@ const watcher = chokidar.watch("./src");
 
 watcher.on("change", async () => {
   await ctx.rebuild();
-  console.log("watch build succeed.");
+  log("watch build succeed.");
   if (electronProcess && electronProcess.kill) {
     if (process.platform === "darwin") {
       spawn("kill", ["-9", electronProcess.pid]);
@@ -72,11 +72,11 @@ function startElectron() {
   electronProcess = spawn(String(electron), args);
 
   electronProcess.stdout.on("data", (data) => {
-    console.log(String(data));
+    log(String(data));
   });
 
   electronProcess.stderr.on("data", (data) => {
-    console.log(String(data));
+    log(String(data));
   });
 }
 
