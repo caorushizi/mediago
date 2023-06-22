@@ -11,5 +11,10 @@
   },
   "keywords": [],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "pnpm": {
+    "patchedDependencies": {
+      "@cliqz/adblocker@1.26.6": "patches/@cliqz__adblocker@1.26.6.patch"
+    }
+  }
 }

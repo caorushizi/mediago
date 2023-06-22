@@ -12,6 +12,10 @@ const initialState: BrowserStore = {
   title: "",
 };
 
+const convertPlainObject = (obj: unknown) => {
+  return JSON.parse(JSON.stringify(obj));
+};
+
 export const browserSlice = createSlice({
   name: "browser",
   initialState,
@@ -24,12 +28,7 @@ export const browserSlice = createSlice({
         }
       });
       // FIXME: 异步函数
-      setSharedState({
-        mode: state.mode,
-        url: state.url,
-        sourceList: [...state.sourceList],
-        title: state.title,
-      });
+      setSharedState(convertPlainObject(state));
     },
     addSource(state, { payload }: PayloadAction<LinkMessage>) {
       if (state.sourceList.find((item) => item.url === payload.url)) {
@@ -37,12 +36,7 @@ export const browserSlice = createSlice({
       }
       state.sourceList = [payload, ...state.sourceList];
       // FIXME: 异步函数
-      setSharedState({
-        mode: state.mode,
-        url: state.url,
-        sourceList: [...state.sourceList],
-        title: state.title,
-      });
+      setSharedState(convertPlainObject(state));
     },
   },
 });

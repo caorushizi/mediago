@@ -5,7 +5,6 @@ import {
   IpcHandlerService,
   MainWindowService,
   ProtocolService,
-  StoreService,
   UpdateService,
   VideoRepository,
   WebviewService,
@@ -31,8 +30,6 @@ export default class ElectronApp implements App {
     private readonly dataService: DatabaseService,
     @inject(TYPES.WebviewService)
     private readonly webview: WebviewService,
-    @inject(TYPES.StoreService)
-    private readonly storeService: StoreService,
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
     @inject(TYPES.DevToolsService)
@@ -41,16 +38,18 @@ export default class ElectronApp implements App {
     private readonly webService: WebService
   ) {}
 
-  async init(): Promise<void> {
+  private async seriveInit(): Promise<void> {
     this.protocolService.create();
+    await this.dataService.init();
     this.mainWindow.init();
     this.ipcHandler.init();
     this.updateService.init();
-    this.webview.init();
-    this.storeService.init();
-    this.devTools.init();
-    await this.dataService.init();
+    this.webview.init(), this.devTools.init();
     this.webService.init();
+  }
+
+  async init(): Promise<void> {
+    await this.seriveInit();
 
     app.on("activate", () => {
       this.mainWindow.init();

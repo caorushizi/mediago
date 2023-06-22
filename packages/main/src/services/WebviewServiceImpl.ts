@@ -8,6 +8,7 @@ import {
   BrowserWindowService,
   LoggerService,
   MainWindowService,
+  StoreService,
   WebviewService,
 } from "../interfaces";
 import { inject, injectable } from "inversify";
@@ -15,12 +16,15 @@ import { TYPES } from "../types";
 import isDev from "electron-is-dev";
 import { PERSIST_WEBVIEW } from "helper/variables";
 import { LinkMessage } from "main";
+import { ElectronBlocker } from "@cliqz/adblocker-electron";
+import fetch from "cross-fetch";
 
 @injectable()
 export default class WebviewServiceImpl implements WebviewService {
   private readonly filter = { urls: ["*://*/*"] };
   private _view: BrowserView;
   webContents: Electron.WebContents;
+  private blocker?: ElectronBlocker;
 
   constructor(
     @inject(TYPES.MainWindowService)
@@ -28,8 +32,13 @@ export default class WebviewServiceImpl implements WebviewService {
     @inject(TYPES.LoggerService)
     private readonly logger: LoggerService,
     @inject(TYPES.BrowserWindowService)
-    private readonly browserWindow: BrowserWindowService
-  ) {}
+    private readonly browserWindow: BrowserWindowService,
+    @inject(TYPES.StoreService)
+    private readonly storeService: StoreService
+  ) {
+    // 初始化 blocker
+    this.initBlocker();
+  }
 
   private create(): void {
     this._view = new BrowserView({
@@ -40,6 +49,10 @@ export default class WebviewServiceImpl implements WebviewService {
     this._view.setBackgroundColor("#fff");
     this.webContents = this._view.webContents;
     this.webContents.setAudioMuted(true);
+
+    const useProxy = this.storeService.get("useProxy");
+    const proxy = this.storeService.get("proxy");
+    this.setProxy(useProxy, proxy);
   }
 
   get view(): BrowserView {
@@ -89,9 +102,10 @@ export default class WebviewServiceImpl implements WebviewService {
       return { action: "deny" };
     });
 
-    session
-      .fromPartition(PERSIST_WEBVIEW)
-      .webRequest.onHeadersReceived(this.filter, this.onHeadersReceived);
+    this.session.webRequest.onHeadersReceived(
+      this.filter,
+      this.onHeadersReceived
+    );
   }
 
   getBounds(): Electron.Rectangle {
@@ -160,5 +174,70 @@ export default class WebviewServiceImpl implements WebviewService {
       return this.mainWindow.window;
     }
     return null;
+  }
+
+  private get session() {
+    return session.fromPartition(PERSIST_WEBVIEW);
+  }
+
+  private enableProxy(proxy: string) {
+    if (!proxy) {
+      this.logger.error("[proxy] 代理地址不能为空");
+      return;
+    }
+
+    // 处理 proxy 地址的合法性
+    if (!/https?:\/\//.test(proxy)) {
+      proxy = `http://${proxy}`;
+    }
+
+    this.session.setProxy({ proxyRules: proxy });
+    this.logger.info(`[proxy] 代理开启成功，代理地址为${proxy}`);
+  }
+
+  private disableProxy() {
+    this.session.setProxy({ proxyRules: "" });
+    this.logger.info("[proxy] 代理关闭成功");
+  }
+
+  setProxy(useProxy: boolean, proxy: string): void {
+    if (useProxy) {
+      this.enableProxy(proxy);
+    } else {
+      this.disableProxy();
+    }
+  }
+
+  setBlocking(enableBlocking: boolean): void {
+    if (enableBlocking) {
+      this.enableBlocking();
+    } else {
+      this.disableBlocking();
+    }
+  }
+
+  async initBlocker() {
+    this.blocker = await ElectronBlocker.fromPrebuiltAdsAndTracking(fetch);
+
+    const enableBlocking = this.storeService.get("blockAds");
+    this.setBlocking(enableBlocking);
+  }
+
+  private enableBlocking() {
+    if (!this.blocker) {
+      this.logger.error("开启 blocker 失败，未初始化");
+      return;
+    }
+    this.blocker.enableBlockingInSession(this.session);
+    this.logger.info("开启 blocker 成功");
+  }
+
+  private disableBlocking() {
+    if (!this.blocker) {
+      this.logger.error("关闭 blocker 失败，未初始化");
+      return;
+    }
+    this.blocker.disableBlockingInSession(this.session);
+    this.logger.info("关闭 blocker 成功");
   }
 }

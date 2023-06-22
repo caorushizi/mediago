@@ -13,7 +13,13 @@ esbuild.build({
   platform: "node",
   sourcemap: false,
   target: ["node16.13"],
-  external: ["electron", "nock", "aws-sdk", "mock-aws-s3"],
+  external: [
+    "electron",
+    "nock",
+    "aws-sdk",
+    "mock-aws-s3",
+    "@cliqz/adblocker-electron-preload",
+  ],
   define: {
     "process.env.NODE_ENV": '"production"',
     ...mainDefined,

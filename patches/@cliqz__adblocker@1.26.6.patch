@@ -1,0 +1,13 @@
+diff --git a/dist/cjs/src/fetch.js b/dist/cjs/src/fetch.js
+index 1ba0a7aefa7466e9e43dd9dac81b72d0ef525f56..f9aa88d74c32547e0962fab4230fe9298ab2e9f8 100644
+--- a/dist/cjs/src/fetch.js
++++ b/dist/cjs/src/fetch.js
+@@ -39,7 +39,7 @@ exports.fetchWithRetry = fetchWithRetry;
+ function fetchResource(fetch, url) {
+     return fetchWithRetry(fetch, url).then((response) => response.text());
+ }
+-const PREFIX = 'https://raw.githubusercontent.com/cliqz-oss/adblocker/master/packages/adblocker/assets';
++const PREFIX = 'https://static.ziying.site/adblocker';
+ exports.adsLists = [
+     `${PREFIX}/easylist/easylist.txt`,
+     `${PREFIX}/easylist/easylistgermany.txt`,

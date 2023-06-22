@@ -14,7 +14,6 @@ export default class DatabaseServiceImpl implements DatabaseService {
     @inject(TYPES.LoggerService)
     private readonly logger: LoggerService
   ) {
-    logger.info("数据库地址是： ", db);
     this.appDataSource = new DataSource({
       type: "better-sqlite3",
       database: db,
@@ -27,7 +26,10 @@ export default class DatabaseServiceImpl implements DatabaseService {
   }
 
   async init(): Promise<void> {
+    this.logger.info("数据库地址是： ", db);
     await this.appDataSource.initialize();
+    console.log("数据库初始化完成");
+    return Promise.resolve();
   }
 
   get manager(): EntityManager {

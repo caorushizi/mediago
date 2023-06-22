@@ -58,11 +58,6 @@ export interface LoggerService {
 
 export interface StoreService extends Store<AppStore> {
   init: () => void;
-  setProxy: (
-    useProxy: boolean,
-    proxy: string,
-    isInit?: boolean
-  ) => Promise<void>;
 }
 
 export interface DownloadItem {
@@ -120,6 +115,8 @@ export interface WebviewService {
   goHome: () => Promise<void>;
   hide: () => void;
   show: () => void;
+  setProxy: (useProxy: boolean, proxy: string) => void;
+  setBlocking: (enableBlocking: boolean) => void;
 }
 
 export interface WebService {
