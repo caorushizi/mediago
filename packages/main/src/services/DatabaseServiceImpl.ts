@@ -28,8 +28,6 @@ export default class DatabaseServiceImpl implements DatabaseService {
   async init(): Promise<void> {
     this.logger.info("数据库地址是： ", db);
     await this.appDataSource.initialize();
-    console.log("数据库初始化完成");
-    return Promise.resolve();
   }
 
   get manager(): EntityManager {

@@ -147,7 +147,6 @@ export default class HomeController implements Controller {
     }
     // theme
     if (key === "theme") {
-      console.log("theme", val);
       nativeTheme.themeSource = val;
     }
 
