@@ -3,11 +3,15 @@ import dotenv from "dotenv";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+// FIXME: 有没有什么办法可以不用这么写？
+const con = console;
+export const log = con.log;
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 export const mainResolve = (r) => resolve(__dirname, "..", r);
 export const rootResolve = (r) => resolve(__dirname, "../../..", r);
 const nodeEnv = process.env.NODE_ENV;
-console.log("当前的环境是： ", nodeEnv);
+log("当前的环境是： ", nodeEnv);
 
 function loadEnv(path) {
   const result = {};

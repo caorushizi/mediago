@@ -103,7 +103,6 @@ export interface FavoriteRepository {
 }
 
 export interface WebviewService {
-  webContents: Electron.WebContents;
   init: () => void;
   getBounds: () => Electron.Rectangle;
   setAutoResize: (options: Electron.AutoResizeOptions) => void;

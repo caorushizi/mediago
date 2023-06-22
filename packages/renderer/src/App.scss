@@ -2,12 +2,6 @@
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  .container-header {
-    color: #fff;
-    font-size: 20px;
-    font-weight: bold;
-    padding: 0 20px;
-  }
   .container-sider {
     .like-item {
       display: flex;
@@ -17,8 +11,14 @@
   }
   .container-footer {
     padding: 5px;
-    // background: #fff;
+    background: #fff;
     text-align: right;
-    border-top: #efefef solid 1px;
+    border-top: #f0f0f0 solid 1px;
+  }
+  @media (prefers-color-scheme: dark) {
+    .container-footer {
+      background: #141414;
+      border-top: #313131 solid 1px;
+    }
   }
 }
