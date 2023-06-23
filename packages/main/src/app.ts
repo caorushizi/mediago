@@ -13,7 +13,7 @@ import {
   DevToolsService,
   StoreService,
 } from "./interfaces";
-import { AppTheme, TYPES } from "./types";
+import { TYPES } from "./types";
 import { app, nativeTheme } from "electron";
 
 @injectable()
