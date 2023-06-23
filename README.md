@@ -27,6 +27,8 @@ m3u8 视频在线提取工具 流媒体下载 m3u8 下载 桌面客户端 window
 
 v2.0.0-beta.5 添加视频播放功能，支持移动设备播放
 
+- 【2023.06.18 v2.0.0-beta.6 windows】[media-downloader-setup-2.0.0-beta.6.exe](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.0-beta.6/media-downloader-setup-2.0.0-beta.6.exe)
+- 【2023.06.18 v2.0.0-beta.6 macos】[media-downloader-windows-v2.0.0-beta.6.dmg](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.0-beta.6/media-downloader-setup-2.0.0-beta.6.dmg)
 - 【2023.06.18 v2.0.0-beta.5 windows】[media-downloader-setup-2.0.0-beta.5.exe](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.0-beta.5/media-downloader-setup-2.0.0-beta.5.exe)
 - 【2023.06.18 v2.0.0-beta.5 macos】[media-downloader-windows-v2.0.0-beta.5.dmg](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.0-beta.5/media-downloader-setup-2.0.0-beta.5.dmg)
 - 【2023.04.01 v2.0.0-beta.4 windows】 [media-downloader-windows-v2.0.0-beta.4.exe](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.0-beta.4/media-downloader-setup-2.0.0-beta.4.exe)
