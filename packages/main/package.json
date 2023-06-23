@@ -2,8 +2,9 @@
   "name": "media-downloader",
   "version": "2.0.0-beta.6",
   "description": "在线视频下载器",
-  "main": "build/main/index.js",
+  "main": "main/index.js",
   "scripts": {
+    "postinstall": "electron-builder install-app-deps",
     "rebuild": "electron-rebuild -f -w better-sqlite3",
     "dev": "cross-env NODE_ENV=development node script/dev.mjs",
     "build": "cross-env NODE_ENV=production node script/build.mjs",
