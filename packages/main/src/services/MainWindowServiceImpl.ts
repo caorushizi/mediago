@@ -50,6 +50,10 @@ export default class MainWindowServiceImpl implements MainWindowService {
   }
 
   create(): BrowserWindow {
+    if (this.window && !this.window.isDestroyed()) {
+      return this.window;
+    }
+
     const window = new BrowserWindow(this.options);
     const url = isDev ? "http://localhost:8555/" : "mediago://index.html/";
     void window.loadURL(url);
