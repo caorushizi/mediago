@@ -5,7 +5,12 @@ import { type App } from "./interfaces";
 import { container } from "./inversify.config";
 import { TYPES } from "./types";
 
+const gotTheLock = app.requestSingleInstanceLock();
 const start = async (): Promise<void> => {
+  if (!gotTheLock) {
+    app.quit();
+  }
+
   protocol.registerSchemesAsPrivileged([
     {
       scheme: defaultScheme,
