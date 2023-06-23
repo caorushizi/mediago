@@ -4,8 +4,8 @@
   "description": "electron-template",
   "main": "index.js",
   "scripts": {
-    "dev": "pnpm --parallel -F ./packages/* run dev",
-    "build": "pnpm --parallel -F ./packages/* run build",
+    "dev": "pnpm --parallel -F \"./packages/*\" run dev",
+    "build": "pnpm --parallel -F \"./packages/*\" run build",
     "pack": "pnpm -F media-downloader run pack",
     "release": "pnpm run build && pnpm -F media-downloader run release"
   },
