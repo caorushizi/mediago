@@ -3,6 +3,7 @@ import {
   BrowserWindowConstructorOptions,
   Menu,
   Notification,
+  app,
 } from "electron";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
@@ -67,6 +68,21 @@ export default class MainWindowServiceImpl implements MainWindowService {
 
     // 处理当前窗口改变大小
     window.on("resized", this.handleResize);
+
+    app.on("second-instance", () => {
+      if (process.platform === "win32") {
+        if (window) {
+          if (window.isMinimized()) {
+            window.restore();
+          }
+          if (window.isVisible()) {
+            window.focus();
+          } else {
+            window.show();
+          }
+        }
+      }
+    });
 
     return window;
   }
