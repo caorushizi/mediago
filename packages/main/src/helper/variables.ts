@@ -24,3 +24,9 @@ export const ffmpegPath =
     ? path.resolve(__bin__, "ffmpeg.exe")
     : path.resolve(__bin__, "ffmpeg");
 export const mobilePath = path.resolve(app.getAppPath(), "../mobile");
+
+// FIXME: 临时解决方案
+export const extensionDir =
+  process.env.NODE_ENV === "development"
+    ? path.join(__dirname, "../../../extension/dist")
+    : "";

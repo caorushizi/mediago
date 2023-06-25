@@ -1,9 +1,6 @@
 import {
   BrowserView,
-  HeadersReceivedResponse,
-  OnHeadersReceivedListenerDetails,
   OnResponseStartedListenerDetails,
-  WebContents,
   session,
 } from "electron";
 import {
@@ -16,7 +13,7 @@ import {
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import isDev from "electron-is-dev";
-import { PERSIST_WEBVIEW } from "helper/variables";
+import { PERSIST_WEBVIEW, extensionDir } from "helper/variables";
 import { LinkMessage } from "main";
 import { ElectronBlocker } from "@cliqz/adblocker-electron";
 import fetch from "cross-fetch";
@@ -37,7 +34,7 @@ export default class WebviewServiceImpl implements WebviewService {
     private readonly storeService: StoreService
   ) {
     // 初始化 blocker
-    // this.initBlocker();
+    this.initBlocker();
   }
 
   private create(): void {
@@ -102,6 +99,8 @@ export default class WebviewServiceImpl implements WebviewService {
       { urls: ["<all_urls>"] },
       this.onHeadersReceived
     );
+
+    this.session.loadExtension(extensionDir);
   }
 
   getBounds(): Electron.Rectangle {

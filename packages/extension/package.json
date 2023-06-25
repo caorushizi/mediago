@@ -1,0 +1,17 @@
+{
+  "name": "extension",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "parcel watch src/manifest.json --host localhost --port 8888",
+    "build": "parcel build src/manifest.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@parcel/config-webextension": "^2.9.3",
+    "@types/chrome": "^0.0.238",
+    "parcel": "^2.9.3"
+  }
+}
