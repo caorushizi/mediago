@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Sample Web Extension",
+  "version": "0.0.1",
+  "background": {
+    "service_worker": "background.ts",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["parcel-content-script.ts"],
+      "css": ["content-script.css"]
+    }
+  ]
+}
