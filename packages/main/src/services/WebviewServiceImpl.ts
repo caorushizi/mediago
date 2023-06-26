@@ -18,6 +18,7 @@ import { LinkMessage } from "main";
 import { ElectronBlocker } from "@cliqz/adblocker-electron";
 import fetch from "cross-fetch";
 
+// FIXME: 需要重构
 @injectable()
 export default class WebviewServiceImpl implements WebviewService {
   private _view: BrowserView;
@@ -53,7 +54,9 @@ export default class WebviewServiceImpl implements WebviewService {
   }
 
   get view(): BrowserView {
-    if (!this._view) this.create();
+    if (!this._view) {
+      this.create();
+    }
     return this._view;
   }
 

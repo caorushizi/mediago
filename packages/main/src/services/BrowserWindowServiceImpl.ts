@@ -51,6 +51,10 @@ export default class BrowserWindowServiceImpl implements BrowserWindowService {
 
     window.on("resized", this.handleResize);
 
+    window.on("close", () => {
+      // 防止 webview 同时被销毁
+      this.window?.setBrowserView(null);
+    });
     return window;
   }
 
