@@ -39,24 +39,29 @@ export default class BrowserWindowServiceImpl implements BrowserWindowService {
       ? "http://localhost:8555/browser"
       : "mediago://index.html/browser";
     void window.loadURL(url);
-
-    this.storeService.onDidChange("openInNewWindow", (newValue) => {
-      // 向所有窗口发送通知
-      if (newValue === false) {
-        if (window && !window.isDestroyed()) {
-          window.close();
-        }
-      }
-    });
-
+    this.storeService.onDidChange("openInNewWindow", this.handleNewWindowsVal);
     window.on("resized", this.handleResize);
-
-    window.on("close", () => {
-      // 防止 webview 同时被销毁
-      this.window?.setBrowserView(null);
-    });
+    window.on("close", this.windowClose);
     return window;
   }
+
+  windowClose = () => {
+    if (!this.window) return;
+
+    // 防止 webview 同时被销毁
+    this.window.setBrowserView(null);
+  };
+
+  handleNewWindowsVal = (newValue: any) => {
+    if (!this.window) return;
+
+    // 向所有窗口发送通知
+    if (newValue === false) {
+      if (this.window && !this.window.isDestroyed()) {
+        this.window.close();
+      }
+    }
+  };
 
   handleResize = () => {
     if (!this.window) return;

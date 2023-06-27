@@ -19,6 +19,7 @@ import {
 } from "../interfaces";
 import { event } from "helper/utils";
 import _ from "lodash";
+import { AppStore } from "main";
 
 @injectable()
 export default class MainWindowServiceImpl implements MainWindowService {
@@ -65,28 +66,11 @@ export default class MainWindowServiceImpl implements MainWindowService {
     this.downloadService.on("download-start", this.onDownloadStart);
     this.downloadService.on("download-stop", this.onDownloadStart);
 
-    this.storeService.onDidAnyChange((store) => {
-      // 向所有窗口发送通知
-      window.webContents.send("store-change", store);
-    });
-
+    this.storeService.onDidAnyChange(this.storeChange);
     // 处理当前窗口改变大小
     window.on("resized", this.handleResize);
-
-    app.on("second-instance", () => {
-      if (process.platform === "win32") {
-        if (window) {
-          if (window.isMinimized()) {
-            window.restore();
-          }
-          if (window.isVisible()) {
-            window.focus();
-          } else {
-            window.show();
-          }
-        }
-      }
-    });
+    window.on("close", this.windowClose);
+    app.on("second-instance", this.secondInstance);
 
     return window;
   }
@@ -101,11 +85,40 @@ export default class MainWindowServiceImpl implements MainWindowService {
     this.window = this.create();
   }
 
+  windowClose = () => {
+    if (!this.window) return;
+
+    // 防止 webview 同时被销毁
+    this.window.setBrowserView(null);
+  };
+
   handleResize = () => {
     if (!this.window) return;
 
     const bounds = this.window.getBounds();
     this.storeService.set("mainBounds", _.omit(bounds, ["x", "y"]));
+  };
+
+  secondInstance = () => {
+    if (!this.window) return;
+    if (process.platform === "win32") {
+      if (this.window) {
+        if (this.window.isMinimized()) {
+          this.window.restore();
+        }
+        if (this.window.isVisible()) {
+          this.window.focus();
+        } else {
+          this.window.show();
+        }
+      }
+    }
+  };
+
+  storeChange = (store: any) => {
+    if (!this.window) return;
+    // 向所有窗口发送通知
+    this.window.webContents.send("store-change", store);
   };
 
   readyToShow = () => {
