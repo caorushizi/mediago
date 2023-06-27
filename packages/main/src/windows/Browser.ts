@@ -1,21 +1,25 @@
-import { BrowserWindow, BrowserWindowConstructorOptions } from "electron";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import { resolve } from "path";
 import { TYPES } from "../types";
 import { BrowserWindowService, StoreService } from "../interfaces";
 import _ from "lodash";
+import Window from "./window";
 
 @injectable()
-export default class BrowserWindowServiceImpl implements BrowserWindowService {
-  window: BrowserWindow | null = null;
-  private options: BrowserWindowConstructorOptions;
+export default class BrowserWindowServiceImpl
+  extends Window
+  implements BrowserWindowService
+{
+  url = isDev
+    ? "http://localhost:8555/browser"
+    : "mediago://index.html/browser";
 
   constructor(
     @inject(TYPES.StoreService)
     private readonly storeService: StoreService
   ) {
-    this.options = {
+    super({
       width: 1100,
       minWidth: 1100,
       height: 680,
@@ -25,32 +29,10 @@ export default class BrowserWindowServiceImpl implements BrowserWindowService {
       webPreferences: {
         preload: resolve(__dirname, "./preload.js"),
       },
-    };
-  }
+    });
 
-  get show() {
-    return !!this.window && !this.window.isDestroyed();
-  }
-
-  private create() {
-    const window = new BrowserWindow(this.options);
-
-    const url = isDev
-      ? "http://localhost:8555/browser"
-      : "mediago://index.html/browser";
-    void window.loadURL(url);
     this.storeService.onDidChange("openInNewWindow", this.handleNewWindowsVal);
-    window.on("resized", this.handleResize);
-    window.on("close", this.windowClose);
-    return window;
   }
-
-  windowClose = () => {
-    if (!this.window) return;
-
-    // 防止 webview 同时被销毁
-    this.window.setBrowserView(null);
-  };
 
   handleNewWindowsVal = (newValue: any) => {
     if (!this.window) return;
@@ -71,8 +53,9 @@ export default class BrowserWindowServiceImpl implements BrowserWindowService {
   };
 
   showWindow = () => {
-    if (!this.window || this.window.isDestroyed()) {
+    if (!this.window) {
       this.window = this.create();
+      this.window.on("resized", this.handleResize);
     }
 
     this.window.show();

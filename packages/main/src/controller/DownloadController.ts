@@ -14,7 +14,7 @@ import {
 } from "../interfaces";
 import { TYPES } from "../types";
 import { spawnDownload } from "helper";
-import MainWindowServiceImpl from "services/MainWindowServiceImpl";
+import MainWindowServiceImpl from "windows/Main";
 
 @injectable()
 export default class DownloadController implements Controller {
