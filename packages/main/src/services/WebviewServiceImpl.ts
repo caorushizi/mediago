@@ -21,7 +21,7 @@ import fetch from "cross-fetch";
 // FIXME: 需要重构
 @injectable()
 export default class WebviewServiceImpl implements WebviewService {
-  private _view: BrowserView;
+  private view: BrowserView;
   private blocker?: ElectronBlocker;
 
   constructor(
@@ -36,28 +36,6 @@ export default class WebviewServiceImpl implements WebviewService {
   ) {
     // 初始化 blocker
     this.initBlocker();
-  }
-
-  private create(): void {
-    this._view = new BrowserView({
-      webPreferences: {
-        partition: PERSIST_WEBVIEW,
-      },
-    });
-    const webContents = this._view.webContents;
-    this._view.setBackgroundColor("#fff");
-    webContents.setAudioMuted(true);
-
-    const useProxy = this.storeService.get("useProxy");
-    const proxy = this.storeService.get("proxy");
-    this.setProxy(useProxy, proxy);
-  }
-
-  get view(): BrowserView {
-    if (!this._view) {
-      this.create();
-    }
-    return this._view;
   }
 
   onHeadersReceived = (details: OnResponseStartedListenerDetails): void => {
@@ -78,6 +56,18 @@ export default class WebviewServiceImpl implements WebviewService {
   };
 
   async init(): Promise<void> {
+    this.view = new BrowserView({
+      webPreferences: {
+        partition: PERSIST_WEBVIEW,
+      },
+    });
+    this.view.setBackgroundColor("#fff");
+    this.view.webContents.setAudioMuted(true);
+
+    const useProxy = this.storeService.get("useProxy");
+    const proxy = this.storeService.get("proxy");
+    this.setProxy(useProxy, proxy);
+
     this.view.webContents.on("dom-ready", () => {
       const title = this.view.webContents.getTitle();
       const url = this.view.webContents.getURL();
@@ -158,6 +148,8 @@ export default class WebviewServiceImpl implements WebviewService {
 
   async reload() {
     this.view.webContents.reload();
+
+    isDev && this.session.loadExtension(extensionDir);
   }
 
   async goHome() {
