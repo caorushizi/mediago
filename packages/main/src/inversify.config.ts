@@ -4,7 +4,7 @@ import WebviewController from "controller/WebviewController";
 import { Container } from "inversify";
 import FavoriteRepositoryImpl from "repository/favoriteRepositoryImpl";
 import VideoRepositoryImpl from "repository/videoRepositoryImpl";
-import BrowserWindowServiceImpl from "services/BrowserWindowServiceImpl";
+import BrowserWindowServiceImpl from "windows/Browser";
 import DatabaseServiceImpl from "services/DatabaseServiceImpl";
 import DevToolsServiceImpl from "services/DevToolsServiceImpl";
 import DownloadServiceImpl from "services/DownloadServiceImpl";
@@ -31,12 +31,12 @@ import {
 } from "./interfaces";
 import IpcHandlerServiceImpl from "./services/IpcHandlerServiceImpl";
 import LoggerServiceImpl from "./services/LoggerServiceImpl";
-import MainWindowServiceImpl from "./services/MainWindowServiceImpl";
+import MainWindowServiceImpl from "./windows/Main";
 import ProtocolServiceImpl from "./services/ProtocolServiceImpl";
 import UpdateServiceImpl from "./services/UpdateServiceImpl";
 import { TYPES } from "./types";
 import WebServiceImpl from "services/WebServiceImpl";
-import PlayerWindowServiceImpl from "services/PlayerWindowServiceImpl";
+import PlayerWindowServiceImpl from "windows/Player";
 
 const container = new Container({
   skipBaseClassChecks: true,

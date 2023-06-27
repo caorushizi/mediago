@@ -8,7 +8,6 @@ import { AppStore } from "main";
 import { DataSource, EntityManager, UpdateResult, DeleteResult } from "typeorm";
 
 export interface MainWindowService {
-  show: boolean;
   window: BrowserWindow | null;
   init: () => void;
 }
@@ -18,7 +17,6 @@ export interface PlayerWindowService {
 }
 
 export interface BrowserWindowService {
-  show: boolean;
   window: BrowserWindow | null;
   showWindow: () => void;
   hideWindow: () => void;
