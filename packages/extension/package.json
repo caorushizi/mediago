@@ -11,7 +11,22 @@
   "license": "ISC",
   "devDependencies": {
     "@parcel/config-webextension": "^2.9.3",
+    "@parcel/transformer-sass": "2.9.3",
     "@types/chrome": "^0.0.238",
-    "parcel": "^2.9.3"
+    "@types/react": "^18.2.13",
+    "@types/react-dom": "^18.2.6",
+    "@typescript-eslint/eslint-plugin": "^5.60.1",
+    "@typescript-eslint/parser": "^5.60.1",
+    "eslint": "^8.43.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.32.2",
+    "parcel": "^2.9.3",
+    "prettier": "2.8.8",
+    "process": "^0.11.10"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   }
 }

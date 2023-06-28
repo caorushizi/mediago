@@ -1,0 +1,10 @@
+#root {
+  position: fixed;
+  right: 50px;
+  bottom: 50px;
+  height: 100px;
+  width: 300px;
+  background: red;
+  z-index: 1000000;
+  overflow: scroll;
+}

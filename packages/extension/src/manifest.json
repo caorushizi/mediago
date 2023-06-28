@@ -1,17 +1,15 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "Sample Web Extension",
   "version": "0.0.1",
-  "permissions": ["webRequest"],
+  "permissions": ["webRequest", "webRequestBlocking", "<all_urls>"],
   "background": {
-    "service_worker": "background.ts",
-    "type": "module"
+    "scripts": ["background.ts"]
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content-script.ts"],
-      "css": ["content-script.css"]
+      "js": ["main.tsx"]
     }
   ]
 }
