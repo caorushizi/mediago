@@ -13,10 +13,11 @@ import {
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import isDev from "electron-is-dev";
-import { PERSIST_WEBVIEW, extensionDir } from "helper/variables";
+import { PERSIST_WEBVIEW } from "helper/variables";
 import { LinkMessage } from "main";
 import { ElectronBlocker } from "@cliqz/adblocker-electron";
 import fetch from "cross-fetch";
+import path from "path";
 
 // FIXME: 需要重构
 @injectable()
@@ -52,6 +53,7 @@ export default class WebviewServiceImpl implements WebviewService {
         title: webContents?.getTitle() || "没有获取到名称",
       };
       this.curWindow?.webContents.send("webview-link-message", linkMessage);
+      this.view.webContents.send("webview-link-message", linkMessage);
     }
   };
 
@@ -59,6 +61,7 @@ export default class WebviewServiceImpl implements WebviewService {
     this.view = new BrowserView({
       webPreferences: {
         partition: PERSIST_WEBVIEW,
+        preload: path.resolve(__dirname, "./webview.js"),
       },
     });
     this.view.setBackgroundColor("#fff");
@@ -71,10 +74,8 @@ export default class WebviewServiceImpl implements WebviewService {
     this.view.webContents.on("dom-ready", () => {
       const title = this.view.webContents.getTitle();
       const url = this.view.webContents.getURL();
-
       this.curWindow?.webContents.send("webview-dom-ready", { title, url });
     });
-
     this.view.webContents.setWindowOpenHandler(({ url }) => {
       if (url === "about:blank") {
         // 兼容一些网站跳转到 about:blank
@@ -92,8 +93,6 @@ export default class WebviewServiceImpl implements WebviewService {
       { urls: ["<all_urls>"] },
       this.onHeadersReceived
     );
-
-    this.session.loadExtension(extensionDir);
   }
 
   getBounds(): Electron.Rectangle {
@@ -148,8 +147,6 @@ export default class WebviewServiceImpl implements WebviewService {
 
   async reload() {
     this.view.webContents.reload();
-
-    isDev && this.session.loadExtension(extensionDir);
   }
 
   async goHome() {
