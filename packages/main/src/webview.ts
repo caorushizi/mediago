@@ -1,22 +1,20 @@
 import { ipcRenderer } from "electron";
 
-console.log("我已经加载");
+const root = document.createElement("div");
+root.id = "MediaDownloaderRoot";
 
 ipcRenderer.on("webview-link-message", (e: any, data: any) => {
-  console.log("我获取到一条消息", data);
-  const item = $(`<div>${data.title}</div>`);
-  item.on("click", () => {
+  const item = document.createElement("div");
+  item.innerText = data.title;
+  item.addEventListener("click", () => {
     ipcRenderer.invoke("add-download-item", {
       name: data.title,
       url: data.url,
     });
   });
-  // $root.append(item);
+  root.appendChild(item);
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  const root = document.createElement("div");
-  root.id = "MediaDownloaderRoot";
-
   document.body.appendChild(root);
 });

@@ -1,6 +1,7 @@
 import {
   BrowserView,
-  OnResponseStartedListenerDetails,
+  CallbackResponse,
+  OnBeforeSendHeadersListenerDetails,
   session,
 } from "electron";
 import {
@@ -39,7 +40,10 @@ export default class WebviewServiceImpl implements WebviewService {
     this.initBlocker();
   }
 
-  onHeadersReceived = (details: OnResponseStartedListenerDetails): void => {
+  onHeadersReceived = (
+    details: OnBeforeSendHeadersListenerDetails,
+    callback: (response: CallbackResponse) => void
+  ): void => {
     const { url } = details;
 
     const sourceReg = /\.m3u8$/;
@@ -50,11 +54,14 @@ export default class WebviewServiceImpl implements WebviewService {
       const webContents = details.webContents;
       const linkMessage: LinkMessage = {
         url: detailsUrl.toString(),
-        title: webContents?.getTitle() || "没有获取到名称",
+        name: webContents?.getTitle() || "没有获取到名称",
+        headers: JSON.stringify(details.requestHeaders),
       };
       this.curWindow?.webContents.send("webview-link-message", linkMessage);
       this.view.webContents.send("webview-link-message", linkMessage);
     }
+
+    callback({});
   };
 
   async init(): Promise<void> {
@@ -89,7 +96,7 @@ export default class WebviewServiceImpl implements WebviewService {
       return { action: "deny" };
     });
 
-    this.session.webRequest.onResponseStarted(
+    this.session.webRequest.onBeforeSendHeaders(
       { urls: ["<all_urls>"] },
       this.onHeadersReceived
     );

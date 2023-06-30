@@ -212,18 +212,12 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
 
   const onAddDownloadItem = (item: LinkMessage) => {
     dispatch(increase());
-    addDownloadItem({
-      name: item.title,
-      url: item.url,
-    });
+    addDownloadItem(item);
   };
 
   const onDownloadNow = (item: LinkMessage) => {
     dispatch(increase());
-    downloadNow({
-      name: item.title,
-      url: item.url,
-    });
+    downloadNow(item);
   };
 
   // 渲染收藏夹
@@ -235,7 +229,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
             return (
               <AntDPanel
                 className="sider-list-container"
-                header={item.title}
+                header={item.name}
                 key={item.url}
                 extra={
                   <Space>
@@ -263,7 +257,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
                 }
               >
                 <div className="sider-list">
-                  <div className="sider-item">视频名： {item.title}</div>
+                  <div className="sider-item">视频名： {item.name}</div>
                   <div className="sider-item">视频链接： {item.url}</div>
                 </div>
               </AntDPanel>

@@ -61,7 +61,8 @@ declare interface ElectronAPI {
 
 declare interface LinkMessage {
   url: string;
-  title: string;
+  name: string;
+  headers: string;
 }
 
 declare interface AppStore {

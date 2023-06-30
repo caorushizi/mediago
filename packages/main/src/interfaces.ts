@@ -62,6 +62,7 @@ export interface DownloadItem {
   id?: number;
   name: string;
   url: string;
+  headers: string;
 }
 
 export enum DownloadFilter {
@@ -152,6 +153,7 @@ export interface DownloadParams {
   url: string;
   local: string;
   name: string;
+  headers: string;
   abortSignal: AbortController;
   deleteSegments?: boolean;
 }
