@@ -21,7 +21,7 @@ export default class BrowserWindowServiceImpl
   ) {
     super({
       width: 1100,
-      minWidth: 1100,
+      minWidth: 414,
       height: 680,
       minHeight: 680,
       show: false,

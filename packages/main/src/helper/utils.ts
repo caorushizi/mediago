@@ -12,4 +12,16 @@ export function stripColors(str: string) {
   return str.replace(colorRegex, "");
 }
 
+export function formatHeaders(headersStr: string): string {
+  const headers: Record<string, string> = JSON.parse(headersStr);
+  const formatted = Object.entries(headers)
+    .map(([key, value]) => `${key}:${value.replace(/"/g, '\\"')}`)
+    .join("|");
+  return formatString(formatted);
+}
+
+export function formatString(str: string) {
+  return `"${str}"`;
+}
+
 export const event = new EventEmitter();

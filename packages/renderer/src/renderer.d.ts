@@ -10,6 +10,7 @@ declare interface DownloadItem {
   id: number;
   name: string;
   url: string;
+  headers: string;
   status: string;
 }
 
@@ -73,7 +74,8 @@ declare interface Favorite {
 
 declare interface LinkMessage {
   url: string;
-  title: string;
+  name: string;
+  headers: string;
 }
 
 declare interface UrlDetail {

@@ -66,7 +66,7 @@ export default class DownloadController implements Controller {
     if (!video) {
       return Promise.reject("没有找到该视频");
     }
-    const { name, url } = video;
+    const { name, url, headers } = video;
     const local = this.storeService.get("local");
 
     // 从配置中添加参数
@@ -78,6 +78,7 @@ export default class DownloadController implements Controller {
         url,
         local,
         name,
+        headers,
         deleteSegments,
       },
       process: spawnDownload,

@@ -25,6 +25,7 @@ export default class VideoRepositoryImpl implements VideoRepository {
     const item = new Video();
     item.name = video.name;
     item.url = video.url;
+    item.headers = video.headers;
     return await this.dataService.manager.save(item);
   }
 
