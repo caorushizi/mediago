@@ -146,6 +146,10 @@ export default class HomeController implements Controller {
     if (key === "theme") {
       nativeTheme.themeSource = val;
     }
+    // isMobile
+    if (key === "isMobile") {
+      this.webviewService.setUserAgent(val);
+    }
 
     this.storeService.set(key, val);
   }

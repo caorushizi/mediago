@@ -10,7 +10,7 @@ import {
 import "./index.scss";
 import { Button, FormInstance, message, Space, Tooltip } from "antd";
 import { FolderOpenOutlined, QuestionCircleOutlined } from "@ant-design/icons";
-import { selectStore, setAppStore } from "../../store/appSlice";
+import { selectAppStore, setAppStore } from "../../store";
 import { useDispatch, useSelector } from "react-redux";
 import useElectron from "../../hooks/electron";
 import { useRequest } from "ahooks";
@@ -27,7 +27,7 @@ const SettingPage: React.FC = () => {
   } = useElectron();
   const dispatch = useDispatch();
   const formRef = useRef<FormInstance<AppStore>>();
-  const settings = useSelector(selectStore);
+  const settings = useSelector(selectAppStore);
   const { data: envPath } = useRequest(getEnvPath);
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -116,8 +116,20 @@ const SettingPage: React.FC = () => {
             placeholder="请选择视频下载目录"
             label={renderButtonLable()}
           />
+          <ProFormSelect
+            name="theme"
+            label="下载器主题"
+            valueEnum={{
+              [AppTheme.System]: "跟随系统",
+              [AppTheme.Dark]: "深色",
+              [AppTheme.Light]: "浅色",
+            }}
+            placeholder="请选择主题色"
+          />
           <ProFormSwitch label="新窗口打开浏览器" name="openInNewWindow" />
           <ProFormSwitch label="下载完成提示" name="promptTone" />
+        </ProFormGroup>
+        <ProFormGroup title="基础设置" direction={"vertical"}>
           <ProFormText
             width="xl"
             name="proxy"
@@ -140,17 +152,8 @@ const SettingPage: React.FC = () => {
             ]}
           />
           <ProFormSwitch label="开启广告过滤" name="blockAds" />
+          <ProFormSwitch label="以手机模式进入" name="isMobile" />
           <ProFormSwitch label={renderExtensionLabel()} name="useExtension" />
-          <ProFormSelect
-            name="theme"
-            label="主题"
-            valueEnum={{
-              [AppTheme.System]: "跟随系统",
-              [AppTheme.Dark]: "深色",
-              [AppTheme.Light]: "浅色",
-            }}
-            placeholder="请选择主题色"
-          />
         </ProFormGroup>
         <ProFormGroup title="下载设置" direction={"vertical"}>
           <ProFormSwitch label="下载完成删除分片" name="deleteSegments" />

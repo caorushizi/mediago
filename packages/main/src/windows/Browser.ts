@@ -32,7 +32,14 @@ export default class BrowserWindowServiceImpl
     });
 
     this.storeService.onDidChange("openInNewWindow", this.handleNewWindowsVal);
+    this.storeService.onDidAnyChange(this.storeChange);
   }
+
+  storeChange = (store: any) => {
+    if (!this.window) return;
+    // 向所有窗口发送通知
+    this.window.webContents.send("store-change", store);
+  };
 
   handleNewWindowsVal = (newValue: any) => {
     if (!this.window) return;

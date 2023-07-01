@@ -13,15 +13,16 @@ export function stripColors(str: string) {
 }
 
 export function formatHeaders(headersStr: string): string {
-  const headers: Record<string, string> = JSON.parse(headersStr);
+  const headers: Record<string, any> | null = JSON.parse(headersStr);
+  if (!headers) return "";
   const formatted = Object.entries(headers)
-    .map(([key, value]) => `${key}:${value.replace(/"/g, '\\"')}`)
+    .map(([key, value]) => `${key}:${value}`)
     .join("|");
   return formatString(formatted);
 }
 
 export function formatString(str: string) {
-  return `"${str}"`;
+  return JSON.stringify(str);
 }
 
 export const event = new EventEmitter();

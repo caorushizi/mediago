@@ -26,6 +26,7 @@ export default class StoreServiceImpl
         blockAds: true,
         theme: AppTheme.System,
         useExtension: false,
+        isMobile: false,
       },
     });
   }

@@ -1,9 +1,4 @@
-import {
-  OnBeforeSendHeadersListenerDetails,
-  type BrowserWindow,
-  OnCompletedListenerDetails,
-  BrowserView,
-} from "electron";
+import { type BrowserWindow, BrowserView } from "electron";
 import { ElectronLog } from "electron-log";
 import Store from "electron-store";
 import { Favorite } from "entity/Favorite";
@@ -121,6 +116,7 @@ export interface WebviewService {
   show: () => void;
   setProxy: (useProxy: boolean, proxy: string) => void;
   setBlocking: (enableBlocking: boolean) => void;
+  setUserAgent: (isMobile: boolean) => void;
 }
 
 export interface WebService {

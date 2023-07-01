@@ -63,6 +63,7 @@ declare interface ElectronAPI {
   openBrowser: (url: string) => Promise<void>;
   getSharedState: () => Promise<any>;
   setSharedState: (state: any) => Promise<void>;
+  setUserAgent: (isMobile: boolean) => Promise<void>;
 }
 
 declare interface Favorite {
@@ -100,6 +101,10 @@ declare interface AppStore {
   blockAds?: boolean;
   // 主题
   theme?: AppTheme;
+  // 是否使用扩展
+  useExtension?: boolean;
+  // 默认使用移动端UA
+  isMobile?: boolean;
 }
 
 declare interface BrowserStore {

@@ -24,9 +24,11 @@ const winSpawnDownload = async (params: DownloadParams): Promise<void> => {
       formatString(local),
       "--saveName",
       formatString(name),
-      "--headers",
-      formatHeaders(headers),
     ];
+
+    if (headers) {
+      spawnParams.push("--headers", formatHeaders(headers));
+    }
 
     if (deleteSegments) {
       spawnParams.push("--enableDelAfterDone");
@@ -45,6 +47,7 @@ const winSpawnDownload = async (params: DownloadParams): Promise<void> => {
           return;
         }
 
+        process.env.NODE_ENV === "development" && console.log(item);
         const result = progressReg.exec(item);
         if (!result) {
           return;

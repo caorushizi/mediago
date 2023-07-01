@@ -24,3 +24,9 @@ export const ffmpegPath =
     ? path.resolve(__bin__, "ffmpeg.exe")
     : path.resolve(__bin__, "ffmpeg");
 export const mobilePath = path.resolve(app.getAppPath(), "../mobile");
+
+// user agent
+export const pcUA =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36";
+export const mobileUA =
+  "Mozilla/5.0 (Linux; Android 8.0.0; SM-G955U Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Mobile Safari/537.36";
