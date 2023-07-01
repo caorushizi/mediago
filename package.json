@@ -20,7 +20,7 @@
       "@cliqz/adblocker@1.26.6": "patches/@cliqz__adblocker@1.26.6.patch"
     }
   },
-  "dependencies": {
+  "devDependencies": {
     "vitepress": "1.0.0-beta.3"
   }
 }

@@ -104,8 +104,7 @@ const App: FC = () => {
 
   const openHelpUrl = () => {
     tdApp.openHelpPage();
-    const url =
-      "https://blog.ziying.site/post/media-downloader-how-to-use/?form=client";
+    const url = "https://downloader.caorushizi.cn/guides.html?form=client";
     openUrl(url);
   };
 
