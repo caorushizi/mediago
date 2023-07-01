@@ -51,7 +51,7 @@ jobs:
         with:
           node-version: "16"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
-          cache-dependency-path: ${{ env.BUILD_PATH }}/pnpm-lock.json
+          cache-dependency-path: ${{ env.BUILD_PATH }}/pnpm-lock.yaml
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
         working-directory: ${{ env.BUILD_PATH }}
