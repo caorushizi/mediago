@@ -4,7 +4,6 @@ import WebviewController from "controller/WebviewController";
 import { Container } from "inversify";
 import FavoriteRepositoryImpl from "repository/favoriteRepositoryImpl";
 import VideoRepositoryImpl from "repository/videoRepositoryImpl";
-import BrowserWindowServiceImpl from "services/BrowserWindowServiceImpl";
 import DatabaseServiceImpl from "services/DatabaseServiceImpl";
 import DevToolsServiceImpl from "services/DevToolsServiceImpl";
 import DownloadServiceImpl from "services/DownloadServiceImpl";
@@ -31,24 +30,20 @@ import {
 } from "./interfaces";
 import IpcHandlerServiceImpl from "./services/IpcHandlerServiceImpl";
 import LoggerServiceImpl from "./services/LoggerServiceImpl";
-import MainWindowServiceImpl from "./services/MainWindowServiceImpl";
 import ProtocolServiceImpl from "./services/ProtocolServiceImpl";
 import UpdateServiceImpl from "./services/UpdateServiceImpl";
 import { TYPES } from "./types";
 import WebServiceImpl from "services/WebServiceImpl";
-import PlayerWindowServiceImpl from "services/PlayerWindowServiceImpl";
+import MainWindow from "./windows/Main";
+import PlayerWindow from "windows/Player";
+import BrowserWin from "windows/Browser";
 
 const container = new Container({
   skipBaseClassChecks: true,
   defaultScope: "Singleton",
   autoBindInjectable: true,
 });
-container
-  .bind<MainWindowService>(TYPES.MainWindowService)
-  .to(MainWindowServiceImpl);
-container
-  .bind<BrowserWindowService>(TYPES.BrowserWindowService)
-  .to(BrowserWindowServiceImpl);
+
 container.bind<App>(TYPES.App).to(ElectronApp);
 container
   .bind<IpcHandlerService>(TYPES.IpcHandlerService)
@@ -64,9 +59,11 @@ container
   .to(DownloadServiceImpl);
 container.bind<DevToolsService>(TYPES.DevToolsService).to(DevToolsServiceImpl);
 container.bind<WebService>(TYPES.WebService).to(WebServiceImpl);
-container
-  .bind<PlayerWindowService>(TYPES.PlayerWindowService)
-  .to(PlayerWindowServiceImpl);
+
+// windows
+container.bind<MainWindowService>(TYPES.MainWindowService).to(MainWindow);
+container.bind<BrowserWindowService>(TYPES.BrowserWindowService).to(BrowserWin);
+container.bind<PlayerWindowService>(TYPES.PlayerWindowService).to(PlayerWindow);
 
 // === controller
 container.bind<Controller>(TYPES.Controller).to(HomeController);

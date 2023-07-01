@@ -2,51 +2,36 @@ import {
   ArrowLeftOutlined,
   ArrowRightOutlined,
   CloseOutlined,
-  DownloadOutlined,
   HomeOutlined,
   ImportOutlined,
   LinkOutlined,
+  MobileFilled,
+  MobileOutlined,
   PlusOutlined,
   ReloadOutlined,
   StarFilled,
   StarOutlined,
 } from "@ant-design/icons";
 import { useAsyncEffect, useRequest } from "ahooks";
-import {
-  Avatar,
-  Button,
-  Collapse,
-  Form,
-  Input,
-  List,
-  message,
-  Space,
-} from "antd";
+import { Avatar, Button, Form, Input, List, message, Space } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PageContainer from "../../components/PageContainer";
 import useElectron from "../../hooks/electron";
-import { increase } from "../../store/downloadSlice";
 import { generateUrl, getFavIcon } from "../../utils";
-import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "./index.scss";
 import { ModalForm, ProFormText } from "@ant-design/pro-components";
 import {
-  addSource,
+  PageMode,
   selectBrowserStore,
+  setAppStore,
   setBrowserStore,
-} from "../../store/browserSlice";
+} from "../../store";
 import WebView from "../../components/WebView";
-
-const { Panel: AntDPanel } = Collapse;
+import { selectAppStore } from "../../store";
 
 interface SourceExtractProps {
   page?: boolean;
-}
-
-export enum PageMode {
-  Default = "default",
-  Browser = "browser",
 }
 
 const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
@@ -60,11 +45,11 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     webviewGoBack,
     webviewReload,
     webwiewGoHome,
-    addDownloadItem,
     onFavoriteItemContextMenu,
-    downloadNow,
     combineToHomePage,
     getSharedState,
+    setUserAgent,
+    getAppStore: ipcGetAppStore,
   } = useElectron();
   const dispatch = useDispatch();
   const { data: favoriteList = [], refresh } = useRequest(getFavorites);
@@ -72,8 +57,14 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [hoverId, setHoverId] = useState<number>(-1);
   const store = useSelector(selectBrowserStore);
+  const appStore = useSelector(selectAppStore);
 
   const curIsFavorite = favoriteList.find((item) => item.url === store.url);
+
+  useAsyncEffect(async () => {
+    const store = await ipcGetAppStore();
+    dispatch(setAppStore(store));
+  }, []);
 
   const loadUrl = async (url: string) => {
     await webviewLoadURL(url);
@@ -166,10 +157,6 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     }
   };
 
-  const receiveLinkMessage = (e: unknown, msg: LinkMessage) => {
-    dispatch(addSource(msg));
-  };
-
   const onFavoriteEvent = async (
     e: unknown,
     {
@@ -199,90 +186,38 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   useEffect(() => {
     const prevTitle = document.title;
     rendererEvent("webview-dom-ready", onDomReady);
-    rendererEvent("webview-link-message", receiveLinkMessage);
     rendererEvent("favorite-item-event", onFavoriteEvent);
 
     return () => {
       document.title = prevTitle;
       removeEventListener("webview-dom-ready", onDomReady);
-      removeEventListener("webview-link-message", receiveLinkMessage);
       removeEventListener("favorite-item-event", onFavoriteEvent);
     };
   }, []);
-
-  const onAddDownloadItem = (item: LinkMessage) => {
-    dispatch(increase());
-    addDownloadItem({
-      name: item.title,
-      url: item.url,
-    });
-  };
-
-  const onDownloadNow = (item: LinkMessage) => {
-    dispatch(increase());
-    downloadNow({
-      name: item.title,
-      url: item.url,
-    });
-  };
-
-  // 渲染收藏夹
-  const renderWebviewSider = () => {
-    return (
-      <div className="webview-sider">
-        <Collapse className="webview-sider-inner" bordered={false}>
-          {store.sourceList.map((item) => {
-            return (
-              <AntDPanel
-                className="sider-list-container"
-                header={item.title}
-                key={item.url}
-                extra={
-                  <Space>
-                    <Button
-                      type="link"
-                      title="添加到下载列表"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        onAddDownloadItem(item);
-                      }}
-                      icon={<PlusOutlined />}
-                    />
-                    <Button
-                      type="link"
-                      title="立即下载"
-                      icon={<DownloadOutlined />}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        onDownloadNow(item);
-                      }}
-                    />
-                  </Space>
-                }
-              >
-                <div className="sider-list">
-                  <div className="sider-item">视频名： {item.title}</div>
-                  <div className="sider-item">视频链接： {item.url}</div>
-                </div>
-              </AntDPanel>
-            );
-          })}
-        </Collapse>
-      </div>
-    );
-  };
 
   // 合并到主页
   const onCombineToHome = () => {
     combineToHomePage(store);
   };
 
+  // 设置默认UA
+  const onSetDefaultUA = () => {
+    const nextMode = !appStore.isMobile;
+    setUserAgent(nextMode);
+    dispatch(
+      setAppStore({
+        isMobile: nextMode,
+      })
+    );
+  };
+
   // 渲染工具栏
   const renderToolbar = () => {
     return (
       <Space.Compact className="action-bar" block>
+        <Button type="text" title="切换为手机模式" onClick={onSetDefaultUA}>
+          {appStore.isMobile ? <MobileFilled /> : <MobileOutlined />}
+        </Button>
         <Button
           disabled={store.mode === PageMode.Default}
           title="首页"
@@ -307,7 +242,6 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
         >
           <ReloadOutlined />
         </Button>
-
         <Button
           type="text"
           title={curIsFavorite ? "取消收藏" : "收藏"}
@@ -326,7 +260,12 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
           onKeyDown={onInputKeyDown}
           placeholder="请输入网址链接……"
         />
-        <Button title="访问" type="text" onClick={onClickEnter}>
+        <Button
+          title="访问"
+          type="text"
+          onClick={onClickEnter}
+          disabled={!store.url}
+        >
           <ArrowRightOutlined />
         </Button>
         {page && (
@@ -342,19 +281,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   const renderBrowserPanel = () => {
     return (
       <div className="webview-container">
-        <PanelGroup autoSaveId="example" direction="horizontal">
-          <Panel minSize={50}>
-            <WebView className="webview-inner" />
-          </Panel>
-          {store.sourceList.length > 0 && (
-            <>
-              <PanelResizeHandle className="divider">
-                <div className="handle" />
-              </PanelResizeHandle>
-              <Panel minSize={20}>{renderWebviewSider()}</Panel>
-            </>
-          )}
-        </PanelGroup>
+        <WebView className="webview-inner" />
       </div>
     );
   };

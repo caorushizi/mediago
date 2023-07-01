@@ -53,6 +53,8 @@ const handleApi: ElectronAPI = {
   openBrowser: (url: string) => shell.openExternal(url),
   getSharedState: () => ipcRenderer.invoke("get-shared-state"),
   setSharedState: (state) => ipcRenderer.invoke("set-shared-state", state),
+  setUserAgent: (isMobile: boolean) =>
+    ipcRenderer.invoke("webview-change-user-agent", isMobile),
 };
 
 contextBridge.exposeInMainWorld(apiKey, handleApi);

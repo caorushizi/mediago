@@ -29,7 +29,11 @@ async function copySource() {
 }
 
 const ctx = await esbuild.context({
-  entryPoints: [mainResolve("src/index.ts"), mainResolve("src/preload.ts")],
+  entryPoints: [
+    mainResolve("src/index.ts"),
+    mainResolve("src/preload.ts"),
+    mainResolve("src/webview.ts"),
+  ],
   bundle: true,
   platform: "node",
   sourcemap: true,

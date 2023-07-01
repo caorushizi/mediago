@@ -10,7 +10,7 @@ import {
 import "./index.scss";
 import { Button, FormInstance, message, Space, Tooltip } from "antd";
 import { FolderOpenOutlined, QuestionCircleOutlined } from "@ant-design/icons";
-import { selectStore, setAppStore } from "../../store/appSlice";
+import { selectAppStore, setAppStore } from "../../store";
 import { useDispatch, useSelector } from "react-redux";
 import useElectron from "../../hooks/electron";
 import { useRequest } from "ahooks";
@@ -27,7 +27,7 @@ const SettingPage: React.FC = () => {
   } = useElectron();
   const dispatch = useDispatch();
   const formRef = useRef<FormInstance<AppStore>>();
-  const settings = useSelector(selectStore);
+  const settings = useSelector(selectAppStore);
   const { data: envPath } = useRequest(getEnvPath);
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -53,16 +53,26 @@ const SettingPage: React.FC = () => {
 
   const renderTooltipLable = () => {
     return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-        }}
-      >
-        <div style={{ marginRight: "5px" }}>代理开关</div>
+      <div className="item-label">
+        <div className="item-label-text">代理开关</div>
         <Tooltip
           title={"该代理会对软件自带浏览器以及下载时生效"}
+          placement={"right"}
+        >
+          <QuestionCircleOutlined />
+        </Tooltip>
+      </div>
+    );
+  };
+
+  const renderExtensionLabel = () => {
+    return (
+      <div className="item-label">
+        <div className="item-label-text">使用浏览器插件</div>
+        <Tooltip
+          title={
+            "开启后浏览器嗅探到的资源将不会直接显示在下载列表中，所有资源嗅探会交给浏览器插件处理"
+          }
           placement={"right"}
         >
           <QuestionCircleOutlined />
@@ -106,8 +116,20 @@ const SettingPage: React.FC = () => {
             placeholder="请选择视频下载目录"
             label={renderButtonLable()}
           />
+          <ProFormSelect
+            name="theme"
+            label="下载器主题"
+            valueEnum={{
+              [AppTheme.System]: "跟随系统",
+              [AppTheme.Dark]: "深色",
+              [AppTheme.Light]: "浅色",
+            }}
+            placeholder="请选择主题色"
+          />
           <ProFormSwitch label="新窗口打开浏览器" name="openInNewWindow" />
           <ProFormSwitch label="下载完成提示" name="promptTone" />
+        </ProFormGroup>
+        <ProFormGroup title="基础设置" direction={"vertical"}>
           <ProFormText
             width="xl"
             name="proxy"
@@ -130,16 +152,8 @@ const SettingPage: React.FC = () => {
             ]}
           />
           <ProFormSwitch label="开启广告过滤" name="blockAds" />
-          <ProFormSelect
-            name="theme"
-            label="主题"
-            valueEnum={{
-              [AppTheme.System]: "跟随系统",
-              [AppTheme.Dark]: "深色",
-              [AppTheme.Light]: "浅色",
-            }}
-            placeholder="请选择主题色"
-          />
+          <ProFormSwitch label="以手机模式进入" name="isMobile" />
+          <ProFormSwitch label={renderExtensionLabel()} name="useExtension" />
         </ProFormGroup>
         <ProFormGroup title="下载设置" direction={"vertical"}>
           <ProFormSwitch label="下载完成删除分片" name="deleteSegments" />

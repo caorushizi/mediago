@@ -1,9 +1,7 @@
 import {
   BrowserView,
-  HeadersReceivedResponse,
-  OnHeadersReceivedListenerDetails,
-  OnResponseStartedListenerDetails,
-  WebContents,
+  CallbackResponse,
+  OnBeforeSendHeadersListenerDetails,
   session,
 } from "electron";
 import {
@@ -11,19 +9,22 @@ import {
   LoggerService,
   MainWindowService,
   StoreService,
+  VideoRepository,
   WebviewService,
 } from "../interfaces";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import isDev from "electron-is-dev";
-import { PERSIST_WEBVIEW } from "helper/variables";
-import { LinkMessage } from "main";
+import { PERSIST_WEBVIEW, mobileUA, pcUA } from "helper/variables";
 import { ElectronBlocker } from "@cliqz/adblocker-electron";
 import fetch from "cross-fetch";
+import path from "path";
+import { LinkMessage } from "main";
 
+// FIXME: 需要重构
 @injectable()
 export default class WebviewServiceImpl implements WebviewService {
-  private _view: BrowserView;
+  public view: BrowserView;
   private blocker?: ElectronBlocker;
 
   constructor(
@@ -34,57 +35,33 @@ export default class WebviewServiceImpl implements WebviewService {
     @inject(TYPES.BrowserWindowService)
     private readonly browserWindow: BrowserWindowService,
     @inject(TYPES.StoreService)
-    private readonly storeService: StoreService
+    private readonly storeService: StoreService,
+    @inject(TYPES.VideoRepository)
+    private readonly videoRepository: VideoRepository
   ) {
     // 初始化 blocker
-    // this.initBlocker();
+    this.initBlocker();
   }
-
-  private create(): void {
-    this._view = new BrowserView({
-      webPreferences: {
-        partition: PERSIST_WEBVIEW,
-      },
-    });
-    const webContents = this._view.webContents;
-    this._view.setBackgroundColor("#fff");
-    webContents.setAudioMuted(true);
-
-    const useProxy = this.storeService.get("useProxy");
-    const proxy = this.storeService.get("proxy");
-    this.setProxy(useProxy, proxy);
-  }
-
-  get view(): BrowserView {
-    if (!this._view) this.create();
-    return this._view;
-  }
-
-  onHeadersReceived = (details: OnResponseStartedListenerDetails): void => {
-    const { url } = details;
-
-    const sourceReg = /\.m3u8$/;
-    const detailsUrl = new URL(url);
-
-    if (sourceReg.test(detailsUrl.pathname)) {
-      this.logger.info("在窗口中捕获 m3u8 链接: ", detailsUrl.toString());
-      const webContents = details.webContents;
-      const linkMessage: LinkMessage = {
-        url: detailsUrl.toString(),
-        title: webContents?.getTitle() || "没有获取到名称",
-      };
-      this.curWindow?.webContents.send("webview-link-message", linkMessage);
-    }
-  };
 
   async init(): Promise<void> {
+    this.view = new BrowserView({
+      webPreferences: {
+        partition: PERSIST_WEBVIEW,
+        preload: path.resolve(__dirname, "./webview.js"),
+      },
+    });
+    this.view.setBackgroundColor("#fff");
+    this.view.webContents.setAudioMuted(true);
+
+    const { useProxy, proxy, isMobile } = this.storeService.store;
+    this.setProxy(useProxy, proxy);
+    this.setUserAgent(isMobile);
+
     this.view.webContents.on("dom-ready", () => {
       const title = this.view.webContents.getTitle();
       const url = this.view.webContents.getURL();
-
       this.curWindow?.webContents.send("webview-dom-ready", { title, url });
     });
-
     this.view.webContents.setWindowOpenHandler(({ url }) => {
       if (url === "about:blank") {
         // 兼容一些网站跳转到 about:blank
@@ -98,10 +75,8 @@ export default class WebviewServiceImpl implements WebviewService {
       return { action: "deny" };
     });
 
-    this.session.webRequest.onResponseStarted(
-      { urls: ["<all_urls>"] },
-      this.onHeadersReceived
-    );
+    const urls = ["<all_urls>"];
+    this.session.webRequest.onBeforeSendHeaders({ urls }, this.before);
   }
 
   getBounds(): Electron.Rectangle {
@@ -137,7 +112,7 @@ export default class WebviewServiceImpl implements WebviewService {
     const canGoBack = this.view.webContents.canGoBack();
     try {
       await this.view.webContents.loadURL(url || "");
-    } catch (err: any) {
+    } catch (err: unknown) {
       this.logger.error("加载 url 时出现错误: ", err);
     }
     if (!canGoBack && !isNewWindow) {
@@ -163,12 +138,8 @@ export default class WebviewServiceImpl implements WebviewService {
   }
 
   get curWindow() {
-    if (this.browserWindow.window && this.browserWindow.show) {
-      return this.browserWindow.window;
-    }
-    if (this.mainWindow.window && this.mainWindow.show) {
-      return this.mainWindow.window;
-    }
+    if (this.browserWindow.window) return this.browserWindow.window;
+    if (this.mainWindow.window) return this.mainWindow.window;
     return null;
   }
 
@@ -238,5 +209,55 @@ export default class WebviewServiceImpl implements WebviewService {
     }
     this.blocker.disableBlockingInSession(this.session);
     this.logger.info("关闭 blocker 成功");
+  }
+
+  before = (
+    details: OnBeforeSendHeadersListenerDetails,
+    callback: (response: CallbackResponse) => void
+  ): void => {
+    const { url } = details;
+
+    const sourceReg = /\.m3u8$/;
+    const detailsUrl = new URL(url);
+
+    if (sourceReg.test(detailsUrl.pathname)) {
+      this.handleM3u8(details);
+    }
+
+    callback({});
+  };
+
+  handleM3u8 = (details: OnBeforeSendHeadersListenerDetails): void => {
+    const { id, url } = details;
+
+    this.logger.info(`在窗口中捕获 m3u8 链接: ${url} id: ${id}`);
+    const webContents = details.webContents;
+    const linkMessage: LinkMessage = {
+      url,
+      name: webContents?.getTitle() || "没有获取到名称",
+      headers: JSON.stringify(details.requestHeaders),
+    };
+    // 这里需要判断是否使用浏览器插件
+    const useExtension = this.storeService.get("useExtension");
+    if (useExtension) {
+      this.view.webContents.send("webview-link-message", linkMessage);
+    } else {
+      this.videoRepository.addVideo(linkMessage).then((item) => {
+        // 这里向页面发送消息，通知页面更新
+        this.mainWindow.window?.webContents.send(
+          "download-item-notifier",
+          item
+        );
+      });
+    }
+  };
+
+  setUserAgent(isMobile?: boolean) {
+    if (isMobile) {
+      this.view.webContents.setUserAgent(mobileUA);
+    } else {
+      this.view.webContents.setUserAgent(pcUA);
+    }
+    this.logger.info("设置 user-agent 成功", isMobile);
   }
 }

@@ -1,7 +1,7 @@
-import { spawn } from "child_process";
-import { ffmpegPath, macDownloaderPath, winDownloaderPath } from "./variables";
+import { execa } from "execa";
+import { macDownloaderPath, winDownloaderPath } from "./variables";
 import iconv from "iconv-lite";
-import { event, stripColors } from "./utils";
+import { event, formatHeaders, formatString, stripColors } from "./utils";
 import { DownloadParams, DownloadProgress } from "interfaces";
 
 export const spawnDownload = (params: DownloadParams): Promise<void> => {
@@ -12,28 +12,41 @@ export const spawnDownload = (params: DownloadParams): Promise<void> => {
   }
 };
 
-const winSpawnDownload = (params: DownloadParams): Promise<void> => {
-  const { id, abortSignal, url, local, name, deleteSegments } = params;
+const winSpawnDownload = async (params: DownloadParams): Promise<void> => {
+  const { id, abortSignal, url, local, name, deleteSegments, headers } = params;
   const progressReg = /Progress:\s(\d+)\/(\d+)\s\(.+?\).+?\((.+?\/s).*?\)/g;
 
   return new Promise((resolve, reject) => {
-    const spawnParams = [url, "--workDir", local, "--saveName", name];
+    const spawnParams = [
+      formatString(url),
+      "--workDir",
+      formatString(local),
+      "--saveName",
+      formatString(name),
+    ];
+
+    if (headers) {
+      spawnParams.push("--headers", formatHeaders(headers));
+    }
 
     if (deleteSegments) {
       spawnParams.push("--enableDelAfterDone");
     }
 
-    const downloader = spawn(winDownloaderPath, spawnParams, {
+    const downloader = execa(winDownloaderPath, spawnParams, {
+      detached: true,
+      shell: true,
       signal: abortSignal.signal,
     });
 
-    downloader.stdout.on("data", (data) => {
+    downloader.stdout?.on("data", (data) => {
       const str = iconv.decode(Buffer.from(data), "gbk");
       str.split("\n").forEach((item) => {
         if (item.trim() == "") {
           return;
         }
 
+        process.env.NODE_ENV === "development" && console.log(item);
         const result = progressReg.exec(item);
         if (!result) {
           return;
@@ -60,7 +73,7 @@ const winSpawnDownload = (params: DownloadParams): Promise<void> => {
 };
 
 const macSpawnDownload = (params: DownloadParams): Promise<void> => {
-  const { id, abortSignal, url, local, name, deleteSegments } = params;
+  const { id, abortSignal, url, local, name, deleteSegments, headers } = params;
   const progressReg = /([\d.]+)% .*? ([\d.\w]+?) /g;
 
   return new Promise((resolve, reject) => {
@@ -74,20 +87,26 @@ const macSpawnDownload = (params: DownloadParams): Promise<void> => {
       name,
     ];
 
+    if (headers) {
+      spawnParams.push("--headers", formatHeaders(headers));
+    }
+
     if (deleteSegments) {
       spawnParams.push("--del-after-done");
     }
 
-    const downloader = spawn(macDownloaderPath, spawnParams, {
+    console.log("spawnParams", spawnParams);
+    const downloader = execa(macDownloaderPath, spawnParams, {
       signal: abortSignal.signal,
     });
 
-    downloader.stdout.on("data", (data) => {
+    downloader.stdout?.on("data", (data) => {
       const str = String(Buffer.from(data));
       str.split("\n").forEach((item) => {
         if (item.trim() == "") {
           return;
         }
+        process.env.NODE_ENV === "development" && console.log(item);
         const result = progressReg.exec(stripColors(item));
         if (!result) {
           return;

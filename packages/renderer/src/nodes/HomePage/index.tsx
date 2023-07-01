@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useEffect, useRef, useState } from "react";
+import React, { FC, ReactNode, useEffect, useState } from "react";
 import {
   Button,
   Form,
@@ -10,7 +10,9 @@ import {
   Tag,
   Popover,
   QRCode,
+  Dropdown,
 } from "antd";
+import type { MenuProps } from "antd";
 import "./index.scss";
 import PageContainer from "../../components/PageContainer";
 import { useAsyncEffect, usePagination } from "ahooks";
@@ -25,12 +27,13 @@ import {
   PlayCircleOutlined,
   SyncOutlined,
   MobileOutlined,
+  MoreOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { selectStore } from "../../store/appSlice";
+import { selectAppStore } from "../../store";
 import { tdApp } from "../../utils";
 import { increase } from "../../store/downloadSlice";
-import { selectBrowserStore } from "../../store/browserSlice";
 
 enum DownloadFilter {
   list = "list",
@@ -55,7 +58,7 @@ const HomePage: FC = () => {
     getLocalIP,
   } = useElectron();
   const dispatch = useDispatch();
-  const appStore = useSelector(selectStore);
+  const appStore = useSelector(selectAppStore);
   const [filter, setFilter] = useState(DownloadFilter.list);
   const { data, loading, pagination, refresh } = usePagination(
     ({ current, pageSize }) => {
@@ -78,8 +81,6 @@ const HomePage: FC = () => {
   const [addVideoForm] = Form.useForm<DownloadItem>();
   const [editVideoForm] = Form.useForm<DownloadItem>();
   const [baseUrl, setBaseUrl] = useState("");
-
-  const browserStore = useSelector(selectBrowserStore);
 
   useAsyncEffect(async () => {
     const isDev = import.meta.env.MODE === "development";
@@ -128,7 +129,6 @@ const HomePage: FC = () => {
   };
 
   const onReceiveDownloadItem = () => {
-    dispatch(increase());
     refresh();
   };
 
@@ -304,13 +304,6 @@ const HomePage: FC = () => {
     return [
       <Button
         type="text"
-        key="play-video"
-        icon={<PlayCircleOutlined />}
-        title="播放视频"
-        onClick={() => openPlayerWindow(item.id)}
-      />,
-      <Button
-        type="text"
         key="open-file"
         icon={<FolderOpenOutlined />}
         title="打开文件位置"
@@ -318,12 +311,39 @@ const HomePage: FC = () => {
       />,
       <Button
         type="text"
-        key="more"
-        icon={<SyncOutlined />}
-        title="转换为音频"
-        loading={curConverting}
-        onClick={() => onClickConvertToAudio(item)}
+        key="redownload"
+        title="重新下载"
+        icon={<DownloadOutlined />}
+        onClick={() => onStartDownload(item.id)}
       />,
+      <Dropdown
+        key="more"
+        menu={{
+          items: [
+            {
+              label: "播放视频",
+              key: "play",
+              icon: <PlayCircleOutlined />,
+              disabled: curConverting,
+            },
+            {
+              label: "转换为音频",
+              key: "convert",
+              icon: <SyncOutlined />,
+            },
+          ],
+          onClick: ({ key }) => {
+            if (key === "play") {
+              openPlayerWindow(item.id);
+            }
+            if (key === "convert") {
+              onClickConvertToAudio(item);
+            }
+          },
+        }}
+      >
+        <Button type="text" title="更多" icon={<MoreOutlined />} />
+      </Dropdown>,
     ];
   };
 
