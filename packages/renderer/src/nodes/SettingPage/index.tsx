@@ -53,16 +53,26 @@ const SettingPage: React.FC = () => {
 
   const renderTooltipLable = () => {
     return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-        }}
-      >
-        <div style={{ marginRight: "5px" }}>代理开关</div>
+      <div className="item-label">
+        <div className="item-label-text">代理开关</div>
         <Tooltip
           title={"该代理会对软件自带浏览器以及下载时生效"}
+          placement={"right"}
+        >
+          <QuestionCircleOutlined />
+        </Tooltip>
+      </div>
+    );
+  };
+
+  const renderExtensionLabel = () => {
+    return (
+      <div className="item-label">
+        <div className="item-label-text">使用浏览器插件</div>
+        <Tooltip
+          title={
+            "开启后浏览器嗅探到的资源将不会直接显示在下载列表中，所有资源嗅探会交给浏览器插件处理"
+          }
           placement={"right"}
         >
           <QuestionCircleOutlined />
@@ -130,6 +140,7 @@ const SettingPage: React.FC = () => {
             ]}
           />
           <ProFormSwitch label="开启广告过滤" name="blockAds" />
+          <ProFormSwitch label={renderExtensionLabel()} name="useExtension" />
           <ProFormSelect
             name="theme"
             label="主题"

@@ -1,4 +1,9 @@
-import { type BrowserWindow } from "electron";
+import {
+  OnBeforeSendHeadersListenerDetails,
+  type BrowserWindow,
+  OnCompletedListenerDetails,
+  BrowserView,
+} from "electron";
 import { ElectronLog } from "electron-log";
 import Store from "electron-store";
 import { Favorite } from "entity/Favorite";
@@ -102,6 +107,7 @@ export interface FavoriteRepository {
 }
 
 export interface WebviewService {
+  view: BrowserView;
   init: () => void;
   getBounds: () => Electron.Rectangle;
   setAutoResize: (options: Electron.AutoResizeOptions) => void;

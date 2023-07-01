@@ -2,7 +2,6 @@ import {
   ArrowLeftOutlined,
   ArrowRightOutlined,
   CloseOutlined,
-  DownloadOutlined,
   HomeOutlined,
   ImportOutlined,
   LinkOutlined,
@@ -12,41 +11,23 @@ import {
   StarOutlined,
 } from "@ant-design/icons";
 import { useAsyncEffect, useRequest } from "ahooks";
-import {
-  Avatar,
-  Button,
-  Collapse,
-  Form,
-  Input,
-  List,
-  message,
-  Space,
-} from "antd";
+import { Avatar, Button, Form, Input, List, message, Space } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PageContainer from "../../components/PageContainer";
 import useElectron from "../../hooks/electron";
-import { increase } from "../../store/downloadSlice";
 import { generateUrl, getFavIcon } from "../../utils";
-import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import "./index.scss";
 import { ModalForm, ProFormText } from "@ant-design/pro-components";
 import {
-  addSource,
+  PageMode,
   selectBrowserStore,
   setBrowserStore,
 } from "../../store/browserSlice";
 import WebView from "../../components/WebView";
 
-const { Panel: AntDPanel } = Collapse;
-
 interface SourceExtractProps {
   page?: boolean;
-}
-
-export enum PageMode {
-  Default = "default",
-  Browser = "browser",
 }
 
 const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
@@ -60,9 +41,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     webviewGoBack,
     webviewReload,
     webwiewGoHome,
-    addDownloadItem,
     onFavoriteItemContextMenu,
-    downloadNow,
     combineToHomePage,
     getSharedState,
   } = useElectron();
@@ -166,10 +145,6 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     }
   };
 
-  const receiveLinkMessage = (e: unknown, msg: LinkMessage) => {
-    dispatch(addSource(msg));
-  };
-
   const onFavoriteEvent = async (
     e: unknown,
     {
@@ -199,74 +174,14 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   useEffect(() => {
     const prevTitle = document.title;
     rendererEvent("webview-dom-ready", onDomReady);
-    rendererEvent("webview-link-message", receiveLinkMessage);
     rendererEvent("favorite-item-event", onFavoriteEvent);
 
     return () => {
       document.title = prevTitle;
       removeEventListener("webview-dom-ready", onDomReady);
-      removeEventListener("webview-link-message", receiveLinkMessage);
       removeEventListener("favorite-item-event", onFavoriteEvent);
     };
   }, []);
-
-  const onAddDownloadItem = (item: LinkMessage) => {
-    dispatch(increase());
-    addDownloadItem(item);
-  };
-
-  const onDownloadNow = (item: LinkMessage) => {
-    dispatch(increase());
-    downloadNow(item);
-  };
-
-  // 渲染收藏夹
-  const renderWebviewSider = () => {
-    return (
-      <div className="webview-sider">
-        <Collapse className="webview-sider-inner" bordered={false}>
-          {store.sourceList.map((item) => {
-            return (
-              <AntDPanel
-                className="sider-list-container"
-                header={item.name}
-                key={item.url}
-                extra={
-                  <Space>
-                    <Button
-                      type="link"
-                      title="添加到下载列表"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        onAddDownloadItem(item);
-                      }}
-                      icon={<PlusOutlined />}
-                    />
-                    <Button
-                      type="link"
-                      title="立即下载"
-                      icon={<DownloadOutlined />}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        onDownloadNow(item);
-                      }}
-                    />
-                  </Space>
-                }
-              >
-                <div className="sider-list">
-                  <div className="sider-item">视频名： {item.name}</div>
-                  <div className="sider-item">视频链接： {item.url}</div>
-                </div>
-              </AntDPanel>
-            );
-          })}
-        </Collapse>
-      </div>
-    );
-  };
 
   // 合并到主页
   const onCombineToHome = () => {
@@ -336,19 +251,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   const renderBrowserPanel = () => {
     return (
       <div className="webview-container">
-        <PanelGroup autoSaveId="example" direction="horizontal">
-          <Panel minSize={50}>
-            <WebView className="webview-inner" />
-          </Panel>
-          {store.sourceList.length > 0 && (
-            <>
-              <PanelResizeHandle className="divider">
-                <div className="handle" />
-              </PanelResizeHandle>
-              <Panel minSize={20}>{renderWebviewSider()}</Panel>
-            </>
-          )}
-        </PanelGroup>
+        <WebView className="webview-inner" />
       </div>
     );
   };

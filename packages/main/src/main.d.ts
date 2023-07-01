@@ -83,6 +83,8 @@ declare interface AppStore {
   blockAds: boolean;
   // 主题
   theme: "system" | "light" | "dark";
+  // 使用浏览器插件
+  useExtension: boolean;
 }
 
 declare interface BrowserStore {

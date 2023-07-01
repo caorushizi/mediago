@@ -1,14 +1,12 @@
 import { IpcMainEvent } from "electron";
 import { inject, injectable } from "inversify";
 import { handle } from "../helper/decorator";
-import { LoggerService, type Controller, WebviewService } from "../interfaces";
+import { type Controller, WebviewService } from "../interfaces";
 import { TYPES } from "../types";
 
 @injectable()
 export default class WebviewController implements Controller {
   constructor(
-    @inject(TYPES.LoggerService)
-    private readonly logger: LoggerService,
     @inject(TYPES.WebviewService)
     private readonly webview: WebviewService
   ) {}
