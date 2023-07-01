@@ -3,6 +3,7 @@ import { inject, injectable } from "inversify";
 import {
   DownloadService,
   DownloadStatus,
+  StoreService,
   Task,
   VideoRepository,
 } from "../interfaces";
@@ -18,7 +19,7 @@ export default class DownloadServiceImpl
 
   private active: Task[] = [];
 
-  private limit = 2;
+  private limit: number;
 
   private debug = process.env.APP_DOWNLOAD_DEBUG;
 
@@ -28,9 +29,18 @@ export default class DownloadServiceImpl
     @inject(TYPES.LoggerService)
     private readonly logger: LoggerServiceImpl,
     @inject(TYPES.VideoRepository)
-    private readonly videoRepository: VideoRepository
+    private readonly videoRepository: VideoRepository,
+    @inject(TYPES.StoreService)
+    private readonly storeService: StoreService
   ) {
     super();
+
+    const maxRunner = this.storeService.get("maxRunner");
+    this.limit = maxRunner;
+
+    this.storeService.onDidChange("maxRunner", (maxRunner) => {
+      maxRunner && (this.limit = maxRunner);
+    });
   }
 
   async addTask(task: Task) {

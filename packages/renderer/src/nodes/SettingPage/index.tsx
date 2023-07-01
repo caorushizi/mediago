@@ -6,6 +6,7 @@ import {
   ProFormGroup,
   ProFormSwitch,
   ProFormSelect,
+  ProFormDigit,
 } from "@ant-design/pro-components";
 import "./index.scss";
 import { Button, FormInstance, message, Space, Tooltip } from "antd";
@@ -157,6 +158,13 @@ const SettingPage: React.FC = () => {
         </ProFormGroup>
         <ProFormGroup title="下载设置" direction={"vertical"}>
           <ProFormSwitch label="下载完成删除分片" name="deleteSegments" />
+          <ProFormDigit
+            label="最大同时下载数量"
+            name="maxRunner"
+            min={1}
+            max={10}
+            fieldProps={{ precision: 0 }}
+          />
           <ProFormText label="更多操作">
             <Space>
               <Button

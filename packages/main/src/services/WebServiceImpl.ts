@@ -1,4 +1,9 @@
-import { StoreService, VideoRepository, WebService } from "../interfaces";
+import {
+  LoggerService,
+  StoreService,
+  VideoRepository,
+  WebService,
+} from "../interfaces";
 import { inject, injectable } from "inversify";
 import Koa, { Context } from "koa";
 import Router from "@koa/router";
@@ -20,7 +25,9 @@ export default class WebServiceImpl implements WebService {
     @inject(TYPES.StoreService)
     private readonly storeService: StoreService,
     @inject(TYPES.VideoRepository)
-    private readonly videoRepository: VideoRepository
+    private readonly videoRepository: VideoRepository,
+    @inject(TYPES.LoggerService)
+    private readonly logger: LoggerService
   ) {
     this.app = new Koa();
     this.router = new Router();
@@ -48,7 +55,13 @@ export default class WebServiceImpl implements WebService {
     this.app.use(this.router.routes());
     this.app.use(this.router.allowedMethods());
 
-    this.app.listen(process.env.APP_SERVER_PORT);
+    this.app
+      .listen(process.env.APP_SERVER_PORT, () => {
+        this.logger.info("web server init success.");
+      })
+      .on("error", (err: unknown) => {
+        this.logger.error("server error", err);
+      });
   }
 
   private videoList = async (ctx: Context) => {
