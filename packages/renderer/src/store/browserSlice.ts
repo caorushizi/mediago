@@ -1,14 +1,17 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from ".";
-import { PageMode } from "../nodes/SourceExtract";
 import useElectron from "../hooks/electron";
 
 const { setSharedState } = useElectron();
 
+export enum PageMode {
+  Default = "default",
+  Browser = "browser",
+}
+
 const initialState: BrowserStore = {
   mode: PageMode.Default,
   url: "",
-  sourceList: [],
   title: "",
 };
 
@@ -30,19 +33,10 @@ export const browserSlice = createSlice({
       // FIXME: 异步函数
       setSharedState(convertPlainObject(state));
     },
-    addSource(state, { payload }: PayloadAction<LinkMessage>) {
-      if (state.sourceList.find((item) => item.url === payload.url)) {
-        return;
-      }
-      state.sourceList = [payload, ...state.sourceList];
-      // FIXME: 异步函数
-      setSharedState(convertPlainObject(state));
-    },
   },
 });
 
-export const { setBrowserStore, addSource } = browserSlice.actions;
+export const { setBrowserStore } = browserSlice.actions;
 export const selectUrl = (state: RootState) => state.browser.url;
-export const selectSourceList = (state: RootState) => state.browser.sourceList;
 export const selectBrowserStore = (state: RootState) => state.browser;
 export default browserSlice.reducer;

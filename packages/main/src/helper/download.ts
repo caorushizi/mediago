@@ -45,7 +45,6 @@ const winSpawnDownload = async (params: DownloadParams): Promise<void> => {
           return;
         }
 
-        console.log(item);
         const result = progressReg.exec(item);
         if (!result) {
           return;

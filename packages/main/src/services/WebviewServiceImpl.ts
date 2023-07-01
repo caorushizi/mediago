@@ -9,21 +9,23 @@ import {
   LoggerService,
   MainWindowService,
   StoreService,
+  VideoRepository,
   WebviewService,
 } from "../interfaces";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import isDev from "electron-is-dev";
 import { PERSIST_WEBVIEW } from "helper/variables";
-import { LinkMessage } from "main";
 import { ElectronBlocker } from "@cliqz/adblocker-electron";
 import fetch from "cross-fetch";
 import path from "path";
+import fs from "fs-extra";
+import { LinkMessage } from "main";
 
 // FIXME: 需要重构
 @injectable()
 export default class WebviewServiceImpl implements WebviewService {
-  private view: BrowserView;
+  public view: BrowserView;
   private blocker?: ElectronBlocker;
 
   constructor(
@@ -34,35 +36,13 @@ export default class WebviewServiceImpl implements WebviewService {
     @inject(TYPES.BrowserWindowService)
     private readonly browserWindow: BrowserWindowService,
     @inject(TYPES.StoreService)
-    private readonly storeService: StoreService
+    private readonly storeService: StoreService,
+    @inject(TYPES.VideoRepository)
+    private readonly videoRepository: VideoRepository
   ) {
     // 初始化 blocker
     this.initBlocker();
   }
-
-  onHeadersReceived = (
-    details: OnBeforeSendHeadersListenerDetails,
-    callback: (response: CallbackResponse) => void
-  ): void => {
-    const { url } = details;
-
-    const sourceReg = /\.m3u8$/;
-    const detailsUrl = new URL(url);
-
-    if (sourceReg.test(detailsUrl.pathname)) {
-      this.logger.info("在窗口中捕获 m3u8 链接: ", detailsUrl.toString());
-      const webContents = details.webContents;
-      const linkMessage: LinkMessage = {
-        url: detailsUrl.toString(),
-        name: webContents?.getTitle() || "没有获取到名称",
-        headers: JSON.stringify(details.requestHeaders),
-      };
-      this.curWindow?.webContents.send("webview-link-message", linkMessage);
-      this.view.webContents.send("webview-link-message", linkMessage);
-    }
-
-    callback({});
-  };
 
   async init(): Promise<void> {
     this.view = new BrowserView({
@@ -83,6 +63,11 @@ export default class WebviewServiceImpl implements WebviewService {
       const url = this.view.webContents.getURL();
       this.curWindow?.webContents.send("webview-dom-ready", { title, url });
     });
+    this.view.webContents.on("did-navigate", () => {
+      this.view.webContents.insertCSS(
+        fs.readFileSync(path.join(__dirname, "./webview.css"), "utf-8")
+      );
+    });
     this.view.webContents.setWindowOpenHandler(({ url }) => {
       if (url === "about:blank") {
         // 兼容一些网站跳转到 about:blank
@@ -96,10 +81,8 @@ export default class WebviewServiceImpl implements WebviewService {
       return { action: "deny" };
     });
 
-    this.session.webRequest.onBeforeSendHeaders(
-      { urls: ["<all_urls>"] },
-      this.onHeadersReceived
-    );
+    const urls = ["<all_urls>"];
+    this.session.webRequest.onBeforeSendHeaders({ urls }, this.before);
   }
 
   getBounds(): Electron.Rectangle {
@@ -135,7 +118,7 @@ export default class WebviewServiceImpl implements WebviewService {
     const canGoBack = this.view.webContents.canGoBack();
     try {
       await this.view.webContents.loadURL(url || "");
-    } catch (err: any) {
+    } catch (err: unknown) {
       this.logger.error("加载 url 时出现错误: ", err);
     }
     if (!canGoBack && !isNewWindow) {
@@ -233,4 +216,45 @@ export default class WebviewServiceImpl implements WebviewService {
     this.blocker.disableBlockingInSession(this.session);
     this.logger.info("关闭 blocker 成功");
   }
+
+  before = (
+    details: OnBeforeSendHeadersListenerDetails,
+    callback: (response: CallbackResponse) => void
+  ): void => {
+    const { url } = details;
+
+    const sourceReg = /\.m3u8$/;
+    const detailsUrl = new URL(url);
+
+    if (sourceReg.test(detailsUrl.pathname)) {
+      this.handleM3u8(details);
+    }
+
+    callback({});
+  };
+
+  handleM3u8 = (details: OnBeforeSendHeadersListenerDetails): void => {
+    const { id, url } = details;
+
+    this.logger.info(`在窗口中捕获 m3u8 链接: ${url} id: ${id}`);
+    const webContents = details.webContents;
+    const linkMessage: LinkMessage = {
+      url,
+      name: webContents?.getTitle() || "没有获取到名称",
+      headers: JSON.stringify(details.requestHeaders),
+    };
+    // 这里需要判断是否使用浏览器插件
+    const useExtension = this.storeService.get("useExtension");
+    if (useExtension) {
+      this.view.webContents.send("webview-link-message", linkMessage);
+    } else {
+      this.videoRepository.addVideo(linkMessage).then((item) => {
+        // 这里向页面发送消息，通知页面更新
+        this.mainWindow.window?.webContents.send(
+          "download-item-notifier",
+          item
+        );
+      });
+    }
+  };
 }

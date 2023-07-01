@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useEffect, useRef, useState } from "react";
+import React, { FC, ReactNode, useEffect, useState } from "react";
 import {
   Button,
   Form,
@@ -78,8 +78,6 @@ const HomePage: FC = () => {
   const [addVideoForm] = Form.useForm<DownloadItem>();
   const [editVideoForm] = Form.useForm<DownloadItem>();
   const [baseUrl, setBaseUrl] = useState("");
-
-  const browserStore = useSelector(selectBrowserStore);
 
   useAsyncEffect(async () => {
     const isDev = import.meta.env.MODE === "development";

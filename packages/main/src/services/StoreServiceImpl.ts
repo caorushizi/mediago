@@ -25,6 +25,7 @@ export default class StoreServiceImpl
         openInNewWindow: false,
         blockAds: true,
         theme: AppTheme.System,
+        useExtension: false,
       },
     });
   }

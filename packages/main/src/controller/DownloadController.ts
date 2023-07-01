@@ -3,7 +3,6 @@ import { inject, injectable } from "inversify";
 import { handle } from "../helper/decorator";
 import {
   StoreService,
-  LoggerService,
   type Controller,
   VideoRepository,
   DownloadItem,
@@ -19,8 +18,6 @@ import MainWindowServiceImpl from "windows/Main";
 @injectable()
 export default class DownloadController implements Controller {
   constructor(
-    @inject(TYPES.LoggerService)
-    private readonly logger: LoggerService,
     @inject(TYPES.StoreService)
     private readonly storeService: StoreService,
     @inject(TYPES.VideoRepository)

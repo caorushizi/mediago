@@ -105,7 +105,6 @@ declare interface AppStore {
 declare interface BrowserStore {
   mode: PageMode;
   url: string;
-  sourceList: LinkMessage[];
   title: string;
 }
 
