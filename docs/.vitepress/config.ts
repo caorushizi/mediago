@@ -4,6 +4,21 @@ import { defineConfig } from "vitepress";
 export default defineConfig({
   title: "在线视频下载",
   description: "简单易用，快速下载",
+  head: [
+    [
+      "script",
+      {},
+      `<script>
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?eefcbd14f0323044aa0ca678cd278381";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+        </script>`,
+    ],
+  ],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
