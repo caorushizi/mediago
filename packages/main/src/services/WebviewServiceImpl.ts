@@ -15,11 +15,10 @@ import {
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import isDev from "electron-is-dev";
-import { PERSIST_WEBVIEW } from "helper/variables";
+import { PERSIST_WEBVIEW, mobileUA, pcUA } from "helper/variables";
 import { ElectronBlocker } from "@cliqz/adblocker-electron";
 import fetch from "cross-fetch";
 import path from "path";
-import fs from "fs-extra";
 import { LinkMessage } from "main";
 
 // FIXME: 需要重构
@@ -54,19 +53,14 @@ export default class WebviewServiceImpl implements WebviewService {
     this.view.setBackgroundColor("#fff");
     this.view.webContents.setAudioMuted(true);
 
-    const useProxy = this.storeService.get("useProxy");
-    const proxy = this.storeService.get("proxy");
+    const { useProxy, proxy, isMobile } = this.storeService.store;
     this.setProxy(useProxy, proxy);
+    this.setUserAgent(isMobile);
 
     this.view.webContents.on("dom-ready", () => {
       const title = this.view.webContents.getTitle();
       const url = this.view.webContents.getURL();
       this.curWindow?.webContents.send("webview-dom-ready", { title, url });
-    });
-    this.view.webContents.on("did-navigate", () => {
-      this.view.webContents.insertCSS(
-        fs.readFileSync(path.join(__dirname, "./webview.css"), "utf-8")
-      );
     });
     this.view.webContents.setWindowOpenHandler(({ url }) => {
       if (url === "about:blank") {
@@ -257,4 +251,13 @@ export default class WebviewServiceImpl implements WebviewService {
       });
     }
   };
+
+  setUserAgent(isMobile?: boolean) {
+    if (isMobile) {
+      this.view.webContents.setUserAgent(mobileUA);
+    } else {
+      this.view.webContents.setUserAgent(pcUA);
+    }
+    this.logger.info("设置 user-agent 成功", isMobile);
+  }
 }

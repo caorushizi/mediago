@@ -5,6 +5,8 @@ import {
   HomeOutlined,
   ImportOutlined,
   LinkOutlined,
+  MobileFilled,
+  MobileOutlined,
   PlusOutlined,
   ReloadOutlined,
   StarFilled,
@@ -22,9 +24,11 @@ import { ModalForm, ProFormText } from "@ant-design/pro-components";
 import {
   PageMode,
   selectBrowserStore,
+  setAppStore,
   setBrowserStore,
-} from "../../store/browserSlice";
+} from "../../store";
 import WebView from "../../components/WebView";
+import { selectAppStore } from "../../store";
 
 interface SourceExtractProps {
   page?: boolean;
@@ -44,6 +48,8 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     onFavoriteItemContextMenu,
     combineToHomePage,
     getSharedState,
+    setUserAgent,
+    getAppStore: ipcGetAppStore,
   } = useElectron();
   const dispatch = useDispatch();
   const { data: favoriteList = [], refresh } = useRequest(getFavorites);
@@ -51,8 +57,14 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [hoverId, setHoverId] = useState<number>(-1);
   const store = useSelector(selectBrowserStore);
+  const appStore = useSelector(selectAppStore);
 
   const curIsFavorite = favoriteList.find((item) => item.url === store.url);
+
+  useAsyncEffect(async () => {
+    const store = await ipcGetAppStore();
+    dispatch(setAppStore(store));
+  }, []);
 
   const loadUrl = async (url: string) => {
     await webviewLoadURL(url);
@@ -188,10 +200,24 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     combineToHomePage(store);
   };
 
+  // 设置默认UA
+  const onSetDefaultUA = () => {
+    const nextMode = !appStore.isMobile;
+    setUserAgent(nextMode);
+    dispatch(
+      setAppStore({
+        isMobile: nextMode,
+      })
+    );
+  };
+
   // 渲染工具栏
   const renderToolbar = () => {
     return (
       <Space.Compact className="action-bar" block>
+        <Button type="text" title="切换为手机模式" onClick={onSetDefaultUA}>
+          {appStore.isMobile ? <MobileFilled /> : <MobileOutlined />}
+        </Button>
         <Button
           disabled={store.mode === PageMode.Default}
           title="首页"
@@ -216,7 +242,6 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
         >
           <ReloadOutlined />
         </Button>
-
         <Button
           type="text"
           title={curIsFavorite ? "取消收藏" : "收藏"}
@@ -235,7 +260,12 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
           onKeyDown={onInputKeyDown}
           placeholder="请输入网址链接……"
         />
-        <Button title="访问" type="text" onClick={onClickEnter}>
+        <Button
+          title="访问"
+          type="text"
+          onClick={onClickEnter}
+          disabled={!store.url}
+        >
           <ArrowRightOutlined />
         </Button>
         {page && (
