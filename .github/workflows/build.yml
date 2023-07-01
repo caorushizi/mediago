@@ -1,7 +1,7 @@
 # build.yml
 
 # Workflow's name
-name: Build
+name: Build Downloader App.
 
 # Workflow's trigger
 on:
