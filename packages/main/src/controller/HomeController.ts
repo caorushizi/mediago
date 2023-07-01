@@ -16,7 +16,6 @@ import path from "path";
 import { handle, getLocalIP } from "../helper";
 import {
   StoreService,
-  LoggerService,
   type Controller,
   FavoriteRepository,
   MainWindowService,
@@ -33,8 +32,6 @@ export default class HomeController implements Controller {
   private sharedState: Record<string, any> = {};
 
   constructor(
-    @inject(TYPES.LoggerService)
-    private readonly logger: LoggerService,
     @inject(TYPES.StoreService)
     private readonly storeService: StoreService,
     @inject(TYPES.FavoriteRepository)
@@ -148,6 +145,10 @@ export default class HomeController implements Controller {
     // theme
     if (key === "theme") {
       nativeTheme.themeSource = val;
+    }
+    // isMobile
+    if (key === "isMobile") {
+      this.webviewService.setUserAgent(val);
     }
 
     this.storeService.set(key, val);

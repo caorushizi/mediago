@@ -1,16 +1,16 @@
 import { IpcMainEvent } from "electron";
 import { inject, injectable } from "inversify";
 import { handle } from "../helper/decorator";
-import { LoggerService, type Controller, WebviewService } from "../interfaces";
+import { type Controller, WebviewService, StoreService } from "../interfaces";
 import { TYPES } from "../types";
 
 @injectable()
 export default class WebviewController implements Controller {
   constructor(
-    @inject(TYPES.LoggerService)
-    private readonly logger: LoggerService,
     @inject(TYPES.WebviewService)
-    private readonly webview: WebviewService
+    private readonly webview: WebviewService,
+    @inject(TYPES.StoreService)
+    private readonly storeService: StoreService
   ) {}
 
   @handle("set-webview-bounds")
@@ -46,5 +46,11 @@ export default class WebviewController implements Controller {
   @handle("webview-go-home")
   async webviewGoHome() {
     await this.webview.goHome();
+  }
+
+  @handle("webview-change-user-agent")
+  async webviewChangeUserAgent(e: IpcMainEvent, isMobile: boolean) {
+    this.webview.setUserAgent(isMobile);
+    this.storeService.set("isMobile", isMobile);
   }
 }

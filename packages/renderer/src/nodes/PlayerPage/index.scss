@@ -19,6 +19,11 @@
       cursor: pointer;
     }
   }
+  @media (prefers-color-scheme: dark) {
+    .video-list {
+      background: #141414;
+    }
+  }
   .list-toggle {
     position: absolute;
     right: 10px;

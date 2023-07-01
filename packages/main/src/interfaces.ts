@@ -1,4 +1,4 @@
-import { type BrowserWindow } from "electron";
+import { type BrowserWindow, BrowserView } from "electron";
 import { ElectronLog } from "electron-log";
 import Store from "electron-store";
 import { Favorite } from "entity/Favorite";
@@ -8,7 +8,6 @@ import { AppStore } from "main";
 import { DataSource, EntityManager, UpdateResult, DeleteResult } from "typeorm";
 
 export interface MainWindowService {
-  show: boolean;
   window: BrowserWindow | null;
   init: () => void;
 }
@@ -18,7 +17,6 @@ export interface PlayerWindowService {
 }
 
 export interface BrowserWindowService {
-  show: boolean;
   window: BrowserWindow | null;
   showWindow: () => void;
   hideWindow: () => void;
@@ -64,6 +62,7 @@ export interface DownloadItem {
   id?: number;
   name: string;
   url: string;
+  headers: string;
 }
 
 export enum DownloadFilter {
@@ -103,6 +102,7 @@ export interface FavoriteRepository {
 }
 
 export interface WebviewService {
+  view: BrowserView;
   init: () => void;
   getBounds: () => Electron.Rectangle;
   setAutoResize: (options: Electron.AutoResizeOptions) => void;
@@ -116,6 +116,7 @@ export interface WebviewService {
   show: () => void;
   setProxy: (useProxy: boolean, proxy: string) => void;
   setBlocking: (enableBlocking: boolean) => void;
+  setUserAgent: (isMobile: boolean) => void;
 }
 
 export interface WebService {
@@ -154,6 +155,7 @@ export interface DownloadParams {
   url: string;
   local: string;
   name: string;
+  headers: string;
   abortSignal: AbortController;
   deleteSegments?: boolean;
 }

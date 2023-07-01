@@ -57,11 +57,13 @@ declare interface ElectronAPI {
   openBrowser: (url: string) => Promise<void>;
   getSharedState: () => Promise<any>;
   setSharedState: (state: any) => Promise<void>;
+  setUserAgent: (isMobile: boolean) => Promise<void>;
 }
 
 declare interface LinkMessage {
   url: string;
-  title: string;
+  name: string;
+  headers: string;
 }
 
 declare interface AppStore {
@@ -82,6 +84,10 @@ declare interface AppStore {
   blockAds: boolean;
   // 主题
   theme: "system" | "light" | "dark";
+  // 使用浏览器插件
+  useExtension: boolean;
+  // 是否使用手机UA
+  isMobile: boolean;
 }
 
 declare interface BrowserStore {

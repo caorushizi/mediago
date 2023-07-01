@@ -10,6 +10,8 @@ const initialState: AppStore = {
   deleteSegments: true,
   openInNewWindow: false,
   theme: AppTheme.System,
+  useExtension: false,
+  isMobile: false,
 };
 
 export const appSlice = createSlice({
@@ -27,5 +29,5 @@ export const appSlice = createSlice({
 });
 
 export const { setAppStore } = appSlice.actions;
-export const selectStore = (state: RootState) => state.app;
+export const selectAppStore = (state: RootState) => state.app;
 export default appSlice.reducer;

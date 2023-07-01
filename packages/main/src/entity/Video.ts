@@ -28,6 +28,12 @@ export class Video {
 
   @Column({
     type: "text",
+    nullable: true,
+  })
+  headers: string;
+
+  @Column({
+    type: "text",
     nullable: false,
     default: DownloadStatus.Ready,
   })

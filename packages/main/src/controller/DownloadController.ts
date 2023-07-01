@@ -3,7 +3,6 @@ import { inject, injectable } from "inversify";
 import { handle } from "../helper/decorator";
 import {
   StoreService,
-  LoggerService,
   type Controller,
   VideoRepository,
   DownloadItem,
@@ -14,13 +13,11 @@ import {
 } from "../interfaces";
 import { TYPES } from "../types";
 import { spawnDownload } from "helper";
-import MainWindowServiceImpl from "services/MainWindowServiceImpl";
+import MainWindowServiceImpl from "windows/Main";
 
 @injectable()
 export default class DownloadController implements Controller {
   constructor(
-    @inject(TYPES.LoggerService)
-    private readonly logger: LoggerService,
     @inject(TYPES.StoreService)
     private readonly storeService: StoreService,
     @inject(TYPES.VideoRepository)
@@ -66,7 +63,7 @@ export default class DownloadController implements Controller {
     if (!video) {
       return Promise.reject("没有找到该视频");
     }
-    const { name, url } = video;
+    const { name, url, headers } = video;
     const local = this.storeService.get("local");
 
     // 从配置中添加参数
@@ -78,6 +75,7 @@ export default class DownloadController implements Controller {
         url,
         local,
         name,
+        headers,
         deleteSegments,
       },
       process: spawnDownload,

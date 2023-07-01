@@ -2,19 +2,20 @@ import { ConfigProvider, theme } from "antd";
 import "antd/dist/reset.css";
 import React, { FC, StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
-import { Provider, useSelector } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import App from "./App";
 import HomePage from "./nodes/HomePage";
 import SettingPage from "./nodes/SettingPage";
 import PlayerPage from "./nodes/PlayerPage";
 import SourceExtract from "./nodes/SourceExtract";
-import store from "./store";
+import store, { setAppStore, increase } from "./store";
 import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
 import zhCN from "antd/locale/zh_CN";
 import "./index.scss";
 import { tdApp } from "./utils";
+import useElectron from "./hooks/electron";
 
 dayjs.locale("zh-cn");
 tdApp.init();
@@ -24,7 +25,9 @@ function getAlgorithm(appTheme: "dark" | "light") {
 }
 
 const Root: FC = () => {
+  const dispatch = useDispatch();
   const [appTheme, setAppTheme] = React.useState<"dark" | "light">("light");
+  const { rendererEvent, removeEventListener } = useElectron();
 
   const themeChange = (event: MediaQueryListEvent) => {
     if (event.matches) {
@@ -33,6 +36,25 @@ const Root: FC = () => {
       setAppTheme("light");
     }
   };
+
+  // 监听store变化
+  const onAppStoreChange = (event: any, store: AppStore) => {
+    dispatch(setAppStore(store));
+  };
+
+  const onReceiveDownloadItem = () => {
+    dispatch(increase());
+  };
+
+  useEffect(() => {
+    rendererEvent("store-change", onAppStoreChange);
+    rendererEvent("download-item-notifier", onReceiveDownloadItem);
+
+    return () => {
+      removeEventListener("store-change", onAppStoreChange);
+      removeEventListener("download-item-notifier", onReceiveDownloadItem);
+    };
+  }, []);
 
   useEffect(() => {
     const isDarkTheme = matchMedia("(prefers-color-scheme: dark)");

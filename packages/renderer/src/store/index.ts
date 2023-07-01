@@ -15,5 +15,7 @@ export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
 export * from "./appSlice";
+export * from "./browserSlice";
+export * from "./downloadSlice";
 
 export default store;

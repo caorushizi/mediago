@@ -1,10 +1,4 @@
-import {
-  BrowserWindow,
-  BrowserWindowConstructorOptions,
-  Menu,
-  Notification,
-  app,
-} from "electron";
+import { Menu, Notification, app } from "electron";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import { resolve } from "path";
@@ -19,13 +13,14 @@ import {
 } from "../interfaces";
 import { event } from "helper/utils";
 import _ from "lodash";
+import Window from "./window";
 
 @injectable()
-export default class MainWindowServiceImpl implements MainWindowService {
-  private readonly options: BrowserWindowConstructorOptions;
-
-  window: BrowserWindow | null = null;
-
+export default class MainWindowServiceImpl
+  extends Window
+  implements MainWindowService
+{
+  url = isDev ? "http://localhost:8555/" : "mediago://index.html/";
   constructor(
     @inject(TYPES.LoggerService)
     private readonly logger: LoggerService,
@@ -36,7 +31,7 @@ export default class MainWindowServiceImpl implements MainWindowService {
     @inject(TYPES.StoreService)
     private readonly storeService: StoreService
   ) {
-    this.options = {
+    super({
       width: 1100,
       minWidth: 1100,
       height: 680,
@@ -46,59 +41,35 @@ export default class MainWindowServiceImpl implements MainWindowService {
       webPreferences: {
         preload: resolve(__dirname, "./preload.js"),
       },
-    };
-  }
+    });
 
-  create(): BrowserWindow {
-    if (this.window && !this.window.isDestroyed()) {
-      return this.window;
-    }
-
-    const window = new BrowserWindow(this.options);
-    const url = isDev ? "http://localhost:8555/" : "mediago://index.html/";
-    void window.loadURL(url);
-
-    window.once("ready-to-show", this.readyToShow);
     event.on("download-progress", this.onDownloadProgress);
     this.downloadService.on("download-success", this.onDownloadSuccess);
     this.downloadService.on("download-failed", this.onDownloadFailed);
     this.downloadService.on("download-start", this.onDownloadStart);
     this.downloadService.on("download-stop", this.onDownloadStart);
-
-    this.storeService.onDidAnyChange((store) => {
-      // 向所有窗口发送通知
-      window.webContents.send("store-change", store);
-    });
-
-    // 处理当前窗口改变大小
-    window.on("resized", this.handleResize);
-
-    app.on("second-instance", () => {
-      if (process.platform === "win32") {
-        if (window) {
-          if (window.isMinimized()) {
-            window.restore();
-          }
-          if (window.isVisible()) {
-            window.focus();
-          } else {
-            window.show();
-          }
-        }
-      }
-    });
-
-    return window;
-  }
-
-  get show() {
-    return !!this.window && !this.window.isDestroyed();
+    this.storeService.onDidAnyChange(this.storeChange);
+    app.on("second-instance", this.secondInstance);
   }
 
   init(): void {
+    if (this.window) {
+      // 如果窗口已经存在，则直接显示
+      this.window.show();
+      return;
+    }
+
     Menu.setApplicationMenu(null);
 
     this.window = this.create();
+
+    const mainBounds = this.storeService.get("mainBounds");
+    if (mainBounds) {
+      this.window.setBounds(mainBounds);
+    }
+
+    // 处理当前窗口改变大小
+    this.window.on("resized", this.handleResize);
   }
 
   handleResize = () => {
@@ -108,16 +79,26 @@ export default class MainWindowServiceImpl implements MainWindowService {
     this.storeService.set("mainBounds", _.omit(bounds, ["x", "y"]));
   };
 
-  readyToShow = () => {
+  secondInstance = () => {
     if (!this.window) return;
-
-    this.window.show();
-    isDev && this.window.webContents.openDevTools();
-
-    const mainBounds = this.storeService.get("mainBounds");
-    if (mainBounds) {
-      this.window.setBounds(mainBounds);
+    if (process.platform === "win32") {
+      if (this.window) {
+        if (this.window.isMinimized()) {
+          this.window.restore();
+        }
+        if (this.window.isVisible()) {
+          this.window.focus();
+        } else {
+          this.window.show();
+        }
+      }
     }
+  };
+
+  storeChange = (store: any) => {
+    if (!this.window) return;
+    // 向所有窗口发送通知
+    this.window.webContents.send("store-change", store);
   };
 
   onDownloadProgress = (progress: DownloadProgress) => {

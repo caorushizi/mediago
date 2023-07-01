@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Badge, Button, Layout, Menu, MenuProps } from "antd";
 import "./App.scss";
@@ -11,9 +11,8 @@ import {
 } from "@ant-design/icons";
 import useElectron from "./hooks/electron";
 import { useDispatch, useSelector } from "react-redux";
-import { selectStore, setAppStore } from "./store/appSlice";
+import { selectAppStore, setAppStore, clearCount, selectCount } from "./store";
 import { useAsyncEffect } from "ahooks";
-import { clearCount, selectCount } from "./store/downloadSlice";
 import { tdApp } from "./utils";
 
 const { Footer, Sider, Content } = Layout;
@@ -26,15 +25,13 @@ const App: FC = () => {
     openUrl,
     setAppStore: ipcSetAppStore,
     showBrowserWindow,
-    rendererEvent,
-    removeEventListener,
   } = useElectron();
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [showExport, setShowExport] = useState(false);
   const count = useSelector(selectCount);
-  const appStore = useSelector(selectStore);
+  const appStore = useSelector(selectAppStore);
 
   const items: MenuItem[] = [
     {
@@ -101,19 +98,6 @@ const App: FC = () => {
     },
   ];
 
-  // 监听store变化
-  const onAppStoreChange = (event: any, store: AppStore) => {
-    dispatch(setAppStore(store));
-  };
-
-  useEffect(() => {
-    rendererEvent("store-change", onAppStoreChange);
-
-    return () => {
-      removeEventListener("store-change", onAppStoreChange);
-    };
-  }, []);
-
   const finalItems = items.filter((item) =>
     appStore.openInNewWindow ? item?.key !== "source" : true
   );
@@ -132,30 +116,28 @@ const App: FC = () => {
 
   return (
     <Layout className="container">
+      <Sider className="container-sider" theme="light">
+        <Menu
+          style={{ height: "100%" }}
+          defaultSelectedKeys={["home"]}
+          mode="vertical"
+          theme="light"
+          items={finalItems}
+        />
+      </Sider>
       <Layout>
-        <Sider className="container-sider" theme="light">
-          <Menu
-            style={{ height: "100%" }}
-            defaultSelectedKeys={["home"]}
-            mode="vertical"
-            theme="light"
-            items={finalItems}
-          />
-        </Sider>
-        <Layout>
-          <Content className="container-inner">
-            <Outlet />
-          </Content>
-          <Footer className="container-footer">
-            <Button
-              type={"link"}
-              onClick={openHelpUrl}
-              icon={<QuestionCircleOutlined />}
-            >
-              使用帮助
-            </Button>
-          </Footer>
-        </Layout>
+        <Content className="container-inner">
+          <Outlet />
+        </Content>
+        <Footer className="container-footer">
+          <Button
+            type={"link"}
+            onClick={openHelpUrl}
+            icon={<QuestionCircleOutlined />}
+          >
+            使用帮助
+          </Button>
+        </Footer>
       </Layout>
     </Layout>
   );
