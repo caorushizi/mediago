@@ -88,6 +88,8 @@ declare interface AppStore {
   useExtension: boolean;
   // 是否使用手机UA
   isMobile: boolean;
+  // 最大同时下载数
+  maxRunner: number;
 }
 
 declare interface BrowserStore {

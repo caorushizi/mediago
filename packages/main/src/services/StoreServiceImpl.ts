@@ -27,6 +27,7 @@ export default class StoreServiceImpl
         theme: AppTheme.System,
         useExtension: false,
         isMobile: false,
+        maxRunner: 2,
       },
     });
   }
