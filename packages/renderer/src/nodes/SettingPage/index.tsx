@@ -130,7 +130,7 @@ const SettingPage: React.FC = () => {
           <ProFormSwitch label="新窗口打开浏览器" name="openInNewWindow" />
           <ProFormSwitch label="下载完成提示" name="promptTone" />
         </ProFormGroup>
-        <ProFormGroup title="基础设置" direction={"vertical"}>
+        <ProFormGroup title="浏览器设置" direction={"vertical"}>
           <ProFormText
             width="xl"
             name="proxy"

@@ -1,85 +1,78 @@
-# Markdown Extension Examples
+# 使用说明
 
-This page demonstrates some of the built-in markdown extensions provided by VitePress.
+这个页面主要讲解的是设置页面的参数的含义
 
-## 使用说明
+![step 1](./images/documents-step1.png)
 
-VitePress provides Syntax Highlighting powered by [Shiki](https://github.com/shikijs/shiki), with additional features like line-highlighting:
-
-**Input**
-
-````
-```js{4}
-export default {
-  data () {
-    return {
-      msg: 'Highlighted!'
-    }
-  }
-}
-```
-````
-
-**Output**
-
-```js{4}
-export default {
-  data () {
-    return {
-      msg: 'Highlighted!'
-    }
-  }
-}
-```
-
-## Custom Containers
-
-**Input**
-
-```md
-::: info
-This is an info box.
-:::
+## 基础设置
 
 ::: tip
-This is a tip.
+下载器全局设置
 :::
 
-::: warning
-This is a warning.
-:::
+1. 选择文件夹： 视频下载的路径
 
-::: danger
-This is a dangerous warning.
-:::
+2. 下载器主题： 支持浅色和深色模式
 
-::: details
-This is a details block.
-:::
-```
+3. 在新窗口中打开浏览器： 开启了之后浏览器页面会独立出一个窗口。
 
-**Output**
+   ![step 1](./images/documents-step2.png)
 
-::: info
-This is an info box.
-:::
+4. 下载完成提示： 开启之后下载完成会出现系统提示
+
+## 浏览器设置
 
 ::: tip
-This is a tip.
+浏览器窗口相关的设置
 :::
 
-::: warning
-This is a warning.
+1. 代理设置： 填写自己的代理地址
+
+2. 代理开关： 打开开关后浏览器默认会走填写的代理地址，如果代理地址这个开关是打不开的
+
+3. 开启广告过滤： 打开开关后会过滤页面中的广告
+
+4. 以手机模式进入： 打开后会将浏览器伪装成手机浏览器，请求移动端的站点（左侧是开启手机模式的截图）
+
+   ![step 2](./images/documents-step3.png)
+
+5. 使用浏览器插件
+
+   - 打开状态： 从浏览器中嗅探到的资源不会自动添加到下载列表，需要手动点击页面下方的下载的链接来添加视频到下载列表 **（后面会有很强大的功能哦）**
+
+     ![step 3](./images/documents-step4.png)
+
+   - 关闭状态： 浏览器中嗅探到的资源会自动添加到下载列表
+
+## 下载设置
+
+::: tip
+和下载相关的设置
 :::
 
-::: danger
-This is a dangerous warning.
-:::
+1. 下载完成删除分片： 开启后下载完成后会将分片文件删除
+2. 最大同时下载数量： 最多同时可以下载多少视频文件，目前最大是 10，最小是 1
+3. 更多操作
+   - 配置文件目录： 软件数据库路径、日志等等路径
+   - 可执行文件目录： 下载器二进制文件的路径
+   - 本地存储路径： 下载视频的本地路径
+4. 当前版本： 当前软件版本信息
 
-::: details
-This is a details block.
-:::
+## 其他问题
 
-## More
+**Q: 关于直播视频的下载**
 
-Check out the documentation for the [full list of markdown extensions](https://vitepress.dev/guide/markdown).
+A: 软件支持直播下载，软件目前没有好的办法区分直播流，所以将所有的下载控制台开启。用户自行分辨下载数据源
+
+**Q: 关于 MacOS 版本**
+
+A: 目前 MacOS 版本属于非稳定版本，2023 年 5 月发布。需要在 Mac 的安全设置中打开来自身份不明开发者的 Mac App
+![QA1](./images/documents-qa1.png)
+
+**Q: 关于旧版本**
+
+A: 1.1.5 版本确实发布了很长时间，经过大量用户的验证，比较稳定。所以想要使用旧版软件的话请访问[此链接](https://baidu.com)
+
+**Q: 关于 Win7 用户**
+
+A: v2.0.0 之后的版本已经放弃不支持 Win7 如果需要在 win7 上面使用同样需要下载 1.1.5 版本

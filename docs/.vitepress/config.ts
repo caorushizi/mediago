@@ -2,21 +2,20 @@ import { defineConfig } from "vitepress";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "在线视频下载",
+  title: "media-downloader",
   description: "简单易用，快速下载",
+  lastUpdated: true,
   head: [
     [
       "script",
       {},
-      `<script>
-        var _hmt = _hmt || [];
+      `var _hmt = _hmt || [];
         (function() {
           var hm = document.createElement("script");
           hm.src = "https://hm.baidu.com/hm.js?eefcbd14f0323044aa0ca678cd278381";
           var s = document.getElementsByTagName("script")[0];
           s.parentNode.insertBefore(hm, s);
-        })();
-        </script>`,
+        })();`,
     ],
   ],
   themeConfig: {
@@ -32,6 +31,14 @@ export default defineConfig({
         items: [
           { text: "快速开始", link: "/guides" },
           { text: "使用说明", link: "/documents" },
+        ],
+      },
+      {
+        text: "其他",
+        items: [
+          { text: "旧版本", link: "/history" },
+          { text: "意见收集", link: "/proposal" },
+          { text: "支持列表", link: "/list" },
         ],
       },
     ],
