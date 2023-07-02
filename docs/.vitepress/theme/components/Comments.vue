@@ -1,10 +1,21 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
-import { init } from "@waline/client";
+import { onMounted, watch, ref } from "vue";
+import { init, WalineInstance } from "@waline/client";
 import "@waline/client/waline.css";
+import { useData } from "vitepress";
+
+const commentsRef = ref<WalineInstance | null>(null);
+const { isDark } = useData();
+
+watch(isDark, (val: boolean) => {
+  if (!commentsRef.value) return;
+  commentsRef.value.update({
+    dark: val,
+  });
+});
 
 onMounted(() => {
-  init({
+  commentsRef.value = init({
     el: "#waline",
     serverURL: "https://comments.ziying.site",
     dark: "auto",
