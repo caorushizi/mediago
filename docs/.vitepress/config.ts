@@ -6,6 +6,7 @@ export default defineConfig({
   description: "简单易用，快速下载",
   lastUpdated: true,
   head: [
+    ["link", { rel: "shortcut icon", href: "/favicon.svg" }],
     [
       "script",
       {},
