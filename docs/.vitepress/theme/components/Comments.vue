@@ -18,7 +18,7 @@ onMounted(() => {
   commentsRef.value = init({
     el: "#waline",
     serverURL: "https://comments.ziying.site",
-    dark: "auto",
+    dark: isDark.value,
     lang: "zh-CN",
     reaction: true,
     pageview: true,
