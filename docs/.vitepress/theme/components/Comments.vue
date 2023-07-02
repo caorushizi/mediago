@@ -1,20 +1,29 @@
 <script setup lang="ts">
-import { onMounted, watch, ref } from "vue";
+import { onMounted, watch, ref, watchEffect } from "vue";
 import { init, WalineInstance } from "@waline/client";
 import "@waline/client/waline.css";
-import { useData } from "vitepress";
+import { useData, useRoute } from "vitepress";
 
-const commentsRef = ref<WalineInstance | null>(null);
+const route = useRoute();
 const { isDark } = useData();
 
-watch(isDark, (val: boolean) => {
-  if (!commentsRef.value) return;
-  commentsRef.value.update({
-    dark: val,
+const commentsRef = ref<WalineInstance | null>(null);
+
+watchEffect(() => {
+  commentsRef.value?.update({
+    dark: isDark.value,
   });
 });
 
-onMounted(() => {
+watch(
+  () => route.path,
+  () => {
+    commentsRef.value?.destroy();
+    initWaline();
+  }
+);
+
+function initWaline() {
   commentsRef.value = init({
     el: "#waline",
     serverURL: "https://comments.ziying.site",
@@ -23,6 +32,10 @@ onMounted(() => {
     reaction: true,
     pageview: true,
   });
+}
+
+onMounted(() => {
+  initWaline();
 });
 </script>
 
