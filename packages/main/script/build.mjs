@@ -8,7 +8,11 @@ rmSync(mainResolve("build"), { recursive: true, force: true });
 rmSync(mainResolve("dist"), { recursive: true, force: true });
 
 esbuild.build({
-  entryPoints: [mainResolve("src/index.ts"), mainResolve("src/preload.ts")],
+  entryPoints: [
+    mainResolve("src/index.ts"),
+    mainResolve("src/preload.ts"),
+    mainResolve("src/webview.ts"),
+  ],
   bundle: true,
   platform: "node",
   sourcemap: false,
