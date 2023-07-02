@@ -15,8 +15,8 @@ outline: deep
 
 **v2.0.1（2023.7.1 发布）**
 
-- [windows media-downloader v2.0.1](https://baidu.com)
-- [macos media-downloader v2.0.1](https://baidu.com)
+- [windows media-downloader v2.0.0](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.0/media-downloader-setup-2.0.0.exe)
+- [macos media-downloader v2.0.0](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.0/media-downloader-setup-2.0.0.dmg)
 
 **更新日志**
 
