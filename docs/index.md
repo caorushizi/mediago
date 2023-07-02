@@ -7,7 +7,7 @@ hero:
   text: "简单易用，快速下载"
   tagline: 简单易学，无需抓包，不需要安装插件
   image:
-    src: ./images/home.png
+    src: /home.png
     alt: home
   actions:
     - theme: brand

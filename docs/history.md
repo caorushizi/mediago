@@ -1,4 +1,5 @@
 ---
+layout: doc
 outline: deep
 ---
 

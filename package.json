@@ -21,6 +21,8 @@
     }
   },
   "devDependencies": {
-    "vitepress": "1.0.0-beta.3"
+    "@waline/client": "^2.15.5",
+    "vitepress": "1.0.0-beta.3",
+    "vue": "^3.3.4"
   }
 }
