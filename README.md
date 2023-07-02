@@ -9,7 +9,7 @@ m3u8 视频在线提取工具 流媒体下载 m3u8 下载 桌面客户端 window
 
 以下指南将帮助你在本地机器上安装和运行该项目，进行开发和测试。关于如何将该项目部署到在线环境，请参考部署小节。
 
-【使用帮助】[blog.ziying.site](https://ziying.site/post/media-downloader-how-to-use/?from=github)
+【使用帮助】[blog.ziying.site](https://downloader.caorushizi.cn/guides.html?form=github)
 
 ## 安装要求
 
@@ -25,15 +25,27 @@ m3u8 视频在线提取工具 流媒体下载 m3u8 下载 桌面客户端 window
 
 ## 下载链接
 
-v2.0.0-beta.5 添加视频播放功能，支持移动设备播放
+**v2.0.1（2023.7.1 发布）**
 
-- 【2023.06.18 v2.0.0-beta.6 windows】[media-downloader-setup-2.0.0-beta.6.exe](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.0-beta.6/media-downloader-setup-2.0.0-beta.6.exe)
-- 【2023.06.18 v2.0.0-beta.6 macos】[media-downloader-windows-v2.0.0-beta.6.dmg](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.0-beta.6/media-downloader-setup-2.0.0-beta.6.dmg)
-- 【2023.06.18 v2.0.0-beta.5 windows】[media-downloader-setup-2.0.0-beta.5.exe](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.0-beta.5/media-downloader-setup-2.0.0-beta.5.exe)
-- 【2023.06.18 v2.0.0-beta.5 macos】[media-downloader-windows-v2.0.0-beta.5.dmg](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.0-beta.5/media-downloader-setup-2.0.0-beta.5.dmg)
-- 【2023.04.01 v2.0.0-beta.4 windows】 [media-downloader-windows-v2.0.0-beta.4.exe](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.0-beta.4/media-downloader-setup-2.0.0-beta.4.exe)
-- 【2023.04.01 v2.0.0-beta.4 macos】 [media-downloader-windows-v2.0.0-beta.4.dmg](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.0-beta.4/media-downloader-setup-2.0.0-beta.4.dmg)
-- 【2022.01.08 v1.1.5】 [media-downloader-windows-v1.1.5.exe](https://github.com/caorushizi/m3u8-downloader/releases/download/1.1.5/media-downloader-setup-1.1.5.exe)
+- [windows media-downloader v2.0.1](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.1/media-downloader-setup-2.0.1.exe)
+- [macos media-downloader v2.0.1](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.1/media-downloader-setup-2.0.1.dmg)
+
+**更新日志**
+
+- 暗黑模式
+- 更多下载配置
+- 支持请求标头自动带入
+- 支持开启广告过滤
+- 支持开启沉浸式嗅探
+- 支持切换手机和 PC 模式
+- 支持修改同时下载数量
+- 修复了一些 bug
+
+**v1.1.5（2022.2.5 发布）**
+
+- [windows media-downloader v1.1.5](https://github.com/caorushizi/m3u8-downloader/releases/download/1.1.5/media-downloader-setup-1.1.4.exe)
+
+**更新日志**
 
 ## 软件截图
 
