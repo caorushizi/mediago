@@ -96,6 +96,16 @@ export default class VideoRepositoryImpl implements VideoRepository {
       .execute();
   }
 
+  async changeVideoIsLive(id: number | number[], isLive: boolean) {
+    const ids = !Array.isArray(id) ? [id] : id;
+    return this.dataService.appDataSource
+      .createQueryBuilder()
+      .update(Video)
+      .set({ isLive })
+      .where({ id: In(ids) })
+      .execute();
+  }
+
   async findWattingAndDownloadingVideos() {
     return await this.dataService.appDataSource.getRepository(Video).find({
       where: {

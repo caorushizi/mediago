@@ -93,6 +93,10 @@ export interface VideoRepository {
   findWattingAndDownloadingVideos: () => Promise<Video[]>;
   deleteDownloadItem: (id: number) => Promise<DeleteResult>;
   findAllVideos(): Promise<Video[]>;
+  changeVideoIsLive: (
+    id: number | number[],
+    isLive: boolean
+  ) => Promise<UpdateResult>;
 }
 
 export interface FavoriteRepository {
@@ -148,6 +152,7 @@ export interface DownloadProgress {
   cur: string;
   total: string;
   speed: string;
+  isLive: boolean;
 }
 
 export interface DownloadParams {
