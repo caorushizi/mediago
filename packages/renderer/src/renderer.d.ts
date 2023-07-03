@@ -12,6 +12,7 @@ declare interface DownloadItem {
   url: string;
   headers: string;
   status: string;
+  isLive: boolean;
 }
 
 declare interface VideoResponse {
@@ -73,7 +74,7 @@ declare interface Favorite {
   icon?: string;
 }
 
-declare interface LinkMessage {
+declare interface WebSource {
   url: string;
   name: string;
   headers: string;
@@ -118,6 +119,7 @@ declare interface DownloadProgress {
   cur: string;
   total: string;
   speed: string;
+  isLive: boolean;
 }
 
 interface ObjectConstructor {

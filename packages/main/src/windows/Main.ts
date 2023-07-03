@@ -43,6 +43,7 @@ export default class MainWindowServiceImpl
       },
     });
 
+    event.on("download-ready-start", this.onDownloadReadyStart);
     event.on("download-progress", this.onDownloadProgress);
     this.downloadService.on("download-success", this.onDownloadSuccess);
     this.downloadService.on("download-failed", this.onDownloadFailed);
@@ -50,6 +51,11 @@ export default class MainWindowServiceImpl
     this.downloadService.on("download-stop", this.onDownloadStart);
     this.storeService.onDidAnyChange(this.storeChange);
     app.on("second-instance", this.secondInstance);
+  }
+
+  onDownloadReadyStart({ id, isLive }: { id: number; isLive: boolean }) {
+    this.videoRepository.changeVideoIsLive(id, isLive);
+    this.send("change-video-is-live", { id, isLive });
   }
 
   init(): void {
@@ -96,20 +102,15 @@ export default class MainWindowServiceImpl
   };
 
   storeChange = (store: any) => {
-    if (!this.window) return;
     // 向所有窗口发送通知
-    this.window.webContents.send("store-change", store);
+    this.send("store-change", store);
   };
 
   onDownloadProgress = (progress: DownloadProgress) => {
-    if (!this.window) return;
-
-    this.window.webContents.send("download-progress", progress);
+    this.send("download-progress", progress);
   };
 
   onDownloadSuccess = async (id: number) => {
-    if (!this.window) return;
-
     const promptTone = this.storeService.get("promptTone");
     if (promptTone) {
       const video = await this.videoRepository.findVideo(id);
@@ -120,12 +121,10 @@ export default class MainWindowServiceImpl
       }).show();
     }
 
-    this.window.webContents.send("download-success", id);
+    this.send("download-success", id);
   };
 
   onDownloadFailed = async (id: number, err: any) => {
-    if (!this.window) return;
-
     const promptTone = this.storeService.get("promptTone");
     if (promptTone) {
       const video = await this.videoRepository.findVideo(id);
@@ -136,18 +135,20 @@ export default class MainWindowServiceImpl
       }).show();
     }
     this.logger.error("下载失败：", err);
-    this.window.webContents.send("download-failed", id);
+    this.send("download-failed", id);
   };
 
   onDownloadStart = async (id: number) => {
-    if (!this.window) return;
-
-    this.window.webContents.send("download-start", id);
+    this.send("download-start", id);
   };
 
   onDownloadStop = async (id: number) => {
+    this.send("download-stop", id);
+  };
+
+  send(channel: string, ...args: any[]) {
     if (!this.window) return;
 
-    this.window.webContents.send("download-stop", id);
-  };
+    this.window.webContents.send(channel, ...args);
+  }
 }

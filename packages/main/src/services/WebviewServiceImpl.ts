@@ -19,7 +19,9 @@ import { PERSIST_WEBVIEW, mobileUA, pcUA } from "helper/variables";
 import { ElectronBlocker } from "@cliqz/adblocker-electron";
 import fetch from "cross-fetch";
 import path from "path";
-import { LinkMessage } from "main";
+import { WebSource } from "main";
+import { Parser, Segment } from "m3u8-parser";
+import { http } from "helper";
 
 // FIXME: 需要重构
 @injectable()
@@ -221,34 +223,48 @@ export default class WebviewServiceImpl implements WebviewService {
     const detailsUrl = new URL(url);
 
     if (sourceReg.test(detailsUrl.pathname)) {
-      this.handleM3u8(details);
+      this.handleM3u8(details)
+        .then(() => {
+          console.log("parse success");
+          callback({});
+        })
+        .catch((err) => {
+          console.log("parse error", err);
+          // empty
+        });
+    } else {
+      callback({});
     }
-
-    callback({});
   };
 
-  handleM3u8 = (details: OnBeforeSendHeadersListenerDetails): void => {
+  handleM3u8 = async (
+    details: OnBeforeSendHeadersListenerDetails
+  ): Promise<void> => {
     const { id, url } = details;
 
     this.logger.info(`在窗口中捕获 m3u8 链接: ${url} id: ${id}`);
     const webContents = details.webContents;
-    const linkMessage: LinkMessage = {
+
+    const segments = await parseM3u8(url, details.requestHeaders);
+
+    console.log(segments);
+    const lastSegment = segments[segments.length - 1];
+    const isLive = !!lastSegment.discontinuity;
+
+    const source: WebSource = {
       url,
       name: webContents?.getTitle() || "没有获取到名称",
       headers: JSON.stringify(details.requestHeaders),
+      isLive: isLive,
     };
     // 这里需要判断是否使用浏览器插件
     const useExtension = this.storeService.get("useExtension");
     if (useExtension) {
-      this.view.webContents.send("webview-link-message", linkMessage);
+      this.view.webContents.send("webview-link-message", source);
     } else {
-      this.videoRepository.addVideo(linkMessage).then((item) => {
-        // 这里向页面发送消息，通知页面更新
-        this.mainWindow.window?.webContents.send(
-          "download-item-notifier",
-          item
-        );
-      });
+      const item = await this.videoRepository.addVideo(source);
+      // 这里向页面发送消息，通知页面更新
+      this.mainWindow.window?.webContents.send("download-item-notifier", item);
     }
   };
 
@@ -260,4 +276,34 @@ export default class WebviewServiceImpl implements WebviewService {
     }
     this.logger.info("设置 user-agent 成功", isMobile);
   }
+}
+
+async function parseM3u8(
+  url: string,
+  headers: Record<string, string>
+): Promise<Segment[]> {
+  // 下载链接;
+  const response = await http.get<string>(url, {
+    headers,
+  });
+
+  // 创建解析器实例
+  const parser = new Parser();
+
+  // 解析 m3u8 文件
+  parser.push(response.data);
+  parser.end();
+  const { manifest } = parser;
+  const { segments, playlists } = manifest;
+
+  console.log(manifest);
+
+  let finalSegments: Segment[] = segments;
+  // 判断是 master 列表
+  if (playlists && playlists.length > 0) {
+    // 这里选择质量最高的
+    const playlist = playlists[playlists.length - 1];
+    finalSegments = await parseM3u8(playlist.uri, headers);
+  }
+  return finalSegments;
 }

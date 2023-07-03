@@ -11,6 +11,7 @@ import {
   Popover,
   QRCode,
   Dropdown,
+  Tooltip,
 } from "antd";
 import type { MenuProps } from "antd";
 import "./index.scss";
@@ -132,6 +133,10 @@ const HomePage: FC = () => {
     refresh();
   };
 
+  const onChangeVideoIsLive = () => {
+    refresh();
+  };
+
   useEffect(() => {
     rendererEvent("download-progress", onDownloadProgress);
     rendererEvent("download-success", onDownloadSuccess);
@@ -139,6 +144,7 @@ const HomePage: FC = () => {
     rendererEvent("download-start", onDownloadStart);
     rendererEvent("download-item-event", onDownloadMenuEvent);
     rendererEvent("download-item-notifier", onReceiveDownloadItem);
+    rendererEvent("change-video-is-live", onChangeVideoIsLive);
 
     return () => {
       removeEventListener("download-progress", onDownloadProgress);
@@ -147,6 +153,7 @@ const HomePage: FC = () => {
       removeEventListener("download-start", onDownloadStart);
       removeEventListener("download-item-event", onDownloadMenuEvent);
       removeEventListener("download-item-notifier", onReceiveDownloadItem);
+      removeEventListener("change-video-is-live", onChangeVideoIsLive);
     };
   }, []);
 
@@ -364,6 +371,11 @@ const HomePage: FC = () => {
     }
     return (
       <Space>
+        {item.isLive && (
+          <Tooltip placement="top" title="当前资源是直播资源">
+            <SyncOutlined spin />
+          </Tooltip>
+        )}
         {item.name}
         {tag}
       </Space>
