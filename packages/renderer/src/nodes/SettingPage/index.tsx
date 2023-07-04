@@ -44,7 +44,7 @@ const SettingPage: React.FC = () => {
     }
   };
 
-  const renderButtonLable = () => {
+  const renderButtonLabel = () => {
     return (
       <Button onClick={onSelectDir} icon={<FolderOpenOutlined />}>
         选择文件夹
@@ -52,30 +52,11 @@ const SettingPage: React.FC = () => {
     );
   };
 
-  const renderTooltipLable = () => {
+  const renderTooltipLabel = (label: string, tooltip: string) => {
     return (
       <div className="item-label">
-        <div className="item-label-text">代理开关</div>
-        <Tooltip
-          title={"该代理会对软件自带浏览器以及下载时生效"}
-          placement={"right"}
-        >
-          <QuestionCircleOutlined />
-        </Tooltip>
-      </div>
-    );
-  };
-
-  const renderExtensionLabel = () => {
-    return (
-      <div className="item-label">
-        <div className="item-label-text">使用浏览器插件</div>
-        <Tooltip
-          title={
-            "开启后浏览器嗅探到的资源将不会直接显示在下载列表中，所有资源嗅探会交给浏览器插件处理"
-          }
-          placement={"right"}
-        >
+        <div className="item-label-text">{label}</div>
+        <Tooltip title={tooltip} placement={"right"}>
           <QuestionCircleOutlined />
         </Tooltip>
       </div>
@@ -102,7 +83,7 @@ const SettingPage: React.FC = () => {
         formRef={formRef}
         layout="horizontal"
         submitter={false}
-        labelCol={{ style: { width: "130px" } }}
+        labelCol={{ style: { width: "140px" } }}
         labelAlign={"left"}
         colon={false}
         initialValues={settings}
@@ -115,7 +96,7 @@ const SettingPage: React.FC = () => {
             disabled
             name="local"
             placeholder="请选择视频下载目录"
-            label={renderButtonLable()}
+            label={renderButtonLabel()}
           />
           <ProFormSelect
             name="theme"
@@ -139,7 +120,10 @@ const SettingPage: React.FC = () => {
           />
           <ProFormSwitch
             name="useProxy"
-            label={renderTooltipLable()}
+            label={renderTooltipLabel(
+              "代理开关",
+              "该代理会对软件自带浏览器以及下载时生效"
+            )}
             rules={[
               ({ getFieldValue, setFieldValue }) => ({
                 validator() {
@@ -154,12 +138,21 @@ const SettingPage: React.FC = () => {
           />
           <ProFormSwitch label="开启广告过滤" name="blockAds" />
           <ProFormSwitch label="以手机模式进入" name="isMobile" />
-          <ProFormSwitch label={renderExtensionLabel()} name="useExtension" />
+          <ProFormSwitch
+            label={renderTooltipLabel(
+              "使用浏览器插件",
+              "开启后浏览器嗅探到的资源将不会直接显示在下载列表中，所有资源嗅探会交给浏览器插件处理"
+            )}
+            name="useExtension"
+          />
         </ProFormGroup>
         <ProFormGroup title="下载设置" direction={"vertical"}>
           <ProFormSwitch label="下载完成删除分片" name="deleteSegments" />
           <ProFormDigit
-            label="最大同时下载数量"
+            label={renderTooltipLabel(
+              "最大同时下载数量",
+              "直播录制不占用同时下载数量"
+            )}
             name="maxRunner"
             min={1}
             max={10}

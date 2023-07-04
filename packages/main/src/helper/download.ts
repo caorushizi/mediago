@@ -1,9 +1,8 @@
 import { execa } from "execa";
 import { macDownloaderPath, winDownloaderPath } from "./variables";
 import iconv from "iconv-lite";
-import { event, formatHeaders, formatString, stripColors } from "./utils";
+import { event, formatHeaders, stripColors } from "./utils";
 import { DownloadParams, DownloadProgress } from "interfaces";
-import path from "path";
 
 export const spawnDownload = (params: DownloadParams): Promise<void> => {
   if (process.platform === "win32") {
@@ -14,20 +13,23 @@ export const spawnDownload = (params: DownloadParams): Promise<void> => {
 };
 
 const winSpawnDownload = async (params: DownloadParams): Promise<void> => {
-  const { id, abortSignal, url, local, name, deleteSegments, headers } = params;
+  const {
+    id,
+    abortSignal,
+    url,
+    local,
+    name,
+    deleteSegments,
+    headers,
+    callback,
+  } = params;
   const progressReg = /Progress:\s(\d+)\/(\d+)\s\(.+?\).+?\((.+?\/s).*?\)/g;
   const isLiveReg = /识别为直播流, 开始录制/g;
   const startDownloadReg = /开始下载文件/g;
 
   return new Promise((resolve, reject) => {
     console.log("local", local);
-    const spawnParams = [
-      url,
-      "--workDir",
-      local,
-      "--saveName",
-      formatString(name),
-    ];
+    const spawnParams = [url, "--workDir", local, "--saveName", name];
 
     if (headers) {
       spawnParams.push("--headers", formatHeaders(headers));
@@ -42,8 +44,6 @@ const winSpawnDownload = async (params: DownloadParams): Promise<void> => {
       signal: abortSignal.signal,
     });
 
-    let started = false;
-
     downloader.stdout?.on("data", (data) => {
       const str = iconv.decode(Buffer.from(data), "gbk");
       str.split("\n").forEach((item) => {
@@ -56,8 +56,14 @@ const winSpawnDownload = async (params: DownloadParams): Promise<void> => {
         const isLive = isLiveReg.test(item);
         const startDownload = startDownloadReg.test(item);
         if (isLive || startDownload) {
-          started = true;
-          event.emit("download-start", { id, isLive });
+          callback({
+            id,
+            type: "ready",
+            isLive,
+            cur: "",
+            total: "",
+            speed: "",
+          });
         }
 
         const result = progressReg.exec(item);
@@ -66,8 +72,15 @@ const winSpawnDownload = async (params: DownloadParams): Promise<void> => {
         }
 
         const [, cur, total, speed] = result;
-        const progress: DownloadProgress = { id, cur, total, speed, isLive };
-        event.emit("download-progress", progress);
+        const progress: DownloadProgress = {
+          id,
+          type: "progress",
+          cur,
+          total,
+          speed,
+          isLive,
+        };
+        callback(progress);
       });
     });
 
@@ -86,7 +99,16 @@ const winSpawnDownload = async (params: DownloadParams): Promise<void> => {
 };
 
 const macSpawnDownload = (params: DownloadParams): Promise<void> => {
-  const { id, abortSignal, url, local, name, deleteSegments, headers } = params;
+  const {
+    id,
+    abortSignal,
+    url,
+    local,
+    name,
+    deleteSegments,
+    headers,
+    callback,
+  } = params;
   const progressReg = /([\d.]+)% .*? ([\d.\w]+?) /g;
 
   return new Promise((resolve, reject) => {
@@ -135,12 +157,13 @@ const macSpawnDownload = (params: DownloadParams): Promise<void> => {
         // FIXME: 无法获取是否为直播流
         const progress: DownloadProgress = {
           id,
+          type: "progress",
           cur,
           total,
           speed,
           isLive: false,
         };
-        event.emit("download-progress", progress);
+        callback(progress);
       });
     });
 
