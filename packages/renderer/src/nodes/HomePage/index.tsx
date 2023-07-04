@@ -11,7 +11,7 @@ import {
   Popover,
   QRCode,
   Dropdown,
-  Tooltip,
+  Typography,
 } from "antd";
 import type { MenuProps } from "antd";
 import "./index.scss";
@@ -35,6 +35,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectAppStore } from "../../store";
 import { tdApp } from "../../utils";
 import { increase } from "../../store/downloadSlice";
+
+const { Text } = Typography;
 
 enum DownloadFilter {
   list = "list",
@@ -369,15 +371,14 @@ const HomePage: FC = () => {
     } else if (item.status === DownloadStatus.Stopped) {
       tag = <Tag color="default">下载暂停</Tag>;
     }
+
     return (
       <Space>
-        {item.isLive && (
-          <Tooltip placement="top" title="当前资源是直播资源">
-            <SyncOutlined spin />
-          </Tooltip>
-        )}
-        {item.name}
-        {tag}
+        <Text>{item.name}</Text>
+        <Space size={[0, 8]}>
+          {tag}
+          {item.isLive && <Tag color={"default"}>直播资源</Tag>}
+        </Space>
       </Space>
     );
   };

@@ -149,6 +149,7 @@ export type Task = {
 
 export interface DownloadProgress {
   id: number;
+  type: string;
   cur: string;
   total: string;
   speed: string;
@@ -163,6 +164,7 @@ export interface DownloadParams {
   headers: string;
   abortSignal: AbortController;
   deleteSegments?: boolean;
+  callback: (progress: DownloadProgress) => void;
 }
 
 export interface DevToolsService {

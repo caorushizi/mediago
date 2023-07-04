@@ -64,7 +64,6 @@ declare interface WebSource {
   url: string;
   name: string;
   headers: string;
-  isLive: boolean;
 }
 
 declare interface AppStore {

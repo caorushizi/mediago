@@ -40,7 +40,6 @@
     "eslint-plugin-n": "15.0.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-promise": "6.1.1",
-    "m3u8-parser": "^6.2.0",
     "prebuild-install": "^7.1.1",
     "prettier": "2.8.8",
     "semver": "^7.5.2",

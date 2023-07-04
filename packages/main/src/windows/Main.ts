@@ -43,8 +43,8 @@ export default class MainWindowServiceImpl
       },
     });
 
-    event.on("download-ready-start", this.onDownloadReadyStart);
-    event.on("download-progress", this.onDownloadProgress);
+    this.downloadService.on("download-ready-start", this.onDownloadReadyStart);
+    this.downloadService.on("download-progress", this.onDownloadProgress);
     this.downloadService.on("download-success", this.onDownloadSuccess);
     this.downloadService.on("download-failed", this.onDownloadFailed);
     this.downloadService.on("download-start", this.onDownloadStart);
@@ -53,10 +53,10 @@ export default class MainWindowServiceImpl
     app.on("second-instance", this.secondInstance);
   }
 
-  onDownloadReadyStart({ id, isLive }: { id: number; isLive: boolean }) {
+  onDownloadReadyStart = ({ id, isLive }: { id: number; isLive: boolean }) => {
     this.videoRepository.changeVideoIsLive(id, isLive);
     this.send("change-video-is-live", { id, isLive });
-  }
+  };
 
   init(): void {
     if (this.window) {
