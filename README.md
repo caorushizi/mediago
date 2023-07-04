@@ -1,15 +1,11 @@
 # media-downloader
 
 m3u8 视频在线提取工具 流媒体下载 m3u8 下载 桌面客户端 windows mac。
-可以直接在线获取 m3u8 链接地址，无需使用使用网络抓包，无需安装浏览器插件，可以直接带出请求标头……
-
-模板： <https://github.com/caorushizi/electron-template>
+可以直接在线获取 m3u8 链接地址，无需使用使用网络抓包，无需安装浏览器插件，可以直接带出请求标头……详情请参考[使用帮助](https://downloader.caorushizi.cn/guides.html?form=github)
 
 ## 上手指南
 
 以下指南将帮助你在本地机器上安装和运行该项目，进行开发和测试。关于如何将该项目部署到在线环境，请参考部署小节。
-
-【使用帮助】[blog.ziying.site](https://downloader.caorushizi.cn/guides.html?form=github)
 
 ## 安装要求
 
