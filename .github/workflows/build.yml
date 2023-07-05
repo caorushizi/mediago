@@ -47,3 +47,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           APP_TD_APPID: ${{ secrets.APP_TD_APPID }}
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: artifact
+          path: packages/main/dist/media-downloader-setup-*
