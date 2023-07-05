@@ -79,6 +79,11 @@ export default class ElectronApp implements App {
     tray.addListener("click", () => {
       this.mainWindow.init();
     });
+    const contextMenu = Menu.buildFromTemplate([
+      { label: "退出 app", role: "quit" },
+      { label: "显示主窗口", click: () => this.mainWindow.init() },
+    ]);
+    tray.setContextMenu(contextMenu);
   }
 
   // 如果重启后还有正在下载的视频，就将状态改成下载失败
