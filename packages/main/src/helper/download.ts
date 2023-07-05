@@ -28,7 +28,6 @@ const winSpawnDownload = async (params: DownloadParams): Promise<void> => {
   const startDownloadReg = /开始下载文件/g;
 
   return new Promise((resolve, reject) => {
-    console.log("local", local);
     const spawnParams = [url, "--workDir", local, "--saveName", name];
 
     if (headers) {
@@ -39,7 +38,6 @@ const winSpawnDownload = async (params: DownloadParams): Promise<void> => {
       spawnParams.push("--enableDelAfterDone");
     }
 
-    console.log("spawnParams", spawnParams);
     const downloader = execa(winDownloaderPath, spawnParams, {
       signal: abortSignal.signal,
     });
@@ -50,8 +48,6 @@ const winSpawnDownload = async (params: DownloadParams): Promise<void> => {
         if (item.trim() == "") {
           return;
         }
-
-        process.env.NODE_ENV === "development" && console.log(item);
 
         const isLive = isLiveReg.test(item);
         const startDownload = startDownloadReg.test(item);
@@ -130,7 +126,6 @@ const macSpawnDownload = (params: DownloadParams): Promise<void> => {
       spawnParams.push("--del-after-done");
     }
 
-    console.log("spawnParams", spawnParams);
     const downloader = execa(macDownloaderPath, spawnParams, {
       signal: abortSignal.signal,
     });
@@ -141,7 +136,6 @@ const macSpawnDownload = (params: DownloadParams): Promise<void> => {
         if (item.trim() == "") {
           return;
         }
-        process.env.NODE_ENV === "development" && console.log(item);
         const result = progressReg.exec(stripColors(item));
         if (!result) {
           return;

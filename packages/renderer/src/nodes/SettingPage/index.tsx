@@ -140,8 +140,8 @@ const SettingPage: React.FC = () => {
           <ProFormSwitch label="以手机模式进入" name="isMobile" />
           <ProFormSwitch
             label={renderTooltipLabel(
-              "使用浏览器插件",
-              "开启后浏览器嗅探到的资源将不会直接显示在下载列表中，所有资源嗅探会交给浏览器插件处理"
+              "使用沉浸式嗅探",
+              "开启后沉浸式嗅探到的资源将不会直接显示在下载列表中，所有资源嗅探会交给浏览器插件处理"
             )}
             name="useExtension"
           />
