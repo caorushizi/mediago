@@ -75,7 +75,9 @@ export default class DownloadServiceImpl
             this.emit("download-progress", progress);
           } else if (progress.type === "ready") {
             this.emit("download-ready-start", progress);
-            this.removeTask(progress.id);
+            if (progress.isLive) {
+              this.removeTask(progress.id);
+            }
           }
         },
       });
@@ -119,7 +121,9 @@ export default class DownloadServiceImpl
     const doneId = this.active.findIndex((i) => i.id === id);
     this.active.splice(doneId, 1);
     // 处理完成的任务
-    this.runTask();
+    if (this.active.length < this.limit) {
+      this.runTask();
+    }
   }
 
   runTask() {

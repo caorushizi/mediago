@@ -26,6 +26,7 @@ import { WebSource } from "main";
 export default class WebviewServiceImpl implements WebviewService {
   public view: BrowserView;
   private blocker?: ElectronBlocker;
+  private sources = new Set();
 
   constructor(
     @inject(TYPES.MainWindowService)
@@ -58,6 +59,7 @@ export default class WebviewServiceImpl implements WebviewService {
     this.setUserAgent(isMobile);
 
     this.view.webContents.on("dom-ready", () => {
+      this.sources.clear();
       const title = this.view.webContents.getTitle();
       const url = this.view.webContents.getURL();
       this.curWindow?.webContents.send("webview-dom-ready", { title, url });
@@ -221,7 +223,11 @@ export default class WebviewServiceImpl implements WebviewService {
     const detailsUrl = new URL(url);
 
     if (sourceReg.test(detailsUrl.pathname)) {
-      this.handleM3u8(details);
+      try {
+        this.handleM3u8(details);
+      } catch (e) {
+        // empty
+      }
     }
 
     callback({});
@@ -243,11 +249,20 @@ export default class WebviewServiceImpl implements WebviewService {
     // 这里需要判断是否使用浏览器插件
     const useExtension = this.storeService.get("useExtension");
     if (useExtension) {
-      this.view.webContents.send("webview-link-message", source);
+      if (!this.sources.has(source.url)) {
+        this.sources.add(source.url);
+        this.view.webContents.send("webview-link-message", source);
+      }
     } else {
-      const item = await this.videoRepository.addVideo(source);
-      // 这里向页面发送消息，通知页面更新
-      this.mainWindow.window?.webContents.send("download-item-notifier", item);
+      const exist = await this.videoRepository.findVideoByUrl(source.url);
+      if (!exist) {
+        const item = await this.videoRepository.addVideo(source);
+        // 这里向页面发送消息，通知页面更新
+        this.mainWindow.window?.webContents.send(
+          "download-item-notifier",
+          item
+        );
+      }
     }
   };
 

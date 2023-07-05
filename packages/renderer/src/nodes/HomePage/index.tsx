@@ -13,7 +13,6 @@ import {
   Dropdown,
   Typography,
 } from "antd";
-import type { MenuProps } from "antd";
 import "./index.scss";
 import PageContainer from "../../components/PageContainer";
 import { useAsyncEffect, usePagination } from "ahooks";
@@ -29,12 +28,10 @@ import {
   SyncOutlined,
   MobileOutlined,
   MoreOutlined,
-  UserOutlined,
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAppStore } from "../../store";
 import { tdApp } from "../../utils";
-import { increase } from "../../store/downloadSlice";
 
 const { Text } = Typography;
 
@@ -503,6 +500,7 @@ const HomePage: FC = () => {
               ]}
             />
           </ModalForm>
+          <Button onClick={() => openDir(appStore.local)}>打开文件夹</Button>
         </Space>
       }
       className="home-page"

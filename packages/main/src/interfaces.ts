@@ -97,6 +97,7 @@ export interface VideoRepository {
     id: number | number[],
     isLive: boolean
   ) => Promise<UpdateResult>;
+  findVideoByUrl: (url: string) => Promise<Video | null>;
 }
 
 export interface FavoriteRepository {
