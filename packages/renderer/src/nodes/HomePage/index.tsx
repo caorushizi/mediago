@@ -11,8 +11,8 @@ import {
   Popover,
   QRCode,
   Dropdown,
+  Typography,
 } from "antd";
-import type { MenuProps } from "antd";
 import "./index.scss";
 import PageContainer from "../../components/PageContainer";
 import { useAsyncEffect, usePagination } from "ahooks";
@@ -28,12 +28,12 @@ import {
   SyncOutlined,
   MobileOutlined,
   MoreOutlined,
-  UserOutlined,
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAppStore } from "../../store";
 import { tdApp } from "../../utils";
-import { increase } from "../../store/downloadSlice";
+
+const { Text } = Typography;
 
 enum DownloadFilter {
   list = "list",
@@ -132,6 +132,10 @@ const HomePage: FC = () => {
     refresh();
   };
 
+  const onChangeVideoIsLive = () => {
+    refresh();
+  };
+
   useEffect(() => {
     rendererEvent("download-progress", onDownloadProgress);
     rendererEvent("download-success", onDownloadSuccess);
@@ -139,6 +143,7 @@ const HomePage: FC = () => {
     rendererEvent("download-start", onDownloadStart);
     rendererEvent("download-item-event", onDownloadMenuEvent);
     rendererEvent("download-item-notifier", onReceiveDownloadItem);
+    rendererEvent("change-video-is-live", onChangeVideoIsLive);
 
     return () => {
       removeEventListener("download-progress", onDownloadProgress);
@@ -147,6 +152,7 @@ const HomePage: FC = () => {
       removeEventListener("download-start", onDownloadStart);
       removeEventListener("download-item-event", onDownloadMenuEvent);
       removeEventListener("download-item-notifier", onReceiveDownloadItem);
+      removeEventListener("change-video-is-live", onChangeVideoIsLive);
     };
   }, []);
 
@@ -362,10 +368,14 @@ const HomePage: FC = () => {
     } else if (item.status === DownloadStatus.Stopped) {
       tag = <Tag color="default">下载暂停</Tag>;
     }
+
     return (
       <Space>
-        {item.name}
-        {tag}
+        <Text>{item.name}</Text>
+        <Space size={[0, 8]}>
+          {tag}
+          {item.isLive && <Tag color={"default"}>直播资源</Tag>}
+        </Space>
       </Space>
     );
   };
@@ -490,6 +500,7 @@ const HomePage: FC = () => {
               ]}
             />
           </ModalForm>
+          <Button onClick={() => openDir(appStore.local)}>打开文件夹</Button>
         </Space>
       }
       className="home-page"

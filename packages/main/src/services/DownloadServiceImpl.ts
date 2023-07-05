@@ -70,6 +70,16 @@ export default class DownloadServiceImpl
         ...task.params,
         id: task.id,
         abortSignal: controller,
+        callback: (progress) => {
+          if (progress.type === "progress") {
+            this.emit("download-progress", progress);
+          } else if (progress.type === "ready") {
+            this.emit("download-ready-start", progress);
+            if (progress.isLive) {
+              this.removeTask(progress.id);
+            }
+          }
+        },
       });
       delete this.signal[task.id];
       this.log(`taskId: ${task.id} success`);
@@ -97,15 +107,22 @@ export default class DownloadServiceImpl
         this.emit("download-failed", task.id, err);
       }
     } finally {
-      // 处理当前正在活动的任务
-      const doneId = this.active.findIndex((i) => i.id === task.id);
-      this.active.splice(doneId, 1);
-      // 处理完成的任务
-      this.runTask();
+      this.removeTask(task.id);
+
       // 传输完成
       if (this.queue.length === 0 && this.active.length === 0) {
         // this.emit("download-finish");
       }
+    }
+  }
+
+  removeTask(id: number) {
+    // 处理当前正在活动的任务
+    const doneId = this.active.findIndex((i) => i.id === id);
+    this.active.splice(doneId, 1);
+    // 处理完成的任务
+    if (this.active.length < this.limit) {
+      this.runTask();
     }
   }
 

@@ -1,4 +1,4 @@
-import { LinkMessage } from "main";
+import { WebSource } from "main";
 import { IpcRendererEvent, ipcRenderer } from "electron/renderer";
 
 // 创建浮窗容器元素
@@ -44,10 +44,10 @@ overflow: hidden;
 text-overflow: ellipsis;
 `;
 
-const items: LinkMessage[] = [];
+const items: WebSource[] = [];
 ipcRenderer.on(
   "webview-link-message",
-  (e: IpcRendererEvent, data: LinkMessage) => {
+  (e: IpcRendererEvent, data: WebSource) => {
     floatingContainer.style.display = "block";
 
     items.push(data);

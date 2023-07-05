@@ -93,6 +93,11 @@ export interface VideoRepository {
   findWattingAndDownloadingVideos: () => Promise<Video[]>;
   deleteDownloadItem: (id: number) => Promise<DeleteResult>;
   findAllVideos(): Promise<Video[]>;
+  changeVideoIsLive: (
+    id: number | number[],
+    isLive: boolean
+  ) => Promise<UpdateResult>;
+  findVideoByUrl: (url: string) => Promise<Video | null>;
 }
 
 export interface FavoriteRepository {
@@ -145,9 +150,11 @@ export type Task = {
 
 export interface DownloadProgress {
   id: number;
+  type: string;
   cur: string;
   total: string;
   speed: string;
+  isLive: boolean;
 }
 
 export interface DownloadParams {
@@ -158,6 +165,7 @@ export interface DownloadParams {
   headers: string;
   abortSignal: AbortController;
   deleteSegments?: boolean;
+  callback: (progress: DownloadProgress) => void;
 }
 
 export interface DevToolsService {
