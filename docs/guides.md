@@ -67,7 +67,27 @@ outline: deep
 
    ![step 3](./images/guides-step3.png)
 
-### 开始你的视频下载吧
+## 附加功能
+
+1. 下载完成后可以在下载列表中点击转换音频按钮将视频转换为音频
+
+   ![step 1](./images/addition-step1.png)
+
+2. 下载完成后播放视频
+
+   - PC 播放
+
+     ![step 2](./images/addition-step2.png)
+
+   - 移动端播放
+
+     ![step 3](./images/addition-step3.png)
+
+3. 批量下载
+
+   ![step 3](./images/addition-step4.png)
+
+## 开始你的视频下载吧
 
 是不是很简单，快去下载你的视频吧
 
