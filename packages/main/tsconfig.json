@@ -10,7 +10,7 @@
     "resolveJsonModule": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "moduleResolution": "node",
+    "moduleResolution": "Node",
     "strictPropertyInitialization": false,
     "typeRoots": ["node_modules/@types"],
     "outDir": "build/main"

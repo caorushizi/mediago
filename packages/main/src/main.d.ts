@@ -16,7 +16,7 @@ declare interface EnvPath {
 
 declare interface BrowserWindowInitialVal {
   url?: string;
-  sourceList?: LinkMessage[];
+  sourceList?: WebSource[];
 }
 
 declare interface ElectronAPI {
@@ -60,7 +60,7 @@ declare interface ElectronAPI {
   setUserAgent: (isMobile: boolean) => Promise<void>;
 }
 
-declare interface LinkMessage {
+declare interface WebSource {
   url: string;
   name: string;
   headers: string;
@@ -94,5 +94,5 @@ declare interface AppStore {
 
 declare interface BrowserStore {
   url: string;
-  sourceList: LinkMessage[];
+  sourceList: WebSource[];
 }

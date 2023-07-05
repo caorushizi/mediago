@@ -6,6 +6,7 @@ import {
   MenuItemConstructorOptions,
   nativeTheme,
   shell,
+  clipboard,
 } from "electron";
 import { Favorite } from "entity/Favorite";
 import { convertToAudio } from "helper";
@@ -175,7 +176,14 @@ export default class HomeController implements Controller {
         payload: id,
       });
     };
+    const item = await this.videoRepository.findVideo(id);
     const template: Array<MenuItemConstructorOptions | MenuItem> = [
+      {
+        label: "拷贝链接地址",
+        click: () => {
+          clipboard.writeText(item?.url || "");
+        },
+      },
       {
         label: "选择",
         click: () => {

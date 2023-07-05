@@ -33,6 +33,13 @@ export class Video {
   headers: string;
 
   @Column({
+    type: "boolean",
+    default: false,
+    nullable: false,
+  })
+  isLive: boolean;
+
+  @Column({
     type: "text",
     nullable: false,
     default: DownloadStatus.Ready,

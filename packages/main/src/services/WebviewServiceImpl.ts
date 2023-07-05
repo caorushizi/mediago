@@ -19,13 +19,14 @@ import { PERSIST_WEBVIEW, mobileUA, pcUA } from "helper/variables";
 import { ElectronBlocker } from "@cliqz/adblocker-electron";
 import fetch from "cross-fetch";
 import path from "path";
-import { LinkMessage } from "main";
+import { WebSource } from "main";
 
 // FIXME: 需要重构
 @injectable()
 export default class WebviewServiceImpl implements WebviewService {
   public view: BrowserView;
   private blocker?: ElectronBlocker;
+  private sources = new Set();
 
   constructor(
     @inject(TYPES.MainWindowService)
@@ -58,6 +59,7 @@ export default class WebviewServiceImpl implements WebviewService {
     this.setUserAgent(isMobile);
 
     this.view.webContents.on("dom-ready", () => {
+      this.sources.clear();
       const title = this.view.webContents.getTitle();
       const url = this.view.webContents.getURL();
       this.curWindow?.webContents.send("webview-dom-ready", { title, url });
@@ -221,18 +223,25 @@ export default class WebviewServiceImpl implements WebviewService {
     const detailsUrl = new URL(url);
 
     if (sourceReg.test(detailsUrl.pathname)) {
-      this.handleM3u8(details);
+      try {
+        this.handleM3u8(details);
+      } catch (e) {
+        // empty
+      }
     }
 
     callback({});
   };
 
-  handleM3u8 = (details: OnBeforeSendHeadersListenerDetails): void => {
+  handleM3u8 = async (
+    details: OnBeforeSendHeadersListenerDetails
+  ): Promise<void> => {
     const { id, url } = details;
 
     this.logger.info(`在窗口中捕获 m3u8 链接: ${url} id: ${id}`);
     const webContents = details.webContents;
-    const linkMessage: LinkMessage = {
+
+    const source: WebSource = {
       url,
       name: webContents?.getTitle() || "没有获取到名称",
       headers: JSON.stringify(details.requestHeaders),
@@ -240,15 +249,20 @@ export default class WebviewServiceImpl implements WebviewService {
     // 这里需要判断是否使用浏览器插件
     const useExtension = this.storeService.get("useExtension");
     if (useExtension) {
-      this.view.webContents.send("webview-link-message", linkMessage);
+      if (!this.sources.has(source.url)) {
+        this.sources.add(source.url);
+        this.view.webContents.send("webview-link-message", source);
+      }
     } else {
-      this.videoRepository.addVideo(linkMessage).then((item) => {
+      const exist = await this.videoRepository.findVideoByUrl(source.url);
+      if (!exist) {
+        const item = await this.videoRepository.addVideo(source);
         // 这里向页面发送消息，通知页面更新
         this.mainWindow.window?.webContents.send(
           "download-item-notifier",
           item
         );
-      });
+      }
     }
   };
 

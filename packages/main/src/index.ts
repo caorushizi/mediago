@@ -25,9 +25,7 @@ const start = async (): Promise<void> => {
   mediago.init();
 
   app.on("window-all-closed", () => {
-    if (process.platform !== "darwin") {
-      app.quit();
-    }
+    // empty
   });
 };
 

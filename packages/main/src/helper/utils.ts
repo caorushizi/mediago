@@ -18,11 +18,7 @@ export function formatHeaders(headersStr: string): string {
   const formatted = Object.entries(headers)
     .map(([key, value]) => `${key}:${value}`)
     .join("|");
-  return formatString(formatted);
-}
-
-export function formatString(str: string) {
-  return JSON.stringify(str);
+  return formatted;
 }
 
 export const event = new EventEmitter();
