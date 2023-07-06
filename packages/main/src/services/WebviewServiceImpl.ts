@@ -248,14 +248,12 @@ export default class WebviewServiceImpl implements WebviewService {
     };
     // 这里需要判断是否使用浏览器插件
     const useExtension = this.storeService.get("useExtension");
-    if (useExtension) {
-      if (!this.sources.has(source.url)) {
-        this.sources.add(source.url);
+
+    if (!this.sources.has(source.url)) {
+      this.sources.add(source.url);
+      if (useExtension) {
         this.view.webContents.send("webview-link-message", source);
-      }
-    } else {
-      const exist = await this.videoRepository.findVideoByUrl(source.url);
-      if (!exist) {
+      } else {
         const item = await this.videoRepository.addVideo(source);
         // 这里向页面发送消息，通知页面更新
         this.mainWindow.window?.webContents.send(
