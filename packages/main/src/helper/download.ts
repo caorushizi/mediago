@@ -106,6 +106,7 @@ const macSpawnDownload = (params: DownloadParams): Promise<void> => {
     callback,
   } = params;
   const progressReg = /([\d.]+)% .*? ([\d.\w]+?) /g;
+  const errorReg = /ERROR/g;
 
   return new Promise((resolve, reject) => {
     const spawnParams = [
@@ -116,10 +117,14 @@ const macSpawnDownload = (params: DownloadParams): Promise<void> => {
       local,
       "--save-name",
       name,
+      "--auto-select",
     ];
 
     if (headers) {
-      spawnParams.push("--headers", formatHeaders(headers));
+      const h: Record<string, unknown> = JSON.parse(headers);
+      Object.entries(h).forEach(([k, v]) => {
+        spawnParams.push("-H", `${k}: ${v}`);
+      });
     }
 
     if (deleteSegments) {
@@ -136,7 +141,15 @@ const macSpawnDownload = (params: DownloadParams): Promise<void> => {
         if (item.trim() == "") {
           return;
         }
-        const result = progressReg.exec(stripColors(item));
+
+        const log = stripColors(item);
+
+        if (errorReg.test(log)) {
+          reject(new Error(log));
+          return;
+        }
+
+        const result = progressReg.exec(log);
         if (!result) {
           return;
         }
