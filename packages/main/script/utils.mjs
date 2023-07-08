@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, cpSync, rmSync } from "node:fs";
 import dotenv from "dotenv";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -8,8 +8,8 @@ const con = console;
 export const log = con.log;
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-export const mainResolve = (r) => resolve(__dirname, "..", r);
-export const rootResolve = (r) => resolve(__dirname, "../../..", r);
+export const mainResolve = (...r) => resolve(__dirname, "..", ...r);
+export const rootResolve = (...r) => resolve(__dirname, "../../..", ...r);
 const nodeEnv = process.env.NODE_ENV;
 log("当前的环境是： ", nodeEnv);
 
@@ -62,4 +62,19 @@ export function loadDotEnvDefined() {
     prev[`process.env.${[cur]}`] = JSON.stringify(env[cur]);
     return prev;
   }, {});
+}
+
+export function copyResource(resource) {
+  resource.forEach((r) => {
+    const { from, to } = r;
+    cpSync(from, to, {
+      recursive: true,
+    });
+  });
+}
+
+export function removeResource(resource) {
+  resource.forEach((r) => {
+    rmSync(r, { recursive: true, force: true });
+  });
 }
