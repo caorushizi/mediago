@@ -1,0 +1,13 @@
+{
+  "name": "media-downloader",
+  "version": "2.0.1",
+  "description": "在线视频下载器",
+  "main": "main/index.js",
+  "scripts": {},
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@cliqz/adblocker-electron": "^1.26.6",
+    "@cliqz/adblocker-electron-preload": "^1.26.6"
+  }
+}

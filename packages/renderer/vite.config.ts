@@ -13,7 +13,7 @@ export default defineConfig({
   envDir: "../..",
   envPrefix: "APP",
   build: {
-    outDir: path.resolve(__dirname, "../main/build/renderer"),
+    outDir: path.resolve(__dirname, "../main/app/build/renderer"),
     emptyOutDir: true,
   },
 });

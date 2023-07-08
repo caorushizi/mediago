@@ -80,8 +80,8 @@ export default class ElectronApp implements App {
       this.mainWindow.init();
     });
     const contextMenu = Menu.buildFromTemplate([
-      { label: "退出 app", role: "quit" },
       { label: "显示主窗口", click: () => this.mainWindow.init() },
+      { label: "退出 app", role: "quit" },
     ]);
     tray.setContextMenu(contextMenu);
   }

@@ -20,7 +20,9 @@ export const ffmpegPath =
   process.platform === "win32"
     ? path.resolve(__bin__, "ffmpeg.exe")
     : path.resolve(__bin__, "ffmpeg");
-export const mobilePath = path.resolve(app.getAppPath(), "../mobile");
+export const mobilePath = isDev
+  ? path.resolve(app.getAppPath(), "../../mobile")
+  : path.resolve(app.getAppPath(), "../mobile");
 
 // user agent
 export const pcUA =

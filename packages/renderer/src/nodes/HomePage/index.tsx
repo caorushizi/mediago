@@ -83,10 +83,8 @@ const HomePage: FC = () => {
   const [baseUrl, setBaseUrl] = useState("");
 
   useAsyncEffect(async () => {
-    const isDev = import.meta.env.MODE === "development";
     const localIP = await getLocalIP();
-    const port = isDev ? 8556 : import.meta.env.APP_SERVER_PORT;
-    setBaseUrl(`http://${localIP}:${port}/`);
+    setBaseUrl(`http://${localIP}:${import.meta.env.APP_SERVER_PORT}/`);
   }, []);
 
   const onDownloadProgress = (e: any, progress: DownloadProgress) => {
@@ -330,12 +328,12 @@ const HomePage: FC = () => {
               label: "播放视频",
               key: "play",
               icon: <PlayCircleOutlined />,
-              disabled: curConverting,
             },
             {
               label: "转换为音频",
               key: "convert",
               icon: <SyncOutlined />,
+              disabled: curConverting,
             },
           ],
           onClick: ({ key }) => {
