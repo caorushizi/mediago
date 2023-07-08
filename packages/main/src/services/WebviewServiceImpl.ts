@@ -116,9 +116,11 @@ export default class WebviewServiceImpl implements WebviewService {
       await this.view.webContents.loadURL(url || "");
     } catch (err: unknown) {
       this.logger.error("加载 url 时出现错误: ", err);
-    }
-    if (!canGoBack && !isNewWindow) {
-      this.view.webContents.clearHistory();
+      throw err;
+    } finally {
+      if (!canGoBack && !isNewWindow) {
+        this.view.webContents.clearHistory();
+      }
     }
   }
 

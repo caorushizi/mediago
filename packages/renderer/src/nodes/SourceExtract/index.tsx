@@ -13,7 +13,17 @@ import {
   StarOutlined,
 } from "@ant-design/icons";
 import { useAsyncEffect, useRequest } from "ahooks";
-import { Avatar, Button, Form, Input, List, message, Space } from "antd";
+import {
+  Avatar,
+  Button,
+  Empty,
+  Form,
+  Input,
+  List,
+  message,
+  Space,
+  Spin,
+} from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PageContainer from "../../components/PageContainer";
@@ -22,6 +32,7 @@ import { generateUrl, getFavIcon } from "../../utils";
 import "./index.scss";
 import { ModalForm, ProFormText } from "@ant-design/pro-components";
 import {
+  BrowserStatus,
   PageMode,
   selectBrowserStore,
   setAppStore,
@@ -43,7 +54,6 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     rendererEvent,
     removeEventListener,
     webviewGoBack,
-    webviewReload,
     webwiewGoHome,
     onFavoriteItemContextMenu,
     combineToHomePage,
@@ -67,13 +77,28 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   }, []);
 
   const loadUrl = async (url: string) => {
-    await webviewLoadURL(url);
-    dispatch(
-      setBrowserStore({
-        url: url,
-        mode: PageMode.Browser,
-      })
-    );
+    try {
+      dispatch(
+        setBrowserStore({
+          mode: PageMode.Browser,
+          status: BrowserStatus.Loading,
+        })
+      );
+      await webviewLoadURL(url);
+      dispatch(
+        setBrowserStore({
+          url: url,
+          status: BrowserStatus.Loaded,
+        })
+      );
+    } catch (err) {
+      dispatch(
+        setBrowserStore({
+          status: BrowserStatus.Failed,
+          errMsg: (err as any).message,
+        })
+      );
+    }
   };
 
   const goto = async () => {
@@ -127,10 +152,6 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
         mode: PageMode.Default,
       })
     );
-  };
-
-  const onClickReload = () => {
-    webviewReload();
   };
 
   const onClickEnter = async () => {
@@ -213,13 +234,15 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
 
   // 渲染工具栏
   const renderToolbar = () => {
+    const disabled =
+      store.status !== BrowserStatus.Loaded || store.mode !== PageMode.Browser;
     return (
       <Space.Compact className="action-bar" block>
         <Button type="text" title="切换为手机模式" onClick={onSetDefaultUA}>
           {appStore.isMobile ? <MobileFilled /> : <MobileOutlined />}
         </Button>
         <Button
-          disabled={store.mode === PageMode.Default}
+          disabled={disabled}
           title="首页"
           type="text"
           onClick={onClickGoHome}
@@ -227,26 +250,21 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
           <HomeOutlined />
         </Button>
         <Button
-          disabled={store.mode === PageMode.Default}
+          disabled={disabled}
           title="回退"
           type="text"
           onClick={onClickGoBack}
         >
           <ArrowLeftOutlined />
         </Button>
-        <Button
-          disabled={store.mode === PageMode.Default}
-          title="刷新"
-          type="text"
-          onClick={onClickReload}
-        >
+        <Button disabled={disabled} title="刷新" type="text" onClick={goto}>
           <ReloadOutlined />
         </Button>
         <Button
           type="text"
           title={curIsFavorite ? "取消收藏" : "收藏"}
           onClick={onClickAddFavorite}
-          disabled={store.mode === PageMode.Default}
+          disabled={disabled}
         >
           {curIsFavorite ? <StarFilled /> : <StarOutlined />}
         </Button>
@@ -256,6 +274,9 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
           onChange={(e) => {
             const url = e.target.value;
             dispatch(setBrowserStore({ url }));
+          }}
+          onFocus={(e) => {
+            e.target.select();
           }}
           onKeyDown={onInputKeyDown}
           placeholder="请输入网址链接……"
@@ -279,11 +300,24 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
 
   // 渲染浏览器面板
   const renderBrowserPanel = () => {
-    return (
-      <div className="webview-container">
-        <WebView className="webview-inner" />
-      </div>
-    );
+    let content = <div></div>;
+    if (store.status === BrowserStatus.Loading) {
+      content = <Spin />;
+    } else if (store.status === BrowserStatus.Failed) {
+      content = (
+        <Empty description={store.errMsg || "加载失败"}>
+          <Space>
+            <Button type="primary" onClick={onClickGoHome}>
+              返回首页
+            </Button>
+            <Button onClick={goto}>刷新</Button>
+          </Space>
+        </Empty>
+      );
+    } else if (store.status === BrowserStatus.Loaded) {
+      content = <WebView className="webview-inner" />;
+    }
+    return <div className="webview-container">{content}</div>;
   };
 
   // 渲染收藏 item

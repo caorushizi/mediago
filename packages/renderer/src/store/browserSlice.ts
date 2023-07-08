@@ -9,10 +9,19 @@ export enum PageMode {
   Browser = "browser",
 }
 
+export enum BrowserStatus {
+  Default = "default",
+  Loaded = "loaded",
+  Loading = "loading",
+  Failed = "failed",
+}
+
 const initialState: BrowserStore = {
   mode: PageMode.Default,
   url: "",
   title: "",
+  status: BrowserStatus.Default,
+  errMsg: "",
 };
 
 const convertPlainObject = (obj: unknown) => {

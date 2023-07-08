@@ -7,10 +7,10 @@
     "dev": "pnpm run build:mobile && pnpm --parallel -F \"./packages/*\" run dev",
     "build": "pnpm run build:mobile && pnpm run build:main && pnpm run build:renderer",
     "build:mobile": "pnpm -F mobile run build",
-    "build:main": "pnpm -F media-downloader run build",
+    "build:main": "pnpm -F main run build",
     "build:renderer": "pnpm -F renderer run build",
     "pack": "pnpm -F media-downloader run pack",
-    "release": "pnpm run build && pnpm -F media-downloader run release",
+    "release": "pnpm run build && pnpm -F main run release",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
