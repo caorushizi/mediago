@@ -1,7 +1,7 @@
 import { execa } from "execa";
 import { macDownloaderPath, winDownloaderPath } from "./variables";
 import iconv from "iconv-lite";
-import { event, formatHeaders, stripColors } from "./utils";
+import { formatHeaders, stripColors } from "./utils";
 import { DownloadParams, DownloadProgress } from "interfaces";
 
 export const spawnDownload = (params: DownloadParams): Promise<void> => {
@@ -42,6 +42,7 @@ const winSpawnDownload = async (params: DownloadParams): Promise<void> => {
       signal: abortSignal.signal,
     });
 
+    let isLive = false;
     downloader.stdout?.on("data", (data) => {
       const str = iconv.decode(Buffer.from(data), "gbk");
       str.split("\n").forEach((item) => {
@@ -49,9 +50,7 @@ const winSpawnDownload = async (params: DownloadParams): Promise<void> => {
           return;
         }
 
-        const isLive = isLiveReg.test(item);
-        const startDownload = startDownloadReg.test(item);
-        if (isLive || startDownload) {
+        if (isLiveReg.test(item) || startDownloadReg.test(item)) {
           callback({
             id,
             type: "ready",
@@ -60,6 +59,7 @@ const winSpawnDownload = async (params: DownloadParams): Promise<void> => {
             total: "",
             speed: "",
           });
+          isLive = true;
         }
 
         const result = progressReg.exec(item);
@@ -105,8 +105,11 @@ const macSpawnDownload = (params: DownloadParams): Promise<void> => {
     headers,
     callback,
   } = params;
-  const progressReg = /([\d.]+)% .*? ([\d.\w]+?) /g;
+  // const progressReg = /([\d.]+)% .*? ([\d.\w]+?) /g;
+  const progressReg = /([\d.]+)%/g;
   const errorReg = /ERROR/g;
+  const startDownloadReg = /保存文件名:/g;
+  const isLiveReg = /检测到直播流/g;
 
   return new Promise((resolve, reject) => {
     const spawnParams = [
@@ -135,11 +138,24 @@ const macSpawnDownload = (params: DownloadParams): Promise<void> => {
       signal: abortSignal.signal,
     });
 
+    let isLive = false;
     downloader.stdout?.on("data", (data) => {
       const str = String(Buffer.from(data));
       str.split("\n").forEach((item) => {
         if (item.trim() == "") {
           return;
+        }
+
+        if (isLiveReg.test(item) || startDownloadReg.test(item)) {
+          callback({
+            id,
+            type: "ready",
+            isLive,
+            cur: "",
+            total: "",
+            speed: "",
+          });
+          isLive = true;
         }
 
         const log = stripColors(item);
@@ -168,7 +184,7 @@ const macSpawnDownload = (params: DownloadParams): Promise<void> => {
           cur,
           total,
           speed,
-          isLive: false,
+          isLive,
         };
         callback(progress);
       });
