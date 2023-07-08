@@ -13,7 +13,7 @@
     "moduleResolution": "Node",
     "strictPropertyInitialization": false,
     "typeRoots": ["node_modules/@types"],
-    "outDir": "build/main"
+    "outDir": "app/output/build/main"
   },
   "include": ["./src/**/*"]
 }

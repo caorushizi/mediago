@@ -44,14 +44,12 @@ export default class WebServiceImpl implements WebService {
     this.app.use(cors());
     this.app.use(range);
     this.app.use(serve(local));
-    if (process.env.NODE_ENV === "production") {
-      this.app.use(
-        serve(mobilePath, {
-          extensions: ["html", "js", "css"],
-          index: "index.html",
-        })
-      );
-    }
+    this.app.use(
+      serve(mobilePath, {
+        extensions: ["html", "js", "css"],
+        index: "index.html",
+      })
+    );
     this.app.use(this.router.routes());
     this.app.use(this.router.allowedMethods());
 

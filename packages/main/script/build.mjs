@@ -1,11 +1,23 @@
 import * as esbuild from "esbuild";
-import { rmSync } from "node:fs";
-import { mainResolve, loadDotEnvDefined } from "./utils.mjs";
+import {
+  mainResolve,
+  loadDotEnvDefined,
+  copyResource,
+  removeResource,
+} from "./utils.mjs";
 
 const mainDefined = loadDotEnvDefined();
 
-rmSync(mainResolve("build"), { recursive: true, force: true });
-rmSync(mainResolve("dist"), { recursive: true, force: true });
+removeResource([mainResolve("app/build")]);
+
+const path = "build/Release/better_sqlite3.node";
+
+copyResource([
+  {
+    from: mainResolve("node_modules/better-sqlite3", path),
+    to: mainResolve("app", path),
+  },
+]);
 
 esbuild.build({
   entryPoints: [
@@ -28,7 +40,7 @@ esbuild.build({
     "process.env.NODE_ENV": '"production"',
     ...mainDefined,
   },
-  outdir: mainResolve("build/main"),
+  outdir: mainResolve("app/build/main"),
   loader: { ".png": "file" },
   minify: true,
 });
