@@ -1,7 +1,14 @@
 import builder from "electron-builder";
 import { readFileSync } from "node:fs";
 import semver from "semver";
-import { mainResolve, loadDotEnvRuntime, log } from "./utils.mjs";
+import {
+  mainResolve,
+  loadDotEnvRuntime,
+  log,
+  removeResource,
+} from "./utils.mjs";
+
+removeResource([mainResolve("release")]);
 
 const packageJson = JSON.parse(readFileSync(mainResolve("./package.json")));
 loadDotEnvRuntime();
@@ -9,20 +16,6 @@ loadDotEnvRuntime();
 if (semver.neq(process.env.APP_VERSION, packageJson.version)) {
   log("请先同步构建版本和发布版本");
   process.exit(0);
-}
-
-const extraResources = [
-  {
-    from: "build/mobile",
-    to: "mobile",
-  },
-];
-if (process.platform === "win32") {
-  // windows
-  extraResources.push("bin/ffmpeg.exe", "bin/N_m3u8DL-CLI_v3.0.2.exe");
-} else {
-  // mac
-  extraResources.push("bin/N_m3u8DL-RE", "bin/ffmpeg");
 }
 
 // Let's get that intellisense working
@@ -37,21 +30,25 @@ const options = {
   copyright: process.env.APP_COPYRIGHT,
   artifactName: "${productName}-setup-${buildVersion}.${ext}",
   directories: {
-    output: "./dist",
+    output: "./release",
   },
   files: [
     {
       from: "./build",
       to: "./",
-      filter: ["**/*"],
     },
     "./package.json",
+  ],
+  extraResources: [
     {
-      from: "./node_modules/better-sqlite3/build/Release",
-      to: "./build/Release",
+      from: "./app/mobile",
+      to: "mobile",
+    },
+    {
+      from: "./app/bin/${platform}/",
+      to: "bin",
     },
   ],
-  extraResources,
   win: {
     icon: "../assets/icon.ico",
     target: [

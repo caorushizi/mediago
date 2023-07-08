@@ -10,14 +10,18 @@ export default class UpdateServiceImpl implements UpdateService {
     @inject(TYPES.LoggerService) private readonly logger: LoggerService
   ) {}
 
-  init(): void {
+  async init(): Promise<void> {
     if (isDev) return;
 
-    autoUpdater.disableWebInstaller = true;
-    autoUpdater.logger = this.logger.logger;
-    autoUpdater.checkForUpdatesAndNotify({
-      title: "自动更新完成",
-      body: "下次重启时将会自动安装",
-    });
+    try {
+      autoUpdater.disableWebInstaller = true;
+      autoUpdater.logger = this.logger.logger;
+      await autoUpdater.checkForUpdatesAndNotify({
+        title: "自动更新完成",
+        body: "下次重启时将会自动安装",
+      });
+    } catch (e) {
+      this.logger.info("update error", e);
+    }
   }
 }

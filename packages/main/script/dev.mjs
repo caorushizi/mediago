@@ -1,9 +1,8 @@
 import { spawn } from "child_process";
-import { cpSync } from "node:fs";
 import electron from "electron";
 import * as esbuild from "esbuild";
 import chokidar from "chokidar";
-import { loadDotEnvRuntime, mainResolve, log } from "./utils.mjs";
+import { loadDotEnvRuntime, mainResolve, log, copyResource } from "./utils.mjs";
 
 let electronProcess = null;
 
@@ -11,21 +10,18 @@ process.env.NODE_ENV = "development";
 loadDotEnvRuntime();
 
 async function copySource() {
-  const oldSqlite3Path = mainResolve(
-    "node_modules/better-sqlite3/build/Release"
-  );
-  const newSqlite3Path = mainResolve("build/Release");
+  const path = "build/Release/better_sqlite3.node";
 
-  cpSync(oldSqlite3Path, newSqlite3Path, {
-    recursive: true,
-  });
-
-  const oldBinPath = mainResolve("bin");
-  const newBinPath = mainResolve("build/bin");
-
-  cpSync(oldBinPath, newBinPath, {
-    recursive: true,
-  });
+  copyResource([
+    {
+      from: mainResolve("node_modules/better-sqlite3", path),
+      to: mainResolve("app", path),
+    },
+    {
+      from: mainResolve("bin"),
+      to: mainResolve("app/bin"),
+    },
+  ]);
 }
 
 const ctx = await esbuild.context({
@@ -47,10 +43,10 @@ const ctx = await esbuild.context({
   ],
   define: {
     // 开发环境中二进制可执行文件的路径
-    __bin__: `"${mainResolve("bin").replace(/\\/g, "\\\\")}"`,
+    __bin__: `"${mainResolve("bin", process.platform).replace(/\\/g, "\\\\")}"`,
   },
   plugins: [],
-  outdir: mainResolve("build/main"),
+  outdir: mainResolve("app/build/main"),
   loader: { ".png": "file" },
 });
 
@@ -71,7 +67,7 @@ watcher.on("change", async () => {
 });
 
 function startElectron() {
-  const args = ["--inspect=5858", mainResolve("build/main/index.js")];
+  const args = ["--inspect=5858", mainResolve("app/build/main/index.js")];
 
   electronProcess = spawn(String(electron), args);
 

@@ -4,8 +4,11 @@
   "description": "electron-template",
   "main": "index.js",
   "scripts": {
-    "dev": "pnpm --parallel -F \"./packages/*\" run dev",
-    "build": "pnpm --parallel -F \"./packages/*\" run build",
+    "dev": "pnpm run build:mobile && pnpm --parallel -F \"./packages/*\" run dev",
+    "build": "pnpm run build:mobile && pnpm run build:main && pnpm run build:renderer",
+    "build:mobile": "pnpm -F mobile run build",
+    "build:main": "pnpm -F media-downloader run build",
+    "build:renderer": "pnpm -F renderer run build",
     "pack": "pnpm -F media-downloader run pack",
     "release": "pnpm run build && pnpm -F media-downloader run release",
     "docs:dev": "vitepress dev docs",

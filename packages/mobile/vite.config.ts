@@ -27,7 +27,7 @@ export default defineConfig({
     port: 8556,
   },
   build: {
-    outDir: path.resolve(__dirname, "../main/build/mobile"),
+    outDir: path.resolve(__dirname, "../main/app/mobile"),
     emptyOutDir: true,
   },
 });

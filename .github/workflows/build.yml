@@ -51,4 +51,4 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: artifact
-          path: packages/main/dist/media-downloader-setup-*
+          path: packages/main/release/media-downloader-setup-*
