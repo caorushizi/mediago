@@ -15,8 +15,11 @@
       overflow: auto;
       .webview-container {
         height: 100%;
+        width: 100%;
         display: flex;
         flex-direction: row;
+        align-items: center;
+        justify-content: center;
         .webview-inner {
           height: 100%;
           width: 100%;

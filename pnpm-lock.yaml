@@ -101,6 +101,9 @@ importers:
         specifier: ^0.3.17
         version: 0.3.17(better-sqlite3@8.4.0)
     devDependencies:
+      '@electron/rebuild':
+        specifier: ^3.2.13
+        version: 3.2.13
       '@rushstack/eslint-patch':
         specifier: ^1.3.2
         version: 1.3.2

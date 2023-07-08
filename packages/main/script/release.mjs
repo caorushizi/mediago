@@ -10,7 +10,7 @@ import {
 
 removeResource([mainResolve("release")]);
 
-const packageJson = JSON.parse(readFileSync(mainResolve("./package.json")));
+const packageJson = JSON.parse(readFileSync(mainResolve("./app/package.json")));
 loadDotEnvRuntime();
 
 if (semver.neq(process.env.APP_VERSION, packageJson.version)) {

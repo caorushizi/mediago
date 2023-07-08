@@ -112,6 +112,8 @@ declare interface BrowserStore {
   mode: PageMode;
   url: string;
   title: string;
+  status: BrowserStatus;
+  errMsg?: string;
 }
 
 declare interface DownloadProgress {
