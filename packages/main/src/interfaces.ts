@@ -164,6 +164,7 @@ export interface DownloadParams {
   name: string;
   headers: string;
   abortSignal: AbortController;
+  proxy?: string;
   deleteSegments?: boolean;
   callback: (progress: DownloadProgress) => void;
 }
