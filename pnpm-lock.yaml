@@ -200,6 +200,10 @@ importers:
       '@cliqz/adblocker-electron-preload':
         specifier: ^1.26.6
         version: 1.26.6(electron@25.2.0)
+    devDependencies:
+      electron-builder:
+        specifier: ^24.4.0
+        version: 24.4.0
 
   packages/mobile:
     dependencies:
@@ -5258,6 +5262,7 @@ packages:
 
   /fast-json-stable-stringify@2.1.0:
     resolution: {integrity: sha512-lhd/wF+Lk98HZoTCtlVraHtfh5XYijIjalXck7saUtuanSDyLMxnHhSXEDJqHxD7msR8D0uCmqlkwjCV8xvwHw==}
+    requiresBuild: true
     dev: true
 
   /fast-levenshtein@2.0.6:
@@ -6177,6 +6182,7 @@ packages:
 
   /json-schema-traverse@0.4.1:
     resolution: {integrity: sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg==}
+    requiresBuild: true
     dev: true
 
   /json-schema-traverse@1.0.0:
