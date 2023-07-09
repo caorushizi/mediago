@@ -3,9 +3,6 @@
   "version": "2.0.2",
   "description": "在线视频下载器",
   "main": "main/index.js",
-  "scripts": {
-    "postinstall": "electron-builder install-app-deps"
-  },
   "author": "",
   "license": "MIT",
   "dependencies": {
