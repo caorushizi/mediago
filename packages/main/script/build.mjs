@@ -9,6 +9,7 @@ import {
 const mainDefined = loadDotEnvDefined();
 
 removeResource([mainResolve("app/build")]);
+removeResource([mainResolve("app/bin")]);
 
 const path = "build/Release/better_sqlite3.node";
 
@@ -16,6 +17,10 @@ copyResource([
   {
     from: mainResolve("node_modules/better-sqlite3", path),
     to: mainResolve("app", path),
+  },
+  {
+    from: mainResolve("bin"),
+    to: mainResolve("app/bin"),
   },
 ]);
 
