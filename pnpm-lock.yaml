@@ -201,9 +201,9 @@ importers:
         specifier: ^1.26.6
         version: 1.26.6(electron@25.2.0)
     devDependencies:
-      electron-builder:
-        specifier: ^24.4.0
-        version: 24.4.0
+      electron:
+        specifier: ^25.2.0
+        version: 25.2.0
 
   packages/mobile:
     dependencies:
