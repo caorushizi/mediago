@@ -1,6 +1,8 @@
 import EventEmitter from "events";
 import { inject, injectable } from "inversify";
 import {
+  DownloadParams,
+  DownloadProgress,
   DownloadService,
   DownloadStatus,
   StoreService,
@@ -66,21 +68,31 @@ export default class DownloadServiceImpl
       this.log(`taskId: ${task.id} start`);
       const controller = new AbortController();
       this.signal[task.id] = controller;
-      await task.process({
+
+      const callback = (progress: DownloadProgress) => {
+        if (progress.type === "progress") {
+          this.emit("download-progress", progress);
+        } else if (progress.type === "ready") {
+          this.emit("download-ready-start", progress);
+          if (progress.isLive) {
+            this.removeTask(progress.id);
+          }
+        }
+      };
+
+      const params: DownloadParams = {
         ...task.params,
         id: task.id,
         abortSignal: controller,
-        callback: (progress) => {
-          if (progress.type === "progress") {
-            this.emit("download-progress", progress);
-          } else if (progress.type === "ready") {
-            this.emit("download-ready-start", progress);
-            if (progress.isLive) {
-              this.removeTask(progress.id);
-            }
-          }
-        },
-      });
+        callback,
+      };
+
+      const { proxy, useProxy } = this.storeService.store;
+      if (useProxy) {
+        params.proxy = proxy;
+      }
+
+      await task.process(params);
       delete this.signal[task.id];
       this.log(`taskId: ${task.id} success`);
 

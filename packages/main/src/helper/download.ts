@@ -22,6 +22,7 @@ const winSpawnDownload = async (params: DownloadParams): Promise<void> => {
     deleteSegments,
     headers,
     callback,
+    proxy,
   } = params;
   const progressReg = /Progress:\s(\d+)\/(\d+)\s\(.+?\).+?\((.+?\/s).*?\)/g;
   const isLiveReg = /识别为直播流, 开始录制/g;
@@ -36,6 +37,10 @@ const winSpawnDownload = async (params: DownloadParams): Promise<void> => {
 
     if (deleteSegments) {
       spawnParams.push("--enableDelAfterDone");
+    }
+
+    if (proxy) {
+      spawnParams.push("--proxyAddress", proxy);
     }
 
     const downloader = execa(winDownloaderPath, spawnParams, {
@@ -104,6 +109,7 @@ const macSpawnDownload = (params: DownloadParams): Promise<void> => {
     deleteSegments,
     headers,
     callback,
+    proxy,
   } = params;
   // const progressReg = /([\d.]+)% .*? ([\d.\w]+?) /g;
   const progressReg = /([\d.]+)%/g;
@@ -132,6 +138,10 @@ const macSpawnDownload = (params: DownloadParams): Promise<void> => {
 
     if (deleteSegments) {
       spawnParams.push("--del-after-done");
+    }
+
+    if (proxy) {
+      spawnParams.push("--custom-proxy", proxy);
     }
 
     const downloader = execa(macDownloaderPath, spawnParams, {
