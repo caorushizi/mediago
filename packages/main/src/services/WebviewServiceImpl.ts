@@ -90,28 +90,23 @@ export default class WebviewServiceImpl implements WebviewService {
       console.log("Debugger detached due to : ", reason);
     });
 
+    let id = 0;
     this.view.webContents.debugger.on("message", (event, method, params) => {
-      if (method === "Network.responseReceived") {
-        //params中无响应数据只有响应头
-        const mimeType = params.response.mimeType;
-        console.log("mimeType", mimeType);
-
-        if (
-          mimeType != "image/gif" &&
-          mimeType === "image/png" &&
-          mimeType !== "application/json"
-        ) {
-          console.log("123123");
-          this.view.webContents.debugger
-            .sendCommand("Network.getResponseBody", {
-              requestId: params.requestId,
-            })
-            .then((response) => {
-              console.log(response.body);
-              console.log("params.response.url", params.response.url);
-            });
-        }
+      if (!id) {
+        id = params.requestId;
       }
+
+      if (id === params.requestId) {
+        console.log("method", method);
+      }
+      // this.view.webContents.debugger
+      //   .sendCommand("Network.getResponseBody", {
+      //     requestId: params.requestId,
+      //   })
+      //   .then((response) => {
+      //     console.log(response.body);
+      //     console.log("params.response.url", params.response.url);
+      //   });
     });
 
     this.view.webContents.debugger.sendCommand("Network.enable");
