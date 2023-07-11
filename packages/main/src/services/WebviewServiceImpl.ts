@@ -79,6 +79,42 @@ export default class WebviewServiceImpl implements WebviewService {
 
     const urls = ["<all_urls>"];
     this.session.webRequest.onBeforeSendHeaders({ urls }, this.before);
+
+    try {
+      this.view.webContents.debugger.attach("1.1");
+    } catch (err) {
+      console.log("Debugger attach failed : ", err);
+    }
+
+    this.view.webContents.debugger.on("detach", (event, reason) => {
+      console.log("Debugger detached due to : ", reason);
+    });
+
+    this.view.webContents.debugger.on("message", (event, method, params) => {
+      if (method === "Network.responseReceived") {
+        //params中无响应数据只有响应头
+        const mimeType = params.response.mimeType;
+        console.log("mimeType", mimeType);
+
+        if (
+          mimeType != "image/gif" &&
+          mimeType === "image/png" &&
+          mimeType !== "application/json"
+        ) {
+          console.log("123123");
+          this.view.webContents.debugger
+            .sendCommand("Network.getResponseBody", {
+              requestId: params.requestId,
+            })
+            .then((response) => {
+              console.log(response.body);
+              console.log("params.response.url", params.response.url);
+            });
+        }
+      }
+    });
+
+    this.view.webContents.debugger.sendCommand("Network.enable");
   }
 
   getBounds(): Electron.Rectangle {
