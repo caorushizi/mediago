@@ -80,44 +80,44 @@ export default class WebviewServiceImpl implements WebviewService {
     const urls = ["<all_urls>"];
     this.session.webRequest.onBeforeSendHeaders({ urls }, this.before);
 
-    try {
-      this.view.webContents.debugger.attach("1.1");
-    } catch (err) {
-      console.log("Debugger attach failed : ", err);
-    }
+    // try {
+    //   this.view.webContents.debugger.attach("1.1");
+    // } catch (err) {
+    //   console.log("Debugger attach failed : ", err);
+    // }
 
-    this.view.webContents.debugger.on("detach", (event, reason) => {
-      console.log("Debugger detached due to : ", reason);
-    });
+    // this.view.webContents.debugger.on("detach", (event, reason) => {
+    //   console.log("Debugger detached due to : ", reason);
+    // });
 
-    let id = 0;
-    this.view.webContents.debugger.on("message", (event, method, params) => {
-      if (!id) {
-        id = params.requestId;
-      }
+    // let id = 0;
+    // this.view.webContents.debugger.on("message", (event, method, params) => {
+    //   if (!id) {
+    //     id = params.requestId;
+    //   }
 
-      if (id === params.requestId) {
-        console.log("method", method);
-      }
-      // method Network.requestWillBeSent
-      // method Network.requestWillBeSentExtraInfo
-      // method Network.responseReceivedExtraInfo
-      // method Network.responseReceived
-      // method Network.dataReceived
-      // method Network.dataReceived
-      // method Network.loadingFinished
+    //   if (id === params.requestId) {
+    //     console.log("method", method);
+    //   }
+    //   // method Network.requestWillBeSent
+    //   // method Network.requestWillBeSentExtraInfo
+    //   // method Network.responseReceivedExtraInfo
+    //   // method Network.responseReceived
+    //   // method Network.dataReceived
+    //   // method Network.dataReceived
+    //   // method Network.loadingFinished
 
-      // this.view.webContents.debugger
-      //   .sendCommand("Network.getResponseBody", {
-      //     requestId: params.requestId,
-      //   })
-      //   .then((response) => {
-      //     console.log(response.body);
-      //     console.log("params.response.url", params.response.url);
-      //   });
-    });
+    //   // this.view.webContents.debugger
+    //   //   .sendCommand("Network.getResponseBody", {
+    //   //     requestId: params.requestId,
+    //   //   })
+    //   //   .then((response) => {
+    //   //     console.log(response.body);
+    //   //     console.log("params.response.url", params.response.url);
+    //   //   });
+    // });
 
-    this.view.webContents.debugger.sendCommand("Network.enable");
+    // this.view.webContents.debugger.sendCommand("Network.enable");
   }
 
   getBounds(): Electron.Rectangle {
