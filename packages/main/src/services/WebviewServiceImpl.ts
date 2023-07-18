@@ -99,6 +99,14 @@ export default class WebviewServiceImpl implements WebviewService {
       if (id === params.requestId) {
         console.log("method", method);
       }
+      // method Network.requestWillBeSent
+      // method Network.requestWillBeSentExtraInfo
+      // method Network.responseReceivedExtraInfo
+      // method Network.responseReceived
+      // method Network.dataReceived
+      // method Network.dataReceived
+      // method Network.loadingFinished
+
       // this.view.webContents.debugger
       //   .sendCommand("Network.getResponseBody", {
       //     requestId: params.requestId,
