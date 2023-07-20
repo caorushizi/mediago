@@ -60,9 +60,10 @@ export interface StoreService extends Store<AppStore> {
 
 export interface DownloadItem {
   id?: number;
+  type: DownloadType;
   name: string;
   url: string;
-  headers: string;
+  headers?: string;
 }
 
 export enum DownloadFilter {
@@ -144,7 +145,7 @@ export interface DownloadService extends EventEmitter {
 
 export type Task = {
   id: number;
-  params: Omit<DownloadParams, "id" | "abortSignal">;
+  params: Omit<DownloadParams, "id" | "abortSignal" | "callback">;
   process: (params: DownloadParams) => Promise<void>;
 };
 
@@ -157,12 +158,17 @@ export interface DownloadProgress {
   isLive: boolean;
 }
 
+export enum DownloadType {
+  m3u8 = "m3u8",
+  bilibili = "bilibili",
+}
 export interface DownloadParams {
   id: number;
+  type: DownloadType;
   url: string;
   local: string;
   name: string;
-  headers: string;
+  headers?: string;
   abortSignal: AbortController;
   proxy?: string;
   deleteSegments?: boolean;

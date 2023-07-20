@@ -11,7 +11,6 @@ import {
   StoreService,
   VideoRepository,
 } from "../interfaces";
-import { event } from "helper/utils";
 import _ from "lodash";
 import Window from "./window";
 

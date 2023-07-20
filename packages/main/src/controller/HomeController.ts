@@ -10,7 +10,7 @@ import {
 } from "electron";
 import { Favorite } from "entity/Favorite";
 import { convertToAudio } from "helper";
-import { db, workspace } from "helper/variables";
+import { db, workspace } from "helper";
 import { inject, injectable } from "inversify";
 import { AppStore, EnvPath } from "main";
 import path from "path";

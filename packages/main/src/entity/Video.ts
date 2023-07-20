@@ -1,4 +1,4 @@
-import { DownloadStatus } from "interfaces";
+import { DownloadStatus, DownloadType } from "interfaces";
 import {
   Column,
   CreateDateColumn,
@@ -19,6 +19,13 @@ export class Video {
     nullable: true,
   })
   name: string;
+
+  @Column({
+    type: "text",
+    nullable: false,
+    default: DownloadType.m3u8,
+  })
+  type: DownloadType;
 
   @Column({
     type: "text",
