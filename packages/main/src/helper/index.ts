@@ -23,9 +23,9 @@ export function getLocalIP() {
   return localIP;
 }
 
-export { sleep } from "./utils";
+export { sleep, stripColors, formatHeaders } from "./utils";
 export * from "./variables";
 export { on, handle } from "./decorator";
-export { spawnDownload } from "./download";
+export { downloader } from "./downloader";
 export { convertToAudio } from "./ffmpeg";
 export { default as http } from "./http";
