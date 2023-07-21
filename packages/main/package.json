@@ -52,6 +52,7 @@
     "@types/koa-static": "^4.0.2",
     "axios": "^1.4.0",
     "better-sqlite3": "^8.4.0",
+    "cheerio": "1.0.0-rc.12",
     "cross-fetch": "^3.1.6",
     "dayjs": "^1.11.8",
     "electron-devtools-installer": "^3.2.0",

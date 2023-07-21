@@ -11,21 +11,37 @@ import {
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import isDev from "electron-is-dev";
-import { PERSIST_WEBVIEW, mobileUA, pcUA } from "helper";
+import { PERSIST_WEBVIEW, mobileUA, pcUA, sleep } from "helper";
 import { ElectronBlocker } from "@cliqz/adblocker-electron";
 import fetch from "cross-fetch";
 import path from "path";
 import { WebSource } from "main";
+import { load } from "cheerio";
+
+interface SourceParams {
+  url: string;
+  requestId: string;
+  headers: Record<string, any>;
+  filter: SourceFilter;
+}
 
 interface SourceFilter {
-  reg: RegExp[];
-  handler: (params: any, title: string) => WebSource;
+  matches: RegExp[];
+  type: DownloadType;
+  handler: (
+    this: WebviewServiceImpl,
+    params: SourceParams
+  ) => Promise<WebSource>;
 }
 const filterList: SourceFilter[] = [
   {
-    reg: [/\.m3u8/],
-    handler: (params, title) => {
-      const { url, headers } = params.response;
+    matches: [/\.m3u8/],
+    type: DownloadType.m3u8,
+    async handler(params) {
+      const { url, headers } = params;
+      const webContents = this.view.webContents;
+      const title = webContents.getTitle();
+
       return {
         url,
         type: DownloadType.m3u8,
@@ -36,9 +52,19 @@ const filterList: SourceFilter[] = [
   },
   {
     // TODO: 合集、列表、收藏夹
-    reg: [/^https?:\/\/(www\.)?bilibili.com\/video/],
-    handler: (params, title) => {
-      const { url } = params.response;
+    matches: [/^https?:\/\/(www\.)?bilibili.com\/video/],
+    type: DownloadType.bilibili,
+    async handler(params) {
+      const { url, requestId } = params;
+      const response = await this.debugger.sendCommand(
+        "Network.getResponseBody",
+        {
+          requestId,
+        }
+      );
+      const $ = load(response.body);
+      const title = $("title").text();
+
       return {
         url,
         type: DownloadType.bilibili,
@@ -53,7 +79,8 @@ const filterList: SourceFilter[] = [
 export default class WebviewServiceImpl implements WebviewService {
   public view: BrowserView;
   private blocker?: ElectronBlocker;
-  private sources = new Set();
+  private pageSources = new Set();
+  requestMap: Record<string, SourceParams> = {};
 
   constructor(
     @inject(TYPES.MainWindowService)
@@ -86,7 +113,7 @@ export default class WebviewServiceImpl implements WebviewService {
     this.setUserAgent(isMobile);
 
     this.view.webContents.on("dom-ready", () => {
-      this.sources.clear();
+      this.pageSources.clear();
       const title = this.view.webContents.getTitle();
       const url = this.view.webContents.getURL();
       this.curWindow?.webContents.send("webview-dom-ready", { title, url });
@@ -114,55 +141,58 @@ export default class WebviewServiceImpl implements WebviewService {
       this.logger.error("Debugger detached due to : ", reason);
     });
 
-    this.debugger.on("message", (event, method, params) => {
-      if (method === "Network.responseReceived") {
-        this.responseReceived(params);
+    this.debugger.on("message", async (event, method, params) => {
+      if (method === "Network.requestWillBeSent") {
+        const { requestId } = params;
+        const { url, headers } = params.request;
+
+        for (const filter of filterList) {
+          for (const match of filter.matches) {
+            if (!match.test(url)) {
+              continue;
+            }
+
+            if (this.pageSources.has(url)) {
+              continue;
+            }
+
+            this.logger.info(`在窗口中捕获视频链接: ${url} id: ${requestId}`);
+            this.pageSources.add(url);
+            this.requestMap[requestId] = {
+              url,
+              headers,
+              requestId,
+              filter,
+            };
+            break;
+          }
+        }
+      }
+      if (method === "Network.loadingFinished") {
+        const { requestId } = params;
+        const sourceParams = this.requestMap[requestId];
+
+        if (sourceParams) {
+          const { filter } = sourceParams;
+          // 这里需要判断是否使用浏览器插件
+          const useExtension = this.storeService.get("useExtension");
+          if (useExtension) {
+            const webContents = this.view.webContents;
+            const item = await filter.handler.call(this, sourceParams);
+            webContents.send("webview-link-message", item);
+          } else {
+            const item = await filter.handler.call(this, sourceParams);
+            const res = await this.videoRepository.addVideo(item);
+            const mainWebContents = this.mainWindow.window?.webContents;
+            if (!mainWebContents) return;
+            // 这里向页面发送消息，通知页面更新
+            mainWebContents.send("download-item-notifier", res);
+          }
+        }
       }
     });
 
     this.debugger.sendCommand("Network.enable");
-  }
-
-  responseReceived(params: any) {
-    const { url } = params.response;
-
-    filterList.some((filter) => {
-      const { reg, handler } = filter;
-
-      for (const r of reg) {
-        if (!r.test(url)) {
-          continue;
-        }
-
-        const requestId = params.requestId;
-        this.logger.info(`在窗口中捕获视频链接: ${url} id: ${requestId}`);
-        const webContents = this.view.webContents;
-
-        if (!this.sources.has(url)) {
-          this.sources.add(url);
-          // 这里需要判断是否使用浏览器插件
-          const useExtension = this.storeService.get("useExtension");
-          if (useExtension) {
-            setTimeout(() => {
-              const title = webContents.getTitle();
-              const item = handler(params, title);
-              webContents.send("webview-link-message", item);
-            });
-          } else {
-            const title = webContents.getTitle();
-            const item = handler(params, title);
-            this.videoRepository.addVideo(item).then((i) => {
-              const mainWebContents = this.mainWindow.window?.webContents;
-              if (!mainWebContents) return;
-              // 这里向页面发送消息，通知页面更新
-              mainWebContents.send("download-item-notifier", i);
-            });
-          }
-        }
-
-        return true;
-      }
-    });
   }
 
   getBounds(): Electron.Rectangle {
