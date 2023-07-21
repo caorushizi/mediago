@@ -279,7 +279,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
             e.target.select();
           }}
           onKeyDown={onInputKeyDown}
-          placeholder="请输入网址链接……"
+          placeholder="请输入网址"
         />
         <Button
           title="访问"
