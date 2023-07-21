@@ -11,7 +11,7 @@ import {
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import isDev from "electron-is-dev";
-import { PERSIST_WEBVIEW, mobileUA, pcUA, sleep } from "helper";
+import { PERSIST_WEBVIEW, mobileUA, pcUA } from "helper";
 import { ElectronBlocker } from "@cliqz/adblocker-electron";
 import fetch from "cross-fetch";
 import path from "path";
