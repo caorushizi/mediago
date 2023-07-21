@@ -231,16 +231,16 @@ const HomePage: FC = () => {
         />
         <ProFormText
           name="url"
-          label="网址"
-          placeholder="请输入网址"
+          label="视频链接"
+          placeholder="请输入视频链接"
           rules={[
             {
               required: true,
-              message: "请输入站点网址",
+              message: "请输入站点视频链接",
             },
             {
               pattern: /^https?:\/\/.+/,
-              message: "请输入正确的网址",
+              message: "请输入正确的视频链接",
             },
           ]}
         />
@@ -484,16 +484,16 @@ const HomePage: FC = () => {
             />
             <ProFormText
               name="url"
-              label="网址"
-              placeholder="请输入网址"
+              label="视频链接"
+              placeholder="请输入视频链接"
               rules={[
                 {
                   required: true,
-                  message: "请输入站点网址",
+                  message: "请输入站点视频链接",
                 },
                 {
                   pattern: /^https?:\/\/.+/,
-                  message: "请输入正确的网址",
+                  message: "请输入正确的视频链接",
                 },
               ]}
             />
