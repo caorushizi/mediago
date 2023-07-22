@@ -40,6 +40,7 @@ export default class VideoRepositoryImpl implements VideoRepository {
     }
     item.name = video.name;
     item.url = video.url;
+    video.headers && (item.headers = video.headers);
     return await this.dataService.manager.save(item);
   }
 

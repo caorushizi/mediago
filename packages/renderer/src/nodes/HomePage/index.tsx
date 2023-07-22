@@ -18,7 +18,16 @@ import PageContainer from "../../components/PageContainer";
 import { useAsyncEffect, usePagination } from "ahooks";
 import useElectron from "../../hooks/electron";
 import { DownloadStatus } from "../../types";
-import { ModalForm, ProFormText, ProList } from "@ant-design/pro-components";
+import {
+  ModalForm,
+  ProForm,
+  ProFormRadio,
+  ProFormSelect,
+  ProFormSwitch,
+  ProFormText,
+  ProFormTextArea,
+  ProList,
+} from "@ant-design/pro-components";
 import {
   DownloadOutlined,
   EditOutlined,
@@ -32,6 +41,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { selectAppStore } from "../../store";
 import { tdApp } from "../../utils";
+import DownloadFrom from "../../components/DownloadForm";
 
 const { Text } = Typography;
 
@@ -78,7 +88,7 @@ const HomePage: FC = () => {
     {}
   );
   const [messageApi, contextHolder] = message.useMessage();
-  const [addVideoForm] = Form.useForm<DownloadItem>();
+
   const [editVideoForm] = Form.useForm<DownloadItem>();
   const [baseUrl, setBaseUrl] = useState("");
 
@@ -190,26 +200,18 @@ const HomePage: FC = () => {
 
   const renderEditForm = (item: DownloadItem) => {
     return (
-      <ModalForm<DownloadItem>
-        key="edit"
-        title="编辑下载"
-        width={500}
-        onOpenChange={() => {
-          editVideoForm.setFieldsValue(item);
-        }}
+      <DownloadFrom
+        key={"edit"}
+        isEdit
+        item={item}
         trigger={<Button type="text" icon={<EditOutlined />} />}
-        form={editVideoForm}
-        autoFocusFirstInput
-        modalProps={{
-          destroyOnClose: true,
-        }}
-        submitTimeout={2000}
         onFinish={async (values) => {
           try {
             await editDownloadItem({
               id: item.id,
               name: values.name,
               url: values.url,
+              headers: values.headers,
             });
             refresh();
             return true;
@@ -217,34 +219,7 @@ const HomePage: FC = () => {
             messageApi.error(err.message);
           }
         }}
-      >
-        <ProFormText
-          name="name"
-          label="标题"
-          placeholder="请输入标题"
-          rules={[
-            {
-              required: true,
-              message: "请输入站点名称",
-            },
-          ]}
-        />
-        <ProFormText
-          name="url"
-          label="视频链接"
-          placeholder="请输入视频链接"
-          rules={[
-            {
-              required: true,
-              message: "请输入站点视频链接",
-            },
-            {
-              pattern: /^https?:\/\/.+/,
-              message: "请输入正确的视频链接",
-            },
-          ]}
-        />
-      </ModalForm>
+      />
     );
   };
 
@@ -452,52 +427,18 @@ const HomePage: FC = () => {
             </Popover>
           )}
           <Button onClick={() => refresh()}>刷新</Button>
-          <ModalForm<DownloadItem>
-            title="新建下载"
-            width={500}
+          <DownloadFrom
             trigger={<Button>新建下载</Button>}
-            form={addVideoForm}
-            autoFocusFirstInput
-            modalProps={{
-              destroyOnClose: true,
-            }}
-            submitTimeout={2000}
             onFinish={async (values) => {
               await addDownloadItem({
                 name: values.name,
                 url: values.url,
+                headers: values.headers,
               });
               refresh();
               return true;
             }}
-          >
-            <ProFormText
-              name="name"
-              label="标题"
-              placeholder="请输入标题"
-              rules={[
-                {
-                  required: true,
-                  message: "请输入站点名称",
-                },
-              ]}
-            />
-            <ProFormText
-              name="url"
-              label="视频链接"
-              placeholder="请输入视频链接"
-              rules={[
-                {
-                  required: true,
-                  message: "请输入站点视频链接",
-                },
-                {
-                  pattern: /^https?:\/\/.+/,
-                  message: "请输入正确的视频链接",
-                },
-              ]}
-            />
-          </ModalForm>
+          />
           <Button onClick={() => openDir(appStore.local)}>打开文件夹</Button>
         </Space>
       }
