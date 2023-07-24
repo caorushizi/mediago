@@ -18,16 +18,7 @@ import PageContainer from "../../components/PageContainer";
 import { useAsyncEffect, usePagination } from "ahooks";
 import useElectron from "../../hooks/electron";
 import { DownloadStatus } from "../../types";
-import {
-  ModalForm,
-  ProForm,
-  ProFormRadio,
-  ProFormSelect,
-  ProFormSwitch,
-  ProFormText,
-  ProFormTextArea,
-  ProList,
-} from "@ant-design/pro-components";
+import { ProList } from "@ant-design/pro-components";
 import {
   DownloadOutlined,
   EditOutlined,
@@ -42,6 +33,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectAppStore } from "../../store";
 import { tdApp } from "../../utils";
 import DownloadFrom from "../../components/DownloadForm";
+import dayjs from "dayjs";
 
 const { Text } = Typography;
 
@@ -63,6 +55,7 @@ const HomePage: FC = () => {
     convertToAudio,
     showBrowserWindow,
     addDownloadItem,
+    addDownloadItems,
     editDownloadItem,
     openPlayerWindow,
     getLocalIP,
@@ -429,12 +422,30 @@ const HomePage: FC = () => {
           <Button onClick={() => refresh()}>刷新</Button>
           <DownloadFrom
             trigger={<Button>新建下载</Button>}
-            onFinish={async (values) => {
-              await addDownloadItem({
-                name: values.name,
-                url: values.url,
-                headers: values.headers,
-              });
+            onFinish={async (values: any) => {
+              if (values.batch) {
+                const { batchList = "" } = values;
+                const items = batchList.split("\n").map((item: any) => {
+                  let [url, name] = item.split(" ");
+                  url = url ? url.trim() : "";
+                  name = name
+                    ? name.trim()
+                    : dayjs().format("YYYY-MM-DDTHH:mm:ssZ");
+                  return {
+                    url,
+                    name,
+                    headers: values.headers,
+                  };
+                });
+                await addDownloadItems(items);
+              } else {
+                await addDownloadItem({
+                  name: values.name || dayjs().format("YYYY-MM-DDTHH:mm:ssZ"),
+                  url: values.url,
+                  headers: values.headers,
+                });
+              }
+
               refresh();
               return true;
             }}

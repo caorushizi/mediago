@@ -97,7 +97,7 @@ const DownloadFrom: FC<DownloadFormProps> = ({
           if (!isEdit && form.getFieldValue("batch")) {
             return (
               <ProFormTextArea
-                name="url"
+                name="batchList"
                 fieldProps={{
                   rows: 6,
                 }}
@@ -111,10 +111,6 @@ http://example.com/xxx.m3u8`}
                     required: true,
                     message: "请输入站点视频链接",
                   },
-                  {
-                    pattern: /^https?:\/\/.+/,
-                    message: "请输入正确的视频链接",
-                  },
                 ]}
               />
             );
@@ -127,13 +123,20 @@ http://example.com/xxx.m3u8`}
                 rules={[
                   {
                     required: true,
-                    message: "请输入在线网络视频URL，或者将M3U8拖拽至此",
+                    message: "请输入在线网络视频URL",
                   },
                   {
-                    pattern: /^https?:\/\/.+/,
+                    pattern: /^(file|https?):\/\/.+/,
                     message: "请输入正确的视频链接",
                   },
                 ]}
+                fieldProps={{
+                  onDrop: (e) => {
+                    const file: any = e.dataTransfer.files[0];
+                    form.setFieldValue("url", `file://${file.path}`);
+                    form.validateFields(["url"]);
+                  },
+                }}
               />
             );
           }

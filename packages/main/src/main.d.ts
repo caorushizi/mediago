@@ -29,12 +29,13 @@ declare interface ElectronAPI {
   webviewLoadURL: (url?: string) => Promise<void>;
   webviewGoBack: () => Promise<boolean>;
   webviewReload: () => Promise<void>;
-  webwiewGoHome: () => Promise<void>;
+  webviewGoHome: () => Promise<void>;
   getAppStore: () => Promise<AppStore>;
   onSelectDownloadDir: () => Promise<string>;
   setAppStore: (key: keyof AppStore, val: any) => Promise<void>;
   openDir: (dir: string) => Promise<void>;
   addDownloadItem: (video: DownloadItem) => Promise<Video>;
+  addDownloadItems: (videos: DownloadItem[]) => Promise<Video[]>;
   getDownloadItems: (
     pagiantion: DownloadItemPagination
   ) => Promise<VideoResponse>;

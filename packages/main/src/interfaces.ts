@@ -84,6 +84,7 @@ export interface VideoResponse {
 
 export interface VideoRepository {
   addVideo: (video: DownloadItem) => Promise<Video>;
+  addVideos: (videos: DownloadItem[]) => Promise<Video[]>;
   editVideo: (video: DownloadItem) => Promise<Video>;
   findVideos: (pagiantion: DownloadItemPagination) => Promise<VideoResponse>;
   findVideo: (id: number) => Promise<Video | null>;
