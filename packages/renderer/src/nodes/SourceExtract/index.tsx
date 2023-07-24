@@ -54,7 +54,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     rendererEvent,
     removeEventListener,
     webviewGoBack,
-    webwiewGoHome,
+    webviewGoHome,
     onFavoriteItemContextMenu,
     combineToHomePage,
     getSharedState,
@@ -145,7 +145,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   };
 
   const onClickGoHome = async () => {
-    await webwiewGoHome();
+    await webviewGoHome();
     dispatch(
       setBrowserStore({
         url: "",
