@@ -1,5 +1,6 @@
 import { Video, Rectangle } from "electron";
 import { type Favorite } from "entity/Favorite";
+import { type DownloadType } from "interfaces";
 import {
   DownloadItem,
   DownloadItemPagination,
@@ -28,12 +29,13 @@ declare interface ElectronAPI {
   webviewLoadURL: (url?: string) => Promise<void>;
   webviewGoBack: () => Promise<boolean>;
   webviewReload: () => Promise<void>;
-  webwiewGoHome: () => Promise<void>;
+  webviewGoHome: () => Promise<void>;
   getAppStore: () => Promise<AppStore>;
   onSelectDownloadDir: () => Promise<string>;
   setAppStore: (key: keyof AppStore, val: any) => Promise<void>;
   openDir: (dir: string) => Promise<void>;
   addDownloadItem: (video: DownloadItem) => Promise<Video>;
+  addDownloadItems: (videos: DownloadItem[]) => Promise<Video[]>;
   getDownloadItems: (
     pagiantion: DownloadItemPagination
   ) => Promise<VideoResponse>;
@@ -62,8 +64,9 @@ declare interface ElectronAPI {
 
 declare interface WebSource {
   url: string;
+  type: DownloadType;
   name: string;
-  headers: string;
+  headers?: string;
 }
 
 declare interface AppStore {

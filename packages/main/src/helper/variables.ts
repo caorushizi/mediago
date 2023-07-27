@@ -23,6 +23,10 @@ export const ffmpegPath =
 export const mobilePath = isDev
   ? path.resolve(app.getAppPath(), "../../mobile")
   : path.resolve(app.getAppPath(), "../mobile");
+export const biliDownloader =
+  process.platform === "win32"
+    ? path.resolve(__bin__, "BBDown.exe")
+    : path.resolve(__bin__, "BBDown");
 
 // user agent
 export const pcUA =

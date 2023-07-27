@@ -1,6 +1,6 @@
 import { IpcMainEvent } from "electron/main";
 import { inject, injectable } from "inversify";
-import { handle } from "../helper/decorator";
+import { handle } from "../helper";
 import {
   StoreService,
   type Controller,
@@ -12,7 +12,7 @@ import {
   DownloadStatus,
 } from "../interfaces";
 import { TYPES } from "../types";
-import { spawnDownload } from "helper";
+import { downloader } from "helper";
 import MainWindowServiceImpl from "windows/Main";
 
 @injectable()
@@ -34,6 +34,14 @@ export default class DownloadController implements Controller {
     // 这里向页面发送消息，通知页面更新
     this.mainWindow.window?.webContents.send("download-item-notifier", item);
     return item;
+  }
+
+  @handle("add-download-items")
+  async addDownloadItems(e: IpcMainEvent, videos: DownloadItem[]) {
+    const items = await this.videoRepository.addVideos(videos);
+    // 这里向页面发送消息，通知页面更新
+    this.mainWindow.window?.webContents.send("download-item-notifier", items);
+    return items;
   }
 
   @handle("edit-download-item")
@@ -63,7 +71,7 @@ export default class DownloadController implements Controller {
     if (!video) {
       return Promise.reject("没有找到该视频");
     }
-    const { name, url, headers } = video;
+    const { name, url, headers, type } = video;
     const local = this.storeService.get("local");
 
     // 从配置中添加参数
@@ -73,12 +81,13 @@ export default class DownloadController implements Controller {
       id: vid,
       params: {
         url,
+        type,
         local,
         name,
         headers,
         deleteSegments,
       },
-      process: spawnDownload,
+      process: downloader,
     };
     await this.videoRepository.changeVideoStatus(vid, DownloadStatus.Watting);
     this.downloadService.addTask(task);
