@@ -1,9 +1,9 @@
-import { db } from "../helper/variables";
+import { db } from "helper";
 import { inject, injectable } from "inversify";
 import { DataSource, EntityManager } from "typeorm";
 import { TYPES } from "../types";
-import { DatabaseService, LoggerService } from "../interfaces";
-import { Video } from "../entity/Video";
+import { DatabaseService, LoggerService } from "interfaces";
+import { Video } from "entity/Video";
 import { Favorite } from "entity/Favorite";
 
 @injectable()

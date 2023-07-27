@@ -4,7 +4,7 @@ import { pathExists, readFile } from "fs-extra";
 import { injectable } from "inversify";
 import { extname, join } from "path";
 import { URL } from "url";
-import { defaultScheme } from "../helper/variables";
+import { defaultScheme } from "../helper";
 import { ProtocolService } from "../interfaces";
 
 @injectable()

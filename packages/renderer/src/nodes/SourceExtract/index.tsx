@@ -54,7 +54,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     rendererEvent,
     removeEventListener,
     webviewGoBack,
-    webwiewGoHome,
+    webviewGoHome,
     onFavoriteItemContextMenu,
     combineToHomePage,
     getSharedState,
@@ -145,7 +145,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   };
 
   const onClickGoHome = async () => {
-    await webwiewGoHome();
+    await webviewGoHome();
     dispatch(
       setBrowserStore({
         url: "",
@@ -279,7 +279,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
             e.target.select();
           }}
           onKeyDown={onInputKeyDown}
-          placeholder="请输入网址链接……"
+          placeholder="请输入网址"
         />
         <Button
           title="访问"

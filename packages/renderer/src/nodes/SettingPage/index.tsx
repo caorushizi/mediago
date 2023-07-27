@@ -155,7 +155,7 @@ const SettingPage: React.FC = () => {
             )}
             name="maxRunner"
             min={1}
-            max={10}
+            max={50}
             fieldProps={{ precision: 0 }}
           />
           <ProFormText label="更多操作">

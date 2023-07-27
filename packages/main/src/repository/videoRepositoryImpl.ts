@@ -25,8 +25,21 @@ export default class VideoRepositoryImpl implements VideoRepository {
     const item = new Video();
     item.name = video.name;
     item.url = video.url;
-    item.headers = video.headers;
+    item.type = video.type;
+    video.headers && (item.headers = video.headers);
     return await this.dataService.manager.save(item);
+  }
+
+  async addVideos(videos: DownloadItem[]) {
+    const items = videos.map((video) => {
+      const item = new Video();
+      item.name = video.name;
+      item.url = video.url;
+      item.type = video.type;
+      video.headers && (item.headers = video.headers);
+      return item;
+    });
+    return await this.dataService.manager.save(items);
   }
 
   // 编辑视频
@@ -39,6 +52,7 @@ export default class VideoRepositoryImpl implements VideoRepository {
     }
     item.name = video.name;
     item.url = video.url;
+    video.headers && (item.headers = video.headers);
     return await this.dataService.manager.save(item);
   }
 

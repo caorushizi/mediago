@@ -68,6 +68,7 @@ ipcRenderer.on(
         ipcRenderer.invoke("add-download-item", {
           name: data.name,
           url: data.url,
+          type: data.type,
         });
       });
       elItem.addEventListener("mouseenter", () => {

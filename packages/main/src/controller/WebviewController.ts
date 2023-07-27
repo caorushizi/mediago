@@ -1,6 +1,6 @@
 import { IpcMainEvent } from "electron";
 import { inject, injectable } from "inversify";
-import { handle } from "../helper/decorator";
+import { handle } from "../helper";
 import { type Controller, WebviewService, StoreService } from "../interfaces";
 import { TYPES } from "../types";
 

@@ -1,7 +1,7 @@
 import Store from "electron-store";
 import { injectable } from "inversify";
 import { AppStore } from "main";
-import { download, workspace } from "../helper/variables";
+import { download, workspace } from "../helper";
 import { StoreService } from "../interfaces";
 import { AppTheme } from "types";
 

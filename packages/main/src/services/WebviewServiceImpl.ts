@@ -1,11 +1,7 @@
-import {
-  BrowserView,
-  CallbackResponse,
-  OnBeforeSendHeadersListenerDetails,
-  session,
-} from "electron";
+import { BrowserView, session } from "electron";
 import {
   BrowserWindowService,
+  DownloadType,
   LoggerService,
   MainWindowService,
   StoreService,
@@ -15,18 +11,76 @@ import {
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import isDev from "electron-is-dev";
-import { PERSIST_WEBVIEW, mobileUA, pcUA } from "helper/variables";
+import { PERSIST_WEBVIEW, mobileUA, pcUA } from "helper";
 import { ElectronBlocker } from "@cliqz/adblocker-electron";
 import fetch from "cross-fetch";
 import path from "path";
 import { WebSource } from "main";
+import { load } from "cheerio";
+
+interface SourceParams {
+  url: string;
+  requestId: string;
+  headers: Record<string, any>;
+  filter: SourceFilter;
+}
+
+interface SourceFilter {
+  matches: RegExp[];
+  type: DownloadType;
+  handler: (
+    this: WebviewServiceImpl,
+    params: SourceParams
+  ) => Promise<WebSource>;
+}
+const filterList: SourceFilter[] = [
+  {
+    matches: [/\.m3u8/],
+    type: DownloadType.m3u8,
+    async handler(params) {
+      const { url, headers } = params;
+      const webContents = this.view.webContents;
+      const title = webContents.getTitle();
+
+      return {
+        url,
+        type: DownloadType.m3u8,
+        name: title || "没有获取到名称",
+        headers: JSON.stringify(headers),
+      };
+    },
+  },
+  {
+    // TODO: 合集、列表、收藏夹
+    matches: [/^https?:\/\/(www\.)?bilibili.com\/video/],
+    type: DownloadType.bilibili,
+    async handler(params) {
+      const { url, requestId } = params;
+      const response = await this.debugger.sendCommand(
+        "Network.getResponseBody",
+        {
+          requestId,
+        }
+      );
+      const $ = load(response.body);
+      const title = $("title").text();
+
+      return {
+        url,
+        type: DownloadType.bilibili,
+        name: title || "没有获取到名称",
+      };
+    },
+  },
+];
 
 // FIXME: 需要重构
 @injectable()
 export default class WebviewServiceImpl implements WebviewService {
   public view: BrowserView;
   private blocker?: ElectronBlocker;
-  private sources = new Set();
+  private pageSources = new Set();
+  requestMap: Record<string, SourceParams> = {};
 
   constructor(
     @inject(TYPES.MainWindowService)
@@ -59,7 +113,7 @@ export default class WebviewServiceImpl implements WebviewService {
     this.setUserAgent(isMobile);
 
     this.view.webContents.on("dom-ready", () => {
-      this.sources.clear();
+      this.pageSources.clear();
       const title = this.view.webContents.getTitle();
       const url = this.view.webContents.getURL();
       this.curWindow?.webContents.send("webview-dom-ready", { title, url });
@@ -77,47 +131,68 @@ export default class WebviewServiceImpl implements WebviewService {
       return { action: "deny" };
     });
 
-    const urls = ["<all_urls>"];
-    this.session.webRequest.onBeforeSendHeaders({ urls }, this.before);
+    try {
+      this.debugger.attach("1.1");
+    } catch (err) {
+      this.logger.error("Debugger attach failed : ", err);
+    }
 
-    // try {
-    //   this.view.webContents.debugger.attach("1.1");
-    // } catch (err) {
-    //   console.log("Debugger attach failed : ", err);
-    // }
+    this.debugger.on("detach", (event, reason) => {
+      this.logger.error("Debugger detached due to : ", reason);
+    });
 
-    // this.view.webContents.debugger.on("detach", (event, reason) => {
-    //   console.log("Debugger detached due to : ", reason);
-    // });
+    this.debugger.on("message", async (event, method, params) => {
+      if (method === "Network.requestWillBeSent") {
+        const { requestId } = params;
+        const { url, headers } = params.request;
 
-    // let id = 0;
-    // this.view.webContents.debugger.on("message", (event, method, params) => {
-    //   if (!id) {
-    //     id = params.requestId;
-    //   }
+        for (const filter of filterList) {
+          for (const match of filter.matches) {
+            if (!match.test(url)) {
+              continue;
+            }
 
-    //   if (id === params.requestId) {
-    //     console.log("method", method);
-    //   }
-    //   // method Network.requestWillBeSent
-    //   // method Network.requestWillBeSentExtraInfo
-    //   // method Network.responseReceivedExtraInfo
-    //   // method Network.responseReceived
-    //   // method Network.dataReceived
-    //   // method Network.dataReceived
-    //   // method Network.loadingFinished
+            if (this.pageSources.has(url)) {
+              continue;
+            }
 
-    //   // this.view.webContents.debugger
-    //   //   .sendCommand("Network.getResponseBody", {
-    //   //     requestId: params.requestId,
-    //   //   })
-    //   //   .then((response) => {
-    //   //     console.log(response.body);
-    //   //     console.log("params.response.url", params.response.url);
-    //   //   });
-    // });
+            this.logger.info(`在窗口中捕获视频链接: ${url} id: ${requestId}`);
+            this.pageSources.add(url);
+            this.requestMap[requestId] = {
+              url,
+              headers,
+              requestId,
+              filter,
+            };
+            break;
+          }
+        }
+      }
+      if (method === "Network.loadingFinished") {
+        const { requestId } = params;
+        const sourceParams = this.requestMap[requestId];
 
-    // this.view.webContents.debugger.sendCommand("Network.enable");
+        if (sourceParams) {
+          const { filter } = sourceParams;
+          // 这里需要判断是否使用浏览器插件
+          const useExtension = this.storeService.get("useExtension");
+          if (useExtension) {
+            const webContents = this.view.webContents;
+            const item = await filter.handler.call(this, sourceParams);
+            webContents.send("webview-link-message", item);
+          } else {
+            const item = await filter.handler.call(this, sourceParams);
+            const res = await this.videoRepository.addVideo(item);
+            const mainWebContents = this.mainWindow.window?.webContents;
+            if (!mainWebContents) return;
+            // 这里向页面发送消息，通知页面更新
+            mainWebContents.send("download-item-notifier", res);
+          }
+        }
+      }
+    });
+
+    this.debugger.sendCommand("Network.enable");
   }
 
   getBounds(): Electron.Rectangle {
@@ -254,57 +329,6 @@ export default class WebviewServiceImpl implements WebviewService {
     this.logger.info("关闭 blocker 成功");
   }
 
-  before = (
-    details: OnBeforeSendHeadersListenerDetails,
-    callback: (response: CallbackResponse) => void
-  ): void => {
-    const { url } = details;
-
-    const sourceReg = /\.m3u8$/;
-    const detailsUrl = new URL(url);
-
-    if (sourceReg.test(detailsUrl.pathname)) {
-      try {
-        this.handleM3u8(details);
-      } catch (e) {
-        // empty
-      }
-    }
-
-    callback({});
-  };
-
-  handleM3u8 = async (
-    details: OnBeforeSendHeadersListenerDetails
-  ): Promise<void> => {
-    const { id, url } = details;
-
-    this.logger.info(`在窗口中捕获 m3u8 链接: ${url} id: ${id}`);
-    const webContents = details.webContents;
-
-    const source: WebSource = {
-      url,
-      name: webContents?.getTitle() || "没有获取到名称",
-      headers: JSON.stringify(details.requestHeaders),
-    };
-    // 这里需要判断是否使用浏览器插件
-    const useExtension = this.storeService.get("useExtension");
-
-    if (!this.sources.has(source.url)) {
-      this.sources.add(source.url);
-      if (useExtension) {
-        this.view.webContents.send("webview-link-message", source);
-      } else {
-        const item = await this.videoRepository.addVideo(source);
-        // 这里向页面发送消息，通知页面更新
-        this.mainWindow.window?.webContents.send(
-          "download-item-notifier",
-          item
-        );
-      }
-    }
-  };
-
   setUserAgent(isMobile?: boolean) {
     if (isMobile) {
       this.view.webContents.setUserAgent(mobileUA);
@@ -312,5 +336,9 @@ export default class WebviewServiceImpl implements WebviewService {
       this.view.webContents.setUserAgent(pcUA);
     }
     this.logger.info("设置 user-agent 成功", isMobile);
+  }
+
+  get debugger() {
+    return this.view.webContents.debugger;
   }
 }

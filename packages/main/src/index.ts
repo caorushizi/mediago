@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { app, protocol } from "electron";
-import { defaultScheme } from "./helper/variables";
+import { defaultScheme } from "./helper";
 import { type App } from "./interfaces";
 import { container } from "./inversify.config";
 import { TYPES } from "./types";
