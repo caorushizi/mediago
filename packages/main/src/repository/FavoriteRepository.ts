@@ -1,19 +1,13 @@
 import { inject, injectable } from "inversify";
-import {
-  DatabaseService,
-  FavoriteRepository,
-  LoggerService,
-} from "../interfaces";
 import { TYPES } from "../types";
 import { Favorite } from "entity/Favorite";
+import DatabaseService from "services/DatabaseService";
 
 @injectable()
-export default class FavoriteRepositoryImpl implements FavoriteRepository {
+export default class FavoriteRepository {
   constructor(
     @inject(TYPES.DatabaseService)
-    private readonly dataService: DatabaseService,
-    @inject(TYPES.LoggerService)
-    private readonly logger: LoggerService
+    private readonly dataService: DatabaseService
   ) {}
 
   async findFavorites(): Promise<Favorite[]> {

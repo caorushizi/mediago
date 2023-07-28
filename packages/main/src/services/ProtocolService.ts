@@ -5,10 +5,9 @@ import { injectable } from "inversify";
 import { extname, join } from "path";
 import { URL } from "url";
 import { defaultScheme } from "../helper";
-import { ProtocolService } from "../interfaces";
 
 @injectable()
-export default class ProtocolServiceImpl implements ProtocolService {
+export default class ProtocolService {
   create(): void {
     if (isDev) return;
 

@@ -2,41 +2,24 @@ import DownloadController from "controller/DownloadController";
 import HomeController from "controller/HomeController";
 import WebviewController from "controller/WebviewController";
 import { Container } from "inversify";
-import FavoriteRepositoryImpl from "repository/favoriteRepositoryImpl";
-import VideoRepositoryImpl from "repository/videoRepositoryImpl";
-import DatabaseServiceImpl from "services/DatabaseServiceImpl";
-import DevToolsServiceImpl from "services/DevToolsServiceImpl";
-import DownloadServiceImpl from "services/DownloadServiceImpl";
-import StoreServiceImpl from "services/StoreServiceImpl";
-import WebviewServiceImpl from "services/WebviewServiceImpl";
+import FavoriteRepository from "repository/FavoriteRepository";
+import VideoRepository from "repository/VideoRepository";
+import DatabaseService from "services/DatabaseService";
+import DevToolsService from "services/DevToolsService";
+import DownloadService from "services/DownloadService";
+import StoreService from "services/StoreService";
+import WebviewService from "services/WebviewService";
 import ElectronApp from "./app";
-import {
-  App,
-  StoreService,
-  Controller,
-  IpcHandlerService,
-  LoggerService,
-  MainWindowService,
-  ProtocolService,
-  UpdateService,
-  VideoRepository,
-  DatabaseService,
-  FavoriteRepository,
-  WebviewService,
-  BrowserWindowService,
-  DevToolsService,
-  WebService,
-  PlayerWindowService,
-} from "./interfaces";
-import IpcHandlerServiceImpl from "./services/IpcHandlerServiceImpl";
-import LoggerServiceImpl from "./services/LoggerServiceImpl";
-import ProtocolServiceImpl from "./services/ProtocolServiceImpl";
-import UpdateServiceImpl from "./services/UpdateServiceImpl";
+import { Controller } from "./interfaces";
+import IpcHandlerService from "./services/IpcHandlerService";
+import LoggerService from "./services/LoggerService";
+import ProtocolService from "./services/ProtocolService";
+import UpdateService from "./services/UpdateService";
 import { TYPES } from "./types";
-import WebServiceImpl from "services/WebServiceImpl";
-import MainWindow from "./windows/Main";
-import PlayerWindow from "windows/Player";
-import BrowserWin from "windows/Browser";
+import WebService from "services/WebService";
+import MainWindow from "./windows/MainWindow";
+import PlayerWindow from "windows/PlayerWindow";
+import BrowserWindow from "windows/BrowserWindow";
 
 const container = new Container({
   skipBaseClassChecks: true,
@@ -44,26 +27,24 @@ const container = new Container({
   autoBindInjectable: true,
 });
 
-container.bind<App>(TYPES.App).to(ElectronApp);
+container.bind<ElectronApp>(TYPES.ElectronApp).to(ElectronApp);
 container
   .bind<IpcHandlerService>(TYPES.IpcHandlerService)
-  .to(IpcHandlerServiceImpl);
-container.bind<ProtocolService>(TYPES.ProtocolService).to(ProtocolServiceImpl);
-container.bind<UpdateService>(TYPES.UpdateService).to(UpdateServiceImpl);
-container.bind<LoggerService>(TYPES.LoggerService).to(LoggerServiceImpl);
-container.bind<StoreService>(TYPES.StoreService).to(StoreServiceImpl);
-container.bind<DatabaseService>(TYPES.DatabaseService).to(DatabaseServiceImpl);
-container.bind<WebviewService>(TYPES.WebviewService).to(WebviewServiceImpl);
-container
-  .bind<DownloadServiceImpl>(TYPES.DownloadService)
-  .to(DownloadServiceImpl);
-container.bind<DevToolsService>(TYPES.DevToolsService).to(DevToolsServiceImpl);
-container.bind<WebService>(TYPES.WebService).to(WebServiceImpl);
+  .to(IpcHandlerService);
+container.bind<ProtocolService>(TYPES.ProtocolService).to(ProtocolService);
+container.bind<UpdateService>(TYPES.UpdateService).to(UpdateService);
+container.bind<LoggerService>(TYPES.LoggerService).to(LoggerService);
+container.bind<StoreService>(TYPES.StoreService).to(StoreService);
+container.bind<DatabaseService>(TYPES.DatabaseService).to(DatabaseService);
+container.bind<WebviewService>(TYPES.WebviewService).to(WebviewService);
+container.bind<DownloadService>(TYPES.DownloadService).to(DownloadService);
+container.bind<DevToolsService>(TYPES.DevToolsService).to(DevToolsService);
+container.bind<WebService>(TYPES.WebService).to(WebService);
 
 // windows
-container.bind<MainWindowService>(TYPES.MainWindowService).to(MainWindow);
-container.bind<BrowserWindowService>(TYPES.BrowserWindowService).to(BrowserWin);
-container.bind<PlayerWindowService>(TYPES.PlayerWindowService).to(PlayerWindow);
+container.bind<MainWindow>(TYPES.MainWindow).to(MainWindow);
+container.bind<BrowserWindow>(TYPES.BrowserWindow).to(BrowserWindow);
+container.bind<PlayerWindow>(TYPES.PlayerWindow).to(PlayerWindow);
 
 // === controller
 container.bind<Controller>(TYPES.Controller).to(HomeController);
@@ -71,9 +52,9 @@ container.bind<Controller>(TYPES.Controller).to(WebviewController);
 container.bind<Controller>(TYPES.Controller).to(DownloadController);
 
 // === repository
-container.bind<VideoRepository>(TYPES.VideoRepository).to(VideoRepositoryImpl);
+container.bind<VideoRepository>(TYPES.VideoRepository).to(VideoRepository);
 container
   .bind<FavoriteRepository>(TYPES.FavoriteRepository)
-  .to(FavoriteRepositoryImpl);
+  .to(FavoriteRepository);
 
 export { container };

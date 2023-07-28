@@ -3,22 +3,16 @@ import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import { resolve } from "path";
 import { TYPES } from "../types";
-import {
-  DownloadProgress,
-  DownloadService,
-  LoggerService,
-  MainWindowService,
-  StoreService,
-  VideoRepository,
-} from "../interfaces";
+import { DownloadProgress } from "../interfaces";
 import _ from "lodash";
 import Window from "./window";
+import LoggerService from "services/LoggerService";
+import DownloadService from "services/DownloadService";
+import StoreService from "services/StoreService";
+import VideoRepository from "repository/videoRepository";
 
 @injectable()
-export default class MainWindowServiceImpl
-  extends Window
-  implements MainWindowService
-{
+export default class MainWindow extends Window {
   url = isDev ? "http://localhost:8555/" : "mediago://index.html/";
   constructor(
     @inject(TYPES.LoggerService)

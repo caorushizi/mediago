@@ -1,15 +1,12 @@
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import { resolve } from "path";
-import { PlayerWindowService, VideoRepository } from "../interfaces";
 import { TYPES } from "types";
 import Window from "./window";
+import VideoRepository from "repository/videoRepository";
 
 @injectable()
-export default class PlayerWindowServiceImpl
-  extends Window
-  implements PlayerWindowService
-{
+export default class PlayerWindowServiceImpl extends Window {
   url = isDev ? "http://localhost:8555/player" : "mediago://index.html/player";
 
   constructor(

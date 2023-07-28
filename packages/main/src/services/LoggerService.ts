@@ -3,10 +3,9 @@ import { injectable } from "inversify";
 import dayjs from "dayjs";
 import path from "path";
 import { appName, workspace } from "../helper";
-import { LoggerService } from "../interfaces";
 
 @injectable()
-export default class LoggerServiceImpl implements LoggerService {
+export default class LoggerService {
   logger: ElectronLog;
 
   constructor() {

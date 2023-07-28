@@ -15,18 +15,16 @@ import { inject, injectable } from "inversify";
 import { AppStore, EnvPath } from "main";
 import path from "path";
 import { handle, getLocalIP } from "../helper";
-import {
-  StoreService,
-  type Controller,
-  FavoriteRepository,
-  MainWindowService,
-  VideoRepository,
-  BrowserWindowService,
-  PlayerWindowService,
-  WebviewService,
-} from "../interfaces";
+import { type Controller } from "../interfaces";
 import { TYPES } from "../types";
 import fs from "fs-extra";
+import MainWindow from "windows/MainWindow";
+import BrowserWindow from "windows/BrowserWindow";
+import PlayerWindow from "windows/PlayerWindow";
+import StoreService from "services/StoreService";
+import WebviewService from "services/WebviewService";
+import FavoriteRepository from "repository/favoriteRepository";
+import VideoRepository from "repository/videoRepository";
 
 @injectable()
 export default class HomeController implements Controller {
@@ -37,14 +35,14 @@ export default class HomeController implements Controller {
     private readonly storeService: StoreService,
     @inject(TYPES.FavoriteRepository)
     private readonly favoriteRepository: FavoriteRepository,
-    @inject(TYPES.MainWindowService)
-    private readonly mainWindow: MainWindowService,
+    @inject(TYPES.MainWindow)
+    private readonly mainWindow: MainWindow,
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
-    @inject(TYPES.BrowserWindowService)
-    private readonly browserWindow: BrowserWindowService,
-    @inject(TYPES.PlayerWindowService)
-    private readonly playerWindow: PlayerWindowService,
+    @inject(TYPES.BrowserWindow)
+    private readonly browserWindow: BrowserWindow,
+    @inject(TYPES.PlayerWindow)
+    private readonly playerWindow: PlayerWindow,
     @inject(TYPES.WebviewService)
     private readonly webviewService: WebviewService
   ) {}

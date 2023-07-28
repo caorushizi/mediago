@@ -1,10 +1,11 @@
 import { ipcMain } from "electron";
 import { inject, injectable, multiInject } from "inversify";
-import { Controller, IpcHandlerService, LoggerService } from "../interfaces";
+import { Controller } from "../interfaces";
 import { TYPES } from "../types";
+import LoggerService from "./LoggerService";
 
 @injectable()
-export default class IpcHandlerServiceImpl implements IpcHandlerService {
+export default class IpcHandlerService {
   constructor(
     @multiInject(TYPES.Controller)
     private readonly controllers: Controller[],
