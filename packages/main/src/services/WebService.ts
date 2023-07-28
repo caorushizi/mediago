@@ -1,9 +1,3 @@
-import {
-  LoggerService,
-  StoreService,
-  VideoRepository,
-  WebService,
-} from "../interfaces";
 import { inject, injectable } from "inversify";
 import Koa, { Context } from "koa";
 import Router from "@koa/router";
@@ -14,9 +8,12 @@ import { glob } from "glob";
 import send from "koa-send";
 import cors from "@koa/cors";
 import { getLocalIP, mobilePath } from "helper";
+import StoreService from "./StoreService";
+import LoggerService from "./LoggerService";
+import VideoRepository from "repository/videoRepository";
 
 @injectable()
-export default class WebServiceImpl implements WebService {
+export default class WebService {
   private readonly app: Koa;
   private readonly router: Router;
   private readonly baseUrl: string;

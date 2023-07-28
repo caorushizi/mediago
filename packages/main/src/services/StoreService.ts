@@ -2,14 +2,10 @@ import Store from "electron-store";
 import { injectable } from "inversify";
 import { AppStore } from "main";
 import { download, workspace } from "../helper";
-import { StoreService } from "../interfaces";
 import { AppTheme } from "types";
 
 @injectable()
-export default class StoreServiceImpl
-  extends Store<AppStore>
-  implements StoreService
-{
+export default class StoreService extends Store<AppStore> {
   constructor() {
     super({
       name: "config",

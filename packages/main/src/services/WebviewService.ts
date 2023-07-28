@@ -1,13 +1,5 @@
 import { BrowserView, session } from "electron";
-import {
-  BrowserWindowService,
-  DownloadType,
-  LoggerService,
-  MainWindowService,
-  StoreService,
-  VideoRepository,
-  WebviewService,
-} from "../interfaces";
+import { DownloadType } from "../interfaces";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import isDev from "electron-is-dev";
@@ -17,6 +9,11 @@ import fetch from "cross-fetch";
 import path from "path";
 import { WebSource } from "main";
 import { load } from "cheerio";
+import LoggerService from "./LoggerService";
+import StoreService from "./StoreService";
+import MainWindow from "windows/MainWindow";
+import BrowserWindow from "windows/BrowserWindow";
+import VideoRepository from "repository/videoRepository";
 
 interface SourceParams {
   url: string;
@@ -28,10 +25,7 @@ interface SourceParams {
 interface SourceFilter {
   matches: RegExp[];
   type: DownloadType;
-  handler: (
-    this: WebviewServiceImpl,
-    params: SourceParams
-  ) => Promise<WebSource>;
+  handler: (this: WebviewService, params: SourceParams) => Promise<WebSource>;
 }
 const filterList: SourceFilter[] = [
   {
@@ -76,19 +70,19 @@ const filterList: SourceFilter[] = [
 
 // FIXME: 需要重构
 @injectable()
-export default class WebviewServiceImpl implements WebviewService {
+export default class WebviewService {
   public view: BrowserView;
   private blocker?: ElectronBlocker;
   private pageSources = new Set();
   requestMap: Record<string, SourceParams> = {};
 
   constructor(
-    @inject(TYPES.MainWindowService)
-    private readonly mainWindow: MainWindowService,
+    @inject(TYPES.MainWindow)
+    private readonly mainWindow: MainWindow,
     @inject(TYPES.LoggerService)
     private readonly logger: LoggerService,
-    @inject(TYPES.BrowserWindowService)
-    private readonly browserWindow: BrowserWindowService,
+    @inject(TYPES.BrowserWindow)
+    private readonly browserWindow: BrowserWindow,
     @inject(TYPES.StoreService)
     private readonly storeService: StoreService,
     @inject(TYPES.VideoRepository)
