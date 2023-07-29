@@ -27,7 +27,7 @@ function getAlgorithm(appTheme: "dark" | "light") {
 const Root: FC = () => {
   const dispatch = useDispatch();
   const [appTheme, setAppTheme] = React.useState<"dark" | "light">("light");
-  const { rendererEvent, removeEventListener } = useElectron();
+  const { addIpcListener, removeIpcListener } = useElectron();
 
   const themeChange = (event: MediaQueryListEvent) => {
     if (event.matches) {
@@ -47,12 +47,12 @@ const Root: FC = () => {
   };
 
   useEffect(() => {
-    rendererEvent("store-change", onAppStoreChange);
-    rendererEvent("download-item-notifier", onReceiveDownloadItem);
+    addIpcListener("store-change", onAppStoreChange);
+    addIpcListener("download-item-notifier", onReceiveDownloadItem);
 
     return () => {
-      removeEventListener("store-change", onAppStoreChange);
-      removeEventListener("download-item-notifier", onReceiveDownloadItem);
+      removeIpcListener("store-change", onAppStoreChange);
+      removeIpcListener("download-item-notifier", onReceiveDownloadItem);
     };
   }, []);
 

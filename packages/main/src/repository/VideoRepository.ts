@@ -1,27 +1,23 @@
 import { Video } from "../entity/Video";
 import { inject, injectable } from "inversify";
 import {
-  DatabaseService,
   DownloadFilter,
   DownloadItem,
   DownloadItemPagination,
   DownloadStatus,
-  LoggerService,
-  VideoRepository,
 } from "../interfaces";
 import { TYPES } from "../types";
 import { In, Not } from "typeorm";
+import DatabaseService from "../services/DatabaseService";
 
 @injectable()
-export default class VideoRepositoryImpl implements VideoRepository {
+export default class VideoRepository {
   constructor(
     @inject(TYPES.DatabaseService)
-    private readonly dataService: DatabaseService,
-    @inject(TYPES.LoggerService)
-    private readonly logger: LoggerService
+    private readonly dataService: DatabaseService
   ) {}
 
-  async addVideo(video: DownloadItem) {
+  async addVideo(video: Omit<DownloadItem, "id">) {
     const item = new Video();
     item.name = video.name;
     item.url = video.url;

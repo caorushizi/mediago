@@ -1,28 +1,25 @@
 import { inject, injectable } from "inversify";
-import {
-  DatabaseService,
-  DownloadStatus,
-  IpcHandlerService,
-  MainWindowService,
-  ProtocolService,
-  UpdateService,
-  VideoRepository,
-  WebviewService,
-  type App,
-  WebService,
-  DevToolsService,
-  StoreService,
-} from "./interfaces";
+import { DownloadStatus } from "./interfaces";
 import { TYPES } from "./types";
 import { Menu, Tray, app, nativeImage, nativeTheme } from "electron";
 import TrayIcon from "./tray-icon.png";
 import path from "path";
+import MainWindow from "./windows/MainWindow";
+import ProtocolService from "./services/ProtocolService";
+import UpdateService from "./services/UpdateService";
+import IpcHandlerService from "./services/IpcHandlerService";
+import DatabaseService from "./services/DatabaseService";
+import WebviewService from "./services/WebviewService";
+import DevToolsService from "./services/DevToolsService";
+import WebService from "./services/WebService";
+import StoreService from "./services/StoreService";
+import VideoRepository from "./repository/VideoRepository";
 
 @injectable()
-export default class ElectronApp implements App {
+export default class ElectronApp {
   constructor(
-    @inject(TYPES.MainWindowService)
-    private readonly mainWindow: MainWindowService,
+    @inject(TYPES.MainWindow)
+    private readonly mainWindow: MainWindow,
     @inject(TYPES.ProtocolService)
     private readonly protocolService: ProtocolService,
     @inject(TYPES.UpdateService)

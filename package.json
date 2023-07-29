@@ -4,7 +4,7 @@
   "description": "electron-template",
   "main": "index.js",
   "scripts": {
-    "dev": "pnpm run build:mobile && pnpm --parallel -F \"./packages/*\" run dev",
+    "dev": "pnpm run build:mobile && pnpm run types && pnpm --parallel -F \"./packages/*\" run dev",
     "build": "pnpm run build:mobile && pnpm run build:main && pnpm run build:renderer",
     "build:mobile": "pnpm -F mobile run build",
     "build:main": "pnpm -F main run build",
@@ -13,7 +13,8 @@
     "release": "pnpm run build && pnpm -F main run release",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "docs:preview": "vitepress preview docs",
+    "types": "pnpm -F main run types"
   },
   "keywords": [],
   "author": "",

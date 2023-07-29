@@ -1,4 +1,4 @@
-import { WebSource } from "main";
+import { WebSource } from "./main";
 import { IpcRendererEvent, ipcRenderer } from "electron/renderer";
 
 // 创建浮窗容器元素

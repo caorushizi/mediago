@@ -1,13 +1,13 @@
-import { db } from "helper";
+import { db } from "../helper";
 import { inject, injectable } from "inversify";
 import { DataSource, EntityManager } from "typeorm";
 import { TYPES } from "../types";
-import { DatabaseService, LoggerService } from "interfaces";
-import { Video } from "entity/Video";
-import { Favorite } from "entity/Favorite";
+import { Video } from "../entity/Video";
+import { Favorite } from "../entity/Favorite";
+import LoggerService from "./LoggerService";
 
 @injectable()
-export default class DatabaseServiceImpl implements DatabaseService {
+export default class DatabaseService {
   appDataSource: DataSource;
 
   constructor(

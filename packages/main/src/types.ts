@@ -1,6 +1,6 @@
 export const TYPES = {
-  App: Symbol.for("App"),
-  MainWindowService: Symbol.for("MainWindowService"),
+  ElectronApp: Symbol.for("ElectronApp"),
+  MainWindow: Symbol.for("MainWindow"),
   StoreService: Symbol.for("StoreService"),
   SessionService: Symbol.for("SessionService"),
   DatabaseService: Symbol.for("DatabaseService"),
@@ -13,10 +13,10 @@ export const TYPES = {
   FavoriteRepository: Symbol.for("FavoriteRepository"),
   WebviewService: Symbol.for("WebviewService"),
   DownloadService: Symbol.for("DownloadService"),
-  BrowserWindowService: Symbol.for("BrowserWindowService"),
+  BrowserWindow: Symbol.for("BrowserWindow"),
   DevToolsService: Symbol.for("DevToolsService"),
   WebService: Symbol.for("WebService"),
-  PlayerWindowService: Symbol.for("PlayerWindowService"),
+  PlayerWindow: Symbol.for("PlayerWindow"),
 };
 
 export enum AppTheme {

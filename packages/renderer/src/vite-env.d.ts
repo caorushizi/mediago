@@ -1,8 +1,9 @@
 import "vite/client";
+import { ElectronApi } from "../../main/types/preload";
 
 declare global {
   interface Window {
-    electron: ElectronAPI;
+    electron: ElectronApi;
     TDAPP?: {
       onEvent: (
         eventId: string,

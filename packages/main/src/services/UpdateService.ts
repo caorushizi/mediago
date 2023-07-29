@@ -1,11 +1,11 @@
 import { autoUpdater } from "electron-updater";
 import { inject, injectable } from "inversify";
-import { LoggerService, type UpdateService } from "../interfaces";
 import { TYPES } from "../types";
 import isDev from "electron-is-dev";
+import LoggerService from "./LoggerService";
 
 @injectable()
-export default class UpdateServiceImpl implements UpdateService {
+export default class UpdateService {
   constructor(
     @inject(TYPES.LoggerService) private readonly logger: LoggerService
   ) {}

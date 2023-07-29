@@ -4,7 +4,8 @@ import {
   loadDotEnvDefined,
   copyResource,
   removeResource,
-} from "./utils.mjs";
+} from "./utils";
+import { external } from "./config";
 
 const mainDefined = loadDotEnvDefined();
 
@@ -25,22 +26,28 @@ copyResource([
 ]);
 
 esbuild.build({
-  entryPoints: [
-    mainResolve("src/index.ts"),
-    mainResolve("src/preload.ts"),
-    mainResolve("src/webview.ts"),
-  ],
+  entryPoints: [mainResolve("src/index.ts")],
   bundle: true,
   platform: "node",
   sourcemap: false,
   target: ["node16.13"],
-  external: [
-    "electron",
-    "nock",
-    "aws-sdk",
-    "mock-aws-s3",
-    "@cliqz/adblocker-electron-preload",
-  ],
+  external,
+  define: {
+    "process.env.NODE_ENV": '"production"',
+    ...mainDefined,
+  },
+  outdir: mainResolve("app/build/main"),
+  loader: { ".png": "file" },
+  minify: true,
+});
+
+esbuild.build({
+  entryPoints: [mainResolve("src/preload.ts"), mainResolve("src/webview.ts")],
+  bundle: true,
+  platform: "browser",
+  target: ["chrome89"],
+  sourcemap: false,
+  external,
   define: {
     "process.env.NODE_ENV": '"production"',
     ...mainDefined,

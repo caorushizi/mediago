@@ -3,20 +3,16 @@ import { inject, injectable } from "inversify";
 import {
   DownloadParams,
   DownloadProgress,
-  DownloadService,
   DownloadStatus,
-  StoreService,
   Task,
-  VideoRepository,
 } from "../interfaces";
 import { TYPES } from "../types";
-import LoggerServiceImpl from "./LoggerServiceImpl";
+import LoggerServiceImpl from "./LoggerService";
+import StoreService from "./StoreService";
+import VideoRepository from "../repository/VideoRepository";
 
 @injectable()
-export default class DownloadServiceImpl
-  extends EventEmitter
-  implements DownloadService
-{
+export default class DownloadService extends EventEmitter {
   private queue: Task[] = [];
 
   private active: Task[] = [];
@@ -148,7 +144,7 @@ export default class DownloadServiceImpl
     }
   }
 
-  log(...args: any[]) {
+  log(...args: unknown[]) {
     if (this.debug) {
       this.logger.info(`[DownloadService] `, ...args);
     }

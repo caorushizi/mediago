@@ -1,4 +1,3 @@
-import { DevToolsService, LoggerService } from "../interfaces";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import isDev from "electron-is-dev";
@@ -6,9 +5,10 @@ import installExtension, {
   REDUX_DEVTOOLS,
   REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
+import LoggerService from "./LoggerService";
 
 @injectable()
-export default class DevToolsServiceImpl implements DevToolsService {
+export default class DevToolsService {
   constructor(
     @inject(TYPES.LoggerService)
     private readonly logger: LoggerService

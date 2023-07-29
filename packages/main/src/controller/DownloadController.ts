@@ -2,18 +2,18 @@ import { IpcMainEvent } from "electron/main";
 import { inject, injectable } from "inversify";
 import { handle } from "../helper";
 import {
-  StoreService,
   type Controller,
-  VideoRepository,
   DownloadItem,
   DownloadItemPagination,
-  DownloadService,
   Task,
   DownloadStatus,
 } from "../interfaces";
 import { TYPES } from "../types";
-import { downloader } from "helper";
-import MainWindowServiceImpl from "windows/Main";
+import { downloader } from "../helper";
+import MainWindow from "../windows/MainWindow";
+import StoreService from "../services/StoreService";
+import DownloadService from "../services/DownloadService";
+import VideoRepository from "../repository/VideoRepository";
 
 @injectable()
 export default class DownloadController implements Controller {
@@ -24,8 +24,8 @@ export default class DownloadController implements Controller {
     private readonly videoRepository: VideoRepository,
     @inject(TYPES.DownloadService)
     private readonly downloadService: DownloadService,
-    @inject(TYPES.MainWindowService)
-    private readonly mainWindow: MainWindowServiceImpl
+    @inject(TYPES.MainWindow)
+    private readonly mainWindow: MainWindow
   ) {}
 
   @handle("add-download-item")
