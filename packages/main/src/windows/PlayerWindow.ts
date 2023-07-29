@@ -3,7 +3,7 @@ import { inject, injectable } from "inversify";
 import { resolve } from "path";
 import { TYPES } from "types";
 import Window from "./window";
-import VideoRepository from "repository/videoRepository";
+import VideoRepository from "repository/VideoRepository";
 
 @injectable()
 export default class PlayerWindowServiceImpl extends Window {

@@ -13,7 +13,7 @@ import WebviewService from "services/WebviewService";
 import DevToolsService from "services/DevToolsService";
 import WebService from "services/WebService";
 import StoreService from "services/StoreService";
-import VideoRepository from "repository/videoRepository";
+import VideoRepository from "repository/VideoRepository";
 
 @injectable()
 export default class ElectronApp {

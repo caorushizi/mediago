@@ -9,7 +9,7 @@ import Window from "./window";
 import LoggerService from "services/LoggerService";
 import DownloadService from "services/DownloadService";
 import StoreService from "services/StoreService";
-import VideoRepository from "repository/videoRepository";
+import VideoRepository from "repository/VideoRepository";
 
 @injectable()
 export default class MainWindow extends Window {

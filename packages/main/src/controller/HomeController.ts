@@ -23,8 +23,8 @@ import BrowserWindow from "windows/BrowserWindow";
 import PlayerWindow from "windows/PlayerWindow";
 import StoreService from "services/StoreService";
 import WebviewService from "services/WebviewService";
-import FavoriteRepository from "repository/favoriteRepository";
-import VideoRepository from "repository/videoRepository";
+import FavoriteRepository from "repository/FavoriteRepository";
+import VideoRepository from "repository/VideoRepository";
 
 @injectable()
 export default class HomeController implements Controller {

@@ -1,8 +1,10 @@
 import { IpcMainEvent } from "electron";
 import { inject, injectable } from "inversify";
 import { handle } from "../helper";
-import { type Controller, WebviewService, StoreService } from "../interfaces";
+import { type Controller } from "../interfaces";
 import { TYPES } from "../types";
+import WebviewService from "services/WebviewService";
+import StoreService from "services/StoreService";
 
 @injectable()
 export default class WebviewController implements Controller {
