@@ -13,7 +13,7 @@ import LoggerService from "./LoggerService";
 import StoreService from "./StoreService";
 import MainWindow from "windows/MainWindow";
 import BrowserWindow from "windows/BrowserWindow";
-import VideoRepository from "repository/videoRepository";
+import VideoRepository from "repository/VideoRepository";
 
 interface SourceParams {
   url: string;

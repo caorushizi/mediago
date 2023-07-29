@@ -9,7 +9,7 @@ import {
 import { TYPES } from "../types";
 import LoggerServiceImpl from "./LoggerService";
 import StoreService from "./StoreService";
-import VideoRepository from "repository/videoRepository";
+import VideoRepository from "repository/VideoRepository";
 
 @injectable()
 export default class DownloadService extends EventEmitter {

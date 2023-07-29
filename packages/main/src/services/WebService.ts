@@ -10,7 +10,7 @@ import cors from "@koa/cors";
 import { getLocalIP, mobilePath } from "helper";
 import StoreService from "./StoreService";
 import LoggerService from "./LoggerService";
-import VideoRepository from "repository/videoRepository";
+import VideoRepository from "repository/VideoRepository";
 
 @injectable()
 export default class WebService {

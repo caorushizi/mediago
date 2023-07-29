@@ -13,7 +13,7 @@ import { downloader } from "helper";
 import MainWindow from "windows/MainWindow";
 import StoreService from "services/StoreService";
 import DownloadService from "services/DownloadService";
-import VideoRepository from "repository/videoRepository";
+import VideoRepository from "repository/VideoRepository";
 
 @injectable()
 export default class DownloadController implements Controller {
