@@ -15,5 +15,10 @@
     "typeRoots": ["node_modules/@types"],
     "outDir": "app/output/build/main"
   },
-  "include": ["./src/**/*"]
+  "include": ["src"],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
 }

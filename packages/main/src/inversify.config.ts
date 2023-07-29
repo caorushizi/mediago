@@ -28,6 +28,8 @@ const container = new Container({
 });
 
 container.bind<ElectronApp>(TYPES.ElectronApp).to(ElectronApp);
+
+// services
 container
   .bind<IpcHandlerService>(TYPES.IpcHandlerService)
   .to(IpcHandlerService);
@@ -46,12 +48,12 @@ container.bind<MainWindow>(TYPES.MainWindow).to(MainWindow);
 container.bind<BrowserWindow>(TYPES.BrowserWindow).to(BrowserWindow);
 container.bind<PlayerWindow>(TYPES.PlayerWindow).to(PlayerWindow);
 
-// === controller
+// controller
 container.bind<Controller>(TYPES.Controller).to(HomeController);
 container.bind<Controller>(TYPES.Controller).to(WebviewController);
 container.bind<Controller>(TYPES.Controller).to(DownloadController);
 
-// === repository
+// repository
 container.bind<VideoRepository>(TYPES.VideoRepository).to(VideoRepository);
 container
   .bind<FavoriteRepository>(TYPES.FavoriteRepository)

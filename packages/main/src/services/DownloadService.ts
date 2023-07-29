@@ -144,7 +144,7 @@ export default class DownloadService extends EventEmitter {
     }
   }
 
-  log(...args: any[]) {
+  log(...args: unknown[]) {
     if (this.debug) {
       this.logger.info(`[DownloadService] `, ...args);
     }
