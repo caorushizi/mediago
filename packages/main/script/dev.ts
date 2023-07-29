@@ -3,6 +3,7 @@ import electron from "electron";
 import * as esbuild from "esbuild";
 import chokidar from "chokidar";
 import { loadDotEnvRuntime, mainResolve, log, copyResource } from "./utils";
+import { external } from "./config";
 
 let electronProcess: ChildProcessWithoutNullStreams | null = null;
 
@@ -24,40 +25,52 @@ async function copySource() {
   ]);
 }
 
-async function startElectron() {
-  const ctx = await esbuild.context({
-    entryPoints: [
-      mainResolve("src/index.ts"),
-      mainResolve("src/preload.ts"),
-      mainResolve("src/webview.ts"),
-    ],
-    bundle: true,
-    platform: "node",
-    sourcemap: true,
-    target: ["node16.13"],
-    external: [
-      "electron",
-      "mock-aws-s3",
-      "aws-sdk",
-      "nock",
-      "@cliqz/adblocker-electron-preload",
-    ],
-    define: {
-      // 开发环境中二进制可执行文件的路径
-      __bin__: `"${mainResolve("bin", process.platform).replace(
-        /\\/g,
-        "\\\\"
-      )}"`,
-    },
-    plugins: [],
-    outdir: mainResolve("app/build/main"),
-    loader: { ".png": "file" },
+const buildConfig: esbuild.BuildOptions = {
+  bundle: true,
+  platform: "node",
+  sourcemap: true,
+  target: ["node16.13"],
+  external,
+  define: {
+    // 开发环境中二进制可执行文件的路径
+    __bin__: `"${mainResolve("bin", process.platform).replace(/\\/g, "\\\\")}"`,
+  },
+  plugins: [],
+  outdir: mainResolve("app/build/main"),
+  loader: { ".png": "file" },
+};
+
+function startElectron() {
+  const args = ["--inspect=5858", mainResolve("app/build/main/index.js")];
+
+  electronProcess = spawn(String(electron), args);
+
+  electronProcess.stdout.on("data", (data) => {
+    log(String(data));
+  });
+
+  electronProcess.stderr.on("data", (data) => {
+    log(String(data));
+  });
+}
+
+async function start() {
+  const mainContext = await esbuild.context({
+    ...buildConfig,
+    entryPoints: [mainResolve("src/index.ts")],
+  });
+
+  const preloadContext = await esbuild.context({
+    ...buildConfig,
+    entryPoints: [mainResolve("src/preload.ts"), mainResolve("src/webview.ts")],
+    platform: "browser",
   });
 
   const watcher = chokidar.watch("./src");
 
   watcher.on("change", async () => {
-    await ctx.rebuild();
+    await mainContext.rebuild();
+    await preloadContext.rebuild();
     log("watch build succeed.");
     if (electronProcess && electronProcess.pid) {
       if (process.platform === "darwin") {
@@ -70,22 +83,9 @@ async function startElectron() {
     }
   });
 
-  function startElectron() {
-    const args = ["--inspect=5858", mainResolve("app/build/main/index.js")];
-
-    electronProcess = spawn(String(electron), args);
-
-    electronProcess.stdout.on("data", (data) => {
-      log(String(data));
-    });
-
-    electronProcess.stderr.on("data", (data) => {
-      log(String(data));
-    });
-  }
-
   try {
-    await ctx.rebuild();
+    await mainContext.rebuild();
+    await preloadContext.rebuild();
     await copySource();
     await startElectron();
   } catch (e) {
@@ -94,4 +94,4 @@ async function startElectron() {
   }
 }
 
-startElectron();
+start();

@@ -1,6 +1,6 @@
 import { execa } from "execa";
-import { stripColors, macDownloaderPath } from "helper";
-import { DownloadParams, DownloadProgress } from "interfaces";
+import { stripColors, macDownloaderPath } from "../../helper";
+import { DownloadParams, DownloadProgress } from "../../interfaces";
 
 export const macSpawnDownload = (params: DownloadParams): Promise<void> => {
   const {

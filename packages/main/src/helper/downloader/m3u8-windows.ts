@@ -1,6 +1,6 @@
 import { execa } from "execa";
-import { formatHeaders, winDownloaderPath } from "helper";
-import { DownloadParams, DownloadProgress } from "interfaces";
+import { formatHeaders, winDownloaderPath } from "../../helper";
+import { DownloadParams, DownloadProgress } from "../../interfaces";
 import iconv from "iconv-lite";
 
 export const winSpawnDownload = async (

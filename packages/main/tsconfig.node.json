@@ -3,9 +3,11 @@
     "strict": true,
     "composite": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "ESNext",
+    "module": "ES2015",
     "moduleResolution": "Node",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true
   },
-  "include": ["./script/*", "src/global.d.ts"]
+  "include": ["script", "app/package.json"]
 }

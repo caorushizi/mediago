@@ -1,11 +1,5 @@
-import { Video, Rectangle } from "electron";
-import { type Favorite } from "entity/Favorite";
+import { Rectangle } from "electron";
 import { type DownloadType } from "interfaces";
-import {
-  DownloadItem,
-  DownloadItemPagination,
-  VideoResponse,
-} from "interfaces";
 
 declare interface EnvPath {
   binPath: string;
@@ -18,48 +12,6 @@ declare interface EnvPath {
 declare interface BrowserWindowInitialVal {
   url?: string;
   sourceList?: WebSource[];
-}
-
-declare interface ElectronAPI {
-  getEnvPath: () => Promise<EnvPath>;
-  getFavorites: () => Promise<Favorite>;
-  addFavorite: (favorite: Favorite) => Promise<Favorite>;
-  removeFavorite: (id: number) => Promise<void>;
-  setWebviewBounds: (rect: Electron.Rectangle) => Promise<void>;
-  webviewLoadURL: (url?: string) => Promise<void>;
-  webviewGoBack: () => Promise<boolean>;
-  webviewReload: () => Promise<void>;
-  webviewGoHome: () => Promise<void>;
-  getAppStore: () => Promise<AppStore>;
-  onSelectDownloadDir: () => Promise<string>;
-  setAppStore: (key: keyof AppStore, val: any) => Promise<void>;
-  openDir: (dir: string) => Promise<void>;
-  addDownloadItem: (video: DownloadItem) => Promise<Video>;
-  addDownloadItems: (videos: DownloadItem[]) => Promise<Video[]>;
-  getDownloadItems: (
-    pagiantion: DownloadItemPagination
-  ) => Promise<VideoResponse>;
-  startDownload: (vid: number) => Promise<void>;
-  openUrl: (url: string) => Promise<void>;
-  stopDownload: (id: number) => Promise<void>;
-  onDownloadListContextMenu: (id: number) => Promise<void>;
-  onFavoriteItemContextMenu: (id: number) => Promise<void>;
-  deleteDownloadItem: (id: number) => Promise<void>;
-  convertToAudio: (id: number) => Promise<void>;
-  rendererEvent: (channel: string, funcId: string, listener: any) => void;
-  removeEventListener: (channel: string, funcId: string) => void;
-  showBrowserWindow: () => Promise<void>;
-  webviewHide: () => Promise<void>;
-  webviewShow: () => Promise<void>;
-  downloadNow: (video: DownloadItem) => Promise<void>;
-  combineToHomePage: (initialVal: BrowserStore) => Promise<void>;
-  editDownloadItem: (video: DownloadItem) => Promise<void>;
-  openPlayerWindow: (videoId: number) => Promise<void>;
-  getLocalIP: () => Promise<string>;
-  openBrowser: (url: string) => Promise<void>;
-  getSharedState: () => Promise<any>;
-  setSharedState: (state: any) => Promise<void>;
-  setUserAgent: (isMobile: boolean) => Promise<void>;
 }
 
 declare interface WebSource {

@@ -51,8 +51,8 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     addFavorite,
     removeFavorite,
     webviewLoadURL,
-    rendererEvent,
-    removeEventListener,
+    addIpcListener,
+    removeIpcListener,
     webviewGoBack,
     webviewGoHome,
     onFavoriteItemContextMenu,
@@ -206,13 +206,13 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
 
   useEffect(() => {
     const prevTitle = document.title;
-    rendererEvent("webview-dom-ready", onDomReady);
-    rendererEvent("favorite-item-event", onFavoriteEvent);
+    addIpcListener("webview-dom-ready", onDomReady);
+    addIpcListener("favorite-item-event", onFavoriteEvent);
 
     return () => {
       document.title = prevTitle;
-      removeEventListener("webview-dom-ready", onDomReady);
-      removeEventListener("favorite-item-event", onFavoriteEvent);
+      removeIpcListener("webview-dom-ready", onDomReady);
+      removeIpcListener("favorite-item-event", onFavoriteEvent);
     };
   }, []);
 

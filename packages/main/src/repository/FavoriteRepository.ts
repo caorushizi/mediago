@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
-import { Favorite } from "entity/Favorite";
-import DatabaseService from "services/DatabaseService";
+import { Favorite } from "../entity/Favorite";
+import DatabaseService from "../services/DatabaseService";
 
 @injectable()
 export default class FavoriteRepository {

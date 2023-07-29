@@ -1,25 +1,18 @@
-import builder, { Configuration } from "electron-builder";
-import { readFileSync } from "node:fs";
+import { loadDotEnvRuntime, log, mainResolve, removeResource } from "./utils";
+import * as builder from "electron-builder";
 import semver from "semver";
-import { mainResolve, loadDotEnvRuntime, log, removeResource } from "./utils";
+import pkg from "../app/package.json";
 
 removeResource([mainResolve("release")]);
 
-const packageJsonBuffer = readFileSync(mainResolve("./app/package.json"));
-const packageJson = JSON.parse(String(packageJsonBuffer));
 loadDotEnvRuntime();
 
-if (semver.neq(process.env.APP_VERSION || "", packageJson.version)) {
+if (semver.neq(process.env.APP_VERSION || "", pkg.version)) {
   log("请先同步构建版本和发布版本");
   process.exit(0);
 }
 
-// Let's get that intellisense working
-/**
- * @type {import('electron-builder').Configuration}
- * @see https://www.electron.build/configuration/configuration
- */
-const options: Configuration = {
+const options: builder.Configuration = {
   productName: process.env.APP_NAME,
   buildVersion: process.env.APP_VERSION,
   appId: process.env.APP_ID,

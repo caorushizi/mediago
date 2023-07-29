@@ -1,4 +1,4 @@
-import { DownloadParams } from "interfaces";
+import { DownloadParams } from "../../interfaces";
 import { macSpawnDownload } from "./m3u8-macos";
 import { winSpawnDownload } from "./m3u8-windows";
 import { bilibiliDownload } from "./bilibili";

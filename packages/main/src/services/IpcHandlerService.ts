@@ -3,7 +3,7 @@ import { inject, injectable, multiInject } from "inversify";
 import { Controller } from "../interfaces";
 import { TYPES } from "../types";
 import LoggerService from "./LoggerService";
-import { error, success } from "helper/utils";
+import { error, success } from "../helper/utils";
 
 @injectable()
 export default class IpcHandlerService {

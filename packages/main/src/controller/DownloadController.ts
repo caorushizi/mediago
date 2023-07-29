@@ -9,11 +9,11 @@ import {
   DownloadStatus,
 } from "../interfaces";
 import { TYPES } from "../types";
-import { downloader } from "helper";
-import MainWindow from "windows/MainWindow";
-import StoreService from "services/StoreService";
-import DownloadService from "services/DownloadService";
-import VideoRepository from "repository/VideoRepository";
+import { downloader } from "../helper";
+import MainWindow from "../windows/MainWindow";
+import StoreService from "../services/StoreService";
+import DownloadService from "../services/DownloadService";
+import VideoRepository from "../repository/VideoRepository";
 
 @injectable()
 export default class DownloadController implements Controller {
