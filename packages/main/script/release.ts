@@ -1,19 +1,15 @@
-import builder from "electron-builder";
+import builder, { Configuration } from "electron-builder";
 import { readFileSync } from "node:fs";
 import semver from "semver";
-import {
-  mainResolve,
-  loadDotEnvRuntime,
-  log,
-  removeResource,
-} from "./utils.mjs";
+import { mainResolve, loadDotEnvRuntime, log, removeResource } from "./utils";
 
 removeResource([mainResolve("release")]);
 
-const packageJson = JSON.parse(readFileSync(mainResolve("./app/package.json")));
+const packageJsonBuffer = readFileSync(mainResolve("./app/package.json"));
+const packageJson = JSON.parse(String(packageJsonBuffer));
 loadDotEnvRuntime();
 
-if (semver.neq(process.env.APP_VERSION, packageJson.version)) {
+if (semver.neq(process.env.APP_VERSION || "", packageJson.version)) {
   log("请先同步构建版本和发布版本");
   process.exit(0);
 }
@@ -23,7 +19,7 @@ if (semver.neq(process.env.APP_VERSION, packageJson.version)) {
  * @type {import('electron-builder').Configuration}
  * @see https://www.electron.build/configuration/configuration
  */
-const options = {
+const options: Configuration = {
   productName: process.env.APP_NAME,
   buildVersion: process.env.APP_VERSION,
   appId: process.env.APP_ID,
@@ -101,19 +97,23 @@ const options = {
   },
 };
 
-const target =
-  process.env.NODE_ENV === "development"
-    ? builder.DIR_TARGET
-    : builder.DEFAULT_TARGET;
-try {
-  const targets =
-    process.platform === "win32"
-      ? builder.Platform.WINDOWS.createTarget(target)
-      : builder.Platform.MAC.createTarget(target);
-  await builder.build({
-    targets,
-    config: options,
-  });
-} catch (e) {
-  log(e);
+async function start() {
+  const target =
+    process.env.NODE_ENV === "development"
+      ? builder.DIR_TARGET
+      : builder.DEFAULT_TARGET;
+  try {
+    const targets =
+      process.platform === "win32"
+        ? builder.Platform.WINDOWS.createTarget(target)
+        : builder.Platform.MAC.createTarget(target);
+    await builder.build({
+      targets,
+      config: options,
+    });
+  } catch (e) {
+    log(e);
+  }
 }
+
+start();

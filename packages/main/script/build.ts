@@ -4,7 +4,7 @@ import {
   loadDotEnvDefined,
   copyResource,
   removeResource,
-} from "./utils.mjs";
+} from "./utils";
 
 const mainDefined = loadDotEnvDefined();
 
