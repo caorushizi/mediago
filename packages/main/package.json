@@ -5,10 +5,11 @@
   "main": "main/index.js",
   "scripts": {
     "postinstall": "electron-rebuild -f -w better-sqlite3",
-    "dev": "cross-env NODE_ENV=development node script/dev.mjs",
-    "build": "cross-env NODE_ENV=production node script/build.mjs",
-    "pack": "cross-env NODE_ENV=development node script/release.mjs",
-    "release": "cross-env NODE_ENV=production node script/release.mjs"
+    "dev": "cross-env NODE_ENV=development ts-node script/dev.ts",
+    "build": "cross-env NODE_ENV=production ts-node script/build.ts",
+    "pack": "cross-env NODE_ENV=development ts-node script/release.ts",
+    "types": "tsc --emitDeclarationOnly",
+    "release": "cross-env NODE_ENV=production ts-node script/release.ts"
   },
   "author": "",
   "license": "MIT",
@@ -50,6 +51,7 @@
     "@koa/cors": "^4.0.0",
     "@koa/router": "^12.0.0",
     "@types/koa-static": "^4.0.2",
+    "@types/semver": "^7.5.0",
     "axios": "^1.4.0",
     "better-sqlite3": "^8.4.0",
     "cheerio": "1.0.0-rc.12",
@@ -70,6 +72,7 @@
     "koa-static": "^5.0.0",
     "lodash": "^4.17.21",
     "reflect-metadata": "^0.1.13",
+    "ts-node": "^10.9.1",
     "typeorm": "^0.3.17"
   }
 }

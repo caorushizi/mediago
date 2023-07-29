@@ -1,9 +1,9 @@
 import "reflect-metadata";
 import { app, protocol } from "electron";
 import { defaultScheme } from "./helper";
-import { type App } from "./interfaces";
 import { container } from "./inversify.config";
 import { TYPES } from "./types";
+import ElectronApp from "./app";
 
 const gotTheLock = app.requestSingleInstanceLock();
 const start = async (): Promise<void> => {
@@ -21,7 +21,7 @@ const start = async (): Promise<void> => {
     },
   ]);
   await app.whenReady();
-  const mediago = container.get<App>(TYPES.App);
+  const mediago = container.get<ElectronApp>(TYPES.ElectronApp);
   mediago.init();
 
   app.on("window-all-closed", () => {

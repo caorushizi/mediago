@@ -1,6 +1,6 @@
 import { execa } from "execa";
-import { stripColors, biliDownloader } from "helper";
-import { DownloadParams, DownloadProgress } from "interfaces";
+import { stripColors, biliDownloader } from "../../helper";
+import { DownloadParams, DownloadProgress } from "../../interfaces";
 
 export const bilibiliDownload = (params: DownloadParams): Promise<void> => {
   const { id, abortSignal, url, local, callback } = params;

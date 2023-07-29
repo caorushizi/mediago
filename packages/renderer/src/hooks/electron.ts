@@ -1,22 +1,14 @@
 import { nanoid } from "nanoid";
+import { ElectronApi } from "../../../main/types/preload";
 
 const eventFun = ["rendererEvent", "removeEventListener"];
 const eventMap = new Map();
 
-const electronApi = Object.keys(window.electron).reduce<any>((res, funName) => {
+const api = Object.keys(window.electron).reduce<any>((res, funName) => {
   const fun = async (...args: any[]) => {
-    const electronFun = (window.electron as any)[funName];
-    if (eventFun.includes(funName)) {
-      const [eventName, func = {}] = args;
-      let id = "";
-      if (eventMap.get(func)) {
-        id = eventMap.get(func);
-      } else {
-        id = nanoid();
-        eventMap.set(func, id);
-      }
-
-      return electronFun(eventName, id, func);
+    const electronFun: any = window.electron[funName];
+    if (eventFun.includes(String(funName))) {
+      return null;
     }
 
     const { code, data, message } = await electronFun(...args);
@@ -29,6 +21,32 @@ const electronApi = Object.keys(window.electron).reduce<any>((res, funName) => {
   return res;
 }, {});
 
-export default function useElectron(): ElectronAPI {
-  return electronApi;
+interface IpcListener {
+  addIpcListener: (eventName: string, func: any) => void;
+  removeIpcListener: (eventName: string, func: any) => void;
+}
+
+const getIpcId = (func: any) => {
+  let id = "";
+  if (eventMap.get(func)) {
+    id = eventMap.get(func);
+  } else {
+    id = nanoid();
+    eventMap.set(func, id);
+  }
+  return id;
+};
+
+export default function useElectron(): ElectronApi & IpcListener {
+  return {
+    ...api,
+    addIpcListener: (eventName: string, func: any) => {
+      const id = getIpcId(func);
+      window.electron.rendererEvent(eventName, id, func);
+    },
+    removeIpcListener: (eventName: string, func: any) => {
+      const id = getIpcId(func);
+      window.electron.removeEventListener(eventName, id);
+    },
+  };
 }

@@ -2,15 +2,12 @@ import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import { resolve } from "path";
 import { TYPES } from "../types";
-import { BrowserWindowService, StoreService } from "../interfaces";
 import _ from "lodash";
 import Window from "./window";
+import StoreService from "../services/StoreService";
 
 @injectable()
-export default class BrowserWindowServiceImpl
-  extends Window
-  implements BrowserWindowService
-{
+export default class BrowserWindow extends Window {
   url = isDev
     ? "http://localhost:8555/browser"
     : "mediago://index.html/browser";
