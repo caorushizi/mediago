@@ -1,14 +1,14 @@
-import DownloadController from "controller/DownloadController";
-import HomeController from "controller/HomeController";
-import WebviewController from "controller/WebviewController";
+import DownloadController from "./controller/DownloadController";
+import HomeController from "./controller/HomeController";
+import WebviewController from "./controller/WebviewController";
 import { Container } from "inversify";
-import FavoriteRepository from "repository/FavoriteRepository";
-import VideoRepository from "repository/VideoRepository";
-import DatabaseService from "services/DatabaseService";
-import DevToolsService from "services/DevToolsService";
-import DownloadService from "services/DownloadService";
-import StoreService from "services/StoreService";
-import WebviewService from "services/WebviewService";
+import FavoriteRepository from "./repository/FavoriteRepository";
+import VideoRepository from "./repository/VideoRepository";
+import DatabaseService from "./services/DatabaseService";
+import DevToolsService from "./services/DevToolsService";
+import DownloadService from "./services/DownloadService";
+import StoreService from "./services/StoreService";
+import WebviewService from "./services/WebviewService";
 import ElectronApp from "./app";
 import { Controller } from "./interfaces";
 import IpcHandlerService from "./services/IpcHandlerService";
@@ -16,10 +16,10 @@ import LoggerService from "./services/LoggerService";
 import ProtocolService from "./services/ProtocolService";
 import UpdateService from "./services/UpdateService";
 import { TYPES } from "./types";
-import WebService from "services/WebService";
+import WebService from "./services/WebService";
 import MainWindow from "./windows/MainWindow";
-import PlayerWindow from "windows/PlayerWindow";
-import BrowserWindow from "windows/BrowserWindow";
+import PlayerWindow from "./windows/PlayerWindow";
+import BrowserWindow from "./windows/BrowserWindow";
 
 const container = new Container({
   skipBaseClassChecks: true,

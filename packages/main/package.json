@@ -8,6 +8,7 @@
     "dev": "cross-env NODE_ENV=development ts-node script/dev.ts",
     "build": "cross-env NODE_ENV=production ts-node script/build.ts",
     "pack": "cross-env NODE_ENV=development ts-node script/release.ts",
+    "types": "tsc --emitDeclarationOnly",
     "release": "cross-env NODE_ENV=production ts-node script/release.ts"
   },
   "author": "",

@@ -1,11 +1,13 @@
 export type Controller = Record<string | symbol, any>;
 
 export interface DownloadItem {
-  id?: number;
+  id: number;
   type: DownloadType;
   name: string;
   url: string;
   headers?: string;
+  status?: DownloadStatus;
+  isLive?: boolean;
 }
 
 export enum DownloadFilter {

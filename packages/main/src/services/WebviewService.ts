@@ -3,17 +3,17 @@ import { DownloadType } from "../interfaces";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import isDev from "electron-is-dev";
-import { PERSIST_WEBVIEW, mobileUA, pcUA } from "helper";
+import { PERSIST_WEBVIEW, mobileUA, pcUA } from "../helper";
 import { ElectronBlocker } from "@cliqz/adblocker-electron";
 import fetch from "cross-fetch";
 import path from "path";
-import { WebSource } from "main";
+import { WebSource } from "../main";
 import { load } from "cheerio";
 import LoggerService from "./LoggerService";
 import StoreService from "./StoreService";
-import MainWindow from "windows/MainWindow";
-import BrowserWindow from "windows/BrowserWindow";
-import VideoRepository from "repository/VideoRepository";
+import MainWindow from "../windows/MainWindow";
+import BrowserWindow from "../windows/BrowserWindow";
+import VideoRepository from "../repository/VideoRepository";
 
 interface SourceParams {
   url: string;

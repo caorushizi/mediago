@@ -4,16 +4,16 @@ import { TYPES } from "./types";
 import { Menu, Tray, app, nativeImage, nativeTheme } from "electron";
 import TrayIcon from "./tray-icon.png";
 import path from "path";
-import MainWindow from "windows/MainWindow";
-import ProtocolService from "services/ProtocolService";
-import UpdateService from "services/UpdateService";
-import IpcHandlerService from "services/IpcHandlerService";
-import DatabaseService from "services/DatabaseService";
-import WebviewService from "services/WebviewService";
-import DevToolsService from "services/DevToolsService";
-import WebService from "services/WebService";
-import StoreService from "services/StoreService";
-import VideoRepository from "repository/VideoRepository";
+import MainWindow from "./windows/MainWindow";
+import ProtocolService from "./services/ProtocolService";
+import UpdateService from "./services/UpdateService";
+import IpcHandlerService from "./services/IpcHandlerService";
+import DatabaseService from "./services/DatabaseService";
+import WebviewService from "./services/WebviewService";
+import DevToolsService from "./services/DevToolsService";
+import WebService from "./services/WebService";
+import StoreService from "./services/StoreService";
+import VideoRepository from "./repository/VideoRepository";
 
 @injectable()
 export default class ElectronApp {

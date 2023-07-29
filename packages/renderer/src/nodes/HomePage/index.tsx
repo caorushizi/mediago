@@ -1,7 +1,6 @@
 import React, { FC, ReactNode, useEffect, useState } from "react";
 import {
   Button,
-  Form,
   message,
   Progress,
   Radio,
@@ -17,7 +16,7 @@ import "./index.scss";
 import PageContainer from "../../components/PageContainer";
 import { useAsyncEffect, usePagination } from "ahooks";
 import useElectron from "../../hooks/electron";
-import { DownloadStatus } from "../../types";
+import { DownloadStatus, DownloadType } from "../../types";
 import { ProList } from "@ant-design/pro-components";
 import {
   DownloadOutlined,
@@ -29,7 +28,7 @@ import {
   MobileOutlined,
   MoreOutlined,
 } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { selectAppStore } from "../../store";
 import { tdApp } from "../../utils";
 import DownloadFrom from "../../components/DownloadForm";
@@ -46,8 +45,8 @@ const HomePage: FC = () => {
   const {
     getDownloadItems,
     startDownload,
-    rendererEvent,
-    removeEventListener,
+    addIpcListener,
+    removeIpcListener,
     openDir,
     stopDownload,
     onDownloadListContextMenu,
@@ -60,7 +59,6 @@ const HomePage: FC = () => {
     openPlayerWindow,
     getLocalIP,
   } = useElectron();
-  const dispatch = useDispatch();
   const appStore = useSelector(selectAppStore);
   const [filter, setFilter] = useState(DownloadFilter.list);
   const { data, loading, pagination, refresh } = usePagination(
@@ -82,7 +80,6 @@ const HomePage: FC = () => {
   );
   const [messageApi, contextHolder] = message.useMessage();
 
-  const [editVideoForm] = Form.useForm<DownloadItem>();
   const [baseUrl, setBaseUrl] = useState("");
 
   useAsyncEffect(async () => {
@@ -138,22 +135,22 @@ const HomePage: FC = () => {
   };
 
   useEffect(() => {
-    rendererEvent("download-progress", onDownloadProgress);
-    rendererEvent("download-success", onDownloadSuccess);
-    rendererEvent("download-failed", onDownloadFailed);
-    rendererEvent("download-start", onDownloadStart);
-    rendererEvent("download-item-event", onDownloadMenuEvent);
-    rendererEvent("download-item-notifier", onReceiveDownloadItem);
-    rendererEvent("change-video-is-live", onChangeVideoIsLive);
+    addIpcListener("download-progress", onDownloadProgress);
+    addIpcListener("download-success", onDownloadSuccess);
+    addIpcListener("download-failed", onDownloadFailed);
+    addIpcListener("download-start", onDownloadStart);
+    addIpcListener("download-item-event", onDownloadMenuEvent);
+    addIpcListener("download-item-notifier", onReceiveDownloadItem);
+    addIpcListener("change-video-is-live", onChangeVideoIsLive);
 
     return () => {
-      removeEventListener("download-progress", onDownloadProgress);
-      removeEventListener("download-success", onDownloadSuccess);
-      removeEventListener("download-failed", onDownloadFailed);
-      removeEventListener("download-start", onDownloadStart);
-      removeEventListener("download-item-event", onDownloadMenuEvent);
-      removeEventListener("download-item-notifier", onReceiveDownloadItem);
-      removeEventListener("change-video-is-live", onChangeVideoIsLive);
+      removeIpcListener("download-progress", onDownloadProgress);
+      removeIpcListener("download-success", onDownloadSuccess);
+      removeIpcListener("download-failed", onDownloadFailed);
+      removeIpcListener("download-start", onDownloadStart);
+      removeIpcListener("download-item-event", onDownloadMenuEvent);
+      removeIpcListener("download-item-notifier", onReceiveDownloadItem);
+      removeIpcListener("change-video-is-live", onChangeVideoIsLive);
     };
   }, []);
 
@@ -205,6 +202,7 @@ const HomePage: FC = () => {
               name: values.name,
               url: values.url,
               headers: values.headers,
+              type: DownloadType.m3u8,
             });
             refresh();
             return true;
@@ -443,6 +441,7 @@ const HomePage: FC = () => {
                   name: values.name || dayjs().format("YYYY-MM-DDTHH:mm:ssZ"),
                   url: values.url,
                   headers: values.headers,
+                  type: DownloadType.m3u8,
                 });
               }
 
@@ -479,7 +478,7 @@ const HomePage: FC = () => {
         }}
         rowKey="id"
         rowSelection={rowSelection}
-        dataSource={data?.list}
+        dataSource={data?.list || []}
         tableAlertOptionRender={({ selectedRowKeys, onCleanSelected }) => {
           if (selectedRowKeys.length === 0) {
             return null;
@@ -515,7 +514,8 @@ const HomePage: FC = () => {
                 <Button
                   type="link"
                   onClick={() => {
-                    const ids = data?.list.map((item) => item.id);
+                    const list = data?.list || [];
+                    const ids = list.map((item) => item.id || 0);
                     if (ids) {
                       setSelectedRowKeys(ids);
                     }

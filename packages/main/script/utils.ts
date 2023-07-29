@@ -1,6 +1,6 @@
-import { existsSync, cpSync, rmSync } from "node:fs";
+import { existsSync, cpSync, rmSync } from "fs";
 import dotenv from "dotenv";
-import { resolve } from "node:path";
+import { resolve } from "path";
 
 // FIXME: 有没有什么办法可以不用这么写？
 const con = console;

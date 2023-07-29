@@ -12,3 +12,8 @@ export enum AppTheme {
   Light = "light",
   Dark = "dark",
 }
+
+export enum DownloadType {
+  m3u8 = "m3u8",
+  bilibili = "bilibili",
+}

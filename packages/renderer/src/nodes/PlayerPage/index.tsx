@@ -17,7 +17,7 @@ const port = import.meta.env.APP_SERVER_PORT;
 
 // 播放器页面
 const PlayerPage: FC = () => {
-  const { rendererEvent, removeEventListener, getLocalIP } = useElectron();
+  const { addIpcListener, removeIpcListener, getLocalIP } = useElectron();
   const [showVideoList, { toggle }] = useToggle();
   const [showButton, setShowButton] = useState(false);
   const [videoList, setVideoList] = useState<Video[]>([]);
@@ -83,10 +83,10 @@ const PlayerPage: FC = () => {
   };
 
   useEffect(() => {
-    rendererEvent("open-player-window", openPlayerWindow);
+    addIpcListener("open-player-window", openPlayerWindow);
 
     return () => {
-      removeEventListener("open-player-window", openPlayerWindow);
+      removeIpcListener("open-player-window", openPlayerWindow);
     };
   }, []);
 

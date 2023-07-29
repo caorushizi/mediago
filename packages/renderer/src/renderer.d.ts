@@ -8,11 +8,12 @@ declare interface EnvPath {
 
 declare interface DownloadItem {
   id: number;
+  type: DownloadType;
   name: string;
   url: string;
-  headers: string;
-  status: string;
-  isLive: boolean;
+  headers?: string;
+  status?: DownloadStatus;
+  isLive?: boolean;
 }
 
 declare interface VideoResponse {
@@ -24,50 +25,6 @@ declare interface DownloadItemPagination {
   current?: number;
   pageSize?: number;
   filter?: string;
-}
-
-declare interface ElectronAPI {
-  getEnvPath: () => Promise<EnvPath>;
-  addFavorite: (favorite: Omit<Favorite, "id">) => Promise<Favorite>;
-  removeFavorite: (id: number) => Promise<void>;
-  getFavorites: () => Promise<Favorite[]>;
-  setWebviewBounds: (bounds: any) => Promise<void>;
-  webviewLoadURL: (url?: string) => Promise<void>;
-  webviewGoBack: () => Promise<boolean>;
-  webviewReload: () => Promise<void>;
-  webviewGoHome: () => Promise<void>;
-  getAppStore: () => Promise<AppStore>;
-  onSelectDownloadDir: () => Promise<string>;
-  setAppStore: (key: keyof AppStore, val: any) => Promise<void>;
-  openDir: (dir: string) => Promise<void>;
-  addDownloadItem: (video: Partial<DownloadItem>) => Promise<DownloadItem>;
-  addDownloadItems: (
-    videos: Partial<DownloadItem>[]
-  ) => Promise<DownloadItem[]>;
-  getDownloadItems: (
-    pagination: DownloadItemPagination
-  ) => Promise<VideoResponse>;
-  startDownload: (vid: number) => Promise<void>;
-  openUrl: (url: string) => Promise<void>;
-  stopDownload: (id: number) => Promise<void>;
-  onDownloadListContextMenu: (id: number) => Promise<void>;
-  onFavoriteItemContextMenu: (id: number) => Promise<void>;
-  deleteDownloadItem: (id: number) => Promise<void>;
-  convertToAudio: (id: number) => Promise<void>;
-  rendererEvent: (channel: string, listener: any) => void;
-  removeEventListener: (channel: string, listener: any) => void;
-  showBrowserWindow: () => Promise<void>;
-  webviewHide: () => Promise<void>;
-  webviewShow: () => Promise<void>;
-  downloadNow: (video: Partial<DownloadItem>) => Promise<void>;
-  combineToHomePage: (store: BrowserStore) => Promise<void>;
-  editDownloadItem: (video: Partial<DownloadItem>) => Promise<void>;
-  openPlayerWindow: (videoId: number) => Promise<void>;
-  getLocalIP: () => Promise<string>;
-  openBrowser: (url: string) => Promise<void>;
-  getSharedState: () => Promise<any>;
-  setSharedState: (state: any) => Promise<void>;
-  setUserAgent: (isMobile: boolean) => Promise<void>;
 }
 
 declare interface Favorite {

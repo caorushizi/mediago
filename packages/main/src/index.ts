@@ -3,7 +3,7 @@ import { app, protocol } from "electron";
 import { defaultScheme } from "./helper";
 import { container } from "./inversify.config";
 import { TYPES } from "./types";
-import ElectronApp from "app";
+import ElectronApp from "./app";
 
 const gotTheLock = app.requestSingleInstanceLock();
 const start = async (): Promise<void> => {

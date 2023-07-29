@@ -4,7 +4,7 @@ import { resolve } from "path";
 import { TYPES } from "../types";
 import _ from "lodash";
 import Window from "./window";
-import StoreService from "services/StoreService";
+import StoreService from "../services/StoreService";
 
 @injectable()
 export default class BrowserWindow extends Window {

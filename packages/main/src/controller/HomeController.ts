@@ -8,23 +8,22 @@ import {
   shell,
   clipboard,
 } from "electron";
-import { Favorite } from "entity/Favorite";
-import { convertToAudio } from "helper";
-import { db, workspace } from "helper";
+import { Favorite } from "../entity/Favorite";
+import { convertToAudio, db, workspace } from "../helper";
 import { inject, injectable } from "inversify";
-import { AppStore, EnvPath } from "main";
+import { AppStore, EnvPath } from "../main";
 import path from "path";
 import { handle, getLocalIP } from "../helper";
 import { type Controller } from "../interfaces";
 import { TYPES } from "../types";
 import fs from "fs-extra";
-import MainWindow from "windows/MainWindow";
-import BrowserWindow from "windows/BrowserWindow";
-import PlayerWindow from "windows/PlayerWindow";
-import StoreService from "services/StoreService";
-import WebviewService from "services/WebviewService";
-import FavoriteRepository from "repository/FavoriteRepository";
-import VideoRepository from "repository/VideoRepository";
+import MainWindow from "../windows/MainWindow";
+import BrowserWindow from "../windows/BrowserWindow";
+import PlayerWindow from "../windows/PlayerWindow";
+import StoreService from "../services/StoreService";
+import WebviewService from "../services/WebviewService";
+import FavoriteRepository from "../repository/FavoriteRepository";
+import VideoRepository from "../repository/VideoRepository";
 
 @injectable()
 export default class HomeController implements Controller {

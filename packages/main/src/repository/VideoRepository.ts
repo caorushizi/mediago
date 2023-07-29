@@ -8,7 +8,7 @@ import {
 } from "../interfaces";
 import { TYPES } from "../types";
 import { In, Not } from "typeorm";
-import DatabaseService from "services/DatabaseService";
+import DatabaseService from "../services/DatabaseService";
 
 @injectable()
 export default class VideoRepository {
@@ -17,7 +17,7 @@ export default class VideoRepository {
     private readonly dataService: DatabaseService
   ) {}
 
-  async addVideo(video: DownloadItem) {
+  async addVideo(video: Omit<DownloadItem, "id">) {
     const item = new Video();
     item.name = video.name;
     item.url = video.url;
