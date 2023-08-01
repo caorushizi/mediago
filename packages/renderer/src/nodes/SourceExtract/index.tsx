@@ -338,8 +338,12 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
           autoFocusFirstInput
           modalProps={{
             destroyOnClose: true,
+            bodyStyle: {
+              paddingTop: 5,
+            },
           }}
           submitTimeout={2000}
+          layout="horizontal"
           onFinish={async (values) => {
             try {
               const icon = await getFavIcon(values.url);
