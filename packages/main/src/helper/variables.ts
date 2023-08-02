@@ -1,32 +1,32 @@
 import { app } from "electron";
 import isDev from "electron-is-dev";
-import path from "path";
+import { resolve } from "path";
+
+const appPath = app.getAppPath();
+export const appData = app.getPath("appData");
+export const download = app.getPath("downloads");
 
 if (!isDev) {
-  global.__bin__ = path.resolve(app.getAppPath(), "../bin");
+  global.__bin__ = resolve(appPath, "../bin");
 }
 
-export const appData = app.getPath("appData");
 export const appName = process.env.APP_NAME || "electron-template";
-export const workspace = path.resolve(appData, appName);
+export const workspace = resolve(appData, appName);
 export const defaultScheme = "mediago";
-export const download = app.getPath("downloads");
 export const PERSIST_MEDIAGO = "persist:mediago";
 export const PERSIST_WEBVIEW = "persist:webview";
-export const db = path.resolve(workspace, "app.db");
-export const macDownloaderPath = path.resolve(__bin__, "N_m3u8DL-RE");
-export const winDownloaderPath = path.resolve(__bin__, "N_m3u8DL-CLI.exe");
-export const ffmpegPath =
-  process.platform === "win32"
-    ? path.resolve(__bin__, "ffmpeg.exe")
-    : path.resolve(__bin__, "ffmpeg");
-export const mobilePath = isDev
-  ? path.resolve(app.getAppPath(), "../../mobile")
-  : path.resolve(app.getAppPath(), "../mobile");
-export const biliDownloader =
-  process.platform === "win32"
-    ? path.resolve(__bin__, "BBDown.exe")
-    : path.resolve(__bin__, "BBDown");
+export const db = resolve(workspace, "app.db");
+
+// bin path
+export const ffmpegPath = resolve(__bin__, "ffmpeg");
+export const biliDownloaderBin = resolve(__bin__, "BBDown");
+export const m3u8DownloaderBin = resolve(__bin__, "N_m3u8DL-RE");
+
+// mobile path
+export const mobilePath = resolve(
+  appPath,
+  isDev ? "../../mobile" : "../mobile"
+);
 
 // user agent
 export const pcUA =
