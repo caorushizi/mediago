@@ -1,9 +1,10 @@
 import { stripColors, m3u8DownloaderBin } from "../../helper";
 import { DownloadParams, DownloadProgress } from "../../interfaces";
 import { cmdr } from "./cmdr";
-import iconv from "iconv-lite";
 
-export const m3u8Downloader = async (params: DownloadParams): Promise<void> => {
+export const m3u8DownloaderDarwin = async (
+  params: DownloadParams
+): Promise<void> => {
   const {
     id,
     abortSignal,
