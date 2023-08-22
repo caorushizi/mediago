@@ -20,7 +20,10 @@ export const db = resolve(workspace, "app.db");
 // bin path
 export const ffmpegPath = resolve(__bin__, "ffmpeg");
 export const biliDownloaderBin = resolve(__bin__, "BBDown");
-export const m3u8DownloaderBin = resolve(__bin__, "N_m3u8DL-RE");
+export const m3u8DownloaderBin =
+  process.platform === "win32"
+    ? resolve(__bin__, "N_m3u8DL-CLI")
+    : resolve(__bin__, "N_m3u8DL-RE");
 
 // mobile path
 export const mobilePath = resolve(
