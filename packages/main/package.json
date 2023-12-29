@@ -48,7 +48,7 @@
   "dependencies": {
     "@cliqz/adblocker-electron": "^1.26.6",
     "@cliqz/adblocker-electron-preload": "^1.26.6",
-    "@koa/cors": "^4.0.0",
+    "@koa/cors": "^5.0.0",
     "@koa/router": "^12.0.0",
     "@types/koa-static": "^4.0.2",
     "@types/semver": "^7.5.0",
