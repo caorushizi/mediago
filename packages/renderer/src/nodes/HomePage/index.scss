@@ -1,23 +1,51 @@
 .home-page {
   .home-page-inner {
     padding-bottom: 10px;
-    .ant-pro-card-body {
-      padding: 0;
-    }
-    .description {
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    .download-list {
+      height: 100%;
       overflow: hidden;
-      cursor: default;
-    }
-    .download-progress {
-      .ant-progress {
-        align-items: center;
-        margin-bottom: 0px;
+      .ant-pro-card {
+        height: 100%;
+        .ant-pro-card-body {
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          .ant-list {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            .ant-spin-nested-loading {
+              flex: 1;
+              overflow: auto;
+              .ant-list-item {
+                padding-left: 10px;
+              }
+            }
+          }
+        }
       }
-      .progress-speed {
-        line-height: 25px;
-        min-width: max-content;
+      .description {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        cursor: default;
+      }
+      .download-progress {
+        .ant-progress {
+          align-items: center;
+          margin-bottom: 0px;
+        }
+        .progress-speed {
+          line-height: 25px;
+          min-width: max-content;
+        }
+      }
+      .ant-pro-list-row-title {
+        cursor: default;
+        .title-disabled {
+          opacity: 0.5;
+        }
       }
     }
   }

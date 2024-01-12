@@ -76,8 +76,10 @@ const DownloadFrom: FC<DownloadFormProps> = ({
       }}
       modalProps={{
         destroyOnClose: true,
-        bodyStyle: {
-          paddingTop: 5,
+        styles: {
+          body: {
+            paddingTop: 5,
+          },
         },
       }}
       submitTimeout={2000}

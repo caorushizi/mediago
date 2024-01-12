@@ -1,5 +1,5 @@
 diff --git a/dist/cjs/src/fetch.js b/dist/cjs/src/fetch.js
-index 1ba0a7aefa7466e9e43dd9dac81b72d0ef525f56..f9aa88d74c32547e0962fab4230fe9298ab2e9f8 100644
+index 030dcbb4adf87aeeb4fc8288f572c27e2c38ead0..c6bdc3384c954fa0ea7d3ec721f3c69d020d4050 100644
 --- a/dist/cjs/src/fetch.js
 +++ b/dist/cjs/src/fetch.js
 @@ -39,7 +39,7 @@ exports.fetchWithRetry = fetchWithRetry;
