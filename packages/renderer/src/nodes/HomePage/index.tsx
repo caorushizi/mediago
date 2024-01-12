@@ -3,8 +3,6 @@ import {
   Button,
   message,
   Progress,
-  Radio,
-  RadioChangeEvent,
   Space,
   Tag,
   Popover,
@@ -21,7 +19,6 @@ import { ProList } from "@ant-design/pro-components";
 import {
   DownloadOutlined,
   EditOutlined,
-  FolderOpenOutlined,
   PauseCircleOutlined,
   PlayCircleOutlined,
   SyncOutlined,
@@ -33,15 +30,20 @@ import { selectAppStore } from "../../store";
 import { tdApp } from "../../utils";
 import DownloadFrom from "../../components/DownloadForm";
 import dayjs from "dayjs";
+import classNames from "classnames";
 
 const { Text } = Typography;
 
-enum DownloadFilter {
+export enum DownloadFilter {
   list = "list",
   done = "done",
 }
 
-const HomePage: FC = () => {
+interface Props {
+  filter?: DownloadFilter;
+}
+
+const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   const {
     getDownloadItems,
     startDownload,
@@ -60,7 +62,6 @@ const HomePage: FC = () => {
     getLocalIP,
   } = useElectron();
   const appStore = useSelector(selectAppStore);
-  const [filter, setFilter] = useState(DownloadFilter.list);
   const { data, loading, pagination, refresh } = usePagination(
     ({ current, pageSize }) => {
       return getDownloadItems({
@@ -275,26 +276,15 @@ const HomePage: FC = () => {
       <Button
         type="text"
         key="open-file"
-        icon={<FolderOpenOutlined />}
-        title="打开文件位置"
-        onClick={() => onOpenDir()}
-      />,
-      <Button
-        type="text"
-        key="redownload"
-        title="重新下载"
-        icon={<DownloadOutlined />}
-        onClick={() => onStartDownload(item.id)}
+        disabled={!item.exist}
+        icon={<PlayCircleOutlined />}
+        title="播放视频"
+        onClick={() => openPlayerWindow(item.id)}
       />,
       <Dropdown
         key="more"
         menu={{
           items: [
-            {
-              label: "播放视频",
-              key: "play",
-              icon: <PlayCircleOutlined />,
-            },
             {
               label: "转换为音频",
               key: "convert",
@@ -303,9 +293,6 @@ const HomePage: FC = () => {
             },
           ],
           onClick: ({ key }) => {
-            if (key === "play") {
-              openPlayerWindow(item.id);
-            }
             if (key === "convert") {
               onClickConvertToAudio(item);
             }
@@ -326,7 +313,11 @@ const HomePage: FC = () => {
         </Tag>
       );
     } else if (item.status === DownloadStatus.Success) {
-      tag = <Tag color="success">下载成功</Tag>;
+      if (item.exist) {
+        tag = <Tag color="success">下载成功</Tag>;
+      } else {
+        tag = <Tag color="default">文件不存在</Tag>;
+      }
     } else if (item.status === DownloadStatus.Failed) {
       tag = <Tag color="error">下载失败</Tag>;
     } else if (item.status === DownloadStatus.Stopped) {
@@ -335,7 +326,14 @@ const HomePage: FC = () => {
 
     return (
       <Space>
-        <Text>{item.name}</Text>
+        <Text
+          className={classNames({
+            "title-disabled":
+              item.status === DownloadStatus.Success && !item.exist,
+          })}
+        >
+          {item.name}
+        </Text>
         <Space size={[0, 8]}>
           {tag}
           {item.isLive && <Tag color={"default"}>直播资源</Tag>}
@@ -367,13 +365,9 @@ const HomePage: FC = () => {
     onChange: (keys: React.Key[]) => setSelectedRowKeys(keys),
   };
 
-  const onFilterChange = (e: RadioChangeEvent) => {
-    setFilter(e.target.value);
-  };
-
   const onBatchDownload = async () => {
     for (const id of selectedRowKeys) {
-      await startDownload(+id);
+      await startDownload(Number(id));
     }
 
     messageApi.success("添加任务成功");
@@ -383,20 +377,9 @@ const HomePage: FC = () => {
 
   return (
     <PageContainer
-      title="下载列表"
-      titleExtra={
-        <Radio.Group value={filter} onChange={onFilterChange}>
-          <Radio.Button value="list">下载列表</Radio.Button>
-          <Radio.Button value="done">下载完成</Radio.Button>
-        </Radio.Group>
-      }
+      title={filter === DownloadFilter.list ? "下载列表" : "下载完成"}
       rightExtra={
         <Space>
-          {appStore.openInNewWindow && (
-            <Button type="primary" onClick={() => showBrowserWindow()}>
-              打开浏览器
-            </Button>
-          )}
           {filter === DownloadFilter.done && (
             <Popover
               placement="topRight"
@@ -417,39 +400,50 @@ const HomePage: FC = () => {
               <Button icon={<MobileOutlined />}>手机上播放</Button>
             </Popover>
           )}
-          <Button onClick={() => refresh()}>刷新</Button>
-          <DownloadFrom
-            trigger={<Button>新建下载</Button>}
-            onFinish={async (values: any) => {
-              if (values.batch) {
-                const { batchList = "" } = values;
-                const items = batchList.split("\n").map((item: any) => {
-                  let [url, name] = item.split(" ");
-                  url = url ? url.trim() : "";
-                  name = name
-                    ? name.trim()
-                    : dayjs().format("YYYY-MM-DDTHH:mm:ssZ");
-                  return {
-                    url,
-                    name,
+          {filter === DownloadFilter.done && (
+            <Button onClick={() => openDir(appStore.local)}>打开文件夹</Button>
+          )}
+          {filter === DownloadFilter.list && appStore.openInNewWindow && (
+            <Button type="primary" onClick={() => showBrowserWindow()}>
+              打开浏览器
+            </Button>
+          )}
+          {filter === DownloadFilter.list && (
+            <Button onClick={() => refresh()}>刷新</Button>
+          )}
+          {filter === DownloadFilter.list && (
+            <DownloadFrom
+              trigger={<Button>新建下载</Button>}
+              onFinish={async (values: any) => {
+                if (values.batch) {
+                  const { batchList = "" } = values;
+                  const items = batchList.split("\n").map((item: any) => {
+                    let [url, name] = item.split(" ");
+                    url = url ? url.trim() : "";
+                    name = name
+                      ? name.trim()
+                      : dayjs().format("YYYY-MM-DDTHH:mm:ssZ");
+                    return {
+                      url,
+                      name,
+                      headers: values.headers,
+                    };
+                  });
+                  await addDownloadItems(items);
+                } else {
+                  await addDownloadItem({
+                    name: values.name || dayjs().format("YYYY-MM-DDTHH:mm:ssZ"),
+                    url: values.url,
                     headers: values.headers,
-                  };
-                });
-                await addDownloadItems(items);
-              } else {
-                await addDownloadItem({
-                  name: values.name || dayjs().format("YYYY-MM-DDTHH:mm:ssZ"),
-                  url: values.url,
-                  headers: values.headers,
-                  type: DownloadType.m3u8,
-                });
-              }
+                    type: DownloadType.m3u8,
+                  });
+                }
 
-              refresh();
-              return true;
-            }}
-          />
-          <Button onClick={() => openDir(appStore.local)}>打开文件夹</Button>
+                refresh();
+                return true;
+              }}
+            />
+          )}
         </Space>
       }
       className="home-page"
@@ -457,6 +451,7 @@ const HomePage: FC = () => {
       {contextHolder}
       <ProList<DownloadItem>
         loading={loading}
+        className="download-list"
         pagination={pagination}
         metas={{
           title: {
@@ -490,7 +485,7 @@ const HomePage: FC = () => {
                 type="link"
                 onClick={async () => {
                   for (const id of selectedRowKeys) {
-                    await deleteDownloadItem(+id);
+                    await deleteDownloadItem(Number(id));
                   }
                   setSelectedRowKeys([]);
                   refresh();

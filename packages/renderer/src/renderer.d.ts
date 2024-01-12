@@ -14,6 +14,7 @@ declare interface DownloadItem {
   headers?: string;
   status?: DownloadStatus;
   isLive?: boolean;
+  exist?: boolean;
 }
 
 declare interface VideoResponse {

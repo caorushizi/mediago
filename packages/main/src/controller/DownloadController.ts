@@ -14,6 +14,7 @@ import MainWindow from "../windows/MainWindow";
 import StoreService from "../services/StoreService";
 import DownloadService from "../services/DownloadService";
 import VideoRepository from "../repository/VideoRepository";
+import { existsSync } from "fs-extra";
 
 @injectable()
 export default class DownloadController implements Controller {
@@ -61,7 +62,22 @@ export default class DownloadController implements Controller {
 
   @handle("get-download-items")
   async getDownloadItems(e: IpcMainEvent, pagination: DownloadItemPagination) {
-    return await this.videoRepository.findVideos(pagination);
+    const localDir = this.storeService.get("local");
+    const videos = await this.videoRepository.findVideos(pagination);
+    const newVideos = videos.list.map((video) => {
+      if (video.status === DownloadStatus.Success) {
+        return {
+          ...video,
+          exist: existsSync(`${localDir}/${video.name}`),
+        };
+      }
+      return video;
+    });
+
+    return {
+      total: videos.total,
+      list: newVideos,
+    };
   }
 
   @handle("start-download")

@@ -1,144 +1,94 @@
-import React, { FC, useState } from "react";
-import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Badge, Button, Layout, Menu, MenuProps } from "antd";
+import { ConfigProvider, theme } from "antd";
+import "antd/dist/reset.css";
+import React, { FC, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import AppLayout from "./layout/App";
+import HomePage, { DownloadFilter } from "./nodes/HomePage";
+import SettingPage from "./nodes/SettingPage";
+import PlayerPage from "./nodes/PlayerPage";
+import SourceExtract from "./nodes/SourceExtract";
+import { setAppStore, increase } from "./store";
+import "dayjs/locale/zh-cn";
+import zhCN from "antd/locale/zh_CN";
 import "./App.scss";
-import {
-  DownloadOutlined,
-  ExportOutlined,
-  ProfileOutlined,
-  QuestionCircleOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
 import useElectron from "./hooks/electron";
-import { useDispatch, useSelector } from "react-redux";
-import { selectAppStore, setAppStore, clearCount, selectCount } from "./store";
-import { useAsyncEffect } from "ahooks";
-import { tdApp } from "./utils";
 
-const { Footer, Sider, Content } = Layout;
-
-type MenuItem = Required<MenuProps>["items"][number];
+function getAlgorithm(appTheme: "dark" | "light") {
+  return appTheme === "dark" ? theme.darkAlgorithm : theme.defaultAlgorithm;
+}
 
 const App: FC = () => {
-  const {
-    getAppStore: ipcGetAppStore,
-    openUrl,
-    setAppStore: ipcSetAppStore,
-    showBrowserWindow,
-  } = useElectron();
-  const location = useLocation();
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [showExport, setShowExport] = useState(false);
-  const count = useSelector(selectCount);
-  const appStore = useSelector(selectAppStore);
+  const [appTheme, setAppTheme] = React.useState<"dark" | "light">("light");
+  const { addIpcListener, removeIpcListener } = useElectron();
 
-  const items: MenuItem[] = [
-    {
-      label: (
-        <Link
-          to="/"
-          className="like-item"
-          onClick={() => {
-            dispatch(clearCount());
-          }}
-        >
-          <DownloadOutlined />
-          <span>下载列表</span>
-          {count > 0 && (
-            <Badge count={count} offset={[5, 1]} size="small"></Badge>
-          )}
-        </Link>
-      ),
-      key: "home",
-    },
-    {
-      label: (
-        <Link to="/source-extract" className="like-item">
-          <ProfileOutlined />
-          <span>素材提取</span>
-          {showExport && (
-            <Button
-              title="在新窗口中打开"
-              type="text"
-              style={{ marginLeft: "auto" }}
-              icon={<ExportOutlined />}
-              onClick={async (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-
-                dispatch(setAppStore({ openInNewWindow: true }));
-                if (location.pathname === "/source-extract") {
-                  navigate("/");
-                }
-                // FIXME: 有可能 webview 还没有完全隐藏
-                await ipcSetAppStore("openInNewWindow", true);
-                await showBrowserWindow();
-              }}
-            />
-          )}
-        </Link>
-      ),
-      key: "source",
-      onMouseEnter: () => {
-        setShowExport(true);
-      },
-      onMouseLeave: () => {
-        setShowExport(false);
-      },
-    },
-    {
-      label: (
-        <Link to="/settings" className="like-item">
-          <SettingOutlined />
-          <span>设置</span>
-        </Link>
-      ),
-      key: "settings",
-    },
-  ];
-
-  const finalItems = items.filter((item) =>
-    appStore.openInNewWindow ? item?.key !== "source" : true
-  );
-
-  const openHelpUrl = () => {
-    tdApp.openHelpPage();
-    const url = "https://downloader.caorushizi.cn/guides.html?form=client";
-    openUrl(url);
+  const themeChange = (event: MediaQueryListEvent) => {
+    if (event.matches) {
+      setAppTheme("dark");
+    } else {
+      setAppTheme("light");
+    }
   };
 
-  useAsyncEffect(async () => {
-    const store = await ipcGetAppStore();
+  // 监听store变化
+  const onAppStoreChange = (event: any, store: AppStore) => {
     dispatch(setAppStore(store));
+  };
+
+  const onReceiveDownloadItem = () => {
+    console.log("onReceiveDownloadItem");
+    dispatch(increase());
+  };
+
+  useEffect(() => {
+    addIpcListener("store-change", onAppStoreChange);
+    addIpcListener("download-item-notifier", onReceiveDownloadItem);
+
+    return () => {
+      removeIpcListener("store-change", onAppStoreChange);
+      removeIpcListener("download-item-notifier", onReceiveDownloadItem);
+    };
+  }, []);
+
+  useEffect(() => {
+    const isDarkTheme = matchMedia("(prefers-color-scheme: dark)");
+    isDarkTheme.addEventListener("change", themeChange);
+
+    if (isDarkTheme.matches) {
+      setAppTheme("dark");
+    } else {
+      setAppTheme("light");
+    }
+
+    return () => {
+      isDarkTheme.removeEventListener("change", themeChange);
+    };
   }, []);
 
   return (
-    <Layout className="container">
-      <Sider className="container-sider" theme="light">
-        <Menu
-          style={{ height: "100%" }}
-          defaultSelectedKeys={["home"]}
-          mode="vertical"
-          theme="light"
-          items={finalItems}
-        />
-      </Sider>
-      <Layout>
-        <Content className="container-inner">
-          <Outlet />
-        </Content>
-        <Footer className="container-footer">
-          <Button
-            type={"link"}
-            onClick={openHelpUrl}
-            icon={<QuestionCircleOutlined />}
-          >
-            使用帮助
-          </Button>
-        </Footer>
-      </Layout>
-    </Layout>
+    <ConfigProvider
+      locale={zhCN}
+      componentSize="small"
+      theme={{ algorithm: getAlgorithm(appTheme) }}
+    >
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<AppLayout />}>
+            <Route index element={<HomePage />} />
+            <Route
+              path="done"
+              element={<HomePage filter={DownloadFilter.done} />}
+            />
+            <Route path="source" element={<SourceExtract />} />
+            <Route path="settings" element={<SettingPage />} />
+            <Route path="*" element={<div>404</div>} />
+          </Route>
+          <Route path="/browser" element={<SourceExtract page={true} />} />
+          <Route path="/player" element={<PlayerPage />} />
+        </Routes>
+      </BrowserRouter>
+    </ConfigProvider>
   );
 };
 
