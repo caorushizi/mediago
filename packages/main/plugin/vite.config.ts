@@ -9,10 +9,10 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, "./src/main.tsx"),
       name: "plugin",
-      fileName: () => "plugin.js",
+      fileName: () => "index.js",
       formats: ["cjs"],
     },
-    outDir: path.resolve(__dirname, "../main/app/plugin"),
+    outDir: path.resolve(__dirname, "../../main/app/plugin"),
     emptyOutDir: true,
     rollupOptions: {
       external: ["electron/renderer"],

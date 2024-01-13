@@ -10,7 +10,7 @@
     "build:plugin": "pnpm -F plugin run build",
     "build:main": "pnpm -F main run build",
     "build:renderer": "pnpm -F renderer run build",
-    "build:server": "cd internal && go build -o ../packages/main/bin/win32/server.exe",
+    "build:server": "cd internal && cross-env GIN_MODE=release go build -o ../packages/main/bin/win32/server.exe",
     "pack": "pnpm -F media-downloader run pack",
     "release": "pnpm run build && pnpm -F main run release",
     "docs:dev": "vitepress dev docs",
@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "@waline/client": "^2.15.5",
+    "cross-env": "^7.0.3",
     "vitepress": "1.0.0-beta.3",
     "vue": "^3.3.4",
     "zx": "^7.2.3"

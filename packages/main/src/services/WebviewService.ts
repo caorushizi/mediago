@@ -106,9 +106,7 @@ export default class WebviewService {
     this.view = new BrowserView({
       webPreferences: {
         partition: PERSIST_WEBVIEW,
-        preload: isDev
-          ? path.resolve(__dirname, "./devReload.js")
-          : path.resolve(__dirname, "../../plugin/plugin.js"),
+        preload: path.resolve(__dirname, "../../plugin/index.js"),
       },
     });
     this.view.setBackgroundColor("#fff");
