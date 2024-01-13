@@ -24,6 +24,7 @@ export const m3u8DownloaderBin =
   process.platform === "win32"
     ? resolve(__bin__, "N_m3u8DL-CLI")
     : resolve(__bin__, "N_m3u8DL-RE");
+export const videoServerBin = resolve(__bin__, "server.exe");
 
 // mobile path
 export const mobilePath = resolve(

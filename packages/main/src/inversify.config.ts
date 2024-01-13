@@ -16,10 +16,10 @@ import LoggerService from "./services/LoggerService";
 import ProtocolService from "./services/ProtocolService";
 import UpdateService from "./services/UpdateService";
 import { TYPES } from "./types";
-import WebService from "./services/WebService";
 import MainWindow from "./windows/MainWindow";
 import PlayerWindow from "./windows/PlayerWindow";
 import BrowserWindow from "./windows/BrowserWindow";
+import VideoService from "./services/VideoService";
 
 const container = new Container({
   skipBaseClassChecks: true,
@@ -41,7 +41,7 @@ container.bind<DatabaseService>(TYPES.DatabaseService).to(DatabaseService);
 container.bind<WebviewService>(TYPES.WebviewService).to(WebviewService);
 container.bind<DownloadService>(TYPES.DownloadService).to(DownloadService);
 container.bind<DevToolsService>(TYPES.DevToolsService).to(DevToolsService);
-container.bind<WebService>(TYPES.WebService).to(WebService);
+container.bind<VideoService>(TYPES.VideoService).to(VideoService);
 
 // windows
 container.bind<MainWindow>(TYPES.MainWindow).to(MainWindow);

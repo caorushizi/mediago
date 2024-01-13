@@ -68,7 +68,7 @@ export default class DownloadController implements Controller {
       if (video.status === DownloadStatus.Success) {
         return {
           ...video,
-          exist: existsSync(`${localDir}/${video.name}`),
+          exist: existsSync(`${localDir}/${video.name}.mp4`),
         };
       }
       return video;

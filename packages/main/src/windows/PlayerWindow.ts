@@ -1,18 +1,13 @@
 import isDev from "electron-is-dev";
-import { inject, injectable } from "inversify";
+import { injectable } from "inversify";
 import { resolve } from "path";
-import { TYPES } from "../types";
 import Window from "./window";
-import VideoRepository from "../repository/VideoRepository";
 
 @injectable()
 export default class PlayerWindowServiceImpl extends Window {
   url = isDev ? "http://localhost:8555/player" : "mediago://index.html/player";
 
-  constructor(
-    @inject(TYPES.VideoRepository)
-    private readonly videoRepository: VideoRepository
-  ) {
+  constructor() {
     super({
       width: 1100,
       minWidth: 1100,
@@ -26,16 +21,15 @@ export default class PlayerWindowServiceImpl extends Window {
     });
   }
 
-  openWindow = async (id: number) => {
+  openWindow = async (name: string) => {
     if (!this.window) {
+      const url = new URL(this.url);
+      url.searchParams.set("name", encodeURIComponent(name));
+      this.url = url.toString();
       this.window = this.create();
     }
 
-    const video = await this.videoRepository.findVideo(id);
-    if (!video) throw new Error("video not found");
-
     isDev && this.window.webContents.openDevTools();
-    this.window.webContents.send("open-player-window", video.id);
     this.window.show();
   };
 }
