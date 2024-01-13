@@ -71,11 +71,8 @@ const filterList: SourceFilter[] = [
   },
 ];
 
-let styleText = "";
-if (!isDev) {
-  const preloadPath = path.resolve(__dirname, "../../plugin/style.css");
-  styleText = readFileSync(preloadPath, "utf-8");
-}
+const preloadPath = path.resolve(__dirname, "../../plugin/style.css");
+const styleText = readFileSync(preloadPath, "utf-8");
 
 // FIXME: 需要重构
 @injectable()
@@ -118,9 +115,7 @@ export default class WebviewService {
 
     this.view.webContents.on("dom-ready", async () => {
       this.pageSources.clear();
-      if (!isDev) {
-        this.view.webContents.insertCSS(styleText);
-      }
+      this.view.webContents.insertCSS(styleText);
       const title = this.view.webContents.getTitle();
       const url = this.view.webContents.getURL();
       this.curWindow?.webContents.send("webview-dom-ready", { title, url });
