@@ -4,9 +4,10 @@
   "description": "electron-template",
   "main": "index.js",
   "scripts": {
-    "dev": "pnpm run build:mobile && pnpm run types && pnpm --parallel -F \"./packages/*\" run dev",
-    "build": "pnpm run build:mobile && pnpm run types && pnpm run build:main && pnpm run build:renderer",
+    "dev": "zx scripts/dev.mjs && pnpm --parallel -F \"./packages/*\" run dev",
+    "build": "zx scripts/build.mjs",
     "build:mobile": "pnpm -F mobile run build",
+    "build:plugin": "pnpm -F plugin run build",
     "build:main": "pnpm -F main run build",
     "build:renderer": "pnpm -F renderer run build",
     "build:server": "cd internal && go build -o ../packages/main/bin/win32/server.exe",
@@ -28,6 +29,7 @@
   "devDependencies": {
     "@waline/client": "^2.15.5",
     "vitepress": "1.0.0-beta.3",
-    "vue": "^3.3.4"
+    "vue": "^3.3.4",
+    "zx": "^7.2.3"
   }
 }

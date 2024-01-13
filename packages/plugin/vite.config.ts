@@ -10,15 +10,15 @@ export default defineConfig({
       entry: path.resolve(__dirname, "./src/main.tsx"),
       name: "plugin",
       fileName: () => "plugin.js",
-      formats: ["umd"],
+      formats: ["cjs"],
     },
     outDir: path.resolve(__dirname, "../main/app/plugin"),
     emptyOutDir: true,
+    rollupOptions: {
+      external: ["electron/renderer"],
+    },
   },
   server: {
     origin: "http://localhost:5173",
-  },
-  optimizeDeps: {
-    exclude: ["electron"],
   },
 });

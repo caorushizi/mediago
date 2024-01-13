@@ -91,7 +91,7 @@ const App: FC = () => {
                 e.preventDefault();
 
                 dispatch(setAppStore({ openInNewWindow: true }));
-                if (location.pathname === "/source-extract") {
+                if (location.pathname === "/source") {
                   navigate("/");
                 }
                 // FIXME: 有可能 webview 还没有完全隐藏
