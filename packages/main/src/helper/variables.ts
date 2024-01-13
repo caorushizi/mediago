@@ -31,6 +31,11 @@ export const mobilePath = resolve(
   appPath,
   isDev ? "../../mobile" : "../mobile"
 );
+// plugin path
+export const pluginPath = resolve(
+  appPath,
+  isDev ? "../../plugin" : "../plugin"
+);
 
 // user agent
 export const pcUA =

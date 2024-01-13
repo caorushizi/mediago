@@ -96,6 +96,12 @@ export default class VideoRepository {
     });
   }
 
+  async findVideoByName(name: string) {
+    return this.dataService.appDataSource.getRepository(Video).findOneBy({
+      name,
+    });
+  }
+
   async changeVideoStatus(id: number | number[], status: DownloadStatus) {
     const ids = !Array.isArray(id) ? [id] : id;
     return this.dataService.appDataSource

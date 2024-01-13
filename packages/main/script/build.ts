@@ -42,7 +42,7 @@ esbuild.build({
 });
 
 esbuild.build({
-  entryPoints: [mainResolve("src/preload.ts"), mainResolve("src/webview.ts")],
+  entryPoints: [mainResolve("src/preload.ts"), mainResolve("src/devReload.ts")],
   bundle: true,
   platform: "browser",
   target: ["chrome89"],
