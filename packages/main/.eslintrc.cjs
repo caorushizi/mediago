@@ -9,6 +9,7 @@ module.exports = {
     "prettier",
   ],
   overrides: [],
+  ignorePatterns: ["app"],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaVersion: "latest",

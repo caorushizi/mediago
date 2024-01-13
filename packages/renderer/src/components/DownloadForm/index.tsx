@@ -162,7 +162,7 @@ http://example.com/xxx.m3u8`}
           if (isEdit || !form.getFieldValue("batch")) {
             return (
               <ProFormText
-                name="name"
+                name="key"
                 label="私有KEY"
                 placeholder="KEY和IV值（HEX格式）"
               />

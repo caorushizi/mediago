@@ -62,7 +62,10 @@ async function start() {
 
   const preloadContext = await esbuild.context({
     ...buildConfig,
-    entryPoints: [mainResolve("src/preload.ts"), mainResolve("src/webview.ts")],
+    entryPoints: [
+      mainResolve("src/preload.ts"),
+      mainResolve("src/devReload.ts"),
+    ],
     platform: "browser",
   });
 

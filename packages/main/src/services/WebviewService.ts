@@ -3,7 +3,7 @@ import { DownloadType } from "../interfaces";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import isDev from "electron-is-dev";
-import { PERSIST_WEBVIEW, mobileUA, pcUA } from "../helper";
+import { PERSIST_WEBVIEW, mobileUA, pcUA, pluginPath } from "../helper";
 import { ElectronBlocker } from "@cliqz/adblocker-electron";
 import fetch from "cross-fetch";
 import path from "path";
@@ -14,12 +14,14 @@ import StoreService from "./StoreService";
 import MainWindow from "../windows/MainWindow";
 import BrowserWindow from "../windows/BrowserWindow";
 import VideoRepository from "../repository/VideoRepository";
+import { readFileSync } from "fs-extra";
 
 interface SourceParams {
   url: string;
   requestId: string;
   headers: Record<string, any>;
   filter: SourceFilter;
+  documentURL: string;
 }
 
 interface SourceFilter {
@@ -27,6 +29,7 @@ interface SourceFilter {
   type: DownloadType;
   handler: (this: WebviewService, params: SourceParams) => Promise<WebSource>;
 }
+
 const filterList: SourceFilter[] = [
   {
     matches: [/\.m3u8/],
@@ -68,6 +71,12 @@ const filterList: SourceFilter[] = [
   },
 ];
 
+let scriptText = "";
+if (isDev) {
+  const preloadPath = path.resolve(__dirname, "./devReload.js");
+  scriptText = readFileSync(preloadPath, "utf-8");
+}
+
 // FIXME: 需要重构
 @injectable()
 export default class WebviewService {
@@ -75,6 +84,7 @@ export default class WebviewService {
   private blocker?: ElectronBlocker;
   private pageSources = new Set();
   requestMap: Record<string, SourceParams> = {};
+  responseMap: Record<string, string[]> = {};
 
   constructor(
     @inject(TYPES.MainWindow)
@@ -96,7 +106,7 @@ export default class WebviewService {
     this.view = new BrowserView({
       webPreferences: {
         partition: PERSIST_WEBVIEW,
-        preload: path.resolve(__dirname, "./webview.js"),
+        preload: path.resolve(__dirname, "./devReload.js"),
       },
     });
     this.view.setBackgroundColor("#fff");
@@ -106,8 +116,13 @@ export default class WebviewService {
     this.setProxy(useProxy, proxy);
     this.setUserAgent(isMobile);
 
-    this.view.webContents.on("dom-ready", () => {
+    this.view.webContents.on("dom-ready", async () => {
       this.pageSources.clear();
+
+      // if (isDev) {
+      //   this.view.webContents.executeJavaScript(scriptText);
+      // }
+
       const title = this.view.webContents.getTitle();
       const url = this.view.webContents.getURL();
       this.curWindow?.webContents.send("webview-dom-ready", { title, url });
@@ -137,7 +152,7 @@ export default class WebviewService {
 
     this.debugger.on("message", async (event, method, params) => {
       if (method === "Network.requestWillBeSent") {
-        const { requestId } = params;
+        const { requestId, documentURL } = params;
         const { url, headers } = params.request;
 
         for (const filter of filterList) {
@@ -152,11 +167,13 @@ export default class WebviewService {
 
             this.logger.info(`在窗口中捕获视频链接: ${url} id: ${requestId}`);
             this.pageSources.add(url);
+            this.responseMap[documentURL] = [];
             this.requestMap[requestId] = {
               url,
               headers,
               requestId,
               filter,
+              documentURL,
             };
             break;
           }
@@ -167,7 +184,31 @@ export default class WebviewService {
         const sourceParams = this.requestMap[requestId];
 
         if (sourceParams) {
-          const { filter } = sourceParams;
+          const { filter, url, documentURL } = sourceParams;
+          const objUrl = new URL(url);
+
+          const { body, base64Encoded } = await this.debugger.sendCommand(
+            "Network.getResponseBody",
+            {
+              requestId: params.requestId,
+            }
+          );
+          if (this.responseMap[documentURL].length > 0) {
+            const bodys = this.responseMap[documentURL];
+            const exist = bodys.some((item) =>
+              new RegExp(objUrl.pathname).test(item)
+            );
+            console.log("exist", exist);
+            if (exist) return;
+          }
+          if (base64Encoded) {
+            // base64 解码
+            const bodyContent = Buffer.from(body, "base64").toString();
+            this.responseMap[documentURL].push(bodyContent);
+          } else {
+            this.responseMap[documentURL].push(body);
+          }
+
           // 这里需要判断是否使用浏览器插件
           const useExtension = this.storeService.get("useExtension");
           if (useExtension) {
@@ -176,6 +217,10 @@ export default class WebviewService {
             webContents.send("webview-link-message", item);
           } else {
             const item = await filter.handler.call(this, sourceParams);
+            const video = await this.videoRepository.findVideoByName(item.name);
+            if (video) {
+              item.name = `${item.name}-${Date.now()}`;
+            }
             const res = await this.videoRepository.addVideo(item);
             const mainWebContents = this.mainWindow.window?.webContents;
             if (!mainWebContents) return;

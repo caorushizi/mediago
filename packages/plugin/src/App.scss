@@ -1,0 +1,29 @@
+#MediagoRoot {
+  .app {
+    position: fixed;
+    left: 30px;
+    bottom: 30px;
+    z-index: 99999;
+    height: 45px;
+    width: 45px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    &:hover {
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.35);
+    }
+    .app-logo {
+      display: block;
+      box-sizing: border-box;
+      height: 100%;
+      width: 100%;
+      padding: 3px;
+    }
+  }
+}
