@@ -3,7 +3,7 @@ import { DownloadType } from "../interfaces";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import isDev from "electron-is-dev";
-import { PERSIST_WEBVIEW, mobileUA, pcUA, pluginPath } from "../helper";
+import { PERSIST_WEBVIEW, mobileUA, pcUA } from "../helper";
 import { ElectronBlocker } from "@cliqz/adblocker-electron";
 import fetch from "cross-fetch";
 import path from "path";
@@ -71,10 +71,10 @@ const filterList: SourceFilter[] = [
   },
 ];
 
-let scriptText = "";
-if (isDev) {
-  const preloadPath = path.resolve(__dirname, "./devReload.js");
-  scriptText = readFileSync(preloadPath, "utf-8");
+let styleText = "";
+if (!isDev) {
+  const preloadPath = path.resolve(__dirname, "../../plugin/style.css");
+  styleText = readFileSync(preloadPath, "utf-8");
 }
 
 // FIXME: 需要重构
@@ -106,7 +106,9 @@ export default class WebviewService {
     this.view = new BrowserView({
       webPreferences: {
         partition: PERSIST_WEBVIEW,
-        preload: path.resolve(__dirname, "./devReload.js"),
+        preload: isDev
+          ? path.resolve(__dirname, "./devReload.js")
+          : path.resolve(__dirname, "../../plugin/plugin.js"),
       },
     });
     this.view.setBackgroundColor("#fff");
@@ -118,11 +120,9 @@ export default class WebviewService {
 
     this.view.webContents.on("dom-ready", async () => {
       this.pageSources.clear();
-
-      // if (isDev) {
-      //   this.view.webContents.executeJavaScript(scriptText);
-      // }
-
+      if (!isDev) {
+        this.view.webContents.insertCSS(styleText);
+      }
       const title = this.view.webContents.getTitle();
       const url = this.view.webContents.getURL();
       this.curWindow?.webContents.send("webview-dom-ready", { title, url });
@@ -165,7 +165,6 @@ export default class WebviewService {
               continue;
             }
 
-            this.logger.info(`在窗口中捕获视频链接: ${url} id: ${requestId}`);
             this.pageSources.add(url);
             this.responseMap[documentURL] = [];
             this.requestMap[requestId] = {
@@ -198,7 +197,6 @@ export default class WebviewService {
             const exist = bodys.some((item) =>
               new RegExp(objUrl.pathname).test(item)
             );
-            console.log("exist", exist);
             if (exist) return;
           }
           if (base64Encoded) {
@@ -209,6 +207,7 @@ export default class WebviewService {
             this.responseMap[documentURL].push(body);
           }
 
+          this.logger.info(`在窗口中捕获视频链接: ${url}`);
           // 这里需要判断是否使用浏览器插件
           const useExtension = this.storeService.get("useExtension");
           if (useExtension) {

@@ -34,6 +34,10 @@ const options: builder.Configuration = {
       to: "mobile",
     },
     {
+      from: "./app/plugin",
+      to: "plugin",
+    },
+    {
       from: "./app/bin/${platform}/",
       to: "bin",
     },
