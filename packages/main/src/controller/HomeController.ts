@@ -241,9 +241,9 @@ export default class HomeController implements Controller {
   }
 
   @handle("open-player-window")
-  async openPlayerWindow(event: IpcMainEvent, id: number) {
+  async openPlayerWindow(event: IpcMainEvent, name: string) {
     // 打开播放器窗口
-    this.playerWindow.openWindow(id);
+    this.playerWindow.openWindow(name);
   }
 
   @handle("get-local-ip")

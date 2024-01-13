@@ -1,0 +1,3 @@
+[submodule "internal"]
+	path = internal
+	url = https://github.com/caorushizi/mediago

@@ -37,7 +37,6 @@ const App: FC = () => {
   };
 
   const onReceiveDownloadItem = () => {
-    console.log("onReceiveDownloadItem");
     dispatch(increase());
   };
 

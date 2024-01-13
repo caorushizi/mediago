@@ -11,9 +11,9 @@ import IpcHandlerService from "./services/IpcHandlerService";
 import DatabaseService from "./services/DatabaseService";
 import WebviewService from "./services/WebviewService";
 import DevToolsService from "./services/DevToolsService";
-import WebService from "./services/WebService";
 import StoreService from "./services/StoreService";
 import VideoRepository from "./repository/VideoRepository";
+import VideoService from "./services/VideoService";
 
 @injectable()
 export default class ElectronApp {
@@ -34,10 +34,10 @@ export default class ElectronApp {
     private readonly videoRepository: VideoRepository,
     @inject(TYPES.DevToolsService)
     private readonly devTools: DevToolsService,
-    @inject(TYPES.WebService)
-    private readonly webService: WebService,
     @inject(TYPES.StoreService)
-    private readonly storeService: StoreService
+    private readonly storeService: StoreService,
+    @inject(TYPES.VideoService)
+    private readonly videoService: VideoService
   ) {}
 
   private async seriveInit(): Promise<void> {
@@ -47,7 +47,7 @@ export default class ElectronApp {
     this.ipcHandler.init();
     this.updateService.init();
     this.webview.init(), this.devTools.init();
-    this.webService.init();
+    this.videoService.init();
   }
 
   async init(): Promise<void> {

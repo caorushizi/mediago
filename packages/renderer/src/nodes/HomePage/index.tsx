@@ -279,7 +279,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
         disabled={!item.exist}
         icon={<PlayCircleOutlined />}
         title="播放视频"
-        onClick={() => openPlayerWindow(item.id)}
+        onClick={() => openPlayerWindow(item.name)}
       />,
       <Dropdown
         key="more"
