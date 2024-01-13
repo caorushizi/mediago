@@ -3,6 +3,7 @@ import { FloatButton, Button, Dropdown, Space } from "antd";
 import "./App.scss";
 import logo from "./assets/logo.png";
 import { WebSource } from "./types";
+import { ipcRenderer } from "electron/renderer";
 
 function App() {
   const [items, setItems] = useState<WebSource[]>([]);
@@ -14,13 +15,10 @@ function App() {
   };
 
   useEffect(() => {
-    window?.ipcRenderer.on("webview-link-message", receiveMessage);
+    ipcRenderer.on("webview-link-message", receiveMessage);
 
     return () => {
-      window?.ipcRenderer.removeListener(
-        "webview-link-message",
-        receiveMessage
-      );
+      ipcRenderer.removeListener("webview-link-message", receiveMessage);
     };
   }, []);
 
@@ -38,7 +36,7 @@ function App() {
             label: (
               <Space
                 onClick={() => {
-                  window?.ipcRenderer.invoke("add-download-item", {
+                  ipcRenderer.invoke("add-download-item", {
                     name: item.name,
                     url: item.url,
                     type: item.type,

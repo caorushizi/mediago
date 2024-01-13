@@ -4,6 +4,8 @@ import * as esbuild from "esbuild";
 import chokidar from "chokidar";
 import { loadDotEnvRuntime, mainResolve, log, copyResource } from "./utils";
 import { external } from "./config";
+import { build } from "vite";
+import path from "path";
 
 let electronProcess: ChildProcessWithoutNullStreams | null = null;
 
@@ -54,6 +56,18 @@ function startElectron() {
   });
 }
 
+function restartElectron() {
+  if (electronProcess && electronProcess.pid) {
+    if (process.platform === "darwin") {
+      spawn("kill", ["-9", String(electronProcess.pid)]);
+    } else {
+      process.kill(electronProcess.pid);
+    }
+    electronProcess = null;
+    startElectron();
+  }
+}
+
 async function start() {
   const mainContext = await esbuild.context({
     ...buildConfig,
@@ -62,28 +76,24 @@ async function start() {
 
   const preloadContext = await esbuild.context({
     ...buildConfig,
-    entryPoints: [
-      mainResolve("src/preload.ts"),
-      mainResolve("src/devReload.ts"),
-    ],
+    entryPoints: [mainResolve("src/preload.ts")],
     platform: "browser",
   });
 
   const watcher = chokidar.watch("./src");
-
   watcher.on("change", async () => {
     await mainContext.rebuild();
     await preloadContext.rebuild();
     log("watch build succeed.");
-    if (electronProcess && electronProcess.pid) {
-      if (process.platform === "darwin") {
-        spawn("kill", ["-9", String(electronProcess.pid)]);
-      } else {
-        process.kill(electronProcess.pid);
-      }
-      electronProcess = null;
-      startElectron();
-    }
+    restartElectron();
+  });
+
+  const pluginRoot = path.resolve(__dirname, "../plugin");
+  const watcher2 = chokidar.watch(pluginRoot);
+  watcher2.on("change", async () => {
+    console.log("plugin changed");
+    await build({ root: pluginRoot });
+    restartElectron();
   });
 
   try {
