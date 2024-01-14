@@ -44,8 +44,8 @@ importers:
         specifier: ^1.4.0
         version: 1.6.5
       better-sqlite3:
-        specifier: ^8.4.0
-        version: 8.7.0
+        specifier: ^9.2.2
+        version: 9.2.2
       cheerio:
         specifier: 1.0.0-rc.12
         version: 1.0.0-rc.12
@@ -90,7 +90,7 @@ importers:
         version: 10.9.2(@types/node@20.11.0)(typescript@5.1.6)
       typeorm:
         specifier: ^0.3.17
-        version: 0.3.19(better-sqlite3@8.7.0)(ts-node@10.9.2)
+        version: 0.3.19(better-sqlite3@9.2.2)(ts-node@10.9.2)
     devDependencies:
       '@electron/rebuild':
         specifier: ^3.2.13
@@ -317,55 +317,6 @@ importers:
       vue-tsc:
         specifier: ^1.8.1
         version: 1.8.27(typescript@5.1.6)
-
-  packages/plugin:
-    dependencies:
-      antd:
-        specifier: ^5.12.8
-        version: 5.12.8(react-dom@18.2.0)(react@18.2.0)
-      react:
-        specifier: ^18.2.0
-        version: 18.2.0
-      react-dom:
-        specifier: ^18.2.0
-        version: 18.2.0(react@18.2.0)
-    devDependencies:
-      '@types/node':
-        specifier: ^20.3.1
-        version: 20.11.0
-      '@types/react':
-        specifier: ^18.2.43
-        version: 18.2.47
-      '@types/react-dom':
-        specifier: ^18.2.17
-        version: 18.2.18
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^6.14.0
-        version: 6.18.1(@typescript-eslint/parser@6.18.1)(eslint@8.56.0)(typescript@5.1.6)
-      '@typescript-eslint/parser':
-        specifier: ^6.14.0
-        version: 6.18.1(eslint@8.56.0)(typescript@5.1.6)
-      '@vitejs/plugin-react':
-        specifier: ^4.2.1
-        version: 4.2.1(vite@5.0.11)
-      electron:
-        specifier: 25.9.8
-        version: 25.9.8
-      eslint:
-        specifier: ^8.55.0
-        version: 8.56.0
-      eslint-plugin-react-hooks:
-        specifier: ^4.6.0
-        version: 4.6.0(eslint@8.56.0)
-      eslint-plugin-react-refresh:
-        specifier: ^0.4.5
-        version: 0.4.5(eslint@8.56.0)
-      typescript:
-        specifier: ^5.1.3
-        version: 5.1.6
-      vite:
-        specifier: ^5.0.8
-        version: 5.0.11(@types/node@20.11.0)
 
   packages/renderer:
     dependencies:
@@ -3913,8 +3864,8 @@ packages:
   /base64-js@1.5.1:
     resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
 
-  /better-sqlite3@8.7.0:
-    resolution: {integrity: sha512-99jZU4le+f3G6aIl6PmmV0cxUIWqKieHxsiF7G34CVFiE+/UabpYqkU0NJIkY/96mQKikHeBjtR27vFfs5JpEw==}
+  /better-sqlite3@9.2.2:
+    resolution: {integrity: sha512-qwjWB46il0lsDkeB4rSRI96HyDQr8sxeu1MkBVLMrwusq1KRu4Bpt1TMI+8zIJkDUtZ3umjAkaEjIlokZKWCQw==}
     requiresBuild: true
     dependencies:
       bindings: 1.5.0
@@ -4296,6 +4247,7 @@ packages:
   /color-convert@2.0.1:
     resolution: {integrity: sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==}
     engines: {node: '>=7.0.0'}
+    requiresBuild: true
     dependencies:
       color-name: 1.1.4
 
@@ -4305,6 +4257,7 @@ packages:
 
   /color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
+    requiresBuild: true
 
   /color-support@1.1.3:
     resolution: {integrity: sha512-qiBjkpbMLO/HL68y+lh4q0/O1MZFj2RX6X/KmMa3+gJD3z+WwI1ZzDHysvqHGS3mP6mznPckpXmw1nI9cJjyRg==}
@@ -9346,7 +9299,7 @@ packages:
       is-typed-array: 1.1.12
     dev: true
 
-  /typeorm@0.3.19(better-sqlite3@8.7.0)(ts-node@10.9.2):
+  /typeorm@0.3.19(better-sqlite3@9.2.2)(ts-node@10.9.2):
     resolution: {integrity: sha512-OGelrY5qEoAU80mR1iyvmUHiKCPUydL6xp6bebXzS7jyv/X70Gp/jBWRAfF4qGOfy2A7orMiGRfwsBUNbEL65g==}
     engines: {node: '>= 12.9.0'}
     hasBin: true
@@ -9406,7 +9359,7 @@ packages:
     dependencies:
       '@sqltools/formatter': 1.2.5
       app-root-path: 3.1.0
-      better-sqlite3: 8.7.0
+      better-sqlite3: 9.2.2
       buffer: 6.0.3
       chalk: 4.1.2
       cli-highlight: 2.1.11
