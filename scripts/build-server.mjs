@@ -4,11 +4,9 @@ const platform = os.platform();
 
 let GOOS = "";
 let GOARCH = "amd64";
-let filename = "../packages/main/bin/win32/server";
+let filename = `../packages/main/bin/${platform}/server`;
 
-if (platform == "linux") {
-  GOOS = "linux";
-} else if (platform == "darwin") {
+if (platform == "darwin") {
   GOOS = "darwin";
 } else if (platform == "win32") {
   GOOS = "windows";
