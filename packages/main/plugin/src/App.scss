@@ -1,6 +1,12 @@
 #MediagoRoot {
+  position: absolute;
+  z-index: 99999;
   .app {
-    z-index: 9999;
+    z-index: 99999;
+    .app-float-button {
+      left: 30px;
+      bottom: 30px;
+    }
     .app-logo {
       display: block;
       box-sizing: border-box;

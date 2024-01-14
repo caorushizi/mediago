@@ -54,6 +54,7 @@ function App() {
         trigger={["click"]}
       >
         <FloatButton
+          className="app-float-button"
           icon={<img className="app-logo" src={logo} alt="" />}
           shape="square"
           badge={{

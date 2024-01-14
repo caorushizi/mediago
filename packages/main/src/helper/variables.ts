@@ -6,8 +6,19 @@ const appPath = app.getAppPath();
 export const appData = app.getPath("appData");
 export const download = app.getPath("downloads");
 
+export const isMac = process.platform === "darwin";
+export const isWin = process.platform === "win32";
+
 if (!isDev) {
   global.__bin__ = resolve(appPath, "../bin");
+}
+
+export function resolveStatic(path: string) {
+  const relativePath = isDev ? "../.." : "..";
+  return resolve(appPath, relativePath, path);
+}
+export function resolveBin(path: string) {
+  return resolve(__bin__, path);
 }
 
 export const appName = process.env.APP_NAME || "electron-template";
@@ -18,24 +29,17 @@ export const PERSIST_WEBVIEW = "persist:webview";
 export const db = resolve(workspace, "app.db");
 
 // bin path
-export const ffmpegPath = resolve(__bin__, "ffmpeg");
-export const biliDownloaderBin = resolve(__bin__, "BBDown");
-export const m3u8DownloaderBin =
-  process.platform === "win32"
-    ? resolve(__bin__, "N_m3u8DL-CLI")
-    : resolve(__bin__, "N_m3u8DL-RE");
-export const videoServerBin = resolve(__bin__, "server.exe");
+export const ffmpegPath = resolveBin("ffmpeg");
+export const biliDownloaderBin = resolveBin("BBDown");
+const downloaderBinName = isWin ? "N_m3u8DL-CLI" : "N_m3u8DL-RE";
+export const m3u8DownloaderBin = resolveBin(downloaderBinName);
+export const videoServerBin = resolveBin("server");
 
 // mobile path
-export const mobilePath = resolve(
-  appPath,
-  isDev ? "../../mobile" : "../mobile"
-);
+export const mobilePath = resolveStatic("mobile");
 // plugin path
-export const pluginPath = resolve(
-  appPath,
-  isDev ? "../../plugin" : "../plugin"
-);
+export const pluginPath = resolveStatic("plugin/index.js");
+export const pluginStylePath = resolveStatic("plugin/style.css");
 
 // user agent
 export const pcUA =
