@@ -3,7 +3,13 @@ import { DownloadType } from "../interfaces";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import isDev from "electron-is-dev";
-import { PERSIST_WEBVIEW, mobileUA, pcUA } from "../helper";
+import {
+  PERSIST_WEBVIEW,
+  mobileUA,
+  pcUA,
+  pluginPath,
+  pluginStylePath,
+} from "../helper";
 import { ElectronBlocker } from "@cliqz/adblocker-electron";
 import fetch from "cross-fetch";
 import path from "path";
@@ -71,8 +77,7 @@ const filterList: SourceFilter[] = [
   },
 ];
 
-const preloadPath = path.resolve(__dirname, "../../plugin/style.css");
-const styleText = readFileSync(preloadPath, "utf-8");
+const styleText = readFileSync(pluginStylePath, "utf-8");
 
 // FIXME: 需要重构
 @injectable()
@@ -103,7 +108,7 @@ export default class WebviewService {
     this.view = new BrowserView({
       webPreferences: {
         partition: PERSIST_WEBVIEW,
-        preload: path.resolve(__dirname, "../../plugin/index.js"),
+        preload: pluginPath,
       },
     });
     this.view.setBackgroundColor("#fff");
