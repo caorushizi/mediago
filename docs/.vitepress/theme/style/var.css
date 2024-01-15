@@ -20,11 +20,13 @@
   --vp-button-brand-text: #f2f7fd;
   --vp-button-brand-bg: #2a82f6;
 
+  --vp-button-brand-active-border: #5e9ef3;
+  --vp-button-brand-active-text: #fff;
+  --vp-button-brand-active-bg: #409eff;
+
   --vp-button-brand-hover-border: #5e9ef3;
   --vp-button-brand-hover-text: #fff;
   --vp-button-brand-hover-bg: #2a82f6;
-
-  --vp-button-brand-active-border: #f6ceec;
 
   --vp-c-brand: #2a82f6;
 }
