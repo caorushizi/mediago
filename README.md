@@ -9,6 +9,13 @@
   <a href="https://downloader.caorushizi.cn/documents.html?form=github">文档</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="https://github.com/caorushizi/m3u8-downloader/discussions">Discussions</a>
+  <br>
+  <br>
+
+  <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/caorushizi/m3u8-downloader/total">
+  <img alt="GitHub Downloads (all assets, latest release)" src="https://img.shields.io/github/downloads/caorushizi/m3u8-downloader/latest/total">
+  <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/caorushizi/m3u8-downloader">
+  <img alt="GitHub forks" src="https://img.shields.io/github/forks/caorushizi/m3u8-downloader">
 
   <hr />
 </div>
