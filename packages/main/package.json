@@ -46,7 +46,7 @@
     "@cliqz/adblocker-electron-preload": "^1.26.6",
     "@types/semver": "^7.5.0",
     "axios": "^1.4.0",
-    "better-sqlite3": "^8.4.0",
+    "better-sqlite3": "^9.3.0",
     "cheerio": "1.0.0-rc.12",
     "cross-fetch": "^3.1.6",
     "dayjs": "^1.11.8",
