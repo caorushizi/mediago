@@ -27,10 +27,10 @@
     }
   },
   "devDependencies": {
-    "@waline/client": "^2.15.5",
+    "@waline/client": "3.0.0-alpha.10",
     "cross-env": "^7.0.3",
-    "vitepress": "1.0.0-beta.3",
-    "vue": "^3.3.4",
+    "vitepress": "1.0.0-rc.39",
+    "vue": "^3.4.15",
     "zx": "^7.2.3"
   }
 }

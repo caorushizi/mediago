@@ -12,7 +12,6 @@ import {
 } from "../helper";
 import { ElectronBlocker } from "@cliqz/adblocker-electron";
 import fetch from "cross-fetch";
-import path from "path";
 import { WebSource } from "../main";
 import { load } from "cheerio";
 import LoggerService from "./LoggerService";
