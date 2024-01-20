@@ -1,4 +1,4 @@
-import logger, { ElectronLog } from "electron-log";
+import logger, { Logger } from "electron-log";
 import { injectable } from "inversify";
 import dayjs from "dayjs";
 import path from "path";
@@ -6,7 +6,7 @@ import { appName, workspace } from "../helper";
 
 @injectable()
 export default class LoggerService {
-  logger: ElectronLog;
+  logger: Logger;
 
   constructor() {
     const datetime = dayjs().format("YYYY-MM-DD");

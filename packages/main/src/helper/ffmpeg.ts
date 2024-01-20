@@ -3,7 +3,7 @@ import { ffmpegPath } from "./variables";
 
 export const convertToAudio = async (
   input: string,
-  output: string
+  output: string,
 ): Promise<void> => {
   return new Promise((resolve, reject) => {
     const ffmpeg = spawn(ffmpegPath, [

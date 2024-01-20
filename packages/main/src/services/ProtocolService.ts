@@ -44,7 +44,7 @@ export default class ProtocolService {
           const data = await readFile(filePath);
           callback({ mimeType: "text/html", data });
         }
-      }
+      },
     );
   }
 }

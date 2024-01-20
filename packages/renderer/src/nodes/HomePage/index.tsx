@@ -73,11 +73,11 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     {
       defaultPageSize: 50,
       refreshDeps: [filter],
-    }
+    },
   );
   const [converting, setConverting] = useState<Record<number, boolean>>({});
   const [progress, setProgress] = useState<Record<number, DownloadProgress>>(
-    {}
+    {},
   );
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -111,7 +111,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
 
   const onDownloadMenuEvent = async (
     e: any,
-    params: { action: string; payload: number }
+    params: { action: string; payload: number },
   ) => {
     const { action, payload } = params;
 
@@ -160,10 +160,6 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     await startDownload(id);
     messageApi.success("添加任务成功");
     refresh();
-  };
-
-  const onOpenDir = async () => {
-    await openDir(appStore.local);
   };
 
   const onClickStopDownload = async (item: DownloadItem) => {
@@ -217,7 +213,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
 
   const renderActionButtons = (
     dom: ReactNode,
-    item: DownloadItem
+    item: DownloadItem,
   ): ReactNode => {
     if (item.status === DownloadStatus.Ready) {
       return [
@@ -466,7 +462,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
         }}
         onRow={(record) => {
           return {
-            onContextMenu: (event) => {
+            onContextMenu: () => {
               onDownloadListContextMenu(record.id);
             },
           };

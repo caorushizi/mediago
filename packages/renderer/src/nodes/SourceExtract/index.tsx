@@ -82,21 +82,21 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
         setBrowserStore({
           mode: PageMode.Browser,
           status: BrowserStatus.Loading,
-        })
+        }),
       );
       await webviewLoadURL(url);
       dispatch(
         setBrowserStore({
           url: url,
           status: BrowserStatus.Loaded,
-        })
+        }),
       );
     } catch (err) {
       dispatch(
         setBrowserStore({
           status: BrowserStatus.Failed,
           errMsg: (err as any).message,
-        })
+        }),
       );
     }
   };
@@ -139,7 +139,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
         setBrowserStore({
           url: "",
           mode: PageMode.Default,
-        })
+        }),
       );
     }
   };
@@ -150,7 +150,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
       setBrowserStore({
         url: "",
         mode: PageMode.Default,
-      })
+      }),
     );
   };
 
@@ -173,7 +173,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
         setBrowserStore({
           url: data.url,
           title: data.title,
-        })
+        }),
       );
     }
   };
@@ -186,7 +186,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     }: {
       action: string;
       payload: number;
-    }
+    },
   ) => {
     if (action === "open") {
       const item = favoriteList.find((item) => item.id === payload);
@@ -228,7 +228,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     dispatch(
       setAppStore({
         isMobile: nextMode,
-      })
+      }),
     );
   };
 

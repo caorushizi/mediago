@@ -8,7 +8,7 @@ import StoreService from "./StoreService";
 export default class VideoService {
   constructor(
     @inject(TYPES.StoreService)
-    private readonly storeService: StoreService
+    private readonly storeService: StoreService,
   ) {}
 
   init(): void {

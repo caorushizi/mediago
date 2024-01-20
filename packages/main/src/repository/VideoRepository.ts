@@ -14,7 +14,7 @@ import DatabaseService from "../services/DatabaseService";
 export default class VideoRepository {
   constructor(
     @inject(TYPES.DatabaseService)
-    private readonly dataService: DatabaseService
+    private readonly dataService: DatabaseService,
   ) {}
 
   async addVideo(video: Omit<DownloadItem, "id">) {

@@ -43,7 +43,7 @@ export default class HomeController implements Controller {
     @inject(TYPES.PlayerWindow)
     private readonly playerWindow: PlayerWindow,
     @inject(TYPES.WebviewService)
-    private readonly webviewService: WebviewService
+    private readonly webviewService: WebviewService,
   ) {}
 
   @handle("get-env-path")

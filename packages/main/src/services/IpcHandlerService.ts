@@ -11,12 +11,12 @@ export default class IpcHandlerService {
     @multiInject(TYPES.Controller)
     private readonly controllers: Controller[],
     @inject(TYPES.LoggerService)
-    private readonly logger: LoggerService
+    private readonly logger: LoggerService,
   ) {}
 
   private registerIpc(
     controller: Controller,
-    propertyKey: string | symbol
+    propertyKey: string | symbol,
   ): void {
     const property = controller[propertyKey];
     if (typeof property !== "function") return;
@@ -24,14 +24,14 @@ export default class IpcHandlerService {
     const channel: string = Reflect.getMetadata(
       "ipc-channel",
       controller,
-      propertyKey
+      propertyKey,
     );
     if (!channel) return;
 
     const ipcMethod: "on" | "handle" = Reflect.getMetadata(
       "ipc-method",
       controller,
-      propertyKey
+      propertyKey,
     );
     if (!ipcMethod) return;
 
@@ -57,7 +57,7 @@ export default class IpcHandlerService {
     for (const controller of this.controllers) {
       const Class = Object.getPrototypeOf(controller);
       Object.getOwnPropertyNames(Class).forEach((propertyKey) =>
-        this.registerIpc(controller, propertyKey)
+        this.registerIpc(controller, propertyKey),
       );
     }
   }

@@ -6,7 +6,7 @@ import axios from "axios";
 import { useAsyncEffect, useToggle } from "ahooks";
 import { List, Space, Button } from "antd";
 import useElectron from "../../hooks/electron";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 interface Video {
   id: number;

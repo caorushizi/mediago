@@ -7,7 +7,7 @@ import LoggerService from "./LoggerService";
 @injectable()
 export default class UpdateService {
   constructor(
-    @inject(TYPES.LoggerService) private readonly logger: LoggerService
+    @inject(TYPES.LoggerService) private readonly logger: LoggerService,
   ) {}
 
   async init(): Promise<void> {

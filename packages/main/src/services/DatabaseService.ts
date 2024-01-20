@@ -12,7 +12,7 @@ export default class DatabaseService {
 
   constructor(
     @inject(TYPES.LoggerService)
-    private readonly logger: LoggerService
+    private readonly logger: LoggerService,
   ) {
     this.appDataSource = new DataSource({
       type: "better-sqlite3",

@@ -22,7 +22,7 @@ export default class MainWindow extends Window {
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
     @inject(TYPES.StoreService)
-    private readonly storeService: StoreService
+    private readonly storeService: StoreService,
   ) {
     super({
       width: 1100,

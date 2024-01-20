@@ -122,7 +122,7 @@ const SettingPage: React.FC = () => {
             name="useProxy"
             label={renderTooltipLabel(
               "代理开关",
-              "该代理会对软件自带浏览器以及下载时生效"
+              "该代理会对软件自带浏览器以及下载时生效",
             )}
             rules={[
               ({ getFieldValue, setFieldValue }) => ({
@@ -141,7 +141,7 @@ const SettingPage: React.FC = () => {
           <ProFormSwitch
             label={renderTooltipLabel(
               "使用沉浸式嗅探",
-              "开启后沉浸式嗅探到的资源将不会直接显示在下载列表中，所有资源嗅探会交给浏览器插件处理"
+              "开启后沉浸式嗅探到的资源将不会直接显示在下载列表中，所有资源嗅探会交给浏览器插件处理",
             )}
             name="useExtension"
           />
@@ -151,7 +151,7 @@ const SettingPage: React.FC = () => {
           <ProFormDigit
             label={renderTooltipLabel(
               "最大同时下载数量",
-              "直播录制不占用同时下载数量"
+              "直播录制不占用同时下载数量",
             )}
             name="maxRunner"
             min={1}

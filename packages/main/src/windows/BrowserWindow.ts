@@ -14,7 +14,7 @@ export default class BrowserWindow extends Window {
 
   constructor(
     @inject(TYPES.StoreService)
-    private readonly storeService: StoreService
+    private readonly storeService: StoreService,
   ) {
     super({
       width: 1100,

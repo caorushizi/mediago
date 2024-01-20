@@ -3,7 +3,7 @@ import { DownloadParams, DownloadProgress } from "../../interfaces";
 import { cmdr } from "./cmdr";
 
 export const m3u8DownloaderDarwin = async (
-  params: DownloadParams
+  params: DownloadParams,
 ): Promise<void> => {
   const {
     id,
@@ -51,7 +51,6 @@ export const m3u8DownloaderDarwin = async (
   let isLive = false;
   await cmdr(m3u8DownloaderBin, spawnParams, {
     abortSignal,
-    encoding: "gbk",
     onMessage: (message) => {
       if (isLiveReg.test(message) || startDownloadReg.test(message)) {
         callback({
