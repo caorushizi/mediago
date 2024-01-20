@@ -26,7 +26,7 @@ export default class DownloadController implements Controller {
     @inject(TYPES.DownloadService)
     private readonly downloadService: DownloadService,
     @inject(TYPES.MainWindow)
-    private readonly mainWindow: MainWindow
+    private readonly mainWindow: MainWindow,
   ) {}
 
   @handle("add-download-item")

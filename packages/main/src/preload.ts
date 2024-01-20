@@ -18,7 +18,7 @@ const electronApi = {
   getEnvPath: (): Promise<EnvPath> => ipcRenderer.invoke("get-env-path"),
   getFavorites: (): Promise<Favorite[]> => ipcRenderer.invoke("get-favorites"),
   addFavorite: (
-    favorite: Omit<Favorite, "id" | "createdDate" | "updatedDate">
+    favorite: Omit<Favorite, "id" | "createdDate" | "updatedDate">,
   ): Promise<Favorite> => ipcRenderer.invoke("add-favorite", favorite),
   removeFavorite: (id: number): Promise<void> =>
     ipcRenderer.invoke("remove-favorite", id),
@@ -34,7 +34,7 @@ const electronApi = {
     ipcRenderer.invoke("select-download-dir"),
   setAppStore: (
     key: keyof AppStore,
-    val: AppStore[keyof AppStore]
+    val: AppStore[keyof AppStore],
   ): Promise<void> => ipcRenderer.invoke("set-app-store", key, val),
   openDir: (dir: string): Promise<void> => ipcRenderer.invoke("open-dir", dir),
   addDownloadItem: (video: Omit<DownloadItem, "id">): Promise<Video> =>

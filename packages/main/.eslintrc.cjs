@@ -18,5 +18,6 @@ module.exports = {
   plugins: ["@typescript-eslint", "prettier"],
   rules: {
     "prettier/prettier": "warn",
+    "@typescript-eslint/no-explicit-any": "warn",
   },
 };

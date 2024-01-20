@@ -11,7 +11,7 @@ import LoggerService from "./LoggerService";
 export default class DevToolsService {
   constructor(
     @inject(TYPES.LoggerService)
-    private readonly logger: LoggerService
+    private readonly logger: LoggerService,
   ) {}
 
   async init(): Promise<void> {

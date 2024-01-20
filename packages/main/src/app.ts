@@ -37,7 +37,7 @@ export default class ElectronApp {
     @inject(TYPES.StoreService)
     private readonly storeService: StoreService,
     @inject(TYPES.VideoService)
-    private readonly videoService: VideoService
+    private readonly videoService: VideoService,
   ) {}
 
   private async seriveInit(): Promise<void> {
@@ -90,7 +90,7 @@ export default class ElectronApp {
     const videoIds = videos.map((video) => video.id);
     await this.videoRepository.changeVideoStatus(
       videoIds,
-      DownloadStatus.Failed
+      DownloadStatus.Failed,
     );
   }
 }

@@ -29,7 +29,7 @@ export default class DownloadService extends EventEmitter {
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
     @inject(TYPES.StoreService)
-    private readonly storeService: StoreService
+    private readonly storeService: StoreService,
   ) {
     super();
 
@@ -57,7 +57,7 @@ export default class DownloadService extends EventEmitter {
     try {
       await this.videoRepository.changeVideoStatus(
         task.id,
-        DownloadStatus.Downloading
+        DownloadStatus.Downloading,
       );
       this.emit("download-start", task.id);
 
@@ -94,7 +94,7 @@ export default class DownloadService extends EventEmitter {
 
       await this.videoRepository.changeVideoStatus(
         task.id,
-        DownloadStatus.Success
+        DownloadStatus.Success,
       );
       this.emit("download-success", task.id);
     } catch (err: any) {
@@ -103,14 +103,14 @@ export default class DownloadService extends EventEmitter {
         // 下载暂停
         await this.videoRepository.changeVideoStatus(
           task.id,
-          DownloadStatus.Stopped
+          DownloadStatus.Stopped,
         );
         this.emit("download-stop", task.id);
       } else {
         // 下载失败
         await this.videoRepository.changeVideoStatus(
           task.id,
-          DownloadStatus.Failed
+          DownloadStatus.Failed,
         );
         this.emit("download-failed", task.id, err);
       }

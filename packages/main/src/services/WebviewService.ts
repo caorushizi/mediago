@@ -62,7 +62,7 @@ const filterList: SourceFilter[] = [
         "Network.getResponseBody",
         {
           requestId,
-        }
+        },
       );
       const $ = load(response.body);
       const title = $("title").text();
@@ -97,7 +97,7 @@ export default class WebviewService {
     @inject(TYPES.StoreService)
     private readonly storeService: StoreService,
     @inject(TYPES.VideoRepository)
-    private readonly videoRepository: VideoRepository
+    private readonly videoRepository: VideoRepository,
   ) {
     // 初始化 blocker
     this.initBlocker();
@@ -187,12 +187,12 @@ export default class WebviewService {
             "Network.getResponseBody",
             {
               requestId: params.requestId,
-            }
+            },
           );
           if (this.responseMap[documentURL].length > 0) {
             const bodys = this.responseMap[documentURL];
             const exist = bodys.some((item) =>
-              new RegExp(objUrl.pathname).test(item)
+              new RegExp(objUrl.pathname).test(item),
             );
             if (exist) return;
           }

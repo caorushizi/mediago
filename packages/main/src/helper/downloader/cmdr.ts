@@ -11,7 +11,7 @@ export interface CmdrParams {
 export const cmdr = (
   binPath: string,
   args: string[],
-  params: CmdrParams & Options
+  params: CmdrParams & Options,
 ): Promise<void> => {
   const {
     abortSignal,

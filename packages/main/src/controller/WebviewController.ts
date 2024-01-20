@@ -12,7 +12,7 @@ export default class WebviewController implements Controller {
     @inject(TYPES.WebviewService)
     private readonly webview: WebviewService,
     @inject(TYPES.StoreService)
-    private readonly storeService: StoreService
+    private readonly storeService: StoreService,
   ) {}
 
   @handle("set-webview-bounds")

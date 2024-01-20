@@ -122,7 +122,7 @@ const App: FC = () => {
   ];
 
   const finalItems = items.filter((item) =>
-    appStore.openInNewWindow ? item?.key !== "source" : true
+    appStore.openInNewWindow ? item?.key !== "source" : true,
   );
 
   const openHelpUrl = () => {

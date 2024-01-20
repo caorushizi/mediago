@@ -11,7 +11,7 @@ export function getLocalIP() {
 
     // 过滤出 IPv4 地址且非回环地址
     const filteredIface = iface.filter(
-      (details) => details.family === "IPv4" && !details.internal
+      (details) => details.family === "IPv4" && !details.internal,
     );
 
     if (filteredIface.length > 0) {

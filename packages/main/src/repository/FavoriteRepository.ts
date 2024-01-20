@@ -7,7 +7,7 @@ import DatabaseService from "../services/DatabaseService";
 export default class FavoriteRepository {
   constructor(
     @inject(TYPES.DatabaseService)
-    private readonly dataService: DatabaseService
+    private readonly dataService: DatabaseService,
   ) {}
 
   async findFavorites(): Promise<Favorite[]> {
