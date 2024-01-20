@@ -31,7 +31,7 @@ const buildConfig: esbuild.BuildOptions = {
   bundle: true,
   platform: "node",
   sourcemap: true,
-  target: ["node16.13"],
+  target: ["node20.9"],
   external,
   define: {
     // 开发环境中二进制可执行文件的路径
