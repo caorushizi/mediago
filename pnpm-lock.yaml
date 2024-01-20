@@ -44,8 +44,8 @@ importers:
         specifier: ^1.4.0
         version: 1.6.5
       better-sqlite3:
-        specifier: ^8.4.0
-        version: 8.7.0
+        specifier: ^9.3.0
+        version: 9.3.0
       cheerio:
         specifier: 1.0.0-rc.12
         version: 1.0.0-rc.12
@@ -90,7 +90,7 @@ importers:
         version: 10.9.2(@types/node@20.11.0)(typescript@5.1.6)
       typeorm:
         specifier: ^0.3.17
-        version: 0.3.19(better-sqlite3@8.7.0)(ts-node@10.9.2)
+        version: 0.3.19(better-sqlite3@9.3.0)(ts-node@10.9.2)
     devDependencies:
       '@electron/rebuild':
         specifier: ^3.2.13
@@ -3973,8 +3973,8 @@ packages:
   /base64-js@1.5.1:
     resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
 
-  /better-sqlite3@8.7.0:
-    resolution: {integrity: sha512-99jZU4le+f3G6aIl6PmmV0cxUIWqKieHxsiF7G34CVFiE+/UabpYqkU0NJIkY/96mQKikHeBjtR27vFfs5JpEw==}
+  /better-sqlite3@9.3.0:
+    resolution: {integrity: sha512-ww73jVpQhRRdS9uMr761ixlkl4bWoXi8hMQlBGhoN6vPNlUHpIsNmw4pKN6kjknlt/wopdvXHvLk1W75BI+n0Q==}
     requiresBuild: true
     dependencies:
       bindings: 1.5.0
@@ -9440,7 +9440,7 @@ packages:
       is-typed-array: 1.1.12
     dev: true
 
-  /typeorm@0.3.19(better-sqlite3@8.7.0)(ts-node@10.9.2):
+  /typeorm@0.3.19(better-sqlite3@9.3.0)(ts-node@10.9.2):
     resolution: {integrity: sha512-OGelrY5qEoAU80mR1iyvmUHiKCPUydL6xp6bebXzS7jyv/X70Gp/jBWRAfF4qGOfy2A7orMiGRfwsBUNbEL65g==}
     engines: {node: '>= 12.9.0'}
     hasBin: true
@@ -9500,7 +9500,7 @@ packages:
     dependencies:
       '@sqltools/formatter': 1.2.5
       app-root-path: 3.1.0
-      better-sqlite3: 8.7.0
+      better-sqlite3: 9.3.0
       buffer: 6.0.3
       chalk: 4.1.2
       cli-highlight: 2.1.11
