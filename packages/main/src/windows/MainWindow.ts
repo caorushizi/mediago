@@ -10,6 +10,7 @@ import LoggerService from "../services/LoggerService";
 import DownloadService from "../services/DownloadService";
 import StoreService from "../services/StoreService";
 import VideoRepository from "../repository/VideoRepository";
+import { isWin } from "../helper";
 
 @injectable()
 export default class MainWindow extends Window {
@@ -80,7 +81,7 @@ export default class MainWindow extends Window {
 
   secondInstance = () => {
     if (!this.window) return;
-    if (process.platform === "win32") {
+    if (isWin) {
       if (this.window) {
         if (this.window.isMinimized()) {
           this.window.restore();

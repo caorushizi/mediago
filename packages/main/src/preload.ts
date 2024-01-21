@@ -1,4 +1,5 @@
-import { contextBridge, ipcRenderer, shell } from "electron";
+import { contextBridge, ipcRenderer } from "electron/renderer";
+import { shell } from "electron/common";
 import { AppStore, BrowserStore, EnvPath } from "./main";
 import { type Favorite } from "./entity/Favorite";
 import {
