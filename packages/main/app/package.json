@@ -1,6 +1,6 @@
 {
   "name": "media-downloader",
-  "version": "2.0.3-beta.1",
+  "version": "2.0.3-beta.2",
   "description": "在线视频下载器",
   "main": "main/index.js",
   "author": "",

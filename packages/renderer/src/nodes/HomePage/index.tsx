@@ -27,7 +27,6 @@ import {
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { selectAppStore } from "../../store";
-import { tdApp } from "../../utils";
 import DownloadFrom from "../../components/DownloadForm";
 import dayjs from "dayjs";
 import classNames from "classnames";
@@ -96,12 +95,10 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   };
 
   const onDownloadSuccess = () => {
-    tdApp.downloadSuccess();
     refresh();
   };
 
   const onDownloadFailed = () => {
-    tdApp.downloadFailed();
     refresh();
   };
 
@@ -156,7 +153,6 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   }, []);
 
   const onStartDownload = async (id: number) => {
-    tdApp.startDownload();
     await startDownload(id);
     messageApi.success("添加任务成功");
     refresh();

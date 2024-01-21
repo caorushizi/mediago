@@ -19,7 +19,6 @@ import {
   selectCount,
 } from "../../store";
 import { useAsyncEffect } from "ahooks";
-import { tdApp } from "../../utils";
 
 const { Footer, Sider, Content } = Layout;
 
@@ -126,7 +125,6 @@ const App: FC = () => {
   );
 
   const openHelpUrl = () => {
-    tdApp.openHelpPage();
     const url = "https://downloader.caorushizi.cn/guides.html?form=client";
     openUrl(url);
   };
