@@ -1,5 +1,4 @@
-import { HeadConfig } from "vitepress";
-import { defineConfig } from "vitepress";
+import { HeadConfig, defineConfig } from "vitepress";
 
 const isDev = process.env.NODE_ENV === "development";
 
