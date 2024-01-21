@@ -31,12 +31,7 @@ const WebView: FC<WebViewProps> = ({ className }) => {
     if (webviewRef.current != null) {
       // 监控 webview 元素的大小
       resizeObserver.current = new ResizeObserver((entries) => {
-        if (!webviewRef.current) {
-          return;
-        }
-
         const rect = computeRect(webviewRef.current?.getBoundingClientRect());
-
         const entry = entries[0];
         const viewRect = computeRect(entry.contentRect);
         viewRect.x += rect.x;

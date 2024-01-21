@@ -5,6 +5,7 @@ import { TYPES } from "../types";
 import isDev from "electron-is-dev";
 import {
   PERSIST_WEBVIEW,
+  isWin,
   mobileUA,
   pcUA,
   pluginPath,
@@ -253,8 +254,10 @@ export default class WebviewService {
   }
 
   setBounds(bounds: Electron.Rectangle): void {
-    if (process.platform === "darwin") {
+    if (isWin) {
       bounds.y = bounds.y + 30;
+    } else {
+      bounds.y = bounds.y - 0;
     }
     this.view.setBounds(bounds);
   }
