@@ -5,11 +5,12 @@ import { Provider } from "react-redux";
 import store from "./store";
 import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
-import { tdApp } from "./utils";
+import { tdApp, initClarity } from "./utils";
 import App from "./App";
 
 dayjs.locale("zh-cn");
 tdApp.init();
+initClarity();
 
 createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
