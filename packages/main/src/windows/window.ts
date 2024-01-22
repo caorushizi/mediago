@@ -1,4 +1,5 @@
 import { BrowserWindow, BrowserWindowConstructorOptions } from "electron";
+import isDev from "electron-is-dev";
 
 export default class Window {
   window: BrowserWindow | null = null;
@@ -27,7 +28,7 @@ export default class Window {
     if (!this.window) return;
 
     this.window.show();
-    this.window.webContents.openDevTools();
+    isDev && this.window.webContents.openDevTools();
   };
 
   windowClose = () => {
