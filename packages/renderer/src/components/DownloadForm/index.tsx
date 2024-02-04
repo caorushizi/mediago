@@ -7,6 +7,7 @@ import {
 import { Form } from "antd";
 import React, { FC } from "react";
 import "./index.scss";
+import { useTranslation } from "react-i18next";
 
 export interface DownloadFormProps {
   onFinish: (values: DownloadItem) => Promise<boolean | void>;
@@ -54,11 +55,12 @@ const DownloadFrom: FC<DownloadFormProps> = ({
   item,
 }) => {
   const [form] = Form.useForm<DownloadItem>();
+  const { t } = useTranslation();
 
   return (
     <ModalForm<DownloadItem>
       key={isEdit ? "edit" : "new"}
-      title={isEdit ? "编辑下载" : "新建下载"}
+      title={isEdit ? t("editDownload") : t("newDownload")}
       width={500}
       trigger={trigger}
       form={form}
@@ -93,7 +95,7 @@ const DownloadFrom: FC<DownloadFormProps> = ({
       layout="horizontal"
       colon={false}
     >
-      {!isEdit && <ProFormSwitch label="批量下载" name={"batch"} />}
+      {!isEdit && <ProFormSwitch label={t("batchDownload")} name={"batch"} />}
       <Form.Item noStyle shouldUpdate>
         {(form) => {
           if (!isEdit && form.getFieldValue("batch")) {
@@ -103,15 +105,12 @@ const DownloadFrom: FC<DownloadFormProps> = ({
                 fieldProps={{
                   rows: 6,
                 }}
-                label="视频链接"
-                placeholder={`请输入视频链接， 确保一行一个，格式： 视频链接 视频名称(非必填)， 例如
-https://www.bilibili.com/video/XXX 哔哩哔哩视频
-http://example.com/xxx.m3u8 m3u8视频
-http://example.com/xxx.m3u8`}
+                label={t("videoLink")}
+                placeholder={t("videoLikeDescription")}
                 rules={[
                   {
                     required: true,
-                    message: "请输入站点视频链接",
+                    message: t("pleaseEnterVideoLink"),
                   },
                 ]}
               />
@@ -120,16 +119,16 @@ http://example.com/xxx.m3u8`}
             return (
               <ProFormText
                 name="url"
-                label="视频链接"
-                placeholder="请输入在线网络视频URL，或者将M3U8拖拽至此"
+                label={t("videoLink")}
+                placeholder={t("pleaseEnterOnlineVideoUrlOrDragM3U8Here")}
                 rules={[
                   {
                     required: true,
-                    message: "请输入在线网络视频URL",
+                    message: t("pleaseEnterOnlineVideoUrl"),
                   },
                   {
                     pattern: /^(file|https?):\/\/.+/,
-                    message: "请输入正确的视频链接",
+                    message: t("pleaseEnterCorrectVideoLink"),
                   },
                 ]}
                 fieldProps={{
@@ -150,8 +149,8 @@ http://example.com/xxx.m3u8`}
             return (
               <ProFormText
                 name="name"
-                label="视频名称"
-                placeholder="请输入视频名称，默认以当前时间作为视频名称"
+                label={t("videoName")}
+                placeholder={t("pleaseEnterVideoName")}
               />
             );
           }
@@ -163,8 +162,8 @@ http://example.com/xxx.m3u8`}
             return (
               <ProFormText
                 name="key"
-                label="私有KEY"
-                placeholder="KEY和IV值（HEX格式）"
+                label={t("privateKey")}
+                placeholder={t("keyAndIv")}
               />
             );
           }
@@ -172,13 +171,11 @@ http://example.com/xxx.m3u8`}
       </Form.Item>
       <ProFormTextArea
         name="headers"
-        label="附加标头"
+        label={t("additionalHeaders")}
         fieldProps={{
           rows: 4,
         }}
-        placeholder={`请输入附加标头，确保一行一个 Header， 例如：
-Origin: http://www.example.com
-Referer: http://www.example.com`}
+        placeholder={t("additionalHeadersDescription")}
       />
     </ModalForm>
   );

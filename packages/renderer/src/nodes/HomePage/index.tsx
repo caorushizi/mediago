@@ -30,6 +30,7 @@ import { selectAppStore } from "../../store";
 import DownloadFrom from "../../components/DownloadForm";
 import dayjs from "dayjs";
 import classNames from "classnames";
+import { Trans, useTranslation } from "react-i18next";
 
 const { Text } = Typography;
 
@@ -61,6 +62,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     getLocalIP,
   } = useElectron();
   const appStore = useSelector(selectAppStore);
+  const { t } = useTranslation();
   const { data, loading, pagination, refresh } = usePagination(
     ({ current, pageSize }) => {
       return getDownloadItems({
@@ -154,7 +156,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
 
   const onStartDownload = async (id: number) => {
     await startDownload(id);
-    messageApi.success("添加任务成功");
+    messageApi.success(t("addTaskSuccess"));
     refresh();
   };
 
@@ -170,7 +172,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     }));
     try {
       await convertToAudio(item.id);
-      messageApi.success("转换成功");
+      messageApi.success(t("convertSuccess"));
     } catch (e: any) {
       messageApi.error(e.message);
     } finally {
@@ -187,7 +189,9 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
         key={"edit"}
         isEdit
         item={item}
-        trigger={<Button type="text" icon={<EditOutlined />} />}
+        trigger={
+          <Button type="text" title={t("edit")} icon={<EditOutlined />} />
+        }
         onFinish={async (values) => {
           try {
             await editDownloadItem({
@@ -218,7 +222,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
           type="text"
           key="download"
           icon={<DownloadOutlined />}
-          title="下载"
+          title={t("download")}
           onClick={() => onStartDownload(item.id)}
         />,
       ];
@@ -228,7 +232,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
         <Button
           type="text"
           key="stop"
-          title="暂停"
+          title={t("pause")}
           icon={<PauseCircleOutlined />}
           onClick={() => onClickStopDownload(item)}
         />,
@@ -240,14 +244,14 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
         <Button
           type="text"
           key="redownload"
-          title="重新下载"
+          title={t("redownload")}
           icon={<DownloadOutlined />}
           onClick={() => onStartDownload(item.id)}
         />,
       ];
     }
     if (item.status === DownloadStatus.Watting) {
-      return ["等待下载"];
+      return [t("watting")];
     }
     if (item.status === DownloadStatus.Stopped) {
       return [
@@ -256,7 +260,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
           type="text"
           key="restart"
           icon={<DownloadOutlined />}
-          title="继续下载"
+          title={t("continueDownload")}
           onClick={() => onStartDownload(item.id)}
         />,
       ];
@@ -270,7 +274,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
         key="open-file"
         disabled={!item.exist}
         icon={<PlayCircleOutlined />}
-        title="播放视频"
+        title={t("playVideo")}
         onClick={() => openPlayerWindow(item.name)}
       />,
       <Dropdown
@@ -278,7 +282,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
         menu={{
           items: [
             {
-              label: "转换为音频",
+              label: t("convertToAudio"),
               key: "convert",
               icon: <SyncOutlined />,
               disabled: curConverting,
@@ -291,7 +295,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
           },
         }}
       >
-        <Button type="text" title="更多" icon={<MoreOutlined />} />
+        <Button type="text" title={t("more")} icon={<MoreOutlined />} />
       </Dropdown>,
     ];
   };
@@ -301,19 +305,19 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     if (item.status === DownloadStatus.Downloading) {
       tag = (
         <Tag color="processing" icon={<SyncOutlined spin />}>
-          下载中
+          {t("downloading")}
         </Tag>
       );
     } else if (item.status === DownloadStatus.Success) {
       if (item.exist) {
-        tag = <Tag color="success">下载成功</Tag>;
+        tag = <Tag color="success">{t("downloadSuccess")}</Tag>;
       } else {
-        tag = <Tag color="default">文件不存在</Tag>;
+        tag = <Tag color="default">{t("fileNotExist")}</Tag>;
       }
     } else if (item.status === DownloadStatus.Failed) {
-      tag = <Tag color="error">下载失败</Tag>;
+      tag = <Tag color="error">{t("downloadFailed")}</Tag>;
     } else if (item.status === DownloadStatus.Stopped) {
-      tag = <Tag color="default">下载暂停</Tag>;
+      tag = <Tag color="default">{t("downloadPause")}</Tag>;
     }
 
     return (
@@ -328,7 +332,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
         </Text>
         <Space size={[0, 8]}>
           {tag}
-          {item.isLive && <Tag color={"default"}>直播资源</Tag>}
+          {item.isLive && <Tag color={"default"}>{t("liveResource")}</Tag>}
         </Space>
       </Space>
     );
@@ -362,20 +366,24 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       await startDownload(Number(id));
     }
 
-    messageApi.success("添加任务成功");
+    messageApi.success(t("addTaskSuccess"));
     refresh();
     setSelectedRowKeys([]);
   };
 
   return (
     <PageContainer
-      title={filter === DownloadFilter.list ? "下载列表" : "下载完成"}
+      title={
+        filter === DownloadFilter.list
+          ? t("downloadList")
+          : t("downloadComplete")
+      }
       rightExtra={
         <Space>
           {filter === DownloadFilter.done && (
             <Popover
               placement="topRight"
-              title={"扫码观看(需要连接相同 WIFI)"}
+              title={t("scanToWatch")}
               content={
                 <div
                   style={{
@@ -389,11 +397,13 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
               }
               trigger="click"
             >
-              <Button icon={<MobileOutlined />}>手机上播放</Button>
+              <Button icon={<MobileOutlined />}>{t("playOnMobile")}</Button>
             </Popover>
           )}
           {filter === DownloadFilter.done && (
-            <Button onClick={() => openDir(appStore.local)}>打开文件夹</Button>
+            <Button onClick={() => openDir(appStore.local)}>
+              {t("openFolder")}
+            </Button>
           )}
           {filter === DownloadFilter.list && appStore.openInNewWindow && (
             <Button type="primary" onClick={() => showBrowserWindow()}>
@@ -401,11 +411,11 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
             </Button>
           )}
           {filter === DownloadFilter.list && (
-            <Button onClick={() => refresh()}>刷新</Button>
+            <Button onClick={() => refresh()}>{t("refresh")}</Button>
           )}
           {filter === DownloadFilter.list && (
             <DownloadFrom
-              trigger={<Button>新建下载</Button>}
+              trigger={<Button>{t("newDownload")}</Button>}
               onFinish={async (values: any) => {
                 if (values.batch) {
                   const { batchList = "" } = values;
@@ -483,13 +493,13 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
                   refresh();
                 }}
               >
-                删除
+                {t("delete")}
               </Button>
               <Button type="link" onClick={() => onCleanSelected()}>
-                取消
+                {t("cancel")}
               </Button>
               <Button type="link" onClick={onBatchDownload}>
-                下载
+                {t("download")}
               </Button>
             </>
           );
@@ -508,11 +518,16 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
                     }
                   }}
                 >
-                  全选
+                  {t("selectAll")}
                 </Button>
               )}
               {selectedRows.length !== 0 && (
-                <span>已选择 {selectedRows.length} 项</span>
+                <span>
+                  <Trans
+                    i18nKey="selectedItems"
+                    values={{ count: selectedRows.length }}
+                  />
+                </span>
               )}
             </>
           );

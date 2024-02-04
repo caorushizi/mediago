@@ -1,5 +1,6 @@
 import { Rectangle } from "electron";
 import { type DownloadType } from "interfaces";
+import { AppLanguage, AppTheme } from "./types";
 
 declare interface EnvPath {
   binPath: string;
@@ -38,13 +39,15 @@ declare interface AppStore {
   browserBounds?: Rectangle;
   blockAds: boolean;
   // 主题
-  theme: "system" | "light" | "dark";
+  theme: AppTheme;
   // 使用浏览器插件
   useExtension: boolean;
   // 是否使用手机UA
   isMobile: boolean;
   // 最大同时下载数
   maxRunner: number;
+  // 语言
+  language: AppLanguage;
 }
 
 declare interface BrowserStore {

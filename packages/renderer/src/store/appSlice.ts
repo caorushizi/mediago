@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from ".";
 import { AppTheme } from "../types";
+import i18n from "../i18n";
 
 const initialState: AppStore = {
   local: "",
@@ -12,6 +13,8 @@ const initialState: AppStore = {
   theme: AppTheme.System,
   useExtension: false,
   isMobile: false,
+  maxRunner: 2,
+  language: "system",
 };
 
 export const appSlice = createSlice({
@@ -22,6 +25,9 @@ export const appSlice = createSlice({
       Object.keys(payload).forEach((key) => {
         if (payload[key] != null) {
           state[key] = payload[key] as never;
+          if (key === "language") {
+            i18n.changeLanguage(payload[key] as string);
+          }
         }
       });
     },

@@ -27,3 +27,9 @@ export enum AppTheme {
   Light = "light",
   Dark = "dark",
 }
+
+export enum AppLanguage {
+  System = "system",
+  ZH = "zh",
+  EN = "en",
+}
