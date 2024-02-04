@@ -15,7 +15,8 @@ import { selectAppStore, setAppStore } from "../../store";
 import { useDispatch, useSelector } from "react-redux";
 import useElectron from "../../hooks/electron";
 import { useRequest } from "ahooks";
-import { AppTheme } from "../../types";
+import { AppLanguage, AppTheme } from "../../types";
+import { useTranslation } from "react-i18next";
 
 const version = import.meta.env.APP_VERSION;
 
@@ -27,6 +28,7 @@ const SettingPage: React.FC = () => {
     openDir,
   } = useElectron();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const formRef = useRef<FormInstance<AppStore>>();
   const settings = useSelector(selectAppStore);
   const { data: envPath } = useRequest(getEnvPath);
@@ -47,7 +49,7 @@ const SettingPage: React.FC = () => {
   const renderButtonLabel = () => {
     return (
       <Button onClick={onSelectDir} icon={<FolderOpenOutlined />}>
-        选择文件夹
+        {t("selectFolder")}
       </Button>
     );
   };
@@ -77,7 +79,7 @@ const SettingPage: React.FC = () => {
   };
 
   return (
-    <PageContainer title="设置">
+    <PageContainer title={t("setting")}>
       <ProForm<AppStore>
         className={"setting-form-inner"}
         formRef={formRef}
@@ -90,97 +92,106 @@ const SettingPage: React.FC = () => {
         onValuesChange={onFormValueChange}
       >
         {contextHolder}
-        <ProFormGroup title="基础设置" direction={"vertical"}>
+        <ProFormGroup title={t("basicSetting")} direction={"vertical"}>
           <ProFormText
             width="xl"
             disabled
             name="local"
-            placeholder="请选择视频下载目录"
+            placeholder={t("pleaseSelectDownloadDir")}
             label={renderButtonLabel()}
           />
           <ProFormSelect
             name="theme"
-            label="下载器主题"
+            label={t("downloaderTheme")}
             valueEnum={{
-              [AppTheme.System]: "跟随系统",
-              [AppTheme.Dark]: "深色",
-              [AppTheme.Light]: "浅色",
+              [AppTheme.System]: t("followSystem"),
+              [AppTheme.Dark]: t("dark"),
+              [AppTheme.Light]: t("light"),
             }}
-            placeholder="请选择主题色"
+            placeholder={t("pleaseSelectTheme")}
+            allowClear={false}
           />
-          <ProFormSwitch label="新窗口打开浏览器" name="openInNewWindow" />
-          <ProFormSwitch label="下载完成提示" name="promptTone" />
+          <ProFormSelect
+            name="language"
+            label={t("displayLanguage")}
+            valueEnum={{
+              [AppLanguage.System]: t("followSystem"),
+              [AppLanguage.ZH]: t("chinese"),
+              [AppLanguage.EN]: t("english"),
+            }}
+            placeholder={t("pleaseSelectLanguage")}
+            allowClear={false}
+          />
+          <ProFormSwitch label={t("openInNewWindow")} name="openInNewWindow" />
+          <ProFormSwitch label={t("downloadPrompt")} name="promptTone" />
         </ProFormGroup>
-        <ProFormGroup title="浏览器设置" direction={"vertical"}>
+        <ProFormGroup title={t("browserSetting")} direction={"vertical"}>
           <ProFormText
             width="xl"
             name="proxy"
-            placeholder="请填写代理地址"
-            label="代理设置"
+            placeholder={t("pleaseEnterProxy")}
+            label={t("proxySetting")}
           />
           <ProFormSwitch
             name="useProxy"
-            label={renderTooltipLabel(
-              "代理开关",
-              "该代理会对软件自带浏览器以及下载时生效",
-            )}
+            label={renderTooltipLabel(t("proxySwitch"), t("proxyDescription"))}
             rules={[
               ({ getFieldValue, setFieldValue }) => ({
                 validator() {
                   if (getFieldValue("proxy") === "") {
                     setFieldValue("useProxy", false);
-                    return Promise.reject("请先输入代理地址");
+                    return Promise.reject(t("pleaseEnterProxyFirst"));
                   }
                   return Promise.resolve();
                 },
               }),
             ]}
           />
-          <ProFormSwitch label="开启广告过滤" name="blockAds" />
-          <ProFormSwitch label="以手机模式进入" name="isMobile" />
+          <ProFormSwitch label={t("blockAds")} name="blockAds" />
+          <ProFormSwitch label={t("enterMobileMode")} name="isMobile" />
           <ProFormSwitch
             label={renderTooltipLabel(
-              "使用沉浸式嗅探",
-              "开启后沉浸式嗅探到的资源将不会直接显示在下载列表中，所有资源嗅探会交给浏览器插件处理",
+              t("useImmersiveSniffing"),
+              t("immersiveSniffingDescription"),
             )}
             name="useExtension"
           />
         </ProFormGroup>
-        <ProFormGroup title="下载设置" direction={"vertical"}>
-          <ProFormSwitch label="下载完成删除分片" name="deleteSegments" />
+        <ProFormGroup title={t("downloadSetting")} direction={"vertical"}>
+          <ProFormSwitch label={t("deleteSegments")} name="deleteSegments" />
           <ProFormDigit
             label={renderTooltipLabel(
-              "最大同时下载数量",
-              "直播录制不占用同时下载数量",
+              t("maxRunner"),
+              t("maxRunnerDescription"),
             )}
             name="maxRunner"
             min={1}
             max={50}
             fieldProps={{ precision: 0 }}
           />
-          <ProFormText label="更多操作">
+          <ProFormText label={t("moreAction")}>
             <Space>
               <Button
                 onClick={() => envPath?.workspace && openDir(envPath.workspace)}
                 icon={<FolderOpenOutlined />}
               >
-                配置文件目录
+                {t("configDir")}
               </Button>
               <Button
                 onClick={() => envPath?.binPath && openDir(envPath.binPath)}
                 icon={<FolderOpenOutlined />}
               >
-                可执行程序目录
+                {t("binPath")}
               </Button>
               <Button
                 onClick={() => openDir(settings.local)}
                 icon={<FolderOpenOutlined />}
               >
-                本地存储目录
+                {t("localDir")}
               </Button>
             </Space>
           </ProFormText>
-          <ProFormText label="当前版本">
+          <ProFormText label={t("currentVersion")}>
             <div>{version}</div>
           </ProFormText>
         </ProFormGroup>

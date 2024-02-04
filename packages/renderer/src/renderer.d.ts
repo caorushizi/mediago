@@ -67,6 +67,10 @@ declare interface AppStore {
   useExtension?: boolean;
   // 默认使用移动端UA
   isMobile?: boolean;
+  // 最大同时下载数
+  maxRunner?: number;
+  // 语言
+  language?: AppLanguage;
 }
 
 declare interface BrowserStore {

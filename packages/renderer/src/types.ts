@@ -13,6 +13,12 @@ export enum AppTheme {
   Dark = "dark",
 }
 
+export enum AppLanguage {
+  System = "system",
+  ZH = "zh",
+  EN = "en",
+}
+
 export enum DownloadType {
   m3u8 = "m3u8",
   bilibili = "bilibili",
