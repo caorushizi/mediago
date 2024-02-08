@@ -22,7 +22,6 @@ import { SniffingHelper } from "./SniffingHelperService";
 
 const styleText = readFileSync(pluginStylePath, "utf-8");
 
-// FIXME: 需要重构
 @injectable()
 export default class WebviewService {
   public view: BrowserView;
@@ -61,11 +60,12 @@ export default class WebviewService {
     this.setUserAgent(isMobile);
 
     this.webContents.on("dom-ready", async () => {
-      this.sniffingHelper.reset();
       this.webContents.insertCSS(styleText);
       const title = this.webContents.getTitle();
       const url = this.webContents.getURL();
-      this.curWindow?.webContents.send("webview-dom-ready", { title, url });
+      const baseInfo = { title, url };
+      this.sniffingHelper.reset(baseInfo);
+      this.curWindow?.webContents.send("webview-dom-ready", baseInfo);
     });
 
     // 兼容网站在当前页面中打开

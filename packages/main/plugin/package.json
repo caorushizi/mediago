@@ -4,27 +4,25 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "tsc && vite build",
+    "build": "vue-tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
-    "antd": "^5.13.2",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "element-plus": "^2.5.5",
+    "vue": "^3.4.16"
   },
   "devDependencies": {
     "@types/node": "^20.11.5",
-    "@types/react": "^18.2.48",
-    "@types/react-dom": "^18.2.18",
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "@typescript-eslint/parser": "^6.19.0",
-    "@vitejs/plugin-react": "^4.2.1",
+    "@vitejs/plugin-vue": "^4.2.3",
     "electron": "^28.1.4",
     "eslint": "^8.56.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.5",
     "typescript": "^5.3.3",
-    "vite": "^5.0.12"
+    "unplugin-auto-import": "^0.17.5",
+    "unplugin-vue-components": "^0.25.1",
+    "vite": "^5.0.12",
+    "vue-tsc": "^1.8.27"
   }
 }
