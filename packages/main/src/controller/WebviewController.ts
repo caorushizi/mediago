@@ -1,4 +1,9 @@
-import { IpcMainEvent } from "electron";
+import {
+  IpcMainEvent,
+  Menu,
+  MenuItem,
+  MenuItemConstructorOptions,
+} from "electron";
 import { inject, injectable } from "inversify";
 import { handle } from "../helper";
 import { type Controller } from "../interfaces";
@@ -23,6 +28,23 @@ export default class WebviewController implements Controller {
   @handle("webview-load-url")
   async browserViewLoadUrl(e: IpcMainEvent, url?: string): Promise<void> {
     await this.webview.loadURL(url);
+  }
+
+  @handle("webview-url-contextmenu")
+  async webviewUrlContextMenu() {
+    const template: Array<MenuItemConstructorOptions | MenuItem> = [
+      {
+        label: "复制",
+        role: "copy",
+      },
+      {
+        label: "粘贴",
+        role: "paste",
+      },
+    ];
+
+    const menu = Menu.buildFromTemplate(template);
+    menu.popup();
   }
 
   @handle("webview-go-back")

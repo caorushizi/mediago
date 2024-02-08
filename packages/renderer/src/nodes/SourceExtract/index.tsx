@@ -60,6 +60,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     combineToHomePage,
     getSharedState,
     setUserAgent,
+    webviewUrlContextMenu,
     getAppStore: ipcGetAppStore,
   } = useElectron();
   const { t } = useTranslation();
@@ -117,6 +118,10 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     }
 
     await goto();
+  };
+
+  const onInputContextMenu = () => {
+    webviewUrlContextMenu();
   };
 
   const onClickAddFavorite = async () => {
@@ -263,14 +268,20 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
         >
           <ArrowLeftOutlined />
         </Button>
-        <Button
-          disabled={disabled}
-          title={t("refresh")}
-          type="text"
-          onClick={goto}
-        >
-          <ReloadOutlined />
-        </Button>
+        {store.status === BrowserStatus.Loading ? (
+          <Button title={t("cancle")} type="text" onClick={onClickGoHome}>
+            <CloseOutlined />
+          </Button>
+        ) : (
+          <Button
+            disabled={disabled}
+            title={t("refresh")}
+            type="text"
+            onClick={goto}
+          >
+            <ReloadOutlined />
+          </Button>
+        )}
         <Button
           type="text"
           title={curIsFavorite ? t("cancelFavorite") : t("favorite")}
@@ -290,6 +301,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
             e.target.select();
           }}
           onKeyDown={onInputKeyDown}
+          onContextMenu={onInputContextMenu}
           placeholder={t("pleaseEnterUrl")}
         />
         <Button

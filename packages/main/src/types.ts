@@ -20,6 +20,7 @@ export const TYPES = {
   ProtocolService: Symbol.for("ProtocolService"),
   UpdateService: Symbol.for("UpdateService"),
   LoggerService: Symbol.for("LoggerService"),
+  SniffingHelper: Symbol.for("SniffingHelper"),
 };
 
 export enum AppTheme {

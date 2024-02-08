@@ -120,6 +120,7 @@ http://example.com/xxx.m3u8`,
           additionalHeadersDescription: `Please enter additional headers, make sure one line one header, for example:
 Origin: http://www.example.com
 Referer: http://www.example.com`,
+          cancle: "Cancle",
         },
       },
       zh: {
@@ -227,6 +228,7 @@ Referer: http://www.example.com`,
           dark: "深色",
           light: "浅色",
           pleaseSelectTheme: "请选择主题",
+          cancle: "取消",
         },
       },
     },
