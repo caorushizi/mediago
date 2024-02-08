@@ -15,7 +15,6 @@
 //   };
 
 //   useEffect(() => {
-//     console.log("mediago ready!");
 //     ipcRenderer.on("webview-link-message", receiveMessage);
 
 //     return () => {
