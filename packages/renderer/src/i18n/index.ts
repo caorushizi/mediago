@@ -6,7 +6,7 @@ i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    debug: true,
+    debug: import.meta.env.MODE === "development",
     fallbackLng: "zh",
     interpolation: {
       escapeValue: false,
@@ -222,6 +222,11 @@ http://example.com/xxx.m3u8`,
           additionalHeadersDescription: `请输入附加标头，确保一行一个 Header， 例如：
 Origin: http://www.example.com
 Referer: http://www.example.com`,
+          chinese: "中文",
+          displayLanguage: "显示语言",
+          dark: "深色",
+          light: "浅色",
+          pleaseSelectTheme: "请选择主题",
         },
       },
     },
