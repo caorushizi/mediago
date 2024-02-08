@@ -91,7 +91,7 @@ async function start() {
   const pluginRoot = path.resolve(__dirname, "../plugin");
   const watcher2 = chokidar.watch(pluginRoot);
   watcher2.on("change", async () => {
-    console.log("plugin changed");
+    log("plugin changed");
     await build({ root: pluginRoot });
     restartElectron();
   });

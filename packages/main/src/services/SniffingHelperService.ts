@@ -141,7 +141,6 @@ export class SniffingHelper extends EventEmitter {
     const sourceParams = this.requestMap[requestId];
 
     if (sourceParams) {
-      console.log("sourceParams", sourceParams);
       const { filter, url, documentURL } = sourceParams;
       const objUrl = new URL(url);
 
