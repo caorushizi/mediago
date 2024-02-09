@@ -16,6 +16,7 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
+    "lint-stage": "lint-staged",
     "types": "pnpm -F main run types",
     "prepare": "husky",
     "commit": "git-cz",
@@ -51,7 +52,5 @@
     "vue": "^3.4.15",
     "zx": "^7.2.3"
   },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx,vue}": "eslint"
-  }
+  "lint-staged": {}
 }

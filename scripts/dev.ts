@@ -1,5 +1,7 @@
 #!/usr/bin/env zx
 
+import { os, echo, path, fs, $ } from "zx";
+
 const platform = os.platform();
 
 echo("开始构建 development ...");

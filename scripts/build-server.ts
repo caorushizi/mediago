@@ -1,4 +1,5 @@
 #!/usr/bin/env zx
+import { $,os } from "zx";
 
 const platform = os.platform();
 
