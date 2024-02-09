@@ -1,20 +1,9 @@
 import { defineConfig } from "vite";
 import path from "path";
-import vue from "@vitejs/plugin-vue";
-import AutoImport from "unplugin-auto-import/vite";
-import Components from "unplugin-vue-components/vite";
-import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    vue(),
-    AutoImport({
-      resolvers: [ElementPlusResolver()],
-    }),
-    Components({
-      resolvers: [ElementPlusResolver()],
-    }),
   ],
   build: {
     lib: {
@@ -30,6 +19,7 @@ export default defineConfig({
     },
   },
   server: {
-    origin: "http://localhost:5173",
+    port: 8080,
+    cors: true,
   },
 });

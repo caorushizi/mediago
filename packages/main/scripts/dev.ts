@@ -4,8 +4,6 @@ import * as esbuild from "esbuild";
 import chokidar from "chokidar";
 import { loadDotEnvRuntime, mainResolve, log, copyResource } from "./utils";
 import { external } from "./config";
-import { build } from "vite";
-import path from "path";
 
 let electronProcess: ChildProcessWithoutNullStreams | null = null;
 
@@ -85,14 +83,6 @@ async function start() {
     await mainContext.rebuild();
     await preloadContext.rebuild();
     log("watch build succeed.");
-    restartElectron();
-  });
-
-  const pluginRoot = path.resolve(__dirname, "../plugin");
-  const watcher2 = chokidar.watch(pluginRoot);
-  watcher2.on("change", async () => {
-    log("plugin changed");
-    await build({ root: pluginRoot });
     restartElectron();
   });
 
