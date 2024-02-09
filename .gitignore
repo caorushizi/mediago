@@ -4,3 +4,4 @@ node_modules
 .idea
 .parcel-cache
 .vitepress
+*.tsno.mjs

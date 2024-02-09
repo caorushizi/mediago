@@ -4,8 +4,8 @@
   "description": "electron-template",
   "main": "index.js",
   "scripts": {
-    "dev": "zx scripts/dev.mjs && pnpm --parallel -F \"./packages/*\" run dev",
-    "build": "zx scripts/build.mjs",
+    "dev": "tsno run scripts/dev.ts && pnpm --parallel -F \"./packages/*\" run dev",
+    "build": "tsno run scripts/build.ts",
     "build:mobile": "pnpm -F mobile run build",
     "build:plugin": "pnpm -F plugin run build",
     "build:main": "pnpm -F main run build",
@@ -16,7 +16,6 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "lint-stage": "lint-staged",
     "types": "pnpm -F main run types",
     "prepare": "husky",
     "commit": "git-cz",
@@ -51,6 +50,5 @@
     "vitepress": "1.0.0-beta.3",
     "vue": "^3.4.15",
     "zx": "^7.2.3"
-  },
-  "lint-staged": {}
+  }
 }

@@ -1,1 +1,1 @@
-export {emitter} from './events'
+export { emitter } from "./events";
