@@ -1,4 +1,4 @@
-import { WelcomeBanner } from "./components";
+import { OneDialog, WelcomeBanner } from "./components";
 
 export enum DownloadType {
   m3u8 = "m3u8",
@@ -15,5 +15,6 @@ export interface WebSource {
 declare global {
   interface HTMLElementTagNameMap {
     "welcome-banner": WelcomeBanner;
+    "one-dialog": OneDialog;
   }
 }
