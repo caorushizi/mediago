@@ -304,6 +304,9 @@ importers:
       mitt:
         specifier: ^3.0.1
         version: 3.0.1
+      nanoid:
+        specifier: ^5.0.4
+        version: 5.0.4
     devDependencies:
       '@types/node':
         specifier: ^20.11.5
@@ -314,9 +317,6 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^6.21.0
         version: 6.21.0(eslint@8.56.0)(typescript@5.3.3)
-      electron:
-        specifier: ^28.1.4
-        version: 28.1.4
       eslint:
         specifier: ^8.56.0
         version: 8.56.0

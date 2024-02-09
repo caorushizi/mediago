@@ -2,14 +2,7 @@ import { BrowserView, session } from "electron";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import isDev from "electron-is-dev";
-import {
-  PERSIST_WEBVIEW,
-  isWin,
-  mobileUA,
-  pcUA,
-  pluginPath,
-  pluginStylePath,
-} from "../helper";
+import { PERSIST_WEBVIEW, isWin, mobileUA, pcUA, pluginPath } from "../helper";
 import { ElectronBlocker } from "@cliqz/adblocker-electron";
 import fetch from "cross-fetch";
 import LoggerService from "./LoggerService";
@@ -17,8 +10,9 @@ import StoreService from "./StoreService";
 import MainWindow from "../windows/MainWindow";
 import BrowserWindow from "../windows/BrowserWindow";
 import VideoRepository from "../repository/VideoRepository";
-import { readFileSync } from "fs-extra";
 import { SniffingHelper } from "./SniffingHelperService";
+import { resolve } from "path";
+import { readFileSync } from "fs";
 
 @injectable()
 export default class WebviewService {
@@ -47,12 +41,9 @@ export default class WebviewService {
     this.view = new BrowserView({
       webPreferences: {
         partition: PERSIST_WEBVIEW,
-        preload: !isDev ? pluginPath : undefined,
+        preload: resolve(__dirname, "./preload.js"),
       },
     });
-    const styleText = !isDev
-      ? readFileSync(pluginStylePath, "utf-8")
-      : undefined;
     this.view.setBackgroundColor("#fff");
     this.webContents.setAudioMuted(true);
 
@@ -61,7 +52,6 @@ export default class WebviewService {
     this.setUserAgent(isMobile);
 
     this.webContents.on("dom-ready", async () => {
-      styleText && this.webContents.insertCSS(styleText);
       if (isDev) {
         this.webContents.executeJavaScript(
           `const script = document.createElement('script');
@@ -69,6 +59,9 @@ export default class WebviewService {
   script.type = 'module';
   document.body.appendChild(script);`,
         );
+      } else {
+        const content = readFileSync(pluginPath, "utf-8");
+        this.webContents.executeJavaScript(content);
       }
       const title = this.webContents.getTitle();
       const url = this.webContents.getURL();

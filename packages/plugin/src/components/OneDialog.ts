@@ -14,6 +14,7 @@ export class OneDialog extends LitElement {
           transition:
             visibility 0s,
             opacity 0.25s ease-in;
+          z-index: 99999;
         }
         .wrapper:not(.open) {
           visibility: hidden;
@@ -65,7 +66,7 @@ export class OneDialog extends LitElement {
   firstUpdated() {}
 
   render() {
-    return html` <div
+    return html`<div
       class="wrapper ${this.open ? "open" : ""}"
       aria-hidden="${!this.open}"
     >

@@ -89,6 +89,8 @@ const electronApi = {
     ipcRenderer.invoke("set-shared-state", state),
   setUserAgent: (isMobile: boolean): Promise<void> =>
     ipcRenderer.invoke("webview-change-user-agent", isMobile),
+  downloadItem: (data: { name: string; url: string; type: string }) =>
+    ipcRenderer.invoke("add-download-item", data),
 };
 
 contextBridge.exposeInMainWorld(apiKey, electronApi);
