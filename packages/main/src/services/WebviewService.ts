@@ -1,5 +1,4 @@
 import { BrowserView, session } from "electron";
-import { DownloadType } from "../interfaces";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import isDev from "electron-is-dev";
@@ -13,80 +12,18 @@ import {
 } from "../helper";
 import { ElectronBlocker } from "@cliqz/adblocker-electron";
 import fetch from "cross-fetch";
-import { WebSource } from "../main";
-import { load } from "cheerio";
 import LoggerService from "./LoggerService";
 import StoreService from "./StoreService";
 import MainWindow from "../windows/MainWindow";
 import BrowserWindow from "../windows/BrowserWindow";
 import VideoRepository from "../repository/VideoRepository";
 import { readFileSync } from "fs-extra";
+import { SniffingHelper } from "./SniffingHelperService";
 
-interface SourceParams {
-  url: string;
-  requestId: string;
-  headers: Record<string, any>;
-  filter: SourceFilter;
-  documentURL: string;
-}
-
-interface SourceFilter {
-  matches: RegExp[];
-  type: DownloadType;
-  handler: (this: WebviewService, params: SourceParams) => Promise<WebSource>;
-}
-
-const filterList: SourceFilter[] = [
-  {
-    matches: [/\.m3u8/],
-    type: DownloadType.m3u8,
-    async handler(params) {
-      const { url, headers } = params;
-      const webContents = this.view.webContents;
-      const title = webContents.getTitle();
-
-      return {
-        url,
-        type: DownloadType.m3u8,
-        name: title || "没有获取到名称",
-        headers: JSON.stringify(headers),
-      };
-    },
-  },
-  {
-    // TODO: 合集、列表、收藏夹
-    matches: [/^https?:\/\/(www\.)?bilibili.com\/video/],
-    type: DownloadType.bilibili,
-    async handler(params) {
-      const { url, requestId } = params;
-      const response = await this.debugger.sendCommand(
-        "Network.getResponseBody",
-        {
-          requestId,
-        },
-      );
-      const $ = load(response.body);
-      const title = $("title").text();
-
-      return {
-        url,
-        type: DownloadType.bilibili,
-        name: title || "没有获取到名称",
-      };
-    },
-  },
-];
-
-const styleText = readFileSync(pluginStylePath, "utf-8");
-
-// FIXME: 需要重构
 @injectable()
 export default class WebviewService {
   public view: BrowserView;
   private blocker?: ElectronBlocker;
-  private pageSources = new Set();
-  requestMap: Record<string, SourceParams> = {};
-  responseMap: Record<string, string[]> = {};
 
   constructor(
     @inject(TYPES.MainWindow)
@@ -99,6 +36,8 @@ export default class WebviewService {
     private readonly storeService: StoreService,
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
+    @inject(TYPES.SniffingHelper)
+    private readonly sniffingHelper: SniffingHelper,
   ) {
     // 初始化 blocker
     this.initBlocker();
@@ -108,27 +47,41 @@ export default class WebviewService {
     this.view = new BrowserView({
       webPreferences: {
         partition: PERSIST_WEBVIEW,
-        preload: pluginPath,
+        preload: !isDev ? pluginPath : undefined,
       },
     });
+    const styleText = !isDev
+      ? readFileSync(pluginStylePath, "utf-8")
+      : undefined;
     this.view.setBackgroundColor("#fff");
-    this.view.webContents.setAudioMuted(true);
+    this.webContents.setAudioMuted(true);
 
     const { useProxy, proxy, isMobile } = this.storeService.store;
     this.setProxy(useProxy, proxy);
     this.setUserAgent(isMobile);
 
-    this.view.webContents.on("dom-ready", async () => {
-      this.pageSources.clear();
-      this.view.webContents.insertCSS(styleText);
-      const title = this.view.webContents.getTitle();
-      const url = this.view.webContents.getURL();
-      this.curWindow?.webContents.send("webview-dom-ready", { title, url });
+    this.webContents.on("dom-ready", async () => {
+      styleText && this.webContents.insertCSS(styleText);
+      if (isDev) {
+        this.webContents.executeJavaScript(
+          `const script = document.createElement('script');
+  script.src = 'http://localhost:8080/src/main.ts';
+  script.type = 'module';
+  document.body.appendChild(script);`,
+        );
+      }
+      const title = this.webContents.getTitle();
+      const url = this.webContents.getURL();
+      const baseInfo = { title, url };
+      this.sniffingHelper.reset(baseInfo);
+      this.curWindow?.webContents.send("webview-dom-ready", baseInfo);
     });
-    this.view.webContents.setWindowOpenHandler(({ url }) => {
+
+    // 兼容网站在当前页面中打开
+    this.webContents.setWindowOpenHandler(({ url }) => {
       if (url === "about:blank") {
         // 兼容一些网站跳转到 about:blank
-        this.view.webContents.once("will-redirect", async (event, url) => {
+        this.webContents.once("will-redirect", async (event, url) => {
           this.loadURL(url, true);
         });
       } else {
@@ -138,97 +91,25 @@ export default class WebviewService {
       return { action: "deny" };
     });
 
-    try {
-      this.debugger.attach("1.1");
-    } catch (err) {
-      this.logger.error("Debugger attach failed : ", err);
-    }
-
-    this.debugger.on("detach", (event, reason) => {
-      this.logger.error("Debugger detached due to : ", reason);
-    });
-
-    this.debugger.on("message", async (event, method, params) => {
-      if (method === "Network.requestWillBeSent") {
-        const { requestId, documentURL } = params;
-        const { url, headers } = params.request;
-
-        for (const filter of filterList) {
-          for (const match of filter.matches) {
-            if (!match.test(url)) {
-              continue;
-            }
-
-            if (this.pageSources.has(url)) {
-              continue;
-            }
-
-            this.pageSources.add(url);
-            this.responseMap[documentURL] = [];
-            this.requestMap[requestId] = {
-              url,
-              headers,
-              requestId,
-              filter,
-              documentURL,
-            };
-            break;
-          }
+    this.sniffingHelper.setDebugger(this.debugger);
+    this.sniffingHelper.start();
+    this.sniffingHelper.on("source", async (item) => {
+      // 这里需要判断是否使用浏览器插件
+      const useExtension = this.storeService.get("useExtension");
+      if (useExtension) {
+        this.webContents.send("webview-link-message", item);
+      } else {
+        const video = await this.videoRepository.findVideoByName(item.name);
+        if (video) {
+          item.name = `${item.name}-${Date.now()}`;
         }
-      }
-      if (method === "Network.loadingFinished") {
-        const { requestId } = params;
-        const sourceParams = this.requestMap[requestId];
-
-        if (sourceParams) {
-          const { filter, url, documentURL } = sourceParams;
-          const objUrl = new URL(url);
-
-          const { body, base64Encoded } = await this.debugger.sendCommand(
-            "Network.getResponseBody",
-            {
-              requestId: params.requestId,
-            },
-          );
-          if (this.responseMap[documentURL].length > 0) {
-            const bodys = this.responseMap[documentURL];
-            const exist = bodys.some((item) =>
-              new RegExp(objUrl.pathname).test(item),
-            );
-            if (exist) return;
-          }
-          if (base64Encoded) {
-            // base64 解码
-            const bodyContent = Buffer.from(body, "base64").toString();
-            this.responseMap[documentURL].push(bodyContent);
-          } else {
-            this.responseMap[documentURL].push(body);
-          }
-
-          this.logger.info(`在窗口中捕获视频链接: ${url}`);
-          // 这里需要判断是否使用浏览器插件
-          const useExtension = this.storeService.get("useExtension");
-          if (useExtension) {
-            const webContents = this.view.webContents;
-            const item = await filter.handler.call(this, sourceParams);
-            webContents.send("webview-link-message", item);
-          } else {
-            const item = await filter.handler.call(this, sourceParams);
-            const video = await this.videoRepository.findVideoByName(item.name);
-            if (video) {
-              item.name = `${item.name}-${Date.now()}`;
-            }
-            const res = await this.videoRepository.addVideo(item);
-            const mainWebContents = this.mainWindow.window?.webContents;
-            if (!mainWebContents) return;
-            // 这里向页面发送消息，通知页面更新
-            mainWebContents.send("download-item-notifier", res);
-          }
-        }
+        const res = await this.videoRepository.addVideo(item);
+        const mainWebContents = this.mainWindow.window?.webContents;
+        if (!mainWebContents) return;
+        // 这里向页面发送消息，通知页面更新
+        mainWebContents.send("download-item-notifier", res);
       }
     });
-
-    this.debugger.sendCommand("Network.enable");
   }
 
   getBounds(): Electron.Rectangle {
@@ -245,12 +126,12 @@ export default class WebviewService {
 
   show() {
     this.curWindow?.setBrowserView(this.view);
-    isDev && this.view.webContents.openDevTools();
+    isDev && this.webContents.openDevTools();
   }
 
   hide() {
     this.curWindow?.setBrowserView(null);
-    isDev && this.view.webContents.closeDevTools();
+    isDev && this.webContents.closeDevTools();
   }
 
   setBounds(bounds: Electron.Rectangle): void {
@@ -263,22 +144,23 @@ export default class WebviewService {
   }
 
   async loadURL(url?: string, isNewWindow?: boolean) {
-    const canGoBack = this.view.webContents.canGoBack();
+    const canGoBack = this.webContents.canGoBack();
+
     try {
-      await this.view.webContents.loadURL(url || "");
+      await this.webContents.loadURL(url || "");
     } catch (err: unknown) {
       this.logger.error("加载 url 时出现错误: ", err);
       throw err;
     } finally {
       if (!canGoBack && !isNewWindow) {
-        this.view.webContents.clearHistory();
+        this.webContents.clearHistory();
       }
     }
   }
 
   async goBack() {
-    if (this.view.webContents.canGoBack()) {
-      this.view.webContents.goBack();
+    if (this.webContents.canGoBack()) {
+      this.webContents.goBack();
       return true;
     } else {
       return false;
@@ -286,11 +168,11 @@ export default class WebviewService {
   }
 
   async reload() {
-    this.view.webContents.reload();
+    this.webContents.reload();
   }
 
   async goHome() {
-    this.view.webContents.clearHistory();
+    this.webContents.clearHistory();
   }
 
   get curWindow() {
@@ -369,14 +251,18 @@ export default class WebviewService {
 
   setUserAgent(isMobile?: boolean) {
     if (isMobile) {
-      this.view.webContents.setUserAgent(mobileUA);
+      this.webContents.setUserAgent(mobileUA);
     } else {
-      this.view.webContents.setUserAgent(pcUA);
+      this.webContents.setUserAgent(pcUA);
     }
     this.logger.info("设置 user-agent 成功", isMobile);
   }
 
   get debugger() {
-    return this.view.webContents.debugger;
+    return this.webContents.debugger;
+  }
+
+  get webContents() {
+    return this.view.webContents;
   }
 }

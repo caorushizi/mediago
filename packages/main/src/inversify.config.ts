@@ -20,6 +20,7 @@ import MainWindow from "./windows/MainWindow";
 import PlayerWindow from "./windows/PlayerWindow";
 import BrowserWindow from "./windows/BrowserWindow";
 import VideoService from "./services/VideoService";
+import { SniffingHelper } from "./services/SniffingHelperService";
 
 const container = new Container({
   skipBaseClassChecks: true,
@@ -42,6 +43,7 @@ container.bind<WebviewService>(TYPES.WebviewService).to(WebviewService);
 container.bind<DownloadService>(TYPES.DownloadService).to(DownloadService);
 container.bind<DevToolsService>(TYPES.DevToolsService).to(DevToolsService);
 container.bind<VideoService>(TYPES.VideoService).to(VideoService);
+container.bind<SniffingHelper>(TYPES.SniffingHelper).to(SniffingHelper);
 
 // windows
 container.bind<MainWindow>(TYPES.MainWindow).to(MainWindow);

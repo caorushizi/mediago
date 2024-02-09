@@ -7,6 +7,7 @@ import { useAsyncEffect, useToggle } from "ahooks";
 import { List, Space, Button } from "antd";
 import useElectron from "../../hooks/electron";
 import { useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface Video {
   id: number;
@@ -19,6 +20,7 @@ const port = import.meta.env.APP_SERVER_PORT;
 // 播放器页面
 const PlayerPage: FC = () => {
   const { getLocalIP } = useElectron();
+  const { t } = useTranslation();
   const [showVideoList, { toggle }] = useToggle();
   const [showButton, setShowButton] = useState(false);
   const [videoList, setVideoList] = useState<Video[]>([]);
@@ -91,7 +93,7 @@ const PlayerPage: FC = () => {
       >
         {!showVideoList && showButton && (
           <div className="list-toggle">
-            <Button onClick={toggle}>展开</Button>
+            <Button onClick={toggle}>{t("expand")}</Button>
           </div>
         )}
         <div ref={playerRef} />
@@ -101,8 +103,8 @@ const PlayerPage: FC = () => {
           <List
             header={
               <Space.Compact block>
-                <Button onClick={refresh}>刷新</Button>
-                <Button onClick={toggle}>收起</Button>
+                <Button onClick={refresh}>{t("refresh")}</Button>
+                <Button onClick={toggle}>{t("collapse")}</Button>
               </Space.Compact>
             }
             dataSource={videoList}

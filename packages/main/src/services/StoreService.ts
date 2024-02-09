@@ -2,7 +2,7 @@ import Store from "electron-store";
 import { injectable } from "inversify";
 import { AppStore } from "../main";
 import { download, workspace } from "../helper";
-import { AppTheme } from "../types";
+import { AppLanguage, AppTheme } from "../types";
 
 @injectable()
 export default class StoreService extends Store<AppStore> {
@@ -24,6 +24,7 @@ export default class StoreService extends Store<AppStore> {
         useExtension: false,
         isMobile: false,
         maxRunner: 2,
+        language: AppLanguage.System,
       },
     });
   }

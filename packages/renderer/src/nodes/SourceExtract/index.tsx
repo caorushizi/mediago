@@ -40,6 +40,7 @@ import {
 } from "../../store";
 import WebView from "../../components/WebView";
 import { selectAppStore } from "../../store";
+import { useTranslation } from "react-i18next";
 
 interface SourceExtractProps {
   page?: boolean;
@@ -59,8 +60,10 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     combineToHomePage,
     getSharedState,
     setUserAgent,
+    webviewUrlContextMenu,
     getAppStore: ipcGetAppStore,
   } = useElectron();
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { data: favoriteList = [], refresh } = useRequest(getFavorites);
   const [favoriteAddForm] = Form.useForm<Favorite>();
@@ -115,6 +118,10 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     }
 
     await goto();
+  };
+
+  const onInputContextMenu = () => {
+    webviewUrlContextMenu();
   };
 
   const onClickAddFavorite = async () => {
@@ -238,12 +245,16 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
       store.status !== BrowserStatus.Loaded || store.mode !== PageMode.Browser;
     return (
       <Space.Compact className="action-bar" block>
-        <Button type="text" title="切换为手机模式" onClick={onSetDefaultUA}>
+        <Button
+          type="text"
+          title={t("switchToMobileMode")}
+          onClick={onSetDefaultUA}
+        >
           {appStore.isMobile ? <MobileFilled /> : <MobileOutlined />}
         </Button>
         <Button
           disabled={disabled}
-          title="首页"
+          title={t("home")}
           type="text"
           onClick={onClickGoHome}
         >
@@ -251,18 +262,29 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
         </Button>
         <Button
           disabled={disabled}
-          title="回退"
+          title={t("back")}
           type="text"
           onClick={onClickGoBack}
         >
           <ArrowLeftOutlined />
         </Button>
-        <Button disabled={disabled} title="刷新" type="text" onClick={goto}>
-          <ReloadOutlined />
-        </Button>
+        {store.status === BrowserStatus.Loading ? (
+          <Button title={t("cancle")} type="text" onClick={onClickGoHome}>
+            <CloseOutlined />
+          </Button>
+        ) : (
+          <Button
+            disabled={disabled}
+            title={t("refresh")}
+            type="text"
+            onClick={goto}
+          >
+            <ReloadOutlined />
+          </Button>
+        )}
         <Button
           type="text"
-          title={curIsFavorite ? "取消收藏" : "收藏"}
+          title={curIsFavorite ? t("cancelFavorite") : t("favorite")}
           onClick={onClickAddFavorite}
           disabled={disabled}
         >
@@ -279,10 +301,11 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
             e.target.select();
           }}
           onKeyDown={onInputKeyDown}
-          placeholder="请输入网址"
+          onContextMenu={onInputContextMenu}
+          placeholder={t("pleaseEnterUrl")}
         />
         <Button
-          title="访问"
+          title={t("visit")}
           type="text"
           onClick={onClickEnter}
           disabled={!store.url}
@@ -290,7 +313,11 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
           <ArrowRightOutlined />
         </Button>
         {page && (
-          <Button type="text" title="合并到主窗口" onClick={onCombineToHome}>
+          <Button
+            type="text"
+            title={t("mergeToMainWindow")}
+            onClick={onCombineToHome}
+          >
             <ImportOutlined />
           </Button>
         )}
@@ -305,12 +332,12 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
       content = <Spin />;
     } else if (store.status === BrowserStatus.Failed) {
       content = (
-        <Empty description={store.errMsg || "加载失败"}>
+        <Empty description={store.errMsg || t("loadFailed")}>
           <Space>
             <Button type="primary" onClick={onClickGoHome}>
-              返回首页
+              {t("backToHome")}
             </Button>
-            <Button onClick={goto}>刷新</Button>
+            <Button onClick={goto}>{t("refresh")}</Button>
           </Space>
         </Empty>
       );
@@ -325,7 +352,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     if (item === "add") {
       return (
         <ModalForm<Favorite>
-          title="添加快捷方式"
+          title={t("addShortcut")}
           width={500}
           trigger={
             <List.Item className="list-item">
@@ -364,27 +391,27 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
         >
           <ProFormText
             name="title"
-            label="站点名称"
-            placeholder="请输入站点名称"
+            label={t("siteName")}
+            placeholder={t("pleaseEnterSiteName")}
             rules={[
               {
                 required: true,
-                message: "请输入站点名称",
+                message: t("pleaseEnterSiteName"),
               },
             ]}
           />
           <ProFormText
             name="url"
-            label="站点网址"
-            placeholder="请输入站点网址"
+            label={t("siteUrl")}
+            placeholder={t("pleaseEnterSiteUrl")}
             rules={[
               {
                 required: true,
-                message: "请输入站点网址",
+                message: t("pleaseEnterSiteUrl"),
               },
               {
                 pattern: /^https?:\/\/.+/,
-                message: "请输入正确的网址",
+                message: t("pleaseEnterCorrectUrl"),
               },
             ]}
           />
