@@ -20,8 +20,6 @@ import VideoRepository from "../repository/VideoRepository";
 import { readFileSync } from "fs-extra";
 import { SniffingHelper } from "./SniffingHelperService";
 
-// const styleText = readFileSync(pluginStylePath, "utf-8");
-
 @injectable()
 export default class WebviewService {
   public view: BrowserView;
@@ -49,9 +47,12 @@ export default class WebviewService {
     this.view = new BrowserView({
       webPreferences: {
         partition: PERSIST_WEBVIEW,
-        // preload: pluginPath,
+        preload: !isDev ? pluginPath : undefined,
       },
     });
+    const styleText = !isDev
+      ? readFileSync(pluginStylePath, "utf-8")
+      : undefined;
     this.view.setBackgroundColor("#fff");
     this.webContents.setAudioMuted(true);
 
@@ -60,13 +61,15 @@ export default class WebviewService {
     this.setUserAgent(isMobile);
 
     this.webContents.on("dom-ready", async () => {
-      // this.webContents.insertCSS(styleText);
-      this.webContents.executeJavaScript(
-        `const script = document.createElement('script');
-script.src = 'http://localhost:8080/src/main.ts';
-script.type = 'module';
-document.body.appendChild(script);`,
-      );
+      styleText && this.webContents.insertCSS(styleText);
+      if (isDev) {
+        this.webContents.executeJavaScript(
+          `const script = document.createElement('script');
+  script.src = 'http://localhost:8080/src/main.ts';
+  script.type = 'module';
+  document.body.appendChild(script);`,
+        );
+      }
       const title = this.webContents.getTitle();
       const url = this.webContents.getURL();
       const baseInfo = { title, url };

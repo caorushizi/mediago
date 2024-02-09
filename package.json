@@ -16,7 +16,8 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "types": "pnpm -F main run types"
+    "types": "pnpm -F main run types",
+    "prepare": "husky"
   },
   "keywords": [],
   "author": "",
@@ -29,8 +30,13 @@
   "devDependencies": {
     "@waline/client": "^2.15.8",
     "cross-env": "^7.0.3",
+    "husky": "^9.0.10",
+    "lint-staged": "^15.2.2",
     "vitepress": "1.0.0-beta.3",
     "vue": "^3.4.15",
     "zx": "^7.2.3"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,vue}": "eslint"
   }
 }
