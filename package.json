@@ -4,8 +4,8 @@
   "description": "electron-template",
   "main": "index.js",
   "scripts": {
-    "dev": "zx scripts/dev.mjs && pnpm --parallel -F \"./packages/*\" run dev",
-    "build": "zx scripts/build.mjs",
+    "dev": "tsno run scripts/dev.ts && pnpm --parallel -F \"./packages/*\" run dev",
+    "build": "tsno run scripts/build.ts",
     "build:mobile": "pnpm -F mobile run build",
     "build:plugin": "pnpm -F plugin run build",
     "build:main": "pnpm -F main run build",
@@ -16,7 +16,11 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "types": "pnpm -F main run types"
+    "types": "pnpm -F main run types",
+    "prepare": "husky",
+    "commit": "git-cz",
+    "commitlint": "commitlint --edit",
+    "spellcheck": "cspell lint --dot --gitignore --color --cache --show-suggestions \"src/**/*.@(html|js|cjs|mjs|ts|tsx|css|scss|md|vue)\""
   },
   "keywords": [],
   "author": "",
@@ -26,9 +30,23 @@
       "@cliqz/adblocker@1.26.15": "patches/@cliqz__adblocker@1.26.15.patch"
     }
   },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-git"
+    }
+  },
   "devDependencies": {
+    "@commitlint/cli": "^18.6.0",
+    "@commitlint/config-conventional": "^18.6.0",
+    "@commitlint/cz-commitlint": "^18.6.0",
     "@waline/client": "^2.15.8",
+    "commitizen": "^4.3.0",
     "cross-env": "^7.0.3",
+    "cspell": "^8.3.2",
+    "cz-git": "^1.8.0",
+    "husky": "^9.0.10",
+    "lint-staged": "^15.2.2",
+    "tsno": "^2.0.0",
     "vitepress": "1.0.0-beta.3",
     "vue": "^3.4.15",
     "zx": "^7.2.3"

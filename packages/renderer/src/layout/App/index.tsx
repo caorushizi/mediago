@@ -19,6 +19,7 @@ import {
   selectCount,
 } from "../../store";
 import { useAsyncEffect } from "ahooks";
+import { useTranslation } from "react-i18next";
 
 const { Footer, Sider, Content } = Layout;
 
@@ -39,6 +40,7 @@ const App: FC = () => {
     setAppStore: ipcSetAppStore,
     showBrowserWindow,
   } = useElectron();
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -57,7 +59,7 @@ const App: FC = () => {
           }}
         >
           <DownloadOutlined />
-          <span>下载列表</span>
+          <span>{t("downloadList")}</span>
           {count > 0 && (
             <Badge count={count} offset={[5, 1]} size="small"></Badge>
           )}
@@ -69,7 +71,7 @@ const App: FC = () => {
       label: (
         <Link to="/done" className="like-item">
           <CheckCircleOutlined />
-          <span>下载完成</span>
+          <span>{t("downloadComplete")}</span>
         </Link>
       ),
       key: "done",
@@ -78,10 +80,10 @@ const App: FC = () => {
       label: (
         <Link to="/source" className="like-item">
           <ProfileOutlined />
-          <span>素材提取</span>
+          <span>{t("materialExtraction")}</span>
           {showExport && (
             <Button
-              title="在新窗口中打开"
+              title={t("openInNewWindow")}
               type="text"
               style={{ marginLeft: "auto" }}
               icon={<ExportOutlined />}
@@ -113,7 +115,7 @@ const App: FC = () => {
       label: (
         <Link to="/settings" className="like-item">
           <SettingOutlined />
-          <span>设置</span>
+          <span>{t("setting")}</span>
         </Link>
       ),
       key: "settings",
@@ -155,7 +157,7 @@ const App: FC = () => {
             onClick={openHelpUrl}
             icon={<QuestionCircleOutlined />}
           >
-            使用帮助
+            {t("help")}
           </Button>
         </Footer>
       </Layout>

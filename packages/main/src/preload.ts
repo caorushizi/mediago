@@ -72,6 +72,8 @@ const electronApi = {
     ipcRenderer.invoke("show-browser-window"),
   webviewHide: (): Promise<void> => ipcRenderer.invoke("webview-hide"),
   webviewShow: (): Promise<void> => ipcRenderer.invoke("webview-show"),
+  webviewUrlContextMenu: (): Promise<void> =>
+    ipcRenderer.invoke("webview-url-contextmenu"),
   downloadNow: (video: DownloadItem): Promise<void> =>
     ipcRenderer.invoke("download-now", video),
   combineToHomePage: (store: BrowserStore): Promise<void> =>

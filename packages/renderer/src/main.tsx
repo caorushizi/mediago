@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
 import { tdApp, initClarity } from "./utils";
 import App from "./App";
+import "./i18n";
 
 dayjs.locale("zh-cn");
 tdApp.init();
