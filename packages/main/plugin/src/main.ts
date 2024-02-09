@@ -1,20 +1,18 @@
 import "./index.scss";
-import Button from "./components/button.vue";
-import { createApp } from "vue";
+import './components'
 
 function bili() {
   const videoCards = document.querySelectorAll(
     ".feed-card .bili-video-card__image--link",
   );
   videoCards.forEach((card) => {
-    const app = document.createElement("div");
-    app.id = "Test";
-    card.appendChild(app);
-    createApp(Button).mount(app);
+    const banner = document.createElement("welcome-banner");
+    banner.name = 'bili'
+    card.appendChild(banner);
   });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // mount();
   bili();
 });
+bili();
