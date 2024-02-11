@@ -28,6 +28,7 @@ export const cmdr = (
         const message = item.trim();
         if (!message) return;
         try {
+          console.log("message", message);
           callback(message);
         } catch (err) {
           reject(err);

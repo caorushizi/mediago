@@ -1,7 +1,7 @@
 import { LitElement, html, css } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import logo from "../assets/logo.png";
-import { addIpcListener } from "../helper";
+import { addIpcListener, downloadItem } from "../helper";
 
 @customElement("float-button")
 export class FloatButton extends LitElement {
@@ -29,13 +29,13 @@ export class FloatButton extends LitElement {
       }
       .badge {
         position: absolute;
-        right: -9px;
-        top: -9px;
+        right: -2px;
+        top: -2px;
         background: red;
         color: #fff;
         border-radius: 50%;
-        height: 18px;
-        width: 18px;
+        height: 6px;
+        width: 6px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -43,40 +43,39 @@ export class FloatButton extends LitElement {
     }
   `;
 
+  data: any = {};
+
   @property({ type: Number })
   count = 0;
-
-  @state()
-  open = false;
 
   onClick(e: Event) {
     e.preventDefault();
     e.stopPropagation();
-    this.open = true;
+
+    downloadItem({
+      name: this.data.name,
+      url: this.data.url,
+      type: this.data.type,
+    });
   }
 
   firstUpdated() {
     addIpcListener("webview-link-message", this.receiveMessage);
   }
 
-  receiveMessage = () => {
-    this.count++;
+  receiveMessage = (e: any, data: any) => {
+    this.count = 1;
+    this.data = data;
   };
 
-  onClose() {
-    this.open = false;
-  }
-
   render() {
+    if (this.count === 0) {
+      return html``;
+    }
+
     return html`<div class="mg-float-button" @click=${this.onClick}>
-        <img class="logo-img" src=${logo} />
-        ${this.count > 0 ? html`<span class="badge">${this.count}</span>` : ""}
-      </div>
-      <one-dialog ?open=${this.open} @dialog-closed=${this.onClose}>
-        <span slot="heading">标题</span>
-        <div>
-          <p>内容</p>
-        </div>
-      </one-dialog>`;
+      <img class="logo-img" src=${logo} />
+      <span class="badge"></span>
+    </div>`;
   }
 }
