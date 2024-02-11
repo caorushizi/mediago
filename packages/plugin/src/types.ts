@@ -1,4 +1,4 @@
-import { OneDialog, OneButton } from "./components";
+import { OneButton } from "./components";
 import { ElectronApi } from "../../main/types/preload";
 
 export enum DownloadType {
@@ -16,7 +16,6 @@ export interface WebSource {
 declare global {
   interface HTMLElementTagNameMap {
     "one-button": OneButton;
-    "one-dialog": OneDialog;
   }
   interface Window {
     electron: ElectronApi;

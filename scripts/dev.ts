@@ -12,7 +12,7 @@ const main = path.resolve(root, "packages/main");
 const app = path.resolve(main, "app");
 const bin = path.resolve(app, "bin");
 
-let filename = path.resolve(bin, `${platform}/server`)
+let filename = path.resolve(bin, `${platform}/server`);
 if (platform == "win32") {
   filename += ".exe";
 }
@@ -21,11 +21,11 @@ if (!fs.existsSync(filename)) {
   await $`npm run build:server`;
 }
 
-if (!fs.existsSync(path.resolve(app, 'mobile'))) {
+if (!fs.existsSync(path.resolve(app, "mobile"))) {
   await $`npm run build:mobile`;
 }
 
-if (!fs.existsSync(path.resolve(app, 'plugin'))) {
+if (!fs.existsSync(path.resolve(app, "plugin"))) {
   await $`npm run build:plugin`;
 }
 
