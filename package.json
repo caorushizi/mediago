@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsno run scripts/dev.ts && pnpm --parallel -F \"./packages/*\" run dev",
     "build": "tsno run scripts/build.ts",
-    "build:mobile": "pnpm -F mobile run build",
+    "build:player": "pnpm -F player run build",
     "build:plugin": "pnpm -F plugin run build",
     "build:main": "pnpm -F main run build",
     "build:renderer": "pnpm -F renderer run build",

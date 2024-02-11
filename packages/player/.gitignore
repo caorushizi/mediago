@@ -27,5 +27,4 @@ coverage
 *.sln
 *.sw?
 
-test-results/
-playwright-report/
+*.tsbuildinfo
