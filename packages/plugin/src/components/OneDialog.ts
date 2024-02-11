@@ -14,7 +14,6 @@ export class OneDialog extends LitElement {
           transition:
             visibility 0s,
             opacity 0.25s ease-in;
-          z-index: 99999;
         }
         .wrapper:not(.open) {
           visibility: hidden;
@@ -31,6 +30,7 @@ export class OneDialog extends LitElement {
           bottom: 0;
           opacity: 1;
           visibility: visible;
+          z-index: 99999;
         }
         .overlay {
           background: rgba(0, 0, 0, 0.8);
@@ -80,7 +80,7 @@ export class OneDialog extends LitElement {
         <button class="close" aria-label="Close" @click=${this.close}>
           ✖️
         </button>
-        <h1 id="title"><slot name="heading"></slot></h1>
+        <div id="title"><slot name="heading"></slot></div>
         <div id="content" class="content">
           <slot></slot>
         </div>
