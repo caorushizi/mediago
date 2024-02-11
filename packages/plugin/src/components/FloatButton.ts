@@ -63,7 +63,7 @@ export class FloatButton extends LitElement {
     addIpcListener("webview-link-message", this.receiveMessage);
   }
 
-  receiveMessage = (e: any, data: any) => {
+  receiveMessage = (_: any, data: any) => {
     this.count = 1;
     this.data = data;
   };
