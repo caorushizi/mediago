@@ -1,10 +1,10 @@
 #!/usr/bin/env zx
-import { $,os } from "zx";
+import { $, os } from "zx";
 
 const platform = os.platform();
 
 let GOOS = "";
-let GOARCH = "amd64";
+const GOARCH = "amd64";
 let filename = `../packages/main/bin/${platform}/server`;
 
 if (platform == "darwin") {
