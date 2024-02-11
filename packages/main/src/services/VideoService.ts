@@ -13,7 +13,6 @@ export default class VideoService {
 
   init(): void {
     const local = this.storeService.get("local");
-    // empty
     const child = execa(videoServerBin, [
       "--static-path",
       mobilePath,
