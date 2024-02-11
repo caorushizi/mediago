@@ -11,14 +11,16 @@
     "lint-staged": "lint-staged"
   },
   "dependencies": {
+    "jquery": "^3.7.1",
     "lit": "^3.1.2",
-    "mitt": "^3.0.1"
+    "mitt": "^3.0.1",
+    "nanoid": "^5.0.4"
   },
   "devDependencies": {
+    "@types/jquery": "^3.5.29",
     "@types/node": "^20.11.5",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
-    "electron": "^28.1.4",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.3",

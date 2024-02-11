@@ -39,7 +39,6 @@ export const videoServerBin = resolveBin("server");
 export const mobilePath = resolveStatic("mobile");
 // plugin path
 export const pluginPath = resolveStatic("plugin/index.js");
-export const pluginStylePath = resolveStatic("plugin/style.css");
 
 // user agent
 export const pcUA =

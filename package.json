@@ -10,7 +10,7 @@
     "build:plugin": "pnpm -F plugin run build",
     "build:main": "pnpm -F main run build",
     "build:renderer": "pnpm -F renderer run build",
-    "build:server": "zx scripts/build-server.mjs",
+    "build:server": "tsno run scripts/build-server.ts",
     "pack": "pnpm -F media-downloader run pack",
     "release": "pnpm run build && pnpm -F main run release",
     "docs:dev": "vitepress dev docs",
