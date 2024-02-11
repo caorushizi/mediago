@@ -1,13 +1,12 @@
 import { LitElement, html, css } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
+import { BILIBILI_DOWNLOAD_BUTTON, downloadItem } from "../helper";
+import $ from "jquery";
 
 @customElement("one-button")
 export class OneButton extends LitElement {
-  @property({ type: String })
-  name = "";
-
-  @state()
-  open = false;
+  @property({ type: Number })
+  index = 0;
 
   static styles = css`
     .mg-button {
@@ -37,20 +36,13 @@ export class OneButton extends LitElement {
   onClick(e: Event) {
     e.preventDefault();
     e.stopPropagation();
-    this.open = true;
-  }
-
-  onClose() {
-    this.open = false;
+    const videoImage = $(BILIBILI_DOWNLOAD_BUTTON).eq(this.index);
+    const url = videoImage.attr("href") || "";
+    const name = videoImage.parent().find(".bili-video-card__info--tit").text();
+    downloadItem({ name, url, type: "bilibili" });
   }
 
   render() {
-    return html`<div class="mg-button" @click=${this.onClick}>下载</div>
-      <one-dialog ?open=${this.open} @dialog-closed=${this.onClose}>
-        <span slot="heading">标题</span>
-        <div>
-          <p>内容</p>
-        </div>
-      </one-dialog>`;
+    return html`<div class="mg-button" @click=${this.onClick}>下载</div>`;
   }
 }

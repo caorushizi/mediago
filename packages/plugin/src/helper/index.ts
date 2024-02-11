@@ -24,3 +24,16 @@ export function removeIpcListener(eventName: string, func: any) {
   const id = getIpcId(func);
   window.electron.removeEventListener(eventName, id);
 }
+
+export interface Item {
+  name: string;
+  url: string;
+  type: string;
+}
+
+export function downloadItem(item: Item) {
+  window.electron.downloadItem(item);
+}
+
+export const BILIBILI_DOWNLOAD_BUTTON =
+  ".feed-card .bili-video-card__image--link";
