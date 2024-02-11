@@ -1,5 +1,4 @@
 import { defineConfig } from "vite";
-import { splitVendorChunkPlugin } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 
@@ -9,7 +8,7 @@ export default defineConfig({
     port: 8555,
     strictPort: true,
   },
-  plugins: [react(), splitVendorChunkPlugin()],
+  plugins: [react()],
   envDir: "../..",
   envPrefix: "APP",
   build: {
