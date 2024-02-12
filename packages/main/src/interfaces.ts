@@ -38,7 +38,6 @@ export enum DownloadStatus {
 export type Task = {
   id: number;
   params: Omit<DownloadParams, "id" | "abortSignal" | "callback">;
-  process: (params: DownloadParams) => Promise<void>;
 };
 
 export interface DownloadProgress {

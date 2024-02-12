@@ -9,7 +9,6 @@ import {
   DownloadStatus,
 } from "../interfaces";
 import { TYPES } from "../types";
-import { downloader } from "../helper";
 import MainWindow from "../windows/MainWindow";
 import StoreService from "../services/StoreService";
 import DownloadService from "../services/DownloadService";
@@ -103,7 +102,6 @@ export default class DownloadController implements Controller {
         headers,
         deleteSegments,
       },
-      process: downloader,
     };
     await this.videoRepository.changeVideoStatus(vid, DownloadStatus.Watting);
     this.downloadService.addTask(task);
