@@ -53,7 +53,7 @@
     "lint-staged": "^15.2.2",
     "prettier": "3.2.5",
     "tsno": "^2.0.0",
-    "vitepress": "1.0.0-beta.3",
+    "vitepress": "1.0.0-rc.43",
     "vue": "^3.4.15",
     "zx": "^7.2.3"
   }
