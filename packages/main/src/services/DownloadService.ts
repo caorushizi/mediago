@@ -10,8 +10,6 @@ import { TYPES } from "../types";
 import LoggerServiceImpl from "./LoggerService";
 import StoreService from "./StoreService";
 import VideoRepository from "../repository/VideoRepository";
-import { execa, Options as ExecaOptions } from "execa";
-import iconv from "iconv-lite";
 import {
   biliDownloaderBin,
   formatHeaders,
@@ -19,12 +17,12 @@ import {
   m3u8DownloaderBin,
   stripColors,
 } from "../helper";
+import * as pty from "node-pty";
 
 export interface DownloadOptions {
   abortSignal: AbortController;
   encoding?: string;
   onMessage?: (message: string) => void;
-  onErrMessage?: (message: string) => void;
 }
 
 @injectable()
@@ -34,8 +32,6 @@ export default class DownloadService extends EventEmitter {
   private active: Task[] = [];
 
   private limit: number;
-
-  private debug = process.env.APP_DOWNLOAD_DEBUG;
 
   private signal: Record<number, AbortController> = {};
 
@@ -64,7 +60,7 @@ export default class DownloadService extends EventEmitter {
 
   async stopTask(id: number) {
     if (this.signal[id]) {
-      this.log(`taskId: ${id} stop`);
+      this.logger.info(`taskId: ${id} stop`);
       this.signal[id].abort();
     }
   }
@@ -77,7 +73,7 @@ export default class DownloadService extends EventEmitter {
       );
       this.emit("download-start", task.id);
 
-      this.log(`taskId: ${task.id} start`);
+      this.logger.info(`taskId: ${task.id} start`);
       const controller = new AbortController();
       this.signal[task.id] = controller;
 
@@ -106,7 +102,7 @@ export default class DownloadService extends EventEmitter {
 
       await this.process(params);
       delete this.signal[task.id];
-      this.log(`taskId: ${task.id} success`);
+      this.logger.info(`taskId: ${task.id} success`);
 
       await this.videoRepository.changeVideoStatus(
         task.id,
@@ -114,8 +110,8 @@ export default class DownloadService extends EventEmitter {
       );
       this.emit("download-success", task.id);
     } catch (err: any) {
-      this.log(`taskId: ${task.id} failed`);
-      if (err.name === "AbortError") {
+      this.logger.info(`taskId: ${task.id} failed`);
+      if (err.message === "AbortError") {
         // 下载暂停
         await this.videoRepository.changeVideoStatus(
           task.id,
@@ -160,60 +156,45 @@ export default class DownloadService extends EventEmitter {
     }
   }
 
-  log(...args: unknown[]) {
-    if (this.debug) {
-      this.logger.info(`[DownloadService] `, ...args);
-    }
-  }
-
   private _execa(
     binPath: string,
     args: string[],
-    params: DownloadOptions & ExecaOptions,
+    params: DownloadOptions,
   ): Promise<void> {
-    const {
-      abortSignal,
-      encoding = "utf-8",
-      onMessage,
-      onErrMessage,
-      ...execOptions
-    } = params;
+    const { abortSignal, onMessage } = params;
 
     return new Promise((resolve, reject) => {
-      const process = (data: Buffer, callback: (message: string) => void) => {
-        const items = iconv.decode(data, encoding);
-        items.split("\n").forEach((item) => {
-          const message = item.trim();
-          if (!message) return;
-          try {
-            this.logger.debug("DownloadService: ", message);
-            callback(message);
-          } catch (err) {
-            reject(err);
-          }
-        });
+      const process = (lines: string, callback: (message: string) => void) => {
+        const message = lines.replace(/\\./g, "");
+        if (!message) return;
+        try {
+          console.log(message);
+          callback(message);
+        } catch (err) {
+          reject(err);
+        }
       };
 
-      const downloader = execa(binPath, args, {
-        ...execOptions,
-        signal: abortSignal.signal,
+      console.log("args", binPath, args);
+      const ptyProcess = pty.spawn(binPath, args, {
+        cols: 200,
+        rows: 100,
       });
 
-      if (downloader.stdout && onMessage) {
-        downloader.stdout.on("data", (data) => process(data, onMessage));
+      if (onMessage) {
+        ptyProcess.onData((data) => process(data, onMessage));
       }
 
-      if (downloader.stderr && onErrMessage) {
-        downloader.stderr.on("data", (data) => process(data, onErrMessage));
-      }
-
-      downloader.on("error", (err) => {
-        reject(err);
+      abortSignal.signal.addEventListener("abort", () => {
+        ptyProcess.kill();
       });
 
-      downloader.on("close", (code) => {
-        if (code === 0) {
+      ptyProcess.onExit(({ exitCode, signal }) => {
+        console.log("exitCode", exitCode, "signal", signal);
+        if (exitCode === 0 && signal === 0) {
           resolve();
+        } else if (exitCode === 0 && signal === 1) {
+          reject(new Error("AbortError"));
         } else {
           reject(new Error("未知错误"));
         }
@@ -232,8 +213,6 @@ export default class DownloadService extends EventEmitter {
     const spawnParams = [url, "--work-dir", local];
 
     await this._execa(biliDownloaderBin, spawnParams, {
-      detached: true,
-      shell: true,
       abortSignal,
       onMessage: (message) => {
         if (isLiveReg.test(message) || startDownloadReg.test(message)) {
