@@ -191,7 +191,7 @@ export default class DownloadService extends EventEmitter {
 
       ptyProcess.onExit(({ exitCode, signal }) => {
         console.log("exitCode", exitCode, "signal", signal);
-        if (exitCode === 0 && signal === 0) {
+        if (exitCode === 0 && (signal === 0 || signal == null)) {
           resolve();
         } else if (exitCode === 0 && signal === 1) {
           reject(new Error("AbortError"));

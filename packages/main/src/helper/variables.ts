@@ -18,6 +18,9 @@ export function resolveStatic(path: string) {
   return resolve(appPath, relativePath, path);
 }
 export function resolveBin(path: string) {
+  if (isWin) {
+    path += ".exe";
+  }
   return resolve(__bin__, path);
 }
 
