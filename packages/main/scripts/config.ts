@@ -4,4 +4,5 @@ export const external = [
   "aws-sdk",
   "mock-aws-s3",
   "@cliqz/adblocker-electron-preload",
+  "node-pty",
 ];
