@@ -3,8 +3,8 @@ import { inject, injectable } from "inversify";
 import { resolve } from "path";
 import { TYPES } from "../types";
 import _ from "lodash";
-import Window from "./window";
-import StoreService from "../services/StoreService";
+import Window from "../core/window";
+import ElectronStore from "../vendor/ElectronStore";
 
 @injectable()
 export default class BrowserWindow extends Window {
@@ -13,8 +13,8 @@ export default class BrowserWindow extends Window {
     : "mediago://index.html/browser";
 
   constructor(
-    @inject(TYPES.StoreService)
-    private readonly storeService: StoreService,
+    @inject(TYPES.ElectronStore)
+    private readonly store: ElectronStore,
   ) {
     super({
       width: 1100,
@@ -28,8 +28,8 @@ export default class BrowserWindow extends Window {
       },
     });
 
-    this.storeService.onDidChange("openInNewWindow", this.handleNewWindowsVal);
-    this.storeService.onDidAnyChange(this.storeChange);
+    this.store.onDidChange("openInNewWindow", this.handleNewWindowsVal);
+    this.store.onDidAnyChange(this.storeChange);
   }
 
   storeChange = (store: any) => {
@@ -53,7 +53,7 @@ export default class BrowserWindow extends Window {
     if (!this.window) return;
 
     const bounds = this.window.getBounds();
-    this.storeService.set("browserBounds", _.omit(bounds, ["x", "y"]));
+    this.store.set("browserBounds", _.omit(bounds, ["x", "y"]));
   };
 
   showWindow = () => {
@@ -65,7 +65,7 @@ export default class BrowserWindow extends Window {
     this.window.show();
     isDev && this.window.webContents.openDevTools();
 
-    const browserBounds = this.storeService.get("browserBounds");
+    const browserBounds = this.store.get("browserBounds");
     if (browserBounds) {
       this.window.setBounds(browserBounds);
     }

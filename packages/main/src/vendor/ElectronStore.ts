@@ -3,9 +3,10 @@ import { injectable } from "inversify";
 import { AppStore } from "../main";
 import { download, workspace } from "../helper";
 import { AppLanguage, AppTheme } from "../types";
+import { Vendor } from "../core/vendor";
 
 @injectable()
-export default class StoreService extends Store<AppStore> {
+export default class StoreService extends Store<AppStore> implements Vendor {
   constructor() {
     super({
       name: "config",
@@ -29,7 +30,5 @@ export default class StoreService extends Store<AppStore> {
     });
   }
 
-  init(): void {
-    // empty
-  }
+  async init() {}
 }

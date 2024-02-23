@@ -5,16 +5,17 @@ import installExtension, {
   REDUX_DEVTOOLS,
   REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
-import LoggerService from "./LoggerService";
+import ElectronLogger from "./ElectronLogger";
+import { Vendor } from "../core/vendor";
 
 @injectable()
-export default class DevToolsService {
+export default class DevToolsService implements Vendor {
   constructor(
-    @inject(TYPES.LoggerService)
-    private readonly logger: LoggerService,
+    @inject(TYPES.ElectronLogger)
+    private readonly logger: ElectronLogger,
   ) {}
 
-  async init(): Promise<void> {
+  async init() {
     if (!isDev) {
       return;
     }
@@ -27,7 +28,7 @@ export default class DevToolsService {
       this.logger.debug("当前环境为开发环境，开始加载开发者工具");
       await installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS]);
       this.logger.debug("加载开发者工具成功");
-    } catch (err: any) {
+    } catch (err: unknown) {
       this.logger.error("加载开发者工具失败", err);
     }
   }

@@ -4,15 +4,16 @@ import { DataSource, EntityManager } from "typeorm";
 import { TYPES } from "../types";
 import { Video } from "../entity/Video";
 import { Favorite } from "../entity/Favorite";
-import LoggerService from "./LoggerService";
+import ElectronLogger from "./ElectronLogger";
+import { Vendor } from "../core/vendor";
 
 @injectable()
-export default class DatabaseService {
+export default class DatabaseService implements Vendor {
   appDataSource: DataSource;
 
   constructor(
-    @inject(TYPES.LoggerService)
-    private readonly logger: LoggerService,
+    @inject(TYPES.ElectronLogger)
+    private readonly logger: ElectronLogger,
   ) {
     this.appDataSource = new DataSource({
       type: "better-sqlite3",
@@ -25,7 +26,7 @@ export default class DatabaseService {
     });
   }
 
-  async init(): Promise<void> {
+  async init() {
     this.logger.info("数据库地址是： ", db);
     await this.appDataSource.initialize();
   }

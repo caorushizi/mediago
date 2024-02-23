@@ -4,23 +4,23 @@ import WebviewController from "./controller/WebviewController";
 import { Container } from "inversify";
 import FavoriteRepository from "./repository/FavoriteRepository";
 import VideoRepository from "./repository/VideoRepository";
-import DatabaseService from "./services/DatabaseService";
-import DevToolsService from "./services/DevToolsService";
-import DownloadService from "./services/DownloadService";
-import StoreService from "./services/StoreService";
 import WebviewService from "./services/WebviewService";
 import ElectronApp from "./app";
 import { Controller } from "./interfaces";
-import IpcHandlerService from "./services/IpcHandlerService";
-import LoggerService from "./services/LoggerService";
-import ProtocolService from "./services/ProtocolService";
-import UpdateService from "./services/UpdateService";
 import { TYPES } from "./types";
 import MainWindow from "./windows/MainWindow";
 import PlayerWindow from "./windows/PlayerWindow";
 import BrowserWindow from "./windows/BrowserWindow";
 import VideoService from "./services/VideoService";
 import { SniffingHelper } from "./services/SniffingHelperService";
+import DownloadService from "./services/DownloadService";
+import ElectronLogger from "./vendor/ElectronLogger";
+import ElectronUpdater from "./vendor/ElectronUpdater";
+import TypeORM from "./vendor/TypeORM";
+import ElectronDevtools from "./vendor/ElectronDevtools";
+import ElectronStore from "./vendor/ElectronStore";
+import IpcHandler from "./core/ipc";
+import ProtocolService from "./core/protocol";
 
 const container = new Container({
   skipBaseClassChecks: true,
@@ -31,17 +31,8 @@ const container = new Container({
 container.bind<ElectronApp>(TYPES.ElectronApp).to(ElectronApp);
 
 // services
-container
-  .bind<IpcHandlerService>(TYPES.IpcHandlerService)
-  .to(IpcHandlerService);
-container.bind<ProtocolService>(TYPES.ProtocolService).to(ProtocolService);
-container.bind<UpdateService>(TYPES.UpdateService).to(UpdateService);
-container.bind<LoggerService>(TYPES.LoggerService).to(LoggerService);
-container.bind<StoreService>(TYPES.StoreService).to(StoreService);
-container.bind<DatabaseService>(TYPES.DatabaseService).to(DatabaseService);
 container.bind<WebviewService>(TYPES.WebviewService).to(WebviewService);
 container.bind<DownloadService>(TYPES.DownloadService).to(DownloadService);
-container.bind<DevToolsService>(TYPES.DevToolsService).to(DevToolsService);
 container.bind<VideoService>(TYPES.VideoService).to(VideoService);
 container.bind<SniffingHelper>(TYPES.SniffingHelper).to(SniffingHelper);
 
@@ -60,5 +51,16 @@ container.bind<VideoRepository>(TYPES.VideoRepository).to(VideoRepository);
 container
   .bind<FavoriteRepository>(TYPES.FavoriteRepository)
   .to(FavoriteRepository);
+
+// vendor
+container.bind<ElectronDevtools>(TYPES.ElectronDevtools).to(ElectronDevtools);
+container.bind<TypeORM>(TYPES.TypeORM).to(TypeORM);
+container.bind<ElectronUpdater>(TYPES.ElectronUpdater).to(ElectronUpdater);
+container.bind<ElectronLogger>(TYPES.ElectronLogger).to(ElectronLogger);
+container.bind<ElectronStore>(TYPES.ElectronStore).to(ElectronStore);
+
+// core
+container.bind<ProtocolService>(TYPES.ProtocolService).to(ProtocolService);
+container.bind<IpcHandler>(TYPES.IpcHandlerService).to(IpcHandler);
 
 export { container };

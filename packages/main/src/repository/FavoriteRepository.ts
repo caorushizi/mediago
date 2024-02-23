@@ -1,17 +1,17 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import { Favorite } from "../entity/Favorite";
-import DatabaseService from "../services/DatabaseService";
+import TypeORM from "../vendor/TypeORM";
 
 @injectable()
 export default class FavoriteRepository {
   constructor(
-    @inject(TYPES.DatabaseService)
-    private readonly dataService: DatabaseService,
+    @inject(TYPES.TypeORM)
+    private readonly db: TypeORM,
   ) {}
 
   async findFavorites(): Promise<Favorite[]> {
-    return await this.dataService.manager.find(Favorite, {
+    return await this.db.manager.find(Favorite, {
       order: {
         createdDate: "desc",
       },
@@ -19,7 +19,7 @@ export default class FavoriteRepository {
   }
 
   async addFavorite(favorite: Favorite): Promise<Favorite> {
-    const exist = await this.dataService.manager.findOne(Favorite, {
+    const exist = await this.db.manager.findOne(Favorite, {
       where: {
         url: favorite.url,
       },
@@ -33,10 +33,10 @@ export default class FavoriteRepository {
     item.title = favorite.title;
     item.url = favorite.url;
     item.icon = favorite.icon;
-    return await this.dataService.manager.save(item);
+    return await this.db.manager.save(item);
   }
 
   async removeFavorite(id: number): Promise<void> {
-    await this.dataService.manager.getRepository(Favorite).delete(id);
+    await this.db.manager.getRepository(Favorite).delete(id);
   }
 }

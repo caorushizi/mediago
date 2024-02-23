@@ -1,7 +1,7 @@
 import isDev from "electron-is-dev";
 import { injectable } from "inversify";
 import { resolve } from "path";
-import Window from "./window";
+import Window from "../core/window";
 
 @injectable()
 export default class PlayerWindowServiceImpl extends Window {
