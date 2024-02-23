@@ -7,8 +7,8 @@ import {
   Task,
 } from "../interfaces";
 import { TYPES } from "../types";
-import LoggerServiceImpl from "./LoggerService";
-import StoreService from "./StoreService";
+import ElectronLogger from "../vendor/ElectronLogger";
+import ElectronStore from "../vendor/ElectronStore";
 import VideoRepository from "../repository/VideoRepository";
 import {
   biliDownloaderBin,
@@ -36,12 +36,12 @@ export default class DownloadService extends EventEmitter {
   private signal: Record<number, AbortController> = {};
 
   constructor(
-    @inject(TYPES.LoggerService)
-    private readonly logger: LoggerServiceImpl,
+    @inject(TYPES.ElectronLogger)
+    private readonly logger: ElectronLogger,
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
-    @inject(TYPES.StoreService)
-    private readonly storeService: StoreService,
+    @inject(TYPES.ElectronStore)
+    private readonly storeService: ElectronStore,
   ) {
     super();
 

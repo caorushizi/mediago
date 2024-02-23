@@ -10,7 +10,7 @@ import {
 } from "../interfaces";
 import { TYPES } from "../types";
 import MainWindow from "../windows/MainWindow";
-import StoreService from "../services/StoreService";
+import ElectronStore from "../vendor/ElectronStore";
 import DownloadService from "../services/DownloadService";
 import VideoRepository from "../repository/VideoRepository";
 import { existsSync } from "fs-extra";
@@ -18,8 +18,8 @@ import { existsSync } from "fs-extra";
 @injectable()
 export default class DownloadController implements Controller {
   constructor(
-    @inject(TYPES.StoreService)
-    private readonly storeService: StoreService,
+    @inject(TYPES.ElectronStore)
+    private readonly store: ElectronStore,
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
     @inject(TYPES.DownloadService)
@@ -61,7 +61,7 @@ export default class DownloadController implements Controller {
 
   @handle("get-download-items")
   async getDownloadItems(e: IpcMainEvent, pagination: DownloadItemPagination) {
-    const localDir = this.storeService.get("local");
+    const localDir = this.store.get("local");
     const videos = await this.videoRepository.findVideos(pagination);
     const newVideos = videos.list.map((video) => {
       if (video.status === DownloadStatus.Success) {
@@ -87,10 +87,10 @@ export default class DownloadController implements Controller {
       return Promise.reject("没有找到该视频");
     }
     const { name, url, headers, type } = video;
-    const local = this.storeService.get("local");
+    const local = this.store.get("local");
 
     // 从配置中添加参数
-    const deleteSegments = this.storeService.get("deleteSegments");
+    const deleteSegments = this.store.get("deleteSegments");
 
     const task: Task = {
       id: vid,

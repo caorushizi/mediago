@@ -2,7 +2,7 @@ import { ipcMain } from "electron";
 import { inject, injectable, multiInject } from "inversify";
 import { Controller } from "../interfaces";
 import { TYPES } from "../types";
-import LoggerService from "./LoggerService";
+import ElectronLogger from "../vendor/ElectronLogger";
 import { error, success } from "../helper/utils";
 
 @injectable()
@@ -10,8 +10,8 @@ export default class IpcHandlerService {
   constructor(
     @multiInject(TYPES.Controller)
     private readonly controllers: Controller[],
-    @inject(TYPES.LoggerService)
-    private readonly logger: LoggerService,
+    @inject(TYPES.ElectronLogger)
+    private readonly logger: ElectronLogger,
   ) {}
 
   private registerIpc(

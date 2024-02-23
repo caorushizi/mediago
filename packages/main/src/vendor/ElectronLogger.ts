@@ -3,9 +3,10 @@ import { injectable } from "inversify";
 import dayjs from "dayjs";
 import path from "path";
 import { appName, workspace } from "../helper";
+import { Vendor } from "../core/vendor";
 
 @injectable()
-export default class LoggerService {
+export default class ElectronLogger implements Vendor {
   logger: Logger;
 
   constructor() {
@@ -13,23 +14,25 @@ export default class LoggerService {
     const logPath = path.resolve(workspace, `logs/${datetime}-${appName}.log`);
     logger.transports.console.format = "{h}:{i}:{s} {text}";
     logger.transports.file.getFile();
-    logger.transports.file.resolvePath = () => logPath;
+    logger.transports.file.resolvePathFn = () => logPath;
     this.logger = logger;
   }
 
-  info(...args: any[]) {
+  info(...args: unknown[]) {
     return this.logger.info(...args);
   }
 
-  warn(...args: any[]) {
+  warn(...args: unknown[]) {
     return this.logger.warn(...args);
   }
 
-  error(...args: any[]) {
+  error(...args: unknown[]) {
     return this.logger.error(...args);
   }
 
-  debug(...args: any[]) {
+  debug(...args: unknown[]) {
     return this.logger.debug(...args);
   }
+
+  async init() {}
 }

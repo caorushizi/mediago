@@ -5,15 +5,15 @@ import { Menu, Tray, app, nativeImage, nativeTheme } from "electron";
 import TrayIcon from "./tray-icon.png";
 import path from "path";
 import MainWindow from "./windows/MainWindow";
-import ProtocolService from "./services/ProtocolService";
-import UpdateService from "./services/UpdateService";
-import IpcHandlerService from "./services/IpcHandlerService";
-import DatabaseService from "./services/DatabaseService";
 import WebviewService from "./services/WebviewService";
-import DevToolsService from "./services/DevToolsService";
-import StoreService from "./services/StoreService";
 import VideoRepository from "./repository/VideoRepository";
 import VideoService from "./services/VideoService";
+import ElectronDevtools from "./vendor/ElectronDevtools";
+import ElectronStore from "./vendor/ElectronStore";
+import ElectronUpdater from "./vendor/ElectronUpdater";
+import TypeORM from "./vendor/TypeORM";
+import ProtocolService from "./core/protocol";
+import IpcHandlerService from "./core/ipc";
 
 @injectable()
 export default class ElectronApp {
@@ -21,36 +21,44 @@ export default class ElectronApp {
     @inject(TYPES.MainWindow)
     private readonly mainWindow: MainWindow,
     @inject(TYPES.ProtocolService)
-    private readonly protocolService: ProtocolService,
-    @inject(TYPES.UpdateService)
-    private readonly updateService: UpdateService,
+    private readonly protocol: ProtocolService,
+    @inject(TYPES.ElectronUpdater)
+    private readonly updater: ElectronUpdater,
     @inject(TYPES.IpcHandlerService)
-    private readonly ipcHandler: IpcHandlerService,
-    @inject(TYPES.DatabaseService)
-    private readonly dataService: DatabaseService,
+    private readonly ipc: IpcHandlerService,
+    @inject(TYPES.TypeORM)
+    private readonly db: TypeORM,
     @inject(TYPES.WebviewService)
     private readonly webview: WebviewService,
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
-    @inject(TYPES.DevToolsService)
-    private readonly devTools: DevToolsService,
-    @inject(TYPES.StoreService)
-    private readonly storeService: StoreService,
+    @inject(TYPES.ElectronDevtools)
+    private readonly devTools: ElectronDevtools,
+    @inject(TYPES.ElectronStore)
+    private readonly store: ElectronStore,
     @inject(TYPES.VideoService)
     private readonly videoService: VideoService,
   ) {}
 
   private async seriveInit(): Promise<void> {
-    this.protocolService.create();
-    await this.dataService.init();
     this.mainWindow.init();
-    this.ipcHandler.init();
-    this.updateService.init();
-    this.webview.init(), this.devTools.init();
+    this.webview.init();
     this.videoService.init();
   }
 
+  private async vendorInit() {
+    await this.db.init();
+    this.updater.init();
+    this.devTools.init();
+  }
+
   async init(): Promise<void> {
+    this.protocol.create();
+    this.ipc.init();
+
+    // vendor
+    await this.vendorInit();
+    // service
     await this.seriveInit();
 
     app.on("activate", () => {
@@ -64,7 +72,7 @@ export default class ElectronApp {
   }
 
   initAppTheme(): void {
-    const theme = this.storeService.get("theme");
+    const theme = this.store.get("theme");
     nativeTheme.themeSource = theme;
   }
 

@@ -20,7 +20,7 @@ import fs from "fs-extra";
 import MainWindow from "../windows/MainWindow";
 import BrowserWindow from "../windows/BrowserWindow";
 import PlayerWindow from "../windows/PlayerWindow";
-import StoreService from "../services/StoreService";
+import ElectronStore from "../vendor/ElectronStore";
 import WebviewService from "../services/WebviewService";
 import FavoriteRepository from "../repository/FavoriteRepository";
 import VideoRepository from "../repository/VideoRepository";
@@ -30,8 +30,8 @@ export default class HomeController implements Controller {
   private sharedState: Record<string, any> = {};
 
   constructor(
-    @inject(TYPES.StoreService)
-    private readonly storeService: StoreService,
+    @inject(TYPES.ElectronStore)
+    private readonly store: ElectronStore,
     @inject(TYPES.FavoriteRepository)
     private readonly favoriteRepository: FavoriteRepository,
     @inject(TYPES.MainWindow)
@@ -53,7 +53,7 @@ export default class HomeController implements Controller {
       dbPath: db,
       workspace: workspace,
       platform: process.platform,
-      local: this.storeService.get("local"),
+      local: this.store.get("local"),
     };
   }
 
@@ -74,7 +74,7 @@ export default class HomeController implements Controller {
 
   @handle("get-app-store")
   getAppStore() {
-    return this.storeService.store;
+    return this.store.store;
   }
 
   @handle("on-favorite-item-context-menu")
@@ -118,7 +118,7 @@ export default class HomeController implements Controller {
 
     if (!result.canceled) {
       const dir = result.filePaths[0];
-      this.storeService.set("local", dir);
+      this.store.set("local", dir);
       return dir;
     }
     return "";
@@ -128,12 +128,12 @@ export default class HomeController implements Controller {
   async setAppStore(e: IpcMainEvent, key: keyof AppStore, val: any) {
     // useProxy
     if (key === "useProxy") {
-      const proxy = this.storeService.get("proxy");
+      const proxy = this.store.get("proxy");
       this.webviewService.setProxy(val, proxy);
     }
     // proxy
     if (key === "proxy") {
-      const useProxy = this.storeService.get("useProxy");
+      const useProxy = this.store.get("useProxy");
       useProxy && this.webviewService.setProxy(true, val);
     }
     // block
@@ -149,7 +149,7 @@ export default class HomeController implements Controller {
       this.webviewService.setUserAgent(val);
     }
 
-    this.storeService.set(key, val);
+    this.store.set(key, val);
   }
 
   @handle("open-dir")
@@ -215,7 +215,7 @@ export default class HomeController implements Controller {
   @handle("convert-to-audio")
   async convertToAudio(e: IpcMainEvent, id: number) {
     const video = await this.videoRepository.findVideo(id);
-    const local = this.storeService.get("local");
+    const local = this.store.get("local");
     const input = path.join(local, `${video?.name}.mp4`);
     const output = path.join(local, `${video?.name}.mp3`);
 
@@ -237,7 +237,7 @@ export default class HomeController implements Controller {
     // 关闭浏览器窗口
     this.browserWindow.hideWindow();
     // 修改设置中的属性
-    this.storeService.set("openInNewWindow", false);
+    this.store.set("openInNewWindow", false);
   }
 
   @handle("open-player-window")

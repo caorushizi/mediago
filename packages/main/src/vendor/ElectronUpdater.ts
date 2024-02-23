@@ -2,15 +2,16 @@ import { autoUpdater } from "electron-updater";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import isDev from "electron-is-dev";
-import LoggerService from "./LoggerService";
+import ElectronLogger from "./ElectronLogger";
+import { Vendor } from "../core/vendor";
 
 @injectable()
-export default class UpdateService {
+export default class UpdateService implements Vendor {
   constructor(
-    @inject(TYPES.LoggerService) private readonly logger: LoggerService,
+    @inject(TYPES.ElectronLogger) private readonly logger: ElectronLogger,
   ) {}
 
-  async init(): Promise<void> {
+  async init() {
     if (isDev) return;
 
     try {
