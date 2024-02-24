@@ -19,7 +19,6 @@ import { TYPES } from "../types";
 import fs from "fs-extra";
 import MainWindow from "../windows/MainWindow";
 import BrowserWindow from "../windows/BrowserWindow";
-import PlayerWindow from "../windows/PlayerWindow";
 import ElectronStore from "../vendor/ElectronStore";
 import WebviewService from "../services/WebviewService";
 import FavoriteRepository from "../repository/FavoriteRepository";
@@ -40,8 +39,6 @@ export default class HomeController implements Controller {
     private readonly videoRepository: VideoRepository,
     @inject(TYPES.BrowserWindow)
     private readonly browserWindow: BrowserWindow,
-    @inject(TYPES.PlayerWindow)
-    private readonly playerWindow: PlayerWindow,
     @inject(TYPES.WebviewService)
     private readonly webviewService: WebviewService,
   ) {}
@@ -238,12 +235,6 @@ export default class HomeController implements Controller {
     this.browserWindow.hideWindow();
     // 修改设置中的属性
     this.store.set("openInNewWindow", false);
-  }
-
-  @handle("open-player-window")
-  async openPlayerWindow(event: IpcMainEvent, name: string) {
-    // 打开播放器窗口
-    this.playerWindow.openWindow(name);
   }
 
   @handle("get-local-ip")

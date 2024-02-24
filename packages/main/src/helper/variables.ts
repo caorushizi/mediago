@@ -34,8 +34,7 @@ export const db = resolve(workspace, "app.db");
 // bin path
 export const ffmpegPath = resolveBin("ffmpeg");
 export const biliDownloaderBin = resolveBin("BBDown");
-const downloaderBinName = isWin ? "N_m3u8DL-CLI" : "N_m3u8DL-RE";
-export const m3u8DownloaderBin = resolveBin(downloaderBinName);
+export const m3u8DownloaderBin = resolveBin("N_m3u8DL-RE");
 export const videoServerBin = resolveBin("server");
 
 // mobile path

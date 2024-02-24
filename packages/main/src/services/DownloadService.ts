@@ -10,14 +10,9 @@ import { TYPES } from "../types";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";
 import VideoRepository from "../repository/VideoRepository";
-import {
-  biliDownloaderBin,
-  formatHeaders,
-  isWin,
-  m3u8DownloaderBin,
-  stripColors,
-} from "../helper";
+import { biliDownloaderBin, m3u8DownloaderBin, stripColors } from "../helper";
 import * as pty from "node-pty";
+import stripAnsi from "strip-ansi";
 
 export interface DownloadOptions {
   abortSignal: AbortController;
@@ -164,25 +159,22 @@ export default class DownloadService extends EventEmitter {
     const { abortSignal, onMessage } = params;
 
     return new Promise((resolve, reject) => {
-      const process = (lines: string, callback: (message: string) => void) => {
-        const message = lines.replace(/\\./g, "");
-        if (!message) return;
-        try {
-          console.log(message);
-          callback(message);
-        } catch (err) {
-          reject(err);
-        }
-      };
-
-      console.log("args", binPath, args);
       const ptyProcess = pty.spawn(binPath, args, {
-        cols: 200,
-        rows: 100,
+        name: "xterm-color",
+        cols: 500,
+        rows: 500,
       });
 
       if (onMessage) {
-        ptyProcess.onData((data) => process(data, onMessage));
+        ptyProcess.onData((data) => {
+          try {
+            const message = stripAnsi(data);
+            this.logger.debug("download message: ", message);
+            onMessage(message);
+          } catch (err) {
+            reject(err);
+          }
+        });
       }
 
       abortSignal.signal.addEventListener("abort", () => {
@@ -190,7 +182,6 @@ export default class DownloadService extends EventEmitter {
       });
 
       ptyProcess.onExit(({ exitCode, signal }) => {
-        console.log("exitCode", exitCode, "signal", signal);
         if (exitCode === 0 && (signal === 0 || signal == null)) {
           resolve();
         } else if (exitCode === 0 && signal === 1) {
@@ -236,8 +227,8 @@ export default class DownloadService extends EventEmitter {
           return;
         }
 
-        const [, precentage, speed] = result;
-        const cur = String(Number(precentage) * 10);
+        const [, percentage, speed] = result;
+        const cur = String(Number(percentage) * 10);
         if (cur === "0") {
           return;
         }
@@ -257,7 +248,7 @@ export default class DownloadService extends EventEmitter {
     });
   }
 
-  async m3u8DownloaderDarwin(params: DownloadParams): Promise<void> {
+  async m3u8Downloader(params: DownloadParams): Promise<void> {
     const {
       id,
       abortSignal,
@@ -287,10 +278,10 @@ export default class DownloadService extends EventEmitter {
     ];
 
     if (headers) {
-      const h: Record<string, unknown> = JSON.parse(headers);
-      Object.entries(h).forEach(([k, v]) => {
-        spawnParams.push("-H", `${k}: ${v}`);
-      });
+      // const h: Record<string, unknown> = JSON.parse(headers);
+      // Object.entries(h).forEach(([k, v]) => {
+      //   spawnParams.push("--header", `${k}: ${v}`);
+      // });
     }
 
     if (deleteSegments) {
@@ -349,82 +340,13 @@ export default class DownloadService extends EventEmitter {
     });
   }
 
-  async m3u8DownloaderWin32(params: DownloadParams): Promise<void> {
-    const {
-      id,
-      abortSignal,
-      url,
-      local,
-      name,
-      deleteSegments,
-      headers,
-      callback,
-      proxy,
-    } = params;
-    const progressReg = /Progress:\s(\d+)\/(\d+)\s\(.+?\).+?\((.+?\/s).*?\)/g;
-    const isLiveReg = /识别为直播流, 开始录制/g;
-    const startDownloadReg = /开始下载文件/g;
-
-    const spawnParams = [url, "--workDir", local, "--saveName", name];
-
-    if (headers) {
-      spawnParams.push("--headers", formatHeaders(headers));
-    }
-
-    if (deleteSegments) {
-      spawnParams.push("--enableDelAfterDone");
-    }
-
-    if (proxy) {
-      spawnParams.push("--proxyAddress", proxy);
-    }
-
-    let isLive = false;
-    await this._execa(m3u8DownloaderBin, spawnParams, {
-      abortSignal,
-      onMessage: (message) => {
-        if (isLiveReg.test(message) || startDownloadReg.test(message)) {
-          callback({
-            id,
-            type: "ready",
-            isLive,
-            cur: "",
-            total: "",
-            speed: "",
-          });
-          isLive = true;
-        }
-
-        const result = progressReg.exec(message);
-        if (!result) {
-          return;
-        }
-
-        const [, cur, total, speed] = result;
-        const progress: DownloadProgress = {
-          id,
-          type: "progress",
-          cur,
-          total,
-          speed,
-          isLive,
-        };
-        callback(progress);
-      },
-    });
-  }
-
   process(params: DownloadParams): Promise<void> {
     if (params.type === "bilibili") {
       return this.biliDownloader(params);
     }
 
     if (params.type === "m3u8") {
-      if (isWin) {
-        return this.m3u8DownloaderWin32(params);
-      } else {
-        return this.m3u8DownloaderDarwin(params);
-      }
+      return this.m3u8Downloader(params);
     }
 
     return Promise.reject();
