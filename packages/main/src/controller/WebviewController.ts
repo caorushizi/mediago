@@ -9,15 +9,15 @@ import { handle } from "../helper";
 import { type Controller } from "../interfaces";
 import { TYPES } from "../types";
 import WebviewService from "../services/WebviewService";
-import StoreService from "../services/StoreService";
+import ElectronStore from "../vendor/ElectronStore";
 
 @injectable()
 export default class WebviewController implements Controller {
   constructor(
     @inject(TYPES.WebviewService)
     private readonly webview: WebviewService,
-    @inject(TYPES.StoreService)
-    private readonly storeService: StoreService,
+    @inject(TYPES.ElectronStore)
+    private readonly store: ElectronStore,
   ) {}
 
   @handle("set-webview-bounds")
@@ -75,6 +75,6 @@ export default class WebviewController implements Controller {
   @handle("webview-change-user-agent")
   async webviewChangeUserAgent(e: IpcMainEvent, isMobile: boolean) {
     this.webview.setUserAgent(isMobile);
-    this.storeService.set("isMobile", isMobile);
+    this.store.set("isMobile", isMobile);
   }
 }

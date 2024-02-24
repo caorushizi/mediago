@@ -80,8 +80,6 @@ const electronApi = {
     ipcRenderer.invoke("combine-to-home-page", store),
   editDownloadItem: (video: DownloadItem): Promise<void> =>
     ipcRenderer.invoke("edit-download-item", video),
-  openPlayerWindow: (videoId: string): Promise<void> =>
-    ipcRenderer.invoke("open-player-window", videoId),
   getLocalIP: (): Promise<string> => ipcRenderer.invoke("get-local-ip"),
   openBrowser: (url: string): Promise<void> => shell.openExternal(url),
   getSharedState: (): Promise<any> => ipcRenderer.invoke("get-shared-state"),

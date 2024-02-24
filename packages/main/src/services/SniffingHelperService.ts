@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { DownloadType } from "../interfaces";
 import { TYPES } from "../types";
-import LoggerService from "../services/LoggerService";
+import ElectronLogger from "../vendor/ElectronLogger";
 import { load } from "cheerio";
 import EventEmitter from "events";
 
@@ -50,8 +50,8 @@ export class SniffingHelper extends EventEmitter {
   private baseInfo: BaseInfo = { title: "", url: "" };
 
   constructor(
-    @inject(TYPES.LoggerService)
-    private readonly logger: LoggerService,
+    @inject(TYPES.ElectronLogger)
+    private readonly logger: ElectronLogger,
   ) {
     super();
   }

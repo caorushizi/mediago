@@ -5,8 +5,8 @@ import isDev from "electron-is-dev";
 import { PERSIST_WEBVIEW, isWin, mobileUA, pcUA, pluginPath } from "../helper";
 import { ElectronBlocker } from "@cliqz/adblocker-electron";
 import fetch from "cross-fetch";
-import LoggerService from "./LoggerService";
-import StoreService from "./StoreService";
+import ElectronLogger from "../vendor/ElectronLogger";
+import ElectronStore from "../vendor/ElectronStore";
 import MainWindow from "../windows/MainWindow";
 import BrowserWindow from "../windows/BrowserWindow";
 import VideoRepository from "../repository/VideoRepository";
@@ -22,12 +22,12 @@ export default class WebviewService {
   constructor(
     @inject(TYPES.MainWindow)
     private readonly mainWindow: MainWindow,
-    @inject(TYPES.LoggerService)
-    private readonly logger: LoggerService,
+    @inject(TYPES.ElectronLogger)
+    private readonly logger: ElectronLogger,
     @inject(TYPES.BrowserWindow)
     private readonly browserWindow: BrowserWindow,
-    @inject(TYPES.StoreService)
-    private readonly storeService: StoreService,
+    @inject(TYPES.ElectronStore)
+    private readonly store: ElectronStore,
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
     @inject(TYPES.SniffingHelper)
@@ -47,12 +47,12 @@ export default class WebviewService {
     this.view.setBackgroundColor("#fff");
     this.webContents.setAudioMuted(true);
 
-    const { useProxy, proxy, isMobile } = this.storeService.store;
+    const { useProxy, proxy, isMobile } = this.store.store;
     this.setProxy(useProxy, proxy);
     this.setUserAgent(isMobile);
 
     this.webContents.on("dom-ready", async () => {
-      if (isDev) {
+      if (isDev && process.env.DEBUG_PLUGINS === "true") {
         this.webContents.executeJavaScript(
           `const script = document.createElement('script');
   script.src = 'http://localhost:8080/src/main.ts';
@@ -88,7 +88,7 @@ export default class WebviewService {
     this.sniffingHelper.start();
     this.sniffingHelper.on("source", async (item) => {
       // 这里需要判断是否使用浏览器插件
-      const useExtension = this.storeService.get("useExtension");
+      const useExtension = this.store.get("useExtension");
       if (useExtension) {
         this.webContents.send("webview-link-message", item);
       } else {
@@ -217,7 +217,7 @@ export default class WebviewService {
   async initBlocker() {
     this.blocker = await ElectronBlocker.fromPrebuiltAdsAndTracking(fetch);
 
-    const enableBlocking = this.storeService.get("blockAds");
+    const enableBlocking = this.store.get("blockAds");
     this.setBlocking(enableBlocking);
   }
 

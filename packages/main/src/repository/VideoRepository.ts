@@ -8,13 +8,13 @@ import {
 } from "../interfaces";
 import { TYPES } from "../types";
 import { In, Not } from "typeorm";
-import DatabaseService from "../services/DatabaseService";
+import TypeORM from "../vendor/TypeORM";
 
 @injectable()
 export default class VideoRepository {
   constructor(
-    @inject(TYPES.DatabaseService)
-    private readonly dataService: DatabaseService,
+    @inject(TYPES.TypeORM)
+    private readonly db: TypeORM,
   ) {}
 
   async addVideo(video: Omit<DownloadItem, "id">) {
@@ -23,7 +23,7 @@ export default class VideoRepository {
     item.url = video.url;
     item.type = video.type;
     video.headers && (item.headers = video.headers);
-    return await this.dataService.manager.save(item);
+    return await this.db.manager.save(item);
   }
 
   async addVideos(videos: DownloadItem[]) {
@@ -35,12 +35,12 @@ export default class VideoRepository {
       video.headers && (item.headers = video.headers);
       return item;
     });
-    return await this.dataService.manager.save(items);
+    return await this.db.manager.save(items);
   }
 
   // 编辑视频
   async editVideo(video: DownloadItem) {
-    const item = await this.dataService.appDataSource
+    const item = await this.db.appDataSource
       .getRepository(Video)
       .findOneBy({ id: video.id });
     if (!item) {
@@ -49,12 +49,12 @@ export default class VideoRepository {
     item.name = video.name;
     item.url = video.url;
     video.headers && (item.headers = video.headers);
-    return await this.dataService.manager.save(item);
+    return await this.db.manager.save(item);
   }
 
   // 查找所有视频
   async findAllVideos() {
-    return await this.dataService.appDataSource.getRepository(Video).find({
+    return await this.db.appDataSource.getRepository(Video).find({
       order: {
         createdDate: "DESC",
       },
@@ -72,7 +72,7 @@ export default class VideoRepository {
         ? DownloadStatus.Success
         : Not(DownloadStatus.Success);
 
-    const [items, count] = await this.dataService.appDataSource
+    const [items, count] = await this.db.appDataSource
       .getRepository(Video)
       .findAndCount({
         where: {
@@ -91,20 +91,20 @@ export default class VideoRepository {
   }
 
   async findVideo(id: number) {
-    return this.dataService.appDataSource.getRepository(Video).findOneBy({
+    return this.db.appDataSource.getRepository(Video).findOneBy({
       id,
     });
   }
 
   async findVideoByName(name: string) {
-    return this.dataService.appDataSource.getRepository(Video).findOneBy({
+    return this.db.appDataSource.getRepository(Video).findOneBy({
       name,
     });
   }
 
   async changeVideoStatus(id: number | number[], status: DownloadStatus) {
     const ids = !Array.isArray(id) ? [id] : id;
-    return this.dataService.appDataSource
+    return this.db.appDataSource
       .createQueryBuilder()
       .update(Video)
       .set({ status })
@@ -114,7 +114,7 @@ export default class VideoRepository {
 
   async changeVideoIsLive(id: number | number[], isLive: boolean) {
     const ids = !Array.isArray(id) ? [id] : id;
-    return this.dataService.appDataSource
+    return this.db.appDataSource
       .createQueryBuilder()
       .update(Video)
       .set({ isLive })
@@ -123,7 +123,7 @@ export default class VideoRepository {
   }
 
   async findWattingAndDownloadingVideos() {
-    return await this.dataService.appDataSource.getRepository(Video).find({
+    return await this.db.appDataSource.getRepository(Video).find({
       where: {
         status: In([DownloadStatus.Downloading, DownloadStatus.Watting]),
       },
@@ -131,11 +131,11 @@ export default class VideoRepository {
   }
 
   async deleteDownloadItem(id: number) {
-    return await this.dataService.appDataSource.getRepository(Video).delete(id);
+    return await this.db.appDataSource.getRepository(Video).delete(id);
   }
 
   async findVideoByUrl(url: string) {
-    return this.dataService.appDataSource.getRepository(Video).findOneBy({
+    return this.db.appDataSource.getRepository(Video).findOneBy({
       url,
     });
   }

@@ -26,6 +26,5 @@ export function getLocalIP() {
 export { sleep, stripColors, formatHeaders } from "./utils";
 export * from "./variables";
 export { on, handle } from "./decorator";
-export { downloader } from "./downloader";
 export { convertToAudio } from "./ffmpeg";
 export { default as http } from "./http";

@@ -5,8 +5,6 @@
 // import { printObject } from "./utils";
 
 // await $`pnpm spellcheck`.catch((out: ProcessOutput) => {
-//   console.log(out)
-
 //   throw new Error(out.stdout)
 // })
 
