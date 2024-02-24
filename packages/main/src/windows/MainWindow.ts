@@ -5,10 +5,10 @@ import { resolve } from "path";
 import { TYPES } from "../types";
 import { DownloadProgress } from "../interfaces";
 import _ from "lodash";
-import Window from "./window";
-import LoggerService from "../services/LoggerService";
+import Window from "../core/window";
+import ElectronLogger from "../vendor/ElectronLogger";
 import DownloadService from "../services/DownloadService";
-import StoreService from "../services/StoreService";
+import ElectronStore from "../vendor/ElectronStore";
 import VideoRepository from "../repository/VideoRepository";
 import { isWin } from "../helper";
 
@@ -16,14 +16,14 @@ import { isWin } from "../helper";
 export default class MainWindow extends Window {
   url = isDev ? "http://localhost:8555/" : "mediago://index.html/";
   constructor(
-    @inject(TYPES.LoggerService)
-    private readonly logger: LoggerService,
+    @inject(TYPES.ElectronLogger)
+    private readonly logger: ElectronLogger,
     @inject(TYPES.DownloadService)
     private readonly downloadService: DownloadService,
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
-    @inject(TYPES.StoreService)
-    private readonly storeService: StoreService,
+    @inject(TYPES.ElectronStore)
+    private readonly store: ElectronStore,
   ) {
     super({
       width: 1100,
@@ -43,7 +43,7 @@ export default class MainWindow extends Window {
     this.downloadService.on("download-failed", this.onDownloadFailed);
     this.downloadService.on("download-start", this.onDownloadStart);
     this.downloadService.on("download-stop", this.onDownloadStart);
-    this.storeService.onDidAnyChange(this.storeChange);
+    this.store.onDidAnyChange(this.storeChange);
     app.on("second-instance", this.secondInstance);
   }
 
@@ -63,7 +63,7 @@ export default class MainWindow extends Window {
 
     this.window = this.create();
 
-    const mainBounds = this.storeService.get("mainBounds");
+    const mainBounds = this.store.get("mainBounds");
     if (mainBounds) {
       this.window.setBounds(mainBounds);
     }
@@ -76,7 +76,7 @@ export default class MainWindow extends Window {
     if (!this.window) return;
 
     const bounds = this.window.getBounds();
-    this.storeService.set("mainBounds", _.omit(bounds, ["x", "y"]));
+    this.store.set("mainBounds", _.omit(bounds, ["x", "y"]));
   };
 
   secondInstance = () => {
@@ -105,7 +105,7 @@ export default class MainWindow extends Window {
   };
 
   onDownloadSuccess = async (id: number) => {
-    const promptTone = this.storeService.get("promptTone");
+    const promptTone = this.store.get("promptTone");
     if (promptTone) {
       const video = await this.videoRepository.findVideo(id);
 
@@ -119,7 +119,7 @@ export default class MainWindow extends Window {
   };
 
   onDownloadFailed = async (id: number, err: any) => {
-    const promptTone = this.storeService.get("promptTone");
+    const promptTone = this.store.get("promptTone");
     if (promptTone) {
       const video = await this.videoRepository.findVideo(id);
 

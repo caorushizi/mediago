@@ -12,15 +12,16 @@ export const TYPES = {
   // services
   WebviewService: Symbol.for("WebviewService"),
   DownloadService: Symbol.for("DownloadService"),
-  DevToolsService: Symbol.for("DevToolsService"),
   VideoService: Symbol.for("VideoService"),
-  StoreService: Symbol.for("StoreService"),
   SessionService: Symbol.for("SessionService"),
-  DatabaseService: Symbol.for("DatabaseService"),
   ProtocolService: Symbol.for("ProtocolService"),
-  UpdateService: Symbol.for("UpdateService"),
-  LoggerService: Symbol.for("LoggerService"),
   SniffingHelper: Symbol.for("SniffingHelper"),
+  // vendor
+  ElectronLogger: Symbol.for("ElectronLogger"),
+  ElectronUpdater: Symbol.for("ElectronUpdater"),
+  ElectronStore: Symbol.for("ElectronStore"),
+  ElectronDevtools: Symbol.for("ElectronDevtools"),
+  TypeORM: Symbol.for("TypeORM"),
 };
 
 export enum AppTheme {

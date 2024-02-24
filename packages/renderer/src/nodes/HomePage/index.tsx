@@ -58,7 +58,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     addDownloadItem,
     addDownloadItems,
     editDownloadItem,
-    openPlayerWindow,
+    openUrl,
     getLocalIP,
   } = useElectron();
   const appStore = useSelector(selectAppStore);
@@ -275,7 +275,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
         disabled={!item.exist}
         icon={<PlayCircleOutlined />}
         title={t("playVideo")}
-        onClick={() => openPlayerWindow(item.name)}
+        onClick={() => openUrl(baseUrl + "player")}
       />,
       <Dropdown
         key="more"

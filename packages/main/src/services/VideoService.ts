@@ -2,18 +2,17 @@ import { inject, injectable } from "inversify";
 import { execa } from "execa";
 import { mobilePath, videoServerBin } from "../helper";
 import { TYPES } from "../types";
-import StoreService from "./StoreService";
+import ElectronStore from "../vendor/ElectronStore";
 
 @injectable()
 export default class VideoService {
   constructor(
-    @inject(TYPES.StoreService)
-    private readonly storeService: StoreService,
+    @inject(TYPES.ElectronStore)
+    private readonly store: ElectronStore,
   ) {}
 
   init(): void {
-    const local = this.storeService.get("local");
-    // empty
+    const local = this.store.get("local");
     const child = execa(videoServerBin, [
       "--static-path",
       mobilePath,

@@ -268,7 +268,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
         >
           <ArrowLeftOutlined />
         </Button>
-        {store.status === BrowserStatus.Loading ? (
+        {store.mode === PageMode.Browser && store.status === BrowserStatus.Loading ? (
           <Button title={t("cancle")} type="text" onClick={onClickGoHome}>
             <CloseOutlined />
           </Button>
