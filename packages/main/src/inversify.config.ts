@@ -9,7 +9,6 @@ import ElectronApp from "./app";
 import { Controller } from "./interfaces";
 import { TYPES } from "./types";
 import MainWindow from "./windows/MainWindow";
-import PlayerWindow from "./windows/PlayerWindow";
 import BrowserWindow from "./windows/BrowserWindow";
 import VideoService from "./services/VideoService";
 import { SniffingHelper } from "./services/SniffingHelperService";
@@ -39,7 +38,6 @@ container.bind<SniffingHelper>(TYPES.SniffingHelper).to(SniffingHelper);
 // windows
 container.bind<MainWindow>(TYPES.MainWindow).to(MainWindow);
 container.bind<BrowserWindow>(TYPES.BrowserWindow).to(BrowserWindow);
-container.bind<PlayerWindow>(TYPES.PlayerWindow).to(PlayerWindow);
 
 // controller
 container.bind<Controller>(TYPES.Controller).to(HomeController);

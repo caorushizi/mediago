@@ -6,7 +6,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import AppLayout from "./layout/App";
 import HomePage, { DownloadFilter } from "./nodes/HomePage";
 import SettingPage from "./nodes/SettingPage";
-import PlayerPage from "./nodes/PlayerPage";
 import SourceExtract from "./nodes/SourceExtract";
 import { setAppStore, increase } from "./store";
 import "dayjs/locale/zh-cn";
@@ -84,7 +83,6 @@ const App: FC = () => {
             <Route path="*" element={<div>404</div>} />
           </Route>
           <Route path="/browser" element={<SourceExtract page={true} />} />
-          <Route path="/player" element={<PlayerPage />} />
         </Routes>
       </BrowserRouter>
     </ConfigProvider>

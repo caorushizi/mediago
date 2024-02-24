@@ -52,7 +52,7 @@ export default class WebviewService {
     this.setUserAgent(isMobile);
 
     this.webContents.on("dom-ready", async () => {
-      if (isDev) {
+      if (isDev && process.env.DEBUG_PLUGINS === "true") {
         this.webContents.executeJavaScript(
           `const script = document.createElement('script');
   script.src = 'http://localhost:8080/src/main.ts';
