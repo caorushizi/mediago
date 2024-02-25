@@ -168,6 +168,7 @@ export default class DownloadService extends EventEmitter {
       if (onMessage) {
         ptyProcess.onData((data) => {
           try {
+            this.emit("download-message", data);
             const message = stripAnsi(data);
             this.logger.debug("download message: ", message);
             onMessage(message);
