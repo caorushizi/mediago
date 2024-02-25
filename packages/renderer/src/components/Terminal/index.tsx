@@ -5,6 +5,7 @@ import { Terminal as XTerminal } from "xterm";
 import classNames from "classnames";
 import { Button } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
+import useElectron from "../../hooks/electron";
 
 interface TerminalProps {
   className?: string;
@@ -14,16 +15,24 @@ interface TerminalProps {
 const Terminal: FC<TerminalProps> = ({ className, onClose }) => {
   const { styles } = useStyles();
   const terminalRef = useRef<HTMLDivElement | null>(null);
+  const { addIpcListener, removeIpcListener } = useElectron();
 
   useEffect(() => {
     const terminal = new XTerminal({
       rows: 10,
+      cols: 100,
       fontFamily: "Consolas, 'Courier New', monospace",
     });
     terminal.open(terminalRef.current);
-    terminal.write("Hello from \x1B[1;3;31mxterm.js\x1B[0m $ ");
+
+    const onDownloadMessage = (_: unknown, message: string) => {
+      terminal.write(message);
+    };
+
+    addIpcListener("download-message", onDownloadMessage);
 
     return () => {
+      removeIpcListener("download-message", onDownloadMessage);
       terminal.dispose();
     };
   }, []);

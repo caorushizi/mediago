@@ -43,6 +43,7 @@ export default class MainWindow extends Window {
     this.downloadService.on("download-failed", this.onDownloadFailed);
     this.downloadService.on("download-start", this.onDownloadStart);
     this.downloadService.on("download-stop", this.onDownloadStart);
+    this.downloadService.on("download-message", this.receiveMessage);
     this.store.onDidAnyChange(this.storeChange);
     app.on("second-instance", this.secondInstance);
   }
@@ -138,6 +139,10 @@ export default class MainWindow extends Window {
 
   onDownloadStop = async (id: number) => {
     this.send("download-stop", id);
+  };
+
+  receiveMessage = (message: any) => {
+    this.send("download-message", message);
   };
 
   send(channel: string, ...args: any[]) {
