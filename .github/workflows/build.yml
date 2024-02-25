@@ -67,5 +67,5 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          name: artifact
+          name: media-downloader-${{ matrix.os }}
           path: packages/main/release/media-downloader-setup-*
