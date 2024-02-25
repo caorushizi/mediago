@@ -39,6 +39,7 @@ esbuild.build({
   outdir: mainResolve("app/build/main"),
   loader: { ".png": "file" },
   minify: true,
+  plugins: [],
 });
 
 esbuild.build({
