@@ -22,7 +22,7 @@ if (!fs.existsSync(filename)) {
 }
 
 if (!fs.existsSync(path.resolve(app, "mobile"))) {
-  await $`npm run build:mobile`;
+  await $`npm run build:player`;
 }
 
 if (!fs.existsSync(path.resolve(app, "plugin"))) {
