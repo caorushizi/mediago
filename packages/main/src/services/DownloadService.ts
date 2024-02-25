@@ -10,7 +10,13 @@ import { TYPES } from "../types";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";
 import VideoRepository from "../repository/VideoRepository";
-import { biliDownloaderBin, m3u8DownloaderBin, stripColors } from "../helper";
+import {
+  biliDownloaderBin,
+  formatHeaders,
+  isWin,
+  m3u8DownloaderBin,
+  stripColors,
+} from "../helper";
 import * as pty from "node-pty";
 import stripAnsi from "strip-ansi";
 
@@ -163,6 +169,7 @@ export default class DownloadService extends EventEmitter {
         name: "xterm-color",
         cols: 500,
         rows: 500,
+        useConpty: false,
       });
 
       if (onMessage) {
@@ -180,13 +187,12 @@ export default class DownloadService extends EventEmitter {
 
       abortSignal.signal.addEventListener("abort", () => {
         ptyProcess.kill();
+        reject(new Error("AbortError"));
       });
 
-      ptyProcess.onExit(({ exitCode, signal }) => {
-        if (exitCode === 0 && (signal === 0 || signal == null)) {
+      ptyProcess.onExit(({ exitCode }) => {
+        if (exitCode === 0) {
           resolve();
-        } else if (exitCode === 0 && signal === 1) {
-          reject(new Error("AbortError"));
         } else {
           reject(new Error("未知错误"));
         }
@@ -341,13 +347,82 @@ export default class DownloadService extends EventEmitter {
     });
   }
 
+  async m3u8DownloaderWin32(params: DownloadParams): Promise<void> {
+    const {
+      id,
+      abortSignal,
+      url,
+      local,
+      name,
+      deleteSegments,
+      headers,
+      callback,
+      proxy,
+    } = params;
+    const progressReg = /Progress:\s(\d+)\/(\d+)\s\(.+?\).+?\((.+?\/s).*?\)/g;
+    const isLiveReg = /识别为直播流, 开始录制/g;
+    const startDownloadReg = /开始下载文件/g;
+
+    const spawnParams = [url, "--workDir", local, "--saveName", name];
+
+    if (headers) {
+      spawnParams.push("--headers", formatHeaders(headers));
+    }
+
+    if (deleteSegments) {
+      spawnParams.push("--enableDelAfterDone");
+    }
+
+    if (proxy) {
+      spawnParams.push("--proxyAddress", proxy);
+    }
+
+    let isLive = false;
+    await this._execa(m3u8DownloaderBin, spawnParams, {
+      abortSignal,
+      onMessage: (message) => {
+        if (isLiveReg.test(message) || startDownloadReg.test(message)) {
+          callback({
+            id,
+            type: "ready",
+            isLive,
+            cur: "",
+            total: "",
+            speed: "",
+          });
+          isLive = true;
+        }
+
+        const result = progressReg.exec(message);
+        if (!result) {
+          return;
+        }
+
+        const [, cur, total, speed] = result;
+        const progress: DownloadProgress = {
+          id,
+          type: "progress",
+          cur,
+          total,
+          speed,
+          isLive,
+        };
+        callback(progress);
+      },
+    });
+  }
+
   process(params: DownloadParams): Promise<void> {
     if (params.type === "bilibili") {
       return this.biliDownloader(params);
     }
 
     if (params.type === "m3u8") {
-      return this.m3u8Downloader(params);
+      if (isWin) {
+        return this.m3u8DownloaderWin32(params);
+      } else {
+        return this.m3u8Downloader(params);
+      }
     }
 
     return Promise.reject();
