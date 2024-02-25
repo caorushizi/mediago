@@ -24,6 +24,7 @@ import {
   SyncOutlined,
   MobileOutlined,
   MoreOutlined,
+  CodeOutlined,
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { selectAppStore } from "../../store";
@@ -31,6 +32,7 @@ import DownloadFrom from "../../components/DownloadForm";
 import dayjs from "dayjs";
 import classNames from "classnames";
 import { Trans, useTranslation } from "react-i18next";
+import Terminal from "../../components/Terminal";
 
 const { Text } = Typography;
 
@@ -81,8 +83,8 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     {},
   );
   const [messageApi, contextHolder] = message.useMessage();
-
   const [baseUrl, setBaseUrl] = useState("");
+  const [terminalVisible, setTerminalVisible] = useState(false);
 
   useAsyncEffect(async () => {
     const localIP = await getLocalIP();
@@ -211,6 +213,14 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     );
   };
 
+  const showTerminal = () => {
+    setTerminalVisible(true);
+  };
+
+  const closeTerminal = () => {
+    setTerminalVisible(false);
+  };
+
   const renderActionButtons = (
     dom: ReactNode,
     item: DownloadItem,
@@ -231,6 +241,13 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       return [
         <Button
           type="text"
+          key="terminal"
+          title={t("terminal")}
+          icon={<CodeOutlined />}
+          onClick={showTerminal}
+        />,
+        <Button
+          type="text"
           key="stop"
           title={t("pause")}
           icon={<PauseCircleOutlined />}
@@ -240,6 +257,13 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     }
     if (item.status === DownloadStatus.Failed) {
       return [
+        <Button
+          type="text"
+          key="terminal"
+          title={t("terminal")}
+          icon={<CodeOutlined />}
+          onClick={showTerminal}
+        />,
         renderEditForm(item),
         <Button
           type="text"
@@ -533,6 +557,9 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
           );
         }}
       />
+      {terminalVisible && (
+        <Terminal className="home-page-terminal" onClose={closeTerminal} />
+      )}
     </PageContainer>
   );
 };
