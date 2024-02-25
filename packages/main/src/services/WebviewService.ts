@@ -2,7 +2,7 @@ import { BrowserView, session } from "electron";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import isDev from "electron-is-dev";
-import { PERSIST_WEBVIEW, isWin, mobileUA, pcUA, pluginPath } from "../helper";
+import { PERSIST_WEBVIEW, mobileUA, pcUA, pluginPath } from "../helper";
 import { ElectronBlocker } from "@cliqz/adblocker-electron";
 import fetch from "cross-fetch";
 import ElectronLogger from "../vendor/ElectronLogger";
@@ -128,11 +128,11 @@ export default class WebviewService {
   }
 
   setBounds(bounds: Electron.Rectangle): void {
-    if (isWin) {
-      bounds.y = bounds.y + 30;
-    } else {
-      bounds.y = bounds.y - 0;
-    }
+    // if (isWin) {
+    //   bounds.y = bounds.y + 30;
+    // } else {
+    //   bounds.y = bounds.y - 0;
+    // }
     this.view.setBounds(bounds);
   }
 

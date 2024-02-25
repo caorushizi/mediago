@@ -32,9 +32,10 @@ export const PERSIST_WEBVIEW = "persist:webview";
 export const db = resolve(workspace, "app.db");
 
 // bin path
+const downloaderBinName = isWin ? "N_m3u8DL-CLI" : "N_m3u8DL-RE";
 export const ffmpegPath = resolveBin("ffmpeg");
 export const biliDownloaderBin = resolveBin("BBDown");
-export const m3u8DownloaderBin = resolveBin("N_m3u8DL-RE");
+export const m3u8DownloaderBin = resolveBin(downloaderBinName);
 export const videoServerBin = resolveBin("server");
 
 // mobile path
