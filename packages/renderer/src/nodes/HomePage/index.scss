@@ -1,6 +1,8 @@
 .home-page {
   .home-page-inner {
     padding-bottom: 10px;
+    display: flex;
+    flex-direction: column;
     .download-list {
       height: 100%;
       overflow: hidden;
@@ -48,5 +50,8 @@
         }
       }
     }
+  }
+  .home-page-terminal {
+    margin-top: 10px;
   }
 }
