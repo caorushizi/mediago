@@ -18,6 +18,8 @@ const options: builder.Configuration = {
   appId: process.env.APP_ID,
   copyright: process.env.APP_COPYRIGHT,
   artifactName: "${productName}-setup-${buildVersion}.${ext}",
+  // FIXME: 这里屏蔽 node-pty 自动重构，因为会导致打包失败
+  npmRebuild: false,
   directories: {
     output: "./release",
   },
