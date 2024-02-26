@@ -227,6 +227,9 @@ importers:
       '@cliqz/adblocker-electron-preload':
         specifier: ^1.26.15
         version: 1.26.15(electron@28.1.4)
+      node-pty:
+        specifier: ^1.0.0
+        version: 1.0.0
     devDependencies:
       electron:
         specifier: ^28.1.4
