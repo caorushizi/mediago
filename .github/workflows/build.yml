@@ -35,9 +35,9 @@ jobs:
 
       # step2: install node env
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: "16.x"
+          node-version: 20
 
       # step3: install go env
       - name: Install Go
@@ -53,7 +53,7 @@ jobs:
           python-version: "3.10"
 
       # step5: install pnpm env
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v3
         with:
           version: latest
           run_install: true
@@ -65,7 +65,7 @@ jobs:
           APP_TD_APPID: ${{ secrets.APP_TD_APPID }}
           APP_CLARITY_APPID: ${{ secrets.APP_CLARITY_APPID}}
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: media-downloader-${{ matrix.os }}
           path: packages/main/release/media-downloader-setup-*
