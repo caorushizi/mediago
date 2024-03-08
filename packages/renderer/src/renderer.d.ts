@@ -71,6 +71,8 @@ declare interface AppStore {
   maxRunner?: number;
   // 语言
   language?: AppLanguage;
+  // 是否显示终端
+  showTerminal?: boolean;
 }
 
 declare interface BrowserStore {

@@ -18,12 +18,12 @@ import {
   stripColors,
 } from "../helper";
 import * as pty from "node-pty";
-import stripAnsi from "strip-ansi";
 
 export interface DownloadOptions {
   abortSignal: AbortController;
   encoding?: string;
   onMessage?: (message: string) => void;
+  id: number;
 }
 
 @injectable()
@@ -162,7 +162,7 @@ export default class DownloadService extends EventEmitter {
     args: string[],
     params: DownloadOptions,
   ): Promise<void> {
-    const { abortSignal, onMessage } = params;
+    const { abortSignal, onMessage, id } = params;
 
     return new Promise((resolve, reject) => {
       const ptyProcess = pty.spawn(binPath, args, {
@@ -175,10 +175,8 @@ export default class DownloadService extends EventEmitter {
       if (onMessage) {
         ptyProcess.onData((data) => {
           try {
-            this.emit("download-message", data);
-            const message = stripAnsi(data);
-            this.logger.debug("download message: ", message);
-            onMessage(message);
+            this.emit("download-message", id, data);
+            onMessage(data);
           } catch (err) {
             reject(err);
           }
@@ -210,48 +208,51 @@ export default class DownloadService extends EventEmitter {
 
     const spawnParams = [url, "--work-dir", local];
 
-    await this._execa(biliDownloaderBin, spawnParams, {
-      abortSignal,
-      onMessage: (message) => {
-        if (isLiveReg.test(message) || startDownloadReg.test(message)) {
-          callback({
-            id,
-            type: "ready",
-            isLive: false,
-            cur: "",
-            total: "",
-            speed: "",
-          });
-        }
-
-        const log = stripColors(message);
-        if (errorReg.test(log)) {
-          throw new Error(log);
-        }
-
-        const result = progressReg.exec(log);
-        if (!result) {
-          return;
-        }
-
-        const [, percentage, speed] = result;
-        const cur = String(Number(percentage) * 10);
-        if (cur === "0") {
-          return;
-        }
-
-        const total = "1000";
-        // FIXME: 无法获取是否为直播流
-        const progress: DownloadProgress = {
+    const onMessage = (message: string) => {
+      if (isLiveReg.test(message) || startDownloadReg.test(message)) {
+        callback({
           id,
-          type: "progress",
-          cur,
-          total,
-          speed,
+          type: "ready",
           isLive: false,
-        };
-        callback(progress);
-      },
+          cur: "",
+          total: "",
+          speed: "",
+        });
+      }
+
+      const log = stripColors(message);
+      if (errorReg.test(log)) {
+        throw new Error(log);
+      }
+
+      const result = progressReg.exec(log);
+      if (!result) {
+        return;
+      }
+
+      const [, percentage, speed] = result;
+      const cur = String(Number(percentage) * 10);
+      if (cur === "0") {
+        return;
+      }
+
+      const total = "1000";
+      // FIXME: 无法获取是否为直播流
+      const progress: DownloadProgress = {
+        id,
+        type: "progress",
+        cur,
+        total,
+        speed,
+        isLive: false,
+      };
+      callback(progress);
+    };
+
+    await this._execa(biliDownloaderBin, spawnParams, {
+      id,
+      abortSignal,
+      onMessage,
     });
   }
 
@@ -267,7 +268,6 @@ export default class DownloadService extends EventEmitter {
       callback,
       proxy,
     } = params;
-    // const progressReg = /([\d.]+)% .*? ([\d.\w]+?) /g;
     const progressReg = /([\d.]+)%/g;
     const errorReg = /ERROR/g;
     const startDownloadReg = /保存文件名:/g;
@@ -300,50 +300,53 @@ export default class DownloadService extends EventEmitter {
     }
 
     let isLive = false;
-    await this._execa(m3u8DownloaderBin, spawnParams, {
-      abortSignal,
-      onMessage: (message) => {
-        if (isLiveReg.test(message) || startDownloadReg.test(message)) {
-          callback({
-            id,
-            type: "ready",
-            isLive,
-            cur: "",
-            total: "",
-            speed: "",
-          });
-          isLive = true;
-        }
-
-        const log = stripColors(message);
-
-        if (errorReg.test(log)) {
-          throw new Error(log);
-        }
-
-        const result = progressReg.exec(log);
-        if (!result) {
-          return;
-        }
-
-        const [, precentage, speed] = result;
-        const cur = String(Number(precentage) * 10);
-        if (cur === "0") {
-          return;
-        }
-
-        const total = "1000";
-        // FIXME: 无法获取是否为直播流
-        const progress: DownloadProgress = {
+    const onMessage = (message: string) => {
+      if (isLiveReg.test(message) || startDownloadReg.test(message)) {
+        callback({
           id,
-          type: "progress",
-          cur,
-          total,
-          speed,
+          type: "ready",
           isLive,
-        };
-        callback(progress);
-      },
+          cur: "",
+          total: "",
+          speed: "",
+        });
+        isLive = true;
+      }
+
+      const log = stripColors(message);
+
+      if (errorReg.test(log)) {
+        throw new Error(log);
+      }
+
+      const result = progressReg.exec(log);
+      if (!result) {
+        return;
+      }
+
+      const [, precentage, speed] = result;
+      const cur = String(Number(precentage) * 10);
+      if (cur === "0") {
+        return;
+      }
+
+      const total = "1000";
+      // FIXME: 无法获取是否为直播流
+      const progress: DownloadProgress = {
+        id,
+        type: "progress",
+        cur,
+        total,
+        speed,
+        isLive,
+      };
+      callback(progress);
+    };
+
+    await this._execa(m3u8DownloaderBin, spawnParams, {
+      id,
+      abortSignal,
+      onMessage,
     });
   }
 
@@ -378,37 +381,40 @@ export default class DownloadService extends EventEmitter {
     }
 
     let isLive = false;
-    await this._execa(m3u8DownloaderBin, spawnParams, {
-      abortSignal,
-      onMessage: (message) => {
-        if (isLiveReg.test(message) || startDownloadReg.test(message)) {
-          callback({
-            id,
-            type: "ready",
-            isLive,
-            cur: "",
-            total: "",
-            speed: "",
-          });
-          isLive = true;
-        }
-
-        const result = progressReg.exec(message);
-        if (!result) {
-          return;
-        }
-
-        const [, cur, total, speed] = result;
-        const progress: DownloadProgress = {
+    const onMessage = (message: string) => {
+      if (isLiveReg.test(message) || startDownloadReg.test(message)) {
+        callback({
           id,
-          type: "progress",
-          cur,
-          total,
-          speed,
+          type: "ready",
           isLive,
-        };
-        callback(progress);
-      },
+          cur: "",
+          total: "",
+          speed: "",
+        });
+        isLive = true;
+      }
+
+      const result = progressReg.exec(message);
+      if (!result) {
+        return;
+      }
+
+      const [, cur, total, speed] = result;
+      const progress: DownloadProgress = {
+        id,
+        type: "progress",
+        cur,
+        total,
+        speed,
+        isLive,
+      };
+      callback(progress);
+    };
+
+    await this._execa(m3u8DownloaderBin, spawnParams, {
+      id,
+      abortSignal,
+      onMessage,
     });
   }
 

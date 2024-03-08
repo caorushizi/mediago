@@ -42,7 +42,7 @@ export default class MainWindow extends Window {
     this.downloadService.on("download-success", this.onDownloadSuccess);
     this.downloadService.on("download-failed", this.onDownloadFailed);
     this.downloadService.on("download-start", this.onDownloadStart);
-    this.downloadService.on("download-stop", this.onDownloadStart);
+    this.downloadService.on("download-stop", this.onDownloadStop);
     this.downloadService.on("download-message", this.receiveMessage);
     this.store.onDidAnyChange(this.storeChange);
     app.on("second-instance", this.secondInstance);
@@ -141,8 +141,10 @@ export default class MainWindow extends Window {
     this.send("download-stop", id);
   };
 
-  receiveMessage = (message: any) => {
-    this.send("download-message", message);
+  receiveMessage = async (id: number, message: any) => {
+    // 将日志写入数据库中
+    await this.videoRepository.appendDownloadLog(id, message);
+    this.send("download-message", id, message);
   };
 
   send(channel: string, ...args: any[]) {

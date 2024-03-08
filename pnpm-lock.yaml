@@ -127,9 +127,6 @@ importers:
       reflect-metadata:
         specifier: ^0.2.1
         version: 0.2.1
-      strip-ansi:
-        specifier: ^7.1.0
-        version: 7.1.0
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@20.11.5)(typescript@5.3.3)
@@ -383,12 +380,6 @@ importers:
       '@xterm/addon-fit':
         specifier: ^0.9.0
         version: 0.9.0(@xterm/xterm@5.4.0)
-      '@xterm/addon-unicode11':
-        specifier: ^0.7.0
-        version: 0.7.0(@xterm/xterm@5.4.0)
-      '@xterm/addon-webgl':
-        specifier: ^0.17.0
-        version: 0.17.0(@xterm/xterm@5.4.0)
       ahooks:
         specifier: ^3.7.8
         version: 3.7.8(react@18.2.0)
@@ -3759,22 +3750,6 @@ packages:
 
   /@xterm/addon-fit@0.9.0(@xterm/xterm@5.4.0):
     resolution: {integrity: sha512-hDlPPbTVPYyvwXu/asW8HbJkI/2RMi0cMaJnBZYVeJB0SWP2NeESMCNr+I7CvBlyI0sAxpxOg8Wk4OMkxBz9WA==}
-    peerDependencies:
-      '@xterm/xterm': ^5.0.0
-    dependencies:
-      '@xterm/xterm': 5.4.0
-    dev: false
-
-  /@xterm/addon-unicode11@0.7.0(@xterm/xterm@5.4.0):
-    resolution: {integrity: sha512-HIhQpRenrslPn6GlUmCYZcSXvdU0JkTgXQ66dx9QwXEzgNhoh70b7hXPZDBoMD/bH/7DYlseeGO7qKQlFzyhbA==}
-    peerDependencies:
-      '@xterm/xterm': ^5.0.0
-    dependencies:
-      '@xterm/xterm': 5.4.0
-    dev: false
-
-  /@xterm/addon-webgl@0.17.0(@xterm/xterm@5.4.0):
-    resolution: {integrity: sha512-KUH//EZCz7j1+IekW8sZzmcj/y9gOLf/HMcsWXjg0Xr5cT1lIBIIbbBlbf5kZ+XnA/8c1IuBm1vx+blzlfPk0g==}
     peerDependencies:
       '@xterm/xterm': ^5.0.0
     dependencies:

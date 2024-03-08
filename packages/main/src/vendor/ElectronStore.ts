@@ -26,6 +26,7 @@ export default class StoreService extends Store<AppStore> implements Vendor {
         isMobile: false,
         maxRunner: 2,
         language: AppLanguage.System,
+        showTerminal: false,
       },
     });
   }

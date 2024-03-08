@@ -17,6 +17,7 @@ export class Video {
   @Column({
     type: "text",
     nullable: true,
+    unique: true,
   })
   name: string;
 

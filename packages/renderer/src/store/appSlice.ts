@@ -15,6 +15,7 @@ const initialState: AppStore = {
   isMobile: false,
   maxRunner: 2,
   language: "system",
+  showTerminal: false,
 };
 
 export const appSlice = createSlice({
