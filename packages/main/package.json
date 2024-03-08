@@ -60,7 +60,6 @@
     "lodash": "^4.17.21",
     "node-pty": "^1.0.0",
     "reflect-metadata": "^0.2.1",
-    "strip-ansi": "^7.1.0",
     "ts-node": "^10.9.2",
     "typeorm": "^0.3.19"
   }

@@ -251,4 +251,10 @@ export default class HomeController implements Controller {
   async setSharedState(event: IpcMainEvent, state: any) {
     this.sharedState = state;
   }
+
+  @handle("get-download-log")
+  async getDownloadLog(event: IpcMainEvent, id: number) {
+    const video = await this.videoRepository.findVideo(id);
+    return video?.log || "";
+  }
 }
