@@ -223,6 +223,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
 
     return (
       <Button
+        key="terminal"
         type={terminal.id === item.id ? "primary" : "text"}
         title={t("terminal")}
         icon={<CodeOutlined />}
