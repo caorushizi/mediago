@@ -13,14 +13,22 @@ export default class VideoService {
 
   init(): void {
     const local = this.store.get("local");
-    const child = execa(videoServerBin, [
-      "--static-path",
-      mobilePath,
-      "--video-path",
-      local,
-      "--port",
-      process.env.APP_SERVER_PORT || "",
-    ]);
+    const child = execa(
+      videoServerBin,
+      [
+        "--static-path",
+        mobilePath,
+        "--video-path",
+        local,
+        "--port",
+        process.env.APP_SERVER_PORT || "",
+      ],
+      {
+        env: {
+          GIN_MODE: "release",
+        },
+      },
+    );
 
     child.stdout?.pipe(process.stdout);
     child.stderr?.pipe(process.stderr);

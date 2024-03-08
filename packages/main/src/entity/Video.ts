@@ -53,6 +53,12 @@ export class Video {
   })
   status: DownloadStatus;
 
+  @Column({
+    type: "text",
+    default: "",
+  })
+  log: string;
+
   @CreateDateColumn()
   createdDate: Date;
 
