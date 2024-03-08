@@ -84,7 +84,10 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   );
   const [messageApi, contextHolder] = message.useMessage();
   const [baseUrl, setBaseUrl] = useState("");
-  const [terminalVisible, setTerminalVisible] = useState(false);
+  const [terminal, setTerminal] = useState({
+    visual: false,
+    title: "",
+  });
 
   useAsyncEffect(async () => {
     const localIP = await getLocalIP();
@@ -213,12 +216,18 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     );
   };
 
-  const showTerminal = () => {
-    setTerminalVisible(true);
+  const showTerminal = (item: DownloadItem) => {
+    setTerminal({
+      visual: true,
+      title: item.name,
+    });
   };
 
   const closeTerminal = () => {
-    setTerminalVisible(false);
+    setTerminal({
+      visual: false,
+      title: "",
+    });
   };
 
   const renderActionButtons = (
@@ -244,7 +253,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
           key="terminal"
           title={t("terminal")}
           icon={<CodeOutlined />}
-          onClick={showTerminal}
+          onClick={() => showTerminal(item)}
         />,
         <Button
           type="text"
@@ -262,7 +271,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
           key="terminal"
           title={t("terminal")}
           icon={<CodeOutlined />}
-          onClick={showTerminal}
+          onClick={() => showTerminal(item)}
         />,
         renderEditForm(item),
         <Button
@@ -557,8 +566,12 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
           );
         }}
       />
-      {terminalVisible && (
-        <Terminal className="home-page-terminal" onClose={closeTerminal} />
+      {terminal.visual && (
+        <Terminal
+          className="home-page-terminal"
+          onClose={closeTerminal}
+          title={terminal.title}
+        />
       )}
     </PageContainer>
   );
