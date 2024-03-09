@@ -2,31 +2,52 @@ import React, { FC, useEffect, useRef } from "react";
 import { useStyles } from "./style";
 import "xterm/css/xterm.css";
 import { Terminal as XTerminal } from "xterm";
+import { FitAddon } from "@xterm/addon-fit";
 import classNames from "classnames";
-import { Button } from "antd";
-import { CloseOutlined } from "@ant-design/icons";
+import { Flex, Typography } from "antd";
 import useElectron from "../../hooks/electron";
+import { useTranslation } from "react-i18next";
+
+const { Text } = Typography;
 
 interface TerminalProps {
   className?: string;
-  onClose?: () => void;
+  title: string;
+  id: number;
+  log: string;
 }
 
-const Terminal: FC<TerminalProps> = ({ className, onClose }) => {
+const Terminal: FC<TerminalProps> = ({ className, title, id, log }) => {
   const { styles } = useStyles();
   const terminalRef = useRef<HTMLDivElement | null>(null);
   const { addIpcListener, removeIpcListener } = useElectron();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const terminal = new XTerminal({
-      rows: 10,
-      cols: 100,
+      rows: 5,
       fontFamily: "Consolas, 'Courier New', monospace",
+      disableStdin: true,
+      cursorBlink: false,
+      allowProposedApi: true,
     });
+    const fitAddon = new FitAddon();
+    terminal.loadAddon(fitAddon);
     terminal.open(terminalRef.current);
+    fitAddon.fit();
 
-    const onDownloadMessage = (_: unknown, message: string) => {
-      terminal.write(message);
+    if (log) {
+      terminal.write(log);
+    }
+
+    const onDownloadMessage = (
+      _: unknown,
+      messageId: number,
+      message: string,
+    ) => {
+      if (id === messageId) {
+        terminal.write(message);
+      }
     };
 
     addIpcListener("download-message", onDownloadMessage);
@@ -35,16 +56,14 @@ const Terminal: FC<TerminalProps> = ({ className, onClose }) => {
       removeIpcListener("download-message", onDownloadMessage);
       terminal.dispose();
     };
-  }, []);
+  }, [id]);
 
   return (
-    <div ref={terminalRef} className={classNames(className, styles.container)}>
-      <Button
-        type="text"
-        icon={<CloseOutlined />}
-        className={styles.closeBtn}
-        onClick={onClose}
-      />
+    <div className={classNames(className, styles.container)}>
+      <Flex align="center" justify="space-between" className={styles.toolbar}>
+        <Text>{title || t("consoleOutput")}</Text>
+      </Flex>
+      <div ref={terminalRef} />
     </div>
   );
 };

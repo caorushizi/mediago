@@ -1,11 +1,12 @@
 import React, { FC, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Badge, Button, Layout, Menu, MenuProps } from "antd";
-import "./index.scss";
+import { Badge, Button, Layout, Menu, MenuProps, Flex, Segmented } from "antd";
 import {
   CheckCircleOutlined,
   DownloadOutlined,
   ExportOutlined,
+  EyeInvisibleOutlined,
+  EyeOutlined,
   ProfileOutlined,
   QuestionCircleOutlined,
   SettingOutlined,
@@ -20,6 +21,7 @@ import {
 } from "../../store";
 import { useAsyncEffect } from "ahooks";
 import { useTranslation } from "react-i18next";
+import { useStyles } from "./style";
 
 const { Footer, Sider, Content } = Layout;
 
@@ -47,13 +49,14 @@ const App: FC = () => {
   const [showExport, setShowExport] = useState(false);
   const count = useSelector(selectCount);
   const appStore = useSelector(selectAppStore);
+  const { styles } = useStyles();
 
   const items: MenuItem[] = [
     {
       label: (
         <Link
           to="/"
-          className="like-item"
+          className={styles.linkItem}
           onClick={() => {
             dispatch(clearCount());
           }}
@@ -69,7 +72,7 @@ const App: FC = () => {
     },
     {
       label: (
-        <Link to="/done" className="like-item">
+        <Link to="/done" className={styles.linkItem}>
           <CheckCircleOutlined />
           <span>{t("downloadComplete")}</span>
         </Link>
@@ -78,7 +81,7 @@ const App: FC = () => {
     },
     {
       label: (
-        <Link to="/source" className="like-item">
+        <Link to="/source" className={styles.linkItem}>
           <ProfileOutlined />
           <span>{t("materialExtraction")}</span>
           {showExport && (
@@ -113,7 +116,7 @@ const App: FC = () => {
     },
     {
       label: (
-        <Link to="/settings" className="like-item">
+        <Link to="/settings" className={styles.linkItem}>
           <SettingOutlined />
           <span>{t("setting")}</span>
         </Link>
@@ -137,21 +140,40 @@ const App: FC = () => {
   }, []);
 
   return (
-    <Layout className="container">
-      <Sider className="container-sider" theme="light">
-        <Menu
-          style={{ height: "100%" }}
-          defaultSelectedKeys={[processLocation(location.pathname)]}
-          mode="vertical"
-          theme="light"
-          items={finalItems}
-        />
+    <Layout className={styles.container}>
+      <Sider className={styles.containerSider} theme="light">
+        <Flex
+          vertical
+          justify="space-between"
+          className={styles.containerInner}
+        >
+          <Menu
+            style={{ border: "none" }}
+            defaultSelectedKeys={[processLocation(location.pathname)]}
+            mode="vertical"
+            theme="light"
+            items={finalItems}
+          />
+          {false && (
+            <Segmented
+              block
+              options={[
+                { label: "正常", value: "normal", icon: <EyeOutlined /> },
+                {
+                  label: "隐私",
+                  value: "privacy",
+                  icon: <EyeInvisibleOutlined />,
+                },
+              ]}
+            />
+          )}
+        </Flex>
       </Sider>
       <Layout>
         <Content className="container-inner">
           <Outlet />
         </Content>
-        <Footer className="container-footer">
+        <Footer className={styles.containerFooter}>
           <Button
             type={"link"}
             onClick={openHelpUrl}

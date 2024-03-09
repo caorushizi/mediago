@@ -139,4 +139,21 @@ export default class VideoRepository {
       url,
     });
   }
+
+  async appendDownloadLog(id: number, message: string) {
+    const video = await this.findVideo(id);
+    if (!video) {
+      throw new Error("视频不存在");
+    }
+    video.log = video.log ? `${video.log}\n${message}` : message;
+    return await this.db.manager.save(video);
+  }
+
+  async getDownloadLog(id: number) {
+    const video = await this.findVideo(id);
+    if (!video) {
+      throw new Error("视频不存在");
+    }
+    return video.log;
+  }
 }

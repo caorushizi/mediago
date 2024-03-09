@@ -123,6 +123,7 @@ const SettingPage: React.FC = () => {
           />
           <ProFormSwitch label={t("openInNewWindow")} name="openInNewWindow" />
           <ProFormSwitch label={t("downloadPrompt")} name="promptTone" />
+          <ProFormSwitch label={t("showTerminal")} name="showTerminal" />
         </ProFormGroup>
         <ProFormGroup title={t("browserSetting")} direction={"vertical"}>
           <ProFormText
