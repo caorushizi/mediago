@@ -17,6 +17,7 @@ export class Video {
   @Column({
     type: "text",
     nullable: true,
+    unique: true,
   })
   name: string;
 
@@ -52,6 +53,12 @@ export class Video {
     default: DownloadStatus.Ready,
   })
   status: DownloadStatus;
+
+  @Column({
+    type: "text",
+    default: "",
+  })
+  log: string;
 
   @CreateDateColumn()
   createdDate: Date;

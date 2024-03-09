@@ -89,6 +89,8 @@ const electronApi = {
     ipcRenderer.invoke("webview-change-user-agent", isMobile),
   downloadItem: (data: { name: string; url: string; type: string }) =>
     ipcRenderer.invoke("add-download-item", data),
+  getDownloadLog: (id: number): Promise<string> =>
+    ipcRenderer.invoke("get-download-log", id),
 };
 
 contextBridge.exposeInMainWorld(apiKey, electronApi);

@@ -62,6 +62,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     editDownloadItem,
     openUrl,
     getLocalIP,
+    getDownloadLog,
   } = useElectron();
   const appStore = useSelector(selectAppStore);
   const { t } = useTranslation();
@@ -84,7 +85,11 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   );
   const [messageApi, contextHolder] = message.useMessage();
   const [baseUrl, setBaseUrl] = useState("");
-  const [terminalVisible, setTerminalVisible] = useState(false);
+  const [terminal, setTerminal] = useState({
+    title: "",
+    id: 0,
+    log: "",
+  });
 
   useAsyncEffect(async () => {
     const localIP = await getLocalIP();
@@ -213,12 +218,31 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     );
   };
 
-  const showTerminal = () => {
-    setTerminalVisible(true);
+  const renderTerminalBtn = (item: DownloadItem) => {
+    if (!appStore.showTerminal) return null;
+
+    return (
+      <Button
+        key="terminal"
+        type={terminal.id === item.id ? "primary" : "text"}
+        title={t("terminal")}
+        icon={<CodeOutlined />}
+        onClick={() => {
+          if (terminal.id !== item.id) {
+            showTerminal(item);
+          }
+        }}
+      />
+    );
   };
 
-  const closeTerminal = () => {
-    setTerminalVisible(false);
+  const showTerminal = async (item: DownloadItem) => {
+    const log = await getDownloadLog(item.id);
+    setTerminal({
+      title: item.name,
+      id: item.id,
+      log,
+    });
   };
 
   const renderActionButtons = (
@@ -227,6 +251,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   ): ReactNode => {
     if (item.status === DownloadStatus.Ready) {
       return [
+        renderTerminalBtn(item),
         renderEditForm(item),
         <Button
           type="text"
@@ -239,13 +264,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     }
     if (item.status === DownloadStatus.Downloading) {
       return [
-        <Button
-          type="text"
-          key="terminal"
-          title={t("terminal")}
-          icon={<CodeOutlined />}
-          onClick={showTerminal}
-        />,
+        renderTerminalBtn(item),
         <Button
           type="text"
           key="stop"
@@ -257,13 +276,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     }
     if (item.status === DownloadStatus.Failed) {
       return [
-        <Button
-          type="text"
-          key="terminal"
-          title={t("terminal")}
-          icon={<CodeOutlined />}
-          onClick={showTerminal}
-        />,
+        renderTerminalBtn(item),
         renderEditForm(item),
         <Button
           type="text"
@@ -279,6 +292,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     }
     if (item.status === DownloadStatus.Stopped) {
       return [
+        renderTerminalBtn(item),
         renderEditForm(item),
         <Button
           type="text"
@@ -557,8 +571,13 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
           );
         }}
       />
-      {terminalVisible && (
-        <Terminal className="home-page-terminal" onClose={closeTerminal} />
+      {filter === DownloadFilter.list && appStore.showTerminal && (
+        <Terminal
+          className="home-page-terminal"
+          title={terminal.title}
+          id={terminal.id}
+          log={terminal.log}
+        />
       )}
     </PageContainer>
   );

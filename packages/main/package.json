@@ -25,7 +25,7 @@
     "chokidar": "^3.5.3",
     "cross-env": "^7.0.3",
     "dotenv": "^16.3.2",
-    "electron": "^28.1.4",
+    "electron": "^28.2.6",
     "electron-builder": "^24.9.1",
     "electron-updater": "^6.1.7",
     "esbuild": "^0.19.11",
@@ -60,7 +60,6 @@
     "lodash": "^4.17.21",
     "node-pty": "^1.0.0",
     "reflect-metadata": "^0.2.1",
-    "strip-ansi": "^7.1.0",
     "ts-node": "^10.9.2",
     "typeorm": "^0.3.19"
   }
