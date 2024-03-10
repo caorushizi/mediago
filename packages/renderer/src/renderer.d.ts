@@ -85,9 +85,8 @@ declare interface BrowserStore {
 
 declare interface DownloadProgress {
   id: number;
-  cur: string;
-  total: string;
   speed: string;
+  percent: string;
   isLive: boolean;
 }
 
