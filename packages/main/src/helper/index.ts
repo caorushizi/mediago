@@ -23,7 +23,7 @@ export function getLocalIP() {
   return localIP;
 }
 
-export { sleep, stripColors, formatHeaders } from "./utils";
+export { sleep, formatHeaders } from "./utils";
 export * from "./variables";
 export { on, handle } from "./decorator";
 export { convertToAudio } from "./ffmpeg";

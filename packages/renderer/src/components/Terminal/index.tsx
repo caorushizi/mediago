@@ -50,10 +50,16 @@ const Terminal: FC<TerminalProps> = ({ className, title, id, log }) => {
       }
     };
 
+    const resize = () => {
+      fitAddon.fit();
+    };
+
     addIpcListener("download-message", onDownloadMessage);
+    window.addEventListener("resize", resize);
 
     return () => {
       removeIpcListener("download-message", onDownloadMessage);
+      window.removeEventListener("resize", resize);
       terminal.dispose();
     };
   }, [id]);
