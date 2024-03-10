@@ -11,6 +11,6 @@
     "node-pty": "^1.0.0"
   },
   "devDependencies": {
-    "electron": "^28.2.6"
+    "electron": "^29.1.1"
   }
 }
