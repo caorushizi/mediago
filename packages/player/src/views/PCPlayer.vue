@@ -27,7 +27,11 @@ function itemClick(item: VideoData) {
     <div v-show="list.length" ref="videoRef" class="video-inner"></div>
   </div>
   <el-drawer v-model="drawer" title="播放列表" :before-close="closeDrawer">
-    <div v-for="item in list" :key="item.id" @click="itemClick(item)">{{ item.name }}</div>
+    <el-space direction="vertical" alignment="flex-start" size="large">
+      <el-link v-for="item in list" :key="item.id" @click="itemClick(item)" :underline="false">{{
+        item.name
+      }}</el-link>
+    </el-space>
   </el-drawer>
 </template>
 
