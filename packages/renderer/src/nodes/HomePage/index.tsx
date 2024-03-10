@@ -379,12 +379,14 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   const renderDescription = (dom: ReactNode, item: DownloadItem): ReactNode => {
     if (progress[item.id] && filter === DownloadFilter.list) {
       const curProgress = progress[item.id];
-      const { cur, total, speed } = curProgress;
-      const percent = Math.round((Number(cur) / Number(total)) * 100);
+      const { percent, speed } = curProgress;
 
       return (
         <Space.Compact className="download-progress description" block>
-          <Progress percent={percent} />
+          <Progress
+            percent={Math.round(Number(percent))}
+            strokeLinecap="butt"
+          />
           <div className="progress-speed">{speed}</div>
         </Space.Compact>
       );
