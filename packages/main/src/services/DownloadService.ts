@@ -31,14 +31,14 @@ interface Schema {
     isLive: string;
   };
   bin: string;
-  platform: string;
+  platform: string[];
   type: string;
 }
 
 const processList: Schema[] = [
   {
     type: "m3u8",
-    platform: "win32",
+    platform: ["win32"],
     bin: m3u8DownloaderBin,
     args: {
       url: {
@@ -62,15 +62,47 @@ const processList: Schema[] = [
     },
     consoleReg: {
       percent: "([\\d.]+)%",
-      speed: "Progress:\\s\\d+\\/\\d+\\s\\(.+?\\)\\s--\\s.+?\\((.+?\\/s).*?\\)",
+      speed: "([\\d.]+\\s[GMK]B/s)",
       error: "ERROR",
       start: "开始下载文件",
       isLive: "识别为直播流, 开始录制",
     },
   },
   {
+    type: "m3u8",
+    platform: ["darwin"],
+    bin: m3u8DownloaderBin,
+    args: {
+      url: {
+        argsName: null,
+      },
+      localDir: {
+        argsName: ["--tmp-dir", "--save-dir"],
+      },
+      name: {
+        argsName: ["--save-name"],
+      },
+      // headers: {
+      //   argsName: ["--headers"],
+      // },
+      deleteSegments: {
+        argsName: ["--del-after-done"],
+      },
+      proxy: {
+        argsName: ["--custom-proxy"],
+      },
+    },
+    consoleReg: {
+      percent: "([\\d.]+)%",
+      speed: "([\\d.]+[GMK]Bps)",
+      error: "ERROR",
+      start: "保存文件名:",
+      isLive: "检测到直播流",
+    },
+  },
+  {
     type: "bilibili",
-    platform: "win32",
+    platform: ["win32", "darwin"],
     bin: biliDownloaderBin,
     args: {
       url: {
@@ -322,7 +354,7 @@ export default class DownloadService extends EventEmitter {
       }
       // 解析下载进度
       const [, percent] = percentReg.exec(message) || [];
-      if (percent) {
+      if (percent && Number(ctx.percent || 0) < Number(percent)) {
         ctx.percent = percent;
       }
       // 解析下载速度
@@ -365,11 +397,11 @@ export default class DownloadService extends EventEmitter {
 
   async process(params: DownloadParams): Promise<void> {
     const program = processList
-      .filter((i) => i.platform === process.platform)
+      .filter((i) => i.platform.includes(process.platform))
       .filter((i) => i.type === params.type);
 
     if (program.length === 0) {
-      return Promise.reject();
+      return Promise.reject(new Error("不支持的下载类型"));
     }
 
     const schema = program[0];
