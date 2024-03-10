@@ -43,8 +43,7 @@ export type Task = {
 export interface DownloadProgress {
   id: number;
   type: string;
-  cur: string;
-  total: string;
+  percent: string;
   speed: string;
   isLive: boolean;
 }
