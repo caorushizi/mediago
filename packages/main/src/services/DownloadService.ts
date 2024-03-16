@@ -388,6 +388,7 @@ export default class DownloadService extends EventEmitter {
       });
     };
 
+    this.logger.debug("download params: ", spawnParams);
     await this._execa(schema.bin, spawnParams, {
       id,
       abortSignal,

@@ -249,13 +249,22 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   }, []);
 
   const onShowDownloadDialog = async (e: any, data: DownloadForm) => {
+    const { type, url, name } = data;
     const noe = await localforage.getItem<NumberOfEpisodes>("numberOfEpisodes");
+
+    let teleplay = false;
+    let numberOfEpisodes = 1;
+    if (data.type !== "bilibili") {
+      teleplay = noe?.teleplay || false;
+      numberOfEpisodes = noe?.numberOfEpisodes || 1;
+    }
+
     form.setFieldsValue({
-      type: data.type,
-      url: data.url,
-      name: data.name,
-      teleplay: noe?.teleplay || false,
-      numberOfEpisodes: noe?.numberOfEpisodes || 1,
+      type,
+      url,
+      name,
+      teleplay,
+      numberOfEpisodes,
     });
     setModalShow(true);
   };
@@ -510,9 +519,9 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
             </Button>
           )}
           {item.icon ? (
-            <Avatar src={item.icon} icon={<LinkOutlined />} />
+            <Avatar shape="square" src={item.icon} icon={<LinkOutlined />} />
           ) : (
-            <Avatar icon={<LinkOutlined />} />
+            <Avatar shape="square" icon={<LinkOutlined />} />
           )}
           <div className="card-text" title={item.title}>
             {item.title}
@@ -547,7 +556,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
       }
 
       if (teleplay) {
-        item.name = `${item.name} - 第${numberOfEpisodes}集`;
+        item.name = `${item.name}——第${numberOfEpisodes}集`;
       }
 
       if (now) {
@@ -614,10 +623,24 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
           disabled
           placeholder={t("pleaseSelectVideoType")}
         />
-        <ProFormSwitch label={t("showNumberOfEpisodes")} name="teleplay" />
         <Form.Item noStyle shouldUpdate>
           {(form) => {
-            if (form.getFieldValue("teleplay")) {
+            if (form.getFieldValue("type") !== "bilibili") {
+              return (
+                <ProFormSwitch
+                  label={t("showNumberOfEpisodes")}
+                  name="teleplay"
+                />
+              );
+            }
+          }}
+        </Form.Item>
+        <Form.Item noStyle shouldUpdate>
+          {(form) => {
+            if (
+              form.getFieldValue("type") !== "bilibili" &&
+              form.getFieldValue("teleplay")
+            ) {
               return (
                 <ProFormDigit
                   label={t("numberOfEpisodes")}
