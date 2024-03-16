@@ -28,6 +28,11 @@ export default class DownloadController implements Controller {
     private readonly mainWindow: MainWindow,
   ) {}
 
+  @handle("show-download-dialog")
+  async showDownloadDialog(e: IpcMainEvent, data: DownloadItem) {
+    this.mainWindow.window?.webContents.send("show-download-dialog", data);
+  }
+
   @handle("add-download-item")
   async addDownloadItem(e: IpcMainEvent, video: DownloadItem) {
     const item = await this.videoRepository.addVideo(video);
