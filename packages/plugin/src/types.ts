@@ -1,4 +1,4 @@
-import { OneButton } from "./components";
+import { BilibiliButton } from "./components";
 import { ElectronApi } from "../../main/types/preload";
 
 export enum DownloadType {
@@ -15,7 +15,7 @@ export interface WebSource {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "one-button": OneButton;
+    "bilibili-button": BilibiliButton;
   }
   interface Window {
     electron: ElectronApi;

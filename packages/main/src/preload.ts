@@ -74,7 +74,7 @@ const electronApi = {
   webviewShow: (): Promise<void> => ipcRenderer.invoke("webview-show"),
   webviewUrlContextMenu: (): Promise<void> =>
     ipcRenderer.invoke("webview-url-contextmenu"),
-  downloadNow: (video: DownloadItem): Promise<void> =>
+  downloadNow: (video: Omit<DownloadItem, "id">): Promise<void> =>
     ipcRenderer.invoke("download-now", video),
   combineToHomePage: (store: BrowserStore): Promise<void> =>
     ipcRenderer.invoke("combine-to-home-page", store),
@@ -87,10 +87,12 @@ const electronApi = {
     ipcRenderer.invoke("set-shared-state", state),
   setUserAgent: (isMobile: boolean): Promise<void> =>
     ipcRenderer.invoke("webview-change-user-agent", isMobile),
-  downloadItem: (data: { name: string; url: string; type: string }) =>
+  downloadItem: (data: Omit<DownloadItem, "id">) =>
     ipcRenderer.invoke("add-download-item", data),
   getDownloadLog: (id: number): Promise<string> =>
     ipcRenderer.invoke("get-download-log", id),
+  showDownloadDialog: (data: Omit<DownloadItem, "id">) =>
+    ipcRenderer.invoke("show-download-dialog", data),
 };
 
 contextBridge.exposeInMainWorld(apiKey, electronApi);

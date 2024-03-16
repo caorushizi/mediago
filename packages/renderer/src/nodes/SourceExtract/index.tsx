@@ -24,13 +24,19 @@ import {
   Space,
   Spin,
 } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PageContainer from "../../components/PageContainer";
 import useElectron from "../../hooks/electron";
 import { generateUrl, getFavIcon } from "../../utils";
 import "./index.scss";
-import { ModalForm, ProFormText } from "@ant-design/pro-components";
+import {
+  ModalForm,
+  ProFormDigit,
+  ProFormSelect,
+  ProFormSwitch,
+  ProFormText,
+} from "@ant-design/pro-components";
 import {
   BrowserStatus,
   PageMode,
@@ -41,9 +47,27 @@ import {
 import WebView from "../../components/WebView";
 import { selectAppStore } from "../../store";
 import { useTranslation } from "react-i18next";
+import { nanoid } from "nanoid";
+import localforage from "localforage";
+import { DownloadType } from "../../types";
 
 interface SourceExtractProps {
   page?: boolean;
+}
+
+// 下载表单
+interface DownloadForm {
+  teleplay: boolean;
+  type: DownloadType;
+  name: string;
+  url: string;
+  numberOfEpisodes: number;
+}
+
+// 集数
+interface NumberOfEpisodes {
+  teleplay: boolean;
+  numberOfEpisodes: number;
 }
 
 const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
@@ -62,6 +86,8 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     setUserAgent,
     webviewUrlContextMenu,
     getAppStore: ipcGetAppStore,
+    downloadNow,
+    addDownloadItem,
   } = useElectron();
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -71,6 +97,10 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   const [hoverId, setHoverId] = useState<number>(-1);
   const store = useSelector(selectBrowserStore);
   const appStore = useSelector(selectAppStore);
+  const [form] = Form.useForm<DownloadForm>();
+  const [modalShow, setModalShow] = useState(false);
+  const [modalReadyShow, setModalReadyShow] = useState(false);
+  const sessionId = useRef("");
 
   const curIsFavorite = favoriteList.find((item) => item.url === store.url);
 
@@ -80,27 +110,34 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   }, []);
 
   const loadUrl = async (url: string) => {
+    const id = nanoid();
+    sessionId.current = id;
     try {
       dispatch(
         setBrowserStore({
+          url: "",
           mode: PageMode.Browser,
           status: BrowserStatus.Loading,
         }),
       );
       await webviewLoadURL(url);
-      dispatch(
-        setBrowserStore({
-          url: url,
-          status: BrowserStatus.Loaded,
-        }),
-      );
+      if (sessionId.current === id) {
+        dispatch(
+          setBrowserStore({
+            url: url,
+            status: BrowserStatus.Loaded,
+          }),
+        );
+      }
     } catch (err) {
-      dispatch(
-        setBrowserStore({
-          status: BrowserStatus.Failed,
-          errMsg: (err as any).message,
-        }),
-      );
+      if (sessionId.current === id) {
+        dispatch(
+          setBrowserStore({
+            status: BrowserStatus.Failed,
+            errMsg: (err as any).message,
+          }),
+        );
+      }
     }
   };
 
@@ -211,15 +248,29 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     dispatch(setBrowserStore(state));
   }, []);
 
+  const onShowDownloadDialog = async (e: any, data: DownloadForm) => {
+    const noe = await localforage.getItem<NumberOfEpisodes>("numberOfEpisodes");
+    form.setFieldsValue({
+      type: data.type,
+      url: data.url,
+      name: data.name,
+      teleplay: noe?.teleplay || false,
+      numberOfEpisodes: noe?.numberOfEpisodes || 1,
+    });
+    setModalShow(true);
+  };
+
   useEffect(() => {
     const prevTitle = document.title;
     addIpcListener("webview-dom-ready", onDomReady);
     addIpcListener("favorite-item-event", onFavoriteEvent);
+    addIpcListener("show-download-dialog", onShowDownloadDialog);
 
     return () => {
       document.title = prevTitle;
       removeIpcListener("webview-dom-ready", onDomReady);
       removeIpcListener("favorite-item-event", onFavoriteEvent);
+      removeIpcListener("show-download-dialog", onShowDownloadDialog);
     };
   }, []);
 
@@ -268,7 +319,8 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
         >
           <ArrowLeftOutlined />
         </Button>
-        {store.mode === PageMode.Browser && store.status === BrowserStatus.Loading ? (
+        {store.mode === PageMode.Browser &&
+        store.status === BrowserStatus.Loading ? (
           <Button title={t("cancle")} type="text" onClick={onClickGoHome}>
             <CloseOutlined />
           </Button>
@@ -330,6 +382,8 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     let content = <div></div>;
     if (store.status === BrowserStatus.Loading) {
       content = <Spin />;
+    } else if (modalReadyShow || modalShow) {
+      content = <></>;
     } else if (store.status === BrowserStatus.Failed) {
       content = (
         <Empty description={store.errMsg || t("loadFailed")}>
@@ -480,6 +534,132 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     );
   };
 
+  const confirmDownload = async (now?: boolean) => {
+    try {
+      const data = form.getFieldsValue();
+      const { numberOfEpisodes, teleplay, ...item } = data;
+
+      if (teleplay) {
+        await localforage.setItem<NumberOfEpisodes>("numberOfEpisodes", {
+          numberOfEpisodes,
+          teleplay,
+        });
+      }
+
+      if (teleplay) {
+        item.name = `${item.name} - 第${numberOfEpisodes}集`;
+      }
+
+      if (now) {
+        await downloadNow(item);
+      } else {
+        await addDownloadItem(item);
+      }
+
+      // 提交成功后关闭弹窗
+      setModalShow(false);
+    } catch (e) {
+      message.error((e as any).message);
+    }
+  };
+
+  // 渲染表单
+  const renderModalForm = () => {
+    return (
+      <ModalForm<DownloadForm>
+        open={modalShow}
+        title={t("newDownload")}
+        onOpenChange={setModalShow}
+        form={form}
+        modalProps={{
+          destroyOnClose: true,
+          afterOpenChange: setModalReadyShow,
+          okText: t("downloadNow"),
+          styles: {
+            body: {
+              paddingTop: 5,
+            },
+          },
+        }}
+        submitter={{
+          render: (props, [, okButton]) => {
+            return [
+              <Button
+                key="addToList"
+                onClick={async () => {
+                  await confirmDownload();
+                }}
+              >
+                {t("addToDownloadList")}
+              </Button>,
+              okButton,
+            ];
+          },
+        }}
+        submitTimeout={2000}
+        onFinish={async () => {
+          await confirmDownload(true);
+          return true;
+        }}
+        labelCol={{ style: { width: "120px" } }}
+        layout="horizontal"
+        width={550}
+        labelAlign={"left"}
+        colon={false}
+      >
+        <ProFormSelect
+          width="xl"
+          name="type"
+          label={t("videoType")}
+          disabled
+          placeholder={t("pleaseSelectVideoType")}
+        />
+        <ProFormSwitch label={t("showNumberOfEpisodes")} name="teleplay" />
+        <Form.Item noStyle shouldUpdate>
+          {(form) => {
+            if (form.getFieldValue("teleplay")) {
+              return (
+                <ProFormDigit
+                  label={t("numberOfEpisodes")}
+                  tooltip={t("canUseMouseWheelToAdjust")}
+                  name="numberOfEpisodes"
+                  width="xl"
+                  min={1}
+                  max={10000}
+                />
+              );
+            }
+          }}
+        </Form.Item>
+
+        <ProFormText
+          width="xl"
+          name="name"
+          label={t("videoName")}
+          placeholder={t("pleaseEnterVideoName")}
+          rules={[
+            {
+              required: true,
+              message: t("pleaseEnterVideoName"),
+            },
+          ]}
+        />
+        <ProFormText
+          width="xl"
+          name="url"
+          label={t("videoLink")}
+          placeholder={t("pleaseEnterVideoLink")}
+          rules={[
+            {
+              required: true,
+              message: t("pleaseEnterVideoLink"),
+            },
+          ]}
+        />
+      </ModalForm>
+    );
+  };
+
   return (
     <PageContainer
       className={"source-extract"}
@@ -492,6 +672,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
           ? renderBrowserPanel()
           : renderFavoriteList()}
       </div>
+      {renderModalForm()}
     </PageContainer>
   );
 };

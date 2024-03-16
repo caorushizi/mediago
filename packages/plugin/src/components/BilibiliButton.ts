@@ -1,10 +1,10 @@
 import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { BILIBILI_DOWNLOAD_BUTTON, downloadItem } from "../helper";
+import { BILIBILI_DOWNLOAD_BUTTON, showDownloadDialog } from "../helper";
 import $ from "jquery";
 
 @customElement("one-button")
-export class OneButton extends LitElement {
+export class BilibiliButton extends LitElement {
   @property({ type: Number })
   index = 0;
 
@@ -39,7 +39,7 @@ export class OneButton extends LitElement {
     const videoImage = $(BILIBILI_DOWNLOAD_BUTTON).eq(this.index);
     const url = videoImage.attr("href") || "";
     const name = videoImage.parent().find(".bili-video-card__info--tit").text();
-    downloadItem({ name, url, type: "bilibili" });
+    showDownloadDialog({ name, url, type: "bilibili" });
   }
 
   render() {
