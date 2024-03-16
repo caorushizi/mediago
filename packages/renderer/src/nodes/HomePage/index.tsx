@@ -25,6 +25,7 @@ import {
   MobileOutlined,
   MoreOutlined,
   CodeOutlined,
+  FileAddOutlined,
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { selectAppStore } from "../../store";
@@ -420,42 +421,22 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       }
       rightExtra={
         <Space>
-          {filter === DownloadFilter.done && (
-            <Popover
-              placement="topRight"
-              title={t("scanToWatch")}
-              content={
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <QRCode value={baseUrl} />
-                </div>
-              }
-              trigger="click"
-            >
-              <Button icon={<MobileOutlined />}>{t("playOnMobile")}</Button>
-            </Popover>
-          )}
-          {filter === DownloadFilter.done && (
-            <Button onClick={() => openDir(appStore.local)}>
-              {t("openFolder")}
-            </Button>
-          )}
           {filter === DownloadFilter.list && appStore.openInNewWindow && (
             <Button type="primary" onClick={() => showBrowserWindow()}>
-              打开浏览器
+              {t("openBrowser")}
             </Button>
           )}
           {filter === DownloadFilter.list && (
             <Button onClick={() => refresh()}>{t("refresh")}</Button>
           )}
+          <Button onClick={() => openDir(appStore.local)}>
+            {t("openFolder")}
+          </Button>
           {filter === DownloadFilter.list && (
             <DownloadFrom
-              trigger={<Button>{t("newDownload")}</Button>}
+              trigger={
+                <Button icon={<FileAddOutlined />}>{t("newDownload")}</Button>
+              }
               onFinish={async (values: any) => {
                 if (values.batch) {
                   const { batchList = "" } = values;
@@ -485,6 +466,28 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
                 return true;
               }}
             />
+          )}
+          {filter === DownloadFilter.done && (
+            <Popover
+              placement="topRight"
+              title={t("scanToWatch")}
+              content={
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <QRCode value={baseUrl} />
+                </div>
+              }
+              trigger="click"
+            >
+              <Button type="primary" icon={<MobileOutlined />}>
+                {t("playOnMobile")}
+              </Button>
+            </Popover>
           )}
         </Space>
       }
