@@ -1,12 +1,10 @@
 import React, { FC, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Badge, Button, Layout, Menu, MenuProps, Flex, Segmented } from "antd";
+import { Badge, Button, Layout, Menu, MenuProps, Flex } from "antd";
 import {
   CheckCircleOutlined,
   DownloadOutlined,
   ExportOutlined,
-  EyeInvisibleOutlined,
-  EyeOutlined,
   ProfileOutlined,
   QuestionCircleOutlined,
   SettingOutlined,
@@ -154,19 +152,6 @@ const App: FC = () => {
             theme="light"
             items={finalItems}
           />
-          {false && (
-            <Segmented
-              block
-              options={[
-                { label: "正常", value: "normal", icon: <EyeOutlined /> },
-                {
-                  label: "隐私",
-                  value: "privacy",
-                  icon: <EyeInvisibleOutlined />,
-                },
-              ]}
-            />
-          )}
         </Flex>
       </Sider>
       <Layout>

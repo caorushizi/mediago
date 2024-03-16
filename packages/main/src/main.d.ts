@@ -50,6 +50,8 @@ declare interface AppStore {
   language: AppLanguage;
   // 是否显示终端
   showTerminal: boolean;
+  // 隐私模式
+  privacy: boolean;
 }
 
 declare interface BrowserStore {
