@@ -128,11 +128,6 @@ export default class WebviewService {
   }
 
   setBounds(bounds: Electron.Rectangle): void {
-    // if (isWin) {
-    //   bounds.y = bounds.y + 30;
-    // } else {
-    //   bounds.y = bounds.y - 0;
-    // }
     this.view.setBounds(bounds);
   }
 
@@ -140,6 +135,7 @@ export default class WebviewService {
     const canGoBack = this.webContents.canGoBack();
 
     try {
+      this.webContents.stop();
       await this.webContents.loadURL(url || "");
     } catch (err: unknown) {
       this.logger.error("加载 url 时出现错误: ", err);
@@ -165,6 +161,7 @@ export default class WebviewService {
   }
 
   async goHome() {
+    this.webContents.stop();
     this.webContents.clearHistory();
   }
 

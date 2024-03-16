@@ -1,7 +1,5 @@
 import { nanoid } from "nanoid";
 
-export { emitter } from "./events";
-
 const eventMap = new Map();
 
 const getIpcId = (func: any) => {
@@ -28,11 +26,15 @@ export function removeIpcListener(eventName: string, func: any) {
 export interface Item {
   name: string;
   url: string;
-  type: string;
+  type: any;
 }
 
 export function downloadItem(item: Item) {
   window.electron.downloadItem(item);
+}
+
+export function showDownloadDialog(item: Item) {
+  window.electron.showDownloadDialog(item);
 }
 
 export const BILIBILI_DOWNLOAD_BUTTON = ".bili-video-card__image--link";

@@ -1,7 +1,7 @@
 import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import logo from "../assets/logo.png";
-import { addIpcListener, downloadItem } from "../helper";
+import { addIpcListener, showDownloadDialog } from "../helper";
 
 @customElement("float-button")
 export class FloatButton extends LitElement {
@@ -52,7 +52,7 @@ export class FloatButton extends LitElement {
     e.preventDefault();
     e.stopPropagation();
 
-    downloadItem({
+    showDownloadDialog({
       name: this.data.name,
       url: this.data.url,
       type: this.data.type,
