@@ -15,7 +15,7 @@ function bilibili() {
     const isAd = $(card).find(".bili-video-card__info--ad");
     if (isAd.length) return;
 
-    const downloadButton = document.createElement("one-button");
+    const downloadButton = document.createElement("bilibili-button");
     downloadButton.index = index;
     card.appendChild(downloadButton);
   });

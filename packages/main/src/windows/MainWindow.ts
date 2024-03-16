@@ -141,10 +141,13 @@ export default class MainWindow extends Window {
     this.send("download-stop", id);
   };
 
-  receiveMessage = async (id: number, message: any) => {
+  receiveMessage = async (id: number, message: string) => {
     // 将日志写入数据库中
     await this.videoRepository.appendDownloadLog(id, message);
-    this.send("download-message", id, message);
+    const showTerminal = this.store.get("showTerminal");
+    if (showTerminal) {
+      this.send("download-message", id, message);
+    }
   };
 
   send(channel: string, ...args: any[]) {

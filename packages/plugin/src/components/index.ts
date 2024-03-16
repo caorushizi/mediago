@@ -1,2 +1,2 @@
-export { OneButton } from "./OneButton";
+export { BilibiliButton } from "./BilibiliButton";
 export { FloatButton } from "./FloatButton";
