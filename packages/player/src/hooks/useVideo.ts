@@ -22,8 +22,10 @@ export function useVideo(): any {
 
     const options: IPlayerOptions = {
       el: videoRef.value,
-      fluid: true,
-      videoInit: true
+      videoInit: true,
+      videoAttributes: {
+        style: `width:100%;height:100%;position:absolute;top:0;left:0;`
+      }
     }
     if (!Array.isArray(res) || res.length === 0) {
       console.error('video list is empty')
