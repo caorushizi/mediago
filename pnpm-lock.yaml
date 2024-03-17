@@ -259,8 +259,8 @@ importers:
         specifier: ^4.2.5
         version: 4.2.5(vue@3.4.18)
       xgplayer:
-        specifier: ^3.0.11
-        version: 3.0.11(core-js@3.35.0)
+        specifier: ^3.0.14
+        version: 3.0.14(core-js@3.35.0)
     devDependencies:
       '@rushstack/eslint-patch':
         specifier: ^1.3.3
@@ -11849,6 +11849,15 @@ packages:
       eventemitter3: 4.0.7
     dev: false
 
+  /xgplayer-subtitles@3.0.14(core-js@3.35.0):
+    resolution: {integrity: sha512-w6H1h+g3kOI477kv2QBRMZe3M/1dHLXttHBwq4LwKTPGVQ19fLIDGwkfn+HeKwe1ocGDaaq96bS+l+BadnP9TA==}
+    peerDependencies:
+      core-js: '>=3.12.1'
+    dependencies:
+      core-js: 3.35.0
+      eventemitter3: 4.0.7
+    dev: false
+
   /xgplayer@3.0.11(core-js@3.35.0):
     resolution: {integrity: sha512-n7qpUG46IVjcYWCFq9WLe4OQpIZvtT67lObu6RPgxbMm8IMGCscTVdbWQjRbgrlsvTVfes3zTfjyaymuS5g17g==}
     peerDependencies:
@@ -11860,6 +11869,19 @@ packages:
       downloadjs: 1.4.7
       eventemitter3: 4.0.7
       xgplayer-subtitles: 3.0.11(core-js@3.35.0)
+    dev: false
+
+  /xgplayer@3.0.14(core-js@3.35.0):
+    resolution: {integrity: sha512-TPS77hUIcM1zVx6FSpGG+OzfMwjwxxWihd+YxVx82DQ22QK60v8TXWSZlWISbmS1+fAlFneesvXDjwy60tC37w==}
+    peerDependencies:
+      core-js: '>=3.12.1'
+    dependencies:
+      core-js: 3.35.0
+      danmu.js: 1.1.13
+      delegate: 3.2.0
+      downloadjs: 1.4.7
+      eventemitter3: 4.0.7
+      xgplayer-subtitles: 3.0.14(core-js@3.35.0)
     dev: false
 
   /xml-name-validator@4.0.0:

@@ -51,7 +51,8 @@ function itemClick(item: VideoData) {
     z-index: 100;
   }
   .video-inner {
-    max-height: 100%;
+    height: 100% !important;
+    width: 100% !important;
   }
 }
 </style>
