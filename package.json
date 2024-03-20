@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "description": "electron-template",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "dev": "tsno run scripts/dev.ts && pnpm --parallel -F \"./packages/*\" run dev",
-    "build": "tsno run scripts/build.ts",
+    "dev": "tsx scripts/dev.ts && pnpm --parallel -F \"./packages/*\" run dev",
+    "build": "tsx scripts/build.ts",
     "build:plugin": "pnpm -F plugin run build",
     "build:main": "pnpm -F main run build",
     "build:renderer": "pnpm -F renderer run build",
@@ -50,7 +51,7 @@
     "husky": "^9.0.10",
     "lint-staged": "^15.2.2",
     "prettier": "3.2.5",
-    "tsno": "^2.0.0",
+    "tsx": "^4.7.1",
     "vitepress": "1.0.0-beta.3",
     "vue": "^3.4.15",
     "zx": "^7.2.3"
