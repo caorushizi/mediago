@@ -7,12 +7,10 @@ export const TYPES = {
   FavoriteRepository: Symbol.for("FavoriteRepository"),
   // windows
   BrowserWindow: Symbol.for("BrowserWindow"),
-  PlayerWindow: Symbol.for("PlayerWindow"),
   MainWindow: Symbol.for("MainWindow"),
   // services
   WebviewService: Symbol.for("WebviewService"),
   DownloadService: Symbol.for("DownloadService"),
-  VideoService: Symbol.for("VideoService"),
   SessionService: Symbol.for("SessionService"),
   ProtocolService: Symbol.for("ProtocolService"),
   SniffingHelper: Symbol.for("SniffingHelper"),

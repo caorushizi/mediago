@@ -10,7 +10,6 @@ import { Controller } from "./interfaces";
 import { TYPES } from "./types";
 import MainWindow from "./windows/MainWindow";
 import BrowserWindow from "./windows/BrowserWindow";
-import VideoService from "./services/VideoService";
 import { SniffingHelper } from "./services/SniffingHelperService";
 import DownloadService from "./services/DownloadService";
 import ElectronLogger from "./vendor/ElectronLogger";
@@ -32,7 +31,6 @@ container.bind<ElectronApp>(TYPES.ElectronApp).to(ElectronApp);
 // services
 container.bind<WebviewService>(TYPES.WebviewService).to(WebviewService);
 container.bind<DownloadService>(TYPES.DownloadService).to(DownloadService);
-container.bind<VideoService>(TYPES.VideoService).to(VideoService);
 container.bind<SniffingHelper>(TYPES.SniffingHelper).to(SniffingHelper);
 
 // windows

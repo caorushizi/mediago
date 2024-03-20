@@ -21,10 +21,6 @@ if (!fs.existsSync(filename)) {
   await $`npm run build:server`;
 }
 
-if (!fs.existsSync(path.resolve(app, "mobile"))) {
-  await $`npm run build:player`;
-}
-
 if (!fs.existsSync(path.resolve(app, "plugin"))) {
   await $`npm run build:plugin`;
 }
