@@ -28,7 +28,6 @@ export default defineConfig({
           antd: ["antd"],
           icons: ["@ant-design/icons"],
           "pro-components": ["@ant-design/pro-components"],
-          xgplayer: ["xgplayer"],
         },
       },
     },

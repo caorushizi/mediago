@@ -31,7 +31,6 @@
     "react-redux": "^9.1.0",
     "react-router-dom": "^6.21.3",
     "sort-by": "^1.2.0",
-    "xgplayer": "^3.0.11",
     "xterm": "^5.3.0"
   },
   "devDependencies": {
