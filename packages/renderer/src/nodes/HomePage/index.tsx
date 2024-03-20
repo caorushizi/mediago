@@ -5,14 +5,12 @@ import {
   Progress,
   Space,
   Tag,
-  Popover,
-  QRCode,
   Dropdown,
   Typography,
 } from "antd";
 import "./index.scss";
 import PageContainer from "../../components/PageContainer";
-import { useAsyncEffect, usePagination } from "ahooks";
+import { usePagination } from "ahooks";
 import useElectron from "../../hooks/electron";
 import { DownloadStatus, DownloadType } from "../../types";
 import { ProList } from "@ant-design/pro-components";
@@ -20,9 +18,7 @@ import {
   DownloadOutlined,
   EditOutlined,
   PauseCircleOutlined,
-  PlayCircleOutlined,
   SyncOutlined,
-  MobileOutlined,
   MoreOutlined,
   CodeOutlined,
   FileAddOutlined,
@@ -31,7 +27,6 @@ import { useSelector } from "react-redux";
 import { selectAppStore } from "../../store";
 import DownloadFrom from "../../components/DownloadForm";
 import dayjs from "dayjs";
-import classNames from "classnames";
 import { Trans, useTranslation } from "react-i18next";
 import Terminal from "../../components/Terminal";
 
@@ -61,8 +56,6 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     addDownloadItem,
     addDownloadItems,
     editDownloadItem,
-    openUrl,
-    getLocalIP,
     getDownloadLog,
   } = useElectron();
   const appStore = useSelector(selectAppStore);
@@ -85,17 +78,11 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     {},
   );
   const [messageApi, contextHolder] = message.useMessage();
-  const [baseUrl, setBaseUrl] = useState("");
   const [terminal, setTerminal] = useState({
     title: "",
     id: 0,
     log: "",
   });
-
-  useAsyncEffect(async () => {
-    const localIP = await getLocalIP();
-    setBaseUrl(`http://${localIP}:${import.meta.env.APP_SERVER_PORT}/`);
-  }, []);
 
   const onDownloadProgress = (e: any, progress: DownloadProgress) => {
     setProgress((curProgress) => ({
@@ -308,14 +295,6 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     // 下载成功
     const curConverting = converting[item.id];
     return [
-      <Button
-        type="text"
-        key="open-file"
-        disabled={!item.exist}
-        icon={<PlayCircleOutlined />}
-        title={t("playVideo")}
-        onClick={() => openUrl(baseUrl + "player")}
-      />,
       <Dropdown
         key="more"
         menu={{
@@ -348,11 +327,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
         </Tag>
       );
     } else if (item.status === DownloadStatus.Success) {
-      if (item.exist) {
-        tag = <Tag color="success">{t("downloadSuccess")}</Tag>;
-      } else {
-        tag = <Tag color="default">{t("fileNotExist")}</Tag>;
-      }
+      tag = <Tag color="success">{t("downloadSuccess")}</Tag>;
     } else if (item.status === DownloadStatus.Failed) {
       tag = <Tag color="error">{t("downloadFailed")}</Tag>;
     } else if (item.status === DownloadStatus.Stopped) {
@@ -361,14 +336,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
 
     return (
       <Space>
-        <Text
-          className={classNames({
-            "title-disabled":
-              item.status === DownloadStatus.Success && !item.exist,
-          })}
-        >
-          {item.name}
-        </Text>
+        <Text>{item.name}</Text>
         <Space size={[0, 8]}>
           {tag}
           {item.isLive && <Tag color={"default"}>{t("liveResource")}</Tag>}
@@ -466,28 +434,6 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
                 return true;
               }}
             />
-          )}
-          {filter === DownloadFilter.done && (
-            <Popover
-              placement="topRight"
-              title={t("scanToWatch")}
-              content={
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <QRCode value={baseUrl} />
-                </div>
-              }
-              trigger="click"
-            >
-              <Button type="primary" icon={<MobileOutlined />}>
-                {t("playOnMobile")}
-              </Button>
-            </Popover>
           )}
         </Space>
       }

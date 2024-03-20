@@ -13,7 +13,6 @@ import MainWindow from "../windows/MainWindow";
 import ElectronStore from "../vendor/ElectronStore";
 import DownloadService from "../services/DownloadService";
 import VideoRepository from "../repository/VideoRepository";
-import { existsSync } from "fs-extra";
 
 @injectable()
 export default class DownloadController implements Controller {
@@ -66,22 +65,8 @@ export default class DownloadController implements Controller {
 
   @handle("get-download-items")
   async getDownloadItems(e: IpcMainEvent, pagination: DownloadItemPagination) {
-    const localDir = this.store.get("local");
     const videos = await this.videoRepository.findVideos(pagination);
-    const newVideos = videos.list.map((video) => {
-      if (video.status === DownloadStatus.Success) {
-        return {
-          ...video,
-          exist: existsSync(`${localDir}/${video.name}.mp4`),
-        };
-      }
-      return video;
-    });
-
-    return {
-      total: videos.total,
-      list: newVideos,
-    };
+    return videos;
   }
 
   @handle("start-download")

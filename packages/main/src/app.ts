@@ -7,7 +7,6 @@ import path from "path";
 import MainWindow from "./windows/MainWindow";
 import WebviewService from "./services/WebviewService";
 import VideoRepository from "./repository/VideoRepository";
-import VideoService from "./services/VideoService";
 import ElectronDevtools from "./vendor/ElectronDevtools";
 import ElectronStore from "./vendor/ElectronStore";
 import ElectronUpdater from "./vendor/ElectronUpdater";
@@ -36,14 +35,11 @@ export default class ElectronApp {
     private readonly devTools: ElectronDevtools,
     @inject(TYPES.ElectronStore)
     private readonly store: ElectronStore,
-    @inject(TYPES.VideoService)
-    private readonly videoService: VideoService,
   ) {}
 
   private async seriveInit(): Promise<void> {
     this.mainWindow.init();
     this.webview.init();
-    this.videoService.init();
   }
 
   private async vendorInit() {
