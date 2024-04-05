@@ -35,3 +35,4 @@ adblocker
 acodec
 KHTML
 svgz
+stylelint

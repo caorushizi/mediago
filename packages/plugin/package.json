@@ -33,7 +33,6 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": "eslint",
-    "*.css": "stylelint",
-    "*.scss": "stylelint --syntax=scss"
+    "*.{css,scss}": "stylelint"
   }
 }
