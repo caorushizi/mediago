@@ -1,5 +1,5 @@
 {
-  "name": "media-downloader",
+  "name": "mediago",
   "version": "2.1.0-beta.1",
   "description": "在线视频下载器",
   "main": "main/index.js",

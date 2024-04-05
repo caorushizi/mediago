@@ -24,7 +24,7 @@ export function resolveBin(path: string) {
   return resolve(__bin__, path);
 }
 
-export const appName = process.env.APP_NAME || "electron-template";
+export const appName = process.env.APP_NAME || "mediago";
 export const workspace = resolve(appData, appName);
 export const defaultScheme = "mediago";
 export const PERSIST_MEDIAGO = "persist:mediago";
