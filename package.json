@@ -1,8 +1,8 @@
 {
-  "name": "electron-template",
+  "name": "mediago",
   "version": "0.1.0",
-  "description": "electron-template",
-  "main": "index.js",
+  "description": "mediago",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "tsx scripts/dev.ts && pnpm --parallel -F \"./packages/*\" run dev",
@@ -10,7 +10,7 @@
     "build:plugin": "pnpm -F plugin run build",
     "build:main": "pnpm -F main run build",
     "build:renderer": "pnpm -F renderer run build",
-    "pack": "pnpm -F media-downloader run pack",
+    "pack": "pnpm -F mediago run pack",
     "release": "pnpm run build && pnpm -F main run release",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",

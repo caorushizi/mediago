@@ -90,7 +90,7 @@ const options: builder.Configuration = {
   },
   publish: {
     provider: "github",
-    repo: "m3u8-downloader",
+    repo: "mediago",
     owner: "caorushizi",
     releaseType: "prerelease",
   },
