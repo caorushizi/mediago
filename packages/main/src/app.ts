@@ -37,7 +37,7 @@ export default class ElectronApp {
     private readonly store: ElectronStore,
   ) {}
 
-  private async seriveInit(): Promise<void> {
+  private async serviceInit(): Promise<void> {
     this.mainWindow.init();
     this.webview.init();
   }
@@ -55,7 +55,7 @@ export default class ElectronApp {
     // vendor
     await this.vendorInit();
     // service
-    await this.seriveInit();
+    await this.serviceInit();
 
     app.on("activate", () => {
       this.mainWindow.init();

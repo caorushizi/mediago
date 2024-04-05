@@ -19,7 +19,7 @@
     "prepare": "husky",
     "commit": "git-cz",
     "commitlint": "commitlint --edit",
-    "spellcheck": "cspell lint --dot --gitignore --color --cache --show-suggestions \"src/**/*.@(html|js|cjs|mjs|ts|tsx|css|scss|md|vue)\""
+    "spellcheck": "cspell \"packages/**/src/**/*.{ts,tsx}\""
   },
   "keywords": [],
   "author": "",
