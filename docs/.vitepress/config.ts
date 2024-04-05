@@ -21,7 +21,7 @@ if (!isDev) {
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "media-downloader",
+  title: "MediaGo",
   description: "简单易用，快速下载",
   lastUpdated: true,
   head,
@@ -56,7 +56,7 @@ export default defineConfig({
 
     footer: {
       message: '<a href="https://beian.miit.gov.cn">豫ICP备20012967号-2</a>',
-      copyright: "Copyright © 2019-present caorushizi",
+      copyright: "Copyright © 2021-present caorushizi",
     },
   },
 });

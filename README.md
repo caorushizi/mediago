@@ -1,21 +1,21 @@
-<img src="https://socialify.git.ci/caorushizi/m3u8-downloader/image?font=Inter&forks=1&issues=1&language=1&name=1&owner=1&pattern=Circuit%20Board&pulls=1&stargazers=1&theme=Auto" alt="MediaDownloader"/>
+<img src="https://socialify.git.ci/caorushizi/mediago/image?font=Inter&forks=1&issues=1&language=1&name=1&owner=1&pattern=Circuit%20Board&pulls=1&stargazers=1&theme=Auto" alt="MediaDownloader"/>
 
 <div align="center">
-  <h1>Media downloader</h1>
+  <h1>MediaGo</h1>
   <a href="https://downloader.caorushizi.cn/guides.html?form=github">快速开始</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="https://downloader.caorushizi.cn?form=github">官网</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="https://downloader.caorushizi.cn/documents.html?form=github">文档</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://github.com/caorushizi/m3u8-downloader/discussions">Discussions</a>
+  <a href="https://github.com/caorushizi/mediago/discussions">Discussions</a>
   <br>
   <br>
 
-  <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/caorushizi/m3u8-downloader/total">
-  <img alt="GitHub Downloads (all assets, latest release)" src="https://img.shields.io/github/downloads/caorushizi/m3u8-downloader/latest/total">
-  <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/caorushizi/m3u8-downloader">
-  <img alt="GitHub forks" src="https://img.shields.io/github/forks/caorushizi/m3u8-downloader">
+  <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/caorushizi/mediago/total">
+  <img alt="GitHub Downloads (all assets, latest release)" src="https://img.shields.io/github/downloads/caorushizi/mediago/latest/total">
+  <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/caorushizi/mediago">
+  <img alt="GitHub forks" src="https://img.shields.io/github/forks/caorushizi/mediago">
 
   <hr />
 </div>
@@ -36,7 +36,7 @@
 
 ```shell
 # 代码下载
-git clone --recursive https://github.com/caorushizi/m3u8-downloader.git
+git clone https://github.com/caorushizi/mediago.git
 
 # 安装依赖
 pnpm i
@@ -50,15 +50,10 @@ pnpm release
 
 ## Releases
 
-**v2.0.1（2023.7.9 发布）**
+**v2.0.2（2023.7.9 发布）**
 
-- [windows media-downloader v2.0.2](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.2/media-downloader-setup-2.0.2.exe)
-- [macos media-downloader v2.0.2](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.2/media-downloader-setup-2.0.2.dmg)
-
-**v2.0.1（2023.7.1 发布）**
-
-- [windows media-downloader v2.0.1](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.1/media-downloader-setup-2.0.1.exe)
-- [macos media-downloader v2.0.1](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.1/media-downloader-setup-2.0.1.dmg)
+- [windows mediago v2.0.2](https://github.com/caorushizi/mediago/releases/download/v2.0.2/media-downloader-setup-2.0.2.exe)
+- [macos mediago v2.0.2](https://github.com/caorushizi/mediago/releases/download/v2.0.2/media-downloader-setup-2.0.2.dmg)
 
 **更新日志**
 
@@ -73,7 +68,7 @@ pnpm release
 
 **v1.1.5（2022.2.5 发布）**
 
-- [windows media-downloader v1.1.5](https://github.com/caorushizi/m3u8-downloader/releases/download/1.1.5/media-downloader-setup-1.1.4.exe)
+- [windows mediago v1.1.5](https://github.com/caorushizi/mediago/releases/download/1.1.5/media-downloader-setup-1.1.4.exe)
 
 **更新日志**
 

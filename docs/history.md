@@ -13,8 +13,8 @@ outline: deep
 
 **v1.1.5（2022.2.5 发布）**
 
-- [windows media-downloader v1.1.5](https://github.com/caorushizi/m3u8-downloader/releases/download/1.1.5/media-downloader-setup-1.1.4.exe)
-- ~~macos media-downloader v1.1.5 无~~
+- [windows mediago v1.1.5](https://github.com/caorushizi/mediago/releases/download/1.1.5/media-downloader-setup-1.1.4.exe)
+- ~~macos mediago v1.1.5 无~~
 
 **更新日志**
 

@@ -9,7 +9,11 @@
     "build": "cross-env NODE_ENV=production tsx scripts/build.ts",
     "pack": "cross-env NODE_ENV=development tsx scripts/release.ts",
     "types": "tsc --emitDeclarationOnly",
-    "release": "cross-env NODE_ENV=production tsx scripts/release.ts"
+    "release": "cross-env NODE_ENV=production tsx scripts/release.ts",
+    "lint-staged": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": "eslint"
   },
   "author": "",
   "license": "MIT",
@@ -58,6 +62,7 @@
     "execa": "^8.0.1",
     "fs-extra": "^11.2.0",
     "inversify": "^6.0.2",
+    "lint-staged": "^15.2.2",
     "lodash": "^4.17.21",
     "node-pty": "^1.0.0",
     "reflect-metadata": "^0.2.1",
