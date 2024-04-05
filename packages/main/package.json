@@ -5,11 +5,11 @@
   "main": "main/index.js",
   "scripts": {
     "postinstall": "electron-rebuild -f -w",
-    "dev": "cross-env NODE_ENV=development VITE_CJS_IGNORE_WARNING=true ts-node scripts/dev.ts",
-    "build": "cross-env NODE_ENV=production ts-node scripts/build.ts",
-    "pack": "cross-env NODE_ENV=development ts-node scripts/release.ts",
+    "dev": "cross-env NODE_ENV=development VITE_CJS_IGNORE_WARNING=true tsx scripts/dev.ts",
+    "build": "cross-env NODE_ENV=production tsx scripts/build.ts",
+    "pack": "cross-env NODE_ENV=development tsx scripts/release.ts",
     "types": "tsc --emitDeclarationOnly",
-    "release": "cross-env NODE_ENV=production ts-node scripts/release.ts"
+    "release": "cross-env NODE_ENV=production tsx scripts/release.ts"
   },
   "author": "",
   "license": "MIT",
@@ -39,6 +39,7 @@
     "prebuild-install": "^7.1.1",
     "prettier": "3.2.5",
     "semver": "^7.5.4",
+    "tsx": "^4.7.1",
     "typescript": "^5.3.3",
     "vite": "^5.0.12"
   },
@@ -61,7 +62,6 @@
     "node-pty": "^1.0.0",
     "reflect-metadata": "^0.2.1",
     "strip-ansi": "^7.1.0",
-    "ts-node": "^10.9.2",
     "typeorm": "^0.3.19"
   }
 }
