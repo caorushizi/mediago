@@ -15,8 +15,8 @@ outline: deep
 
 **v2.0.1（2023.7.1 发布）**
 
-- [windows media-downloader v2.0.1](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.1/media-downloader-setup-2.0.1.exe)
-- [macos media-downloader v2.0.1](https://github.com/caorushizi/m3u8-downloader/releases/download/v2.0.1/media-downloader-setup-2.0.1.dmg)
+- [windows mediago v2.0.1](https://github.com/caorushizi/mediago/releases/download/v2.0.1/media-downloader-setup-2.0.1.exe)
+- [macos mediago v2.0.1](https://github.com/caorushizi/mediago/releases/download/v2.0.1/media-downloader-setup-2.0.1.dmg)
 
 **更新日志**
 
@@ -31,7 +31,7 @@ outline: deep
 
 **v1.1.5（2022.2.5 发布）**
 
-- [windows media-downloader v1.1.5](https://github.com/caorushizi/m3u8-downloader/releases/download/1.1.5/media-downloader-setup-1.1.4.exe)
+- [windows mediago v1.1.5](https://github.com/caorushizi/mediago/releases/download/1.1.5/media-downloader-setup-1.1.4.exe)
 
 **更新日志**
 

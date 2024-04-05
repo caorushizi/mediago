@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint-staged": "lint-staged"
   },
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
@@ -22,6 +23,7 @@
     "dayjs": "^1.11.10",
     "i18next": "^23.8.2",
     "i18next-browser-languagedetector": "^7.2.0",
+    "lint-staged": "^15.2.2",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.3",
     "nanoid": "^5.0.4",
@@ -51,9 +53,16 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.33.2",
     "prettier": "3.2.5",
+    "stylelint": "^16.2.1",
+    "stylelint-config-standard": "^36.0.0",
+    "stylelint-config-standard-scss": "^13.0.0",
     "sass": "^1.70.0",
     "typescript": "~5.3.3",
     "vite": "^5.0.12"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": "eslint",
+    "*.{css,scss}": "stylelint"
+  }
 }

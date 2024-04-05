@@ -1,4 +1,3 @@
-// FIXME: stylelint
 html,
 body {
   height: 100vh;
@@ -21,15 +20,16 @@ body {
   }
 
   &::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.15);
+    background: rgba(0 0 0 / 15%);
   }
+
   @media (prefers-color-scheme: dark) {
     &::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255 255 255 / 15%);
     }
   }
 }
 
 * {
-  @include scrollbar();
+  @include scrollbar;
 }
