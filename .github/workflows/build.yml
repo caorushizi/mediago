@@ -37,6 +37,12 @@ jobs:
         with:
           node-version: 20
 
+      # step4: install python env
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
       # step5: install pnpm env
       - uses: pnpm/action-setup@v3
         with:
