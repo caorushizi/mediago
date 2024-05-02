@@ -29,7 +29,6 @@ function initWaline() {
     serverURL: "https://comments.ziying.site",
     dark: isDark.value,
     lang: "zh-CN",
-    reaction: true,
     pageview: true,
   });
 }
