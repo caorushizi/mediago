@@ -16,7 +16,6 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  BUILD_PATH: "."
   BUCKET: downloader-docs
   ENDPOINT: oss-cn-beijing.aliyuncs.com
   ACCESS_KEY: LTAI5tLckcUrBtj7bCiUYwWz
@@ -28,22 +27,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: "16"
-      - name: Install PNPM
-        run: npm i -g pnpm
-      - name: Install dependencies
-        run: pnpm install
-        working-directory: ${{ env.BUILD_PATH }}
+          node-version: 20
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: latest
+          run_install: true
+
       - name: Build with Vitepress
         run: pnpm run docs:build
-        working-directory: ${{ env.BUILD_PATH }}
+
       - name: Install Alibaba Cloud OSSUTIL
         run: wget http://gosspublic.alicdn.com/ossutil/1.6.10/ossutil64 && chmod +x ossutil64
+
       - name: Configure Alibaba Cloud OSSUTIL
         run: ./ossutil64 config -i ${ACCESS_KEY} -k ${ACCESS_KEY_SECRET} -e ${ENDPOINT} -c .ossutilconfig
+
       - name: Upload the web folder to the chosen OSS bucket
         run: ./ossutil64 --config-file .ossutilconfig cp ${{ github.workspace }}/docs/.vitepress/dist oss://${BUCKET} -r -f
