@@ -5,9 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  '@cliqz/adblocker@1.26.15':
-    hash: ktysqjs5t5cvcwof7w5aaaoj5q
-    path: patches/@cliqz__adblocker@1.26.15.patch
+  '@cliqz/adblocker@1.27.3':
+    hash: ehnwxuhizcxatborac3eqflbk4
+    path: patches/@cliqz__adblocker@1.27.3.patch
 
 importers:
 
@@ -74,11 +74,11 @@ importers:
   packages/main:
     dependencies:
       '@cliqz/adblocker-electron':
-        specifier: ^1.26.15
-        version: 1.26.15(electron@28.2.6)
+        specifier: ^1.27.3
+        version: 1.27.3(electron@28.2.6)
       '@cliqz/adblocker-electron-preload':
-        specifier: ^1.26.15
-        version: 1.26.15(electron@28.2.6)
+        specifier: ^1.27.3
+        version: 1.27.3(electron@28.2.6)
       axios:
         specifier: ^1.6.5
         version: 1.6.5
@@ -121,6 +121,12 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
+      mime-types:
+        specifier: ^2.1.35
+        version: 2.1.35
+      node-fetch:
+        specifier: ^3.3.2
+        version: 3.3.2
       node-pty:
         specifier: ^1.0.0
         version: 1.0.0
@@ -146,6 +152,9 @@ importers:
       '@types/lodash':
         specifier: ^4.14.202
         version: 4.14.202
+      '@types/mime-types':
+        specifier: ^2.1.4
+        version: 2.1.4
       '@types/node':
         specifier: ^20.11.5
         version: 20.11.5
@@ -222,11 +231,11 @@ importers:
   packages/main/app:
     dependencies:
       '@cliqz/adblocker-electron':
-        specifier: ^1.26.15
-        version: 1.26.15(electron@28.2.6)
+        specifier: ^1.27.3
+        version: 1.27.3(electron@28.2.6)
       '@cliqz/adblocker-electron-preload':
-        specifier: ^1.26.15
-        version: 1.26.15(electron@28.2.6)
+        specifier: ^1.27.3
+        version: 1.27.3(electron@28.2.6)
       node-pty:
         specifier: ^1.0.0
         version: 1.0.0
@@ -959,45 +968,45 @@ packages:
       tinycolor2: 1.6.0
     dev: false
 
-  /@cliqz/adblocker-content@1.26.15:
-    resolution: {integrity: sha512-F1G+HCVW1SjCtHihXdh4iR6JeuI/50agBPl4EmAmZhlC2ALLAf0kZDswNr2L5sNQ1/j1XBbeNzu4YrDonnq7NQ==}
+  /@cliqz/adblocker-content@1.27.3:
+    resolution: {integrity: sha512-fMyvLGzw2aQKO1yuNfc9Pw4wI+a9xAyOgCXgqQOLYn4uXELthdn9vbng/gYmBs5Z3zetJpJmIitoRkIBlwOPhA==}
     dependencies:
-      '@cliqz/adblocker-extended-selectors': 1.26.15
+      '@cliqz/adblocker-extended-selectors': 1.27.3
     dev: false
 
-  /@cliqz/adblocker-electron-preload@1.26.15(electron@28.2.6):
-    resolution: {integrity: sha512-nGfY84iQitDkiz9JTPdATIGuesPo8xcNJiVjWJ4eVtncNBnVvpGSOBI7HlOAPxKsJMDA42vMujm8dIVavTtnBg==}
+  /@cliqz/adblocker-electron-preload@1.27.3(electron@28.2.6):
+    resolution: {integrity: sha512-yLd7uzOxqBVsWGXBvZ9iyyDs9xAiEKXIVvnzoRCRA1XXvz2ckYxHGtz/eNqR5811jJ2F8tuhOmqE8M/3+MaPpQ==}
     peerDependencies:
       electron: '>11'
     dependencies:
-      '@cliqz/adblocker-content': 1.26.15
+      '@cliqz/adblocker-content': 1.27.3
       electron: 28.2.6
     dev: false
 
-  /@cliqz/adblocker-electron@1.26.15(electron@28.2.6):
-    resolution: {integrity: sha512-pOidIXaKoX7R/i/klVOEj/CVkXvXFPKkDp4UTlSOC5Xn7mRtLia8hNJAuLiL3VsJR18PFhBTaPPipd2aVR2+yA==}
+  /@cliqz/adblocker-electron@1.27.3(electron@28.2.6):
+    resolution: {integrity: sha512-eP0q+NrYrr/CKGYWuDumuaHSX5LXsljyS704kdOl0/XkFwGBeeUpm/cm9Fm43Fs9WZh4rgL3+jbwdyuOmNfrTg==}
     peerDependencies:
       electron: '>11'
     dependencies:
-      '@cliqz/adblocker': 1.26.15(patch_hash=ktysqjs5t5cvcwof7w5aaaoj5q)
-      '@cliqz/adblocker-electron-preload': 1.26.15(electron@28.2.6)
+      '@cliqz/adblocker': 1.27.3(patch_hash=ehnwxuhizcxatborac3eqflbk4)
+      '@cliqz/adblocker-electron-preload': 1.27.3(electron@28.2.6)
       electron: 28.2.6
       tldts-experimental: 6.1.2
     dev: false
 
-  /@cliqz/adblocker-extended-selectors@1.26.15:
-    resolution: {integrity: sha512-dM51IMHrRjQPj0JnoYfIBRoG9q9yYKQ7uDW27wfy0QW4pqlGRkEuHjXKK2dC8aOWUgNjDypnzWxfUMf7v0lEXA==}
+  /@cliqz/adblocker-extended-selectors@1.27.3:
+    resolution: {integrity: sha512-aAmb6ExlqUO3m0Td0DWuUxcJhji9tZBisT1G+y+iETcynlv9oG7UR0///gNiceFGJZH2ARjehSIFAi2dPSc55g==}
     dev: false
 
-  /@cliqz/adblocker@1.26.15(patch_hash=ktysqjs5t5cvcwof7w5aaaoj5q):
-    resolution: {integrity: sha512-qmrQd0a6DC+HXWvamezwtdg91mvdyvrmufcg0l/I2EGJV1nLC81S81/Fln3TnJiJTuC7rqko6pq2E+GfoDdRPg==}
+  /@cliqz/adblocker@1.27.3(patch_hash=ehnwxuhizcxatborac3eqflbk4):
+    resolution: {integrity: sha512-qPbQW1ZJBj2f7VhVOg8SCZws4G6WGJ9gmxF+tMpGXHeYN9PwFIvgdiYYmO6m+VH51ccgPu21rBvva9tfWi4I/w==}
     dependencies:
-      '@cliqz/adblocker-content': 1.26.15
-      '@cliqz/adblocker-extended-selectors': 1.26.15
+      '@cliqz/adblocker-content': 1.27.3
+      '@cliqz/adblocker-extended-selectors': 1.27.3
       '@remusao/guess-url-type': 1.2.1
       '@remusao/small': 1.2.1
       '@remusao/smaz': 1.9.1
-      '@types/chrome': 0.0.256
+      '@types/chrome': 0.0.267
       '@types/firefox-webext-browser': 120.0.0
       tldts-experimental: 6.1.2
     dev: false
@@ -2946,8 +2955,8 @@ packages:
       '@types/node': 20.11.17
       '@types/responselike': 1.0.3
 
-  /@types/chrome@0.0.256:
-    resolution: {integrity: sha512-NleTQw4DNzhPwObLNuQ3i3nvX1rZ1mgnx5FNHc2KP+Cj1fgd3BrT5yQ6Xvs+7H0kNsYxCY+lxhiCwsqq3JwtEg==}
+  /@types/chrome@0.0.267:
+    resolution: {integrity: sha512-vnCWPpYjazSPRMNmybRH+0q4f738F+Pbbls4ZPFsPr9/4TTNJyK1OLZDpSnghnEWb4stfmIUtq/GegnlfD4sPA==}
     dependencies:
       '@types/filesystem': 0.0.35
       '@types/har-format': 1.2.15
@@ -3050,6 +3059,10 @@ packages:
 
   /@types/mdurl@1.0.5:
     resolution: {integrity: sha512-6L6VymKTzYSrEf4Nev4Xa1LCHKrlTlYCBMTlQKFuddo1CvQcE52I0mwfOJayueUC7MJuXOeHTcIU683lzd0cUA==}
+    dev: true
+
+  /@types/mime-types@2.1.4:
+    resolution: {integrity: sha512-lfU4b34HOri+kAY5UheuFMWPDOI+OPceBSHZKp69gEyTL/mmJ4cnU6Y/rlme3UL3GyOn6Y42hyIEw0/q8sWx5w==}
     dev: true
 
   /@types/minimist@1.2.5:
@@ -4988,7 +5001,6 @@ packages:
   /data-uri-to-buffer@4.0.1:
     resolution: {integrity: sha512-0R9ikRb668HB7QDxT1vkpuUBtqc53YyAwMwGeUFKRojY/NWKvdZ+9UYtRfGmhqNbRkTSVpMbmyhXipFFv2cb/A==}
     engines: {node: '>= 12'}
-    dev: true
 
   /dayjs@1.11.10:
     resolution: {integrity: sha512-vjAczensTgRcqDERK0SR2XMwsF/tSvnvlv6VcF2GIhg6Sx4yOIt/irsr1RDJsKiIyBzJDpCoXiWWq28MqH2cnQ==}
@@ -5996,7 +6008,6 @@ packages:
     dependencies:
       node-domexception: 1.0.0
       web-streams-polyfill: 3.3.2
-    dev: true
 
   /figures@3.2.0:
     resolution: {integrity: sha512-yaduQFRKLXYOGgEn6AZau90j3ggSOyiqXU0F9JZfeXYhNa+Jk4X+s45A2zg5jns87GAFa34BBm2kXw4XpNcbdg==}
@@ -6147,7 +6158,6 @@ packages:
     engines: {node: '>=12.20.0'}
     dependencies:
       fetch-blob: 3.2.0
-    dev: true
 
   /from@0.1.7:
     resolution: {integrity: sha512-twe20eF1OxVxp/ML/kq2p1uc6KvFK/+vs8WjEbeKmV2He22MKm7YF2ANIt+EOqhJ5L3K/SuuPhk0hWQDjOM23g==}
@@ -7844,7 +7854,6 @@ packages:
   /node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
     engines: {node: '>=10.5.0'}
-    dev: true
 
   /node-fetch@2.7.0:
     resolution: {integrity: sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==}
@@ -7866,6 +7875,15 @@ packages:
       fetch-blob: 3.2.0
       formdata-polyfill: 4.0.10
     dev: true
+
+  /node-fetch@3.3.2:
+    resolution: {integrity: sha512-dRB78srN/l6gqWulah9SrxeYnxeddIG30+GOqK/9OlLVyLg3HPnr6SqOWTWOXKRwC2eGYCkZ59NNuSgvSrpgOA==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    dependencies:
+      data-uri-to-buffer: 4.0.1
+      fetch-blob: 3.2.0
+      formdata-polyfill: 4.0.10
+    dev: false
 
   /node-gyp@9.4.1:
     resolution: {integrity: sha512-OQkWKbjQKbGkMf/xqI1jjy3oCTgMKJac58G2+bjZb3fza6gW2YrCSdMQYaoTb70crvE//Gngr4f0AgVHmqHvBQ==}
@@ -10777,7 +10795,6 @@ packages:
   /web-streams-polyfill@3.3.2:
     resolution: {integrity: sha512-3pRGuxRF5gpuZc0W+EpwQRmCD7gRqcDOMt688KmdlDAgAyaB1XlN0zq2njfDNm44XVdIouE7pZ6GzbdyH47uIQ==}
     engines: {node: '>= 8'}
-    dev: true
 
   /webidl-conversions@3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}

@@ -6,8 +6,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@cliqz/adblocker-electron": "^1.26.15",
-    "@cliqz/adblocker-electron-preload": "^1.26.15",
+    "@cliqz/adblocker-electron": "^1.27.3",
+    "@cliqz/adblocker-electron-preload": "^1.27.3",
     "node-pty": "^1.0.0"
   },
   "devDependencies": {

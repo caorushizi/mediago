@@ -1,4 +1,6 @@
 import os from "os";
+import fetch from "node-fetch";
+import https from "https";
 
 export function getLocalIP() {
   const interfaces = os.networkInterfaces();
@@ -23,8 +25,17 @@ export function getLocalIP() {
   return localIP;
 }
 
+function fetchWrapper(url: string) {
+  const options = {
+    agent: new https.Agent({
+      rejectUnauthorized: false,
+    }),
+  };
+  return fetch(url, options);
+}
+
 export { sleep, formatHeaders } from "./utils";
 export * from "./variables";
 export { on, handle } from "./decorator";
 export { convertToAudio } from "./ffmpeg";
-export { default as http } from "./http";
+export { fetchWrapper as fetch };
