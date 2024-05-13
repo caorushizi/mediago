@@ -10,6 +10,7 @@ import { type Controller } from "../interfaces";
 import { TYPES } from "../types";
 import WebviewService from "../services/WebviewService";
 import ElectronStore from "../vendor/ElectronStore";
+import { SniffingHelper } from "../services/SniffingHelperService";
 
 @injectable()
 export default class WebviewController implements Controller {
@@ -18,6 +19,8 @@ export default class WebviewController implements Controller {
     private readonly webview: WebviewService,
     @inject(TYPES.ElectronStore)
     private readonly store: ElectronStore,
+    @inject(TYPES.SniffingHelper)
+    private readonly sniffingHelper: SniffingHelper,
   ) {}
 
   @handle("set-webview-bounds")
@@ -76,5 +79,10 @@ export default class WebviewController implements Controller {
   async webviewChangeUserAgent(e: IpcMainEvent, isMobile: boolean) {
     this.webview.setUserAgent(isMobile);
     this.store.set("isMobile", isMobile);
+  }
+
+  @handle("plugin-ready")
+  async pluginReady() {
+    this.sniffingHelper.pluginReady();
   }
 }

@@ -10,26 +10,22 @@
     "build:plugin": "pnpm -F plugin run build",
     "build:main": "pnpm -F main run build",
     "build:renderer": "pnpm -F renderer run build",
-    "pack": "pnpm -F mediago run pack",
+    "prerelease": "pnpm run build && pnpm -F mediago run pack",
     "release": "pnpm run build && pnpm -F main run release",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
     "types": "pnpm -F main run types",
+    "types:watch": "pnpm -F main run types:watch",
     "prepare": "husky",
     "commit": "git-cz",
     "commitlint": "commitlint --edit",
     "spellcheck": "cspell \"packages/**/src/**/*.{ts,tsx}\"",
-    "lint-staged": "pnpm --parallel -F \"./packages/*\" run lint-staged"
+    "lint-staged": "pnpm --recursive -F \"./packages/*\" run lint-staged"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "pnpm": {
-    "patchedDependencies": {
-      "@cliqz/adblocker@1.26.15": "patches/@cliqz__adblocker@1.26.15.patch"
-    }
-  },
   "config": {
     "commitizen": {
       "path": "node_modules/cz-git"
@@ -55,5 +51,10 @@
     "vitepress": "1.0.1",
     "vue": "^3.4.15",
     "zx": "^7.2.3"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@cliqz/adblocker@1.27.3": "patches/@cliqz__adblocker@1.27.3.patch"
+    }
   }
 }

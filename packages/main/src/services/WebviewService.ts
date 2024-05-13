@@ -2,9 +2,8 @@ import { BrowserView, session } from "electron";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import isDev from "electron-is-dev";
-import { PERSIST_WEBVIEW, mobileUA, pcUA, pluginPath } from "../helper";
+import { PERSIST_WEBVIEW, fetch, mobileUA, pcUA, pluginPath } from "../helper";
 import { ElectronBlocker } from "@cliqz/adblocker-electron";
-import fetch from "cross-fetch";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";
 import MainWindow from "../windows/MainWindow";
@@ -52,20 +51,23 @@ export default class WebviewService {
     this.setUserAgent(isMobile);
 
     this.webContents.on("dom-ready", async () => {
-      if (isDev && process.env.DEBUG_PLUGINS === "true") {
-        this.webContents.executeJavaScript(
-          `const script = document.createElement('script');
-  script.src = 'http://localhost:8080/src/main.ts';
-  script.type = 'module';
-  document.body.appendChild(script);`,
-        );
-      } else {
-        const content = readFileSync(pluginPath, "utf-8");
-        this.webContents.executeJavaScript(content);
+      try {
+        if (isDev && process.env.DEBUG_PLUGINS === "true") {
+          const content =
+            'const script=document.createElement("script");script.src="http://localhost:8080/src/main.ts";script.type="module";document.body.appendChild(script);';
+          await this.webContents.executeJavaScript(content);
+        } else {
+          const content = readFileSync(pluginPath, "utf-8");
+          await this.webContents.executeJavaScript(content);
+        }
+      } catch (err) {
+        // empty
       }
-      const title = this.webContents.getTitle();
-      const url = this.webContents.getURL();
-      const baseInfo = { title, url };
+
+      const baseInfo = {
+        title: this.webContents.getTitle(),
+        url: this.webContents.getURL(),
+      };
       this.sniffingHelper.reset(baseInfo);
       this.curWindow?.webContents.send("webview-dom-ready", baseInfo);
     });
@@ -84,7 +86,6 @@ export default class WebviewService {
       return { action: "deny" };
     });
 
-    this.sniffingHelper.setDebugger(this.debugger);
     this.sniffingHelper.start();
     this.sniffingHelper.on("source", async (item) => {
       // 这里需要判断是否使用浏览器插件
