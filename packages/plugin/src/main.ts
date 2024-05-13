@@ -1,5 +1,5 @@
 import "./components";
-import { BILIBILI_DOWNLOAD_BUTTON } from "./helper";
+import { BILIBILI_DOWNLOAD_BUTTON, pluginReady } from "./helper";
 import $ from "jquery";
 
 // 哔哩哔哩
@@ -27,6 +27,7 @@ function sniffing() {
 }
 
 sniffing();
+pluginReady();
 
 bilibili();
 setInterval(() => {

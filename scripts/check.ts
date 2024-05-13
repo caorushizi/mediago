@@ -12,9 +12,7 @@ await $`pnpm spellcheck`.catch((out: ProcessOutput) => {
 });
 
 // check type and stage
-await Promise.all([$`pnpm types`, $`pnpm lint-staged`]).catch(
-  (out: ProcessOutput) => {
-    printObject(out);
-    throw new Error(out.stdout);
-  },
-);
+await Promise.all([$`pnpm types`]).catch((out: ProcessOutput) => {
+  printObject(out);
+  throw new Error(out.stdout);
+});

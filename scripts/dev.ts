@@ -1,5 +1,5 @@
 #!/usr/bin/env zx
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from "url";
 import { echo, path, fs, $ } from "zx";
 
 echo("开始构建 development ...");
@@ -15,5 +15,3 @@ const app = path.resolve(main, "app");
 if (!fs.existsSync(path.resolve(app, "plugin"))) {
   await $`npm run build:plugin`;
 }
-
-await $`npm run types`;

@@ -16,11 +16,12 @@
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
     "types": "pnpm -F main run types",
+    "types:watch": "pnpm -F main run types:watch",
     "prepare": "husky",
     "commit": "git-cz",
     "commitlint": "commitlint --edit",
     "spellcheck": "cspell \"packages/**/src/**/*.{ts,tsx}\"",
-    "lint-staged": "pnpm --parallel -F \"./packages/*\" run lint-staged"
+    "lint-staged": "pnpm --recursive -F \"./packages/*\" run lint-staged"
   },
   "keywords": [],
   "author": "",

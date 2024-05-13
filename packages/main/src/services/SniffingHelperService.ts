@@ -2,17 +2,21 @@ import { inject, injectable } from "inversify";
 import { DownloadType } from "../interfaces";
 import { TYPES } from "../types";
 import ElectronLogger from "../vendor/ElectronLogger";
-import { load } from "cheerio";
 import EventEmitter from "events";
+import { session } from "electron";
+import { PERSIST_WEBVIEW } from "../helper";
+import {
+  CallbackResponse,
+  OnBeforeRequestListenerDetails,
+} from "electron/main";
 
 interface SourceParams {
+  id: number;
   url: string;
-  requestId: string;
-  headers: Record<string, any>;
   filter: SourceFilter;
   documentURL: string;
-  body: string;
-  title: string;
+  name: string;
+  type: DownloadType;
 }
 
 interface SourceFilter {
@@ -21,7 +25,7 @@ interface SourceFilter {
   schema?: Record<string, string>;
 }
 
-interface BaseInfo {
+interface PageInfo {
   title: string;
   url: string;
 }
@@ -43,11 +47,9 @@ const filterList: SourceFilter[] = [
 
 @injectable()
 export class SniffingHelper extends EventEmitter {
-  private debugger: Electron.Debugger;
-  private pageSources = new Set();
-  private requestMap: Record<string, Omit<SourceParams, "body">> = {};
-  private responseMap: Record<string, string[]> = {};
-  private baseInfo: BaseInfo = { title: "", url: "" };
+  private pageInfo: PageInfo = { title: "", url: "" };
+  private ready = false;
+  private queue: SourceParams[] = [];
 
   constructor(
     @inject(TYPES.ElectronLogger)
@@ -56,144 +58,61 @@ export class SniffingHelper extends EventEmitter {
     super();
   }
 
-  setDebugger(d: Electron.Debugger) {
-    this.debugger = d;
+  pluginReady() {
+    this.ready = true;
+    this.queue.forEach((item) => {
+      this.emit("source", item);
+    });
   }
 
-  reset(baseInfo: BaseInfo) {
-    this.pageSources.clear();
-    this.responseMap = {};
-    this.requestMap = {};
-    this.baseInfo = baseInfo;
-  }
-
-  async getResponseBody(requestId: string): Promise<string> {
-    const { body, base64Encoded } = await this.debugger.sendCommand(
-      "Network.getResponseBody",
-      {
-        requestId,
-      },
-    );
-
-    if (base64Encoded) {
-      // base64 解码
-      const bodyContent = Buffer.from(body, "base64").toString();
-      return bodyContent;
-    }
-
-    return body;
+  reset(pageInfo: PageInfo) {
+    this.pageInfo = pageInfo;
+    this.ready = false;
+    this.queue = [];
   }
 
   start() {
-    try {
-      this.debugger.attach("1.1");
-      this.debugger.on("detach", (event, reason) => {
-        this.logger.error("Debugger detached due to : ", reason);
-      });
-
-      this.debugger.on("message", async (event, method, params) => {
-        if (method === "Network.requestWillBeSent") {
-          this.requestWillBeSent(params);
-        }
-        if (method === "Network.loadingFinished") {
-          this.loadingFinished(params);
-        }
-      });
-
-      this.debugger.sendCommand("Network.enable");
-    } catch (err) {
-      this.logger.error("Debugger attach failed : ", err);
-    }
+    const viewSession = session.fromPartition(PERSIST_WEBVIEW);
+    viewSession.webRequest.onBeforeRequest(this.requestWillBeSent.bind(this));
   }
 
-  private requestWillBeSent(params: any) {
-    const { requestId, documentURL } = params;
-    const { url, headers } = params.request;
-    const { title } = this.baseInfo;
+  private requestWillBeSent(
+    details: OnBeforeRequestListenerDetails,
+    callback: (response: CallbackResponse) => void,
+  ): void {
+    const { id, webContents, url } = details;
+    const { title } = this.pageInfo;
+
+    const documentURL = webContents?.getURL() || "";
 
     for (const filter of filterList) {
       for (const match of filter.matches) {
-        if (!match.test(url)) {
+        const u = new URL(url);
+        if (!match.test(u.pathname)) {
           continue;
         }
 
-        if (this.pageSources.has(url)) {
-          continue;
-        }
-
-        this.pageSources.add(url);
-        this.responseMap[documentURL] = [];
-        this.requestMap[requestId] = {
+        const item: SourceParams = {
+          id,
           url,
-          headers,
-          requestId,
           filter,
           documentURL,
-          title,
+          name: title,
+          type: filter.type,
         };
-        break;
-      }
-    }
-  }
 
-  private async loadingFinished(params: any) {
-    const { requestId } = params;
-    const sourceParams = this.requestMap[requestId];
+        this.logger.info(`在窗口中捕获视频链接: ${url}`);
+        // 等待 DOM 中浮窗加载完成
+        if (this.ready) {
+          this.emit("source", item);
+        } else {
+          this.queue.push(item);
+        }
 
-    if (sourceParams) {
-      const { filter, url, documentURL } = sourceParams;
-      const objUrl = new URL(url);
-
-      if (this.responseMap[documentURL].length > 0) {
-        const bodys = this.responseMap[documentURL];
-        const exist = bodys.some((item) =>
-          new RegExp(objUrl.pathname).test(item),
-        );
-        if (exist) return;
-      }
-
-      const body = await this.getResponseBody(requestId);
-      this.responseMap[documentURL].push(body);
-      this.logger.info(`在窗口中捕获视频链接: ${url}`);
-      const item = this.handle(
-        {
-          ...sourceParams,
-          body,
-        },
-        filter.schema,
-      );
-      // FIXME: 为了测试，延迟 1s
-      setTimeout(() => {
-        this.emit("source", item);
-      }, 1000);
-    }
-  }
-
-  handle(params: SourceParams, schema: Record<string, string> = {}) {
-    const { filter, url, title, headers } = params;
-
-    const data = {
-      url,
-      type: filter.type,
-      name: title || "没有获取到名称",
-      headers: headers && JSON.stringify(headers),
-    };
-
-    for (const [key, value] of Object.entries(schema)) {
-      if (key === "name") {
-        data.name = this.handleName(params, value);
+        return;
       }
     }
 
-    return data;
-  }
-
-  handleName(params: SourceParams, value: string) {
-    const { body } = params;
-
-    const $ = load(body);
-    const title = $(value).text();
-
-    return title;
+    callback({});
   }
 }
