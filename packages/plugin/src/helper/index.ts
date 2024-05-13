@@ -37,4 +37,9 @@ export function showDownloadDialog(item: Item) {
   window.electron.showDownloadDialog(item);
 }
 
+// 通知主进程插件已经就绪
+export function pluginReady() {
+  window.electron.pluginReady();
+}
+
 export const BILIBILI_DOWNLOAD_BUTTON = ".bili-video-card__image--link";
