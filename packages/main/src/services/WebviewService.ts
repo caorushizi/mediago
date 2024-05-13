@@ -51,6 +51,13 @@ export default class WebviewService {
     this.setUserAgent(isMobile);
 
     this.webContents.on("dom-ready", async () => {
+      const baseInfo = {
+        title: this.webContents.getTitle(),
+        url: this.webContents.getURL(),
+      };
+      this.sniffingHelper.reset(baseInfo);
+      this.curWindow?.webContents.send("webview-dom-ready", baseInfo);
+
       try {
         if (isDev && process.env.DEBUG_PLUGINS === "true") {
           const content =
@@ -63,13 +70,6 @@ export default class WebviewService {
       } catch (err) {
         // empty
       }
-
-      const baseInfo = {
-        title: this.webContents.getTitle(),
-        url: this.webContents.getURL(),
-      };
-      this.sniffingHelper.reset(baseInfo);
-      this.curWindow?.webContents.send("webview-dom-ready", baseInfo);
     });
 
     // 兼容网站在当前页面中打开
