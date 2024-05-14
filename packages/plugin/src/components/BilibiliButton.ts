@@ -46,3 +46,26 @@ export class BilibiliButton extends LitElement {
     return html`<div class="mg-button" @click=${this.onClick}>下载</div>`;
   }
 }
+
+function bilibili() {
+  const videoCards = document.querySelectorAll(".bili-video-card");
+  videoCards.forEach((card, index) => {
+    const imageDOM = card.querySelector(BILIBILI_DOWNLOAD_BUTTON);
+    if (!imageDOM) return;
+
+    const oldBtn = imageDOM.querySelectorAll("one-button");
+    if (oldBtn.length) return;
+
+    const isAd = $(card).find(".bili-video-card__info--ad");
+    if (isAd.length) return;
+
+    const downloadButton = document.createElement("bilibili-button");
+    downloadButton.index = index;
+    card.appendChild(downloadButton);
+  });
+}
+
+bilibili();
+setInterval(() => {
+  bilibili();
+}, 3000);

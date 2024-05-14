@@ -1,7 +1,19 @@
+/**
+ * 适用于 m3u8 视频下载的浮动按钮
+ */
 import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import logo from "../assets/logo.png";
-import { addIpcListener, showDownloadDialog } from "../helper";
+import { addIpcListener, pluginReady, showDownloadDialog } from "../helper";
+import { DownloadType } from "../../../main/types/interfaces";
+
+interface SourceData {
+  id: number;
+  url: string;
+  documentURL: string;
+  name: string;
+  type: DownloadType;
+}
 
 @customElement("float-button")
 export class FloatButton extends LitElement {
@@ -43,7 +55,7 @@ export class FloatButton extends LitElement {
     }
   `;
 
-  data: any = {};
+  data: SourceData | null = null;
 
   @property({ type: Number })
   count = 0;
@@ -51,6 +63,9 @@ export class FloatButton extends LitElement {
   onClick(e: Event) {
     e.preventDefault();
     e.stopPropagation();
+    console.log("this.data:", this.data);
+
+    if (!this.data) return;
 
     showDownloadDialog({
       name: this.data.name,
@@ -79,3 +94,13 @@ export class FloatButton extends LitElement {
     </div>`;
   }
 }
+
+function init() {
+  const floatButton = document.createElement("float-button");
+  document.body.appendChild(floatButton);
+
+  // 向主进程发送插件准备好的消息
+  pluginReady();
+}
+
+init();
