@@ -10,7 +10,7 @@ import {
   OnBeforeRequestListenerDetails,
 } from "electron/main";
 
-interface SourceParams {
+export interface SourceParams {
   id: number;
   url: string;
   filter: SourceFilter;
@@ -19,7 +19,7 @@ interface SourceParams {
   type: DownloadType;
 }
 
-interface SourceFilter {
+export interface SourceFilter {
   matches: RegExp[];
   type: DownloadType;
   schema?: Record<string, string>;

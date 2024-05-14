@@ -61,7 +61,7 @@ export default class WebviewService {
       try {
         if (isDev && process.env.DEBUG_PLUGINS === "true") {
           const content =
-            'const script=document.createElement("script");script.src="http://localhost:8080/src/main.ts";script.type="module";document.body.appendChild(script);';
+            'function addScript(src){const script=document.createElement("script");script.src=src;script.type="module";document.body.appendChild(script)}addScript("http://localhost:8080/src/main.ts");';
           await this.webContents.executeJavaScript(content);
         } else {
           const content = readFileSync(pluginPath, "utf-8");
