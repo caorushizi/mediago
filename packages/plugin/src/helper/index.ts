@@ -33,7 +33,7 @@ export function downloadItem(item: Item) {
   window.electron.downloadItem(item);
 }
 
-export function showDownloadDialog(item: Item) {
+export function showDownloadDialog(item: Item[]) {
   window.electron.showDownloadDialog(item);
 }
 

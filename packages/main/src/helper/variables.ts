@@ -38,8 +38,6 @@ export const biliDownloaderBin = resolveBin("BBDown");
 export const m3u8DownloaderBin = resolveBin(downloaderBinName);
 export const videoServerBin = resolveBin("server");
 
-// mobile path
-export const mobilePath = resolveStatic("mobile");
 // plugin path
 export const pluginPath = resolveStatic("plugin/index.js");
 
