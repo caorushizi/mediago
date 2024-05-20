@@ -32,10 +32,6 @@ const options: builder.Configuration = {
   ],
   extraResources: [
     {
-      from: "./app/mobile",
-      to: "mobile",
-    },
-    {
       from: "./app/plugin",
       to: "plugin",
     },

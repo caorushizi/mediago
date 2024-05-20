@@ -18,6 +18,11 @@ export default class VideoRepository {
   ) {}
 
   async addVideo(video: Omit<DownloadItem, "id">) {
+    // 先判断有没有同名的视频
+    const exist = await this.findVideoByName(video.name);
+    if (exist) {
+      throw new Error("视频名称已存在，请更换视频名称");
+    }
     const item = new Video();
     item.name = video.name;
     item.url = video.url;
