@@ -143,7 +143,7 @@ const electronApi = {
   getDownloadLog(id: number): Promise<string> {
     return ipcRenderer.invoke("get-download-log", id);
   },
-  showDownloadDialog(data: Omit<DownloadItem, "id">) {
+  showDownloadDialog(data: Omit<DownloadItem, "id">[]) {
     return ipcRenderer.invoke("show-download-dialog", data);
   },
   pluginReady() {

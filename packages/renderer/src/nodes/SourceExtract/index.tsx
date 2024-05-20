@@ -23,6 +23,7 @@ import {
   message,
   Space,
   Spin,
+  Tabs,
 } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -100,6 +101,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   const [form] = Form.useForm<DownloadForm>();
   const [modalShow, setModalShow] = useState(false);
   const [modalReadyShow, setModalReadyShow] = useState(false);
+  const [downloadItems, setDownloadItems] = useState<DownloadForm[]>([]);
   const sessionId = useRef("");
 
   const curIsFavorite = favoriteList.find((item) => item.url === store.url);
@@ -248,16 +250,15 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     dispatch(setBrowserStore(state));
   }, []);
 
-  const onShowDownloadDialog = async (e: any, data: DownloadForm) => {
+  // 设置当前的下载表单
+  const setCurrentDownloadForm = async (data: DownloadForm) => {
     const { type, url, name } = data;
-    const noe = await localforage.getItem<NumberOfEpisodes>("numberOfEpisodes");
 
-    let teleplay = false;
-    let numberOfEpisodes = 1;
-    if (data.type !== "bilibili") {
-      teleplay = noe?.teleplay || false;
-      numberOfEpisodes = noe?.numberOfEpisodes || 1;
-    }
+    const noe = await localforage.getItem<NumberOfEpisodes>("numberOfEpisodes");
+    const formData = form.getFieldsValue();
+    const teleplay = formData.teleplay || noe?.teleplay || false;
+    const numberOfEpisodes =
+      formData.numberOfEpisodes || noe?.numberOfEpisodes || 1;
 
     form.setFieldsValue({
       type,
@@ -267,6 +268,11 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
       numberOfEpisodes,
     });
     setModalShow(true);
+  };
+
+  const onShowDownloadDialog = async (e: any, data: DownloadForm[]) => {
+    setDownloadItems(data);
+    setCurrentDownloadForm(data[0]);
   };
 
   useEffect(() => {
@@ -567,8 +573,11 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
 
       // 提交成功后关闭弹窗
       setModalShow(false);
+
+      return true;
     } catch (e) {
       message.error((e as any).message);
+      return false;
     }
   };
 
@@ -584,21 +593,11 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
           destroyOnClose: true,
           afterOpenChange: setModalReadyShow,
           okText: t("downloadNow"),
-          styles: {
-            body: {
-              paddingTop: 5,
-            },
-          },
         }}
         submitter={{
           render: (props, [, okButton]) => {
             return [
-              <Button
-                key="addToList"
-                onClick={async () => {
-                  await confirmDownload();
-                }}
-              >
+              <Button key="addToList" onClick={() => confirmDownload()}>
                 {t("addToDownloadList")}
               </Button>,
               okButton,
@@ -606,16 +605,25 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
           },
         }}
         submitTimeout={2000}
-        onFinish={async () => {
-          await confirmDownload(true);
-          return true;
-        }}
+        onFinish={() => confirmDownload(true)}
         labelCol={{ style: { width: "120px" } }}
         layout="horizontal"
         width={550}
         labelAlign={"left"}
         colon={false}
       >
+        <Tabs
+          onChange={(key) => {
+            const item = downloadItems.find((item) => item.url === key);
+            if (item) {
+              setCurrentDownloadForm(item);
+            }
+          }}
+          items={downloadItems.map((item) => ({
+            key: item.url,
+            label: item.name,
+          }))}
+        />
         <ProFormSelect
           width="xl"
           name="type"
@@ -670,6 +678,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
         <ProFormText
           width="xl"
           name="url"
+          allowClear={false}
           label={t("videoLink")}
           placeholder={t("pleaseEnterVideoLink")}
           rules={[

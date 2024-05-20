@@ -39,7 +39,7 @@ export class BilibiliButton extends LitElement {
     const videoImage = $(BILIBILI_DOWNLOAD_BUTTON).eq(this.index);
     const url = videoImage.attr("href") || "";
     const name = videoImage.parent().find(".bili-video-card__info--tit").text();
-    showDownloadDialog({ name, url, type: "bilibili" });
+    showDownloadDialog([{ name, url, type: "bilibili" }]);
   }
 
   render() {
@@ -65,7 +65,8 @@ function bilibili() {
   });
 }
 
-bilibili();
-setInterval(() => {
-  bilibili();
-}, 3000);
+if (location.pathname === "www.bilibili.com") {
+  setInterval(() => {
+    bilibili();
+  }, 3000);
+}
