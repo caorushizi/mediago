@@ -4,8 +4,14 @@
 import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import logo from "../assets/logo.png";
-import { addIpcListener, pluginReady, showDownloadDialog } from "../helper";
+import {
+  addIpcListener,
+  pluginReady,
+  removeIpcListener,
+  showDownloadDialog,
+} from "../helper";
 import { DownloadType } from "../../../main/types/interfaces";
+import { classMap } from "lit/directives/class-map.js";
 
 interface SourceData {
   id: number;
@@ -22,75 +28,182 @@ export class FloatButton extends LitElement {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      z-index: 99999;
+      z-index: 9999999;
       cursor: pointer;
       background: #fff;
       box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      transition: box-shadow 0.3s ease-in-out;
       border-radius: 5px;
       height: 50px;
       width: 50px;
       display: flex;
       align-items: center;
       justify-content: center;
+      visibility: hidden;
+      &.show {
+        visibility: visible;
+      }
       &:hover {
-        background: #f2f2f2;
+        box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.2);
       }
       .logo-img {
         width: 45px;
         height: 45px;
+        flex: 1;
       }
       .badge {
         position: absolute;
-        right: -2px;
-        top: -2px;
+        right: -5px;
+        top: -5px;
         background: red;
         color: #fff;
         border-radius: 50%;
-        height: 6px;
-        width: 6px;
+        height: 16px;
+        width: 16px;
         display: flex;
         align-items: center;
         justify-content: center;
+        font-size: 12px;
       }
     }
   `;
 
-  data: SourceData | null = null;
+  @property({ type: Array })
+  private data: SourceData[] = [];
 
-  @property({ type: Number })
-  count = 0;
+  private dragging = false;
+  private dragOccurred: boolean = false;
+  private top: number = 0;
+  private left: number = 0;
+  private offsetX: number = 0;
+  private offsetY: number = 0;
+  private button: HTMLElement | null = null;
 
-  onClick(e: Event) {
-    e.preventDefault();
-    e.stopPropagation();
-    console.log("this.data:", this.data);
-
+  onClick() {
+    if (this.dragOccurred) return;
     if (!this.data) return;
 
-    showDownloadDialog({
-      name: this.data.name,
-      url: this.data.url,
-      type: this.data.type,
-    });
+    showDownloadDialog(this.data);
   }
 
   firstUpdated() {
     addIpcListener("webview-link-message", this.receiveMessage);
+
+    this.button = this.renderRoot.querySelector(".mg-float-button");
+    if (this.button) {
+      const react = this.button.getBoundingClientRect();
+      this.top = react.top;
+      this.left = react.left;
+    }
+
+    window.addEventListener("resize", this.handleWindowResize);
+    document.addEventListener("mousemove", this.handleMouseMove);
+    document.addEventListener("mouseup", this.handleMouseUp);
   }
 
-  receiveMessage = (_: any, data: any) => {
-    this.count = 1;
-    this.data = data;
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+
+    removeIpcListener("webview-link-message", this.receiveMessage);
+    window.removeEventListener("resize", this.handleWindowResize);
+    document.removeEventListener("mousemove", this.handleMouseMove);
+    document.removeEventListener("mouseup", this.handleMouseUp);
+  }
+
+  handleWindowResize = () => {
+    if (!this.button) return;
+
+    const { left, top } = this.getPosition(this.left, this.top);
+
+    this.left = left;
+    this.top = top;
+
+    this.button.style.left = `${this.left}px`;
+    this.button.style.top = `${this.top}px`;
+  };
+
+  receiveMessage = (_: unknown, data: SourceData) => {
+    this.data = [...this.data, data];
+  };
+
+  handleMouseStart = (event: MouseEvent) => {
+    this.dragging = true;
+    this.dragOccurred = false;
+    this.offsetX = event.clientX - this.left;
+    this.offsetY = event.clientY - this.top;
+  };
+
+  handleMouseUp = () => {
+    this.dragging = false;
+  };
+
+  getPosition = (newLeft: number, newTop: number) => {
+    if (!this.button) return { left: 0, top: 0 };
+
+    // 获取滚动条的宽度
+    const scrollbarWidth =
+      window.innerWidth - document.documentElement.clientWidth;
+
+    // 获取窗口的宽度和高度
+    const windowWidth =
+      window.innerWidth ||
+      document.documentElement.clientWidth ||
+      document.body.clientWidth;
+    const windowHeight =
+      window.innerHeight ||
+      document.documentElement.clientHeight ||
+      document.body.clientHeight;
+
+    // 确保按钮不会被拖出屏幕
+    if (newLeft < 0) {
+      newLeft = 0;
+    } else if (
+      newLeft + this.button.offsetWidth >
+      windowWidth - scrollbarWidth
+    ) {
+      newLeft = windowWidth - this.button.offsetWidth - scrollbarWidth;
+    }
+
+    if (newTop < 0) {
+      newTop = 0;
+    } else if (newTop + this.button.offsetHeight > windowHeight) {
+      newTop = windowHeight - this.button.offsetHeight;
+    }
+
+    return {
+      left: newLeft,
+      top: newTop,
+    };
+  };
+
+  handleMouseMove = (event: MouseEvent) => {
+    if (this.dragging && this.button) {
+      this.dragOccurred = true;
+      const newLeft = event.clientX - this.offsetX;
+      const newTop = event.clientY - this.offsetY;
+
+      const { left, top } = this.getPosition(newLeft, newTop);
+      this.left = left;
+      this.top = top;
+      this.button.style.left = `${this.left}px`;
+      this.button.style.top = `${this.top}px`;
+    }
   };
 
   render() {
-    if (this.count === 0) {
-      return html``;
-    }
+    const classes = {
+      "mg-float-button": true,
+      show: this.data.length > 0,
+    };
 
-    return html`<div class="mg-float-button" @click=${this.onClick}>
-      <img class="logo-img" src=${logo} />
-      <span class="badge"></span>
+    return html`<div
+      @click=${this.onClick}
+      @mousedown=${this.handleMouseStart}
+      draggable="false"
+      class=${classMap(classes)}
+    >
+      <img class="logo-img" src=${logo} draggable="false" />
+      <span class="badge">${this.data.length}</span>
     </div>`;
   }
 }
