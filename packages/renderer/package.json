@@ -14,7 +14,7 @@
     "@ant-design/icons": "^5.2.6",
     "@ant-design/pro-components": "^2.6.48",
     "@reduxjs/toolkit": "^2.0.1",
-    "@xterm/addon-fit": "^0.9.0",
+    "@xterm/addon-fit": "^0.10.0",
     "ahooks": "^3.7.8",
     "antd": "^5.13.2",
     "antd-style": "^3.6.1",
@@ -33,7 +33,7 @@
     "react-redux": "^9.1.0",
     "react-router-dom": "^6.21.3",
     "sort-by": "^1.2.0",
-    "xterm": "^5.3.0"
+    "@xterm/xterm": "^5.5.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.5",
