@@ -13,18 +13,21 @@
     border-bottom: #f0f0f0 solid 1px;
     background: #fff;
   }
+
   @media (prefers-color-scheme: dark) {
     .page-container-header {
       background: #141414;
       border-bottom: #313131 solid 1px;
     }
   }
+
   .page-container-inner {
     overflow: auto;
     flex: 1;
     padding: 15px;
     background: #fff;
   }
+
   @media (prefers-color-scheme: dark) {
     .page-container-inner {
       background: #141414;

@@ -170,7 +170,7 @@ export default class HomeController implements Controller {
       {
         label: "拷贝链接地址",
         click: () => {
-          clipboard.writeText(item?.url || "");
+          clipboard.writeText(item.url || "");
         },
       },
       {
@@ -208,8 +208,8 @@ export default class HomeController implements Controller {
   async convertToAudio(e: IpcMainEvent, id: number) {
     const video = await this.videoRepository.findVideo(id);
     const local = this.store.get("local");
-    const input = path.join(local, `${video?.name}.mp4`);
-    const output = path.join(local, `${video?.name}.mp3`);
+    const input = path.join(local, `${video.name}.mp4`);
+    const output = path.join(local, `${video.name}.mp3`);
 
     const exist = await fs.exists(input);
     if (exist) {
@@ -250,6 +250,6 @@ export default class HomeController implements Controller {
   @handle("get-download-log")
   async getDownloadLog(event: IpcMainEvent, id: number) {
     const video = await this.videoRepository.findVideo(id);
-    return video?.log || "";
+    return video.log || "";
   }
 }

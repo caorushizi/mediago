@@ -270,8 +270,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     setModalShow(true);
   };
 
-  const onShowDownloadDialog = async (e: any, data: DownloadForm[]) => {
-    console.log(data);
+  const onShowDownloadDialog = async (e: unknown, data: DownloadForm[]) => {
     setDownloadItems(data);
     setCurrentDownloadForm(data[0]);
   };
@@ -555,12 +554,10 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
       const data = form.getFieldsValue();
       const { numberOfEpisodes, teleplay, ...item } = data;
 
-      if (teleplay) {
-        await localforage.setItem<NumberOfEpisodes>("numberOfEpisodes", {
-          numberOfEpisodes,
-          teleplay,
-        });
-      }
+      await localforage.setItem<NumberOfEpisodes>("numberOfEpisodes", {
+        numberOfEpisodes,
+        teleplay,
+      });
 
       if (teleplay) {
         item.name = `${item.name}——第${numberOfEpisodes}集`;
