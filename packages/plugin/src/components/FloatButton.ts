@@ -73,8 +73,6 @@ export class FloatButton extends LitElement {
 
   private dragging = false;
   private dragOccurred: boolean = false;
-  private top: number = 0;
-  private left: number = 0;
   private offsetX: number = 0;
   private offsetY: number = 0;
   private button: HTMLElement | null = null;
@@ -88,17 +86,11 @@ export class FloatButton extends LitElement {
 
   firstUpdated() {
     addIpcListener("webview-link-message", this.receiveMessage);
-
-    this.button = this.renderRoot.querySelector(".mg-float-button");
-    if (this.button) {
-      const react = this.button.getBoundingClientRect();
-      this.top = react.top;
-      this.left = react.left;
-    }
-
     window.addEventListener("resize", this.handleWindowResize);
     document.addEventListener("mousemove", this.handleMouseMove);
     document.addEventListener("mouseup", this.handleMouseUp);
+
+    this.button = this.renderRoot.querySelector(".mg-float-button");
   }
 
   disconnectedCallback(): void {
@@ -113,13 +105,12 @@ export class FloatButton extends LitElement {
   handleWindowResize = () => {
     if (!this.button) return;
 
-    const { left, top } = this.getPosition(this.left, this.top);
+    const react = this.button.getBoundingClientRect();
+    if (react.left === 0 && react.top === 0) return;
 
-    this.left = left;
-    this.top = top;
-
-    this.button.style.left = `${this.left}px`;
-    this.button.style.top = `${this.top}px`;
+    const newPos = this.getPosition(react.left, react.top);
+    this.button.style.left = `${newPos.left}px`;
+    this.button.style.top = `${newPos.top}px`;
   };
 
   receiveMessage = (_: unknown, data: SourceData) => {
@@ -127,17 +118,23 @@ export class FloatButton extends LitElement {
   };
 
   handleMouseStart = (event: MouseEvent) => {
+    if (!this.button) return;
+
     this.dragging = true;
     this.dragOccurred = false;
-    this.offsetX = event.clientX - this.left;
-    this.offsetY = event.clientY - this.top;
+    const react = this.button.getBoundingClientRect();
+    this.offsetX = event.clientX - react.left;
+    this.offsetY = event.clientY - react.top;
   };
 
   handleMouseUp = () => {
     this.dragging = false;
   };
 
-  getPosition = (newLeft: number, newTop: number) => {
+  getPosition = (
+    newLeft: number,
+    newTop: number,
+  ): { left: number; top: number } => {
     if (!this.button) return { left: 0, top: 0 };
 
     // 获取滚动条的宽度
@@ -182,11 +179,14 @@ export class FloatButton extends LitElement {
       const newLeft = event.clientX - this.offsetX;
       const newTop = event.clientY - this.offsetY;
 
-      const { left, top } = this.getPosition(newLeft, newTop);
-      this.left = left;
-      this.top = top;
-      this.button.style.left = `${this.left}px`;
-      this.button.style.top = `${this.top}px`;
+      // 使用 requestAnimationFrame 来优化性能
+      requestAnimationFrame(() => {
+        if (!this.button) return;
+
+        const position = this.getPosition(newLeft, newTop);
+        this.button.style.left = `${position.left}px`;
+        this.button.style.top = `${position.top}px`;
+      });
     }
   };
 
