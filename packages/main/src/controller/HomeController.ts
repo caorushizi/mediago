@@ -77,9 +77,7 @@ export default class HomeController implements Controller {
   @handle("on-favorite-item-context-menu")
   async onFavoriteItemContextMenu(e: IpcMainEvent, id: number) {
     const send = (action: string) => {
-      const window = this.mainWindow.window;
-      if (!window) return;
-      window.webContents.send("favorite-item-event", {
+      this.mainWindow.send("favorite-item-event", {
         action,
         payload: id,
       });
@@ -162,10 +160,7 @@ export default class HomeController implements Controller {
   @handle("on-download-list-context-menu")
   async downloadListContextMenu(e: IpcMainEvent, id: number) {
     const send = (action: string) => {
-      const window = this.mainWindow.window;
-      if (!window) return;
-
-      window.webContents.send("download-item-event", {
+      this.mainWindow.send("download-item-event", {
         action,
         payload: id,
       });

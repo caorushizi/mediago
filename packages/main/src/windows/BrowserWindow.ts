@@ -33,9 +33,7 @@ export default class BrowserWindow extends Window {
   }
 
   storeChange = (store: any) => {
-    if (!this.window) return;
-    // 向所有窗口发送通知
-    this.window.webContents.send("store-change", store);
+    this.send("store-change", store);
   };
 
   handleNewWindowsVal = (newValue: any) => {
@@ -76,4 +74,10 @@ export default class BrowserWindow extends Window {
 
     this.window.close();
   };
+
+  send(channel: string, ...args: any[]) {
+    if (!this.window) return;
+
+    this.window.webContents.send(channel, ...args);
+  }
 }
