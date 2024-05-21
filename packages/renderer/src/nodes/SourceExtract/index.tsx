@@ -271,6 +271,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   };
 
   const onShowDownloadDialog = async (e: any, data: DownloadForm[]) => {
+    console.log(data);
     setDownloadItems(data);
     setCurrentDownloadForm(data[0]);
   };

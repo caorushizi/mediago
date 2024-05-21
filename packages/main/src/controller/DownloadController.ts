@@ -13,6 +13,7 @@ import MainWindow from "../windows/MainWindow";
 import ElectronStore from "../vendor/ElectronStore";
 import DownloadService from "../services/DownloadService";
 import VideoRepository from "../repository/VideoRepository";
+import BrowserWindow from "../windows/BrowserWindow";
 
 @injectable()
 export default class DownloadController implements Controller {
@@ -25,18 +26,21 @@ export default class DownloadController implements Controller {
     private readonly downloadService: DownloadService,
     @inject(TYPES.MainWindow)
     private readonly mainWindow: MainWindow,
+    @inject(TYPES.BrowserWindow)
+    private readonly browserWindow: BrowserWindow,
   ) {}
 
   @handle("show-download-dialog")
   async showDownloadDialog(e: IpcMainEvent, data: DownloadItem) {
-    this.mainWindow.window?.webContents.send("show-download-dialog", data);
+    this.browserWindow.send("show-download-dialog", data);
+    this.mainWindow.send("show-download-dialog", data);
   }
 
   @handle("add-download-item")
   async addDownloadItem(e: IpcMainEvent, video: DownloadItem) {
     const item = await this.videoRepository.addVideo(video);
     // 这里向页面发送消息，通知页面更新
-    this.mainWindow.window?.webContents.send("download-item-notifier", item);
+    this.mainWindow.send("download-item-notifier", item);
     return item;
   }
 
@@ -44,7 +48,7 @@ export default class DownloadController implements Controller {
   async addDownloadItems(e: IpcMainEvent, videos: DownloadItem[]) {
     const items = await this.videoRepository.addVideos(videos);
     // 这里向页面发送消息，通知页面更新
-    this.mainWindow.window?.webContents.send("download-item-notifier", items);
+    this.mainWindow.send("download-item-notifier", items);
     return items;
   }
 
