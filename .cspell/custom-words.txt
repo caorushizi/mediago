@@ -36,3 +36,4 @@ acodec
 KHTML
 svgz
 stylelint
+consola
