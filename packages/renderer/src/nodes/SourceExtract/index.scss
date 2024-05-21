@@ -3,16 +3,20 @@
     height: 100vh;
     width: 100vw;
   }
+
   .source-extract-inner {
     padding: 0;
     display: flex;
     flex-direction: column;
+
     .action-bar {
       padding: 10px 5px;
     }
+
     .source-extract-content {
       flex: 1;
       overflow: auto;
+
       .webview-container {
         height: 100%;
         width: 100%;
@@ -20,23 +24,28 @@
         flex-direction: row;
         align-items: center;
         justify-content: center;
+
         .webview-inner {
           height: 100%;
           width: 100%;
         }
+
         .webview-sider {
           height: 100%;
           padding: 0 10px 10px 5px;
           overflow: auto;
+
           .webview-sider-inner {
             .ant-collapse-header {
               align-items: center;
+
               .ant-collapse-header-text {
                 text-overflow: ellipsis;
                 overflow: hidden;
                 white-space: nowrap;
               }
             }
+
             .sider-list-container {
               .sider-list {
                 .sider-item {
@@ -44,6 +53,7 @@
                   color: #666;
                   word-break: break-all;
                   margin-top: 5px;
+
                   &:first-child {
                     margin-top: -5px;
                   }
@@ -52,11 +62,13 @@
             }
           }
         }
+
         .divider {
           position: relative;
           width: 6px;
           background-color: #ddd;
           cursor: ew-resize;
+
           .handle {
             position: absolute;
             top: 50%;
@@ -73,32 +85,37 @@
           }
         }
       }
+
       .list-container {
         padding: 30px;
         flex: 1;
+
         .list-item {
           display: flex;
           flex-direction: column;
           align-items: center;
+
           .list-tem-card {
             position: relative;
             height: 80px;
-            width: 80px;
-            padding: 10px;
+            width: 70px;
             cursor: pointer;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             border-radius: 5px;
+
             &:hover {
               background: #f2f6fc;
             }
+
             @media (prefers-color-scheme: dark) {
               &:hover {
                 background: #595959;
               }
             }
+
             .card-text {
               width: 100%;
               margin-top: 6px;

@@ -77,9 +77,6 @@ export default class DownloadController implements Controller {
   async startDownload(e: IpcMainEvent, vid: number) {
     // 查找将要下载的视频
     const video = await this.videoRepository.findVideo(vid);
-    if (!video) {
-      return Promise.reject("没有找到该视频");
-    }
     const { name, url, headers, type } = video;
     const local = this.store.get("local");
 

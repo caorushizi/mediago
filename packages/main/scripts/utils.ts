@@ -1,37 +1,29 @@
 import { existsSync, cpSync, rmSync } from "fs";
 import dotenv from "dotenv";
 import { resolve } from "path";
+import consola from "consola";
 
-// FIXME: 有没有什么办法可以不用这么写？
-const con = console;
-export const log = con.log;
-
-export const mainResolve = (...r: any[]) => resolve(__dirname, "..", ...r);
-export const rootResolve = (...r: any[]) =>
+export const mainResolve = (...r: string[]) => resolve(__dirname, "..", ...r);
+export const rootResolve = (...r: string[]) =>
   resolve(__dirname, "../../..", ...r);
 const nodeEnv = process.env.NODE_ENV;
-log("当前的环境是： ", nodeEnv);
+consola.log("当前的环境是： ", nodeEnv);
 
 function loadEnv(path: string) {
   const result: Record<string, string> = {};
 
-  const _loadEnv = (path: string) => {
-    if (!existsSync(path)) {
-      return null;
-    }
+  if (!existsSync(path)) {
+    return null;
+  }
 
-    const { error, parsed } = dotenv.config({ path });
-    if (error != null || !parsed) {
-      return null;
-    }
+  const { error, parsed } = dotenv.config({ path, override: true });
+  if (error != null || !parsed) {
+    return null;
+  }
 
-    Object.keys(parsed).forEach((key) => {
-      result[key] = parsed[key];
-    });
-  };
-
-  _loadEnv(path);
-  _loadEnv(`${path}.local`);
+  Object.keys(parsed).forEach((key) => {
+    result[key] = parsed[key];
+  });
 
   return result;
 }
@@ -39,18 +31,13 @@ function loadEnv(path: string) {
 function loadDotEnv() {
   const env = loadEnv(rootResolve(".env"));
   const envMode = loadEnv(rootResolve(`.env.${nodeEnv}`));
+  const envModeLocal = loadEnv(rootResolve(`.env.${nodeEnv}.local`));
 
-  return { ...env, ...envMode };
+  return { ...env, ...envMode, ...envModeLocal };
 }
 
 export function loadDotEnvRuntime() {
-  const env = loadDotEnv();
-
-  Object.keys(env).forEach((key) => {
-    if (!process.env[key]) {
-      process.env[key] = env[key];
-    }
-  });
+  loadDotEnv();
 }
 
 export function loadDotEnvDefined() {
