@@ -96,9 +96,14 @@ export default class VideoRepository {
   }
 
   async findVideo(id: number) {
-    return this.db.appDataSource.getRepository(Video).findOneBy({
-      id,
-    });
+    const repository = this.db.appDataSource.getRepository(Video);
+    const video = await repository.findOneBy({ id });
+
+    if (!video) {
+      throw new Error("没有找到该视频");
+    }
+
+    return video;
   }
 
   async findVideoByName(name: string) {
@@ -117,14 +122,10 @@ export default class VideoRepository {
       .execute();
   }
 
-  async changeVideoIsLive(id: number | number[], isLive: boolean) {
-    const ids = !Array.isArray(id) ? [id] : id;
-    return this.db.appDataSource
-      .createQueryBuilder()
-      .update(Video)
-      .set({ isLive })
-      .where({ id: In(ids) })
-      .execute();
+  async changeVideoIsLive(id: number) {
+    const video = await this.findVideo(id);
+    video.isLive = true;
+    return this.db.manager.save(video);
   }
 
   async findWattingAndDownloadingVideos() {
@@ -147,18 +148,12 @@ export default class VideoRepository {
 
   async appendDownloadLog(id: number, message: string) {
     const video = await this.findVideo(id);
-    if (!video) {
-      throw new Error("视频不存在");
-    }
     video.log = video.log ? `${video.log}\n${message}` : message;
     return await this.db.manager.save(video);
   }
 
   async getDownloadLog(id: number) {
     const video = await this.findVideo(id);
-    if (!video) {
-      throw new Error("视频不存在");
-    }
     return video.log;
   }
 }

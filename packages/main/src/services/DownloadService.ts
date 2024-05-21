@@ -14,10 +14,21 @@ import { biliDownloaderBin, m3u8DownloaderBin } from "../helper";
 import * as pty from "node-pty";
 import stripAnsi from "strip-ansi";
 
+interface DownloadContext {
+  // 是否为直播
+  isLive: boolean;
+  // 下载进度
+  percent: string;
+  // 下载速度
+  speed: string;
+  // 是否已经 ready
+  ready: boolean;
+}
+
 export interface DownloadOptions {
   abortSignal: AbortController;
   encoding?: string;
-  onMessage?: (ctx: any, message: string) => void;
+  onMessage?: (ctx: DownloadContext, message: string) => void;
   id: number;
 }
 
@@ -64,7 +75,7 @@ const processList: Schema[] = [
       percent: "([\\d.]+)%",
       speed: "([\\d.]+\\s[GMK]B/s)",
       error: "ERROR",
-      start: "开始下载文件",
+      start: "开始下载文件|开始录制",
       isLive: "识别为直播流, 开始录制",
     },
   },
@@ -269,7 +280,12 @@ export default class DownloadService extends EventEmitter {
       });
 
       if (onMessage) {
-        const ctx = {};
+        const ctx: DownloadContext = {
+          ready: false,
+          isLive: false,
+          percent: "",
+          speed: "",
+        };
         ptyProcess.onData((data) => {
           try {
             this.emit("download-message", id, data);
@@ -347,7 +363,7 @@ export default class DownloadService extends EventEmitter {
     const speedReg = RegExp(consoleReg.speed, "g");
     const percentReg = RegExp(consoleReg.percent, "g");
 
-    const onMessage = (ctx: any, message: string) => {
+    const onMessage = (ctx: DownloadContext, message: string) => {
       // 解析是否为直播资源
       if (isLiveReg.test(message)) {
         ctx.isLive = true;
@@ -367,10 +383,11 @@ export default class DownloadService extends EventEmitter {
         callback({
           id,
           type: "ready",
-          isLive: !!ctx.isLive,
+          isLive: ctx.isLive,
           speed: "",
           percent: "",
         });
+        ctx.ready = true;
         return;
       }
 
@@ -378,14 +395,15 @@ export default class DownloadService extends EventEmitter {
         throw new Error(message);
       }
 
-      // FIXME: 无法获取是否为直播流
-      callback({
-        id,
-        type: "progress",
-        percent: ctx.percent || "",
-        speed: ctx.speed || "",
-        isLive: !!ctx.isLive,
-      });
+      if (ctx.ready && (ctx.percent || ctx.speed)) {
+        callback({
+          id,
+          type: "progress",
+          percent: ctx.percent || "",
+          speed: ctx.speed || "",
+          isLive: ctx.isLive,
+        });
+      }
     };
 
     this.logger.debug("download params: ", spawnParams);

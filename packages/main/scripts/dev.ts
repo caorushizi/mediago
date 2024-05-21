@@ -2,8 +2,9 @@ import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import electron from "electron";
 import * as esbuild from "esbuild";
 import chokidar from "chokidar";
-import { loadDotEnvRuntime, mainResolve, log, copyResource } from "./utils";
+import { loadDotEnvRuntime, mainResolve, copyResource } from "./utils";
 import { external } from "./config";
+import consola from "consola";
 
 let electronProcess: ChildProcessWithoutNullStreams | null = null;
 
@@ -46,11 +47,11 @@ function startElectron() {
   electronProcess = spawn(String(electron), args);
 
   electronProcess.stdout.on("data", (data) => {
-    log(String(data));
+    consola.log(String(data));
   });
 
   electronProcess.stderr.on("data", (data) => {
-    log(String(data));
+    consola.log(String(data));
   });
 }
 
@@ -82,7 +83,7 @@ async function start() {
   watcher.on("change", async () => {
     await mainContext.rebuild();
     await preloadContext.rebuild();
-    log("watch build succeed.");
+    consola.log("watch build succeed.");
     restartElectron();
   });
 

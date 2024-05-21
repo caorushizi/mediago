@@ -48,9 +48,11 @@ export default class MainWindow extends Window {
     app.on("second-instance", this.secondInstance);
   }
 
-  onDownloadReadyStart = ({ id, isLive }: { id: number; isLive: boolean }) => {
-    this.videoRepository.changeVideoIsLive(id, isLive);
-    this.send("change-video-is-live", { id, isLive });
+  onDownloadReadyStart = async ({ id, isLive }: DownloadProgress) => {
+    if (isLive) {
+      await this.videoRepository.changeVideoIsLive(id);
+      this.send("change-video-is-live", { id });
+    }
   };
 
   init(): void {
@@ -112,7 +114,7 @@ export default class MainWindow extends Window {
 
       new Notification({
         title: "下载成功",
-        body: `${video?.name} 下载成功`,
+        body: `${video.name} 下载成功`,
       }).show();
     }
 
@@ -126,7 +128,7 @@ export default class MainWindow extends Window {
 
       new Notification({
         title: "下载失败",
-        body: `${video?.name} 下载失败`,
+        body: `${video.name} 下载失败`,
       }).show();
     }
     this.logger.error("下载失败：", err);
