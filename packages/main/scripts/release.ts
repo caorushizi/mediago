@@ -1,14 +1,15 @@
-import { loadDotEnvRuntime, log, mainResolve, removeResource } from "./utils";
+import { loadDotEnvRuntime, mainResolve, removeResource } from "./utils";
 import * as builder from "electron-builder";
 import semver from "semver";
 import pkg from "../app/package.json";
+import consola from "consola";
 
 removeResource([mainResolve("release")]);
 
 loadDotEnvRuntime();
 
 if (semver.neq(process.env.APP_VERSION || "", pkg.version)) {
-  log("请先同步构建版本和发布版本");
+  consola.log("请先同步构建版本和发布版本");
   process.exit(0);
 }
 
@@ -107,7 +108,7 @@ async function start() {
       config: options,
     });
   } catch (e) {
-    log(e);
+    consola.log(e);
   }
 }
 
