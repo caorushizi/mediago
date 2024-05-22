@@ -13,7 +13,7 @@ import MainWindow from "../windows/MainWindow";
 import ElectronStore from "../vendor/ElectronStore";
 import DownloadService from "../services/DownloadService";
 import VideoRepository from "../repository/VideoRepository";
-import BrowserWindow from "../windows/BrowserWindow";
+import WebviewService from "../services/WebviewService";
 
 @injectable()
 export default class DownloadController implements Controller {
@@ -26,14 +26,18 @@ export default class DownloadController implements Controller {
     private readonly downloadService: DownloadService,
     @inject(TYPES.MainWindow)
     private readonly mainWindow: MainWindow,
-    @inject(TYPES.BrowserWindow)
-    private readonly browserWindow: BrowserWindow,
+    @inject(TYPES.WebviewService)
+    private readonly webviewService: WebviewService,
   ) {}
 
   @handle("show-download-dialog")
   async showDownloadDialog(e: IpcMainEvent, data: DownloadItem) {
-    this.browserWindow.send("show-download-dialog", data);
-    this.mainWindow.send("show-download-dialog", data);
+    const image = await this.webviewService.captureView();
+    this.webviewService.sendToWindow(
+      "show-download-dialog",
+      data,
+      image.toDataURL(),
+    );
   }
 
   @handle("add-download-item")
