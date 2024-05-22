@@ -11,7 +11,7 @@ import BrowserWindow from "../windows/BrowserWindow";
 import VideoRepository from "../repository/VideoRepository";
 import { SniffingHelper } from "./SniffingHelperService";
 import { resolve } from "path";
-import { readFileSync } from "fs";
+import { readFileSync } from "fs-extra";
 
 @injectable()
 export default class WebviewService {
@@ -74,14 +74,7 @@ export default class WebviewService {
 
     // 兼容网站在当前页面中打开
     this.webContents.setWindowOpenHandler(({ url }) => {
-      if (url === "about:blank") {
-        // 兼容一些网站跳转到 about:blank
-        this.webContents.once("will-redirect", async (event, url) => {
-          this.loadURL(url, true);
-        });
-      } else {
-        this.loadURL(url, true);
-      }
+      this.loadURL(url, true);
 
       return { action: "deny" };
     });
