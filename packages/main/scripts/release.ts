@@ -89,7 +89,7 @@ const options: builder.Configuration = {
     provider: "github",
     repo: "mediago",
     owner: "caorushizi",
-    releaseType: "prerelease",
+    releaseType: "release",
   },
 };
 
