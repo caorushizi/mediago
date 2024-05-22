@@ -1,4 +1,4 @@
-import { BrowserView, session } from "electron";
+import { WebContentsView, session } from "electron";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
 import isDev from "electron-is-dev";
@@ -15,7 +15,7 @@ import { readFileSync } from "fs";
 
 @injectable()
 export default class WebviewService {
-  public view: BrowserView;
+  public view: WebContentsView;
   private blocker?: ElectronBlocker;
 
   constructor(
@@ -37,7 +37,7 @@ export default class WebviewService {
   }
 
   async init(): Promise<void> {
-    this.view = new BrowserView({
+    this.view = new WebContentsView({
       webPreferences: {
         partition: PERSIST_WEBVIEW,
         preload: resolve(__dirname, "./preload.js"),
@@ -56,7 +56,7 @@ export default class WebviewService {
         url: this.webContents.getURL(),
       };
       this.sniffingHelper.reset(baseInfo);
-      this.curWindow?.webContents.send("webview-dom-ready", baseInfo);
+      this.window.webContents.send("webview-dom-ready", baseInfo);
 
       try {
         if (isDev && process.env.DEBUG_PLUGINS === "true") {
@@ -110,21 +110,17 @@ export default class WebviewService {
     return this.view.getBounds();
   }
 
-  setAutoResize(options: Electron.AutoResizeOptions): void {
-    this.view.setAutoResize(options);
-  }
-
   setBackgroundColor(color: string): void {
     this.view.setBackgroundColor(color);
   }
 
   show() {
-    this.curWindow?.setBrowserView(this.view);
+    this.window.contentView.addChildView(this.view);
     isDev && this.webContents.openDevTools();
   }
 
   hide() {
-    this.curWindow?.setBrowserView(null);
+    this.window.contentView.removeChildView(this.view);
     isDev && this.webContents.closeDevTools();
   }
 
@@ -166,10 +162,10 @@ export default class WebviewService {
     this.webContents.clearHistory();
   }
 
-  get curWindow() {
+  get window() {
     if (this.browserWindow.window) return this.browserWindow.window;
     if (this.mainWindow.window) return this.mainWindow.window;
-    return null;
+    throw new Error("未找到当前窗口");
   }
 
   private get session() {
@@ -255,5 +251,13 @@ export default class WebviewService {
 
   get webContents() {
     return this.view.webContents;
+  }
+
+  captureView(): Promise<Electron.NativeImage> {
+    return this.view.webContents.capturePage();
+  }
+
+  sendToWindow(channel: string, ...args: unknown[]) {
+    this.window.webContents.send(channel, ...args);
   }
 }
