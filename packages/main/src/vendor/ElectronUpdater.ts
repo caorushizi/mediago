@@ -17,6 +17,7 @@ export default class UpdateService implements Vendor {
     try {
       autoUpdater.disableWebInstaller = true;
       autoUpdater.logger = this.logger.logger;
+      autoUpdater.allowPrerelease = false;
       await autoUpdater.checkForUpdatesAndNotify({
         title: "自动更新完成",
         body: "下次重启时将会自动安装",

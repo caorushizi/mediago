@@ -11,17 +11,15 @@ import {
 } from "electron/main";
 
 export interface SourceParams {
-  id: number;
   url: string;
-  filter: SourceFilter;
   documentURL: string;
   name: string;
   type: DownloadType;
 }
 
 export interface SourceFilter {
-  host?: string;
-  matches: RegExp[];
+  hosts?: RegExp[];
+  matches?: RegExp[];
   type: DownloadType;
   schema?: Record<string, string>;
 }
@@ -37,9 +35,8 @@ const filterList: SourceFilter[] = [
     type: DownloadType.m3u8,
   },
   {
-    host: "bilibili.com",
     // TODO: 合集、列表、收藏夹
-    matches: [/\/video/],
+    hosts: [/^https?:\/\/(www\.)?bilibili.com\/video/],
     type: DownloadType.bilibili,
     schema: {
       name: "title",
@@ -71,6 +68,24 @@ export class SniffingHelper extends EventEmitter {
     this.pageInfo = pageInfo;
     this.ready = false;
     this.queue = [];
+
+    listLoop: for (const filter of filterList) {
+      if (filter.hosts) {
+        for (const host of filter.hosts) {
+          if (!host.test(pageInfo.url)) {
+            continue;
+          }
+
+          this.send({
+            url: pageInfo.url,
+            documentURL: pageInfo.url,
+            name: pageInfo.title,
+            type: filter.type,
+          });
+          break listLoop;
+        }
+      }
+    }
   }
 
   start() {
@@ -78,43 +93,39 @@ export class SniffingHelper extends EventEmitter {
     viewSession.webRequest.onBeforeRequest(this.requestWillBeSent.bind(this));
   }
 
+  send = (item: SourceParams) => {
+    this.logger.info(`在窗口中捕获视频链接: ${item.url}`);
+    // 等待 DOM 中浮窗加载完成
+    if (this.ready) {
+      this.emit("source", item);
+    } else {
+      this.queue.push(item);
+    }
+  };
+
   private requestWillBeSent(
     details: OnBeforeRequestListenerDetails,
     callback: (response: CallbackResponse) => void,
   ): void {
-    const { id, webContents, url } = details;
-    const { title } = this.pageInfo;
+    const { url } = details;
+    const { title, url: documentURL } = this.pageInfo;
 
-    const documentURL = webContents?.getURL() || "";
+    listLoop: for (const filter of filterList) {
+      if (filter.matches) {
+        for (const match of filter.matches) {
+          const u = new URL(url);
+          if (!match.test(u.pathname)) {
+            continue;
+          }
 
-    for (const filter of filterList) {
-      for (const match of filter.matches) {
-        if (filter.host && !url.includes(filter.host)) {
-          continue;
+          this.send({
+            url,
+            documentURL,
+            name: title,
+            type: filter.type,
+          });
+          break listLoop;
         }
-        const u = new URL(url);
-        if (!match.test(u.pathname)) {
-          continue;
-        }
-
-        const item: SourceParams = {
-          id,
-          url,
-          filter,
-          documentURL,
-          name: title,
-          type: filter.type,
-        };
-
-        this.logger.info(`在窗口中捕获视频链接: ${url}`);
-        // 等待 DOM 中浮窗加载完成
-        if (this.ready) {
-          this.emit("source", item);
-        } else {
-          this.queue.push(item);
-        }
-
-        return;
       }
     }
 
