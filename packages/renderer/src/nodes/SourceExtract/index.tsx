@@ -674,6 +674,9 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
                   width="xl"
                   min={1}
                   max={10000}
+                  fieldProps={{
+                    changeOnWheel: true,
+                  }}
                 />
               );
             }

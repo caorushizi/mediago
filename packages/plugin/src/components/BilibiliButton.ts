@@ -3,7 +3,7 @@ import { customElement, property } from "lit/decorators.js";
 import { BILIBILI_DOWNLOAD_BUTTON, showDownloadDialog } from "../helper";
 import $ from "jquery";
 
-@customElement("one-button")
+@customElement("bilibili-button")
 export class BilibiliButton extends LitElement {
   @property({ type: Number })
   index = 0;
@@ -53,7 +53,7 @@ function bilibili() {
     const imageDOM = card.querySelector(BILIBILI_DOWNLOAD_BUTTON);
     if (!imageDOM) return;
 
-    const oldBtn = imageDOM.querySelectorAll("one-button");
+    const oldBtn = card.querySelectorAll("bilibili-button");
     if (oldBtn.length) return;
 
     const isAd = $(card).find(".bili-video-card__info--ad");
@@ -65,7 +65,8 @@ function bilibili() {
   });
 }
 
-if (location.pathname === "www.bilibili.com") {
+if (location.hostname === "www.bilibili.com") {
+  bilibili();
   setInterval(() => {
     bilibili();
   }, 3000);
