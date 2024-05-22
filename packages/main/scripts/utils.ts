@@ -2,6 +2,7 @@ import { existsSync, cpSync, rmSync } from "fs";
 import dotenv from "dotenv";
 import { resolve } from "path";
 import consola from "consola";
+import fs from "fs-extra";
 
 export const mainResolve = (...r: string[]) => resolve(__dirname, "..", ...r);
 export const rootResolve = (...r: string[]) =>
@@ -16,8 +17,8 @@ function loadEnv(path: string) {
     return null;
   }
 
-  const { error, parsed } = dotenv.config({ path, override: true });
-  if (error != null || !parsed) {
+  const parsed = dotenv.parse(fs.readFileSync(path));
+  if (!parsed) {
     return null;
   }
 
@@ -37,7 +38,12 @@ function loadDotEnv() {
 }
 
 export function loadDotEnvRuntime() {
-  loadDotEnv();
+  const env = loadDotEnv();
+
+  Object.keys(env).forEach((key) => {
+    if (process.env[key] != null || !env[key]) return;
+    process.env[key] = env[key];
+  });
 }
 
 export function loadDotEnvDefined() {
