@@ -127,7 +127,7 @@ const processList: Schema[] = [
       speed: "([\\d.]+\\s[GMK]B/s)",
       percent: "([\\d.]+)%",
       error: "ERROR",
-      start: "保存文件名:",
+      start: "开始下载",
       isLive: "检测到直播流",
     },
   },
