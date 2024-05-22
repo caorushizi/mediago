@@ -100,6 +100,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   const appStore = useSelector(selectAppStore);
   const [form] = Form.useForm<DownloadForm>();
   const [modalShow, setModalShow] = useState(false);
+  const [placeHolder, setPlaceHolder] = useState<string>("");
   const [modalReadyShow, setModalReadyShow] = useState(false);
   const [downloadItems, setDownloadItems] = useState<DownloadForm[]>([]);
   const sessionId = useRef("");
@@ -267,12 +268,21 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
       teleplay,
       numberOfEpisodes,
     });
-    setModalShow(true);
   };
 
-  const onShowDownloadDialog = async (e: unknown, data: DownloadForm[]) => {
+  const onShowDownloadDialog = async (
+    e: unknown,
+    data: DownloadForm[],
+    image: string,
+  ) => {
     setDownloadItems(data);
     setCurrentDownloadForm(data[0]);
+
+    setPlaceHolder(image);
+    setModalReadyShow(true);
+    setTimeout(() => {
+      setModalShow(true);
+    }, 0);
   };
 
   useEffect(() => {
@@ -398,7 +408,16 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     if (store.status === BrowserStatus.Loading) {
       content = <Spin />;
     } else if (modalReadyShow || modalShow) {
-      content = <></>;
+      content = (
+        <img
+          src={placeHolder}
+          alt=""
+          style={{
+            height: "100%",
+            width: "100%",
+          }}
+        />
+      );
     } else if (store.status === BrowserStatus.Failed) {
       content = (
         <Empty description={store.errMsg || t("loadFailed")}>

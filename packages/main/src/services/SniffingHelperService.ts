@@ -20,6 +20,7 @@ export interface SourceParams {
 }
 
 export interface SourceFilter {
+  host?: string;
   matches: RegExp[];
   type: DownloadType;
   schema?: Record<string, string>;
@@ -36,8 +37,9 @@ const filterList: SourceFilter[] = [
     type: DownloadType.m3u8,
   },
   {
+    host: "bilibili.com",
     // TODO: 合集、列表、收藏夹
-    matches: [/^https?:\/\/(www\.)?bilibili.com\/video/],
+    matches: [/\/video/],
     type: DownloadType.bilibili,
     schema: {
       name: "title",
@@ -87,6 +89,9 @@ export class SniffingHelper extends EventEmitter {
 
     for (const filter of filterList) {
       for (const match of filter.matches) {
+        if (filter.host && !url.includes(filter.host)) {
+          continue;
+        }
         const u = new URL(url);
         if (!match.test(u.pathname)) {
           continue;
