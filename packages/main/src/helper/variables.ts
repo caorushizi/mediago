@@ -6,8 +6,15 @@ const appPath = app.getAppPath();
 export const appData = app.getPath("appData");
 export const download = app.getPath("downloads");
 
-export const isMac = process.platform === "darwin";
-export const isWin = process.platform === "win32";
+export enum Platform {
+  Windows = "win32",
+  MacOS = "darwin",
+  Linux = "linux",
+}
+
+export const isMac = process.platform === Platform.MacOS;
+export const isWin = process.platform === Platform.Windows;
+export const isLinux = process.platform === Platform.Linux;
 
 if (!isDev) {
   global.__bin__ = resolve(appPath, "../bin");

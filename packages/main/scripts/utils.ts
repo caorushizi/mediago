@@ -7,6 +7,10 @@ import fs from "fs-extra";
 export const mainResolve = (...r: string[]) => resolve(__dirname, "..", ...r);
 export const rootResolve = (...r: string[]) =>
   resolve(__dirname, "../../..", ...r);
+export const isLinux = process.platform === "linux";
+export const isMac = process.platform === "darwin";
+export const isWin = process.platform === "win32";
+
 const nodeEnv = process.env.NODE_ENV;
 consola.log("当前的环境是： ", nodeEnv);
 
