@@ -18,7 +18,7 @@ const options: builder.Configuration = {
   buildVersion: process.env.APP_VERSION,
   appId: process.env.APP_ID,
   copyright: process.env.APP_COPYRIGHT,
-  artifactName: "${productName}-setup-${buildVersion}.${ext}",
+  artifactName: "${productName}-setup-${arch}-${buildVersion}.${ext}",
   // FIXME: 这里屏蔽 node-pty 自动重构，因为会导致打包失败
   npmRebuild: false,
   directories: {
@@ -46,6 +46,7 @@ const options: builder.Configuration = {
     target: [
       {
         target: "nsis",
+        arch: ["x64"],
       },
     ],
   },
@@ -67,11 +68,19 @@ const options: builder.Configuration = {
   mac: {
     icon: "../assets/icon.icns",
     target: {
-      target: "default",
+      target: "dmg",
       arch: ["x64", "arm64"],
     },
   },
-  linux: {},
+  linux: {
+    category: "Utility",
+    icon: "../assets/icon.icns",
+    maintainer: "caorushizi <84996057@qq.com>",
+    target: {
+      target: "deb",
+      arch: ["x64", "arm64"],
+    },
+  },
   nsis: {
     oneClick: true,
     allowElevation: true,
@@ -94,17 +103,8 @@ const options: builder.Configuration = {
 };
 
 async function start() {
-  const target =
-    process.env.NODE_ENV === "development"
-      ? builder.DIR_TARGET
-      : builder.DEFAULT_TARGET;
   try {
-    const targets =
-      process.platform === "win32"
-        ? builder.Platform.WINDOWS.createTarget(target)
-        : builder.Platform.MAC.createTarget(target);
     await builder.build({
-      targets,
       config: options,
     });
   } catch (e) {

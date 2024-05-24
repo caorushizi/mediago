@@ -2,7 +2,7 @@ import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import electron from "electron";
 import * as esbuild from "esbuild";
 import chokidar from "chokidar";
-import { loadDotEnvRuntime, mainResolve, copyResource } from "./utils";
+import { loadDotEnvRuntime, mainResolve, copyResource, isMac } from "./utils";
 import { external } from "./config";
 import consola from "consola";
 
@@ -57,7 +57,7 @@ function startElectron() {
 
 function restartElectron() {
   if (electronProcess && electronProcess.pid) {
-    if (process.platform === "darwin") {
+    if (isMac) {
       spawn("kill", ["-9", String(electronProcess.pid)]);
     } else {
       process.kill(electronProcess.pid);

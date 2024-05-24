@@ -3,7 +3,8 @@
   "version": "2.2.0",
   "description": "在线视频下载器",
   "main": "main/index.js",
-  "author": "",
+  "author": "caorushizi",
+  "homepage": "https://downloader.caorushizi.cn/",
   "license": "MIT",
   "dependencies": {
     "@cliqz/adblocker-electron": "^1.27.3",
