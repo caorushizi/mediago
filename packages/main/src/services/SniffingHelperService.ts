@@ -5,10 +5,7 @@ import ElectronLogger from "../vendor/ElectronLogger";
 import EventEmitter from "events";
 import { session } from "electron";
 import { PERSIST_WEBVIEW } from "../helper";
-import {
-  CallbackResponse,
-  OnBeforeRequestListenerDetails,
-} from "electron/main";
+import { OnCompletedListenerDetails } from "electron/main";
 
 export interface SourceParams {
   url: string;
@@ -90,7 +87,7 @@ export class SniffingHelper extends EventEmitter {
 
   start() {
     const viewSession = session.fromPartition(PERSIST_WEBVIEW);
-    viewSession.webRequest.onBeforeRequest(this.requestWillBeSent.bind(this));
+    viewSession.webRequest.onCompleted(this.onCompleted);
   }
 
   send = (item: SourceParams) => {
@@ -103,10 +100,7 @@ export class SniffingHelper extends EventEmitter {
     }
   };
 
-  private requestWillBeSent(
-    details: OnBeforeRequestListenerDetails,
-    callback: (response: CallbackResponse) => void,
-  ): void {
+  private onCompleted = (details: OnCompletedListenerDetails): void => {
     const { url } = details;
     const { title, url: documentURL } = this.pageInfo;
 
@@ -128,7 +122,5 @@ export class SniffingHelper extends EventEmitter {
         }
       }
     }
-
-    callback({});
-  }
+  };
 }
