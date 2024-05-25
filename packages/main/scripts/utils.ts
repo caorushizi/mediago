@@ -1,72 +1,106 @@
-import { existsSync, cpSync, rmSync } from "fs";
+import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import dotenv from "dotenv";
 import { resolve } from "path";
 import consola from "consola";
 import fs from "fs-extra";
+import electron from "electron";
 
-export const mainResolve = (...r: string[]) => resolve(__dirname, "..", ...r);
-export const rootResolve = (...r: string[]) =>
-  resolve(__dirname, "../../..", ...r);
-const nodeEnv = process.env.NODE_ENV;
-consola.log("当前的环境是： ", nodeEnv);
+const baseResolve = (...r) => resolve(__dirname, ...r);
+export const mainResolve = (...r: string[]) => baseResolve("..", ...r);
+export const rootResolve = (...r: string[]) => baseResolve("../../..", ...r);
 
-function loadEnv(path: string) {
-  const result: Record<string, string> = {};
+export const isLinux = process.platform === "linux";
+export const isMac = process.platform === "darwin";
+export const isWin = process.platform === "win32";
 
-  if (!existsSync(path)) {
-    return null;
-  }
+export class ElectronApp {
+  process: ChildProcessWithoutNullStreams | null = null;
 
-  const parsed = dotenv.parse(fs.readFileSync(path));
-  if (!parsed) {
-    return null;
-  }
+  start() {
+    const args = ["--inspect=5858", mainResolve("app/build/main/index.js")];
 
-  Object.keys(parsed).forEach((key) => {
-    result[key] = parsed[key];
-  });
+    this.process = spawn(String(electron), args);
 
-  return result;
-}
-
-function loadDotEnv() {
-  const env = loadEnv(rootResolve(".env"));
-  const envMode = loadEnv(rootResolve(`.env.${nodeEnv}`));
-  const envModeLocal = loadEnv(rootResolve(`.env.${nodeEnv}.local`));
-
-  return { ...env, ...envMode, ...envModeLocal };
-}
-
-export function loadDotEnvRuntime() {
-  const env = loadDotEnv();
-
-  Object.keys(env).forEach((key) => {
-    if (process.env[key] != null || !env[key]) return;
-    process.env[key] = env[key];
-  });
-}
-
-export function loadDotEnvDefined() {
-  const env = loadDotEnv();
-
-  return Object.keys(env).reduce<Record<string, string>>((prev, cur) => {
-    if (!cur.startsWith("APP_")) return prev;
-    prev[`process.env.${[cur]}`] = JSON.stringify(env[cur]);
-    return prev;
-  }, {});
-}
-
-export function copyResource(resource: { from: string; to: string }[]) {
-  resource.forEach((r) => {
-    const { from, to } = r;
-    cpSync(from, to, {
-      recursive: true,
+    this.process.stdout.on("data", (data) => {
+      consola.log(String(data));
     });
-  });
+
+    this.process.stderr.on("data", (data) => {
+      consola.log(String(data));
+    });
+  }
+
+  restart() {
+    this.kill();
+    this.start();
+  }
+
+  kill() {
+    if (this.process && this.process.pid) {
+      if (isMac) {
+        spawn("kill", ["-9", String(this.process.pid)]);
+      } else {
+        process.kill(this.process.pid);
+      }
+      this.process = null;
+    }
+  }
 }
 
-export function removeResource(resource: string[]) {
-  resource.forEach((r) => {
-    rmSync(r, { recursive: true, force: true });
-  });
+export class Env {
+  env: Record<string, string> = {};
+  nodeEnv = "";
+  static instance: Env;
+
+  private constructor(nodeEnv = process.env.NODE_ENV) {
+    const env = this.parseEnv(rootResolve(".env"));
+    const modeEnv = this.parseEnv(rootResolve(`.env.${nodeEnv}`));
+    const localEnv = this.parseEnv(rootResolve(`.env.${nodeEnv}.local`));
+
+    this.nodeEnv = nodeEnv || "development";
+    this.env = { ...env, ...modeEnv, ...localEnv };
+  }
+
+  static getInstance() {
+    if (!Env.instance) {
+      Env.instance = new Env();
+    }
+
+    return Env.instance;
+  }
+
+  private parseEnv(path: string) {
+    if (!fs.existsSync(path)) {
+      return null;
+    }
+
+    const parsed = dotenv.parse(fs.readFileSync(path));
+    if (!parsed) {
+      return null;
+    }
+
+    return Object.keys(parsed).reduce((prev, curr) => {
+      prev[curr] = parsed[curr];
+      return prev;
+    }, {});
+  }
+
+  loadDotEnvRuntime() {
+    Object.keys(this.env).forEach((key) => {
+      if (process.env[key] != null || !this.env[key]) return;
+      process.env[key] = this.env[key];
+    });
+  }
+
+  loadDotEnvDefined() {
+    return Object.keys(this.env).reduce<Record<string, string>>((prev, cur) => {
+      if (!cur.startsWith("APP_")) return prev;
+      prev[`process.env.${[cur]}`] = JSON.stringify(this.env[cur]);
+      return prev;
+    }, {});
+  }
+
+  get isDev() {
+    return this.nodeEnv === "development";
+  }
 }

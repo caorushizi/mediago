@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { isUrl } from "./url";
 
 export { http } from "./http";
@@ -45,3 +46,7 @@ export const generateUrl = (url: string) => {
   }
   return result;
 };
+
+export function moment() {
+  return dayjs().format("YYYY-MM-DDTHH:mm:ssZ");
+}
