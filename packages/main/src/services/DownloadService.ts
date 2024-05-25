@@ -49,39 +49,7 @@ interface Schema {
 const processList: Schema[] = [
   {
     type: "m3u8",
-    platform: [Platform.Windows],
-    bin: m3u8DownloaderBin,
-    args: {
-      url: {
-        argsName: null,
-      },
-      localDir: {
-        argsName: ["--workDir"],
-      },
-      name: {
-        argsName: ["--saveName"],
-      },
-      // headers: {
-      //   argsName: ["--headers"],
-      // },
-      deleteSegments: {
-        argsName: ["--enableDelAfterDone"],
-      },
-      proxy: {
-        argsName: ["--proxyAddress"],
-      },
-    },
-    consoleReg: {
-      percent: "([\\d.]+)%",
-      speed: "([\\d.]+\\s[GMK]B/s)",
-      error: "ERROR",
-      start: "开始下载文件|开始录制",
-      isLive: "识别为直播流, 开始录制",
-    },
-  },
-  {
-    type: "m3u8",
-    platform: [Platform.MacOS, Platform.Linux],
+    platform: [Platform.MacOS, Platform.Linux, Platform.Windows],
     bin: m3u8DownloaderBin,
     args: {
       url: {
