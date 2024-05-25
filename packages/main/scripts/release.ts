@@ -1,8 +1,16 @@
-import { loadDotEnvRuntime, mainResolve, removeResource } from "./utils";
+import {
+  chmodResource,
+  isLinux,
+  isMac,
+  loadDotEnvRuntime,
+  mainResolve,
+  removeResource,
+} from "./utils";
 import * as builder from "electron-builder";
 import semver from "semver";
 import pkg from "../app/package.json";
 import consola from "consola";
+import path from "path";
 
 removeResource([mainResolve("release")]);
 
@@ -13,7 +21,7 @@ if (semver.neq(process.env.APP_VERSION || "", pkg.version)) {
   process.exit(0);
 }
 
-const options: builder.Configuration = {
+const config: builder.Configuration = {
   productName: process.env.APP_NAME,
   buildVersion: process.env.APP_VERSION,
   appId: process.env.APP_ID,
@@ -23,6 +31,12 @@ const options: builder.Configuration = {
   npmRebuild: false,
   directories: {
     output: "./release",
+  },
+  afterPack: ({ appOutDir }) => {
+    if (isMac || isLinux) {
+      const binaryPath = path.join(appOutDir, "resources/bin");
+      chmodResource(binaryPath);
+    }
   },
   files: [
     {
@@ -69,7 +83,7 @@ const options: builder.Configuration = {
     icon: "../assets/icon.icns",
     target: {
       target: "dmg",
-      arch: ["x64", "arm64"],
+      arch: ["x64"],
     },
   },
   linux: {
@@ -78,7 +92,7 @@ const options: builder.Configuration = {
     maintainer: "caorushizi <84996057@qq.com>",
     target: {
       target: "deb",
-      arch: ["x64", "arm64"],
+      arch: ["x64"],
     },
   },
   nsis: {
@@ -94,19 +108,19 @@ const options: builder.Configuration = {
     include: "",
     script: "",
   },
-  publish: {
-    provider: "github",
-    repo: "mediago",
-    owner: "caorushizi",
-    releaseType: "release",
-  },
 };
 
 async function start() {
   try {
-    await builder.build({
-      config: options,
-    });
+    if (process.env.GH_TOKEN) {
+      config.publish = {
+        provider: "github",
+        repo: "mediago",
+        owner: "caorushizi",
+        releaseType: "release",
+      };
+    }
+    await builder.build({ config });
   } catch (e) {
     consola.log(e);
   }

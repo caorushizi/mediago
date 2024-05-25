@@ -2,7 +2,14 @@ import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import electron from "electron";
 import * as esbuild from "esbuild";
 import chokidar from "chokidar";
-import { loadDotEnvRuntime, mainResolve, copyResource, isMac } from "./utils";
+import {
+  loadDotEnvRuntime,
+  mainResolve,
+  copyResource,
+  isMac,
+  isLinux,
+  chmodResource,
+} from "./utils";
 import { external } from "./config";
 import consola from "consola";
 
@@ -24,6 +31,11 @@ async function copySource() {
       to: mainResolve("app/bin"),
     },
   ]);
+
+  // 拷贝完成之后，在 mac 和 linux 下需要修改权限
+  if (isMac || isLinux) {
+    chmodResource(mainResolve("bin", process.platform));
+  }
 }
 
 const buildConfig: esbuild.BuildOptions = {

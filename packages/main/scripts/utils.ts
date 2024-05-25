@@ -74,3 +74,16 @@ export function removeResource(resource: string[]) {
     rmSync(r, { recursive: true, force: true });
   });
 }
+
+// 将文件夹下的所有文件添加可执行权限，需要深度遍历
+export function chmodResource(resource: string) {
+  const files = fs.readdirSync(resource, { withFileTypes: true });
+  files.forEach((file) => {
+    const filePath = resolve(resource, file.name);
+    if (file.isDirectory()) {
+      chmodResource(filePath);
+    } else {
+      fs.chmodSync(filePath, "777");
+    }
+  });
+}
