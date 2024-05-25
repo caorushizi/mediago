@@ -14,22 +14,5 @@ export default defineConfig({
   build: {
     outDir: path.resolve(__dirname, "../main/app/build/renderer"),
     emptyOutDir: true,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          react: [
-            "react",
-            "react-dom",
-            "react-router-dom",
-            "@reduxjs/toolkit",
-            "react-redux",
-            "sort-by",
-          ],
-          antd: ["antd"],
-          icons: ["@ant-design/icons"],
-          "pro-components": ["@ant-design/pro-components"],
-        },
-      },
-    },
   },
 });
