@@ -22,7 +22,7 @@ function getConfig(): esbuild.BuildOptions {
       process.env.NODE_ENV === "development"
         ? {
             // 开发环境中二进制可执行文件的路径
-            __bin__: `"${mainResolve("bin", process.platform).replace(/\\/g, "\\\\")}"`,
+            __bin__: `"${mainResolve("app/bin").replace(/\\/g, "\\\\")}"`,
           }
         : {
             ...env,

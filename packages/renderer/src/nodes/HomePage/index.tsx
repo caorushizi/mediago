@@ -26,9 +26,9 @@ import {
 import { useSelector } from "react-redux";
 import { selectAppStore } from "../../store";
 import DownloadFrom from "../../components/DownloadForm";
-import dayjs from "dayjs";
 import { Trans, useTranslation } from "react-i18next";
 import Terminal from "../../components/Terminal";
+import { moment } from "../../utils";
 
 const { Text } = Typography;
 
@@ -60,7 +60,12 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   } = useElectron();
   const appStore = useSelector(selectAppStore);
   const { t } = useTranslation();
-  const { data, loading, pagination, refresh } = usePagination(
+  const {
+    data = { total: 0, list: [] },
+    loading,
+    pagination,
+    refresh,
+  } = usePagination(
     ({ current, pageSize }) => {
       return getDownloadItems({
         current,
@@ -84,7 +89,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     log: "",
   });
 
-  const onDownloadProgress = (e: any, progress: DownloadProgress) => {
+  const onDownloadProgress = (e: unknown, progress: DownloadProgress) => {
     setProgress((curProgress) => ({
       ...curProgress,
       [progress.id]: progress,
@@ -411,9 +416,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
                   const items = batchList.split("\n").map((item: any) => {
                     let [url, name] = item.split(" ");
                     url = url ? url.trim() : "";
-                    name = name
-                      ? name.trim()
-                      : dayjs().format("YYYY-MM-DDTHH:mm:ssZ");
+                    name = name ? name.trim() : moment();
                     return {
                       url,
                       name,
@@ -423,7 +426,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
                   await addDownloadItems(items);
                 } else {
                   await addDownloadItem({
-                    name: values.name || dayjs().format("YYYY-MM-DDTHH:mm:ssZ"),
+                    name: values.name || moment(),
                     url: values.url,
                     headers: values.headers,
                     type: DownloadType.m3u8,
@@ -464,7 +467,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
         }}
         rowKey="id"
         rowSelection={rowSelection}
-        dataSource={data?.list || []}
+        dataSource={data.list || []}
         tableAlertOptionRender={({ selectedRowKeys, onCleanSelected }) => {
           if (selectedRowKeys.length === 0) {
             return null;
@@ -496,11 +499,11 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
         tableAlertRender={({ selectedRows }) => {
           return (
             <>
-              {data?.list.length !== 0 && (
+              {data.list.length !== 0 && (
                 <Button
                   type="link"
                   onClick={() => {
-                    const list = data?.list || [];
+                    const list = data.list || [];
                     const ids = list.map((item) => item.id || 0);
                     if (ids) {
                       setSelectedRowKeys(ids);

@@ -1,8 +1,7 @@
 import { ConfigProvider, theme } from "antd";
 import React, { FC, Suspense, lazy, useEffect } from "react";
-import AppLayout from "./layout/App";
 import { useDispatch } from "react-redux";
-import { RouterProvider, createHashRouter } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { DownloadFilter } from "./nodes/HomePage";
 import { setAppStore, increase } from "./store";
 import "dayjs/locale/zh-cn";
@@ -11,62 +10,10 @@ import "./App.scss";
 import useElectron from "./hooks/electron";
 import Loading from "./components/Loading";
 
+const AppLayout = lazy(() => import("./layout/App"));
 const HomePage = lazy(() => import("./nodes/HomePage"));
 const SourceExtract = lazy(() => import("./nodes/SourceExtract"));
 const SettingPage = lazy(() => import("./nodes/SettingPage"));
-
-const router = createHashRouter([
-  {
-    path: "/",
-    element: <AppLayout />,
-    children: [
-      {
-        index: true,
-        element: (
-          <Suspense fallback={<Loading />}>
-            <HomePage />
-          </Suspense>
-        ),
-      },
-      {
-        path: "done",
-        element: (
-          <Suspense fallback={<Loading />}>
-            <HomePage filter={DownloadFilter.done} />
-          </Suspense>
-        ),
-      },
-      {
-        path: "source",
-        element: (
-          <Suspense fallback={<Loading />}>
-            <SourceExtract />
-          </Suspense>
-        ),
-      },
-      {
-        path: "settings",
-        element: (
-          <Suspense fallback={<Loading />}>
-            <SettingPage />
-          </Suspense>
-        ),
-      },
-    ],
-  },
-  {
-    path: "/browser",
-    element: (
-      <Suspense fallback={<Loading />}>
-        <SourceExtract page={true} />
-      </Suspense>
-    ),
-  },
-  {
-    path: "*",
-    element: <div>404</div>,
-  },
-]);
 
 function getAlgorithm(appTheme: "dark" | "light") {
   return appTheme === "dark" ? theme.darkAlgorithm : theme.defaultAlgorithm;
@@ -125,7 +72,60 @@ const App: FC = () => {
       componentSize="small"
       theme={{ algorithm: getAlgorithm(appTheme) }}
     >
-      <RouterProvider router={router} />
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <Suspense fallback={<Loading />}>
+                <AppLayout />
+              </Suspense>
+            }
+          >
+            <Route
+              index
+              element={
+                <Suspense fallback={<Loading />}>
+                  <HomePage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="done"
+              element={
+                <Suspense fallback={<Loading />}>
+                  <HomePage filter={DownloadFilter.done} />
+                </Suspense>
+              }
+            />
+            <Route
+              path="source"
+              element={
+                <Suspense fallback={<Loading />}>
+                  <SourceExtract />
+                </Suspense>
+              }
+            />
+            <Route
+              path="settings"
+              element={
+                <Suspense fallback={<Loading />}>
+                  <SettingPage />
+                </Suspense>
+              }
+            />
+            <Route path="*" element={<div>404</div>} />
+          </Route>
+          <Route
+            path="/browser"
+            element={
+              <Suspense fallback={<Loading />}>
+                <SourceExtract page={true} />
+              </Suspense>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
     </ConfigProvider>
   );
 };
