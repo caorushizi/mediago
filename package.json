@@ -12,7 +12,7 @@
     "build:plugin": "pnpm -F plugin run build",
     "build:main": "pnpm -F main run build",
     "build:renderer": "pnpm -F renderer run build",
-    "prerelease": "pnpm run build && pnpm -F mediago run pack",
+    "beta": "pnpm run build && pnpm -F mediago run pack",
     "release": "pnpm run build && pnpm -F main run release",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
