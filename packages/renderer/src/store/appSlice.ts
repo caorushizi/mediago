@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from ".";
-import { AppTheme } from "../types";
+import { AppLanguage, AppTheme } from "../types";
 import i18n from "../i18n";
 
 const initialState: AppStore = {
@@ -14,7 +14,7 @@ const initialState: AppStore = {
   useExtension: false,
   isMobile: false,
   maxRunner: 2,
-  language: "system",
+  language: AppLanguage.System,
   showTerminal: false,
 };
 

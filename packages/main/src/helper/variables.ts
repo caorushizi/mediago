@@ -6,8 +6,15 @@ const appPath = app.getAppPath();
 export const appData = app.getPath("appData");
 export const download = app.getPath("downloads");
 
-export const isMac = process.platform === "darwin";
-export const isWin = process.platform === "win32";
+export enum Platform {
+  Windows = "win32",
+  MacOS = "darwin",
+  Linux = "linux",
+}
+
+export const isMac = process.platform === Platform.MacOS;
+export const isWin = process.platform === Platform.Windows;
+export const isLinux = process.platform === Platform.Linux;
 
 if (!isDev) {
   global.__bin__ = resolve(appPath, "../bin");
@@ -32,11 +39,9 @@ export const PERSIST_WEBVIEW = "persist:webview";
 export const db = resolve(workspace, "app.db");
 
 // bin path
-const downloaderBinName = isWin ? "N_m3u8DL-CLI" : "N_m3u8DL-RE";
 export const ffmpegPath = resolveBin("ffmpeg");
 export const biliDownloaderBin = resolveBin("BBDown");
-export const m3u8DownloaderBin = resolveBin(downloaderBinName);
-export const videoServerBin = resolveBin("server");
+export const m3u8DownloaderBin = resolveBin("N_m3u8DL-RE");
 
 // plugin path
 export const pluginPath = resolveStatic("plugin/index.js");

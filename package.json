@@ -2,6 +2,8 @@
   "name": "mediago",
   "version": "0.1.0",
   "description": "mediago",
+  "author": "caorushizi",
+  "homepage": "https://downloader.caorushizi.cn/",
   "private": true,
   "type": "module",
   "scripts": {
@@ -24,7 +26,6 @@
     "lint-staged": "pnpm --recursive -F \"./packages/*\" run lint-staged"
   },
   "keywords": [],
-  "author": "",
   "license": "MIT",
   "config": {
     "commitizen": {

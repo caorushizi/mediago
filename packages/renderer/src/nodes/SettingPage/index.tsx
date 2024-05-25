@@ -115,6 +115,7 @@ const SettingPage: React.FC = () => {
             name="language"
             label={t("displayLanguage")}
             valueEnum={{
+              [AppLanguage.System]: t("followSystem"),
               [AppLanguage.ZH]: t("chinese"),
               [AppLanguage.EN]: t("english"),
             }}

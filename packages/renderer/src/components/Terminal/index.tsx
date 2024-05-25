@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef } from "react";
-import { useStyles } from "./style";
+import { useStyles } from "./styles";
 import "@xterm/xterm/css/xterm.css";
 import { Terminal as XTerminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";

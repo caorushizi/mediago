@@ -10,7 +10,7 @@ import { TYPES } from "../types";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";
 import VideoRepository from "../repository/VideoRepository";
-import { biliDownloaderBin, m3u8DownloaderBin } from "../helper";
+import { Platform, biliDownloaderBin, m3u8DownloaderBin } from "../helper";
 import * as pty from "node-pty";
 import stripAnsi from "strip-ansi";
 
@@ -49,39 +49,7 @@ interface Schema {
 const processList: Schema[] = [
   {
     type: "m3u8",
-    platform: ["win32"],
-    bin: m3u8DownloaderBin,
-    args: {
-      url: {
-        argsName: null,
-      },
-      localDir: {
-        argsName: ["--workDir"],
-      },
-      name: {
-        argsName: ["--saveName"],
-      },
-      // headers: {
-      //   argsName: ["--headers"],
-      // },
-      deleteSegments: {
-        argsName: ["--enableDelAfterDone"],
-      },
-      proxy: {
-        argsName: ["--proxyAddress"],
-      },
-    },
-    consoleReg: {
-      percent: "([\\d.]+)%",
-      speed: "([\\d.]+\\s[GMK]B/s)",
-      error: "ERROR",
-      start: "开始下载文件|开始录制",
-      isLive: "识别为直播流, 开始录制",
-    },
-  },
-  {
-    type: "m3u8",
-    platform: ["darwin"],
+    platform: [Platform.MacOS, Platform.Linux, Platform.Windows],
     bin: m3u8DownloaderBin,
     args: {
       url: {
@@ -113,7 +81,7 @@ const processList: Schema[] = [
   },
   {
     type: "bilibili",
-    platform: ["win32", "darwin"],
+    platform: [Platform.Linux, Platform.MacOS, Platform.Windows],
     bin: biliDownloaderBin,
     args: {
       url: {
@@ -406,7 +374,7 @@ export default class DownloadService extends EventEmitter {
       }
     };
 
-    this.logger.debug("download params: ", spawnParams);
+    this.logger.debug("download params: ", spawnParams.join(" "));
     await this._execa(schema.bin, spawnParams, {
       id,
       abortSignal,

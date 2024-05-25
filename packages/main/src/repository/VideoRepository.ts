@@ -114,12 +114,12 @@ export default class VideoRepository {
 
   async changeVideoStatus(id: number | number[], status: DownloadStatus) {
     const ids = !Array.isArray(id) ? [id] : id;
-    return this.db.appDataSource
-      .createQueryBuilder()
-      .update(Video)
-      .set({ status })
-      .where({ id: In(ids) })
-      .execute();
+    const videoRepository = this.db.appDataSource.getRepository(Video);
+    const videos = await videoRepository.findBy({ id: In(ids) });
+    for (const video of videos) {
+      video.status = status;
+    }
+    await videoRepository.save(videos);
   }
 
   async changeVideoIsLive(id: number) {

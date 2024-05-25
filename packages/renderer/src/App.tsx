@@ -1,17 +1,19 @@
 import { ConfigProvider, theme } from "antd";
-import "antd/dist/reset.css";
-import React, { FC, useEffect } from "react";
+import React, { FC, Suspense, lazy, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import AppLayout from "./layout/App";
-import HomePage, { DownloadFilter } from "./nodes/HomePage";
-import SettingPage from "./nodes/SettingPage";
-import SourceExtract from "./nodes/SourceExtract";
+import { DownloadFilter } from "./nodes/HomePage";
 import { setAppStore, increase } from "./store";
 import "dayjs/locale/zh-cn";
 import zhCN from "antd/locale/zh_CN";
 import "./App.scss";
 import useElectron from "./hooks/electron";
+import Loading from "./components/Loading";
+
+const AppLayout = lazy(() => import("./layout/App"));
+const HomePage = lazy(() => import("./nodes/HomePage"));
+const SourceExtract = lazy(() => import("./nodes/SourceExtract"));
+const SettingPage = lazy(() => import("./nodes/SettingPage"));
 
 function getAlgorithm(appTheme: "dark" | "light") {
   return appTheme === "dark" ? theme.darkAlgorithm : theme.defaultAlgorithm;
@@ -72,17 +74,56 @@ const App: FC = () => {
     >
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<AppLayout />}>
-            <Route index element={<HomePage />} />
+          <Route
+            path="/"
+            element={
+              <Suspense fallback={<Loading />}>
+                <AppLayout />
+              </Suspense>
+            }
+          >
+            <Route
+              index
+              element={
+                <Suspense fallback={<Loading />}>
+                  <HomePage />
+                </Suspense>
+              }
+            />
             <Route
               path="done"
-              element={<HomePage filter={DownloadFilter.done} />}
+              element={
+                <Suspense fallback={<Loading />}>
+                  <HomePage filter={DownloadFilter.done} />
+                </Suspense>
+              }
             />
-            <Route path="source" element={<SourceExtract />} />
-            <Route path="settings" element={<SettingPage />} />
+            <Route
+              path="source"
+              element={
+                <Suspense fallback={<Loading />}>
+                  <SourceExtract />
+                </Suspense>
+              }
+            />
+            <Route
+              path="settings"
+              element={
+                <Suspense fallback={<Loading />}>
+                  <SettingPage />
+                </Suspense>
+              }
+            />
             <Route path="*" element={<div>404</div>} />
           </Route>
-          <Route path="/browser" element={<SourceExtract page={true} />} />
+          <Route
+            path="/browser"
+            element={
+              <Suspense fallback={<Loading />}>
+                <SourceExtract page={true} />
+              </Suspense>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </ConfigProvider>
