@@ -10,8 +10,6 @@ import * as builder from "electron-builder";
 import glob from "glob";
 import fs from "fs";
 
-process.env.NODE_ENV = "development";
-
 const env = Env.getInstance();
 env.loadDotEnvRuntime();
 

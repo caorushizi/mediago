@@ -9,6 +9,8 @@ const baseResolve = (...r) => resolve(__dirname, ...r);
 export const mainResolve = (...r: string[]) => baseResolve("..", ...r);
 export const rootResolve = (...r: string[]) => baseResolve("../../..", ...r);
 
+export const isDev = process.env.NODE_ENV === "development";
+
 export const isLinux = process.platform === "linux";
 export const isMac = process.platform === "darwin";
 export const isWin = process.platform === "win32";
