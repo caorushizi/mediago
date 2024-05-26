@@ -346,7 +346,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   };
 
   const renderDescription = (dom: ReactNode, item: DownloadItem): ReactNode => {
-    if (progress[item.id] && filter === DownloadFilter.list) {
+    if (progress[item.id] && filter === DownloadFilter.list && !item.isLive) {
       const curProgress = progress[item.id];
       const { percent, speed } = curProgress;
 
