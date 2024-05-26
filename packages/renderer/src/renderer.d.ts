@@ -14,8 +14,6 @@ declare interface DownloadItem {
   headers?: string;
   status?: DownloadStatus;
   isLive?: boolean;
-  numberOfEpisodes?: number;
-  teleplay?: boolean;
 }
 
 declare interface VideoResponse {

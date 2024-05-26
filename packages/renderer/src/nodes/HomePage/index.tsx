@@ -187,7 +187,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
         trigger={
           <Button type="text" title={t("edit")} icon={<EditOutlined />} />
         }
-        onFinish={async (values) => {
+        onDownloadNow={async (values) => {
           try {
             await editDownloadItem({
               id: item.id,
@@ -202,6 +202,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
             messageApi.error(err.message);
           }
         }}
+        onAddToList={async () => {}}
       />
     );
   };
@@ -405,7 +406,8 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
               trigger={
                 <Button icon={<FileAddOutlined />}>{t("newDownload")}</Button>
               }
-              onFinish={async (values: any) => {
+              onAddToList={async () => {}}
+              onDownloadNow={async (values: any) => {
                 if (values.batch) {
                   const { batchList = "" } = values;
                   const items = batchList.split("\n").map((item: any) => {
