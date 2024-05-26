@@ -19,6 +19,7 @@ interface SourceData {
   documentURL: string;
   name: string;
   type: DownloadType;
+  headers?: string;
 }
 
 @customElement("float-button")
@@ -133,7 +134,7 @@ export class FloatButton extends LitElement {
 
   getPosition = (
     newLeft: number,
-    newTop: number,
+    newTop: number
   ): { left: number; top: number } => {
     if (!this.button) return { left: 0, top: 0 };
 
@@ -210,6 +211,8 @@ export class FloatButton extends LitElement {
 
 function init() {
   const floatButton = document.createElement("float-button");
+  floatButton.style.position = "fixed";
+  floatButton.style.zIndex = "9999999999999";
   document.body.appendChild(floatButton);
 
   // 向主进程发送插件准备好的消息

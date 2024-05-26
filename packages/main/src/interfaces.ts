@@ -8,6 +8,8 @@ export interface DownloadItem {
   headers?: string;
   status?: DownloadStatus;
   isLive?: boolean;
+  numberOfEpisodes?: number;
+  teleplay?: boolean;
 }
 
 export enum DownloadFilter {

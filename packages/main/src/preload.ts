@@ -23,7 +23,7 @@ const electronApi = {
     return ipcRenderer.invoke("get-favorites");
   },
   addFavorite(
-    favorite: Omit<Favorite, "id" | "createdDate" | "updatedDate">,
+    favorite: Omit<Favorite, "id" | "createdDate" | "updatedDate">
   ): Promise<Favorite> {
     return ipcRenderer.invoke("add-favorite", favorite);
   },
@@ -53,7 +53,7 @@ const electronApi = {
   },
   setAppStore(
     key: keyof AppStore,
-    val: AppStore[keyof AppStore],
+    val: AppStore[keyof AppStore]
   ): Promise<void> {
     return ipcRenderer.invoke("set-app-store", key, val);
   },
@@ -136,9 +136,6 @@ const electronApi = {
   },
   setUserAgent(isMobile: boolean): Promise<void> {
     return ipcRenderer.invoke("webview-change-user-agent", isMobile);
-  },
-  downloadItem(data: Omit<DownloadItem, "id">) {
-    return ipcRenderer.invoke("add-download-item", data);
   },
   getDownloadLog(id: number): Promise<string> {
     return ipcRenderer.invoke("get-download-log", id);

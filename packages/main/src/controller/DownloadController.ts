@@ -27,7 +27,7 @@ export default class DownloadController implements Controller {
     @inject(TYPES.MainWindow)
     private readonly mainWindow: MainWindow,
     @inject(TYPES.WebviewService)
-    private readonly webviewService: WebviewService,
+    private readonly webviewService: WebviewService
   ) {}
 
   @handle("show-download-dialog")
@@ -36,12 +36,12 @@ export default class DownloadController implements Controller {
     this.webviewService.sendToWindow(
       "show-download-dialog",
       data,
-      image.toDataURL(),
+      image.toDataURL()
     );
   }
 
   @handle("add-download-item")
-  async addDownloadItem(e: IpcMainEvent, video: DownloadItem) {
+  async addDownloadItem(e: IpcMainEvent, video: Omit<DownloadItem, "id">) {
     const item = await this.videoRepository.addVideo(video);
     // 这里向页面发送消息，通知页面更新
     this.mainWindow.send("download-item-notifier", item);
@@ -63,7 +63,7 @@ export default class DownloadController implements Controller {
   }
 
   @handle("download-now")
-  async downloadNow(e: IpcMainEvent, video: DownloadItem) {
+  async downloadNow(e: IpcMainEvent, video: Omit<DownloadItem, "id">) {
     // 添加下载项
     const item = await this.addDownloadItem(e, video);
     // 开始下载
