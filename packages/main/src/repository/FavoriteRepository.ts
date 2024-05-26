@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
-import { TYPES } from "../types";
-import { Favorite } from "../entity/Favorite";
-import TypeORM from "../vendor/TypeORM";
+import { TYPES } from "../types.ts";
+import { Favorite } from "../entity/Favorite.ts";
+import TypeORM from "../vendor/TypeORM.ts";
 
 @injectable()
 export default class FavoriteRepository {

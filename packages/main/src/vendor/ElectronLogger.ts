@@ -2,8 +2,8 @@ import logger, { Logger } from "electron-log";
 import { injectable } from "inversify";
 import dayjs from "dayjs";
 import path from "path";
-import { appName, workspace } from "../helper";
-import { Vendor } from "../core/vendor";
+import { appName, workspace } from "../helper/index.ts";
+import { Vendor } from "../core/vendor.ts";
 
 @injectable()
 export default class ElectronLogger implements Vendor {

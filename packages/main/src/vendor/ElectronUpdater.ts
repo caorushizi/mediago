@@ -1,9 +1,9 @@
 import { autoUpdater } from "electron-updater";
 import { inject, injectable } from "inversify";
-import { TYPES } from "../types";
+import { TYPES } from "../types.ts";
 import isDev from "electron-is-dev";
-import ElectronLogger from "./ElectronLogger";
-import { Vendor } from "../core/vendor";
+import ElectronLogger from "./ElectronLogger.ts";
+import { Vendor } from "../core/vendor.ts";
 
 @injectable()
 export default class UpdateService implements Vendor {

@@ -5,12 +5,12 @@ import {
   MenuItemConstructorOptions,
 } from "electron";
 import { inject, injectable } from "inversify";
-import { handle } from "../helper";
-import { type Controller } from "../interfaces";
-import { TYPES } from "../types";
-import WebviewService from "../services/WebviewService";
-import ElectronStore from "../vendor/ElectronStore";
-import { SniffingHelper } from "../services/SniffingHelperService";
+import { handle } from "../helper/index.ts";
+import { type Controller } from "../interfaces.ts";
+import { TYPES } from "../types.ts";
+import WebviewService from "../services/WebviewService.ts";
+import ElectronStore from "../vendor/ElectronStore.ts";
+import { SniffingHelper } from "../services/SniffingHelperService.ts";
 
 @injectable()
 export default class WebviewController implements Controller {

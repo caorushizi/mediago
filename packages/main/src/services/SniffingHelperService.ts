@@ -1,10 +1,10 @@
 import { inject, injectable } from "inversify";
-import { DownloadType } from "../interfaces";
-import { TYPES } from "../types";
-import ElectronLogger from "../vendor/ElectronLogger";
+import { DownloadType } from "../interfaces.ts";
+import { TYPES } from "../types.ts";
+import ElectronLogger from "../vendor/ElectronLogger.ts";
 import EventEmitter from "events";
 import { session } from "electron";
-import { PERSIST_WEBVIEW } from "../helper";
+import { PERSIST_WEBVIEW } from "../helper/index.ts";
 import { OnCompletedListenerDetails } from "electron/main";
 
 export interface SourceParams {

@@ -1,24 +1,24 @@
-import DownloadController from "./controller/DownloadController";
-import HomeController from "./controller/HomeController";
-import WebviewController from "./controller/WebviewController";
+import DownloadController from "./controller/DownloadController.ts";
+import HomeController from "./controller/HomeController.ts";
+import WebviewController from "./controller/WebviewController.ts";
 import { Container } from "inversify";
-import FavoriteRepository from "./repository/FavoriteRepository";
-import VideoRepository from "./repository/VideoRepository";
-import WebviewService from "./services/WebviewService";
-import ElectronApp from "./app";
-import { Controller } from "./interfaces";
-import { TYPES } from "./types";
-import MainWindow from "./windows/MainWindow";
-import BrowserWindow from "./windows/BrowserWindow";
-import { SniffingHelper } from "./services/SniffingHelperService";
-import DownloadService from "./services/DownloadService";
-import ElectronLogger from "./vendor/ElectronLogger";
-import ElectronUpdater from "./vendor/ElectronUpdater";
-import TypeORM from "./vendor/TypeORM";
-import ElectronDevtools from "./vendor/ElectronDevtools";
-import ElectronStore from "./vendor/ElectronStore";
-import IpcHandler from "./core/ipc";
-import ProtocolService from "./core/protocol";
+import FavoriteRepository from "./repository/FavoriteRepository.ts";
+import VideoRepository from "./repository/VideoRepository.ts";
+import WebviewService from "./services/WebviewService.ts";
+import ElectronApp from "./app.ts";
+import { Controller } from "./interfaces.ts";
+import { TYPES } from "./types.ts";
+import MainWindow from "./windows/MainWindow.ts";
+import BrowserWindow from "./windows/BrowserWindow.ts";
+import { SniffingHelper } from "./services/SniffingHelperService.ts";
+import DownloadService from "./services/DownloadService.ts";
+import ElectronLogger from "./vendor/ElectronLogger.ts";
+import ElectronUpdater from "./vendor/ElectronUpdater.ts";
+import TypeORM from "./vendor/TypeORM.ts";
+import ElectronDevtools from "./vendor/ElectronDevtools.ts";
+import ElectronStore from "./vendor/ElectronStore.ts";
+import IpcHandler from "./core/ipc.ts";
+import ProtocolService from "./core/protocol.ts";
 
 const container = new Container({
   skipBaseClassChecks: true,
