@@ -62,15 +62,10 @@ export function getReleaseConfig(): Configuration {
     appId: process.env.APP_ID,
     copyright: process.env.APP_COPYRIGHT,
     artifactName: "${productName}-setup-${arch}-${buildVersion}.${ext}",
-    // FIXME: 这里屏蔽 node-pty 自动重构，因为会导致打包失败
     npmRebuild: true,
     directories: {
       output: "./release",
     },
-    asarUnpack: [
-      "**/better-sqlite3/build/Release/*.node",
-      "**/node-pty/build/Release/**",
-    ],
     files: [
       {
         from: "./build",

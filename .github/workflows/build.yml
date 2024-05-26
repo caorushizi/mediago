@@ -48,6 +48,7 @@ jobs:
         with:
           version: latest
           run_install: true
+          standalone: true
 
       - name: Build  & release app
         run: pnpm run release
