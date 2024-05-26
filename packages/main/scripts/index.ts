@@ -65,7 +65,6 @@ async function watchTask() {
     })
     .on("error", (error) => {
       consola.error(error);
-      process.exit();
     });
   return Promise.resolve();
 }
