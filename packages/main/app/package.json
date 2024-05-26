@@ -9,11 +9,9 @@
   "dependencies": {
     "@cliqz/adblocker-electron": "^1.27.3",
     "@cliqz/adblocker-electron-preload": "^1.27.3",
-    "better-sqlite3": "^9.3.0",
     "node-pty": "^1.0.0"
   },
   "devDependencies": {
-    "bindings": "^1.5.0",
     "electron": "30.0.6"
   }
 }
