@@ -8,7 +8,6 @@ import semver from "semver";
 import pkg from "../app/package.json";
 import * as builder from "electron-builder";
 import glob from "glob";
-import path from "path";
 import fs from "fs";
 
 process.env.NODE_ENV = "development";
@@ -24,30 +23,17 @@ async function clean() {
   ]);
 }
 
+async function copySqlite() {
+  const path = "build/Release/better_sqlite3.node";
+  const source = mainResolve("node_modules/better-sqlite3", path);
+  const target = mainResolve("app", path);
+  fs.cpSync(source, target, { recursive: true });
+}
+
 async function copyBin() {
-  const sourceDir = mainResolve("bin", process.platform);
-  const targetDir = mainResolve("app/bin");
-
-  // 获取源目录下的所有文件
-  const files = glob.sync(path.join(sourceDir, "*"));
-
-  // 遍历每个文件
-  for (const file of files) {
-    // 忽略 .gitignore 文件和 Logs 文件夹
-    if (file.endsWith(".gitignore") || file.includes("Logs")) {
-      continue;
-    }
-
-    // 计算目标文件的路径
-    const targetFile = path.join(targetDir, path.basename(file));
-    // 如果没有文件夹则创建文件夹
-    if (!fs.existsSync(targetDir)) {
-      fs.mkdirSync(targetDir);
-    }
-
-    // 复制文件
-    fs.copyFileSync(file, targetFile);
-  }
+  const source = mainResolve("bin", process.platform);
+  const target = mainResolve("app/bin");
+  fs.cpSync(source, target, { recursive: true });
 }
 
 async function chmodBin() {
@@ -60,7 +46,7 @@ async function chmodBin() {
   }
 }
 
-const copy = gulp.parallel(copyBin);
+const copy = gulp.parallel(copyBin, copySqlite);
 
 async function watchTask() {
   const app = new ElectronApp();

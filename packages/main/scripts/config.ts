@@ -9,7 +9,6 @@ const external = [
   "mock-aws-s3",
   "@cliqz/adblocker-electron-preload",
   "node-pty",
-  "better-sqlite3",
 ];
 
 function getConfig(): esbuild.BuildOptions {
