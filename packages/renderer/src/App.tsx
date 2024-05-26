@@ -2,13 +2,13 @@ import { ConfigProvider, theme } from "antd";
 import React, { FC, Suspense, lazy, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { DownloadFilter } from "./nodes/HomePage";
 import { setAppStore, increase } from "./store";
 import "dayjs/locale/zh-cn";
 import zhCN from "antd/locale/zh_CN";
 import "./App.scss";
 import useElectron from "./hooks/electron";
 import Loading from "./components/Loading";
+import { DownloadFilter } from "./types";
 
 const AppLayout = lazy(() => import("./layout/App"));
 const HomePage = lazy(() => import("./nodes/HomePage"));
