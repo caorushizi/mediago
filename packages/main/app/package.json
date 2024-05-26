@@ -13,6 +13,7 @@
     "node-pty": "^1.0.0"
   },
   "devDependencies": {
+    "bindings": "^1.5.0",
     "electron": "30.0.6"
   }
 }
