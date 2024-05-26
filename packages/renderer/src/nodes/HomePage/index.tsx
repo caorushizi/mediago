@@ -12,7 +12,7 @@ import "./index.scss";
 import PageContainer from "../../components/PageContainer";
 import { usePagination } from "ahooks";
 import useElectron from "../../hooks/electron";
-import { DownloadStatus, DownloadType } from "../../types";
+import { DownloadFilter, DownloadStatus, DownloadType } from "../../types";
 import { ProList } from "@ant-design/pro-components";
 import {
   DownloadOutlined,
@@ -31,11 +31,6 @@ import Terminal from "../../components/Terminal";
 import { moment } from "../../utils";
 
 const { Text } = Typography;
-
-export enum DownloadFilter {
-  list = "list",
-  done = "done",
-}
 
 interface Props {
   filter?: DownloadFilter;
