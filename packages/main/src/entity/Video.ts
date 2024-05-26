@@ -1,4 +1,4 @@
-import { DownloadStatus, DownloadType } from "../interfaces";
+import { DownloadStatus, DownloadType } from "../interfaces.ts";
 import {
   Column,
   CreateDateColumn,

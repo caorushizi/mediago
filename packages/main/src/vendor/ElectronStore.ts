@@ -1,9 +1,9 @@
 import Store from "electron-store";
 import { injectable } from "inversify";
-import { AppStore } from "../main";
-import { download, workspace } from "../helper";
-import { AppLanguage, AppTheme } from "../types";
-import { Vendor } from "../core/vendor";
+import { AppStore } from "../main.ts";
+import { download, workspace } from "../helper/index.ts";
+import { AppLanguage, AppTheme } from "../types.ts";
+import { Vendor } from "../core/vendor.ts";
 
 @injectable()
 export default class StoreService extends Store<AppStore> implements Vendor {

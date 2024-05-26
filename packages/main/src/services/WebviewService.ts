@@ -1,15 +1,21 @@
 import { WebContentsView, session } from "electron";
 import { inject, injectable } from "inversify";
-import { TYPES } from "../types";
+import { TYPES } from "../types.ts";
 import isDev from "electron-is-dev";
-import { PERSIST_WEBVIEW, fetch, mobileUA, pcUA, pluginPath } from "../helper";
+import {
+  PERSIST_WEBVIEW,
+  fetch,
+  mobileUA,
+  pcUA,
+  pluginPath,
+} from "../helper/index.ts";
 import { ElectronBlocker } from "@cliqz/adblocker-electron";
-import ElectronLogger from "../vendor/ElectronLogger";
-import ElectronStore from "../vendor/ElectronStore";
-import MainWindow from "../windows/MainWindow";
-import BrowserWindow from "../windows/BrowserWindow";
-import VideoRepository from "../repository/VideoRepository";
-import { SniffingHelper } from "./SniffingHelperService";
+import ElectronLogger from "../vendor/ElectronLogger.ts";
+import ElectronStore from "../vendor/ElectronStore.ts";
+import MainWindow from "../windows/MainWindow.ts";
+import BrowserWindow from "../windows/BrowserWindow.ts";
+import VideoRepository from "../repository/VideoRepository.ts";
+import { SniffingHelper } from "./SniffingHelperService.ts";
 import { resolve } from "path";
 import { readFileSync } from "fs-extra";
 

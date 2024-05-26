@@ -1,9 +1,9 @@
 import "reflect-metadata";
 import { app, protocol } from "electron";
-import { defaultScheme } from "./helper";
-import { container } from "./inversify.config";
-import { TYPES } from "./types";
-import ElectronApp from "./app";
+import { defaultScheme } from "./helper/index.ts";
+import { container } from "./inversify.config.ts";
+import { TYPES } from "./types.ts";
+import ElectronApp from "./app.ts";
 
 const gotTheLock = app.requestSingleInstanceLock();
 const start = async (): Promise<void> => {

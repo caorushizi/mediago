@@ -1,9 +1,9 @@
 import { ipcMain } from "electron";
 import { inject, injectable, multiInject } from "inversify";
-import { Controller } from "../interfaces";
-import { TYPES } from "../types";
-import ElectronLogger from "../vendor/ElectronLogger";
-import { error, success } from "../helper/utils";
+import { Controller } from "../interfaces.ts";
+import { TYPES } from "../types.ts";
+import ElectronLogger from "../vendor/ElectronLogger.ts";
+import { error, success } from "../helper/utils.ts";
 
 @injectable()
 export default class IpcHandlerService {

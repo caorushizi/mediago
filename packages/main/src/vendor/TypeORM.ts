@@ -1,11 +1,11 @@
-import { db } from "../helper";
+import { db } from "../helper/index.ts";
 import { inject, injectable } from "inversify";
 import { DataSource, EntityManager } from "typeorm";
-import { TYPES } from "../types";
-import { Video } from "../entity/Video";
-import { Favorite } from "../entity/Favorite";
-import ElectronLogger from "./ElectronLogger";
-import { Vendor } from "../core/vendor";
+import { TYPES } from "../types.ts";
+import { Video } from "../entity/Video.ts";
+import { Favorite } from "../entity/Favorite.ts";
+import ElectronLogger from "./ElectronLogger.ts";
+import { Vendor } from "../core/vendor.ts";
 
 @injectable()
 export default class DatabaseService implements Vendor {

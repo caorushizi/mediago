@@ -1,10 +1,10 @@
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import { resolve } from "path";
-import { TYPES } from "../types";
+import { TYPES } from "../types.ts";
 import _ from "lodash";
-import Window from "../core/window";
-import ElectronStore from "../vendor/ElectronStore";
+import Window from "../core/window.ts";
+import ElectronStore from "../vendor/ElectronStore.ts";
 
 @injectable()
 export default class BrowserWindow extends Window {
