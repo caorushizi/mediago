@@ -63,7 +63,7 @@ export function getReleaseConfig(): Configuration {
     copyright: process.env.APP_COPYRIGHT,
     artifactName: "${productName}-setup-${arch}-${buildVersion}.${ext}",
     // FIXME: 这里屏蔽 node-pty 自动重构，因为会导致打包失败
-    npmRebuild: false,
+    npmRebuild: true,
     directories: {
       output: "./release",
     },
