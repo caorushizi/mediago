@@ -23,3 +23,8 @@ export enum DownloadType {
   m3u8 = "m3u8",
   bilibili = "bilibili",
 }
+
+export enum DownloadFilter {
+  list = "list",
+  done = "done",
+}
