@@ -32,11 +32,11 @@ export default class BrowserWindow extends Window {
     this.store.onDidAnyChange(this.storeChange);
   }
 
-  storeChange = (store: any) => {
+  storeChange = (store: unknown) => {
     this.send("store-change", store);
   };
 
-  handleNewWindowsVal = (newValue: any) => {
+  handleNewWindowsVal = (newValue: unknown) => {
     if (!this.window) return;
 
     // 向所有窗口发送通知
@@ -75,7 +75,7 @@ export default class BrowserWindow extends Window {
     this.window.close();
   };
 
-  send(channel: string, ...args: any[]) {
+  send(channel: string, ...args: unknown[]) {
     if (!this.window) return;
 
     this.window.webContents.send(channel, ...args);

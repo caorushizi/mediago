@@ -98,7 +98,7 @@ export default class MainWindow extends Window {
     }
   };
 
-  storeChange = (store: any) => {
+  storeChange = (store: unknown) => {
     // 向所有窗口发送通知
     this.send("store-change", store);
   };
@@ -121,7 +121,7 @@ export default class MainWindow extends Window {
     this.send("download-success", id);
   };
 
-  onDownloadFailed = async (id: number, err: any) => {
+  onDownloadFailed = async (id: number, err: unknown) => {
     const promptTone = this.store.get("promptTone");
     if (promptTone) {
       const video = await this.videoRepository.findVideo(id);
@@ -152,7 +152,7 @@ export default class MainWindow extends Window {
     }
   };
 
-  send(channel: string, ...args: any[]) {
+  send(channel: string, ...args: unknown[]) {
     if (!this.window) return;
 
     this.window.webContents.send(channel, ...args);

@@ -21,7 +21,7 @@
   "license": "MIT",
   "devDependencies": {
     "@electron/rebuild": "^3.6.0",
-    "@rushstack/eslint-patch": "^1.10.3",
+    "@eslint/js": "^9.3.0",
     "@types/electron-devtools-installer": "^2.2.5",
     "@types/fs-extra": "^11.0.4",
     "@types/gulp": "^4.0.17",
@@ -30,8 +30,6 @@
     "@types/node": "^20.12.12",
     "@types/node-fetch": "^2.6.11",
     "@types/semver": "^7.5.8",
-    "@typescript-eslint/eslint-plugin": "7.10.0",
-    "@typescript-eslint/parser": "7.10.0",
     "consola": "^3.2.3",
     "cross-env": "^7.0.3",
     "del": "^7.1.0",
@@ -42,17 +40,12 @@
     "esbuild": "^0.21.4",
     "esbuild-register": "^3.5.0",
     "eslint": "^9.3.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-config-standard-with-typescript": "^43.0.1",
-    "eslint-plugin-import": "2.29.1",
-    "eslint-plugin-n": "17.7.0",
-    "eslint-plugin-prettier": "^5.1.3",
-    "eslint-plugin-promise": "6.1.1",
+    "globals": "^15.3.0",
     "gulp": "^5.0.0",
     "prebuild-install": "^7.1.2",
-    "prettier": "3.2.5",
     "semver": "^7.6.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^7.10.0"
   },
   "dependencies": {
     "@cliqz/adblocker-electron": "^1.27.3",
