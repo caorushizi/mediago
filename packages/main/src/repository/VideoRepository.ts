@@ -1,14 +1,14 @@
-import { Video } from "../entity/Video";
+import { Video } from "../entity/Video.ts";
 import { inject, injectable } from "inversify";
 import {
   DownloadFilter,
   DownloadItem,
   DownloadItemPagination,
   DownloadStatus,
-} from "../interfaces";
-import { TYPES } from "../types";
+} from "../interfaces.ts";
+import { TYPES } from "../types.ts";
 import { In, Not } from "typeorm";
-import TypeORM from "../vendor/TypeORM";
+import TypeORM from "../vendor/TypeORM.ts";
 
 @injectable()
 export default class VideoRepository {

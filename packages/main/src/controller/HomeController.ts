@@ -8,21 +8,21 @@ import {
   shell,
   clipboard,
 } from "electron";
-import { Favorite } from "../entity/Favorite";
-import { convertToAudio, db, workspace } from "../helper";
+import { Favorite } from "../entity/Favorite.ts";
+import { convertToAudio, db, workspace } from "../helper/index.ts";
 import { inject, injectable } from "inversify";
-import { AppStore, EnvPath } from "../main";
+import { AppStore, EnvPath } from "../main.ts";
 import path from "path";
-import { handle, getLocalIP } from "../helper";
-import { type Controller } from "../interfaces";
-import { TYPES } from "../types";
+import { handle, getLocalIP } from "../helper/index.ts";
+import { type Controller } from "../interfaces.ts";
+import { TYPES } from "../types.ts";
 import fs from "fs-extra";
-import MainWindow from "../windows/MainWindow";
-import BrowserWindow from "../windows/BrowserWindow";
-import ElectronStore from "../vendor/ElectronStore";
-import WebviewService from "../services/WebviewService";
-import FavoriteRepository from "../repository/FavoriteRepository";
-import VideoRepository from "../repository/VideoRepository";
+import MainWindow from "../windows/MainWindow.ts";
+import BrowserWindow from "../windows/BrowserWindow.ts";
+import ElectronStore from "../vendor/ElectronStore.ts";
+import WebviewService from "../services/WebviewService.ts";
+import FavoriteRepository from "../repository/FavoriteRepository.ts";
+import VideoRepository from "../repository/VideoRepository.ts";
 
 @injectable()
 export default class HomeController implements Controller {

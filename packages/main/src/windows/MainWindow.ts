@@ -2,15 +2,15 @@ import { Menu, Notification, app } from "electron";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import { resolve } from "path";
-import { TYPES } from "../types";
-import { DownloadProgress } from "../interfaces";
+import { TYPES } from "../types.ts";
+import { DownloadProgress } from "../interfaces.ts";
 import _ from "lodash";
-import Window from "../core/window";
-import ElectronLogger from "../vendor/ElectronLogger";
-import DownloadService from "../services/DownloadService";
-import ElectronStore from "../vendor/ElectronStore";
-import VideoRepository from "../repository/VideoRepository";
-import { isWin } from "../helper";
+import Window from "../core/window.ts";
+import ElectronLogger from "../vendor/ElectronLogger.ts";
+import DownloadService from "../services/DownloadService.ts";
+import ElectronStore from "../vendor/ElectronStore.ts";
+import VideoRepository from "../repository/VideoRepository.ts";
+import { isWin } from "../helper/index.ts";
 
 @injectable()
 export default class MainWindow extends Window {

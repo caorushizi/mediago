@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2015",
-    "module": "CommonJS",
+    "module": "NodeNext",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
@@ -9,13 +9,14 @@
     "resolveJsonModule": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "moduleResolution": "Node",
+    "moduleResolution": "NodeNext",
     "strictPropertyInitialization": false,
     "typeRoots": ["node_modules/@types"],
     "declaration": true,
     "emitDeclarationOnly": true,
     "declarationDir": "./types",
-    "outDir": "app/output/build/main"
+    "outDir": "app/output/build/main",
+    "allowImportingTsExtensions": true
   },
   "include": ["src"],
   "references": [

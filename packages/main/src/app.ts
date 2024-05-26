@@ -1,18 +1,18 @@
 import { inject, injectable } from "inversify";
-import { DownloadStatus } from "./interfaces";
-import { TYPES } from "./types";
+import { DownloadStatus } from "./interfaces.ts";
+import { TYPES } from "./types.ts";
 import { Menu, Tray, app, nativeImage, nativeTheme } from "electron";
 import TrayIcon from "./tray-icon.png";
 import path from "path";
-import MainWindow from "./windows/MainWindow";
-import WebviewService from "./services/WebviewService";
-import VideoRepository from "./repository/VideoRepository";
-import ElectronDevtools from "./vendor/ElectronDevtools";
-import ElectronStore from "./vendor/ElectronStore";
-import ElectronUpdater from "./vendor/ElectronUpdater";
-import TypeORM from "./vendor/TypeORM";
-import ProtocolService from "./core/protocol";
-import IpcHandlerService from "./core/ipc";
+import MainWindow from "./windows/MainWindow.ts";
+import WebviewService from "./services/WebviewService.ts";
+import VideoRepository from "./repository/VideoRepository.ts";
+import ElectronDevtools from "./vendor/ElectronDevtools.ts";
+import ElectronStore from "./vendor/ElectronStore.ts";
+import ElectronUpdater from "./vendor/ElectronUpdater.ts";
+import TypeORM from "./vendor/TypeORM.ts";
+import ProtocolService from "./core/protocol.ts";
+import IpcHandlerService from "./core/ipc.ts";
 
 @injectable()
 export default class ElectronApp {

@@ -5,12 +5,16 @@ import {
   DownloadProgress,
   DownloadStatus,
   Task,
-} from "../interfaces";
-import { TYPES } from "../types";
-import ElectronLogger from "../vendor/ElectronLogger";
-import ElectronStore from "../vendor/ElectronStore";
-import VideoRepository from "../repository/VideoRepository";
-import { Platform, biliDownloaderBin, m3u8DownloaderBin } from "../helper";
+} from "../interfaces.ts";
+import { TYPES } from "../types.ts";
+import ElectronLogger from "../vendor/ElectronLogger.ts";
+import ElectronStore from "../vendor/ElectronStore.ts";
+import VideoRepository from "../repository/VideoRepository.ts";
+import {
+  Platform,
+  biliDownloaderBin,
+  m3u8DownloaderBin,
+} from "../helper/index.ts";
 import * as pty from "node-pty";
 import stripAnsi from "strip-ansi";
 
