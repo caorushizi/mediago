@@ -4,7 +4,7 @@ import { pathExists, readFile } from "fs-extra";
 import { injectable } from "inversify";
 import { join } from "path";
 import { URL } from "url";
-import { defaultScheme } from "../helper";
+import { defaultScheme } from "../helper/index.ts";
 import mime from "mime-types";
 
 @injectable()

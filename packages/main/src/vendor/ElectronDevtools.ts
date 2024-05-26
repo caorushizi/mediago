@@ -1,12 +1,12 @@
 import { inject, injectable } from "inversify";
-import { TYPES } from "../types";
+import { TYPES } from "../types.ts";
 import isDev from "electron-is-dev";
-import installExtension, {
+import install, {
   REDUX_DEVTOOLS,
   REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
-import ElectronLogger from "./ElectronLogger";
-import { Vendor } from "../core/vendor";
+import ElectronLogger from "./ElectronLogger.ts";
+import { Vendor } from "../core/vendor.ts";
 
 @injectable()
 export default class DevToolsService implements Vendor {
@@ -26,7 +26,7 @@ export default class DevToolsService implements Vendor {
 
     try {
       this.logger.debug("当前环境为开发环境，开始加载开发者工具");
-      await installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS]);
+      await install([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS]);
       this.logger.debug("加载开发者工具成功");
     } catch (err: unknown) {
       this.logger.error("加载开发者工具失败", err);

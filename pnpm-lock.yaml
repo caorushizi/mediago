@@ -150,6 +150,9 @@ importers:
       '@rushstack/eslint-patch':
         specifier: ^1.10.3
         version: 1.10.3
+      '@types/electron-devtools-installer':
+        specifier: ^2.2.5
+        version: 2.2.5
       '@types/fs-extra':
         specifier: ^11.0.4
         version: 11.0.4
@@ -1794,6 +1797,9 @@ packages:
 
   '@types/debug@4.1.12':
     resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
+
+  '@types/electron-devtools-installer@2.2.5':
+    resolution: {integrity: sha512-DhH8z0dadKuDolvH4TiW40Vp7H3VyZbOoZv98hhBaUfnxmvvcXTjkZjzw/54xvAmuG4KFzExOGAiVLg3jM2ojQ==}
 
   '@types/estree@1.0.5':
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
@@ -7750,6 +7756,8 @@ snapshots:
   '@types/debug@4.1.12':
     dependencies:
       '@types/ms': 0.7.34
+
+  '@types/electron-devtools-installer@2.2.5': {}
 
   '@types/estree@1.0.5': {}
 

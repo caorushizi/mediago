@@ -2,6 +2,7 @@
   "name": "main",
   "version": "0.1.0",
   "description": "在线视频下载器",
+  "type": "module",
   "main": "main/index.js",
   "scripts": {
     "postinstall": "electron-rebuild -f -w",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@electron/rebuild": "^3.6.0",
     "@rushstack/eslint-patch": "^1.10.3",
+    "@types/electron-devtools-installer": "^2.2.5",
     "@types/fs-extra": "^11.0.4",
     "@types/gulp": "^4.0.17",
     "@types/lodash": "^4.17.4",

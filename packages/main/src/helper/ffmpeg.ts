@@ -1,5 +1,5 @@
 import { spawn } from "child_process";
-import { ffmpegPath } from "./variables";
+import { ffmpegPath } from "./variables.ts";
 
 export const convertToAudio = async (
   input: string,

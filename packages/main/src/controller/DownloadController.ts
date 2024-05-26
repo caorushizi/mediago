@@ -1,19 +1,19 @@
 import { IpcMainEvent } from "electron/main";
 import { inject, injectable } from "inversify";
-import { handle } from "../helper";
+import { handle } from "../helper/index.ts";
 import {
   type Controller,
   DownloadItem,
   DownloadItemPagination,
   Task,
   DownloadStatus,
-} from "../interfaces";
-import { TYPES } from "../types";
-import MainWindow from "../windows/MainWindow";
-import ElectronStore from "../vendor/ElectronStore";
-import DownloadService from "../services/DownloadService";
-import VideoRepository from "../repository/VideoRepository";
-import WebviewService from "../services/WebviewService";
+} from "../interfaces.ts";
+import { TYPES } from "../types.ts";
+import MainWindow from "../windows/MainWindow.ts";
+import ElectronStore from "../vendor/ElectronStore.ts";
+import DownloadService from "../services/DownloadService.ts";
+import VideoRepository from "../repository/VideoRepository.ts";
+import WebviewService from "../services/WebviewService.ts";
 
 @injectable()
 export default class DownloadController implements Controller {

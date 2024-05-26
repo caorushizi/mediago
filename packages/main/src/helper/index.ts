@@ -34,8 +34,8 @@ function fetchWrapper(url: string) {
   return fetch(url, options);
 }
 
-export { sleep, formatHeaders } from "./utils";
-export * from "./variables";
-export { on, handle } from "./decorator";
-export { convertToAudio } from "./ffmpeg";
+export { sleep, formatHeaders } from "./utils.ts";
+export * from "./variables.ts";
+export { on, handle } from "./decorator.ts";
+export { convertToAudio } from "./ffmpeg.ts";
 export { fetchWrapper as fetch };
