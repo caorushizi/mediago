@@ -136,7 +136,6 @@ export default class DownloadService extends EventEmitter {
 
   async stopTask(id: number) {
     if (this.signal[id]) {
-      this.logger.info(`taskId: ${id} stop`);
       this.signal[id].abort();
     }
   }
@@ -186,8 +185,8 @@ export default class DownloadService extends EventEmitter {
       );
       this.emit("download-success", task.id);
     } catch (err: any) {
-      this.logger.info(`taskId: ${task.id} failed`);
       if (err.message === "AbortError") {
+        this.logger.info(`taskId: ${task.id} stopped`);
         // 下载暂停
         await this.videoRepository.changeVideoStatus(
           task.id,
@@ -195,6 +194,7 @@ export default class DownloadService extends EventEmitter {
         );
         this.emit("download-stop", task.id);
       } else {
+        this.logger.info(`taskId: ${task.id} failed`);
         // 下载失败
         await this.videoRepository.changeVideoStatus(
           task.id,
