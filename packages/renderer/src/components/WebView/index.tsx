@@ -10,12 +10,15 @@ interface DivRect {
   height: number;
 }
 
-const computeRect = ({ left, top, width, height }: DivRect) => ({
-  x: Math.floor(left),
-  y: Math.floor(top),
-  width: Math.floor(width),
-  height: Math.floor(height),
-});
+const computeRect = (rect: DivRect) => {
+  if (!rect) return { x: 0, y: 0, width: 0, height: 0 };
+  return {
+    x: Math.floor(rect.left),
+    y: Math.floor(rect.top),
+    width: Math.floor(rect.width),
+    height: Math.floor(rect.height),
+  };
+};
 
 interface WebViewProps {
   className?: string;

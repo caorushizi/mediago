@@ -25,7 +25,7 @@ import {
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { selectAppStore } from "../../store";
-import DownloadFrom from "../../components/DownloadForm";
+import DownloadForm from "../../components/DownloadForm";
 import { Trans, useTranslation } from "react-i18next";
 import Terminal from "../../components/Terminal";
 import { moment } from "../../utils";
@@ -71,11 +71,11 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     {
       defaultPageSize: 50,
       refreshDeps: [filter],
-    },
+    }
   );
   const [converting, setConverting] = useState<Record<number, boolean>>({});
   const [progress, setProgress] = useState<Record<number, DownloadProgress>>(
-    {},
+    {}
   );
   const [messageApi, contextHolder] = message.useMessage();
   const [terminal, setTerminal] = useState({
@@ -105,7 +105,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
 
   const onDownloadMenuEvent = async (
     e: any,
-    params: { action: string; payload: number },
+    params: { action: string; payload: number }
   ) => {
     const { action, payload } = params;
 
@@ -180,7 +180,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
 
   const renderEditForm = (item: DownloadItem) => {
     return (
-      <DownloadFrom
+      <DownloadForm
         key={"edit"}
         isEdit
         item={item}
@@ -235,7 +235,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
 
   const renderActionButtons = (
     dom: ReactNode,
-    item: DownloadItem,
+    item: DownloadItem
   ): ReactNode => {
     if (item.status === DownloadStatus.Ready) {
       return [
@@ -401,7 +401,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
             {t("openFolder")}
           </Button>
           {filter === DownloadFilter.list && (
-            <DownloadFrom
+            <DownloadForm
               trigger={
                 <Button icon={<FileAddOutlined />}>{t("newDownload")}</Button>
               }

@@ -1,4 +1,5 @@
 import { nanoid } from "nanoid";
+import { DownloadItem } from "../../../main/types/interfaces";
 
 const eventMap = new Map();
 
@@ -29,11 +30,7 @@ export interface Item {
   type: any;
 }
 
-export function downloadItem(item: Item) {
-  window.electron.downloadItem(item);
-}
-
-export function showDownloadDialog(item: Item[]) {
+export function showDownloadDialog(item: Omit<DownloadItem, "id">[]) {
   window.electron.showDownloadDialog(item);
 }
 

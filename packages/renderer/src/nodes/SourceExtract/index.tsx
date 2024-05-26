@@ -23,7 +23,6 @@ import {
   message,
   Space,
   Spin,
-  Tabs,
 } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -31,13 +30,7 @@ import PageContainer from "../../components/PageContainer";
 import useElectron from "../../hooks/electron";
 import { generateUrl, getFavIcon } from "../../utils";
 import "./index.scss";
-import {
-  ModalForm,
-  ProFormDigit,
-  ProFormSelect,
-  ProFormSwitch,
-  ProFormText,
-} from "@ant-design/pro-components";
+import { ModalForm, ProFormText } from "@ant-design/pro-components";
 import {
   BrowserStatus,
   PageMode,
@@ -50,19 +43,10 @@ import { selectAppStore } from "../../store";
 import { useTranslation } from "react-i18next";
 import { nanoid } from "nanoid";
 import localforage from "localforage";
-import { DownloadType } from "../../types";
+import DownloadForm, { DownloadFormRef } from "../../components/DownloadForm";
 
 interface SourceExtractProps {
   page?: boolean;
-}
-
-// 下载表单
-interface DownloadForm {
-  teleplay: boolean;
-  type: DownloadType;
-  name: string;
-  url: string;
-  numberOfEpisodes: number;
 }
 
 // 集数
@@ -98,12 +82,10 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   const [hoverId, setHoverId] = useState<number>(-1);
   const store = useSelector(selectBrowserStore);
   const appStore = useSelector(selectAppStore);
-  const [form] = Form.useForm<DownloadForm>();
   const [modalShow, setModalShow] = useState(false);
   const [placeHolder, setPlaceHolder] = useState<string>("");
-  const [modalReadyShow, setModalReadyShow] = useState(false);
-  const [downloadItems, setDownloadItems] = useState<DownloadForm[]>([]);
   const sessionId = useRef("");
+  const downloadForm = useRef<DownloadFormRef>(null);
 
   const curIsFavorite = favoriteList.find((item) => item.url === store.url);
 
@@ -121,7 +103,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
           url: "",
           mode: PageMode.Browser,
           status: BrowserStatus.Loading,
-        }),
+        })
       );
       await webviewLoadURL(url);
       if (sessionId.current === id) {
@@ -129,7 +111,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
           setBrowserStore({
             url: url,
             status: BrowserStatus.Loaded,
-          }),
+          })
         );
       }
     } catch (err) {
@@ -138,7 +120,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
           setBrowserStore({
             status: BrowserStatus.Failed,
             errMsg: (err as any).message,
-          }),
+          })
         );
       }
     }
@@ -186,7 +168,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
         setBrowserStore({
           url: "",
           mode: PageMode.Default,
-        }),
+        })
       );
     }
   };
@@ -197,7 +179,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
       setBrowserStore({
         url: "",
         mode: PageMode.Default,
-      }),
+      })
     );
   };
 
@@ -220,7 +202,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
         setBrowserStore({
           url: data.url,
           title: data.title,
-        }),
+        })
       );
     }
   };
@@ -233,7 +215,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     }: {
       action: string;
       payload: number;
-    },
+    }
   ) => {
     if (action === "open") {
       const item = favoriteList.find((item) => item.id === payload);
@@ -252,19 +234,20 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   }, []);
 
   // 设置当前的下载表单
-  const setCurrentDownloadForm = async (data: DownloadForm) => {
-    const { type, url, name } = data;
+  const setCurrentDownloadForm = async (data: DownloadItem) => {
+    const { type, url, name, headers } = data;
 
     const noe = await localforage.getItem<NumberOfEpisodes>("numberOfEpisodes");
-    const formData = form.getFieldsValue();
+    const formData = downloadForm.current.getFieldsValue();
     const teleplay = formData.teleplay || noe?.teleplay || false;
     const numberOfEpisodes =
       formData.numberOfEpisodes || noe?.numberOfEpisodes || 1;
 
-    form.setFieldsValue({
+    downloadForm.current.setFieldsValue({
       type,
       url,
       name,
+      headers,
       teleplay,
       numberOfEpisodes,
     });
@@ -272,17 +255,14 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
 
   const onShowDownloadDialog = async (
     e: unknown,
-    data: DownloadForm[],
-    image: string,
+    data: DownloadItem[],
+    image: string
   ) => {
-    setDownloadItems(data);
+    // FIXME: 选择
     setCurrentDownloadForm(data[0]);
 
     setPlaceHolder(image);
-    setModalReadyShow(true);
-    setTimeout(() => {
-      setModalShow(true);
-    }, 0);
+    setModalShow(true);
   };
 
   useEffect(() => {
@@ -311,7 +291,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     dispatch(
       setAppStore({
         isMobile: nextMode,
-      }),
+      })
     );
   };
 
@@ -407,7 +387,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     let content = <div></div>;
     if (store.status === BrowserStatus.Loading) {
       content = <Spin />;
-    } else if (modalReadyShow || modalShow) {
+    } else if (modalShow) {
       content = (
         <img
           src={placeHolder}
@@ -570,7 +550,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
 
   const confirmDownload = async (now?: boolean) => {
     try {
-      const data = form.getFieldsValue();
+      const data = downloadForm.current.getFieldsValue();
       const { numberOfEpisodes, teleplay, ...item } = data;
 
       await localforage.setItem<NumberOfEpisodes>("numberOfEpisodes", {
@@ -583,9 +563,9 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
       }
 
       if (now) {
-        await downloadNow(item);
+        await downloadNow(data);
       } else {
-        await addDownloadItem(item);
+        await addDownloadItem(data);
       }
 
       // 提交成功后关闭弹窗
@@ -601,114 +581,14 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   // 渲染表单
   const renderModalForm = () => {
     return (
-      <ModalForm<DownloadForm>
+      <DownloadForm
+        isEdit
+        ref={downloadForm}
         open={modalShow}
-        title={t("newDownload")}
         onOpenChange={setModalShow}
-        form={form}
-        modalProps={{
-          destroyOnClose: true,
-          afterOpenChange: setModalReadyShow,
-          okText: t("downloadNow"),
-        }}
-        submitter={{
-          render: (props, [, okButton]) => {
-            return [
-              <Button key="addToList" onClick={() => confirmDownload()}>
-                {t("addToDownloadList")}
-              </Button>,
-              okButton,
-            ];
-          },
-        }}
-        submitTimeout={2000}
-        onFinish={() => confirmDownload(true)}
-        labelCol={{ style: { width: "120px" } }}
-        layout="horizontal"
-        width={550}
-        labelAlign={"left"}
-        colon={false}
-      >
-        <Tabs
-          onChange={(key) => {
-            const item = downloadItems.find((item) => item.url === key);
-            if (item) {
-              setCurrentDownloadForm(item);
-            }
-          }}
-          items={downloadItems.map((item) => ({
-            key: item.url,
-            label: item.name,
-          }))}
-        />
-        <ProFormSelect
-          width="xl"
-          name="type"
-          label={t("videoType")}
-          disabled
-          placeholder={t("pleaseSelectVideoType")}
-        />
-        <Form.Item noStyle shouldUpdate>
-          {(form) => {
-            if (form.getFieldValue("type") !== "bilibili") {
-              return (
-                <ProFormSwitch
-                  label={t("showNumberOfEpisodes")}
-                  name="teleplay"
-                />
-              );
-            }
-          }}
-        </Form.Item>
-        <Form.Item noStyle shouldUpdate>
-          {(form) => {
-            if (
-              form.getFieldValue("type") !== "bilibili" &&
-              form.getFieldValue("teleplay")
-            ) {
-              return (
-                <ProFormDigit
-                  label={t("numberOfEpisodes")}
-                  tooltip={t("canUseMouseWheelToAdjust")}
-                  name="numberOfEpisodes"
-                  width="xl"
-                  min={1}
-                  max={10000}
-                  fieldProps={{
-                    changeOnWheel: true,
-                  }}
-                />
-              );
-            }
-          }}
-        </Form.Item>
-
-        <ProFormText
-          width="xl"
-          name="name"
-          label={t("videoName")}
-          placeholder={t("pleaseEnterVideoName")}
-          rules={[
-            {
-              required: true,
-              message: t("pleaseEnterVideoName"),
-            },
-          ]}
-        />
-        <ProFormText
-          width="xl"
-          name="url"
-          allowClear={false}
-          label={t("videoLink")}
-          placeholder={t("pleaseEnterVideoLink")}
-          rules={[
-            {
-              required: true,
-              message: t("pleaseEnterVideoLink"),
-            },
-          ]}
-        />
-      </ModalForm>
+        onDownloadNow={() => confirmDownload(true)}
+        onAddToList={() => confirmDownload()}
+      />
     );
   };
 
