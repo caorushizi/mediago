@@ -1,13 +1,20 @@
 import {
   ModalForm,
-  ProFormDigit,
   ProFormSelect,
   ProFormSwitch,
   ProFormText,
   ProFormTextArea,
 } from "@ant-design/pro-components";
-import { Button, Form } from "antd";
-import React, { forwardRef, useImperativeHandle } from "react";
+import { Button, Form, Input, InputNumber, Select, Space } from "antd";
+import React, {
+  ChangeEvent,
+  FC,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from "react";
 import "./index.scss";
 import { useTranslation } from "react-i18next";
 import { DownloadOutlined, PlusOutlined } from "@ant-design/icons";
@@ -27,12 +34,137 @@ export interface DownloadFormRef {
   getFieldsValue: () => DownloadItem;
 }
 
+interface EpisodeNumberProps {
+  value?: string;
+  onChange?: (value: string) => void;
+  canChangeType: boolean;
+}
+
+const EpisodeNumber: FC<EpisodeNumberProps> = ({
+  value = "",
+  onChange = () => {},
+  canChangeType,
+}) => {
+  const { t } = useTranslation();
+  const [type, setType] = useState("teleplay");
+  const [name, setName] = useState("");
+  const [number, setNumber] = useState(1);
+  const isEpisode = useMemo(() => type === "teleplay", [type]);
+
+  // FIXME: localforage
+  // await localforage.setItem<NumberOfEpisodes>("numberOfEpisodes", {
+  //   numberOfEpisodes,
+  //   teleplay,
+  // });
+
+  const parseName = (value: string = "") => {
+    const res = {
+      name: "",
+      number: 1,
+    };
+
+    if (/_第(\d+)集$/.test(value)) {
+      const [, name, number] = value.match(/(.*?)_第(\d+)集$/);
+      res.name = name;
+      res.number = Number(number);
+    } else {
+      res.name = value;
+    }
+
+    return res;
+  };
+
+  useEffect(() => {
+    const { name, number } = parseName(value);
+    setName(name);
+    setNumber(number);
+    if (isEpisode) {
+      onChange(`${name}_第${number}集`);
+    }
+  }, [value]);
+
+  useEffect(() => {
+    if (!name || !number) return;
+    if (isEpisode) {
+      onChange(`${name}_第${number}集`);
+    } else {
+      onChange(name);
+    }
+  }, [type]);
+
+  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+    if (isEpisode) {
+      onChange(`${e.target.value}_第${number}集`);
+    } else {
+      onChange(e.target.value);
+    }
+  };
+
+  const onNumberChange = (val: number) => {
+    setNumber(val);
+    if (isEpisode) {
+      onChange(`${name}_第${val}集`);
+    }
+  };
+
+  return (
+    <Space.Compact block>
+      {canChangeType && (
+        <Select
+          style={{ width: 100 }}
+          defaultValue="teleplay"
+          options={[
+            {
+              label: "剧集",
+              value: "teleplay",
+            },
+            {
+              label: "电影",
+              value: "movie",
+            },
+          ]}
+          value={type}
+          onChange={setType}
+        />
+      )}
+      <Input
+        value={name}
+        onChange={handleNameChange}
+        placeholder={t("pleaseEnterVideoName")}
+      />
+      {canChangeType && isEpisode && (
+        <InputNumber
+          style={{ width: 300 }}
+          addonBefore="第"
+          addonAfter="集"
+          changeOnWheel
+          value={number}
+          min={1}
+          onChange={onNumberChange}
+        />
+      )}
+    </Space.Compact>
+  );
+};
+
 const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
   (props, ref) => {
-    const { trigger, isEdit, open, onOpenChange, onAddToList, onDownloadNow } =
-      props;
+    const {
+      trigger,
+      isEdit,
+      open,
+      onOpenChange,
+      onAddToList,
+      onDownloadNow,
+      item,
+    } = props;
     const [form] = Form.useForm<DownloadItem>();
     const { t } = useTranslation();
+
+    useEffect(() => {
+      form.setFieldsValue(item);
+    }, [item]);
 
     useImperativeHandle(
       ref,
@@ -116,42 +248,26 @@ const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
           // />
         }
         {!isEdit && <ProFormSwitch label={t("batchDownload")} name={"batch"} />}
-        <ProFormSelect
-          width="xl"
-          name="type"
-          label={t("videoType")}
-          disabled
-          placeholder={t("pleaseSelectVideoType")}
-        />
         <Form.Item noStyle shouldUpdate>
           {(form) => {
-            if (form.getFieldValue("type") !== "bilibili") {
+            if (!form.getFieldValue("batch")) {
               return (
-                <ProFormSwitch
-                  label={t("showNumberOfEpisodes")}
-                  name="teleplay"
-                />
-              );
-            }
-          }}
-        </Form.Item>
-        <Form.Item noStyle shouldUpdate>
-          {(form) => {
-            if (
-              form.getFieldValue("type") !== "bilibili" &&
-              form.getFieldValue("teleplay")
-            ) {
-              return (
-                <ProFormDigit
-                  label={t("numberOfEpisodes")}
-                  tooltip={t("canUseMouseWheelToAdjust")}
-                  name="numberOfEpisodes"
+                <ProFormSelect
+                  key="type"
                   width="xl"
-                  min={1}
-                  max={10000}
-                  fieldProps={{
-                    changeOnWheel: true,
+                  disabled={isEdit}
+                  name="type"
+                  label={t("videoType")}
+                  valueEnum={{
+                    m3u8: "流媒体视频（m3u8）",
+                    bilibili: "哔哩哔哩视频",
                   }}
+                  placeholder={t("pleaseSelectVideoType")}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
                 />
               );
             }
@@ -208,18 +324,29 @@ const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
           {(form) => {
             if (isEdit || !form.getFieldValue("batch")) {
               return (
-                <ProFormText
+                <Form.Item
+                  shouldUpdate
                   name="name"
                   label={t("videoName")}
-                  placeholder={t("pleaseEnterVideoName")}
-                />
+                  tooltip={
+                    form.getFieldValue("type") === "m3u8" &&
+                    t("canUseMouseWheelToAdjust")
+                  }
+                >
+                  <EpisodeNumber
+                    canChangeType={form.getFieldValue("type") === "m3u8"}
+                  />
+                </Form.Item>
               );
             }
           }}
         </Form.Item>
         <Form.Item noStyle shouldUpdate>
           {(form) => {
-            if (isEdit || !form.getFieldValue("batch")) {
+            if (
+              (isEdit || !form.getFieldValue("batch")) &&
+              form.getFieldValue("type") === "m3u8"
+            ) {
               return (
                 <ProFormText
                   name="key"
@@ -230,14 +357,25 @@ const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
             }
           }}
         </Form.Item>
-        <ProFormTextArea
-          name="headers"
-          label={t("additionalHeaders")}
-          fieldProps={{
-            rows: 4,
+        <Form.Item noStyle shouldUpdate>
+          {(form) => {
+            if (
+              form.getFieldValue("type") === "m3u8" ||
+              form.getFieldValue("batch")
+            ) {
+              return (
+                <ProFormTextArea
+                  name="headers"
+                  label={t("additionalHeaders")}
+                  fieldProps={{
+                    rows: 4,
+                  }}
+                  placeholder={t("additionalHeadersDescription")}
+                />
+              );
+            }
           }}
-          placeholder={t("additionalHeadersDescription")}
-        />
+        </Form.Item>
       </ModalForm>
     );
   }
