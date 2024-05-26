@@ -1,5 +1,5 @@
 import { Configuration } from "electron-builder";
-import { Env, mainResolve } from "./utils";
+import { Env, isDev, mainResolve } from "./utils";
 import esbuild from "esbuild";
 
 const external = [
@@ -12,21 +12,24 @@ const external = [
 ];
 
 function getConfig(): esbuild.BuildOptions {
-  const env = Env.getInstance().env;
+  const getDefine = (): Record<string, string> => {
+    if (isDev) {
+      return {
+        __bin__: `"${mainResolve("app/bin").replace(/\\/g, "\\\\")}"`,
+      };
+    }
+
+    return {
+      ...Env.getInstance().loadDotEnvDefined(),
+      "process.env.NODE_ENV": '"production"',
+    };
+  };
+
   return {
     bundle: true,
     sourcemap: process.env.NODE_ENV === "development",
     external,
-    define:
-      process.env.NODE_ENV === "development"
-        ? {
-            // 开发环境中二进制可执行文件的路径
-            __bin__: `"${mainResolve("app/bin").replace(/\\/g, "\\\\")}"`,
-          }
-        : {
-            ...env,
-            "process.env.NODE_ENV": '"production"',
-          },
+    define: getDefine(),
     outdir: mainResolve("app/build/main"),
     loader: { ".png": "file" },
     minify: process.env.NODE_ENV === "production",
