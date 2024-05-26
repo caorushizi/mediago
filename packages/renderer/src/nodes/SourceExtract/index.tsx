@@ -42,17 +42,10 @@ import WebView from "../../components/WebView";
 import { selectAppStore } from "../../store";
 import { useTranslation } from "react-i18next";
 import { nanoid } from "nanoid";
-import localforage from "localforage";
 import DownloadForm, { DownloadFormRef } from "../../components/DownloadForm";
 
 interface SourceExtractProps {
   page?: boolean;
-}
-
-// 集数
-interface NumberOfEpisodes {
-  teleplay: boolean;
-  numberOfEpisodes: number;
 }
 
 const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
@@ -237,19 +230,11 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   const setCurrentDownloadForm = async (data: DownloadItem) => {
     const { type, url, name, headers } = data;
 
-    const noe = await localforage.getItem<NumberOfEpisodes>("numberOfEpisodes");
-    const formData = downloadForm.current.getFieldsValue();
-    const teleplay = formData.teleplay || noe?.teleplay || false;
-    const numberOfEpisodes =
-      formData.numberOfEpisodes || noe?.numberOfEpisodes || 1;
-
     downloadForm.current.setFieldsValue({
       type,
       url,
       name,
       headers,
-      teleplay,
-      numberOfEpisodes,
     });
   };
 
@@ -551,16 +536,6 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   const confirmDownload = async (now?: boolean) => {
     try {
       const data = downloadForm.current.getFieldsValue();
-      const { numberOfEpisodes, teleplay, ...item } = data;
-
-      await localforage.setItem<NumberOfEpisodes>("numberOfEpisodes", {
-        numberOfEpisodes,
-        teleplay,
-      });
-
-      if (teleplay) {
-        item.name = `${item.name}——第${numberOfEpisodes}集`;
-      }
 
       if (now) {
         await downloadNow(data);
