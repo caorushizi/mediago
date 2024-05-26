@@ -1,184 +1,246 @@
 import {
   ModalForm,
+  ProFormDigit,
+  ProFormSelect,
   ProFormSwitch,
   ProFormText,
   ProFormTextArea,
 } from "@ant-design/pro-components";
-import { Form } from "antd";
-import React, { FC } from "react";
+import { Button, Form } from "antd";
+import React, { forwardRef, useImperativeHandle } from "react";
 import "./index.scss";
 import { useTranslation } from "react-i18next";
+import { DownloadOutlined, PlusOutlined } from "@ant-design/icons";
 
 export interface DownloadFormProps {
-  onFinish: (values: DownloadItem) => Promise<boolean | void>;
-  trigger: JSX.Element;
+  trigger?: JSX.Element;
   isEdit?: boolean;
   item?: DownloadItem;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onAddToList: (values: DownloadItem) => Promise<boolean | void>;
+  onDownloadNow: (values: DownloadItem) => Promise<boolean | void>;
 }
 
-const preProcessHeaders = (value: string | null) => {
-  if (!value) return;
+export interface DownloadFormRef {
+  setFieldsValue: (value: Partial<DownloadItem>) => void;
+  getFieldsValue: () => DownloadItem;
+}
 
-  let headers: Record<string, any> = {};
-  try {
-    headers = JSON.parse(value);
-  } catch (err) {
-    // empty
-  }
-  return Object.entries(headers)
-    .map(([key, value]) => {
-      return `${key}: ${value}`;
-    })
-    .join("\n");
-};
+const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
+  (props, ref) => {
+    const { trigger, isEdit, open, onOpenChange, onAddToList, onDownloadNow } =
+      props;
+    const [form] = Form.useForm<DownloadItem>();
+    const { t } = useTranslation();
 
-const postProcessHeaders = (value: string | null) => {
-  if (!value) return "";
-
-  const headers = value
-    .split("\n")
-    .reduce<Record<string, any>>((prev, curr) => {
-      const [key, value] = curr.split(":");
-      if (key) {
-        prev[key.trim()] = value ? value.trim() : "";
-      }
-      return prev;
-    }, {});
-
-  return JSON.stringify(headers);
-};
-
-const DownloadFrom: FC<DownloadFormProps> = ({
-  onFinish,
-  trigger,
-  isEdit,
-  item,
-}) => {
-  const [form] = Form.useForm<DownloadItem>();
-  const { t } = useTranslation();
-
-  return (
-    <ModalForm<DownloadItem>
-      key={isEdit ? "edit" : "new"}
-      title={isEdit ? t("editDownload") : t("newDownload")}
-      width={500}
-      trigger={trigger}
-      form={form}
-      autoFocusFirstInput
-      onOpenChange={() => {
-        if (item) {
-          // 处理 headers 字段
-          const headers = preProcessHeaders(item.headers);
-
-          form.setFieldsValue({
-            ...item,
-            headers,
-          });
-        }
-      }}
-      modalProps={{
-        destroyOnClose: true,
-        styles: {
-          body: {
-            paddingTop: 5,
+    useImperativeHandle(
+      ref,
+      () => {
+        return {
+          setFieldsValue: (value) => {
+            form.setFieldsValue(value);
           },
-        },
-      }}
-      submitTimeout={2000}
-      onFinish={(values) => {
-        // 处理 headers 字段
-        const headers = postProcessHeaders(values.headers);
+          getFieldsValue: () => {
+            return form.getFieldsValue();
+          },
+        };
+      },
+      []
+    );
 
-        return onFinish({ ...values, headers });
-      }}
-      labelCol={{ span: 4 }}
-      layout="horizontal"
-      colon={false}
-    >
-      {!isEdit && <ProFormSwitch label={t("batchDownload")} name={"batch"} />}
-      <Form.Item noStyle shouldUpdate>
-        {(form) => {
-          if (!isEdit && form.getFieldValue("batch")) {
-            return (
-              <ProFormTextArea
-                name="batchList"
-                fieldProps={{
-                  rows: 6,
+    return (
+      <ModalForm<DownloadItem>
+        open={open}
+        key={isEdit ? "edit" : "new"}
+        title={isEdit ? t("editDownload") : t("newDownload")}
+        width={500}
+        trigger={trigger}
+        form={form}
+        autoFocusFirstInput
+        submitter={{
+          render: () => {
+            return [
+              <Button
+                key="addToList"
+                onClick={async () => {
+                  await form.validateFields();
+                  const values = form.getFieldsValue();
+                  return onAddToList(values);
                 }}
-                label={t("videoLink")}
-                placeholder={t("videoLikeDescription")}
-                rules={[
-                  {
-                    required: true,
-                    message: t("pleaseEnterVideoLink"),
-                  },
-                ]}
-              />
-            );
-          } else {
-            return (
-              <ProFormText
-                name="url"
-                label={t("videoLink")}
-                placeholder={t("pleaseEnterOnlineVideoUrlOrDragM3U8Here")}
-                rules={[
-                  {
-                    required: true,
-                    message: t("pleaseEnterOnlineVideoUrl"),
-                  },
-                  {
-                    pattern: /^(file|https?):\/\/.+/,
-                    message: t("pleaseEnterCorrectVideoLink"),
-                  },
-                ]}
-                fieldProps={{
-                  onDrop: (e) => {
-                    const file: any = e.dataTransfer.files[0];
-                    form.setFieldValue("url", `file://${file.path}`);
-                    form.validateFields(["url"]);
-                  },
+                icon={<PlusOutlined />}
+              >
+                {t("addToDownloadList")}
+              </Button>,
+              <Button
+                key="downloadNow"
+                type="primary"
+                onClick={async () => {
+                  await form.validateFields();
+                  const values = form.getFieldsValue();
+                  return onDownloadNow(values);
                 }}
-              />
-            );
-          }
+                icon={<DownloadOutlined />}
+              >
+                {t("downloadNow")}
+              </Button>,
+            ];
+          },
         }}
-      </Form.Item>
-      <Form.Item noStyle shouldUpdate>
-        {(form) => {
-          if (isEdit || !form.getFieldValue("batch")) {
-            return (
-              <ProFormText
-                name="name"
-                label={t("videoName")}
-                placeholder={t("pleaseEnterVideoName")}
-              />
-            );
-          }
+        onOpenChange={onOpenChange}
+        modalProps={{
+          destroyOnClose: true,
+          styles: {
+            body: {
+              paddingTop: 5,
+            },
+          },
         }}
-      </Form.Item>
-      <Form.Item noStyle shouldUpdate>
-        {(form) => {
-          if (isEdit || !form.getFieldValue("batch")) {
-            return (
-              <ProFormText
-                name="key"
-                label={t("privateKey")}
-                placeholder={t("keyAndIv")}
-              />
-            );
-          }
-        }}
-      </Form.Item>
-      <ProFormTextArea
-        name="headers"
-        label={t("additionalHeaders")}
-        fieldProps={{
-          rows: 4,
-        }}
-        placeholder={t("additionalHeadersDescription")}
-      />
-    </ModalForm>
-  );
-};
+        submitTimeout={2000}
+        labelCol={{ span: 4 }}
+        layout="horizontal"
+        colon={false}
+      >
+        {
+          // <Tabs
+          //   onChange={(key) => {
+          //     const item = downloadItems.find((item) => item.url === key);
+          //     if (item) {
+          //       setCurrentDownloadForm(item);
+          //     }
+          //   }}
+          //   items={downloadItems.map((item) => ({
+          //     key: item.url,
+          //     label: item.name,
+          //   }))}
+          // />
+        }
+        {!isEdit && <ProFormSwitch label={t("batchDownload")} name={"batch"} />}
+        <ProFormSelect
+          width="xl"
+          name="type"
+          label={t("videoType")}
+          disabled
+          placeholder={t("pleaseSelectVideoType")}
+        />
+        <Form.Item noStyle shouldUpdate>
+          {(form) => {
+            if (form.getFieldValue("type") !== "bilibili") {
+              return (
+                <ProFormSwitch
+                  label={t("showNumberOfEpisodes")}
+                  name="teleplay"
+                />
+              );
+            }
+          }}
+        </Form.Item>
+        <Form.Item noStyle shouldUpdate>
+          {(form) => {
+            if (
+              form.getFieldValue("type") !== "bilibili" &&
+              form.getFieldValue("teleplay")
+            ) {
+              return (
+                <ProFormDigit
+                  label={t("numberOfEpisodes")}
+                  tooltip={t("canUseMouseWheelToAdjust")}
+                  name="numberOfEpisodes"
+                  width="xl"
+                  min={1}
+                  max={10000}
+                  fieldProps={{
+                    changeOnWheel: true,
+                  }}
+                />
+              );
+            }
+          }}
+        </Form.Item>
+        <Form.Item noStyle shouldUpdate>
+          {(form) => {
+            if (!isEdit && form.getFieldValue("batch")) {
+              return (
+                <ProFormTextArea
+                  name="batchList"
+                  fieldProps={{
+                    rows: 6,
+                  }}
+                  label={t("videoLink")}
+                  placeholder={t("videoLikeDescription")}
+                  rules={[
+                    {
+                      required: true,
+                      message: t("pleaseEnterVideoLink"),
+                    },
+                  ]}
+                />
+              );
+            } else {
+              return (
+                <ProFormText
+                  name="url"
+                  label={t("videoLink")}
+                  placeholder={t("pleaseEnterOnlineVideoUrlOrDragM3U8Here")}
+                  rules={[
+                    {
+                      required: true,
+                      message: t("pleaseEnterOnlineVideoUrl"),
+                    },
+                    {
+                      pattern: /^(file|https?):\/\/.+/,
+                      message: t("pleaseEnterCorrectVideoLink"),
+                    },
+                  ]}
+                  fieldProps={{
+                    onDrop: (e) => {
+                      const file: any = e.dataTransfer.files[0];
+                      form.setFieldValue("url", `file://${file.path}`);
+                      form.validateFields(["url"]);
+                    },
+                  }}
+                />
+              );
+            }
+          }}
+        </Form.Item>
+        <Form.Item noStyle shouldUpdate>
+          {(form) => {
+            if (isEdit || !form.getFieldValue("batch")) {
+              return (
+                <ProFormText
+                  name="name"
+                  label={t("videoName")}
+                  placeholder={t("pleaseEnterVideoName")}
+                />
+              );
+            }
+          }}
+        </Form.Item>
+        <Form.Item noStyle shouldUpdate>
+          {(form) => {
+            if (isEdit || !form.getFieldValue("batch")) {
+              return (
+                <ProFormText
+                  name="key"
+                  label={t("privateKey")}
+                  placeholder={t("keyAndIv")}
+                />
+              );
+            }
+          }}
+        </Form.Item>
+        <ProFormTextArea
+          name="headers"
+          label={t("additionalHeaders")}
+          fieldProps={{
+            rows: 4,
+          }}
+          placeholder={t("additionalHeadersDescription")}
+        />
+      </ModalForm>
+    );
+  }
+);
 
-export default DownloadFrom;
+export default DownloadForm;

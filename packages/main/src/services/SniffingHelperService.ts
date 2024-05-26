@@ -3,15 +3,15 @@ import { DownloadType } from "../interfaces.ts";
 import { TYPES } from "../types.ts";
 import ElectronLogger from "../vendor/ElectronLogger.ts";
 import EventEmitter from "events";
-import { session } from "electron";
-import { PERSIST_WEBVIEW } from "../helper/index.ts";
-import { OnCompletedListenerDetails } from "electron/main";
+import { OnSendHeadersListenerDetails, session } from "electron";
+import { PERSIST_WEBVIEW, formatHeaders } from "../helper/index.ts";
 
 export interface SourceParams {
   url: string;
   documentURL: string;
   name: string;
   type: DownloadType;
+  headers?: string;
 }
 
 export interface SourceFilter {
@@ -49,7 +49,7 @@ export class SniffingHelper extends EventEmitter {
 
   constructor(
     @inject(TYPES.ElectronLogger)
-    private readonly logger: ElectronLogger,
+    private readonly logger: ElectronLogger
   ) {
     super();
   }
@@ -87,7 +87,7 @@ export class SniffingHelper extends EventEmitter {
 
   start() {
     const viewSession = session.fromPartition(PERSIST_WEBVIEW);
-    viewSession.webRequest.onCompleted(this.onCompleted);
+    viewSession.webRequest.onSendHeaders(this.onSendHeaders);
   }
 
   send = (item: SourceParams) => {
@@ -100,8 +100,8 @@ export class SniffingHelper extends EventEmitter {
     }
   };
 
-  private onCompleted = (details: OnCompletedListenerDetails): void => {
-    const { url } = details;
+  private onSendHeaders = (details: OnSendHeadersListenerDetails): void => {
+    const { url, requestHeaders } = details;
     const { title, url: documentURL } = this.pageInfo;
 
     listLoop: for (const filter of filterList) {
@@ -117,6 +117,7 @@ export class SniffingHelper extends EventEmitter {
             documentURL,
             name: title,
             type: filter.type,
+            headers: formatHeaders(requestHeaders),
           });
           break listLoop;
         }

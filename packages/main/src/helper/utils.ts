@@ -4,12 +4,11 @@ export async function sleep(second = 1): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, second * 1000));
 }
 
-export function formatHeaders(headersStr: string): string {
-  const headers: Record<string, any> | null = JSON.parse(headersStr);
+export function formatHeaders(headers: Record<string, string>): string {
   if (!headers) return "";
   const formatted = Object.entries(headers)
     .map(([key, value]) => `${key}:${value}`)
-    .join("|");
+    .join("\n");
   return formatted;
 }
 
