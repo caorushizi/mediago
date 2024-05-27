@@ -13,6 +13,19 @@ outline: deep
 
 ## 下载安装
 
+**v2.2.0 (2024.5.22 发布)**
+
+- [windows mediago v2.2.0](https://github.com/caorushizi/mediago/releases/download/v2.2.0/mediago-setup-2.2.0.exe)
+- [macos mediago v2.2.0](https://github.com/caorushizi/mediago/releases/download/v2.2.0/mediago-setup-2.2.0.dmg)
+
+**更新日志**
+
+- 支持下载直播流
+- 支持哔哩哔哩视频下载
+- 优化沉浸式嗅探流程
+- 支持下载控制台输出
+- 修复了一些 bug
+
 **v2.0.1（2023.7.1 发布）**
 
 - [windows mediago v2.0.1](https://github.com/caorushizi/mediago/releases/download/v2.0.1/media-downloader-setup-2.0.1.exe)
