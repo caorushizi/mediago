@@ -7,7 +7,7 @@ import { browserOptions, nodeOptions, getReleaseConfig } from "./config";
 import semver from "semver";
 import pkg from "../app/package.json";
 import * as builder from "electron-builder";
-import glob from "glob";
+import { globSync } from "glob";
 import fs from "fs";
 
 const env = Env.getInstance();
@@ -38,7 +38,7 @@ async function chmodBin() {
   // 遍历文件夹下的所有文件，将文件的权限设置为 777
   if (isWin) return;
 
-  const files = glob.sync(mainResolve("app/bin/*"));
+  const files = globSync(mainResolve("app/bin/*"));
   for (const file of files) {
     fs.chmodSync(file, 0o777);
   }
