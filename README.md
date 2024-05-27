@@ -25,12 +25,12 @@
 本项目支持 m3u8 视频在线提取工具 流媒体下载 m3u8 下载。
 
 - **✅&nbsp; 无需抓包**： 使用软件自带浏览器可以轻松嗅探网页中的视频资源，通过嗅探到的资源列表选择自己想要下载的资源，简单快速。
-- **📱&nbsp; 移动播放**： 可以轻松无缝的在PC和移动设备之前切换，下载完成后即可使用手机观看视频。
+- **📱&nbsp; 移动播放**： 可以轻松无缝的在 PC 和移动设备之前切换，下载完成后即可使用手机观看视频。
 - **⚡️&nbsp; 批量下载**： 支持同时下载多个视频和直播资源，高速带宽不闲置。
 
 ## Quickstart
 
-运行代码需要 node 、 pnpm 和 go，node、go 需要在官网下载安装，pnpm 可以通过`npm i -g pnpm`安装。
+运行代码需要 node 和 pnpm，node 需要在官网下载安装，pnpm 可以通过`npm i -g pnpm`安装。
 
 ## 运行代码
 
@@ -50,6 +50,19 @@ pnpm release
 
 ## Releases
 
+**v2.2.0 (2024.5.22 发布)**
+
+- [windows mediago v2.2.0](https://github.com/caorushizi/mediago/releases/download/v2.2.0/mediago-setup-2.2.0.exe)
+- [macos mediago v2.2.0](https://github.com/caorushizi/mediago/releases/download/v2.2.0/mediago-setup-2.2.0.dmg)
+
+**更新日志**
+
+- 支持下载直播流
+- 支持哔哩哔哩视频下载
+- 优化沉浸式嗅探流程
+- 支持下载控制台输出
+- 修复了一些 bug
+
 **v2.0.2（2023.7.9 发布）**
 
 - [windows mediago v2.0.2](https://github.com/caorushizi/mediago/releases/download/v2.0.2/media-downloader-setup-2.0.2.exe)
@@ -65,12 +78,6 @@ pnpm release
 - 支持切换手机和 PC 模式
 - 支持修改同时下载数量
 - 修复了一些 bug
-
-**v1.1.5（2022.2.5 发布）**
-
-- [windows mediago v1.1.5](https://github.com/caorushizi/mediago/releases/download/1.1.5/media-downloader-setup-1.1.4.exe)
-
-**更新日志**
 
 ## 软件截图
 
@@ -88,6 +95,4 @@ pnpm release
 
 ## 鸣谢
 
-N_m3u8DL-CLI 来自于 <https://github.com/nilaoda/N_m3u8DL-CLI>
-
-mediago 来自于 <https://github.com/caorushizi/mediago>
+N_m3u8DL-RE 来自于 <https://github.com/nilaoda/N_m3u8DL-RE>
