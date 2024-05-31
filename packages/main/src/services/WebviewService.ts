@@ -36,7 +36,7 @@ export default class WebviewService {
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
     @inject(TYPES.SniffingHelper)
-    private readonly sniffingHelper: SniffingHelper,
+    private readonly sniffingHelper: SniffingHelper
   ) {
     // 初始化 blocker
     this.initBlocker();
