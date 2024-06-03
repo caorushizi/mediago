@@ -28,7 +28,7 @@
     "@types/gulp": "^4.0.17",
     "@types/lodash": "^4.17.4",
     "@types/mime-types": "^2.1.4",
-    "@types/node": "^20.12.12",
+    "@types/node": "^20.14.0",
     "@types/node-fetch": "^2.6.11",
     "@types/semver": "^7.5.8",
     "consola": "^3.2.3",
