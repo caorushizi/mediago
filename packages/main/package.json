@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "@cliqz/adblocker-electron": "^1.27.3",
-    "@cliqz/adblocker-electron-preload": "^1.27.3",
+    "@cliqz/adblocker-electron-preload": "^1.27.6",
     "axios": "^1.7.2",
     "better-sqlite3": "^10.0.0",
     "cheerio": "1.0.0-rc.12",
