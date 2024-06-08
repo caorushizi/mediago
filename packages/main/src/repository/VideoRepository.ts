@@ -14,7 +14,7 @@ import TypeORM from "../vendor/TypeORM.ts";
 export default class VideoRepository {
   constructor(
     @inject(TYPES.TypeORM)
-    private readonly db: TypeORM,
+    private readonly db: TypeORM
   ) {}
 
   async addVideo(video: Omit<DownloadItem, "id">) {
@@ -31,7 +31,7 @@ export default class VideoRepository {
     return await this.db.manager.save(item);
   }
 
-  async addVideos(videos: DownloadItem[]) {
+  async addVideos(videos: Omit<DownloadItem, "id">[]) {
     const items = videos.map((video) => {
       const item = new Video();
       item.name = video.name;

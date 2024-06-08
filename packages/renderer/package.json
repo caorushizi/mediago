@@ -18,7 +18,7 @@
     "@xterm/addon-fit": "^0.10.0",
     "@xterm/xterm": "^5.5.0",
     "ahooks": "^3.8.0",
-    "antd": "^5.17.3",
+    "antd": "^5.18.0",
     "antd-style": "^3.6.2",
     "axios": "^1.7.2",
     "classnames": "^2.5.1",
