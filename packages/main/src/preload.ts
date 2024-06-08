@@ -116,6 +116,12 @@ const electronApi = {
   downloadNow(video: Omit<DownloadItem, "id">): Promise<void> {
     return ipcRenderer.invoke("download-now", video);
   },
+  downloadItemsNow(videos: Omit<DownloadItem, "id">[]): Promise<void> {
+    return ipcRenderer.invoke("download-items-now", videos);
+  },
+  editDownloadNow(video: DownloadItem): Promise<void> {
+    return ipcRenderer.invoke("edit-download-now", video);
+  },
   combineToHomePage(store: BrowserStore): Promise<void> {
     return ipcRenderer.invoke("combine-to-home-page", store);
   },

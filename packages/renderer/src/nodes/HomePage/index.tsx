@@ -12,7 +12,7 @@ import "./index.scss";
 import PageContainer from "../../components/PageContainer";
 import { usePagination } from "ahooks";
 import useElectron from "../../hooks/electron";
-import { DownloadFilter, DownloadStatus, DownloadType } from "../../types";
+import { DownloadFilter, DownloadStatus } from "../../types";
 import { ProList } from "@ant-design/pro-components";
 import {
   DownloadOutlined,
@@ -51,6 +51,9 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     addDownloadItem,
     addDownloadItems,
     editDownloadItem,
+    downloadItemsNow,
+    downloadNow,
+    editDownloadNow,
     getDownloadLog,
   } = useElectron();
   const appStore = useSelector(selectAppStore);
@@ -178,6 +181,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     }
   };
 
+  // 编辑表单
   const renderEditForm = (item: DownloadItem) => {
     return (
       <DownloadForm
@@ -187,22 +191,8 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
         trigger={
           <Button type="text" title={t("edit")} icon={<EditOutlined />} />
         }
-        onDownloadNow={async (values) => {
-          try {
-            await editDownloadItem({
-              id: item.id,
-              name: values.name,
-              url: values.url,
-              headers: values.headers,
-              type: DownloadType.m3u8,
-            });
-            refresh();
-            return true;
-          } catch (err: any) {
-            messageApi.error(err.message);
-          }
-        }}
-        onAddToList={async () => {}}
+        onAddToList={(values) => confirmAddItem(values)}
+        onDownloadNow={(values) => confirmAddItem(values, true)}
       />
     );
   };
@@ -381,6 +371,62 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     setSelectedRowKeys([]);
   };
 
+  const confirmAddItem = async (values: any, now?: boolean) => {
+    const item = {
+      id: values.id,
+      name: values.name || moment(),
+      url: values.url,
+      headers: values.headers,
+      type: values.type,
+    };
+
+    if (now) {
+      await editDownloadNow(item);
+    } else {
+      await editDownloadItem(item);
+    }
+
+    refresh();
+    return true;
+  };
+
+  const confirmAddItems = async (values: any, now?: boolean) => {
+    if (values.batch) {
+      const { batchList = "" } = values;
+      const items = batchList.split("\n").map((item: any) => {
+        let [url, name] = item.split(" ");
+        url = url ? url.trim() : "";
+        name = name ? name.trim() : moment();
+        return {
+          url,
+          name,
+          headers: values.headers,
+          type: values.type,
+        };
+      });
+      if (now) {
+        await downloadItemsNow(items);
+      } else {
+        await addDownloadItems(items);
+      }
+    } else {
+      const item = {
+        name: values.name || moment(),
+        url: values.url,
+        headers: values.headers,
+        type: values.type,
+      };
+      if (now) {
+        await downloadNow(item);
+      } else {
+        await addDownloadItem(item);
+      }
+    }
+
+    refresh();
+    return true;
+  };
+
   return (
     <PageContainer
       title={
@@ -395,44 +441,17 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
               {t("openBrowser")}
             </Button>
           )}
-          {filter === DownloadFilter.list && (
-            <Button onClick={() => refresh()}>{t("refresh")}</Button>
-          )}
           <Button onClick={() => openDir(appStore.local)}>
             {t("openFolder")}
           </Button>
           {filter === DownloadFilter.list && (
             <DownloadForm
+              destroyOnClose
               trigger={
                 <Button icon={<FileAddOutlined />}>{t("newDownload")}</Button>
               }
-              onAddToList={async () => {}}
-              onDownloadNow={async (values: any) => {
-                if (values.batch) {
-                  const { batchList = "" } = values;
-                  const items = batchList.split("\n").map((item: any) => {
-                    let [url, name] = item.split(" ");
-                    url = url ? url.trim() : "";
-                    name = name ? name.trim() : moment();
-                    return {
-                      url,
-                      name,
-                      headers: values.headers,
-                    };
-                  });
-                  await addDownloadItems(items);
-                } else {
-                  await addDownloadItem({
-                    name: values.name || moment(),
-                    url: values.url,
-                    headers: values.headers,
-                    type: DownloadType.m3u8,
-                  });
-                }
-
-                refresh();
-                return true;
-              }}
+              onAddToList={async (values) => confirmAddItems(values)}
+              onDownloadNow={async (values) => confirmAddItems(values, true)}
             />
           )}
         </Space>
