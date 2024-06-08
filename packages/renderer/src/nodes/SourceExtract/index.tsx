@@ -244,7 +244,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     image: string
   ) => {
     // FIXME: 选择
-    setCurrentDownloadForm(data[0]);
+    setCurrentDownloadForm(data[data.length - 1]);
 
     setPlaceHolder(image);
     setModalShow(true);
