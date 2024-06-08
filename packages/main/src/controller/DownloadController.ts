@@ -49,7 +49,7 @@ export default class DownloadController implements Controller {
   }
 
   @handle("add-download-items")
-  async addDownloadItems(e: IpcMainEvent, videos: DownloadItem[]) {
+  async addDownloadItems(e: IpcMainEvent, videos: Omit<DownloadItem, "id">[]) {
     const items = await this.videoRepository.addVideos(videos);
     // 这里向页面发送消息，通知页面更新
     this.mainWindow.send("download-item-notifier", items);
@@ -62,6 +62,13 @@ export default class DownloadController implements Controller {
     return item;
   }
 
+  @handle("edit-download-now")
+  async editDownloadNow(e: IpcMainEvent, video: DownloadItem) {
+    const item = await this.editDownloadItem(e, video);
+    await this.startDownload(e, item.id);
+    return item;
+  }
+
   @handle("download-now")
   async downloadNow(e: IpcMainEvent, video: Omit<DownloadItem, "id">) {
     // 添加下载项
@@ -69,6 +76,15 @@ export default class DownloadController implements Controller {
     // 开始下载
     await this.startDownload(e, item.id);
     return item;
+  }
+
+  @handle("download-items-now")
+  async downloadItemsNow(e: IpcMainEvent, videos: Omit<DownloadItem, "id">[]) {
+    // 添加下载项
+    const items = await this.addDownloadItems(e, videos);
+    // 开始下载
+    items.forEach((item) => this.startDownload(e, item.id));
+    return items;
   }
 
   @handle("get-download-items")
