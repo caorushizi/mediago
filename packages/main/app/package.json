@@ -1,6 +1,6 @@
 {
   "name": "mediago",
-  "version": "2.2.0",
+  "version": "2.2.1-beta.0",
   "description": "在线视频下载器",
   "main": "main/index.js",
   "author": "caorushizi",
