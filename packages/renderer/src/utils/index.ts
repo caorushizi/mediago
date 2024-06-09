@@ -50,3 +50,9 @@ export const generateUrl = (url: string) => {
 export function moment() {
   return dayjs().format("YYYY-MM-DDTHH:mm:ssZ");
 }
+
+export function getFileName(url: string) {
+  const urlObject = new URL(url);
+  const name = urlObject.pathname.split("/").pop() || "";
+  return decodeURIComponent(name);
+}

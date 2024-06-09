@@ -179,8 +179,10 @@ const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
     }, [open]);
 
     useEffect(() => {
-      form.setFieldsValue(item);
-    }, [item]);
+      if (modalOpen) {
+        form.setFieldsValue(item);
+      }
+    }, [item, modalOpen]);
 
     useImperativeHandle(
       ref,

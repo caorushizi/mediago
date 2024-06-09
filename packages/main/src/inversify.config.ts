@@ -19,6 +19,8 @@ import ElectronDevtools from "./vendor/ElectronDevtools.ts";
 import ElectronStore from "./vendor/ElectronStore.ts";
 import IpcHandler from "./core/ipc.ts";
 import ProtocolService from "./core/protocol.ts";
+import ConversionController from "./controller/ConversionController.ts";
+import ConversionRepository from "./repository/ConversionRepository.ts";
 
 const container = new Container({
   skipBaseClassChecks: true,
@@ -41,12 +43,16 @@ container.bind<BrowserWindow>(TYPES.BrowserWindow).to(BrowserWindow);
 container.bind<Controller>(TYPES.Controller).to(HomeController);
 container.bind<Controller>(TYPES.Controller).to(WebviewController);
 container.bind<Controller>(TYPES.Controller).to(DownloadController);
+container.bind<Controller>(TYPES.Controller).to(ConversionController);
 
 // repository
 container.bind<VideoRepository>(TYPES.VideoRepository).to(VideoRepository);
 container
   .bind<FavoriteRepository>(TYPES.FavoriteRepository)
   .to(FavoriteRepository);
+container
+  .bind<ConversionRepository>(TYPES.ConversionRepository)
+  .to(ConversionRepository);
 
 // vendor
 container.bind<ElectronDevtools>(TYPES.ElectronDevtools).to(ElectronDevtools);
