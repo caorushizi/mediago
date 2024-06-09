@@ -11,9 +11,10 @@ import Loading from "./components/Loading";
 import { DownloadFilter } from "./types";
 
 const AppLayout = lazy(() => import("./layout/App"));
-const HomePage = lazy(() => import("./nodes/HomePage"));
-const SourceExtract = lazy(() => import("./nodes/SourceExtract"));
-const SettingPage = lazy(() => import("./nodes/SettingPage"));
+const HomePage = lazy(() => import("./pages/HomePage"));
+const SourceExtract = lazy(() => import("./pages/SourceExtract"));
+const SettingPage = lazy(() => import("./pages/SettingPage"));
+const ConverterPage = lazy(() => import("./pages/Converter"));
 
 function getAlgorithm(appTheme: "dark" | "light") {
   return appTheme === "dark" ? theme.darkAlgorithm : theme.defaultAlgorithm;
@@ -111,6 +112,14 @@ const App: FC = () => {
               element={
                 <Suspense fallback={<Loading />}>
                   <SettingPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="converter"
+              element={
+                <Suspense fallback={<Loading />}>
+                  <ConverterPage />
                 </Suspense>
               }
             />
