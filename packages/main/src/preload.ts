@@ -3,11 +3,14 @@ import { shell } from "electron/common";
 import { AppStore, BrowserStore, EnvPath } from "./main.ts";
 import { type Favorite } from "./entity/Favorite.ts";
 import {
+  ConversionPagination,
+  ConversionResponse,
   VideoResponse,
   type DownloadItem,
   type DownloadItemPagination,
 } from "./interfaces.ts";
 import { Video } from "./entity/Video.ts";
+import { Conversion } from "./entity/Conversion.ts";
 
 const apiFunctions: Record<string, any> = {};
 
@@ -134,6 +137,9 @@ const electronApi = {
   openBrowser(url: string): Promise<void> {
     return shell.openExternal(url);
   },
+  selectFile(): Promise<string> {
+    return ipcRenderer.invoke("select-file");
+  },
   getSharedState(): Promise<any> {
     return ipcRenderer.invoke("get-shared-state");
   },
@@ -151,6 +157,14 @@ const electronApi = {
   },
   pluginReady() {
     return ipcRenderer.invoke("plugin-ready");
+  },
+  getConversions(
+    pagination: ConversionPagination
+  ): Promise<ConversionResponse> {
+    return ipcRenderer.invoke("get-conversions", pagination);
+  },
+  addConversion(conversion: Omit<Conversion, "id">): Promise<Conversion> {
+    return ipcRenderer.invoke("add-conversion", conversion);
   },
 };
 

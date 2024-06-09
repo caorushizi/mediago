@@ -1,3 +1,5 @@
+import { Conversion } from "./entity/Conversion.ts";
+
 export type Controller = Record<string | symbol, any>;
 
 export interface DownloadItem {
@@ -21,9 +23,19 @@ export interface DownloadItemPagination {
   filter?: DownloadFilter;
 }
 
+export interface ConversionPagination {
+  current?: number;
+  pageSize?: number;
+}
+
 export interface VideoResponse {
   total: number;
   list: DownloadItem[];
+}
+
+export interface ConversionResponse {
+  total: number;
+  list: Conversion[];
 }
 
 export enum DownloadStatus {

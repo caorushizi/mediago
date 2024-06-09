@@ -40,7 +40,7 @@ export default class HomeController implements Controller {
     @inject(TYPES.BrowserWindow)
     private readonly browserWindow: BrowserWindow,
     @inject(TYPES.WebviewService)
-    private readonly webviewService: WebviewService,
+    private readonly webviewService: WebviewService
   ) {}
 
   @handle("get-env-path")
@@ -251,5 +251,20 @@ export default class HomeController implements Controller {
   async getDownloadLog(event: IpcMainEvent, id: number) {
     const video = await this.videoRepository.findVideo(id);
     return video.log || "";
+  }
+
+  @handle("select-file")
+  async selectFile() {
+    const window = this.mainWindow.window;
+    if (!window) return Promise.reject("未找到主窗口");
+
+    const result = await dialog.showOpenDialog(window, {
+      properties: ["openFile"],
+    });
+
+    if (!result.canceled) {
+      return result.filePaths[0];
+    }
+    return "";
   }
 }
