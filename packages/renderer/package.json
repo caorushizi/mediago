@@ -25,6 +25,7 @@
     "dayjs": "^1.11.11",
     "i18next": "^23.11.5",
     "i18next-browser-languagedetector": "^8.0.0",
+    "immer": "^10.1.1",
     "lint-staged": "^15.2.5",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.4",

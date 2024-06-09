@@ -1,13 +1,5 @@
 import React, { FC, ReactNode, useEffect, useState } from "react";
-import {
-  Button,
-  message,
-  Progress,
-  Space,
-  Tag,
-  Dropdown,
-  Typography,
-} from "antd";
+import { Button, message, Progress, Space, Tag, Typography } from "antd";
 import "./index.scss";
 import PageContainer from "../../components/PageContainer";
 import { usePagination } from "ahooks";
@@ -19,16 +11,16 @@ import {
   EditOutlined,
   PauseCircleOutlined,
   SyncOutlined,
-  MoreOutlined,
   CodeOutlined,
   FileAddOutlined,
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { selectAppStore } from "../../store";
-import DownloadForm from "../../components/DownloadForm";
+import DownloadForm, { DownloadItemForm } from "../../components/DownloadForm";
 import { Trans, useTranslation } from "react-i18next";
 import Terminal from "../../components/Terminal";
 import { moment } from "../../utils";
+import { produce } from "immer";
 
 const { Text } = Typography;
 
@@ -46,7 +38,6 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     stopDownload,
     onDownloadListContextMenu,
     deleteDownloadItem,
-    convertToAudio,
     showBrowserWindow,
     addDownloadItem,
     addDownloadItems,
@@ -76,7 +67,6 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       refreshDeps: [filter],
     }
   );
-  const [converting, setConverting] = useState<Record<number, boolean>>({});
   const [progress, setProgress] = useState<Record<number, DownloadProgress>>(
     {}
   );
@@ -87,11 +77,11 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     log: "",
   });
 
-  const onDownloadProgress = (e: unknown, progress: DownloadProgress) => {
-    setProgress((curProgress) => ({
-      ...curProgress,
-      [progress.id]: progress,
-    }));
+  const onDownloadProgress = (e: unknown, currProgress: DownloadProgress) => {
+    const nextState = produce(progress, (draft) => {
+      draft[currProgress.id] = currProgress;
+    });
+    setProgress(nextState);
   };
 
   const onDownloadSuccess = () => {
@@ -161,24 +151,6 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   const onClickStopDownload = async (item: DownloadItem) => {
     await stopDownload(item.id);
     refresh();
-  };
-
-  const onClickConvertToAudio = async (item: DownloadItem) => {
-    setConverting((curConverting) => ({
-      ...curConverting,
-      [item.id]: true,
-    }));
-    try {
-      await convertToAudio(item.id);
-      messageApi.success(t("convertSuccess"));
-    } catch (e: any) {
-      messageApi.error(e.message);
-    } finally {
-      setConverting((curConverting) => ({
-        ...curConverting,
-        [item.id]: false,
-      }));
-    }
   };
 
   // 编辑表单
@@ -284,29 +256,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     }
 
     // 下载成功
-    const curConverting = converting[item.id];
-    return [
-      <Dropdown
-        key="more"
-        menu={{
-          items: [
-            {
-              label: t("convertToAudio"),
-              key: "convert",
-              icon: <SyncOutlined />,
-              disabled: curConverting,
-            },
-          ],
-          onClick: ({ key }) => {
-            if (key === "convert") {
-              onClickConvertToAudio(item);
-            }
-          },
-        }}
-      >
-        <Button type="text" title={t("more")} icon={<MoreOutlined />} />
-      </Dropdown>,
-    ];
+    return [];
   };
 
   const renderTitle = (dom: ReactNode, item: DownloadItem): ReactNode => {
@@ -390,31 +340,30 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     return true;
   };
 
-  const confirmAddItems = async (values: any, now?: boolean) => {
-    if (values.batch) {
-      const { batchList = "" } = values;
-      const items = batchList.split("\n").map((item: any) => {
-        let [url, name] = item.split(" ");
-        url = url ? url.trim() : "";
-        name = name ? name.trim() : moment();
-        return {
-          url,
-          name,
-          headers: values.headers,
-          type: values.type,
-        };
-      });
+  const confirmAddItems = async (values: DownloadItemForm, now?: boolean) => {
+    const { batch, batchList = "", name, headers, type, url } = values;
+    if (batch) {
+      const items: Omit<DownloadItem, "id">[] = batchList
+        .split("\n")
+        .map((url: string, i: number) => {
+          return {
+            url: url.trim(),
+            name: `${name}_${i}`,
+            headers,
+            type,
+          };
+        });
       if (now) {
         await downloadItemsNow(items);
       } else {
         await addDownloadItems(items);
       }
     } else {
-      const item = {
-        name: values.name || moment(),
-        url: values.url,
-        headers: values.headers,
-        type: values.type,
+      const item: Omit<DownloadItem, "id"> = {
+        name,
+        url,
+        headers,
+        type,
       };
       if (now) {
         await downloadNow(item);

@@ -328,6 +328,9 @@ importers:
       i18next-browser-languagedetector:
         specifier: ^8.0.0
         version: 8.0.0
+      immer:
+        specifier: ^10.1.1
+        version: 10.1.1
       lint-staged:
         specifier: ^15.2.5
         version: 15.2.5

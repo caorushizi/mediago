@@ -104,16 +104,14 @@ i18n
           videoLink: "Video Link",
           pleaseEnterVideoLink: "Please enter video link",
           videoName: "Video Name",
-          pleaseEnterVideoName:
-            "Please enter video name, default is the current time",
+          pleaseEnterVideoName: "Please enter video name",
           additionalHeaders: "Additional Headers",
           pleaseEnterOnlineVideoUrl: "Please enter online network video URL",
           pleaseEnterCorrectVideoLink: "Please enter correct video link",
           pleaseEnterOnlineVideoUrlOrDragM3U8Here:
             "Please enter online network video URL, or drag M3U8 here",
-          videoLikeDescription: `Please enter the video link, make sure one line one, format: video link video name (optional), for example
-https://www.bilibili.com/video/XXX Bilibili video
-http://example.com/xxx.m3u8 m3u8 video
+          videoLikeDescription: `Please enter the video link, make sure one line one, for example
+http://example.com/xxx.m3u8
 http://example.com/xxx.m3u8`,
           additionalHeadersDescription: `Please enter additional headers, make sure one line one header, for example:
 Origin: http://www.example.com
@@ -133,6 +131,7 @@ Referer: http://www.example.com`,
           canUseMouseWheelToAdjust: "Can use mouse wheel to adjust",
           openBrowser: "Open Browser",
           privacy: "Privacy Mode",
+          converter: "Converter",
         },
       },
       zh: {
@@ -140,7 +139,7 @@ Referer: http://www.example.com`,
           downloadList: "下载列表",
           downloadComplete: "下载完成",
           materialExtraction: "素材提取",
-          setting: "设置",
+          setting: "软件设置",
           refresh: "刷新",
           newDownload: "新建下载",
           selectAll: "全选",
@@ -219,16 +218,15 @@ Referer: http://www.example.com`,
           batchDownload: "批量下载",
           videoLink: "视频链接",
           pleaseEnterVideoLink: "请输入站点视频链接",
-          videoName: "视频名",
-          pleaseEnterVideoName: "请输入视频名称，默认以当前时间作为视频名称",
+          videoName: "视频名称",
+          pleaseEnterVideoName: "请输入视频名称",
           additionalHeaders: "附加标头",
           pleaseEnterOnlineVideoUrl: "请输入在线网络视频URL",
           pleaseEnterCorrectVideoLink: "请输入正确的视频链接",
           pleaseEnterOnlineVideoUrlOrDragM3U8Here:
             "请输入在线网络视频URL，或者将M3U8拖拽至此",
-          videoLikeDescription: `请输入视频链接， 确保一行一个，格式： 视频链接 视频名称(非必填)， 例如
-https://www.bilibili.com/video/XXX 哔哩哔哩视频
-http://example.com/xxx.m3u8 m3u8视频
+          videoLikeDescription: `请输入视频链接， 确保一行一个，例如：
+http://example.com/xxx.m3u8
 http://example.com/xxx.m3u8`,
           additionalHeadersDescription: `请输入附加标头，确保一行一个 Header， 例如：
 Origin: http://www.example.com
@@ -253,6 +251,7 @@ Referer: http://www.example.com`,
           canUseMouseWheelToAdjust: "可以使用鼠标滚轮调整",
           openBrowser: "打开浏览器",
           privacy: "隐私模式",
+          converter: "格式转换",
         },
       },
     },

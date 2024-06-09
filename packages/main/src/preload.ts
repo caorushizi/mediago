@@ -63,7 +63,7 @@ const electronApi = {
   addDownloadItem(video: Omit<DownloadItem, "id">): Promise<Video> {
     return ipcRenderer.invoke("add-download-item", video);
   },
-  addDownloadItems(videos: DownloadItem[]): Promise<Video[]> {
+  addDownloadItems(videos: Omit<DownloadItem, "id">[]): Promise<Video[]> {
     return ipcRenderer.invoke("add-download-items", videos);
   },
   getDownloadItems(p: DownloadItemPagination): Promise<VideoResponse> {
