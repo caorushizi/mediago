@@ -9,4 +9,9 @@ export default [
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
   ...fixupConfigRules(pluginReactConfig),
+  {
+    rules: {
+      "@typescript-eslint/no-explicit-any": "warn",
+    },
+  },
 ];

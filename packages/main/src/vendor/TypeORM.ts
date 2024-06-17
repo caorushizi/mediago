@@ -6,6 +6,7 @@ import { Video } from "../entity/Video.ts";
 import { Favorite } from "../entity/Favorite.ts";
 import ElectronLogger from "./ElectronLogger.ts";
 import { Vendor } from "../core/vendor.ts";
+import { Conversion } from "../entity/Conversion.ts";
 
 @injectable()
 export default class DatabaseService implements Vendor {
@@ -13,14 +14,14 @@ export default class DatabaseService implements Vendor {
 
   constructor(
     @inject(TYPES.ElectronLogger)
-    private readonly logger: ElectronLogger,
+    private readonly logger: ElectronLogger
   ) {
     this.appDataSource = new DataSource({
       type: "better-sqlite3",
       database: db,
       synchronize: true,
       logging: false,
-      entities: [Video, Favorite],
+      entities: [Video, Favorite, Conversion],
       migrations: [],
       subscribers: [],
     });

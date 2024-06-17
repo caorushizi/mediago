@@ -41,6 +41,11 @@ interface EpisodeNumberProps {
   canChangeType: boolean;
 }
 
+export interface DownloadItemForm extends DownloadItem {
+  batch?: boolean;
+  batchList?: string;
+}
+
 const EpisodeNumber: FC<EpisodeNumberProps> = ({
   value = "",
   onChange = () => {},
@@ -174,8 +179,10 @@ const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
     }, [open]);
 
     useEffect(() => {
-      form.setFieldsValue(item);
-    }, [item]);
+      if (modalOpen) {
+        form.setFieldsValue(item);
+      }
+    }, [item, modalOpen]);
 
     useImperativeHandle(
       ref,
@@ -207,7 +214,7 @@ const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
     return (
       <>
         {renderTrigger()}
-        <ModalForm<DownloadItem>
+        <ModalForm<DownloadItemForm>
           open={modalOpen}
           key={isEdit ? "edit" : "new"}
           title={isEdit ? t("editDownload") : t("newDownload")}
@@ -273,7 +280,7 @@ const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
             },
           }}
           submitTimeout={2000}
-          labelCol={{ span: 4 }}
+          labelCol={{ span: 5 }}
           layout="horizontal"
           colon={false}
         >
@@ -300,12 +307,35 @@ const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
           />
           <Form.Item noStyle shouldUpdate>
             {(form) => {
+              const canChangeType =
+                !form.getFieldValue("batch") &&
+                form.getFieldValue("type") === "m3u8";
+              return (
+                <Form.Item
+                  shouldUpdate
+                  name="name"
+                  label={t("videoName")}
+                  rules={[
+                    {
+                      required: true,
+                      message: t("pleaseEnterVideoName"),
+                    },
+                  ]}
+                  tooltip={canChangeType && t("canUseMouseWheelToAdjust")}
+                >
+                  <EpisodeNumber canChangeType={canChangeType} />
+                </Form.Item>
+              );
+            }}
+          </Form.Item>
+          <Form.Item noStyle shouldUpdate>
+            {(form) => {
               if (!isEdit && form.getFieldValue("batch")) {
                 return (
                   <ProFormTextArea
                     name="batchList"
                     fieldProps={{
-                      rows: 6,
+                      rows: 4,
                     }}
                     label={t("videoLink")}
                     placeholder={t("videoLikeDescription")}
@@ -341,27 +371,6 @@ const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
                       },
                     }}
                   />
-                );
-              }
-            }}
-          </Form.Item>
-          <Form.Item noStyle shouldUpdate>
-            {(form) => {
-              if (isEdit || !form.getFieldValue("batch")) {
-                return (
-                  <Form.Item
-                    shouldUpdate
-                    name="name"
-                    label={t("videoName")}
-                    tooltip={
-                      form.getFieldValue("type") === "m3u8" &&
-                      t("canUseMouseWheelToAdjust")
-                    }
-                  >
-                    <EpisodeNumber
-                      canChangeType={form.getFieldValue("type") === "m3u8"}
-                    />
-                  </Form.Item>
                 );
               }
             }}
