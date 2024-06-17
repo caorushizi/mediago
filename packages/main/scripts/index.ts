@@ -84,7 +84,7 @@ async function pack() {
       provider: "github",
       repo: "mediago",
       owner: "caorushizi",
-      releaseType: "prerelease",
+      releaseType: "release",
     };
   }
   await builder.build({ config });
