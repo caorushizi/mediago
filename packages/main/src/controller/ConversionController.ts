@@ -22,4 +22,9 @@ export default class ConversionController implements Controller {
   async addConversion(e: IpcMainEvent, conversion: Conversion) {
     return await this.conversionRepository.addConversion(conversion);
   }
+
+  @handle("delete-conversion")
+  async deleteConversion(e: IpcMainEvent, id: number) {
+    return await this.conversionRepository.deleteConversion(id);
+  }
 }

@@ -11,6 +11,17 @@ export default class ConversionRepository {
     private readonly db: TypeORM
   ) {}
 
+  async findConversion(id: number) {
+    const repository = this.db.appDataSource.getRepository(Conversion);
+    const conversion = await repository.findOneBy({ id });
+
+    if (!conversion) {
+      throw new Error("没有找到该转换任务");
+    }
+
+    return conversion;
+  }
+
   async getConversions(pagination: ConversionPagination) {
     const { current = 0, pageSize = 50 } = pagination;
 
@@ -31,5 +42,9 @@ export default class ConversionRepository {
 
   async addConversion(conversion: Conversion) {
     await this.db.appDataSource.getRepository(Conversion).save(conversion);
+  }
+
+  async deleteConversion(id: number) {
+    await this.db.appDataSource.getRepository(Conversion).delete({ id });
   }
 }

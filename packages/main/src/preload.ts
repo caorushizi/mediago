@@ -166,6 +166,9 @@ const electronApi = {
   addConversion(conversion: Omit<Conversion, "id">): Promise<Conversion> {
     return ipcRenderer.invoke("add-conversion", conversion);
   },
+  deleteConversion(id: number): Promise<void> {
+    return ipcRenderer.invoke("delete-conversion", id);
+  },
 };
 
 contextBridge.exposeInMainWorld(apiKey, electronApi);
