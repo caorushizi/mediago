@@ -23,10 +23,11 @@ import ElectronStore from "../vendor/ElectronStore.ts";
 import WebviewService from "../services/WebviewService.ts";
 import FavoriteRepository from "../repository/FavoriteRepository.ts";
 import VideoRepository from "../repository/VideoRepository.ts";
+import ConversionRepository from "../repository/ConversionRepository.ts";
 
 @injectable()
 export default class HomeController implements Controller {
-  private sharedState: Record<string, any> = {};
+  private sharedState: Record<string, unknown> = {};
 
   constructor(
     @inject(TYPES.ElectronStore)
@@ -40,7 +41,9 @@ export default class HomeController implements Controller {
     @inject(TYPES.BrowserWindow)
     private readonly browserWindow: BrowserWindow,
     @inject(TYPES.WebviewService)
-    private readonly webviewService: WebviewService
+    private readonly webviewService: WebviewService,
+    @inject(TYPES.ConversionRepository)
+    private readonly conversionRepository: ConversionRepository
   ) {}
 
   @handle("get-env-path")
@@ -206,10 +209,11 @@ export default class HomeController implements Controller {
 
   @handle("convert-to-audio")
   async convertToAudio(e: IpcMainEvent, id: number) {
-    const video = await this.videoRepository.findVideo(id);
+    const conversion = await this.conversionRepository.findConversion(id);
     const local = this.store.get("local");
-    const input = path.join(local, `${video.name}.mp4`);
-    const output = path.join(local, `${video.name}.mp3`);
+    const input = conversion.path;
+    const outName = `${path.basename(input, path.extname(input))}.mp3`;
+    const output = path.join(local, outName);
 
     const exist = await fs.exists(input);
     if (exist) {
