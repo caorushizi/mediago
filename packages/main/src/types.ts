@@ -5,6 +5,7 @@ export const TYPES = {
   // repository
   VideoRepository: Symbol.for("VideoRepository"),
   FavoriteRepository: Symbol.for("FavoriteRepository"),
+  ConversionRepository: Symbol.for("ConversionRepository"),
   // windows
   BrowserWindow: Symbol.for("BrowserWindow"),
   MainWindow: Symbol.for("MainWindow"),

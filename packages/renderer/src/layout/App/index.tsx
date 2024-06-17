@@ -8,6 +8,7 @@ import {
   ProfileOutlined,
   QuestionCircleOutlined,
   SettingOutlined,
+  SyncOutlined,
 } from "@ant-design/icons";
 import useElectron from "../../hooks/electron";
 import { useDispatch, useSelector } from "react-redux";
@@ -79,6 +80,15 @@ const App: FC = () => {
     },
     {
       label: (
+        <Link to="/converter" className={styles.linkItem}>
+          <SyncOutlined />
+          <span>{t("converter")}</span>
+        </Link>
+      ),
+      key: "converter",
+    },
+    {
+      label: (
         <Link to="/source" className={styles.linkItem}>
           <ProfileOutlined />
           <span>{t("materialExtraction")}</span>
@@ -124,7 +134,7 @@ const App: FC = () => {
   ];
 
   const finalItems = items.filter((item) =>
-    appStore.openInNewWindow ? item?.key !== "source" : true,
+    appStore.openInNewWindow ? item?.key !== "source" : true
   );
 
   const openHelpUrl = () => {
