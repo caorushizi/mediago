@@ -52,6 +52,8 @@ declare interface AppStore {
   showTerminal: boolean;
   // 隐私模式
   privacy: boolean;
+  // 机器id
+  machineId: string;
 }
 
 declare interface BrowserStore {

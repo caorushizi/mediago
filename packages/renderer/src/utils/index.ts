@@ -3,7 +3,7 @@ import { isUrl } from "./url";
 
 export { http } from "./http";
 export { tdApp } from "./tdapp";
-export { initClarity } from "./clarity";
+export { apApp } from "./aplus";
 
 export const requestImage = (url: string, timeout = 1000): Promise<void> => {
   return new Promise((resolve, reject) => {
