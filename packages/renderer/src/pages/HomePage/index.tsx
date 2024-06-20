@@ -19,7 +19,7 @@ import { selectAppStore } from "../../store";
 import DownloadForm, { DownloadItemForm } from "../../components/DownloadForm";
 import { Trans, useTranslation } from "react-i18next";
 import Terminal from "../../components/Terminal";
-import { moment } from "../../utils";
+import { apApp, moment } from "../../utils";
 import { produce } from "immer";
 
 const { Text } = Typography;
@@ -209,7 +209,10 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
           key="download"
           icon={<DownloadOutlined />}
           title={t("download")}
-          onClick={() => onStartDownload(item.id)}
+          onClick={() => {
+            apApp.record("startDownload");
+            onStartDownload(item.id);
+          }}
         />,
       ];
     }

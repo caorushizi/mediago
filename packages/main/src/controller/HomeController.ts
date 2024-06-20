@@ -24,6 +24,8 @@ import WebviewService from "../services/WebviewService.ts";
 import FavoriteRepository from "../repository/FavoriteRepository.ts";
 import VideoRepository from "../repository/VideoRepository.ts";
 import ConversionRepository from "../repository/ConversionRepository.ts";
+import { machineId } from "node-machine-id";
+import { nanoid } from "nanoid";
 
 @injectable()
 export default class HomeController implements Controller {
@@ -270,5 +272,22 @@ export default class HomeController implements Controller {
       return result.filePaths[0];
     }
     return "";
+  }
+
+  @handle("get-machine-id")
+  async getMachineId() {
+    try {
+      const id = this.store.get("machineId");
+      if (id) return id;
+      const newId = await machineId();
+      this.store.set("machineId", newId);
+      return newId;
+    } catch (e) {
+      const id = this.store.get("machineId");
+      if (id) return id;
+      const newId = nanoid();
+      this.store.set("machineId", newId);
+      return newId;
+    }
   }
 }
