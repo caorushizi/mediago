@@ -17,7 +17,7 @@ class TDEvent {
     headElement.appendChild(script);
   }
 
-  private onEvent(eventId: string, mapKv: Record<string, string> = {}) {
+  onEvent(eventId: string, mapKv: Record<string, string> = {}) {
     try {
       window.TDAPP?.onEvent(eventId, "", mapKv);
     } catch (e) {

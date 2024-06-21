@@ -28,6 +28,7 @@ export default class StoreService extends Store<AppStore> implements Vendor {
         language: AppLanguage.System,
         showTerminal: false,
         privacy: false,
+        machineId: "",
       },
     });
   }

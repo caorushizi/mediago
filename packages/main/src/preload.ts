@@ -169,6 +169,9 @@ const electronApi = {
   deleteConversion(id: number): Promise<void> {
     return ipcRenderer.invoke("delete-conversion", id);
   },
+  getMachineId(): Promise<string> {
+    return ipcRenderer.invoke("get-machine-id");
+  },
 };
 
 contextBridge.exposeInMainWorld(apiKey, electronApi);

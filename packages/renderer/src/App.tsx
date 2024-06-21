@@ -9,6 +9,8 @@ import "./App.scss";
 import useElectron from "./hooks/electron";
 import Loading from "./components/Loading";
 import { DownloadFilter } from "./types";
+import { tdApp } from "./utils";
+import { useAsyncEffect } from "ahooks";
 
 const AppLayout = lazy(() => import("./layout/App"));
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -23,7 +25,7 @@ function getAlgorithm(appTheme: "dark" | "light") {
 const App: FC = () => {
   const dispatch = useDispatch();
   const [appTheme, setAppTheme] = React.useState<"dark" | "light">("light");
-  const { addIpcListener, removeIpcListener } = useElectron();
+  const { addIpcListener, removeIpcListener, getMachineId } = useElectron();
 
   const themeChange = (event: MediaQueryListEvent) => {
     if (event.matches) {
@@ -50,6 +52,11 @@ const App: FC = () => {
       removeIpcListener("store-change", onAppStoreChange);
       removeIpcListener("download-item-notifier", onReceiveDownloadItem);
     };
+  }, []);
+
+  useAsyncEffect(async () => {
+    const deviceId = await getMachineId();
+    tdApp.onEvent("页面加载", { deviceId });
   }, []);
 
   useEffect(() => {
