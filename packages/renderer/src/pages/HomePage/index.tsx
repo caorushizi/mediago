@@ -78,7 +78,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   });
 
   const onDownloadProgress = (e: unknown, currProgress: DownloadProgress) => {
-    const nextState = produce(progress, (draft) => {
+    const nextState = produce((draft) => {
       draft[currProgress.id] = currProgress;
     });
     setProgress(nextState);

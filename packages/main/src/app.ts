@@ -34,12 +34,11 @@ export default class ElectronApp {
     @inject(TYPES.ElectronDevtools)
     private readonly devTools: ElectronDevtools,
     @inject(TYPES.ElectronStore)
-    private readonly store: ElectronStore,
+    private readonly store: ElectronStore
   ) {}
 
   private async serviceInit(): Promise<void> {
     this.mainWindow.init();
-    this.webview.init();
   }
 
   private async vendorInit() {
@@ -94,7 +93,7 @@ export default class ElectronApp {
     const videoIds = videos.map((video) => video.id);
     await this.videoRepository.changeVideoStatus(
       videoIds,
-      DownloadStatus.Failed,
+      DownloadStatus.Failed
     );
   }
 }

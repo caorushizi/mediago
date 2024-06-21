@@ -41,7 +41,6 @@ import {
 import WebView from "../../components/WebView";
 import { selectAppStore } from "../../store";
 import { useTranslation } from "react-i18next";
-import { nanoid } from "nanoid";
 import DownloadForm, { DownloadFormRef } from "../../components/DownloadForm";
 
 interface SourceExtractProps {
@@ -77,7 +76,6 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   const appStore = useSelector(selectAppStore);
   const [modalShow, setModalShow] = useState(false);
   const [placeHolder, setPlaceHolder] = useState<string>("");
-  const sessionId = useRef("");
   const downloadForm = useRef<DownloadFormRef>(null);
 
   const curIsFavorite = favoriteList.find((item) => item.url === store.url);
@@ -87,41 +85,20 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     dispatch(setAppStore(store));
   }, []);
 
-  const loadUrl = async (url: string) => {
-    const id = nanoid();
-    sessionId.current = id;
-    try {
-      dispatch(
-        setBrowserStore({
-          url: "",
-          mode: PageMode.Browser,
-          status: BrowserStatus.Loading,
-        })
-      );
-      await webviewLoadURL(url);
-      if (sessionId.current === id) {
-        dispatch(
-          setBrowserStore({
-            url: url,
-            status: BrowserStatus.Loaded,
-          })
-        );
-      }
-    } catch (err) {
-      if (sessionId.current === id) {
-        dispatch(
-          setBrowserStore({
-            status: BrowserStatus.Failed,
-            errMsg: (err as any).message,
-          })
-        );
-      }
-    }
+  const loadUrl = (url: string) => {
+    dispatch(
+      setBrowserStore({
+        url,
+        mode: PageMode.Browser,
+        status: BrowserStatus.Loading,
+      })
+    );
+    webviewLoadURL(url);
   };
 
-  const goto = async () => {
+  const goto = () => {
     const link = generateUrl(store.url);
-    await loadUrl(link);
+    loadUrl(link);
   };
 
   const onInputKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -184,20 +161,30 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     await goto();
   };
 
-  const onClickLoadItem = async (item: Favorite) => {
-    await loadUrl(item.url);
+  const onClickLoadItem = (item: Favorite) => {
+    loadUrl(item.url);
   };
 
   const onDomReady = (e: unknown, data: UrlDetail) => {
-    if (data.url) {
+    if (data.url && store.status !== BrowserStatus.Failed) {
       document.title = data.title;
       dispatch(
         setBrowserStore({
           url: data.url,
           title: data.title,
+          status: BrowserStatus.Loaded,
         })
       );
     }
+  };
+
+  const onFailLoad = (e: unknown, data: { code: number; desc: string }) => {
+    dispatch(
+      setBrowserStore({
+        status: BrowserStatus.Failed,
+        errMsg: data.desc,
+      })
+    );
   };
 
   const onFavoriteEvent = async (
@@ -253,12 +240,14 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   useEffect(() => {
     const prevTitle = document.title;
     addIpcListener("webview-dom-ready", onDomReady);
+    addIpcListener("webview-fail-load", onFailLoad);
     addIpcListener("favorite-item-event", onFavoriteEvent);
     addIpcListener("show-download-dialog", onShowDownloadDialog);
 
     return () => {
       document.title = prevTitle;
       removeIpcListener("webview-dom-ready", onDomReady);
+      removeIpcListener("webview-fail-load", onFailLoad);
       removeIpcListener("favorite-item-event", onFavoriteEvent);
       removeIpcListener("show-download-dialog", onShowDownloadDialog);
     };
