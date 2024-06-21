@@ -20,7 +20,7 @@ export default class WebviewController implements Controller {
     @inject(TYPES.ElectronStore)
     private readonly store: ElectronStore,
     @inject(TYPES.SniffingHelper)
-    private readonly sniffingHelper: SniffingHelper,
+    private readonly sniffingHelper: SniffingHelper
   ) {}
 
   @handle("set-webview-bounds")
@@ -29,7 +29,7 @@ export default class WebviewController implements Controller {
   }
 
   @handle("webview-load-url")
-  async browserViewLoadUrl(e: IpcMainEvent, url?: string): Promise<void> {
+  async browserViewLoadUrl(e: IpcMainEvent, url: string): Promise<void> {
     await this.webview.loadURL(url);
   }
 

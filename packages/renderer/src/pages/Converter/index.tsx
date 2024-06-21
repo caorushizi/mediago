@@ -41,7 +41,7 @@ const Converter = () => {
   );
 
   const onClickConvertToAudio = async (item: Conversion) => {
-    const nextState = produce(converting, (draft) => {
+    const nextState = produce((draft) => {
       draft[item.id] = true;
     });
     setConverting(nextState);
@@ -51,7 +51,7 @@ const Converter = () => {
     } catch (e: any) {
       messageApi.error(e.message);
     } finally {
-      const nextState = produce(converting, (draft) => {
+      const nextState = produce((draft) => {
         draft[item.id] = false;
       });
       setConverting(nextState);
