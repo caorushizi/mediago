@@ -8,10 +8,9 @@ declare global {
       onEvent: (
         eventId: string,
         label: "",
-        mapKv: Record<string, string>,
+        mapKv: Record<string, string>
       ) => void;
     };
-    clarity?: any;
   }
 }
 

@@ -2,6 +2,7 @@ acodec
 adblocker
 ahooks
 antd
+aplus
 behaviour
 bili
 bilibili
@@ -15,6 +16,7 @@ conventionalcommits
 datetime
 DDTHH
 execa
+idtype
 immer
 inversify
 KHTML
