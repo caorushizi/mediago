@@ -11,8 +11,6 @@ declare global {
         mapKv: Record<string, string>
       ) => void;
     };
-    clarity?: any;
-    aplus_queue?: any[];
   }
 }
 
