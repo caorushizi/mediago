@@ -4,7 +4,11 @@ import { TYPES } from "../types.ts";
 import ElectronLogger from "../vendor/ElectronLogger.ts";
 import EventEmitter from "events";
 import { OnSendHeadersListenerDetails, session } from "electron";
-import { PERSIST_WEBVIEW, formatHeaders } from "../helper/index.ts";
+import {
+  PERSIST_WEBVIEW,
+  PRIVACY_WEBVIEW,
+  formatHeaders,
+} from "../helper/index.ts";
 
 export interface SourceParams {
   url: string;
@@ -89,8 +93,9 @@ export class SniffingHelper extends EventEmitter {
     }
   }
 
-  start() {
-    const viewSession = session.fromPartition(PERSIST_WEBVIEW);
+  start(privacy: boolean = false) {
+    const partition = privacy ? PRIVACY_WEBVIEW : PERSIST_WEBVIEW;
+    const viewSession = session.fromPartition(partition);
     viewSession.webRequest.onSendHeaders(this.onSendHeaders);
   }
 
