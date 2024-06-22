@@ -85,4 +85,9 @@ export default class WebviewController implements Controller {
   async pluginReady() {
     this.sniffingHelper.pluginReady();
   }
+
+  @handle("clear-webview-cache")
+  async clearWebviewCache() {
+    return this.webview.clearCache();
+  }
 }
