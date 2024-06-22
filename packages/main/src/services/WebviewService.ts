@@ -44,10 +44,11 @@ export default class WebviewService {
     // 初始化 blocker
     this.initBlocker();
 
-    this.sniffingHelper.start();
+    const { useProxy, proxy, privacy } = this.store.store;
+
+    this.sniffingHelper.start(privacy);
     this.sniffingHelper.on("source", this.onSource);
 
-    const { useProxy, proxy, privacy } = this.store.store;
     this.setDefaultSession(privacy, true);
     this.setProxy(useProxy, proxy);
   }
@@ -335,8 +336,11 @@ export default class WebviewService {
     }
 
     if (this.view) {
+      const { useProxy, proxy } = this.store.store;
       this.destroyView();
       this.init();
+      this.setProxy(useProxy, proxy);
+      this.sniffingHelper.start(isPrivacy);
     }
 
     if (!init) {

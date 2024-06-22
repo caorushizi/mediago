@@ -213,11 +213,6 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     setModalShow(true);
   };
 
-  const onChangePrivacy = () => {
-    document.title = originTitle.current;
-    dispatch(setBrowserStore({ url: "", title: "", mode: PageMode.Default }));
-  };
-
   useEffect(() => {
     addIpcListener("webview-dom-ready", onDomReady);
     addIpcListener("webview-fail-load", onFailLoad);
@@ -225,7 +220,6 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     addIpcListener("webview-did-navigate-in-page", onDidNavigateInPage);
     addIpcListener("favorite-item-event", onFavoriteEvent);
     addIpcListener("show-download-dialog", onShowDownloadDialog);
-    addIpcListener("change-privacy", onChangePrivacy);
 
     return () => {
       removeIpcListener("webview-dom-ready", onDomReady);
@@ -234,7 +228,6 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
       removeIpcListener("webview-did-navigate-in-page", onDidNavigateInPage);
       removeIpcListener("favorite-item-event", onFavoriteEvent);
       removeIpcListener("show-download-dialog", onShowDownloadDialog);
-      removeIpcListener("change-privacy", onChangePrivacy);
     };
   }, [store.status]);
 
