@@ -115,7 +115,7 @@ export class FloatButton extends LitElement {
   };
 
   receiveMessage = (_: unknown, data: SourceData) => {
-    this.data = [...this.data, data];
+    this.data = [...this.data, { ...data, name: document.title }];
   };
 
   handleMouseStart = (event: MouseEvent) => {
