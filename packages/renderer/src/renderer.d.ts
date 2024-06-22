@@ -72,6 +72,14 @@ declare interface AppStore {
   language?: AppLanguage;
   // 是否显示终端
   showTerminal?: boolean;
+  // 隐私模式
+  privacy?: boolean;
+  // 机器id
+  machineId?: string;
+  // 下载代理设置
+  downloadProxySwitch?: boolean;
+  // 自动更新
+  autoUpgrade?: boolean;
 }
 
 declare interface BrowserStore {
