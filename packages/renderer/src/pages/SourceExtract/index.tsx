@@ -24,7 +24,7 @@ import {
   Space,
   Spin,
 } from "antd";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PageContainer from "../../components/PageContainer";
 import useElectron from "../../hooks/electron";
@@ -71,14 +71,16 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   const { data: favoriteList = [], refresh } = useRequest(getFavorites);
   const [favoriteAddForm] = Form.useForm<Favorite>();
   const [messageApi, contextHolder] = message.useMessage();
-  const [hoverId, setHoverId] = useState<number>(-1);
   const store = useSelector(selectBrowserStore);
   const appStore = useSelector(selectAppStore);
   const [modalShow, setModalShow] = useState(false);
   const [placeHolder, setPlaceHolder] = useState<string>("");
   const downloadForm = useRef<DownloadFormRef>(null);
+  const originTitle = useRef(document.title);
 
-  const curIsFavorite = favoriteList.find((item) => item.url === store.url);
+  const curIsFavorite = useMemo(() => {
+    return favoriteList.find((item) => item.url === store.url);
+  }, [favoriteList, store.url]);
 
   useAsyncEffect(async () => {
     const store = await ipcGetAppStore();
@@ -132,14 +134,9 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
 
   const onClickGoBack = async () => {
     const back = await webviewGoBack();
-
     if (!back) {
-      dispatch(
-        setBrowserStore({
-          url: "",
-          mode: PageMode.Default,
-        })
-      );
+      document.title = originTitle.current;
+      dispatch(setBrowserStore({ url: "", title: "", mode: PageMode.Default }));
     }
   };
 
@@ -148,6 +145,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     dispatch(
       setBrowserStore({
         url: "",
+        title: "",
         mode: PageMode.Default,
       })
     );
@@ -163,27 +161,6 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
 
   const onClickLoadItem = (item: Favorite) => {
     loadUrl(item.url);
-  };
-
-  const onFailLoad = (e: unknown, data: { code: number; desc: string }) => {
-    dispatch(
-      setBrowserStore({
-        status: BrowserStatus.Failed,
-        errCode: data.code,
-        errMsg: data.desc,
-      })
-    );
-  };
-
-  const onDidNavigate = (e: unknown, data: UrlDetail) => {
-    document.title = data.title;
-    dispatch(
-      setBrowserStore({
-        url: data.url,
-        title: data.title,
-        status: BrowserStatus.Loaded,
-      })
-    );
   };
 
   const onFavoriteEvent = async (
@@ -237,19 +214,57 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   };
 
   useEffect(() => {
-    const prevTitle = document.title;
+    addIpcListener("webview-dom-ready", onDomReady);
     addIpcListener("webview-fail-load", onFailLoad);
     addIpcListener("webview-did-navigate", onDidNavigate);
+    addIpcListener("webview-did-navigate-in-page", onDidNavigateInPage);
     addIpcListener("favorite-item-event", onFavoriteEvent);
     addIpcListener("show-download-dialog", onShowDownloadDialog);
 
     return () => {
-      document.title = prevTitle;
+      removeIpcListener("webview-dom-ready", onDomReady);
       removeIpcListener("webview-fail-load", onFailLoad);
+      removeIpcListener("webview-did-navigate", onDidNavigate);
+      removeIpcListener("webview-did-navigate-in-page", onDidNavigateInPage);
       removeIpcListener("favorite-item-event", onFavoriteEvent);
       removeIpcListener("show-download-dialog", onShowDownloadDialog);
     };
   }, [store.status]);
+
+  const setPageInfo = ({ url, title }: UrlDetail) => {
+    document.title = title;
+    dispatch(setBrowserStore({ url, title }));
+  };
+
+  const onDomReady = (e: unknown, info: UrlDetail) => {
+    setPageInfo(info);
+  };
+
+  const onFailLoad = (e: unknown, data: { code: number; desc: string }) => {
+    dispatch(
+      setBrowserStore({
+        status: BrowserStatus.Failed,
+        errCode: data.code,
+        errMsg: data.desc,
+      })
+    );
+  };
+
+  const onDidNavigate = (e: unknown, info: UrlDetail) => {
+    setPageInfo(info);
+    dispatch(setBrowserStore({ status: BrowserStatus.Loaded }));
+  };
+
+  const onDidNavigateInPage = (e: unknown, info: UrlDetail) => {
+    setPageInfo(info);
+  };
+
+  useEffect(() => {
+    document.title = store.title || document.title;
+    return () => {
+      document.title = originTitle.current;
+    };
+  }, []);
 
   // 合并到主页
   const onCombineToHome = () => {
@@ -468,35 +483,19 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
           onFavoriteItemContextMenu(item.id);
         }}
       >
-        <div
-          className="list-tem-card"
-          onClick={() => onClickLoadItem(item)}
-          onMouseLeave={() => {
-            setHoverId(-1);
-          }}
-          onMouseOver={() => {
-            setHoverId(item.id);
-          }}
-        >
-          {hoverId === item.id && (
-            <Button
-              style={{
-                position: "absolute",
-                right: -1,
-                top: 2,
-                color: "gray",
-              }}
-              type="link"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                removeFavorite(item.id);
-                refresh();
-              }}
-            >
-              <CloseOutlined />
-            </Button>
-          )}
+        <div className="list-tem-card" onClick={() => onClickLoadItem(item)}>
+          <Button
+            className="favorite-remove-btn"
+            type="link"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              removeFavorite(item.id);
+              refresh();
+            }}
+          >
+            <CloseOutlined />
+          </Button>
           {item.icon ? (
             <Avatar shape="square" src={item.icon} icon={<LinkOutlined />} />
           ) : (
