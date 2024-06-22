@@ -108,12 +108,24 @@
 
             &:hover {
               background: #f2f6fc;
+
+              .favorite-remove-btn {
+                display: block;
+              }
             }
 
             @media (prefers-color-scheme: dark) {
               &:hover {
                 background: #595959;
               }
+            }
+
+            .favorite-remove-btn {
+              position: absolute;
+              top: 2px;
+              right: -2px;
+              color: gray;
+              display: none;
             }
 
             .card-text {

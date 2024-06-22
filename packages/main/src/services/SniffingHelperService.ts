@@ -61,6 +61,10 @@ export class SniffingHelper extends EventEmitter {
     });
   }
 
+  update(pageInfo: PageInfo) {
+    this.pageInfo = pageInfo;
+  }
+
   reset(pageInfo: PageInfo) {
     this.pageInfo = pageInfo;
     this.ready = false;

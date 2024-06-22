@@ -54,6 +54,8 @@ declare interface AppStore {
   privacy: boolean;
   // 机器id
   machineId: string;
+  // 下载代理设置
+  downloadProxySwitch: boolean;
 }
 
 declare interface BrowserStore {

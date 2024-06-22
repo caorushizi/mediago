@@ -10,7 +10,11 @@ import {
 } from "@ant-design/pro-components";
 import "./index.scss";
 import { Button, FormInstance, message, Space, Tooltip } from "antd";
-import { FolderOpenOutlined, QuestionCircleOutlined } from "@ant-design/icons";
+import {
+  ClearOutlined,
+  FolderOpenOutlined,
+  QuestionCircleOutlined,
+} from "@ant-design/icons";
 import { selectAppStore, setAppStore } from "../../store";
 import { useDispatch, useSelector } from "react-redux";
 import useElectron from "../../hooks/electron";
@@ -26,6 +30,7 @@ const SettingPage: React.FC = () => {
     setAppStore: ipcSetAppStore,
     getEnvPath,
     openDir,
+    clearWebviewCache,
   } = useElectron();
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -136,17 +141,16 @@ const SettingPage: React.FC = () => {
           />
           <ProFormSwitch
             name="useProxy"
-            label={renderTooltipLabel(t("proxySwitch"), t("proxyDescription"))}
+            label={t("proxySwitch")}
             rules={[
-              ({ getFieldValue, setFieldValue }) => ({
-                validator() {
-                  if (getFieldValue("proxy") === "") {
-                    setFieldValue("useProxy", false);
+              {
+                validator(rules, value) {
+                  if (value && formRef.current.getFieldValue("proxy") === "") {
                     return Promise.reject(t("pleaseEnterProxyFirst"));
                   }
                   return Promise.resolve();
                 },
-              }),
+              },
             ]}
           />
           <ProFormSwitch label={t("blockAds")} name="blockAds" />
@@ -154,17 +158,48 @@ const SettingPage: React.FC = () => {
           <ProFormSwitch
             label={renderTooltipLabel(
               t("useImmersiveSniffing"),
-              t("immersiveSniffingDescription"),
+              t("immersiveSniffingDescription")
             )}
             name="useExtension"
           />
+          <ProFormText label={t("moreAction")}>
+            <Space>
+              <Button
+                onClick={async () => {
+                  try {
+                    await clearWebviewCache();
+                    messageApi.success(t("clearCacheSuccess"));
+                  } catch (err) {
+                    messageApi.error(t("clearCacheFailed"));
+                  }
+                }}
+                icon={<ClearOutlined />}
+              >
+                {t("clearCache")}
+              </Button>
+            </Space>
+          </ProFormText>
         </ProFormGroup>
         <ProFormGroup title={t("downloadSetting")} direction={"vertical"}>
+          <ProFormSwitch
+            name="downloadProxySwitch"
+            label={t("downloadProxySwitch")}
+            rules={[
+              {
+                validator(rules, value) {
+                  if (value && formRef.current.getFieldValue("proxy") === "") {
+                    return Promise.reject(t("pleaseEnterProxyFirst"));
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
+          />
           <ProFormSwitch label={t("deleteSegments")} name="deleteSegments" />
           <ProFormDigit
             label={renderTooltipLabel(
               t("maxRunner"),
-              t("maxRunnerDescription"),
+              t("maxRunnerDescription")
             )}
             name="maxRunner"
             min={1}
@@ -174,13 +209,13 @@ const SettingPage: React.FC = () => {
           <ProFormText label={t("moreAction")}>
             <Space>
               <Button
-                onClick={() => envPath?.workspace && openDir(envPath.workspace)}
+                onClick={() => openDir(envPath.workspace)}
                 icon={<FolderOpenOutlined />}
               >
                 {t("configDir")}
               </Button>
               <Button
-                onClick={() => envPath?.binPath && openDir(envPath.binPath)}
+                onClick={() => openDir(envPath.binPath)}
                 icon={<FolderOpenOutlined />}
               >
                 {t("binPath")}
