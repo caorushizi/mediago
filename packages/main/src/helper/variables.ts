@@ -36,6 +36,7 @@ export const workspace = resolve(appData, appName);
 export const defaultScheme = "mediago";
 export const PERSIST_MEDIAGO = "persist:mediago";
 export const PERSIST_WEBVIEW = "persist:webview";
+export const PRIVACY_WEBVIEW = "webview";
 export const db = resolve(workspace, "app.db");
 
 // bin path

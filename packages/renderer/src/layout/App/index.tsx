@@ -1,10 +1,11 @@
 import React, { FC, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Badge, Button, Layout, Menu, MenuProps, Flex } from "antd";
+import { Badge, Button, Layout, Menu, MenuProps, Flex, Typography } from "antd";
 import {
   CheckCircleOutlined,
   DownloadOutlined,
   ExportOutlined,
+  EyeInvisibleOutlined,
   ProfileOutlined,
   QuestionCircleOutlined,
   SettingOutlined,
@@ -21,8 +22,10 @@ import {
 import { useAsyncEffect } from "ahooks";
 import { useTranslation } from "react-i18next";
 import { useStyles } from "./style";
+import classNames from "classnames";
 
 const { Footer, Sider, Content } = Layout;
+const { Text } = Typography;
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -45,7 +48,6 @@ const App: FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [showExport, setShowExport] = useState(false);
   const count = useSelector(selectCount);
   const appStore = useSelector(selectAppStore);
   const { styles } = useStyles();
@@ -89,38 +91,33 @@ const App: FC = () => {
     },
     {
       label: (
-        <Link to="/source" className={styles.linkItem}>
+        <Link
+          to="/source"
+          className={classNames([styles.linkItem, styles.extract])}
+        >
           <ProfileOutlined />
           <span>{t("materialExtraction")}</span>
-          {showExport && (
-            <Button
-              title={t("openInNewWindow")}
-              type="text"
-              style={{ marginLeft: "auto" }}
-              icon={<ExportOutlined />}
-              onClick={async (e) => {
-                e.stopPropagation();
-                e.preventDefault();
+          <Button
+            title={t("openInNewWindow")}
+            type="text"
+            className={styles.hoverButton}
+            icon={<ExportOutlined />}
+            onClick={async (e) => {
+              e.stopPropagation();
+              e.preventDefault();
 
-                dispatch(setAppStore({ openInNewWindow: true }));
-                if (location.pathname === "/source") {
-                  navigate("/");
-                }
-                // FIXME: 有可能 webview 还没有完全隐藏
-                await ipcSetAppStore("openInNewWindow", true);
-                await showBrowserWindow();
-              }}
-            />
-          )}
+              dispatch(setAppStore({ openInNewWindow: true }));
+              if (location.pathname === "/source") {
+                navigate("/");
+              }
+              // FIXME: 有可能 webview 还没有完全隐藏
+              await ipcSetAppStore("openInNewWindow", true);
+              await showBrowserWindow();
+            }}
+          />
         </Link>
       ),
       key: "source",
-      onMouseEnter: () => {
-        setShowExport(true);
-      },
-      onMouseLeave: () => {
-        setShowExport(false);
-      },
     },
     {
       label: (
@@ -169,6 +166,14 @@ const App: FC = () => {
           <Outlet />
         </Content>
         <Footer className={styles.containerFooter}>
+          <Text>
+            {appStore.privacy && (
+              <>
+                <EyeInvisibleOutlined /> 隐私模式
+              </>
+            )}
+          </Text>
+
           <Button
             type={"link"}
             onClick={openHelpUrl}
