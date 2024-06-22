@@ -63,19 +63,25 @@ export default class WebviewService {
     const { isMobile } = this.store.store;
     this.setUserAgent(isMobile);
 
+    this.view.webContents.on("dom-ready", this.onDomReady);
     this.view.webContents.on("did-navigate", this.onDidNavigate);
     this.view.webContents.on("did-fail-load", this.onDidFailLoad);
+    this.view.webContents.on("did-navigate-in-page", this.onDidNavigateInPage);
     this.view.webContents.setWindowOpenHandler(this.onOpenNewWindow);
   }
 
+  onDomReady = () => {
+    if (!this.view) return;
+    const pageInfo = this.getPageInfo();
+    this.sniffingHelper.update(pageInfo);
+    this.window.webContents.send("webview-dom-ready", pageInfo);
+  };
+
   onDidNavigate = async () => {
     if (!this.view) return;
-    const baseInfo = {
-      title: this.view.webContents.getTitle(),
-      url: this.view.webContents.getURL(),
-    };
-    this.sniffingHelper.reset(baseInfo);
-    this.window.webContents.send("webview-did-navigate", baseInfo);
+    const pageInfo = this.getPageInfo();
+    this.sniffingHelper.reset(pageInfo);
+    this.window.webContents.send("webview-did-navigate", pageInfo);
 
     try {
       if (isDev && process.env.DEBUG_PLUGINS === "true") {
@@ -93,6 +99,13 @@ export default class WebviewService {
 
   onDidFailLoad = (e: Event, code: number, desc: string) => {
     this.window.webContents.send("webview-fail-load", { code, desc });
+  };
+
+  onDidNavigateInPage = () => {
+    if (!this.view) return;
+    const pageInfo = this.getPageInfo();
+    this.sniffingHelper.update(pageInfo);
+    this.window.webContents.send("webview-did-navigate-in-page", pageInfo);
   };
 
   onOpenNewWindow = ({ url }: HandlerDetails) => {
@@ -119,6 +132,16 @@ export default class WebviewService {
       mainWebContents.send("download-item-notifier", res);
     }
   };
+
+  getPageInfo() {
+    if (!this.view) {
+      throw new Error("未找到 view");
+    }
+    return {
+      title: this.view.webContents.getTitle(),
+      url: this.view.webContents.getURL(),
+    };
+  }
 
   getBounds(): Electron.Rectangle {
     if (!this.view) {
@@ -293,5 +316,10 @@ export default class WebviewService {
     }
     // FIXME: 为了避免内存泄漏，这里需要销毁 view
     this.view = null;
+  }
+
+  async clearCache() {
+    await this.session.clearCache();
+    await this.session.clearStorageData();
   }
 }

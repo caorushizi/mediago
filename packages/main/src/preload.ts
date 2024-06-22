@@ -60,7 +60,8 @@ const electronApi = {
   ): Promise<void> {
     return ipcRenderer.invoke("set-app-store", key, val);
   },
-  openDir(dir: string): Promise<void> {
+  async openDir(dir?: string): Promise<void> {
+    if (!dir) return;
     return ipcRenderer.invoke("open-dir", dir);
   },
   addDownloadItem(video: Omit<DownloadItem, "id">): Promise<Video> {
@@ -171,6 +172,9 @@ const electronApi = {
   },
   getMachineId(): Promise<string> {
     return ipcRenderer.invoke("get-machine-id");
+  },
+  clearWebviewCache(): Promise<void> {
+    return ipcRenderer.invoke("clear-webview-cache");
   },
 };
 
