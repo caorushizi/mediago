@@ -2,7 +2,7 @@ import { ConfigProvider, theme } from "antd";
 import React, { FC, Suspense, lazy, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { setAppStore, increase } from "./store";
+import { setAppStore, increase, setBrowserStore, PageMode } from "./store";
 import "dayjs/locale/zh-cn";
 import zhCN from "antd/locale/zh_CN";
 import "./App.scss";
@@ -44,13 +44,19 @@ const App: FC = () => {
     dispatch(increase());
   };
 
+  const onChangePrivacy = () => {
+    dispatch(setBrowserStore({ url: "", title: "", mode: PageMode.Default }));
+  };
+
   useEffect(() => {
     addIpcListener("store-change", onAppStoreChange);
     addIpcListener("download-item-notifier", onReceiveDownloadItem);
+    addIpcListener("change-privacy", onChangePrivacy);
 
     return () => {
       removeIpcListener("store-change", onAppStoreChange);
       removeIpcListener("download-item-notifier", onReceiveDownloadItem);
+      removeIpcListener("change-privacy", onChangePrivacy);
     };
   }, []);
 
