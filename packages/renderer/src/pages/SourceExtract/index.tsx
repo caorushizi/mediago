@@ -165,24 +165,23 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     loadUrl(item.url);
   };
 
-  const onDomReady = (e: unknown, data: UrlDetail) => {
-    if (data.url && store.status !== BrowserStatus.Failed) {
-      document.title = data.title;
-      dispatch(
-        setBrowserStore({
-          url: data.url,
-          title: data.title,
-          status: BrowserStatus.Loaded,
-        })
-      );
-    }
-  };
-
   const onFailLoad = (e: unknown, data: { code: number; desc: string }) => {
     dispatch(
       setBrowserStore({
         status: BrowserStatus.Failed,
+        errCode: data.code,
         errMsg: data.desc,
+      })
+    );
+  };
+
+  const onDidNavigate = (e: unknown, data: UrlDetail) => {
+    document.title = data.title;
+    dispatch(
+      setBrowserStore({
+        url: data.url,
+        title: data.title,
+        status: BrowserStatus.Loaded,
       })
     );
   };
@@ -239,19 +238,18 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
 
   useEffect(() => {
     const prevTitle = document.title;
-    addIpcListener("webview-dom-ready", onDomReady);
     addIpcListener("webview-fail-load", onFailLoad);
+    addIpcListener("webview-did-navigate", onDidNavigate);
     addIpcListener("favorite-item-event", onFavoriteEvent);
     addIpcListener("show-download-dialog", onShowDownloadDialog);
 
     return () => {
       document.title = prevTitle;
-      removeIpcListener("webview-dom-ready", onDomReady);
       removeIpcListener("webview-fail-load", onFailLoad);
       removeIpcListener("favorite-item-event", onFavoriteEvent);
       removeIpcListener("show-download-dialog", onShowDownloadDialog);
     };
-  }, []);
+  }, [store.status]);
 
   // 合并到主页
   const onCombineToHome = () => {
@@ -374,7 +372,9 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
       );
     } else if (store.status === BrowserStatus.Failed) {
       content = (
-        <Empty description={store.errMsg || t("loadFailed")}>
+        <Empty
+          description={`${store.errMsg || t("loadFailed")} (${store.errCode})`}
+        >
           <Space>
             <Button type="primary" onClick={onClickGoHome}>
               {t("backToHome")}
