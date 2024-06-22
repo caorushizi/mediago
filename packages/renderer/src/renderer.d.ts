@@ -79,6 +79,7 @@ declare interface BrowserStore {
   url: string;
   title: string;
   status: BrowserStatus;
+  errCode?: number;
   errMsg?: string;
 }
 

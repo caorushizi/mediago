@@ -18,6 +18,7 @@ import VideoRepository from "../repository/VideoRepository.ts";
 import { SniffingHelper, SourceParams } from "./SniffingHelperService.ts";
 import { resolve } from "path";
 import { readFileSync } from "fs-extra";
+import { nativeTheme } from "electron/main";
 
 @injectable()
 export default class WebviewService {
@@ -49,33 +50,32 @@ export default class WebviewService {
   }
 
   async init(): Promise<void> {
-    console.time("webview-service");
     this.view = new WebContentsView({
       webPreferences: {
         partition: PERSIST_WEBVIEW,
         preload: resolve(__dirname, "./preload.js"),
       },
     });
-    this.view.setBackgroundColor("#fff");
+    const background = nativeTheme.shouldUseDarkColors ? "#141414" : "#fff";
+    this.view.setBackgroundColor(background);
     this.view.webContents.setAudioMuted(true);
 
     const { isMobile } = this.store.store;
     this.setUserAgent(isMobile);
 
-    this.view.webContents.on("dom-ready", this.onDomReady);
+    this.view.webContents.on("did-navigate", this.onDidNavigate);
     this.view.webContents.on("did-fail-load", this.onDidFailLoad);
     this.view.webContents.setWindowOpenHandler(this.onOpenNewWindow);
-    console.timeEnd("webview-service");
   }
 
-  onDomReady = async () => {
+  onDidNavigate = async () => {
     if (!this.view) return;
     const baseInfo = {
       title: this.view.webContents.getTitle(),
       url: this.view.webContents.getURL(),
     };
     this.sniffingHelper.reset(baseInfo);
-    this.window.webContents.send("webview-dom-ready", baseInfo);
+    this.window.webContents.send("webview-did-navigate", baseInfo);
 
     try {
       if (isDev && process.env.DEBUG_PLUGINS === "true") {
