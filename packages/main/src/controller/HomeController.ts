@@ -148,6 +148,10 @@ export default class HomeController implements Controller {
     if (key === "isMobile") {
       this.webviewService.setUserAgent(val);
     }
+    // privacy
+    if (key === "privacy") {
+      this.webviewService.setDefaultSession(val);
+    }
 
     this.store.set(key, val);
   }

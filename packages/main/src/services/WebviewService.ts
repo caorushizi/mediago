@@ -4,6 +4,7 @@ import { TYPES } from "../types.ts";
 import isDev from "electron-is-dev";
 import {
   PERSIST_WEBVIEW,
+  PRIVACY_WEBVIEW,
   fetch,
   mobileUA,
   pcUA,
@@ -24,6 +25,7 @@ import { nativeTheme } from "electron/main";
 export default class WebviewService {
   private view: WebContentsView | null = null;
   private blocker?: ElectronBlocker;
+  private defaultSession: string;
 
   constructor(
     @inject(TYPES.MainWindow)
@@ -45,14 +47,15 @@ export default class WebviewService {
     this.sniffingHelper.start();
     this.sniffingHelper.on("source", this.onSource);
 
-    const { useProxy, proxy } = this.store.store;
+    const { useProxy, proxy, privacy } = this.store.store;
+    this.setDefaultSession(privacy, true);
     this.setProxy(useProxy, proxy);
   }
 
   async init(): Promise<void> {
     this.view = new WebContentsView({
       webPreferences: {
-        partition: PERSIST_WEBVIEW,
+        partition: this.defaultSession,
         preload: resolve(__dirname, "./preload.js"),
       },
     });
@@ -221,12 +224,12 @@ export default class WebviewService {
   }
 
   private get session() {
-    return session.fromPartition(PERSIST_WEBVIEW);
+    return session.fromPartition(this.defaultSession);
   }
 
   private enableProxy(proxy: string) {
     if (!proxy) {
-      this.logger.error("[proxy] 代理地址不能为空");
+      this.logger.error("[Proxy] 代理地址不能为空");
       return;
     }
 
@@ -236,12 +239,12 @@ export default class WebviewService {
     }
 
     this.session.setProxy({ proxyRules: proxy });
-    this.logger.info(`[proxy] 代理开启成功，代理地址为${proxy}`);
+    this.logger.info(`[Proxy] 代理开启（${proxy}）`);
   }
 
   private disableProxy() {
     this.session.setProxy({ proxyRules: "" });
-    this.logger.info("[proxy] 代理关闭成功");
+    this.logger.info("[Proxy] 代理关闭");
   }
 
   setProxy(useProxy: boolean, proxy: string): void {
@@ -269,23 +272,23 @@ export default class WebviewService {
 
   private enableBlocking() {
     if (!this.blocker) {
-      this.logger.error("开启 blocker 失败，未初始化");
+      this.logger.error("[AdBlocker] 开启失败（未初始化）");
       return;
     }
     this.blocker.enableBlockingInSession(this.session);
-    this.logger.info("开启 blocker 成功");
+    this.logger.info("[AdBlocker] 开启");
   }
 
   private disableBlocking() {
     if (!this.blocker) {
-      this.logger.error("关闭 blocker 失败，未初始化");
+      this.logger.error("[AdBlocker] 关闭失败（未初始化）");
       return;
     }
     if (!this.blocker.isBlockingEnabled(this.session)) {
       return;
     }
     this.blocker.disableBlockingInSession(this.session);
-    this.logger.info("关闭 blocker 成功");
+    this.logger.info("[AdBlocker] 关闭");
   }
 
   setUserAgent(isMobile?: boolean) {
@@ -295,7 +298,7 @@ export default class WebviewService {
     } else {
       this.view.webContents.setUserAgent(pcUA);
     }
-    this.logger.info("设置 user-agent 成功", isMobile);
+    this.logger.info(`[UA] 设置为${isMobile ? "移动端" : " pc 端"}`);
   }
 
   captureView(): Promise<Electron.NativeImage> {
@@ -321,5 +324,23 @@ export default class WebviewService {
   async clearCache() {
     await this.session.clearCache();
     await this.session.clearStorageData();
+  }
+
+  setDefaultSession(isPrivacy = false, init = false) {
+    this.logger.info(`[Session] ${isPrivacy ? "隐私" : "正常"}模式`);
+    if (isPrivacy) {
+      this.defaultSession = PRIVACY_WEBVIEW;
+    } else {
+      this.defaultSession = PERSIST_WEBVIEW;
+    }
+
+    if (this.view) {
+      this.destroyView();
+      this.init();
+    }
+
+    if (!init) {
+      this.window.webContents.send("change-privacy");
+    }
   }
 }
