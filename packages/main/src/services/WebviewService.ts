@@ -19,7 +19,6 @@ import VideoRepository from "../repository/VideoRepository.ts";
 import { SniffingHelper, SourceParams } from "./SniffingHelperService.ts";
 import { resolve } from "path";
 import { readFileSync } from "fs-extra";
-import { nativeTheme } from "electron/main";
 
 @injectable()
 export default class WebviewService {
@@ -60,8 +59,7 @@ export default class WebviewService {
         preload: resolve(__dirname, "./preload.js"),
       },
     });
-    const background = nativeTheme.shouldUseDarkColors ? "#141414" : "#fff";
-    this.view.setBackgroundColor(background);
+    this.view.setBackgroundColor("#fff");
     this.view.webContents.setAudioMuted(true);
 
     const { isMobile } = this.store.store;

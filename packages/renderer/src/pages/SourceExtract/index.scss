@@ -105,6 +105,7 @@
             align-items: center;
             justify-content: center;
             border-radius: 5px;
+            transition: background 0.3s ease;
 
             &:hover {
               background: #f2f6fc;
