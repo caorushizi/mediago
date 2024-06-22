@@ -4,15 +4,22 @@ import { TYPES } from "../types.ts";
 import isDev from "electron-is-dev";
 import ElectronLogger from "./ElectronLogger.ts";
 import { Vendor } from "../core/vendor.ts";
+import ElectronStore from "electron-store";
 
 @injectable()
 export default class UpdateService implements Vendor {
   constructor(
-    @inject(TYPES.ElectronLogger) private readonly logger: ElectronLogger,
+    @inject(TYPES.ElectronLogger)
+    private readonly logger: ElectronLogger,
+    @inject(TYPES.ElectronStore)
+    private readonly store: ElectronStore
   ) {}
 
   async init() {
     if (isDev) return;
+
+    const { autoUpgrade } = this.store.store;
+    if (!autoUpgrade) return;
 
     try {
       autoUpdater.disableWebInstaller = true;

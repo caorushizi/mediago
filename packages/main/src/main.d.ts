@@ -56,6 +56,8 @@ declare interface AppStore {
   machineId: string;
   // 下载代理设置
   downloadProxySwitch: boolean;
+  // 自动更新
+  autoUpgrade: boolean;
 }
 
 declare interface BrowserStore {
