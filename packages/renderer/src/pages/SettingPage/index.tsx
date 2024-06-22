@@ -137,7 +137,10 @@ const SettingPage: React.FC = () => {
             )}
             name="autoUpgrade"
           />
-          {/* <ProFormSwitch label={t("privacy")} name="privacy" /> */}
+          <ProFormSwitch
+            label={renderTooltipLabel(t("privacy"), t("privacyTooltip"))}
+            name="privacy"
+          />
         </ProFormGroup>
         <ProFormGroup title={t("browserSetting")} direction={"vertical"}>
           <ProFormText

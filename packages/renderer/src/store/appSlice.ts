@@ -16,6 +16,10 @@ const initialState: AppStore = {
   maxRunner: 2,
   language: AppLanguage.System,
   showTerminal: false,
+  privacy: false,
+  machineId: "",
+  downloadProxySwitch: false,
+  autoUpgrade: true,
 };
 
 export const appSlice = createSlice({
