@@ -39,7 +39,7 @@ function getConfig(): esbuild.BuildOptions {
 function buildOptions(
   entry: string,
   platform: esbuild.Platform,
-  target: string,
+  target: string
 ): esbuild.BuildOptions {
   return {
     ...getConfig(),
@@ -90,7 +90,7 @@ export function getReleaseConfig(): Configuration {
       target: [
         {
           target: "nsis",
-          arch: ["x64"],
+          arch: ["x64", "ia32"],
         },
       ],
     },
@@ -111,10 +111,12 @@ export function getReleaseConfig(): Configuration {
     },
     mac: {
       icon: "../assets/icon.icns",
-      target: {
-        target: "dmg",
-        arch: ["x64"],
-      },
+      target: [
+        {
+          target: "dmg",
+          arch: ["x64", "arm64"],
+        },
+      ],
     },
     linux: {
       category: "Utility",
@@ -126,17 +128,11 @@ export function getReleaseConfig(): Configuration {
       },
     },
     nsis: {
-      oneClick: true,
+      oneClick: false,
       allowElevation: true,
-      allowToChangeInstallationDirectory: false,
-      installerIcon: "",
-      uninstallerIcon: "",
-      installerHeaderIcon: "",
+      allowToChangeInstallationDirectory: true,
       createDesktopShortcut: true,
       createStartMenuShortcut: true,
-      shortcutName: "",
-      include: "",
-      script: "",
     },
   };
 }
