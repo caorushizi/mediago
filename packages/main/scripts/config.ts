@@ -90,7 +90,11 @@ export function getReleaseConfig(): Configuration {
       target: [
         {
           target: "nsis",
-          arch: ["x64", "ia32"],
+          arch: ["x64"],
+        },
+        {
+          target: "portable",
+          arch: ["x64"],
         },
       ],
     },
