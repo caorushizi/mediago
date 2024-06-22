@@ -74,10 +74,10 @@ importers:
   packages/main:
     dependencies:
       '@cliqz/adblocker-electron':
-        specifier: ^1.27.3
+        specifier: 1.27.3
         version: 1.27.3(electron@30.0.8)
       '@cliqz/adblocker-electron-preload':
-        specifier: ^1.27.3
+        specifier: 1.27.3
         version: 1.27.3(electron@30.0.8)
       axios:
         specifier: ^1.7.2
