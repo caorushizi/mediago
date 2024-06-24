@@ -41,7 +41,7 @@ export const generateUrl = (url: string) => {
     result = `http://${url}`;
   }
   if (!isUrl(result)) {
-    result = `https://baidu.com/s?word=${url}`;
+    result = `https://www.baidu.com/s?word=${url}`;
   }
   return result;
 };
