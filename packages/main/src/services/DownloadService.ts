@@ -74,6 +74,9 @@ const processList: Schema[] = [
       proxy: {
         argsName: ["--custom-proxy"],
       },
+      __common__: {
+        argsName: ["--no-log"],
+      },
     },
     consoleReg: {
       percent: "([\\d.]+)%",
@@ -325,6 +328,10 @@ export default class DownloadService extends EventEmitter {
 
       if (key === "proxy" && proxy) {
         argsName && argsName.forEach((i) => spawnParams.push(i, proxy));
+      }
+
+      if (key === "__common__") {
+        argsName && spawnParams.push(...argsName);
       }
     }
 
