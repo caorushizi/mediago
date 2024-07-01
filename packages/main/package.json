@@ -35,7 +35,7 @@
     "cross-env": "^7.0.3",
     "del": "^7.1.0",
     "dotenv": "^16.4.5",
-    "electron": "30.0.8",
+    "electron": "31.1.0",
     "electron-builder": "^24.13.3",
     "electron-updater": "^6.1.8",
     "esbuild": "^0.21.4",
