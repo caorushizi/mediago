@@ -21,7 +21,7 @@
   "license": "MIT",
   "devDependencies": {
     "@electron/rebuild": "^3.6.0",
-    "@eslint/js": "^9.3.0",
+    "@eslint/js": "^9.6.0",
     "@types/electron-devtools-installer": "^2.2.5",
     "@types/fs-extra": "^11.0.4",
     "@types/glob": "^8.1.0",

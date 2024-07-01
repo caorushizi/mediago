@@ -16,7 +16,7 @@
     "nanoid": "^5.0.7"
   },
   "devDependencies": {
-    "@eslint/js": "^9.3.0",
+    "@eslint/js": "^9.6.0",
     "@types/jquery": "^3.5.30",
     "@types/node": "^20.12.12",
     "eslint": "^9.3.0",
