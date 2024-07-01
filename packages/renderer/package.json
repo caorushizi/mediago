@@ -47,7 +47,7 @@
     "@types/sort-by": "^1.2.3",
     "@vitejs/plugin-react-swc": "^3.7.0",
     "eslint": "^9.3.0",
-    "globals": "^15.3.0",
+    "globals": "^15.7.0",
     "sass": "^1.77.2",
     "stylelint": "^16.6.0",
     "stylelint-config-standard": "^36.0.0",

@@ -42,7 +42,7 @@
     "esbuild-register": "^3.5.0",
     "eslint": "^9.3.0",
     "glob": "^10.4.1",
-    "globals": "^15.3.0",
+    "globals": "^15.7.0",
     "gulp": "^5.0.0",
     "prebuild-install": "^7.1.2",
     "semver": "^7.6.2",

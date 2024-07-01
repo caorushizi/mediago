@@ -45,7 +45,7 @@
     "cspell": "^8.8.3",
     "cz-git": "^1.9.2",
     "eslint": "^9.3.0",
-    "globals": "^15.3.0",
+    "globals": "^15.7.0",
     "husky": "^9.0.11",
     "tsx": "^4.11.0",
     "typescript-eslint": "^7.10.0",

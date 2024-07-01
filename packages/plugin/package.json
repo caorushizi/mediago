@@ -20,7 +20,7 @@
     "@types/jquery": "^3.5.30",
     "@types/node": "^20.12.12",
     "eslint": "^9.3.0",
-    "globals": "^15.3.0",
+    "globals": "^15.7.0",
     "lint-staged": "^15.2.5",
     "stylelint": "^16.6.0",
     "stylelint-config-standard": "^36.0.0",
