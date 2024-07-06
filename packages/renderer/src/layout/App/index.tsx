@@ -22,7 +22,7 @@ import {
 import { useAsyncEffect } from "ahooks";
 import { useTranslation } from "react-i18next";
 import { useStyles } from "./style";
-import classNames from "classnames";
+import { cn } from "@/utils";
 
 const { Footer, Sider, Content } = Layout;
 const { Text } = Typography;
@@ -91,10 +91,7 @@ const App: FC = () => {
     },
     {
       label: (
-        <Link
-          to="/source"
-          className={classNames([styles.linkItem, styles.extract])}
-        >
+        <Link to="/source" className={cn([styles.linkItem, styles.extract])}>
           <ProfileOutlined />
           <span>{t("materialExtraction")}</span>
           <Button

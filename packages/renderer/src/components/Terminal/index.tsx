@@ -3,10 +3,10 @@ import { useStyles } from "./styles";
 import "@xterm/xterm/css/xterm.css";
 import { Terminal as XTerminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
-import classNames from "classnames";
 import { Flex, Typography } from "antd";
 import useElectron from "../../hooks/electron";
 import { useTranslation } from "react-i18next";
+import { cn } from "@/utils";
 
 const { Text } = Typography;
 
@@ -43,7 +43,7 @@ const Terminal: FC<TerminalProps> = ({ className, title, id, log }) => {
     const onDownloadMessage = (
       _: unknown,
       messageId: number,
-      message: string,
+      message: string
     ) => {
       if (id === messageId) {
         terminal.write(message);
@@ -65,7 +65,7 @@ const Terminal: FC<TerminalProps> = ({ className, title, id, log }) => {
   }, [id]);
 
   return (
-    <div className={classNames(className, styles.container)}>
+    <div className={cn(className, styles.container)}>
       <Flex align="center" justify="space-between" className={styles.toolbar}>
         <Text>{title || t("consoleOutput")}</Text>
       </Flex>

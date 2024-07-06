@@ -1,7 +1,7 @@
-import classNames from "classnames";
 import React, { FC } from "react";
 import "./index.scss";
 import { Space, Typography } from "antd";
+import { cn } from "@/utils";
 
 const { Text } = Typography;
 
@@ -23,7 +23,7 @@ const PageContainer: FC<PageContainerProps> = ({
   extraClassName,
 }) => {
   return (
-    <div className={classNames("page-container", className, extraClassName)}>
+    <div className={cn("page-container", className, extraClassName)}>
       {title && (
         <div className="page-container-header">
           <Space>
@@ -34,7 +34,7 @@ const PageContainer: FC<PageContainerProps> = ({
         </div>
       )}
 
-      <div className={classNames("page-container-inner", `${className}-inner`)}>
+      <div className={cn("page-container-inner", `${className}-inner`)}>
         {children}
       </div>
     </div>
