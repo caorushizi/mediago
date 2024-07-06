@@ -15,4 +15,9 @@ export default defineConfig({
     outDir: path.resolve(__dirname, "../main/app/build/renderer"),
     emptyOutDir: true,
   },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
 });

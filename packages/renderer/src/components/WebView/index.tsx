@@ -1,7 +1,7 @@
 import React, { FC, useRef, useEffect } from "react";
 import useElectron from "../../hooks/electron";
-import classNames from "classnames";
 import "./index.scss";
+import { cn } from "@/utils";
 
 interface DivRect {
   left: number;
@@ -52,7 +52,7 @@ const WebView: FC<WebViewProps> = ({ className }) => {
     };
   }, []);
 
-  return <div ref={webviewRef} className={classNames(className)} />;
+  return <div ref={webviewRef} className={cn(className)} />;
 };
 
 export default WebView;

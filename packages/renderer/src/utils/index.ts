@@ -1,5 +1,7 @@
 import dayjs from "dayjs";
 import { isUrl } from "./url";
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export { http } from "./http";
 export { tdApp } from "./tdapp";
@@ -54,4 +56,8 @@ export function getFileName(url: string) {
   const urlObject = new URL(url);
   const name = urlObject.pathname.split("/").pop() || "";
   return decodeURIComponent(name);
+}
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
 }
