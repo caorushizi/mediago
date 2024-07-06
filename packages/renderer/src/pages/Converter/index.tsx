@@ -3,7 +3,6 @@ import PageContainer from "../../components/PageContainer";
 import { useTranslation } from "react-i18next";
 import { Button, Space, message } from "antd";
 import useElectron from "../../hooks/electron";
-import { ProList } from "@ant-design/pro-components";
 import { usePagination } from "ahooks";
 import { getFileName } from "../../utils";
 import { Conversion } from "../../../../main/types/entity/Conversion";
@@ -37,7 +36,7 @@ const Converter = () => {
     {
       defaultPageSize: 50,
       refreshDeps: [],
-    }
+    },
   );
 
   const onClickConvertToAudio = async (item: Conversion) => {
@@ -104,28 +103,17 @@ const Converter = () => {
       }
     >
       {contextHolder}
-      <ProList<Conversion>
-        loading={loading}
-        className="download-list"
-        pagination={pagination}
-        metas={{
-          title: {
-            render: (text, record) => {
-              return record.name;
-            },
-          },
-          description: {
-            render: (text, record) => {
-              return record.path;
-            },
-          },
-          actions: {
-            render: renderActionButtons,
-          },
-        }}
-        rowKey="id"
-        dataSource={data.list}
-      />
+      <div>
+        {data.list.map((item) => {
+          return (
+            <div key={item.id}>
+              <div>{item.name}</div>
+              <div>{item.path}</div>
+              {renderActionButtons(null, item)}
+            </div>
+          );
+        })}
+      </div>
     </PageContainer>
   );
 };
