@@ -1,14 +1,10 @@
 import React, { FC, useEffect, useRef } from "react";
-import { useStyles } from "./styles";
 import "@xterm/xterm/css/xterm.css";
 import { Terminal as XTerminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
-import { Flex, Typography } from "antd";
-import useElectron from "../../hooks/electron";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/utils";
-
-const { Text } = Typography;
+import useElectron from "@/hooks/electron";
 
 interface TerminalProps {
   className?: string;
@@ -18,7 +14,6 @@ interface TerminalProps {
 }
 
 const Terminal: FC<TerminalProps> = ({ className, title, id, log }) => {
-  const { styles } = useStyles();
   const terminalRef = useRef<HTMLDivElement | null>(null);
   const { addIpcListener, removeIpcListener } = useElectron();
   const { t } = useTranslation();
@@ -43,7 +38,7 @@ const Terminal: FC<TerminalProps> = ({ className, title, id, log }) => {
     const onDownloadMessage = (
       _: unknown,
       messageId: number,
-      message: string
+      message: string,
     ) => {
       if (id === messageId) {
         terminal.write(message);
@@ -65,10 +60,10 @@ const Terminal: FC<TerminalProps> = ({ className, title, id, log }) => {
   }, [id]);
 
   return (
-    <div className={cn(className, styles.container)}>
-      <Flex align="center" justify="space-between" className={styles.toolbar}>
-        <Text>{title || t("consoleOutput")}</Text>
-      </Flex>
+    <div className={cn(className)}>
+      <div>
+        <div>{title || t("consoleOutput")}</div>
+      </div>
       <div ref={terminalRef} />
     </div>
   );

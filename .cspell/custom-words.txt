@@ -35,6 +35,7 @@ stylelint
 svgz
 TDAPP
 tiptap
+tseslint
 typeorm
 vitepress
 vuedraggable
