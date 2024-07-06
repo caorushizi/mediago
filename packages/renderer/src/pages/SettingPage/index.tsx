@@ -1,15 +1,17 @@
 import React, { useEffect, useRef } from "react";
 import PageContainer from "../../components/PageContainer";
 import {
-  ProForm,
-  ProFormText,
-  ProFormGroup,
-  ProFormSwitch,
-  ProFormSelect,
-  ProFormDigit,
-} from "@ant-design/pro-components";
-import "./index.scss";
-import { Button, FormInstance, message, Space, Tooltip } from "antd";
+  Button,
+  Form,
+  FormInstance,
+  Input,
+  InputNumber,
+  message,
+  Select,
+  Space,
+  Switch,
+  Tooltip,
+} from "antd";
 import {
   ClearOutlined,
   FolderOpenOutlined,
@@ -85,11 +87,11 @@ const SettingPage: React.FC = () => {
 
   return (
     <PageContainer title={t("setting")}>
-      <ProForm<AppStore>
+      <Form<AppStore>
         className={"setting-form-inner"}
-        formRef={formRef}
+        ref={formRef}
         layout="horizontal"
-        submitter={false}
+        // submitter={false}
         labelCol={{ style: { width: "140px" } }}
         labelAlign={"left"}
         colon={false}
@@ -97,59 +99,68 @@ const SettingPage: React.FC = () => {
         onValuesChange={onFormValueChange}
       >
         {contextHolder}
-        <ProFormGroup title={t("basicSetting")} direction={"vertical"}>
-          <ProFormText
-            width="xl"
-            disabled
-            name="local"
-            placeholder={t("pleaseSelectDownloadDir")}
-            label={renderButtonLabel()}
-          />
-          <ProFormSelect
-            name="theme"
-            label={t("downloaderTheme")}
-            valueEnum={{
-              [AppTheme.System]: t("followSystem"),
-              [AppTheme.Dark]: t("dark"),
-              [AppTheme.Light]: t("light"),
-            }}
-            placeholder={t("pleaseSelectTheme")}
-            allowClear={false}
-          />
-          <ProFormSelect
-            name="language"
-            label={t("displayLanguage")}
-            valueEnum={{
-              [AppLanguage.System]: t("followSystem"),
-              [AppLanguage.ZH]: t("chinese"),
-              [AppLanguage.EN]: t("english"),
-            }}
-            placeholder={t("pleaseSelectLanguage")}
-            allowClear={false}
-          />
-          <ProFormSwitch label={t("openInNewWindow")} name="openInNewWindow" />
-          <ProFormSwitch label={t("downloadPrompt")} name="promptTone" />
-          <ProFormSwitch label={t("showTerminal")} name="showTerminal" />
-          <ProFormSwitch
+        <div>
+          <div>{t("basicSetting")}</div>
+          <Form.Item name="local" label={renderButtonLabel()}>
+            <Input
+              width="xl"
+              disabled
+              placeholder={t("pleaseSelectDownloadDir")}
+            />
+          </Form.Item>
+          <Form.Item name="theme" label={t("downloaderTheme")}>
+            <Select
+              options={[
+                { label: t("followSystem"), value: AppTheme.System },
+                { label: t("dark"), value: AppTheme.Dark },
+                { label: t("light"), value: AppTheme.Light },
+              ]}
+              placeholder={t("pleaseSelectTheme")}
+              allowClear={false}
+            />
+          </Form.Item>
+          <Form.Item name="language" label={t("displayLanguage")}>
+            <Select
+              options={[
+                { label: t("followSystem"), value: AppLanguage.System },
+                { label: t("chinese"), value: AppLanguage.ZH },
+                { label: t("english"), value: AppLanguage.EN },
+              ]}
+              placeholder={t("pleaseSelectLanguage")}
+              allowClear={false}
+            />
+          </Form.Item>
+          <Form.Item label={t("openInNewWindow")} name="openInNewWindow">
+            <Switch />
+          </Form.Item>
+          <Form.Item label={t("downloadPrompt")} name="promptTone">
+            <Switch />
+          </Form.Item>
+          <Form.Item label={t("showTerminal")} name="showTerminal">
+            <Switch />
+          </Form.Item>
+          <Form.Item
             label={renderTooltipLabel(
               t("autoUpgrade"),
-              t("autoUpgradeTooltip")
+              t("autoUpgradeTooltip"),
             )}
             name="autoUpgrade"
-          />
-          <ProFormSwitch
+          >
+            <Switch />
+          </Form.Item>
+          <Form.Item
             label={renderTooltipLabel(t("privacy"), t("privacyTooltip"))}
             name="privacy"
-          />
-        </ProFormGroup>
-        <ProFormGroup title={t("browserSetting")} direction={"vertical"}>
-          <ProFormText
-            width="xl"
-            name="proxy"
-            placeholder={t("pleaseEnterProxy")}
-            label={t("proxySetting")}
-          />
-          <ProFormSwitch
+          >
+            <Switch />
+          </Form.Item>
+        </div>
+        <div>
+          <div>{t("browserSetting")}</div>
+          <Form.Item name="proxy" label={t("proxySetting")}>
+            <Input width="xl" placeholder={t("pleaseEnterProxy")} />
+          </Form.Item>
+          <Form.Item
             name="useProxy"
             label={t("proxySwitch")}
             rules={[
@@ -162,17 +173,25 @@ const SettingPage: React.FC = () => {
                 },
               },
             ]}
-          />
-          <ProFormSwitch label={t("blockAds")} name="blockAds" />
-          <ProFormSwitch label={t("enterMobileMode")} name="isMobile" />
-          <ProFormSwitch
+          >
+            <Switch />
+          </Form.Item>
+          <Form.Item label={t("blockAds")} name="blockAds">
+            <Switch />
+          </Form.Item>
+          <Form.Item label={t("enterMobileMode")} name="isMobile">
+            <Switch />
+          </Form.Item>
+          <Form.Item
             label={renderTooltipLabel(
               t("useImmersiveSniffing"),
-              t("immersiveSniffingDescription")
+              t("immersiveSniffingDescription"),
             )}
             name="useExtension"
-          />
-          <ProFormText label={t("moreAction")}>
+          >
+            <Switch />
+          </Form.Item>
+          <Form.Item label={t("moreAction")}>
             <Space>
               <Button
                 onClick={async () => {
@@ -188,10 +207,11 @@ const SettingPage: React.FC = () => {
                 {t("clearCache")}
               </Button>
             </Space>
-          </ProFormText>
-        </ProFormGroup>
-        <ProFormGroup title={t("downloadSetting")} direction={"vertical"}>
-          <ProFormSwitch
+          </Form.Item>
+        </div>
+        <div>
+          <div>{t("downloadSetting")}</div>
+          <Form.Item
             name="downloadProxySwitch"
             label={t("downloadProxySwitch")}
             rules={[
@@ -204,19 +224,22 @@ const SettingPage: React.FC = () => {
                 },
               },
             ]}
-          />
-          <ProFormSwitch label={t("deleteSegments")} name="deleteSegments" />
-          <ProFormDigit
+          >
+            <Switch />
+          </Form.Item>
+          <Form.Item label={t("deleteSegments")} name="deleteSegments">
+            <Switch />
+          </Form.Item>
+          <Form.Item
             label={renderTooltipLabel(
               t("maxRunner"),
-              t("maxRunnerDescription")
+              t("maxRunnerDescription"),
             )}
             name="maxRunner"
-            min={1}
-            max={50}
-            fieldProps={{ precision: 0 }}
-          />
-          <ProFormText label={t("moreAction")}>
+          >
+            <InputNumber min={1} max={50} precision={0} />
+          </Form.Item>
+          <Form.Item label={t("moreAction")}>
             <Space>
               <Button
                 onClick={() => openDir(envPath.workspace)}
@@ -237,12 +260,12 @@ const SettingPage: React.FC = () => {
                 {t("localDir")}
               </Button>
             </Space>
-          </ProFormText>
-          <ProFormText label={t("currentVersion")}>
+          </Form.Item>
+          <Form.Item label={t("currentVersion")}>
             <div>{version}</div>
-          </ProFormText>
-        </ProFormGroup>
-      </ProForm>
+          </Form.Item>
+        </div>
+      </Form>
     </PageContainer>
   );
 };

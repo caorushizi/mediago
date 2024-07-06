@@ -5,7 +5,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { setAppStore, increase, setBrowserStore, PageMode } from "./store";
 import "dayjs/locale/zh-cn";
 import zhCN from "antd/locale/zh_CN";
-import "./App.scss";
 import useElectron from "./hooks/electron";
 import Loading from "./components/Loading";
 import { DownloadFilter } from "./types";
