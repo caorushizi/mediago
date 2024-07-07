@@ -21,6 +21,7 @@ import IpcHandler from "./core/ipc.ts";
 import ProtocolService from "./core/protocol.ts";
 import ConversionController from "./controller/ConversionController.ts";
 import ConversionRepository from "./repository/ConversionRepository.ts";
+import { VideoService } from "./services/VideoService.ts";
 
 const container = new Container({
   skipBaseClassChecks: true,
@@ -34,6 +35,7 @@ container.bind<ElectronApp>(TYPES.ElectronApp).to(ElectronApp);
 container.bind<WebviewService>(TYPES.WebviewService).to(WebviewService);
 container.bind<DownloadService>(TYPES.DownloadService).to(DownloadService);
 container.bind<SniffingHelper>(TYPES.SniffingHelper).to(SniffingHelper);
+container.bind<VideoService>(TYPES.VideoService).to(VideoService);
 
 // windows
 container.bind<MainWindow>(TYPES.MainWindow).to(MainWindow);

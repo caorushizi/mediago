@@ -23,6 +23,7 @@
     "@electron/rebuild": "^3.6.0",
     "@eslint/js": "^9.3.0",
     "@types/electron-devtools-installer": "^2.2.5",
+    "@types/express": "^4.17.21",
     "@types/fs-extra": "^11.0.4",
     "@types/glob": "^8.1.0",
     "@types/gulp": "^4.0.17",
@@ -31,6 +32,7 @@
     "@types/node": "^20.12.12",
     "@types/node-fetch": "^2.6.11",
     "@types/semver": "^7.5.8",
+    "@types/serve-handler": "^6.1.4",
     "consola": "^3.2.3",
     "cross-env": "^7.0.3",
     "del": "^7.1.0",
@@ -61,6 +63,7 @@
     "electron-log": "^5.1.5",
     "electron-store": "^9.0.0",
     "execa": "^9.1.0",
+    "express": "^4.19.2",
     "fs-extra": "^11.2.0",
     "inversify": "^6.0.2",
     "lint-staged": "^15.2.5",
@@ -71,6 +74,7 @@
     "node-machine-id": "^1.1.12",
     "node-pty": "^1.0.0",
     "reflect-metadata": "^0.2.2",
+    "serve-handler": "^6.1.5",
     "strip-ansi": "^7.1.0",
     "typeorm": "0.3.20"
   }

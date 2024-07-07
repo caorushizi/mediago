@@ -13,6 +13,7 @@ import ElectronUpdater from "./vendor/ElectronUpdater.ts";
 import TypeORM from "./vendor/TypeORM.ts";
 import ProtocolService from "./core/protocol.ts";
 import IpcHandlerService from "./core/ipc.ts";
+import { VideoService } from "./services/VideoService.ts";
 
 @injectable()
 export default class ElectronApp {
@@ -34,11 +35,14 @@ export default class ElectronApp {
     @inject(TYPES.ElectronDevtools)
     private readonly devTools: ElectronDevtools,
     @inject(TYPES.ElectronStore)
-    private readonly store: ElectronStore
+    private readonly store: ElectronStore,
+    @inject(TYPES.VideoService)
+    private readonly videoService: VideoService,
   ) {}
 
   private async serviceInit(): Promise<void> {
     this.mainWindow.init();
+    this.videoService.init();
   }
 
   private async vendorInit() {
@@ -93,7 +97,7 @@ export default class ElectronApp {
     const videoIds = videos.map((video) => video.id);
     await this.videoRepository.changeVideoStatus(
       videoIds,
-      DownloadStatus.Failed
+      DownloadStatus.Failed,
     );
   }
 }
