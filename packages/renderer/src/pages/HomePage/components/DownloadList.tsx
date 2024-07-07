@@ -112,7 +112,6 @@ export function DownloadList({
   }, []);
 
   const handleItemSelectChange = (id: number) => {
-    console.log("handleItemSelectChange", id);
     setSelected(
       produce((draft) => {
         const index = draft.findIndex((i) => i === id);
