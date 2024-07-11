@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { PropsWithChildren, useEffect, useRef } from "react";
 import PageContainer from "../../components/PageContainer";
 import {
   Button,
@@ -25,6 +25,19 @@ import { AppLanguage, AppTheme } from "../../types";
 import { useTranslation } from "react-i18next";
 
 const version = import.meta.env.APP_VERSION;
+
+interface GroupWrapperProps extends PropsWithChildren {
+  title: string;
+}
+
+function GroupWrapper({ children, title }: GroupWrapperProps) {
+  return (
+    <div className="rounded-lg bg-white p-2">
+      <div>{title}</div>
+      {children}
+    </div>
+  );
+}
 
 const SettingPage: React.FC = () => {
   const {
@@ -87,8 +100,8 @@ const SettingPage: React.FC = () => {
 
   return (
     <PageContainer title={t("setting")}>
+      {contextHolder}
       <Form<AppStore>
-        className={"setting-form-inner"}
         ref={formRef}
         layout="horizontal"
         // submitter={false}
@@ -98,9 +111,7 @@ const SettingPage: React.FC = () => {
         initialValues={settings}
         onValuesChange={onFormValueChange}
       >
-        {contextHolder}
-        <div>
-          <div>{t("basicSetting")}</div>
+        <GroupWrapper title={t("basicSetting")}>
           <Form.Item name="local" label={renderButtonLabel()}>
             <Input
               width="xl"
@@ -154,9 +165,8 @@ const SettingPage: React.FC = () => {
           >
             <Switch />
           </Form.Item>
-        </div>
-        <div>
-          <div>{t("browserSetting")}</div>
+        </GroupWrapper>
+        <GroupWrapper title={t("browserSetting")}>
           <Form.Item name="proxy" label={t("proxySetting")}>
             <Input width="xl" placeholder={t("pleaseEnterProxy")} />
           </Form.Item>
@@ -208,9 +218,8 @@ const SettingPage: React.FC = () => {
               </Button>
             </Space>
           </Form.Item>
-        </div>
-        <div>
-          <div>{t("downloadSetting")}</div>
+        </GroupWrapper>
+        <GroupWrapper title={t("downloadSetting")}>
           <Form.Item
             name="downloadProxySwitch"
             label={t("downloadProxySwitch")}
@@ -264,7 +273,7 @@ const SettingPage: React.FC = () => {
           <Form.Item label={t("currentVersion")}>
             <div>{version}</div>
           </Form.Item>
-        </div>
+        </GroupWrapper>
       </Form>
     </PageContainer>
   );

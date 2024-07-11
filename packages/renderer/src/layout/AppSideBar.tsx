@@ -48,7 +48,7 @@ function AppMenuItem({
     <Link
       to={link}
       className={cn(
-        "flex h-10 flex-row items-center gap-3 rounded-lg bg-[#FAFCFF] px-3 text-sm text-[#636D7E] hover:bg-[rgba(0,0,0,0.06)]",
+        "flex h-10 flex-row items-center gap-3 rounded-lg bg-[#FAFCFF] px-3 text-sm text-[#636D7E] hover:bg-[#E1F0FF]",
         {
           "bg-gradient-to-r from-[#127AF3] to-[#06D5FB] text-white": isActive,
         },

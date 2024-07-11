@@ -15,6 +15,28 @@ import { selectAppStore } from "@/store";
 import selectedBg from "./images/select-item-bg.png";
 import { CurrTerminal } from "./types";
 import DownloadForm from "@/components/DownloadForm";
+import DownloadIcon from "./svg/download.svg?react";
+import FailedIcon from "./svg/error.svg?react";
+import PauseIcon from "./svg/pause.svg?react";
+
+interface DownloadTagProps {
+  icon?: React.ReactNode;
+  text: string;
+  color: string;
+}
+
+function DownloadTag({ icon, text, color }: DownloadTagProps) {
+  return (
+    <div
+      className={cn(
+        `rounded-full bg-[${color}] flex flex-row items-center gap-[3px] rounded-bl-lg pl-1 pr-2`,
+      )}
+    >
+      {icon}
+      <span className="text-xs text-white">{text}</span>
+    </div>
+  );
+}
 
 interface Props {
   item: DownloadItem;
@@ -142,25 +164,45 @@ export function DownloadItem({
   const renderTitle = (item: DownloadItem): ReactNode => {
     let tag = null;
     if (item.status === DownloadStatus.Downloading) {
-      tag = <div>{t("downloading")}</div>;
+      tag = (
+        <DownloadTag
+          icon={<DownloadIcon />}
+          text={t("downloading")}
+          color="#127af3"
+        />
+      );
     } else if (item.status === DownloadStatus.Success) {
-      tag = <div>{t("downloadSuccess")}</div>;
+      tag = <DownloadTag text={t("downloadSuccess")} color="#09ce87" />;
     } else if (item.status === DownloadStatus.Failed) {
-      tag = <div>{t("downloadFailed")}</div>;
+      tag = (
+        <DownloadTag
+          icon={<FailedIcon />}
+          text={t("downloadFailed")}
+          color="#ff7373"
+        />
+      );
     } else if (item.status === DownloadStatus.Stopped) {
-      tag = <div>{t("downloadPause")}</div>;
+      tag = (
+        <DownloadTag
+          icon={<PauseIcon />}
+          text={t("downloadPause")}
+          color="#9abbe2"
+        />
+      );
     }
 
     return (
       <div className="flex flex-row gap-2">
         <div
-          className={cn({
-            "text-[#127AF3]": selected,
+          className={cn("text-sm", {
+            "text-[#127af3]": selected,
           })}
         >
           {item.name}
         </div>
-        {item.isLive && <div>{t("liveResource")}</div>}
+        {item.isLive && (
+          <DownloadTag text={t("liveResource")} color="#9abbe2" />
+        )}
         {tag}
       </div>
     );
@@ -181,7 +223,10 @@ export function DownloadItem({
       );
     }
     return (
-      <div className="relative truncate text-[#B3B3B3]" title={item.url}>
+      <div
+        className="relative truncate text-xs text-[#B3B3B3]"
+        title={item.url}
+      >
         {item.url}
       </div>
     );
@@ -201,7 +246,7 @@ export function DownloadItem({
         checked={selected}
         onCheckedChange={() => onSelectChange(item.id)}
       />
-      <div className={cn("flex flex-1 flex-col gap-3 overflow-hidden")}>
+      <div className={cn("flex flex-1 flex-col gap-1 overflow-hidden")}>
         {selected && (
           <img
             src={selectedBg}
@@ -210,7 +255,7 @@ export function DownloadItem({
         )}
         <div className="relative flex flex-row items-center justify-between">
           {renderTitle(item)}
-          <div className="flex flex-row gap-7 bg-white">
+          <div className="flex flex-row items-center gap-5 rounded-l-full rounded-r-lg bg-white py-1 pl-4">
             {renderActionButtons(item)}
           </div>
         </div>

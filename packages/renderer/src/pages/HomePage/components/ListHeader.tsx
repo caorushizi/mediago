@@ -22,25 +22,42 @@ export function ListHeader({
 }: Props) {
   const { t } = useTranslation();
 
+  const disabled = selected.length === 0;
+
   return (
-    <div className="flex flex-row items-center justify-between py-5 pl-3">
-      <div className="flex flex-row items-center">
+    <div className="flex flex-row items-center justify-between pb-2 pl-3">
+      <div className="flex flex-row items-center gap-3">
         <Checkbox checked={checked} onCheckedChange={onSelectAll} />
-        <Button type="link" onClick={() => onSelectAll(true)}>
+        <span
+          className="cursor-pointer text-sm text-[#343434]"
+          onClick={() => onSelectAll(true)}
+        >
           {t("selectAll")}
-        </Button>
+        </span>
         {!!selected.length && (
-          <Trans i18nKey="selectedItems" values={{ count: selected.length }} />
+          <span className="text-xs text-[#A4A4A4]">
+            <Trans
+              i18nKey="selectedItems"
+              values={{ count: selected.length }}
+            />
+          </span>
         )}
       </div>
-      <div className="flex flex-row items-center">
-        <Button type="link" onClick={async () => onDeleteItems(selected)}>
+      <div className="flex flex-row items-center gap-3">
+        <Button
+          disabled={disabled}
+          onClick={async () => onDeleteItems(selected)}
+        >
           {t("delete")}
         </Button>
-        <Button type="link" onClick={() => onCancelItems()}>
+        <Button disabled={disabled} onClick={() => onCancelItems()}>
           {t("cancel")}
         </Button>
-        <Button type="link" onClick={() => onDownloadItems(selected)}>
+        <Button
+          disabled={disabled}
+          type="primary"
+          onClick={() => onDownloadItems(selected)}
+        >
           {t("download")}
         </Button>
       </div>
