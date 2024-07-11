@@ -5,7 +5,7 @@ interface PageContainerProps {
   children: React.ReactNode | null;
   titleExtra?: React.ReactNode | null;
   rightExtra?: React.ReactNode | null;
-  title?: string;
+  title?: React.ReactNode | null;
   className?: string;
 }
 
@@ -17,7 +17,7 @@ const PageContainer: FC<PageContainerProps> = ({
   className,
 }) => {
   return (
-    <div className={cn("flex h-full flex-col gap-3 p-3", className)}>
+    <div className={cn("flex h-full flex-col gap-3 p-3")}>
       {title && (
         <div className="flex flex-row items-center justify-between rounded-lg bg-white p-3">
           <div className="flex flex-row gap-3">

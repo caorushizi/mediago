@@ -73,22 +73,19 @@ export function BrowserView({ onDownloadForm }: Props) {
   };
 
   const renderContent = () => {
-    let content = <div></div>;
+    // 加载状态
     if (store.status === BrowserStatus.Loading) {
-      content = <Spin />;
-    } else if (modalShow) {
-      content = (
-        <img
-          src={placeHolder}
-          alt=""
-          style={{
-            height: "100%",
-            width: "100%",
-          }}
-        />
-      );
-    } else if (store.status === BrowserStatus.Failed) {
-      content = (
+      return <Spin />;
+    }
+
+    // 模态框
+    if (modalShow) {
+      return <img src={placeHolder} className="h-full w-full" />;
+    }
+
+    // 加载失败
+    if (store.status === BrowserStatus.Failed) {
+      return (
         <Empty
           description={`${store.errMsg || t("loadFailed")} (${store.errCode})`}
         >
@@ -100,10 +97,14 @@ export function BrowserView({ onDownloadForm }: Props) {
           </Space>
         </Empty>
       );
-    } else if (store.status === BrowserStatus.Loaded) {
-      content = <WebView className="webview-inner" />;
     }
-    return content;
+
+    // 加载成功
+    if (store.status === BrowserStatus.Loaded) {
+      return <WebView className="h-full w-full flex-1" />;
+    }
+
+    return null;
   };
-  return <div className="webview-container">{renderContent()}</div>;
+  return <div className="flex flex-1">{renderContent()}</div>;
 }

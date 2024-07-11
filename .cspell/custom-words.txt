@@ -43,3 +43,4 @@ vuejs
 waline
 watting
 Watting
+svgr

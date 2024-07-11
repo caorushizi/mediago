@@ -43,6 +43,8 @@
   "devDependencies": {
     "@eslint/compat": "^1.0.1",
     "@eslint/js": "^9.3.0",
+    "@svgr/plugin-jsx": "^8.1.0",
+    "@svgr/plugin-svgo": "^8.1.0",
     "@types/node": "^20.12.12",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
@@ -66,7 +68,8 @@
     "typescript": "~5.4.5",
     "typescript-eslint": "^7.10.0",
     "vite": "^5.2.11",
-    "vite-bundle-visualizer": "^1.2.1"
+    "vite-bundle-visualizer": "^1.2.1",
+    "vite-plugin-svgr": "^4.2.0"
   },
   "license": "MIT",
   "lint-staged": {

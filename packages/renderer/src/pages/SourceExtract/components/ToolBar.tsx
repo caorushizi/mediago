@@ -145,7 +145,7 @@ export function ToolBar({ page }: Props) {
   };
 
   return (
-    <Space.Compact className="action-bar" block>
+    <Space.Compact className="flex-1" block>
       <Button
         type="text"
         title={t("switchToMobileMode")}

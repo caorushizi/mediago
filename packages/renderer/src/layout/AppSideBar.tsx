@@ -1,19 +1,17 @@
 import React, { cloneElement } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Badge, Button } from "antd";
-import {
-  CheckCircleOutlined,
-  DownloadOutlined,
-  ExportOutlined,
-  ProfileOutlined,
-  SettingOutlined,
-  SyncOutlined,
-} from "@ant-design/icons";
+import { ExportOutlined } from "@ant-design/icons";
 import useElectron from "../hooks/electron";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAppStore, setAppStore, clearCount, selectCount } from "../store";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/utils";
+import ConverterIcon from "./assets/converter.svg?react";
+import DoneIcon from "./assets/done.svg?react";
+import ExtractIcon from "./assets/extract.svg?react";
+import ListIcon from "./assets/list.svg?react";
+import SettingsIcon from "./assets/settings.svg?react";
 
 function processLocation(pathname: string) {
   let name = pathname;
@@ -34,6 +32,7 @@ interface AppMenuItemProps {
   link: string;
   activeKey: string;
   className?: string;
+  icon?: React.ReactNode;
 }
 
 function AppMenuItem({
@@ -42,26 +41,35 @@ function AppMenuItem({
   link,
   activeKey,
   className,
+  icon,
 }: AppMenuItemProps) {
+  const isActive = activeKey === processLocation(link);
   return (
     <Link
       to={link}
       className={cn(
-        "flex h-10 flex-row items-center gap-3 rounded-lg bg-[#FAFCFF] px-3 text-[#666] hover:bg-[rgba(0,0,0,0.06)]",
+        "flex h-10 flex-row items-center gap-3 rounded-lg bg-[#FAFCFF] px-3 text-sm text-[#636D7E] hover:bg-[rgba(0,0,0,0.06)]",
         {
-          "bg-gradient-to-r from-[#127AF3] to-[#00FCFF] text-white":
-            activeKey === processLocation(link),
+          "bg-gradient-to-r from-[#127AF3] to-[#06D5FB] text-white": isActive,
         },
         className,
       )}
       onClick={onClick}
     >
+      {icon &&
+        React.cloneElement(icon as React.ReactElement, {
+          fill: isActive ? "#fff" : "#AAB5CB",
+        })}
       {children}
     </Link>
   );
 }
 
-export function AppSideBar() {
+interface Props {
+  className?: string;
+}
+
+export function AppSideBar({ className }: Props) {
   const { setAppStore: ipcSetAppStore, showBrowserWindow } = useElectron();
   const { t } = useTranslation();
   const location = useLocation();
@@ -94,8 +102,8 @@ export function AppSideBar() {
             dispatch(clearCount());
           }}
           activeKey={activeKey}
+          icon={<ListIcon />}
         >
-          <DownloadOutlined />
           <span>{t("downloadList")}</span>
           {count > 0 && (
             <Badge count={count} offset={[5, 1]} size="small"></Badge>
@@ -106,8 +114,7 @@ export function AppSideBar() {
     },
     {
       label: (
-        <AppMenuItem link="/done" activeKey={activeKey}>
-          <CheckCircleOutlined />
+        <AppMenuItem link="/done" activeKey={activeKey} icon={<DoneIcon />}>
           <span>{t("downloadComplete")}</span>
         </AppMenuItem>
       ),
@@ -115,8 +122,11 @@ export function AppSideBar() {
     },
     {
       label: (
-        <AppMenuItem link="/converter" activeKey={activeKey}>
-          <SyncOutlined />
+        <AppMenuItem
+          link="/converter"
+          activeKey={activeKey}
+          icon={<ConverterIcon />}
+        >
           <span>{t("converter")}</span>
         </AppMenuItem>
       ),
@@ -124,13 +134,17 @@ export function AppSideBar() {
     },
     {
       label: (
-        <AppMenuItem link="/source" activeKey={activeKey} className="group">
-          <ProfileOutlined />
+        <AppMenuItem
+          link="/source"
+          activeKey={activeKey}
+          className="group"
+          icon={<ExtractIcon />}
+        >
           <span>{t("materialExtraction")}</span>
           <Button
             title={t("openInNewWindow")}
             type="text"
-            className="hidden justify-self-end group-hover:block"
+            className="hidden justify-self-end text-[#AAB5CB] group-hover:block"
             icon={<ExportOutlined />}
             onClick={handleExternalLink}
           />
@@ -140,8 +154,11 @@ export function AppSideBar() {
     },
     {
       label: (
-        <AppMenuItem link="/settings" activeKey={activeKey}>
-          <SettingOutlined />
+        <AppMenuItem
+          link="/settings"
+          activeKey={activeKey}
+          icon={<SettingsIcon />}
+        >
           <span>{t("setting")}</span>
         </AppMenuItem>
       ),
@@ -154,7 +171,9 @@ export function AppSideBar() {
   );
 
   return (
-    <div className="flex w-[200px] flex-col gap-3 p-3">
+    <div
+      className={cn("flex w-[180px] flex-col gap-3 bg-[#fff] p-3", className)}
+    >
       {finalItems.map((item) => cloneElement(item.label, { key: item.key }))}
     </div>
   );
