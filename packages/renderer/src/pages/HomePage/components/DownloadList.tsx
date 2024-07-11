@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { DownloadItem } from "./DownloadItem";
 import { ListHeader } from "./ListHeader";
 import { produce } from "immer";
-import { message, Pagination } from "antd";
+import { Empty, message, Pagination } from "antd";
 import { DownloadFilter } from "@/types";
 import { selectAppStore } from "@/store";
 import { useSelector } from "react-redux";
@@ -211,8 +211,17 @@ export function DownloadList({
     return <Loading />;
   }
 
+  console.log(data.length);
+  if (data.length === 0) {
+    return (
+      <div className="flex h-full flex-1 flex-row items-center justify-center rounded-lg bg-white">
+        <Empty />
+      </div>
+    );
+  }
+
   return (
-    <div className="rounded-lg bg-white">
+    <div className="gap-3 rounded-lg">
       {contextHolder}
       <ListHeader
         selected={selected}

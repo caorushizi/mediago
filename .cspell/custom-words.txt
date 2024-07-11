@@ -22,6 +22,7 @@ inversify
 KHTML
 languagedetector
 localforage
+lucide
 mediago
 metas
 nocheck
@@ -32,6 +33,7 @@ Redownload
 reduxjs
 Sider
 stylelint
+svgr
 svgz
 TDAPP
 tiptap
@@ -43,4 +45,3 @@ vuejs
 waline
 watting
 Watting
-svgr
