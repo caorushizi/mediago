@@ -33,7 +33,10 @@ interface GroupWrapperProps extends PropsWithChildren {
 function GroupWrapper({ children, title }: GroupWrapperProps) {
   return (
     <div className="rounded-lg bg-white p-2">
-      <div>{title}</div>
+      <div className="mb-5 flex flex-row items-center gap-2">
+        <div className="h-4 w-1 rounded-full bg-[#127AF3]" />
+        {title}
+      </div>
       {children}
     </div>
   );
@@ -76,7 +79,7 @@ const SettingPage: React.FC = () => {
 
   const renderTooltipLabel = (label: string, tooltip: string) => {
     return (
-      <div className="item-label">
+      <div className="flex flex-row items-center gap-1">
         <div className="item-label-text">{label}</div>
         <Tooltip title={tooltip} placement={"right"}>
           <QuestionCircleOutlined />
@@ -110,6 +113,7 @@ const SettingPage: React.FC = () => {
         colon={false}
         initialValues={settings}
         onValuesChange={onFormValueChange}
+        className="flex flex-col gap-2"
       >
         <GroupWrapper title={t("basicSetting")}>
           <Form.Item name="local" label={renderButtonLabel()}>

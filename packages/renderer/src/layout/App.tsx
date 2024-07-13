@@ -19,12 +19,10 @@ const App: FC = () => {
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
       <AppHeader className="flex-shrink-0" />
-      <div className="flex h-full flex-row bg-[#F4F7FA]">
+      <div className="flex flex-1 flex-row overflow-hidden bg-[#F4F7FA]">
         <AppSideBar />
-        <div className="flex h-full flex-1 flex-col overflow-hidden">
-          <div className="flex-1 overflow-auto">
-            <Outlet />
-          </div>
+        <div className="flex-1 overflow-auto">
+          <Outlet />
         </div>
       </div>
     </div>

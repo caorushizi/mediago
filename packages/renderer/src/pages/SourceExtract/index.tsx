@@ -187,9 +187,9 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   };
 
   return (
-    <PageContainer className="flex flex-col p-0">
+    <PageContainer className="flex flex-col gap-2 p-0">
       <ToolBar page={page} />
-      <div className="flex flex-1 bg-blue-900">
+      <div className="flex flex-1">
         {store.mode === PageMode.Browser ? (
           <BrowserView onDownloadForm={onDownloadForm} />
         ) : (

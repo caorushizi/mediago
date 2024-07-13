@@ -211,7 +211,6 @@ export function DownloadList({
     return <Loading />;
   }
 
-  console.log(data.length);
   if (data.length === 0) {
     return (
       <div className="flex h-full flex-1 flex-row items-center justify-center rounded-lg bg-white">
