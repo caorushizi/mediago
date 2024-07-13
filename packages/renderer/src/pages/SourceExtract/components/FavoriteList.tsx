@@ -3,7 +3,7 @@ import { BrowserStatus, PageMode, setBrowserStore } from "@/store";
 import { getFavIcon } from "@/utils";
 import { CloseOutlined, LinkOutlined, PlusOutlined } from "@ant-design/icons";
 import { useRequest } from "ahooks";
-import { Avatar, Button, Form, Input, message, Modal } from "antd";
+import { Form, Input, message, Modal } from "antd";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
@@ -38,11 +38,21 @@ export function FavoriteList() {
     loadUrl(item.url);
   };
 
+  const handleRemoveFavorite = async (e: any, id: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+    removeFavorite(id);
+    refresh();
+  };
+
   // 渲染收藏 item
   const renderFavoriteItem = (item: Favorite | "add") => {
     if (item === "add") {
       return (
-        <div onClick={() => showModal()}>
+        <div
+          className="flex h-16 w-16 cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden"
+          onClick={() => showModal()}
+        >
           <PlusOutlined style={{ fontSize: "20px" }} />
         </div>
       );
@@ -51,30 +61,29 @@ export function FavoriteList() {
     return (
       <div
         key={item.id}
-        className="flex h-16 w-16 flex-col items-center justify-center overflow-hidden rounded-lg"
+        className="flex h-16 w-16 cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden"
         onContextMenu={() => {
           onFavoriteItemContextMenu(item.id);
         }}
         onClick={() => onClickLoadItem(item)}
       >
-        <Button
+        <div
           className="absolute right-1 top-1 hidden"
-          type="link"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            removeFavorite(item.id);
-            refresh();
-          }}
+          onClick={(e) => handleRemoveFavorite(e, item.id)}
         >
           <CloseOutlined />
-        </Button>
-        {item.icon ? (
-          <Avatar shape="square" src={item.icon} icon={<LinkOutlined />} />
-        ) : (
-          <Avatar shape="square" icon={<LinkOutlined />} />
-        )}
-        <div className="w-full truncate text-center" title={item.title}>
+        </div>
+        <div className="flex h-14 w-14 flex-row items-center justify-center rounded-lg bg-white">
+          {item.icon ? (
+            <img className="h-8 w-8" src={item.icon} />
+          ) : (
+            <LinkOutlined />
+          )}
+        </div>
+        <div
+          className="w-full truncate text-center text-sm text-[#636D7E]"
+          title={item.title}
+        >
           {item.title}
         </div>
       </div>

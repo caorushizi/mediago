@@ -1,7 +1,6 @@
 import React, { cloneElement } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Badge, Button } from "antd";
-import { ExportOutlined } from "@ant-design/icons";
+import { Badge } from "antd";
 import useElectron from "../hooks/electron";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAppStore, setAppStore, clearCount, selectCount } from "../store";
@@ -12,6 +11,8 @@ import DoneIcon from "./assets/done.svg?react";
 import ExtractIcon from "./assets/extract.svg?react";
 import ListIcon from "./assets/list.svg?react";
 import SettingsIcon from "./assets/settings.svg?react";
+import ShareIcon from "./assets/share.svg?react";
+import siderBg from "./assets/sider-bg.png";
 
 function processLocation(pathname: string) {
   let name = pathname;
@@ -80,7 +81,7 @@ export function AppSideBar({ className }: Props) {
 
   const activeKey = processLocation(location.pathname);
 
-  const handleExternalLink = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleExternalLink = async (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     e.preventDefault();
 
@@ -140,14 +141,14 @@ export function AppSideBar({ className }: Props) {
           className="group"
           icon={<ExtractIcon />}
         >
-          <span>{t("materialExtraction")}</span>
-          <Button
+          <span className="flex flex-1">{t("materialExtraction")}</span>
+          <div
             title={t("openInNewWindow")}
-            type="text"
-            className="hidden justify-self-end text-[#AAB5CB] group-hover:block"
-            icon={<ExportOutlined />}
-            onClick={handleExternalLink}
-          />
+            className="hidden group-hover:block"
+            onClick={(e) => handleExternalLink(e)}
+          >
+            {<ShareIcon fill={activeKey === "source" ? "#fff" : "#AAB5CB"} />}
+          </div>
         </AppMenuItem>
       ),
       key: "source",
@@ -171,10 +172,12 @@ export function AppSideBar({ className }: Props) {
   );
 
   return (
-    <div
-      className={cn("flex w-[180px] flex-col gap-3 bg-[#fff] p-3", className)}
-    >
-      {finalItems.map((item) => cloneElement(item.label, { key: item.key }))}
+    <div className={cn("relative bg-[#fff] p-3", className)}>
+      <div className="relative z-10 flex w-[180px] flex-col gap-3">
+        {finalItems.map((item) => cloneElement(item.label, { key: item.key }))}
+      </div>
+
+      <img src={siderBg} className="absolute bottom-0 left-0 right-0" />
     </div>
   );
 }

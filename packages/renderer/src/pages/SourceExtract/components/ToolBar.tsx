@@ -7,24 +7,40 @@ import {
   setAppStore,
   setBrowserStore,
 } from "@/store";
-import { generateUrl, getFavIcon } from "@/utils";
-import {
-  ArrowLeftOutlined,
-  ArrowRightOutlined,
-  CloseOutlined,
-  HomeOutlined,
-  ImportOutlined,
-  MobileFilled,
-  MobileOutlined,
-  ReloadOutlined,
-  StarFilled,
-  StarOutlined,
-} from "@ant-design/icons";
+import { cn, generateUrl, getFavIcon } from "@/utils";
+import { CloseOutlined } from "@ant-design/icons";
 import { useRequest } from "ahooks";
-import { Button, Input, Space } from "antd";
-import React, { useMemo } from "react";
+import { Input } from "antd";
+import React, { PropsWithChildren, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
+import BackIcon from "./svg/back.svg?react";
+import HomeIcon from "./svg/home.svg?react";
+import PhoneIcon from "./svg/phone.svg?react";
+import FavIcon from "./svg/fav.svg?react";
+import RefreshIcon from "./svg/refresh.svg?react";
+import SendIcon from "./svg/send.svg?react";
+import ShareIcon from "./svg/share.svg?react";
+
+interface ToolBtnProps extends PropsWithChildren {
+  title: string;
+  onClick?: () => void;
+  disabled?: boolean;
+}
+
+function ToolBtn({ children, disabled, title, onClick }: ToolBtnProps) {
+  return (
+    <div
+      className={cn("h-5 w-5 rounded-sm hover:bg-[#E1F0FF]", {
+        "cursor-not-allowed": disabled,
+      })}
+      title={title}
+      onClick={onClick}
+    >
+      {children}
+    </div>
+  );
+}
 
 interface Props {
   page: boolean;
@@ -145,53 +161,41 @@ export function ToolBar({ page }: Props) {
   };
 
   return (
-    <Space.Compact block>
-      <Button
-        type="text"
-        title={t("switchToMobileMode")}
-        onClick={onSetDefaultUA}
-      >
-        {appStore.isMobile ? <MobileFilled /> : <MobileOutlined />}
-      </Button>
-      <Button
-        disabled={disabled}
-        title={t("home")}
-        type="text"
-        onClick={onClickGoHome}
-      >
-        <HomeOutlined />
-      </Button>
-      <Button
-        disabled={disabled}
-        title={t("back")}
-        type="text"
-        onClick={onClickGoBack}
-      >
-        <ArrowLeftOutlined />
-      </Button>
+    <div className="flex flex-row items-center gap-1.5 rounded-lg bg-white px-3 py-2">
+      <ToolBtn title={t("switchToMobileMode")} onClick={onSetDefaultUA}>
+        {appStore.isMobile ? (
+          <PhoneIcon fill="#515151" />
+        ) : (
+          <PhoneIcon stroke="#515151" />
+        )}
+      </ToolBtn>
+      <ToolBtn disabled={disabled} title={t("home")} onClick={onClickGoHome}>
+        <HomeIcon />
+      </ToolBtn>
+      <ToolBtn disabled={disabled} title={t("back")} onClick={onClickGoBack}>
+        <BackIcon />
+      </ToolBtn>
       {store.mode === PageMode.Browser &&
       store.status === BrowserStatus.Loading ? (
-        <Button title={t("cancle")} type="text" onClick={onClickGoHome}>
+        <ToolBtn title={t("cancle")} onClick={onClickGoHome}>
           <CloseOutlined />
-        </Button>
+        </ToolBtn>
       ) : (
-        <Button
-          disabled={disabled}
-          title={t("refresh")}
-          type="text"
-          onClick={goto}
-        >
-          <ReloadOutlined />
-        </Button>
+        <ToolBtn disabled={disabled} title={t("refresh")} onClick={goto}>
+          <RefreshIcon />
+        </ToolBtn>
       )}
-      <Button
-        type="text"
+      <ToolBtn
         title={curIsFavorite ? t("cancelFavorite") : t("favorite")}
         onClick={onClickAddFavorite}
         disabled={disabled}
       >
-        {curIsFavorite ? <StarFilled /> : <StarOutlined />}
-      </Button>
+        {curIsFavorite ? (
+          <FavIcon fill="#515151" />
+        ) : (
+          <FavIcon fill="none" stroke="#515151" />
+        )}
+      </ToolBtn>
       <Input
         key="url-input"
         value={store.url}
@@ -206,23 +210,14 @@ export function ToolBar({ page }: Props) {
         onContextMenu={onInputContextMenu}
         placeholder={t("pleaseEnterUrl")}
       />
-      <Button
-        title={t("visit")}
-        type="text"
-        onClick={onClickEnter}
-        disabled={!store.url}
-      >
-        <ArrowRightOutlined />
-      </Button>
+      <ToolBtn title={t("visit")} onClick={onClickEnter} disabled={!store.url}>
+        <SendIcon />
+      </ToolBtn>
       {page && (
-        <Button
-          type="text"
-          title={t("mergeToMainWindow")}
-          onClick={onCombineToHome}
-        >
-          <ImportOutlined />
-        </Button>
+        <ToolBtn title={t("mergeToMainWindow")} onClick={onCombineToHome}>
+          <ShareIcon transform="rotate(180)" />
+        </ToolBtn>
       )}
-    </Space.Compact>
+    </div>
   );
 }
