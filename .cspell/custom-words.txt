@@ -9,7 +9,9 @@ bilibili
 bodys
 cancle
 cliqz
+clsx
 commitlint
+compat
 Conpty
 consola
 conventionalcommits
@@ -35,6 +37,7 @@ Sider
 stylelint
 svgr
 svgz
+tailwindcss
 TDAPP
 tiptap
 tseslint

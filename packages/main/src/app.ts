@@ -42,7 +42,7 @@ export default class ElectronApp {
 
   private async serviceInit(): Promise<void> {
     this.mainWindow.init();
-    this.videoService.init();
+    // this.videoService.init();
   }
 
   private async vendorInit() {

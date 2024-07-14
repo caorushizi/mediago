@@ -1,4 +1,3 @@
-import "vite-plugin-svgr/client";
 import "vite/client";
 import { ElectronApi } from "../../main/types/preload";
 
@@ -13,6 +12,11 @@ declare global {
       ) => void;
     };
   }
+}
+
+declare module "*.svg" {
+  const content: React.FC<React.SVGProps<SVGElement>>;
+  export default content;
 }
 
 export {};

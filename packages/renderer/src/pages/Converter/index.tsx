@@ -1,13 +1,14 @@
 import React, { ReactNode, useState } from "react";
 import PageContainer from "../../components/PageContainer";
 import { useTranslation } from "react-i18next";
-import { Button, Empty, Space, message } from "antd";
+import { Empty, Space, message } from "antd";
 import useElectron from "../../hooks/electron";
 import { usePagination } from "ahooks";
 import { getFileName } from "../../utils";
 import { Conversion } from "../../../../main/types/entity/Conversion";
 import { DeleteOutlined, SyncOutlined } from "@ant-design/icons";
 import { produce } from "immer";
+import { Button } from "@/components/ui/button";
 
 const Converter = () => {
   const { t } = useTranslation();
