@@ -86,7 +86,7 @@ body {
   width: 100vw;
 }
 
-@mixin scrollbar() {
+* {
   &::-webkit-scrollbar {
     height: 8px;
     width: 8px;
@@ -105,8 +105,4 @@ body {
       background: rgba(255 255 255 / 15%);
     }
   }
-}
-
-* {
-  @include scrollbar;
 }

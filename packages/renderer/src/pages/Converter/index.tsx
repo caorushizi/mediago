@@ -66,20 +66,20 @@ const Converter = () => {
   const renderActionButtons = (dom: ReactNode, item: Conversion): ReactNode => {
     // 下载成功
     return [
-      <Button
-        type="text"
-        key="restart"
-        icon={<SyncOutlined spin={converting[item.id]} />}
+      <div
+        key="convert"
         title={t("convertToAudio")}
         onClick={() => onClickConvertToAudio(item)}
-      />,
-      <Button
-        type="text"
-        key="restart"
-        icon={<DeleteOutlined />}
+      >
+        {<SyncOutlined spin={converting[item.id]} />}
+      </div>,
+      <div
+        key="delete"
         title={t("delete")}
         onClick={() => onDeleteConversion(item.id)}
-      />,
+      >
+        {<DeleteOutlined />}
+      </div>,
     ];
   };
 
@@ -105,14 +105,16 @@ const Converter = () => {
       className="rounded-lg bg-white"
     >
       {contextHolder}
-      <div>
+      <div className="p-3">
         {list.length ? (
           list.map((item) => {
             return (
-              <div key={item.id}>
-                <div>{item.name}</div>
-                <div>{item.path}</div>
-                {renderActionButtons(null, item)}
+              <div key={item.id} className="rounded-lg bg-[#FAFCFF] p-3">
+                <div>
+                  <div className="text-sm text-[#343434]">{item.name}</div>
+                  {renderActionButtons(null, item)}
+                </div>
+                <div className="text-xs text-[#AAB5CB]">{item.path}</div>
               </div>
             );
           })

@@ -16,10 +16,10 @@
     "nanoid": "^5.0.7"
   },
   "devDependencies": {
-    "@eslint/js": "^9.3.0",
+    "@eslint/js": "^8.57.0",
     "@types/jquery": "^3.5.30",
     "@types/node": "^20.12.12",
-    "eslint": "^9.3.0",
+    "eslint": "^8.57.0",
     "globals": "^15.3.0",
     "lint-staged": "^15.2.5",
     "stylelint": "^16.6.0",
