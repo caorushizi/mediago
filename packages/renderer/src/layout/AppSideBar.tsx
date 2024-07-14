@@ -6,13 +6,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectAppStore, setAppStore, clearCount, selectCount } from "../store";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/utils";
-import ConverterIcon from "./assets/converter.svg?react";
-import DoneIcon from "./assets/done.svg?react";
-import ExtractIcon from "./assets/extract.svg?react";
-import ListIcon from "./assets/list.svg?react";
-import SettingsIcon from "./assets/settings.svg?react";
-import ShareIcon from "./assets/share.svg?react";
-import siderBg from "./assets/sider-bg.png";
+import {
+  ConverterIcon,
+  DoneIcon,
+  ExtractIcon,
+  ListIcon,
+  SettingsIcon,
+  ShareIcon,
+} from "@/assets/svg";
+import siderBg from "@/assets/images/sider-bg.png";
 
 function processLocation(pathname: string) {
   let name = pathname;
@@ -147,7 +149,7 @@ export function AppSideBar({ className }: Props) {
             className="hidden group-hover:block"
             onClick={(e) => handleExternalLink(e)}
           >
-            {<ShareIcon fill={activeKey === "source" ? "#fff" : "#AAB5CB"} />}
+            <ShareIcon />
           </div>
         </AppMenuItem>
       ),

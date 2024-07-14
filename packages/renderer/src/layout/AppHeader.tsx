@@ -1,15 +1,11 @@
 import useElectron from "@/hooks/electron";
 import { selectAppStore } from "@/store";
 import { cn } from "@/utils";
-import {
-  EyeInvisibleOutlined,
-  QuestionCircleOutlined,
-} from "@ant-design/icons";
-import { Button } from "antd";
+import { EyeInvisibleOutlined } from "@ant-design/icons";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import HelpIcon from "./assets/help.svg?react";
+import { HelpIcon } from "@/assets/svg";
 
 interface Props {
   className?: string;
