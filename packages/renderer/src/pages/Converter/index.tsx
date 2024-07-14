@@ -1,7 +1,7 @@
 import React, { ReactNode, useState } from "react";
 import PageContainer from "../../components/PageContainer";
 import { useTranslation } from "react-i18next";
-import { Button, Space, message } from "antd";
+import { Button, Empty, Space, message } from "antd";
 import useElectron from "../../hooks/electron";
 import { usePagination } from "ahooks";
 import { getFileName } from "../../utils";
@@ -22,7 +22,7 @@ const Converter = () => {
   const [converting, setConverting] = useState<Record<number, boolean>>({});
 
   const {
-    data = { total: 0, list: [] },
+    data: { total, list } = { total: 0, list: [] },
     loading,
     pagination,
     refresh,
@@ -101,18 +101,25 @@ const Converter = () => {
           </Button>
         </Space>
       }
+      className="rounded-lg bg-white"
     >
       {contextHolder}
       <div>
-        {data.list.map((item) => {
-          return (
-            <div key={item.id}>
-              <div>{item.name}</div>
-              <div>{item.path}</div>
-              {renderActionButtons(null, item)}
-            </div>
-          );
-        })}
+        {list.length ? (
+          list.map((item) => {
+            return (
+              <div key={item.id}>
+                <div>{item.name}</div>
+                <div>{item.path}</div>
+                {renderActionButtons(null, item)}
+              </div>
+            );
+          })
+        ) : (
+          <>
+            <Empty />
+          </>
+        )}
       </div>
     </PageContainer>
   );

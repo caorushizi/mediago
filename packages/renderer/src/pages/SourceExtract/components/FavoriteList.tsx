@@ -61,7 +61,7 @@ export function FavoriteList() {
     return (
       <div
         key={item.id}
-        className="flex h-16 w-16 cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden"
+        className="flex cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden"
         onContextMenu={() => {
           onFavoriteItemContextMenu(item.id);
         }}
