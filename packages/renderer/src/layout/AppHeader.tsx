@@ -9,6 +9,7 @@ import { Button } from "antd";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
+import HelpIcon from "./assets/help.svg?react";
 
 interface Props {
   className?: string;
@@ -42,14 +43,16 @@ export function AppHeader({ className }: Props) {
         </div>
       </div>
       {/* help */}
-      <div>
-        <Button
-          type={"link"}
+      <div className="flex flex-row items-center pr-3">
+        <div
+          className="cursor-pointer rounded-full rounded-br-sm bg-white p-1"
           onClick={openHelpUrl}
-          icon={<QuestionCircleOutlined />}
         >
-          {t("help")}
-        </Button>
+          <div className="flex flex-row items-center gap-2 rounded-full rounded-br-sm bg-[#F9FBFC] p-2">
+            <HelpIcon />
+            <span className="text-xs text-[#137BF4]">{t("help")}</span>
+          </div>
+        </div>
         {appStore.privacy && (
           <>
             <EyeInvisibleOutlined /> 隐私模式
