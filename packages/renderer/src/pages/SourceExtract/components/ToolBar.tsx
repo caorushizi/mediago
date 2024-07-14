@@ -14,13 +14,15 @@ import { Input } from "antd";
 import React, { PropsWithChildren, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import BackIcon from "./svg/back.svg?react";
-import HomeIcon from "./svg/home.svg?react";
-import PhoneIcon from "./svg/phone.svg?react";
-import FavIcon from "./svg/fav.svg?react";
-import RefreshIcon from "./svg/refresh.svg?react";
-import SendIcon from "./svg/send.svg?react";
-import ShareIcon from "./svg/share.svg?react";
+import {
+  BackIcon,
+  HomeIcon,
+  PhoneIcon,
+  FavIcon,
+  RefreshIcon,
+  SendIcon,
+  ShareIcon,
+} from "@/assets/svg";
 
 interface ToolBtnProps extends PropsWithChildren {
   title: string;
@@ -163,11 +165,7 @@ export function ToolBar({ page }: Props) {
   return (
     <div className="flex flex-row items-center gap-1.5 rounded-lg bg-white px-3 py-2">
       <ToolBtn title={t("switchToMobileMode")} onClick={onSetDefaultUA}>
-        {appStore.isMobile ? (
-          <PhoneIcon fill="#515151" />
-        ) : (
-          <PhoneIcon stroke="#515151" />
-        )}
+        {appStore.isMobile ? <PhoneIcon /> : <PhoneIcon />}
       </ToolBtn>
       <ToolBtn disabled={disabled} title={t("home")} onClick={onClickGoHome}>
         <HomeIcon />
@@ -190,11 +188,7 @@ export function ToolBar({ page }: Props) {
         onClick={onClickAddFavorite}
         disabled={disabled}
       >
-        {curIsFavorite ? (
-          <FavIcon fill="#515151" />
-        ) : (
-          <FavIcon fill="none" stroke="#515151" />
-        )}
+        {curIsFavorite ? <FavIcon /> : <FavIcon />}
       </ToolBtn>
       <Input
         key="url-input"
@@ -215,7 +209,7 @@ export function ToolBar({ page }: Props) {
       </ToolBtn>
       {page && (
         <ToolBtn title={t("mergeToMainWindow")} onClick={onCombineToHome}>
-          <ShareIcon transform="rotate(180)" />
+          <ShareIcon />
         </ToolBtn>
       )}
     </div>

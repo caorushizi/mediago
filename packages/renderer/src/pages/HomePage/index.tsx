@@ -1,5 +1,4 @@
 import React, { FC } from "react";
-import { Button } from "antd";
 import PageContainer from "../../components/PageContainer";
 import { usePagination } from "ahooks";
 import useElectron from "../../hooks/electron";
@@ -9,9 +8,13 @@ import { selectAppStore } from "../../store";
 import { useTranslation } from "react-i18next";
 import { DownloadList } from "./components";
 import DownloadForm, { DownloadItemForm } from "@/components/DownloadForm";
-import DownloadIcon from "./components/svg/download.svg?react";
-import DownloadBg1 from "./components/svg/download-bg1.svg?react";
-import DownloadBg2 from "./components/svg/download-bg2.svg?react";
+import {
+  DownloadIcon,
+  DownloadBg1,
+  DownloadBg2,
+  FolderIcon,
+} from "@/assets/svg";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   filter?: DownloadFilter;
@@ -94,11 +97,12 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       rightExtra={
         <div className="flex flex-row gap-2">
           {filter === DownloadFilter.list && appStore.openInNewWindow && (
-            <Button type="primary" onClick={() => showBrowserWindow()}>
+            <Button onClick={() => showBrowserWindow()}>
               {t("openBrowser")}
             </Button>
           )}
           <Button onClick={() => openDir(appStore.local)}>
+            <FolderIcon />
             {t("openFolder")}
           </Button>
           {filter === DownloadFilter.list && (
@@ -106,8 +110,14 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
               destroyOnClose
               trigger={
                 <div className="relative flex cursor-pointer flex-row items-center gap-5 rounded-md bg-gradient-to-r from-[#24C1FF] to-[#823CFE] px-2 py-1 text-xs text-white">
-                  {/* <DownloadBg1 /> */}
-                  {/* <DownloadBg2 /> */}
+                  <img
+                    className="absolute bottom-0 left-2 top-0 h-full"
+                    src={DownloadBg2}
+                  />
+                  <img
+                    className="absolute bottom-0 left-0 top-0 h-full"
+                    src={DownloadBg1}
+                  />
                   <DownloadIcon />
                   {t("newDownload")}
                 </div>

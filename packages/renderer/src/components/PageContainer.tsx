@@ -28,7 +28,7 @@ const PageContainer: FC<PageContainerProps> = ({
         </div>
       )}
 
-      <div className={cn("flex-1 overflow-scroll", className)}>{children}</div>
+      <div className={cn("flex-1 overflow-auto", className)}>{children}</div>
     </div>
   );
 };

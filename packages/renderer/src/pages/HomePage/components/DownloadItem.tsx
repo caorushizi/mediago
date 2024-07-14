@@ -12,12 +12,10 @@ import {
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { selectAppStore } from "@/store";
-import selectedBg from "./images/select-item-bg.png";
+import selectedBg from "@/assets/images/select-item-bg.png";
 import { CurrTerminal } from "./types";
 import DownloadForm from "@/components/DownloadForm";
-import DownloadIcon from "./svg/download.svg?react";
-import FailedIcon from "./svg/error.svg?react";
-import PauseIcon from "./svg/pause.svg?react";
+import { DownloadIcon, FailedIcon, PauseIcon } from "@/assets/svg";
 
 interface DownloadTagProps {
   icon?: React.ReactNode;
@@ -29,8 +27,9 @@ function DownloadTag({ icon, text, color }: DownloadTagProps) {
   return (
     <div
       className={cn(
-        `rounded-full bg-[${color}] flex flex-row items-center gap-[3px] rounded-bl-lg pl-1 pr-2`,
+        "flex flex-row items-center gap-[3px] rounded-full rounded-bl-lg pl-1 pr-2",
       )}
+      style={{ background: color }}
     >
       {icon}
       <span className="text-xs text-white">{text}</span>
