@@ -4,12 +4,14 @@ import PageContainer from "../../components/PageContainer";
 import { usePagination } from "ahooks";
 import useElectron from "../../hooks/electron";
 import { DownloadFilter } from "../../types";
-import { FileAddOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { selectAppStore } from "../../store";
 import { useTranslation } from "react-i18next";
 import { DownloadList } from "./components";
 import DownloadForm, { DownloadItemForm } from "@/components/DownloadForm";
+import DownloadIcon from "./components/svg/download.svg?react";
+import DownloadBg1 from "./components/svg/download-bg1.svg?react";
+import DownloadBg2 from "./components/svg/download-bg2.svg?react";
 
 interface Props {
   filter?: DownloadFilter;
@@ -103,7 +105,12 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
             <DownloadForm
               destroyOnClose
               trigger={
-                <Button icon={<FileAddOutlined />}>{t("newDownload")}</Button>
+                <div className="relative flex cursor-pointer flex-row items-center gap-5 rounded-md bg-gradient-to-r from-[#24C1FF] to-[#823CFE] px-2 py-1 text-xs text-white">
+                  {/* <DownloadBg1 /> */}
+                  {/* <DownloadBg2 /> */}
+                  <DownloadIcon />
+                  {t("newDownload")}
+                </div>
               }
               onAddToList={async (values) => confirmAddItems(values)}
               onDownloadNow={async (values) => confirmAddItems(values, true)}
@@ -111,7 +118,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
           )}
         </div>
       }
-      className="home-page"
+      className="rounded-lg bg-white p-3"
     >
       <DownloadList
         loading={loading}
