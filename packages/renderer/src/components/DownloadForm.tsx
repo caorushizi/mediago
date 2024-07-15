@@ -1,4 +1,5 @@
 import {
+  Button,
   Form,
   Input,
   InputNumber,
@@ -218,33 +219,46 @@ const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
           title={isEdit ? t("editDownload") : t("newDownload")}
           width={500}
           onClose={() => setModalOpen(false)}
-          destroyOnClose
-          onCancel={async () => {
-            try {
-              await form.validateFields();
-              const values = form.getFieldsValue();
-              const close = await onAddToList(values);
-              if (close) {
-                setModalOpen(false);
-              }
-            } catch (e: any) {
-              messageApi.error(e?.message);
-            }
-          }}
-          onOk={async () => {
-            try {
-              await form.validateFields();
-              const values = form.getFieldsValue();
-              const close = await onDownloadNow(values);
-              if (close) {
-                setModalOpen(false);
-              }
-            } catch (e: any) {
-              messageApi.error(e?.message);
-            }
-          }}
-          okText={t("downloadNow")}
-          cancelText={t("addToDownloadList")}
+          onCancel={() => setModalOpen(false)}
+          afterOpenChange={(open) => onOpenChange(open)}
+          destroyOnClose={destroyOnClose}
+          footer={[
+            <Button
+              key="submit"
+              onClick={async () => {
+                try {
+                  await form.validateFields();
+                  const values = form.getFieldsValue();
+                  const close = await onAddToList(values);
+                  if (close) {
+                    setModalOpen(false);
+                  }
+                } catch (e: any) {
+                  messageApi.error(e?.message);
+                }
+              }}
+            >
+              {t("addToDownloadList")}
+            </Button>,
+            <Button
+              key="link"
+              type="primary"
+              onClick={async () => {
+                try {
+                  await form.validateFields();
+                  const values = form.getFieldsValue();
+                  const close = await onDownloadNow(values);
+                  if (close) {
+                    setModalOpen(false);
+                  }
+                } catch (e: any) {
+                  messageApi.error(e?.message);
+                }
+              }}
+            >
+              {t("downloadNow")}
+            </Button>,
+          ]}
         >
           <Form
             form={form}
