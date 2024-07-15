@@ -38,7 +38,7 @@ export default class WebviewService {
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
     @inject(TYPES.SniffingHelper)
-    private readonly sniffingHelper: SniffingHelper
+    private readonly sniffingHelper: SniffingHelper,
   ) {
     // 初始化 blocker
     this.initBlocker();
@@ -122,6 +122,7 @@ export default class WebviewService {
     const useExtension = this.store.get("useExtension");
     if (useExtension) {
       this.view.webContents.send("webview-link-message", item);
+      this.window.webContents.send("webview-link-message", item);
     } else {
       const video = await this.videoRepository.findVideoByName(item.name);
       if (video) {
