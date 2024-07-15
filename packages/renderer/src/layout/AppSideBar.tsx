@@ -179,7 +179,10 @@ export function AppSideBar({ className }: Props) {
         {finalItems.map((item) => cloneElement(item.label, { key: item.key }))}
       </div>
 
-      <img src={siderBg} className="absolute bottom-0 left-0 right-0" />
+      <img
+        src={siderBg}
+        className="absolute bottom-0 left-0 right-0 select-none"
+      />
     </div>
   );
 }
