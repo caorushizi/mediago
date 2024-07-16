@@ -1,4 +1,5 @@
 import DownloadForm, { DownloadFormRef } from "@/components/DownloadForm";
+import { Button } from "@/components/ui/button";
 import WebView from "@/components/WebView";
 import useElectron from "@/hooks/electron";
 import {
@@ -7,12 +8,22 @@ import {
   selectBrowserStore,
   setBrowserStore,
 } from "@/store";
+import { DownloadType } from "@/types";
 import { generateUrl } from "@/utils";
-import { Button, Empty, Space, Spin, message } from "antd";
+import { Empty, Space, Spin, message } from "antd";
 import { produce } from "immer";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
+
+interface SourceData {
+  id: number;
+  url: string;
+  documentURL: string;
+  name: string;
+  type: DownloadType;
+  headers?: string;
+}
 
 export function BrowserView() {
   const {
@@ -22,6 +33,7 @@ export function BrowserView() {
     webviewGoHome,
     downloadNow,
     addDownloadItem,
+    showDownloadDialog: ipcShowDownloadDialog,
   } = useElectron();
   const downloadForm = useRef<DownloadFormRef>(null);
   const store = useSelector(selectBrowserStore);
@@ -30,7 +42,7 @@ export function BrowserView() {
   const [placeHolder, setPlaceHolder] = useState<string>("");
   const dispatch = useDispatch();
   const [messageApi, contextHolder] = message.useMessage();
-  const [sources, setSources] = useState<DownloadItem[]>([]);
+  const [sources, setSources] = useState<SourceData[]>([]);
 
   useEffect(() => {
     const onShowDownloadDialog = async (
@@ -39,7 +51,7 @@ export function BrowserView() {
       image: string,
     ) => {
       // FIXME: 选择
-      setCurrentDownloadForm(data[data.length - 1]);
+      setCurrentDownloadForm(data[0]);
 
       setPlaceHolder(image);
       setModalShow(true);
@@ -132,6 +144,7 @@ export function BrowserView() {
         onOpenChange={setModalShow}
         onDownloadNow={() => confirmDownload(true)}
         onAddToList={() => confirmDownload()}
+        destroyOnClose
       />
     );
   };
@@ -154,9 +167,7 @@ export function BrowserView() {
           description={`${store.errMsg || t("loadFailed")} (${store.errCode})`}
         >
           <Space>
-            <Button type="primary" onClick={onClickGoHome}>
-              {t("backToHome")}
-            </Button>
+            <Button onClick={onClickGoHome}>{t("backToHome")}</Button>
             <Button onClick={goto}>{t("refresh")}</Button>
           </Space>
         </Empty>
@@ -177,22 +188,26 @@ export function BrowserView() {
     }
 
     return (
-      <div className="m-3 h-full overflow-auto rounded-lg bg-white p-3">
-        {sources.map((item) => {
+      <div className="mx-2 flex h-full flex-col gap-3 overflow-y-auto rounded-lg bg-white p-3">
+        {sources.map((item, index) => {
           return (
             <div
-              className="max-w-60 overflow-auto rounded-lg bg-[#FAFCFF] p-3"
-              key={item.url}
+              className="min-w-60 max-w-60 break-all rounded-lg bg-[#FAFCFF] bg-red-900 p-3"
+              key={index}
             >
-              <span className="line-clamp-2 text-sm text-[#343434]">
+              <span
+                className="line-clamp-2 cursor-default text-sm text-[#343434]"
+                title={item.name}
+              >
                 {item.name}
+              </span>
+              <span className="cursor-default text-xs" title={item.url}>
+                {item.url}
               </span>
               <div>
                 <Button
-                  size="small"
                   onClick={() => {
-                    setCurrentDownloadForm(item);
-                    setModalShow(true);
+                    ipcShowDownloadDialog([item]);
                   }}
                 >
                   {t("addToDownloadList")}
@@ -206,7 +221,7 @@ export function BrowserView() {
   };
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex flex-1 flex-col overflow-hidden">
       <div className="flex h-full flex-1">
         {renderContent()}
         {renderSidePanel()}

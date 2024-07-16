@@ -133,7 +133,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   return (
     <PageContainer className="flex flex-col gap-2 p-0">
       <ToolBar page={page} />
-      <div className="flex flex-1">
+      <div className="flex flex-1 overflow-hidden">
         {store.mode === PageMode.Browser ? <BrowserView /> : <FavoriteList />}
       </div>
     </PageContainer>
