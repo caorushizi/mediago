@@ -243,10 +243,10 @@ importers:
   packages/main/app:
     dependencies:
       '@cliqz/adblocker-electron':
-        specifier: ^1.27.3
+        specifier: 1.27.3
         version: 1.27.3(electron@30.0.8)
       '@cliqz/adblocker-electron-preload':
-        specifier: ^1.27.3
+        specifier: 1.27.3
         version: 1.27.3(electron@30.0.8)
       node-pty:
         specifier: ^1.0.0
