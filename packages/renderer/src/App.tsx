@@ -16,6 +16,7 @@ const HomePage = lazy(() => import("./pages/HomePage"));
 const SourceExtract = lazy(() => import("./pages/SourceExtract"));
 const SettingPage = lazy(() => import("./pages/SettingPage"));
 const ConverterPage = lazy(() => import("./pages/Converter"));
+const PlayerPage = lazy(() => import("./pages/Player"));
 
 function getAlgorithm(appTheme: "dark" | "light") {
   return appTheme === "dark" ? theme.darkAlgorithm : theme.defaultAlgorithm;
@@ -142,6 +143,14 @@ const App: FC = () => {
             element={
               <Suspense fallback={<Loading />}>
                 <SourceExtract page={true} />
+              </Suspense>
+            }
+          />
+          <Route
+            path="player"
+            element={
+              <Suspense fallback={<Loading />}>
+                <PlayerPage />
               </Suspense>
             }
           />

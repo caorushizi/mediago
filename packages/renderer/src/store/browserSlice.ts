@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from ".";
 import useElectron from "../hooks/electron";
+import { DownloadType } from "@/types";
 
 const { setSharedState } = useElectron();
 
@@ -16,12 +17,22 @@ export enum BrowserStatus {
   Failed = "failed",
 }
 
+export interface SourceData {
+  id: number;
+  url: string;
+  documentURL: string;
+  name: string;
+  type: DownloadType;
+  headers?: string;
+}
+
 const initialState: BrowserStore = {
   mode: PageMode.Default,
   url: "",
   title: "",
   status: BrowserStatus.Default,
   errMsg: "",
+  sources: [],
 };
 
 const convertPlainObject = (obj: unknown) => {
@@ -42,10 +53,16 @@ export const browserSlice = createSlice({
       // FIXME: 异步函数
       setSharedState(convertPlainObject(state));
     },
+    setSources(state, action: PayloadAction<SourceData[]>) {
+      state.sources = action.payload;
+    },
+    addSource(state, action: PayloadAction<SourceData>) {
+      state.sources.push(action.payload);
+    },
   },
 });
 
-export const { setBrowserStore } = browserSlice.actions;
+export const { setBrowserStore, setSources, addSource } = browserSlice.actions;
 export const selectUrl = (state: RootState) => state.browser.url;
 export const selectBrowserStore = (state: RootState) => state.browser;
 export default browserSlice.reducer;

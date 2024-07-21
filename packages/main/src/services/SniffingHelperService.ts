@@ -53,7 +53,7 @@ export class SniffingHelper extends EventEmitter {
 
   constructor(
     @inject(TYPES.ElectronLogger)
-    private readonly logger: ElectronLogger
+    private readonly logger: ElectronLogger,
   ) {
     super();
   }
@@ -102,11 +102,11 @@ export class SniffingHelper extends EventEmitter {
   send = (item: SourceParams) => {
     this.logger.info(`在窗口中捕获视频链接: ${item.url}`);
     // 等待 DOM 中浮窗加载完成
-    if (this.ready) {
-      this.emit("source", item);
-    } else {
-      this.queue.push(item);
-    }
+    // if (this.ready) {
+    // } else {
+    //   this.queue.push(item);
+    // }
+    this.emit("source", item);
   };
 
   private onSendHeaders = (details: OnSendHeadersListenerDetails): void => {

@@ -48,3 +48,4 @@ vuejs
 waline
 watting
 Watting
+xgplayer

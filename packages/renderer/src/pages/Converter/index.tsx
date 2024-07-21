@@ -110,9 +110,11 @@ const Converter = () => {
           list.map((item) => {
             return (
               <div key={item.id} className="rounded-lg bg-[#FAFCFF] p-3">
-                <div>
+                <div className="flex flex-row items-center justify-between">
                   <div className="text-sm text-[#343434]">{item.name}</div>
-                  {renderActionButtons(null, item)}
+                  <div className="flex flex-row gap-3">
+                    {renderActionButtons(null, item)}
+                  </div>
                 </div>
                 <div className="text-xs text-[#AAB5CB]">{item.path}</div>
               </div>
