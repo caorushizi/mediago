@@ -220,7 +220,7 @@ const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
           width={500}
           onClose={() => setModalOpen(false)}
           onCancel={() => setModalOpen(false)}
-          afterOpenChange={(open) => onOpenChange(open)}
+          afterOpenChange={(open) => onOpenChange?.(open)}
           destroyOnClose={destroyOnClose}
           footer={[
             <Button
@@ -346,9 +346,10 @@ const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
             </Form.Item>
             <Form.Item noStyle shouldUpdate>
               {(form) => {
-                if (!(!isEdit && form.getFieldValue("batch"))) {
+                if (isEdit || !form.getFieldValue("batch")) {
                   return (
                     <Form.Item
+                      name="url"
                       label={t("videoLink")}
                       required
                       rules={[
@@ -363,7 +364,6 @@ const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
                       ]}
                     >
                       <Input
-                        name="url"
                         placeholder={t(
                           "pleaseEnterOnlineVideoUrlOrDragM3U8Here",
                         )}

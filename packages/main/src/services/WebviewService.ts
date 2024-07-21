@@ -121,7 +121,7 @@ export default class WebviewService {
     // 这里需要判断是否使用浏览器插件
     const useExtension = this.store.get("useExtension");
     if (useExtension) {
-      this.view.webContents.send("webview-link-message", item);
+      // this.view.webContents.send("webview-link-message", item);
       this.window.webContents.send("webview-link-message", item);
     } else {
       const video = await this.videoRepository.findVideoByName(item.name);

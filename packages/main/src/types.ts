@@ -9,6 +9,7 @@ export const TYPES = {
   // windows
   BrowserWindow: Symbol.for("BrowserWindow"),
   MainWindow: Symbol.for("MainWindow"),
+  PlayerWindow: Symbol.for("PlayerWindow"),
   // services
   WebviewService: Symbol.for("WebviewService"),
   DownloadService: Symbol.for("DownloadService"),

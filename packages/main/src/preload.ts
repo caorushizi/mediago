@@ -26,7 +26,7 @@ const electronApi = {
     return ipcRenderer.invoke("get-favorites");
   },
   addFavorite(
-    favorite: Omit<Favorite, "id" | "createdDate" | "updatedDate">
+    favorite: Omit<Favorite, "id" | "createdDate" | "updatedDate">,
   ): Promise<Favorite> {
     return ipcRenderer.invoke("add-favorite", favorite);
   },
@@ -56,7 +56,7 @@ const electronApi = {
   },
   setAppStore(
     key: keyof AppStore,
-    val: AppStore[keyof AppStore]
+    val: AppStore[keyof AppStore],
   ): Promise<void> {
     return ipcRenderer.invoke("set-app-store", key, val);
   },
@@ -160,7 +160,7 @@ const electronApi = {
     return ipcRenderer.invoke("plugin-ready");
   },
   getConversions(
-    pagination: ConversionPagination
+    pagination: ConversionPagination,
   ): Promise<ConversionResponse> {
     return ipcRenderer.invoke("get-conversions", pagination);
   },
@@ -175,6 +175,9 @@ const electronApi = {
   },
   clearWebviewCache(): Promise<void> {
     return ipcRenderer.invoke("clear-webview-cache");
+  },
+  openPlayerWindow(): Promise<void> {
+    return ipcRenderer.invoke("open-player-window");
   },
 };
 

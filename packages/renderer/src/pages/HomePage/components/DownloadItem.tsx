@@ -8,6 +8,7 @@ import {
   DownloadOutlined,
   EditOutlined,
   PauseCircleOutlined,
+  PlayCircleOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -16,6 +17,7 @@ import selectedBg from "@/assets/images/select-item-bg.png";
 import { CurrTerminal } from "./types";
 import DownloadForm from "@/components/DownloadForm";
 import { DownloadIcon, FailedIcon, PauseIcon } from "@/assets/svg";
+import useElectron from "@/hooks/electron";
 
 interface DownloadTagProps {
   icon?: React.ReactNode;
@@ -26,9 +28,7 @@ interface DownloadTagProps {
 function DownloadTag({ icon, text, color }: DownloadTagProps) {
   return (
     <div
-      className={cn(
-        "flex flex-row items-center gap-[3px] rounded-full rounded-bl-lg pl-1 pr-2",
-      )}
+      className={cn("flex flex-row items-center gap-[3px] rounded pl-1 pr-2")}
       style={{ background: color }}
     >
       {icon}
@@ -67,6 +67,7 @@ export function DownloadItem({
 }: Props) {
   const appStore = useSelector(selectAppStore);
   const { t } = useTranslation();
+  const { openPlayerWindow } = useElectron();
 
   const renderTerminalBtn = (item: DownloadItem) => {
     if (!appStore.showTerminal) return null;
@@ -157,7 +158,15 @@ export function DownloadItem({
     }
 
     // 下载成功
-    return [];
+    return [
+      <Button
+        type="text"
+        key={"play"}
+        icon={<PlayCircleOutlined />}
+        title={t("playVideo")}
+        onClick={() => openPlayerWindow()}
+      />,
+    ];
   };
 
   const renderTitle = (item: DownloadItem): ReactNode => {
@@ -234,7 +243,7 @@ export function DownloadItem({
   return (
     <div
       className={cn(
-        "relative flex flex-row gap-3 rounded-lg bg-[#FAFCFF] px-3 py-3.5",
+        "relative flex flex-row gap-3 rounded-lg bg-[#FAFCFF] px-3 pb-3.5 pt-2",
         {
           "bg-gradient-to-r from-[#D0E8FF] to-[#F2F7FF]": selected,
         },
@@ -242,6 +251,7 @@ export function DownloadItem({
       onContextMenu={() => onContextMenu(item.id)}
     >
       <Checkbox
+        className="mt-2"
         checked={selected}
         onCheckedChange={() => onSelectChange(item.id)}
       />

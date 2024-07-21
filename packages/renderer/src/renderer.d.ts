@@ -89,6 +89,7 @@ declare interface BrowserStore {
   status: BrowserStatus;
   errCode?: number;
   errMsg?: string;
+  sources: SourceData[];
 }
 
 declare interface DownloadProgress {

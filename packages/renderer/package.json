@@ -64,7 +64,8 @@
     "typescript": "~5.4.5",
     "typescript-eslint": "^7.10.0",
     "vite": "^5.2.11",
-    "vite-bundle-visualizer": "^1.2.1"
+    "vite-bundle-visualizer": "^1.2.1",
+    "xgplayer": "^3.0.19"
   },
   "license": "MIT",
   "lint-staged": {
