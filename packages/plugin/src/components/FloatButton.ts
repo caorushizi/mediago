@@ -134,7 +134,7 @@ export class FloatButton extends LitElement {
 
   getPosition = (
     newLeft: number,
-    newTop: number
+    newTop: number,
   ): { left: number; top: number } => {
     if (!this.button) return { left: 0, top: 0 };
 

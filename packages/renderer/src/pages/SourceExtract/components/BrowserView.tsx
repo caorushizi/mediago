@@ -3,27 +3,17 @@ import { Button } from "@/components/ui/button";
 import WebView from "@/components/WebView";
 import useElectron from "@/hooks/electron";
 import {
+  addSource,
   BrowserStatus,
   PageMode,
   selectBrowserStore,
   setBrowserStore,
 } from "@/store";
-import { DownloadType } from "@/types";
 import { generateUrl } from "@/utils";
 import { Empty, Space, Spin, message } from "antd";
-import { produce } from "immer";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-
-interface SourceData {
-  id: number;
-  url: string;
-  documentURL: string;
-  name: string;
-  type: DownloadType;
-  headers?: string;
-}
 
 export function BrowserView() {
   const {
@@ -42,7 +32,6 @@ export function BrowserView() {
   const [placeHolder, setPlaceHolder] = useState<string>("");
   const dispatch = useDispatch();
   const [messageApi, contextHolder] = message.useMessage();
-  const [sources, setSources] = useState<SourceData[]>([]);
 
   useEffect(() => {
     const onShowDownloadDialog = async (
@@ -58,12 +47,7 @@ export function BrowserView() {
     };
 
     const onWebviewLinkMessage = async (e: unknown, data: any) => {
-      console.log(data);
-      setSources(
-        produce((draft) => {
-          draft.push(data);
-        }),
-      );
+      dispatch(addSource(data));
     };
 
     addIpcListener("show-download-dialog", onShowDownloadDialog);
@@ -152,7 +136,11 @@ export function BrowserView() {
   const renderContent = () => {
     // 加载状态
     if (store.status === BrowserStatus.Loading) {
-      return <Spin />;
+      return (
+        <div className="flex h-full w-full flex-row items-center justify-center">
+          <Spin />
+        </div>
+      );
     }
 
     // 模态框
@@ -183,29 +171,30 @@ export function BrowserView() {
   };
 
   const renderSidePanel = () => {
-    if (sources.length === 0) {
+    if (store.sources.length === 0) {
       return null;
     }
 
     return (
-      <div className="mx-2 flex h-full flex-col gap-3 overflow-y-auto rounded-lg bg-white p-3">
-        {sources.map((item, index) => {
+      <div className="mx-2 flex h-full min-w-60 max-w-60 flex-col gap-3 overflow-y-auto rounded-lg bg-white p-3">
+        {store.sources.map((item, index) => {
           return (
-            <div
-              className="min-w-60 max-w-60 break-all rounded-lg bg-[#FAFCFF] bg-red-900 p-3"
-              key={index}
-            >
+            <div className="break-all rounded-lg bg-[#FAFCFF] p-3" key={index}>
               <span
                 className="line-clamp-2 cursor-default text-sm text-[#343434]"
                 title={item.name}
               >
                 {item.name}
               </span>
-              <span className="cursor-default text-xs" title={item.url}>
+              <span
+                className="line-clamp-2 cursor-default text-xs"
+                title={item.url}
+              >
                 {item.url}
               </span>
               <div>
                 <Button
+                  size="sm"
                   onClick={() => {
                     ipcShowDownloadDialog([item]);
                   }}

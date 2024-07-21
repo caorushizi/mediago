@@ -22,6 +22,8 @@ import ProtocolService from "./core/protocol.ts";
 import ConversionController from "./controller/ConversionController.ts";
 import ConversionRepository from "./repository/ConversionRepository.ts";
 import { VideoService } from "./services/VideoService.ts";
+import PlayerWindow from "./windows/PlayerWindow.ts";
+import PlayerController from "./controller/PlayerController.ts";
 
 const container = new Container({
   skipBaseClassChecks: true,
@@ -40,12 +42,14 @@ container.bind<VideoService>(TYPES.VideoService).to(VideoService);
 // windows
 container.bind<MainWindow>(TYPES.MainWindow).to(MainWindow);
 container.bind<BrowserWindow>(TYPES.BrowserWindow).to(BrowserWindow);
+container.bind<PlayerWindow>(TYPES.PlayerWindow).to(PlayerWindow);
 
 // controller
 container.bind<Controller>(TYPES.Controller).to(HomeController);
 container.bind<Controller>(TYPES.Controller).to(WebviewController);
 container.bind<Controller>(TYPES.Controller).to(DownloadController);
 container.bind<Controller>(TYPES.Controller).to(ConversionController);
+container.bind<Controller>(TYPES.Controller).to(PlayerController);
 
 // repository
 container.bind<VideoRepository>(TYPES.VideoRepository).to(VideoRepository);
