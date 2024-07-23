@@ -24,24 +24,24 @@ export function AppHeader({ className }: Props) {
   return (
     <div
       className={cn(
-        "flex h-16 w-full flex-row justify-between bg-[#F9FBFC]",
+        "flex h-16 w-full flex-row justify-between bg-[#F9FBFC] dark:bg-[#1F2024]",
         className,
       )}
     >
-      <div className="h-full rounded-br-full bg-[#EBF3FB] pr-2">
-        <div className="relative flex h-full min-w-[299px] flex-row items-center rounded-br-full bg-[#fff] pl-3 pr-2">
-          <span className="text-lg">Media Go</span>
-          <span className="ml-[30px] block text-sm text-[#666]">
+      <div className="h-full rounded-br-full bg-[#EBF3FB] pr-2 dark:bg-[#3B3C41]">
+        <div className="relative flex h-full min-w-[299px] flex-row items-center rounded-br-full bg-[#fff] pl-3 pr-2 dark:bg-[#2C2E33]">
+          <span className="text-lg dark:text-white">Media Go</span>
+          <span className="ml-[30px] block text-sm text-[#666] dark:text-white">
             v{import.meta.env.APP_VERSION}
           </span>
-          <div className="absolute bottom-0 h-[1px] w-[136px] bg-[#EFF7FF]" />
+          <div className="absolute bottom-0 h-[1px] w-[136px] bg-[#EFF7FF] dark:bg-[#606167]" />
           <div className="absolute bottom-0 h-[2px] w-[45px] bg-[#127AF3]" />
         </div>
       </div>
       {/* help */}
       <div className="flex flex-row items-center gap-3 pr-3">
         {appStore.privacy && (
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-gray-600 dark:text-white">
             <EyeInvisibleOutlined /> 隐私模式
           </div>
         )}

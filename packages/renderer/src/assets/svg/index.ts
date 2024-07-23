@@ -17,3 +17,4 @@ export { FavIcon } from "./FavIcon";
 export { RefreshIcon } from "./RefreshIcon";
 export { SendIcon } from "./SendIcon";
 export { FolderIcon } from "./FolderIcon";
+export { DeleteIcon } from "./DeleteIcon";
