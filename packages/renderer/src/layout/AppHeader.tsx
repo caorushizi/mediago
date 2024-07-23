@@ -39,7 +39,12 @@ export function AppHeader({ className }: Props) {
         </div>
       </div>
       {/* help */}
-      <div className="flex flex-row items-center pr-3">
+      <div className="flex flex-row items-center gap-3 pr-3">
+        {appStore.privacy && (
+          <div className="text-sm text-gray-600">
+            <EyeInvisibleOutlined /> 隐私模式
+          </div>
+        )}
         <div
           className="cursor-pointer rounded-full rounded-br-sm bg-white p-1"
           onClick={openHelpUrl}
@@ -49,11 +54,6 @@ export function AppHeader({ className }: Props) {
             <span className="text-xs text-[#137BF4]">{t("help")}</span>
           </div>
         </div>
-        {appStore.privacy && (
-          <>
-            <EyeInvisibleOutlined /> 隐私模式
-          </>
-        )}
       </div>
     </div>
   );
