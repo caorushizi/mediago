@@ -1,10 +1,13 @@
+import { DeleteIcon } from "@/assets/svg";
 import DownloadForm, { DownloadFormRef } from "@/components/DownloadForm";
+import { IconButton } from "@/components/IconButton";
 import { Button } from "@/components/ui/button";
 import WebView from "@/components/WebView";
 import useElectron from "@/hooks/electron";
 import {
   addSource,
   BrowserStatus,
+  deleteSource,
   PageMode,
   selectBrowserStore,
   setBrowserStore,
@@ -179,20 +182,31 @@ export function BrowserView() {
       <div className="mx-2 flex h-full min-w-60 max-w-60 flex-col gap-3 overflow-y-auto rounded-lg bg-white p-3">
         {store.sources.map((item, index) => {
           return (
-            <div className="break-all rounded-lg bg-[#FAFCFF] p-3" key={index}>
+            <div
+              className="flex flex-col gap-2 rounded-lg bg-[#FAFCFF] p-2"
+              key={index}
+            >
               <span
-                className="line-clamp-2 cursor-default text-sm text-[#343434]"
+                className="line-clamp-2 cursor-default break-words text-sm text-[#343434]"
                 title={item.name}
               >
                 {item.name}
               </span>
               <span
-                className="line-clamp-2 cursor-default text-xs"
+                className="line-clamp-2 cursor-default break-words text-xs"
                 title={item.url}
               >
                 {item.url}
               </span>
-              <div>
+              <div className="flex flex-row items-center justify-between gap-3">
+                <div>
+                  <IconButton
+                    icon={<DeleteIcon />}
+                    onClick={() => {
+                      dispatch(deleteSource(item.id));
+                    }}
+                  />
+                </div>
                 <Button
                   size="sm"
                   onClick={() => {

@@ -2,11 +2,9 @@ import { cn } from "@/utils";
 import React, { ReactNode } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DownloadStatus } from "@/types";
-import { Button, Progress, Space } from "antd";
+import { Progress, Space } from "antd";
 import {
   CodeOutlined,
-  DownloadOutlined,
-  EditOutlined,
   PauseCircleOutlined,
   PlayCircleOutlined,
 } from "@ant-design/icons";
@@ -16,26 +14,16 @@ import { selectAppStore } from "@/store";
 import selectedBg from "@/assets/images/select-item-bg.png";
 import { CurrTerminal } from "./types";
 import DownloadForm from "@/components/DownloadForm";
-import { DownloadIcon, FailedIcon, PauseIcon } from "@/assets/svg";
+import {
+  DownloadIcon,
+  DownloadListIcon,
+  EditIcon,
+  FailedIcon,
+  PauseIcon,
+} from "@/assets/svg";
 import useElectron from "@/hooks/electron";
-
-interface DownloadTagProps {
-  icon?: React.ReactNode;
-  text: string;
-  color: string;
-}
-
-function DownloadTag({ icon, text, color }: DownloadTagProps) {
-  return (
-    <div
-      className={cn("flex flex-row items-center gap-[3px] rounded pl-1 pr-2")}
-      style={{ background: color }}
-    >
-      {icon}
-      <span className="text-xs text-white">{text}</span>
-    </div>
-  );
-}
+import { DownloadTag } from "@/components/DownloadTag";
+import { IconButton } from "@/components/IconButton";
 
 interface Props {
   item: DownloadItem;
@@ -73,9 +61,9 @@ export function DownloadItem({
     if (!appStore.showTerminal) return null;
 
     return (
-      <Button
+      <IconButton
         key="terminal"
-        type={currTerminal.id === item.id ? "primary" : "text"}
+        highlight={currTerminal.id === item.id}
         title={t("terminal")}
         icon={<CodeOutlined />}
         onClick={() => {
@@ -93,9 +81,7 @@ export function DownloadItem({
         key={"edit"}
         isEdit
         item={item}
-        trigger={
-          <Button type="text" title={t("edit")} icon={<EditOutlined />} />
-        }
+        trigger={<IconButton title={t("edit")} icon={<EditIcon />} />}
         onAddToList={(values) => onConfirmEdit(values)}
         onDownloadNow={(values) => onConfirmEdit(values, true)}
       />
@@ -106,10 +92,9 @@ export function DownloadItem({
       return [
         renderTerminalBtn(item),
         renderEditForm(item),
-        <Button
-          type="text"
+        <IconButton
           key="download"
-          icon={<DownloadOutlined />}
+          icon={<DownloadListIcon />}
           title={t("download")}
           onClick={() => onStartDownload(item.id)}
         />,
@@ -118,8 +103,7 @@ export function DownloadItem({
     if (item.status === DownloadStatus.Downloading) {
       return [
         renderTerminalBtn(item),
-        <Button
-          type="text"
+        <IconButton
           key="stop"
           title={t("pause")}
           icon={<PauseCircleOutlined />}
@@ -131,11 +115,10 @@ export function DownloadItem({
       return [
         renderTerminalBtn(item),
         renderEditForm(item),
-        <Button
-          type="text"
+        <IconButton
           key="redownload"
           title={t("redownload")}
-          icon={<DownloadOutlined />}
+          icon={<DownloadListIcon />}
           onClick={() => onStartDownload(item.id)}
         />,
       ];
@@ -147,10 +130,9 @@ export function DownloadItem({
       return [
         renderTerminalBtn(item),
         renderEditForm(item),
-        <Button
-          type="text"
+        <IconButton
           key="restart"
-          icon={<DownloadOutlined />}
+          icon={<DownloadListIcon />}
           title={t("continueDownload")}
           onClick={() => onStartDownload(item.id)}
         />,
@@ -159,8 +141,7 @@ export function DownloadItem({
 
     // 下载成功
     return [
-      <Button
-        type="text"
+      <IconButton
         key={"play"}
         icon={<PlayCircleOutlined />}
         title={t("playVideo")}

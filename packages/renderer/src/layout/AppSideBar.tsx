@@ -1,4 +1,4 @@
-import React, { cloneElement } from "react";
+import React, { cloneElement, PropsWithChildren, ReactElement } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Badge } from "antd";
 import useElectron from "../hooks/electron";
@@ -25,17 +25,16 @@ function processLocation(pathname: string) {
 }
 
 type MenuItem = {
-  label: React.ReactElement;
+  label: ReactElement;
   key: string;
 };
 
-interface AppMenuItemProps {
-  children: React.ReactNode;
+interface AppMenuItemProps extends PropsWithChildren {
   onClick?: () => void;
   link: string;
   activeKey: string;
   className?: string;
-  icon?: React.ReactNode;
+  icon?: ReactElement;
 }
 
 function AppMenuItem({
@@ -51,7 +50,7 @@ function AppMenuItem({
     <Link
       to={link}
       className={cn(
-        "flex h-10 flex-row items-center gap-3 rounded-lg bg-[#FAFCFF] px-3 text-sm text-[#636D7E] hover:bg-[#E1F0FF]",
+        "flex h-10 flex-row items-center gap-3 rounded-lg bg-[#FAFCFF] px-3 text-sm text-[#636D7E] hover:bg-[#E1F0FF] dark:bg-[#2C2E33] dark:hover:bg-[#3B3C41]",
         {
           "bg-gradient-to-r from-[#127AF3] to-[#06D5FB] text-white": isActive,
         },
@@ -60,7 +59,7 @@ function AppMenuItem({
       onClick={onClick}
     >
       {icon &&
-        React.cloneElement(icon as React.ReactElement, {
+        cloneElement(icon as React.ReactElement, {
           fill: isActive ? "#fff" : "#AAB5CB",
         })}
       {children}
@@ -174,7 +173,7 @@ export function AppSideBar({ className }: Props) {
   );
 
   return (
-    <div className={cn("relative bg-[#fff] p-3", className)}>
+    <div className={cn("relative bg-[#fff] p-3 dark:bg-[#1F2024]", className)}>
       <div className="relative z-10 flex w-[180px] flex-col gap-3">
         {finalItems.map((item) => cloneElement(item.label, { key: item.key }))}
       </div>
