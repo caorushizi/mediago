@@ -13,6 +13,7 @@ import {
 import { FavoriteList } from "./components/FavoriteList";
 import { BrowserView } from "./components/BrowserView";
 import { ToolBar } from "./components/ToolBar";
+import { cn } from "@/utils";
 
 interface SourceExtractProps {
   page?: boolean;
@@ -131,7 +132,10 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   }, []);
 
   return (
-    <PageContainer className="flex flex-col gap-2 p-0">
+    <PageContainer
+      className={cn("flex flex-col p-0", { "gap-2": !page })}
+      wrapperClassName={cn({ "p-0": page })}
+    >
       <ToolBar page={page} />
       <div className="flex flex-1 overflow-hidden">
         {store.mode === PageMode.Browser ? <BrowserView /> : <FavoriteList />}

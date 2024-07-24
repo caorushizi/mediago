@@ -128,7 +128,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
           )}
         </div>
       }
-      className="rounded-lg bg-white p-3"
+      className="rounded-lg bg-white p-3 dark:bg-[#1F2024]"
     >
       <DownloadList
         loading={loading}

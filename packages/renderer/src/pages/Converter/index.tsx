@@ -102,7 +102,7 @@ const Converter = () => {
           </Button>
         </Space>
       }
-      className="rounded-lg bg-white"
+      className="rounded-lg bg-white dark:bg-[#1F2024]"
     >
       {contextHolder}
       <div className="p-3">

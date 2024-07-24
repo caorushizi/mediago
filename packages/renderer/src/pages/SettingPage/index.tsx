@@ -32,7 +32,7 @@ interface GroupWrapperProps extends PropsWithChildren {
 
 function GroupWrapper({ children, title }: GroupWrapperProps) {
   return (
-    <div className="rounded-lg bg-white p-2">
+    <div className="rounded-lg bg-white p-2 dark:bg-[#1F2024]">
       <div className="mb-5 flex flex-row items-center gap-2">
         <div className="h-4 w-1 rounded-full bg-[#127AF3]" />
         {title}

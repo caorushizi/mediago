@@ -53,16 +53,22 @@ export const browserSlice = createSlice({
       // FIXME: 异步函数
       setSharedState(convertPlainObject(state));
     },
-    setSources(state, action: PayloadAction<SourceData[]>) {
+    setSources(state: BrowserStore, action: PayloadAction<SourceData[]>) {
       state.sources = action.payload;
     },
-    addSource(state, action: PayloadAction<SourceData>) {
-      state.sources.push(action.payload);
+    addSource(state: BrowserStore, action: PayloadAction<SourceData>) {
+      state.sources.unshift(action.payload);
+    },
+    deleteSource(state: BrowserStore, action: PayloadAction<number>) {
+      state.sources = state.sources.filter(
+        (item) => item.id !== action.payload,
+      );
     },
   },
 });
 
-export const { setBrowserStore, setSources, addSource } = browserSlice.actions;
+export const { setBrowserStore, setSources, addSource, deleteSource } =
+  browserSlice.actions;
 export const selectUrl = (state: RootState) => state.browser.url;
 export const selectBrowserStore = (state: RootState) => state.browser;
 export default browserSlice.reducer;
