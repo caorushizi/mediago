@@ -1,11 +1,10 @@
 import useElectron from "@/hooks/electron";
 import { selectAppStore } from "@/store";
 import { cn } from "@/utils";
-import { EyeInvisibleOutlined } from "@ant-design/icons";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { HelpIcon } from "@/assets/svg";
+import { HelpIcon, PrivacyIcon } from "@/assets/svg";
 
 interface Props {
   className?: string;
@@ -41,8 +40,8 @@ export function AppHeader({ className }: Props) {
       {/* help */}
       <div className="flex flex-row items-center gap-3 pr-3">
         {appStore.privacy && (
-          <div className="text-sm text-gray-600 dark:text-white">
-            <EyeInvisibleOutlined /> 隐私模式
+          <div className="flex flex-row items-center gap-1 text-sm text-gray-600 dark:text-white">
+            <PrivacyIcon height={15} width={15} /> 隐私模式
           </div>
         )}
         <div

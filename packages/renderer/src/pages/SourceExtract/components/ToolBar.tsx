@@ -8,7 +8,6 @@ import {
   setBrowserStore,
 } from "@/store";
 import { generateUrl, getFavIcon } from "@/utils";
-import { CloseOutlined } from "@ant-design/icons";
 import { useRequest } from "ahooks";
 import { Input } from "antd";
 import React, { useMemo } from "react";
@@ -18,10 +17,13 @@ import {
   BackIcon,
   HomeIcon,
   PhoneIcon,
-  FavIcon,
+  FavFillIcon,
   RefreshIcon,
   SendIcon,
   ShareIcon,
+  FavIcon,
+  CloseIcon,
+  PCIcon,
 } from "@/assets/svg";
 import { IconButton } from "@/components/IconButton";
 
@@ -148,7 +150,7 @@ export function ToolBar({ page }: Props) {
       <IconButton
         title={t("switchToMobileMode")}
         onClick={onSetDefaultUA}
-        icon={appStore.isMobile ? <PhoneIcon /> : <PhoneIcon />}
+        icon={appStore.isMobile ? <PhoneIcon /> : <PCIcon />}
       />
       <IconButton
         disabled={disabled}
@@ -167,7 +169,7 @@ export function ToolBar({ page }: Props) {
         <IconButton
           title={t("cancle")}
           onClick={onClickGoHome}
-          icon={<CloseOutlined />}
+          icon={<CloseIcon />}
         />
       ) : (
         <IconButton
@@ -181,7 +183,7 @@ export function ToolBar({ page }: Props) {
         title={curIsFavorite ? t("cancelFavorite") : t("favorite")}
         onClick={onClickAddFavorite}
         disabled={disabled}
-        icon={curIsFavorite ? <FavIcon /> : <FavIcon />}
+        icon={curIsFavorite ? <FavFillIcon /> : <FavIcon />}
       />
       <Input
         key="url-input"

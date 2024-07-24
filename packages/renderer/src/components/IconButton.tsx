@@ -7,6 +7,7 @@ interface Props extends PropsWithChildren {
   onClick?: () => void;
   disabled?: boolean;
   icon?: ReactElement;
+  highlight?: boolean;
 }
 
 export function IconButton({
@@ -15,6 +16,7 @@ export function IconButton({
   title,
   onClick,
   icon,
+  highlight,
 }: Props) {
   const handleClick = useMemoizedFn(() => {
     if (disabled) {
@@ -31,6 +33,7 @@ export function IconButton({
           "cursor-not-allowed": disabled,
           "opacity-50": disabled,
           "hover:bg-[#E1F0FF]": !disabled,
+          "bg-[#00f]": highlight,
         },
       )}
       title={title}
