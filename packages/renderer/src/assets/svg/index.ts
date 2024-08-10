@@ -25,3 +25,4 @@ export { PrivacyIcon } from "./PrivacyIcon";
 export { DownloadListIcon } from "./DownloadListIcon";
 export { EditIcon } from "./EditIcon";
 export { ConsoleIcon } from "./ConsoleIcon";
+export { TerminalIcon } from "./TerminalIcon";
