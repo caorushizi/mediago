@@ -15,7 +15,10 @@ export default [
     rules: {
       "@typescript-eslint/no-explicit-any": "warn",
       "prettier/prettier": ["error"],
-      "react/prop-types": [2, { ignore: ["className"] }],
+      "react/prop-types": [
+        2,
+        { ignore: ["className", "shouldScaleBackground"] },
+      ],
     },
   },
 ];

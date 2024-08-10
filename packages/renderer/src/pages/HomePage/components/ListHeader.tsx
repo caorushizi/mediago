@@ -29,7 +29,7 @@ export function ListHeader({
       <div className="flex flex-row items-center gap-3">
         <Checkbox checked={checked} onCheckedChange={onSelectAll} />
         <span
-          className="cursor-pointer text-sm text-[#343434]"
+          className="cursor-pointer text-sm text-[#343434] dark:text-white"
           onClick={() => onSelectAll(true)}
         >
           {t("selectAll")}

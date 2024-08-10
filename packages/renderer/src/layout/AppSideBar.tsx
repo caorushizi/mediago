@@ -1,4 +1,9 @@
-import React, { cloneElement, PropsWithChildren, ReactElement } from "react";
+import React, {
+  cloneElement,
+  PropsWithChildren,
+  ReactElement,
+  useContext,
+} from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Badge } from "antd";
 import useElectron from "../hooks/electron";
@@ -15,6 +20,7 @@ import {
   ShareIcon,
 } from "@/assets/svg";
 import siderBg from "@/assets/images/sider-bg.png";
+import { ThemeContext } from "@/context/ThemeContext";
 
 function processLocation(pathname: string) {
   let name = pathname;
@@ -79,6 +85,7 @@ export function AppSideBar({ className }: Props) {
   const dispatch = useDispatch();
   const count = useSelector(selectCount);
   const appStore = useSelector(selectAppStore);
+  const theme = useContext(ThemeContext);
 
   const activeKey = processLocation(location.pathname);
 
@@ -148,7 +155,7 @@ export function AppSideBar({ className }: Props) {
             className="hidden group-hover:block"
             onClick={(e) => handleExternalLink(e)}
           >
-            <ShareIcon />
+            <ShareIcon fill={theme === "light" ? "black" : "white"} />
           </div>
         </AppMenuItem>
       ),
@@ -173,14 +180,19 @@ export function AppSideBar({ className }: Props) {
   );
 
   return (
-    <div className={cn("relative bg-[#fff] p-3 dark:bg-[#1F2024]", className)}>
+    <div
+      className={cn(
+        "relative select-none bg-[#fff] p-3 dark:bg-[#1F2024]",
+        className,
+      )}
+    >
       <div className="relative z-10 flex w-[180px] flex-col gap-3">
         {finalItems.map((item) => cloneElement(item.label, { key: item.key }))}
       </div>
 
       <img
         src={siderBg}
-        className="absolute bottom-0 left-0 right-0 select-none"
+        className="pointer-events-none absolute bottom-0 left-0 right-0 select-none"
       />
     </div>
   );

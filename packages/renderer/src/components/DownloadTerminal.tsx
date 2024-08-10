@@ -1,26 +1,23 @@
-import React, { FC, useEffect, useRef } from "react";
+import React, { FC, ReactNode, useEffect, useRef } from "react";
 import "@xterm/xterm/css/xterm.css";
 import { Terminal as XTerminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
-import { useTranslation } from "react-i18next";
 import { cn } from "@/utils";
 import useElectron from "@/hooks/electron";
 
 interface TerminalProps {
   className?: string;
-  title: string;
   id: number;
   log: string;
+  header?: ReactNode;
 }
 
-const Terminal: FC<TerminalProps> = ({ className, title, id, log }) => {
+const Terminal: FC<TerminalProps> = ({ className, id, log, header }) => {
   const terminalRef = useRef<HTMLDivElement | null>(null);
   const { addIpcListener, removeIpcListener } = useElectron();
-  const { t } = useTranslation();
 
   useEffect(() => {
     const terminal = new XTerminal({
-      rows: 5,
       fontFamily: "Consolas, 'Courier New', monospace",
       disableStdin: true,
       cursorBlink: false,
@@ -60,11 +57,11 @@ const Terminal: FC<TerminalProps> = ({ className, title, id, log }) => {
   }, [id]);
 
   return (
-    <div className={cn(className)}>
-      <div>
-        <div>{title || t("consoleOutput")}</div>
+    <div className={cn("flex flex-col", className)}>
+      {header}
+      <div className="flex-1">
+        <div ref={terminalRef} />
       </div>
-      <div ref={terminalRef} />
     </div>
   );
 };
