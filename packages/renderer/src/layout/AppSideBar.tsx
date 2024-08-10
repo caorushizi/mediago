@@ -155,7 +155,7 @@ export function AppSideBar({ className }: Props) {
             className="hidden group-hover:block"
             onClick={(e) => handleExternalLink(e)}
           >
-            <ShareIcon fill={theme === "light" ? "black" : "white"} />
+            <ShareIcon fill={theme === "light" ? "#2c2f35" : "white"} />
           </div>
         </AppMenuItem>
       ),

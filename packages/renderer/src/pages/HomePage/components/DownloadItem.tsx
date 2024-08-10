@@ -3,11 +3,7 @@ import React, { ReactNode } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DownloadStatus } from "@/types";
 import { Progress, Space } from "antd";
-import {
-  CodeOutlined,
-  PauseCircleOutlined,
-  PlayCircleOutlined,
-} from "@ant-design/icons";
+import { PauseCircleOutlined, PlayCircleOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { selectAppStore } from "@/store";
@@ -20,6 +16,7 @@ import {
   EditIcon,
   FailedIcon,
   PauseIcon,
+  TerminalIcon,
 } from "@/assets/svg";
 import useElectron from "@/hooks/electron";
 import { DownloadTag } from "@/components/DownloadTag";
@@ -69,7 +66,7 @@ export function DownloadItem({
           <IconButton
             key="terminal"
             title={t("terminal")}
-            icon={<CodeOutlined />}
+            icon={<TerminalIcon fill="#707070" />}
           />
         </DrawerTrigger>
         <DrawerContent>
