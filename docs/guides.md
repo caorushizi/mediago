@@ -5,17 +5,34 @@ outline: deep
 
 # 快速开始
 
-这篇文章是软件的简单说明，可以快速上手使用本本软件。
+这篇文章是软件的简单说明，可以快速上手使用本软件。
 
 ::: tip
-方便大家一起沟通交流， 可以加入 QQ 反馈群：
+方便大家一起沟通交流， 可以加入反馈群：
 
-MediaGo 反馈群 1： 574209001
+MediaGo QQ反馈群 1： 574209001
 
-MediaGo 反馈群 2： 921619626
+MediaGo QQ反馈群 2： 921619626
+
+MediaGo 微信反馈群：[评论区每周更新二维码](#waline)
 :::
 
 ## 下载安装
+**v2.2.3 (2024.7.06 发布)**
+
+- [windows mediago v2.2.3](https://github.com/caorushizi/mediago/releases/download/v2.2.3/mediago-setup-x64-2.2.3.exe)
+- [macos mediago v2.2.3](https://github.com/caorushizi/mediago/releases/download/v2.2.3/mediago-setup-x64-2.2.3.dmg)
+- [linux mediago v2.2.3](https://github.com/caorushizi/mediago/releases/download/v2.2.3/mediago-setup-arm64-2.2.3.dmg)
+
+**更新日志**
+
+- 设置中添加【自动更新】开关：仅更新 release 版本，beta 版本不会自动更新
+- 下载表单中增加【批量更新】
+- 新增 Linux 版本发布
+- 载时自动选择清晰度最高的视频
+- 新增【清空缓存】&【无痕模式】
+- 自定义选择安装位置
+- 修复了一些 bug
 
 **v2.2.0 (2024.5.22 发布)**
 
