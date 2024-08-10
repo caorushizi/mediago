@@ -14,7 +14,7 @@ MediaGo QQ反馈群 1： 574209001
 
 MediaGo QQ反馈群 2： 921619626
 
-MediaGo 微信反馈群：[评论区每周更新二维码](#waline)
+MediaGo 微信反馈群：[评论区查看](#waline)
 :::
 
 ## 下载安装
