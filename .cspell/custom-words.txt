@@ -42,6 +42,7 @@ TDAPP
 tiptap
 tseslint
 typeorm
+vaul
 vitepress
 vuedraggable
 vuejs

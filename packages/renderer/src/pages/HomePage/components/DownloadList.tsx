@@ -5,12 +5,9 @@ import { ListHeader } from "./ListHeader";
 import { produce } from "immer";
 import { Empty, message, Pagination } from "antd";
 import { DownloadFilter } from "@/types";
-import { selectAppStore } from "@/store";
-import { useSelector } from "react-redux";
-import { CurrTerminal, ListPagination } from "./types";
+import { ListPagination } from "./types";
 import useElectron from "@/hooks/electron";
 import { useTranslation } from "react-i18next";
-import Terminal from "@/components/DownloadTerminal";
 import Loading from "@/components/Loading";
 
 interface Props {
@@ -29,12 +26,6 @@ export function DownloadList({
   pagination,
 }: Props) {
   const [selected, setSelected] = useState<number[]>([]);
-  const appStore = useSelector(selectAppStore);
-  const [terminal, setTerminal] = useState<CurrTerminal>({
-    title: "",
-    id: 0,
-    log: "",
-  });
   const {
     startDownload,
     addIpcListener,
@@ -44,7 +35,6 @@ export function DownloadList({
     deleteDownloadItem,
     editDownloadItem,
     editDownloadNow,
-    getDownloadLog,
   } = useElectron();
   const [messageApi, contextHolder] = message.useMessage();
   const { t } = useTranslation();
@@ -124,13 +114,13 @@ export function DownloadList({
     );
   };
 
-  const handleSelectAll = (checked: boolean) => {
+  const handleSelectAll = () => {
     setSelected(
       produce((draft) => {
-        if (checked) {
-          draft.push(...data.map((item) => item.id));
-        } else {
+        if (draft.length) {
           draft.splice(0, draft.length);
+        } else {
+          draft.push(...data.map((item) => item.id));
         }
       }),
     );
@@ -145,15 +135,6 @@ export function DownloadList({
     }
     return "indeterminate";
   }, [selected]);
-
-  const showTerminal = async (item: DownloadItem) => {
-    const log = await getDownloadLog(item.id);
-    setTerminal({
-      title: item.name,
-      id: item.id,
-      log,
-    });
-  };
 
   const onStartDownload = async (id: number) => {
     await startDownload(id);
@@ -246,8 +227,6 @@ export function DownloadList({
               item={item}
               onSelectChange={handleItemSelectChange}
               selected={selected.includes(item.id)}
-              onShowTerminal={showTerminal}
-              currTerminal={terminal}
               onStartDownload={onStartDownload}
               onStopDownload={onStopDownload}
               onConfirmEdit={confirmAddItem}
@@ -258,16 +237,6 @@ export function DownloadList({
         })}
       </div>
       <Pagination {...pagination} />
-      {filter === DownloadFilter.list && appStore.showTerminal && (
-        <div className="p-3">
-          <Terminal
-            className="home-page-terminal"
-            title={terminal.title}
-            id={terminal.id}
-            log={terminal.log}
-          />
-        </div>
-      )}
     </div>
   );
 }
