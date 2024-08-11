@@ -46,6 +46,8 @@ export const m3u8DownloaderBin = resolveBin("N_m3u8DL-RE");
 
 // plugin path
 export const pluginPath = resolveStatic("plugin/index.js");
+// mobile path
+export const mobileDir = resolveStatic("mobile");
 
 // user agent
 export const pcUA =

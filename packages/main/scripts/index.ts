@@ -17,6 +17,8 @@ async function clean() {
   return deleteSync([
     mainResolve("app/build"),
     mainResolve("app/bin"),
+    mainResolve("app/mobile"),
+    mainResolve("app/plugin"),
     mainResolve("release"),
   ]);
 }
@@ -91,7 +93,7 @@ async function pack() {
 }
 
 // 开发环境
-export const dev = gulp.series(clean, copy, chmodBin, watchTask);
+export const dev = gulp.series(copy, chmodBin, watchTask);
 // 构建打包
 export const build = gulp.series(clean, copy, chmodBin, buildTask);
 // release

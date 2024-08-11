@@ -1,6 +1,6 @@
 import { cn, http } from "@/utils";
-import { useAsyncEffect, useMount } from "ahooks";
-import React, { useEffect, useRef, useState } from "react";
+import { useAsyncEffect } from "ahooks";
+import React, { useRef, useState } from "react";
 import Player from "xgplayer";
 import "xgplayer/dist/index.min.css";
 
@@ -10,7 +10,7 @@ export default function PlayerPage() {
   const [currentVideo, setCurrentVideo] = useState("");
 
   useAsyncEffect(async () => {
-    const res = await http.get("http://localhost:3222/");
+    const res = await http.get("http://localhost:3222/api");
     setVideoList(res.data);
     setCurrentVideo(res.data[0].url);
 
