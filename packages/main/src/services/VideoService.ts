@@ -7,10 +7,11 @@ import mime from "mime-types";
 import path from "path";
 import express from "express";
 import ElectronLogger from "../vendor/ElectronLogger.ts";
+import cors from "cors";
 
 @injectable()
 export class VideoService {
-  private port = 3000;
+  private port = 3222;
   private videoDir: string;
   constructor(
     @inject(TYPES.ElectronStore)
@@ -41,6 +42,8 @@ export class VideoService {
 
   init() {
     const app = express();
+
+    app.use(cors());
 
     app.get("/", async (req, res) => {
       const videos = await this.getVideoFiles();

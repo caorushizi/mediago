@@ -10,7 +10,7 @@ import {
 import { generateUrl, getFavIcon } from "@/utils";
 import { useRequest } from "ahooks";
 import { Input } from "antd";
-import React, { useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -26,6 +26,7 @@ import {
   PCIcon,
 } from "@/assets/svg";
 import { IconButton } from "@/components/IconButton";
+import { ThemeContext } from "@/context/ThemeContext";
 
 interface Props {
   page: boolean;
@@ -43,6 +44,7 @@ export function ToolBar({ page }: Props) {
     setUserAgent,
     webviewUrlContextMenu,
   } = useElectron();
+  const theme = useContext(ThemeContext);
   const store = useSelector(selectBrowserStore);
   const appStore = useSelector(selectAppStore);
   const { t } = useTranslation();
@@ -145,45 +147,59 @@ export function ToolBar({ page }: Props) {
     loadUrl(link);
   };
 
+  const iconColor = theme === "dark" ? "white" : "black";
+
   return (
-    <div className="flex flex-row items-center gap-1 rounded-lg bg-white px-3 py-2">
+    <div className="flex flex-row items-center gap-1 rounded-lg bg-white px-3 py-2 dark:bg-[#1F2024]">
       <IconButton
         title={t("switchToMobileMode")}
         onClick={onSetDefaultUA}
-        icon={appStore.isMobile ? <PhoneIcon /> : <PCIcon />}
+        icon={
+          appStore.isMobile ? (
+            <PhoneIcon fill={iconColor} />
+          ) : (
+            <PCIcon fill={iconColor} />
+          )
+        }
       />
       <IconButton
         disabled={disabled}
         title={t("home")}
         onClick={onClickGoHome}
-        icon={<HomeIcon />}
+        icon={<HomeIcon fill={iconColor} />}
       />
       <IconButton
         disabled={disabled}
         title={t("back")}
         onClick={onClickGoBack}
-        icon={<BackIcon />}
+        icon={<BackIcon fill={iconColor} />}
       />
       {store.mode === PageMode.Browser &&
       store.status === BrowserStatus.Loading ? (
         <IconButton
           title={t("cancle")}
           onClick={onClickGoHome}
-          icon={<CloseIcon />}
+          icon={<CloseIcon fill={iconColor} />}
         />
       ) : (
         <IconButton
           disabled={disabled}
           title={t("refresh")}
           onClick={goto}
-          icon={<RefreshIcon />}
+          icon={<RefreshIcon fill={iconColor} />}
         />
       )}
       <IconButton
         title={curIsFavorite ? t("cancelFavorite") : t("favorite")}
         onClick={onClickAddFavorite}
         disabled={disabled}
-        icon={curIsFavorite ? <FavFillIcon /> : <FavIcon />}
+        icon={
+          curIsFavorite ? (
+            <FavFillIcon fill={iconColor} />
+          ) : (
+            <FavIcon fill={iconColor} />
+          )
+        }
       />
       <Input
         key="url-input"
@@ -203,13 +219,13 @@ export function ToolBar({ page }: Props) {
         title={t("visit")}
         onClick={onClickEnter}
         disabled={!store.url}
-        icon={<SendIcon />}
+        icon={<SendIcon fill={iconColor} />}
       />
       {page && (
         <IconButton
           title={t("mergeToMainWindow")}
           onClick={onCombineToHome}
-          icon={<ShareIcon className="rotate-180" />}
+          icon={<ShareIcon className="rotate-180" fill={iconColor} />}
         />
       )}
     </div>

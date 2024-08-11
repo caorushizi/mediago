@@ -10,6 +10,7 @@ import Loading from "./components/Loading";
 import { DownloadFilter } from "./types";
 import { tdApp } from "./utils";
 import { useAsyncEffect } from "ahooks";
+import { ThemeContext } from "./context/ThemeContext";
 
 const AppLayout = lazy(() => import("./layout/App"));
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -81,82 +82,84 @@ const App: FC = () => {
   }, []);
 
   return (
-    <ConfigProvider
-      locale={zhCN}
-      componentSize="small"
-      theme={{ algorithm: getAlgorithm(appTheme) }}
-    >
-      <BrowserRouter>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Suspense fallback={<Loading />}>
-                <AppLayout />
-              </Suspense>
-            }
-          >
+    <ThemeContext.Provider value={appTheme}>
+      <ConfigProvider
+        locale={zhCN}
+        componentSize="small"
+        theme={{ algorithm: getAlgorithm(appTheme) }}
+      >
+        <BrowserRouter>
+          <Routes>
             <Route
-              index
+              path="/"
               element={
                 <Suspense fallback={<Loading />}>
-                  <HomePage />
+                  <AppLayout />
+                </Suspense>
+              }
+            >
+              <Route
+                index
+                element={
+                  <Suspense fallback={<Loading />}>
+                    <HomePage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="done"
+                element={
+                  <Suspense fallback={<Loading />}>
+                    <HomePage filter={DownloadFilter.done} />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="source"
+                element={
+                  <Suspense fallback={<Loading />}>
+                    <SourceExtract />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="settings"
+                element={
+                  <Suspense fallback={<Loading />}>
+                    <SettingPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="converter"
+                element={
+                  <Suspense fallback={<Loading />}>
+                    <ConverterPage />
+                  </Suspense>
+                }
+              />
+              <Route path="*" element={<div>404</div>} />
+            </Route>
+            <Route
+              path="/browser"
+              element={
+                <Suspense fallback={<Loading />}>
+                  <SourceExtract page={true} />
                 </Suspense>
               }
             />
             <Route
-              path="done"
+              path="player"
               element={
                 <Suspense fallback={<Loading />}>
-                  <HomePage filter={DownloadFilter.done} />
+                  <PlayerPage />
                 </Suspense>
               }
             />
-            <Route
-              path="source"
-              element={
-                <Suspense fallback={<Loading />}>
-                  <SourceExtract />
-                </Suspense>
-              }
-            />
-            <Route
-              path="settings"
-              element={
-                <Suspense fallback={<Loading />}>
-                  <SettingPage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="converter"
-              element={
-                <Suspense fallback={<Loading />}>
-                  <ConverterPage />
-                </Suspense>
-              }
-            />
-            <Route path="*" element={<div>404</div>} />
-          </Route>
-          <Route
-            path="/browser"
-            element={
-              <Suspense fallback={<Loading />}>
-                <SourceExtract page={true} />
-              </Suspense>
-            }
-          />
-          <Route
-            path="player"
-            element={
-              <Suspense fallback={<Loading />}>
-                <PlayerPage />
-              </Suspense>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </ConfigProvider>
+          </Routes>
+        </BrowserRouter>
+      </ConfigProvider>
+    </ThemeContext.Provider>
   );
 };
 
