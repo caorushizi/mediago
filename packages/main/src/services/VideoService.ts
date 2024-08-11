@@ -8,11 +8,15 @@ import path from "path";
 import express from "express";
 import ElectronLogger from "../vendor/ElectronLogger.ts";
 import cors from "cors";
+import { mobileDir } from "../helper/variables.ts";
+import { getLocalIP } from "../helper/index.ts";
 
 @injectable()
 export class VideoService {
   private port = 3222;
   private videoDir: string;
+  private localIp: string;
+
   constructor(
     @inject(TYPES.ElectronStore)
     private readonly store: StoreService,
@@ -20,6 +24,7 @@ export class VideoService {
     private readonly logger: ElectronLogger,
   ) {
     this.videoDir = this.store.get("local");
+    this.localIp = getLocalIP();
   }
 
   // 使用glob搜索视频文件
@@ -34,7 +39,7 @@ export class VideoService {
         const fileName = path.basename(file);
         return {
           title: fileName,
-          url: `http://localhost:${this.port}/${encodeURIComponent(fileName)}`,
+          url: `http://${this.localIp}:${this.port}/${encodeURIComponent(fileName)}`,
         };
       });
     return videos;
@@ -45,10 +50,16 @@ export class VideoService {
 
     app.use(cors());
 
-    app.get("/", async (req, res) => {
+    app.get("/", (req, res) => {
+      res.sendFile(path.join(mobileDir, "index.html"));
+    });
+
+    app.get("/api", async (req, res) => {
       const videos = await this.getVideoFiles();
       res.json(videos);
     });
+
+    app.use(express.static(mobileDir));
 
     // 使用serve-handler处理静态文件请求的中间件
     app.use(async (req, res) => {
