@@ -106,3 +106,49 @@ body {
     }
   }
 }
+
+.ant-modal-content {
+  &:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background-image: linear-gradient(#89d4ff 0%, rgba(255, 255, 255, 0) 100%);
+    border-radius: 8px 8px 0 0;
+    z-index: 1;
+  }
+  &:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background-image: url("./assets/images/modal-bg.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: 80% 0;
+    border-radius: 0 0 8px 8px;
+    z-index: 1;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:before {
+      filter: invert(100%) hue-rotate(180deg);
+    }
+  }
+  @media (prefers-color-scheme: dark) {
+    &:after {
+      filter: invert(100%) hue-rotate(180deg) contrast(100%);
+    }
+  }
+
+  .ant-modal-header,
+  .ant-modal-body,
+  .ant-modal-footer {
+    position: relative;
+    z-index: 2;
+    background: transparent;
+  }
+}

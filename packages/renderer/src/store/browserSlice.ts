@@ -59,9 +59,9 @@ export const browserSlice = createSlice({
     addSource(state: BrowserStore, action: PayloadAction<SourceData>) {
       state.sources.unshift(action.payload);
     },
-    deleteSource(state: BrowserStore, action: PayloadAction<number>) {
+    deleteSource(state: BrowserStore, action: PayloadAction<string>) {
       state.sources = state.sources.filter(
-        (item) => item.id !== action.payload,
+        (item) => item.url !== action.payload,
       );
     },
   },
