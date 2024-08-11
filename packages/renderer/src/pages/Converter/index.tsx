@@ -22,12 +22,7 @@ const Converter = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [converting, setConverting] = useState<Record<number, boolean>>({});
 
-  const {
-    data: { total, list } = { total: 0, list: [] },
-    loading,
-    pagination,
-    refresh,
-  } = usePagination(
+  const { data, refresh } = usePagination(
     ({ current, pageSize }) => {
       return getConversions({
         current,
@@ -106,12 +101,17 @@ const Converter = () => {
     >
       {contextHolder}
       <div className="p-3">
-        {list.length ? (
-          list.map((item) => {
+        {data && data.list.length ? (
+          data.list.map((item) => {
             return (
-              <div key={item.id} className="rounded-lg bg-[#FAFCFF] p-3">
+              <div
+                key={item.id}
+                className="flex flex-col gap-3 rounded-lg bg-[#FAFCFF] p-3 dark:bg-[#27292F]"
+              >
                 <div className="flex flex-row items-center justify-between">
-                  <div className="text-sm text-[#343434]">{item.name}</div>
+                  <div className="text-sm text-[#343434] dark:text-[#B4B4B4]">
+                    {item.name}
+                  </div>
                   <div className="flex flex-row gap-3">
                     {renderActionButtons(null, item)}
                   </div>

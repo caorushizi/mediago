@@ -3,34 +3,36 @@ import React, { ReactNode } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DownloadStatus } from "@/types";
 import { Progress, Space } from "antd";
-import {
-  CodeOutlined,
-  PauseCircleOutlined,
-  PlayCircleOutlined,
-} from "@ant-design/icons";
+import { PauseCircleOutlined, PlayCircleOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { selectAppStore } from "@/store";
 import selectedBg from "@/assets/images/select-item-bg.png";
-import { CurrTerminal } from "./types";
 import DownloadForm from "@/components/DownloadForm";
 import {
+  CloseIcon,
   DownloadIcon,
   DownloadListIcon,
   EditIcon,
   FailedIcon,
   PauseIcon,
+  TerminalIcon,
 } from "@/assets/svg";
 import useElectron from "@/hooks/electron";
 import { DownloadTag } from "@/components/DownloadTag";
 import { IconButton } from "@/components/IconButton";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import Terminal from "@/components/DownloadTerminal";
 
 interface Props {
   item: DownloadItem;
   onSelectChange: (id: number) => void;
   selected: boolean;
-  onShowTerminal: (item: DownloadItem) => void;
-  currTerminal: CurrTerminal;
   onStartDownload: (id: number) => void;
   onStopDownload: (item: number) => void;
   onConfirmEdit: (
@@ -45,8 +47,6 @@ export function DownloadItem({
   item,
   onSelectChange,
   selected,
-  onShowTerminal,
-  currTerminal,
   onStartDownload,
   onStopDownload,
   onConfirmEdit,
@@ -61,17 +61,30 @@ export function DownloadItem({
     if (!appStore.showTerminal) return null;
 
     return (
-      <IconButton
-        key="terminal"
-        highlight={currTerminal.id === item.id}
-        title={t("terminal")}
-        icon={<CodeOutlined />}
-        onClick={() => {
-          if (currTerminal.id !== item.id) {
-            onShowTerminal(item);
-          }
-        }}
-      />
+      <Drawer handleOnly>
+        <DrawerTrigger>
+          <IconButton
+            key="terminal"
+            title={t("terminal")}
+            icon={<TerminalIcon fill="#707070" />}
+          />
+        </DrawerTrigger>
+        <DrawerContent>
+          <Terminal
+            header={
+              <div className="flex flex-shrink-0 flex-row items-center justify-between">
+                {item.name}
+                <DrawerClose>
+                  <IconButton icon={<CloseIcon />} />
+                </DrawerClose>
+              </div>
+            }
+            className="h-[350px] overflow-hidden px-3"
+            id={item.id}
+            log={item.log}
+          />
+        </DrawerContent>
+      </Drawer>
     );
   };
   // 编辑表单
@@ -183,7 +196,7 @@ export function DownloadItem({
     return (
       <div className="flex flex-row gap-2">
         <div
-          className={cn("text-sm", {
+          className={cn("text-sm dark:text-[#B4B4B4]", {
             "text-[#127af3]": selected,
           })}
         >
@@ -213,7 +226,7 @@ export function DownloadItem({
     }
     return (
       <div
-        className="relative truncate text-xs text-[#B3B3B3]"
+        className="relative truncate text-xs text-[#B3B3B3] dark:text-[#515257]"
         title={item.url}
       >
         {item.url}
@@ -224,9 +237,10 @@ export function DownloadItem({
   return (
     <div
       className={cn(
-        "relative flex flex-row gap-3 rounded-lg bg-[#FAFCFF] px-3 pb-3.5 pt-2",
+        "relative flex flex-row gap-3 rounded-lg bg-[#FAFCFF] px-3 pb-3.5 pt-2 dark:bg-[#27292F]",
         {
-          "bg-gradient-to-r from-[#D0E8FF] to-[#F2F7FF]": selected,
+          "bg-gradient-to-r from-[#D0E8FF] to-[#F2F7FF] dark:from-[#27292F] dark:to-[#00244E]":
+            selected,
         },
       )}
       onContextMenu={() => onContextMenu(item.id)}
@@ -245,7 +259,7 @@ export function DownloadItem({
         )}
         <div className="relative flex flex-row items-center justify-between">
           {renderTitle(item)}
-          <div className="flex flex-row items-center gap-5 rounded-l-full rounded-r-lg bg-white py-1 pl-4">
+          <div className="flex flex-row items-center gap-5 rounded-2xl rounded-r-lg bg-white px-4 py-1 dark:bg-[#3B3F48]">
             {renderActionButtons(item)}
           </div>
         </div>

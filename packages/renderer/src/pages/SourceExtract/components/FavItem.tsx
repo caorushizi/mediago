@@ -38,12 +38,13 @@ export function FavItem({
           <CloseIcon width={15} height={15} />
         </div>
       )}
-      <div className="flex h-14 w-14 flex-row items-center justify-center rounded-lg bg-white">
+      <div className="flex h-14 w-14 flex-row items-center justify-center rounded-lg bg-white dark:bg-[#27292F]">
         <Avatar
           size={35}
           src={src}
           shape="square"
-          icon={icon || <LinkOutlined />}
+          icon={icon || <LinkOutlined size={35} />}
+          className="bg-white text-[#27292F] dark:bg-[#27292F] dark:text-white"
         />
       </div>
       <div

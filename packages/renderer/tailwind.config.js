@@ -75,5 +75,19 @@ export default {
       },
     },
   },
-  plugins: [tailwindAnimation],
+  plugins: [
+    tailwindAnimation,
+    function ({ addUtilities }) {
+      const newUtilities = {
+        ".app-region-drag": {
+          "-webkit-app-region": "drag",
+        },
+        ".app-region-no-drag": {
+          "-webkit-app-region": "no-drag",
+        },
+      };
+
+      addUtilities(newUtilities, ["responsive", "hover"]);
+    },
+  ],
 };
