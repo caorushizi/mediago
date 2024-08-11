@@ -39,7 +39,7 @@ function getConfig(): esbuild.BuildOptions {
 function buildOptions(
   entry: string,
   platform: esbuild.Platform,
-  target: string
+  target: string,
 ): esbuild.BuildOptions {
   return {
     ...getConfig(),
@@ -79,6 +79,10 @@ export function getReleaseConfig(): Configuration {
       {
         from: "./app/plugin",
         to: "plugin",
+      },
+      {
+        from: "./app/mobile",
+        to: "mobile",
       },
       {
         from: "./app/bin/",

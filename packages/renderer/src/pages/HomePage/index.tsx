@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import PageContainer from "../../components/PageContainer";
-import { usePagination } from "ahooks";
+import { useMount, usePagination } from "ahooks";
 import useElectron from "../../hooks/electron";
 import { DownloadFilter } from "../../types";
 import { useSelector } from "react-redux";
@@ -15,6 +15,8 @@ import {
   FolderIcon,
 } from "@/assets/svg";
 import { Button } from "@/components/ui/button";
+import { Popover, QRCode } from "antd";
+import { QrcodeOutlined } from "@ant-design/icons";
 
 interface Props {
   filter?: DownloadFilter;
@@ -29,9 +31,11 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     addDownloadItems,
     downloadItemsNow,
     downloadNow,
+    getLocalIP,
   } = useElectron();
   const appStore = useSelector(selectAppStore);
   const { t } = useTranslation();
+  const [localIP, setLocalIP] = React.useState<string>("");
   const {
     data = { total: 0, list: [] },
     loading,
@@ -50,6 +54,11 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       refreshDeps: [filter],
     },
   );
+
+  useMount(async () => {
+    const ip = await getLocalIP();
+    setLocalIP(ip);
+  });
 
   const confirmAddItems = async (values: DownloadItemForm, now?: boolean) => {
     const { batch, batchList = "", name, headers, type, url } = values;
@@ -87,6 +96,13 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     return true;
   };
 
+  const content = (
+    <div>
+      <QRCode value={localIP ? `http://${localIP}:3222/` : ""} />
+      <div className="text-xs">{t("scanToWatch")}</div>
+    </div>
+  );
+
   return (
     <PageContainer
       title={
@@ -100,6 +116,14 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
             <Button onClick={() => showBrowserWindow()}>
               {t("openBrowser")}
             </Button>
+          )}
+          {filter === DownloadFilter.done && (
+            <Popover content={content}>
+              <Button>
+                {<QrcodeOutlined />}
+                {t("playOnMobile")}
+              </Button>
+            </Popover>
           )}
           <Button onClick={() => openDir(appStore.local)}>
             <FolderIcon />
