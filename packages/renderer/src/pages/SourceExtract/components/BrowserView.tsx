@@ -154,14 +154,16 @@ export function BrowserView() {
     // 加载失败
     if (store.status === BrowserStatus.Failed) {
       return (
-        <Empty
-          description={`${store.errMsg || t("loadFailed")} (${store.errCode})`}
-        >
-          <Space>
-            <Button onClick={onClickGoHome}>{t("backToHome")}</Button>
-            <Button onClick={goto}>{t("refresh")}</Button>
-          </Space>
-        </Empty>
+        <div className="flex h-full w-full flex-row items-center justify-center">
+          <Empty
+            description={`${store.errMsg || t("loadFailed")} (${store.errCode})`}
+          >
+            <Space>
+              <Button onClick={onClickGoHome}>{t("backToHome")}</Button>
+              <Button onClick={goto}>{t("refresh")}</Button>
+            </Space>
+          </Empty>
+        </div>
       );
     }
 
@@ -179,7 +181,7 @@ export function BrowserView() {
     }
 
     return (
-      <div className="mx-2 flex h-full min-w-60 max-w-60 flex-col gap-3 overflow-y-auto rounded-lg bg-white p-3 dark:bg-[#1F2024]">
+      <div className="flex h-full min-w-60 max-w-60 flex-col gap-3 overflow-y-auto bg-white p-3 dark:bg-[#1F2024]">
         {store.sources.map((item, index) => {
           return (
             <div
@@ -203,7 +205,7 @@ export function BrowserView() {
                   <IconButton
                     icon={<DeleteIcon />}
                     onClick={() => {
-                      dispatch(deleteSource(item.id));
+                      dispatch(deleteSource(item.url));
                     }}
                   />
                 </div>
@@ -225,7 +227,7 @@ export function BrowserView() {
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <div className="flex h-full flex-1">
+      <div className="flex h-full flex-1 gap-2">
         {renderContent()}
         {renderSidePanel()}
       </div>
