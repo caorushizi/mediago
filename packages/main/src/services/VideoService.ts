@@ -69,7 +69,7 @@ export class VideoService {
     });
 
     // 直接使用Koa的listen方法启动服务器
-    app.listen(this.port, () => {
+    app.listen(this.port, this.localIp, () => {
       this.logger.info("Server is running on http://localhost:3000");
     });
   }
