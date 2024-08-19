@@ -75,10 +75,10 @@ importers:
     dependencies:
       '@cliqz/adblocker-electron':
         specifier: 1.27.3
-        version: 1.27.3(electron@30.0.8)
+        version: 1.27.3(electron@31.4.0)
       '@cliqz/adblocker-electron-preload':
         specifier: 1.27.3
-        version: 1.27.3(electron@30.0.8)
+        version: 1.27.3(electron@31.4.0)
       axios:
         specifier: ^1.7.2
         version: 1.7.2
@@ -207,8 +207,8 @@ importers:
         specifier: ^16.4.5
         version: 16.4.5
       electron:
-        specifier: 30.0.8
-        version: 30.0.8
+        specifier: 31.4.0
+        version: 31.4.0
       electron-builder:
         specifier: ^24.13.3
         version: 24.13.3(electron-builder-squirrel-windows@24.13.3(dmg-builder@24.13.3))
@@ -250,17 +250,17 @@ importers:
     dependencies:
       '@cliqz/adblocker-electron':
         specifier: 1.27.3
-        version: 1.27.3(electron@30.0.8)
+        version: 1.27.3(electron@31.4.0)
       '@cliqz/adblocker-electron-preload':
         specifier: 1.27.3
-        version: 1.27.3(electron@30.0.8)
+        version: 1.27.3(electron@31.4.0)
       node-pty:
         specifier: ^1.0.0
         version: 1.0.0
     devDependencies:
       electron:
-        specifier: 30.0.8
-        version: 30.0.8
+        specifier: 31.4.0
+        version: 31.4.0
 
   packages/mobile:
     dependencies:
@@ -2598,6 +2598,7 @@ packages:
   are-we-there-yet@3.0.1:
     resolution: {integrity: sha512-QZW4EDmGwlYur0Yyf/b2uGucHQMa8aFUP7eu9ddR73vvhFyt4V0Vl3QHPcTNJ8l6qYOBdxgXdnBXQrHilfRQBg==}
     engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
+    deprecated: This package is no longer supported.
 
   arg@5.0.2:
     resolution: {integrity: sha512-PYjyFOLKQ9y57JvQ6QLo8dAgNqswh8M1RMJYdQduT6xbWSgK36P/Z/v+p888pM69jMMfS8Xd8F6I1kQ/I9HUGg==}
@@ -3480,8 +3481,8 @@ packages:
   electron-updater@6.1.8:
     resolution: {integrity: sha512-hhOTfaFAd6wRHAfUaBhnAOYc+ymSGCWJLtFkw4xJqOvtpHmIdNHnXDV9m1MHC+A6q08Abx4Ykgyz/R5DGKNAMQ==}
 
-  electron@30.0.8:
-    resolution: {integrity: sha512-ivzXJJ/9gdb4oOw+5SDuaZpSInz8C+Z021dKZfFLMltKbDa4sSqt5cRBiUg7J36Z2kdus+Jai0bdHWutYE9wAA==}
+  electron@31.4.0:
+    resolution: {integrity: sha512-YTwKoAA+nrJMlI1TTHnIXLYWoQLKnhbkz0qxZcI7Hadcy0UaFMFs9xzwvH2MnrRpVJy7RKo49kVGuvSdRl8zMA==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
 
@@ -3950,6 +3951,7 @@ packages:
   gauge@4.0.4:
     resolution: {integrity: sha512-f9m+BEN5jkg6a0fZjleidjN51VE1X+mPFQ2DJ0uv1V39oCLCbsGe6yjbBnp7eK7z/+GAon99a3nHuqbuuthyPg==}
     engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
+    deprecated: This package is no longer supported.
 
   gensequence@7.0.0:
     resolution: {integrity: sha512-47Frx13aZh01afHJTB3zTtKIlFI6vWY+MYCN9Qpew6i52rfKjnhCF/l1YlC8UmEMvvntZZ6z4PiCcmyuedR2aQ==}
@@ -4276,6 +4278,7 @@ packages:
 
   inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
+    deprecated: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
 
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
@@ -5100,6 +5103,7 @@ packages:
   npmlog@6.0.2:
     resolution: {integrity: sha512-/vBvz5Jfr9dT/aFWd0FIRf+T/Q2WBsLENygUaFUqstqsycmZAP/t5BvFJTK0viFmSUxiUKTUplWy5vt+rvKIxg==}
     engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
+    deprecated: This package is no longer supported.
 
   nth-check@2.1.1:
     resolution: {integrity: sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==}
@@ -6027,6 +6031,7 @@ packages:
 
   rimraf@3.0.2:
     resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
 
   roarr@2.15.4:
@@ -7254,16 +7259,16 @@ snapshots:
     dependencies:
       '@cliqz/adblocker-extended-selectors': 1.27.3
 
-  '@cliqz/adblocker-electron-preload@1.27.3(electron@30.0.8)':
+  '@cliqz/adblocker-electron-preload@1.27.3(electron@31.4.0)':
     dependencies:
       '@cliqz/adblocker-content': 1.27.3
-      electron: 30.0.8
+      electron: 31.4.0
 
-  '@cliqz/adblocker-electron@1.27.3(electron@30.0.8)':
+  '@cliqz/adblocker-electron@1.27.3(electron@31.4.0)':
     dependencies:
       '@cliqz/adblocker': 1.27.3(patch_hash=ehnwxuhizcxatborac3eqflbk4)
-      '@cliqz/adblocker-electron-preload': 1.27.3(electron@30.0.8)
-      electron: 30.0.8
+      '@cliqz/adblocker-electron-preload': 1.27.3(electron@31.4.0)
+      electron: 31.4.0
       tldts-experimental: 6.1.21
 
   '@cliqz/adblocker-extended-selectors@1.27.3': {}
@@ -10407,7 +10412,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron@30.0.8:
+  electron@31.4.0:
     dependencies:
       '@electron/get': 2.0.3
       '@types/node': 20.12.12
