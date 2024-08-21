@@ -1,9 +1,6 @@
-import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import dotenv from "dotenv";
 import { resolve } from "path";
-import consola from "consola";
 import fs from "fs-extra";
-import electron from "electron";
 
 const baseResolve = (...r: any[]) => resolve(__dirname, ...r);
 export const mainResolve = (...r: string[]) => baseResolve("..", ...r);
@@ -14,40 +11,6 @@ export const isDev = process.env.NODE_ENV === "development";
 export const isLinux = process.platform === "linux";
 export const isMac = process.platform === "darwin";
 export const isWin = process.platform === "win32";
-
-export class ElectronApp {
-  process: ChildProcessWithoutNullStreams | null = null;
-
-  start() {
-    const args = ["--inspect=5858", mainResolve("app/build/main/index.js")];
-
-    this.process = spawn(String(electron), args);
-
-    this.process.stdout.on("data", (data) => {
-      consola.log(String(data));
-    });
-
-    this.process.stderr.on("data", (data) => {
-      consola.log(String(data));
-    });
-  }
-
-  restart() {
-    this.kill();
-    this.start();
-  }
-
-  kill() {
-    if (this.process && this.process.pid) {
-      if (isMac) {
-        spawn("kill", ["-9", String(this.process.pid)]);
-      } else {
-        process.kill(this.process.pid);
-      }
-      this.process = null;
-    }
-  }
-}
 
 export class Env {
   env: Record<string, string> = {};
