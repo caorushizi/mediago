@@ -43,7 +43,7 @@
     "esbuild-register": "^3.5.0",
     "eslint": "^8.57.0",
     "glob": "^10.4.1",
-    "globals": "^15.3.0",
+    "globals": "^15.9.0",
     "gulp": "^5.0.0",
     "nodemon": "^3.1.4",
     "semver": "^7.6.2",
