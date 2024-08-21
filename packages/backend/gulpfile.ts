@@ -1,1 +1,1 @@
-export { dev, build, release } from "./scripts";
+export { dev, build } from "./scripts";

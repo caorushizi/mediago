@@ -34,6 +34,7 @@
     "@types/node-fetch": "^2.6.11",
     "@types/semver": "^7.5.8",
     "@types/serve-handler": "^6.1.4",
+    "@types/undertaker": "^1.2.11",
     "consola": "^3.2.3",
     "cross-env": "^7.0.3",
     "del": "^7.1.0",

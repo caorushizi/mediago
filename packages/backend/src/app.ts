@@ -1,20 +1,18 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "./types.ts";
 import TypeORM from "./vendor/TypeORM.ts";
-import IpcHandlerService from "./core/ipc.ts";
+import RouterHandlerService from "./core/router.ts";
 import Koa from "koa";
 
 @injectable()
-export default class ElectronApp {
-  private readonly app: Koa;
-
+export default class ElectronApp extends Koa {
   constructor(
-    @inject(TYPES.IpcHandlerService)
-    private readonly ipc: IpcHandlerService,
+    @inject(TYPES.RouterHandlerService)
+    private readonly router: RouterHandlerService,
     @inject(TYPES.TypeORM)
     private readonly db: TypeORM,
   ) {
-    this.app = new Koa();
+    super();
   }
 
   private async vendorInit() {
@@ -22,9 +20,15 @@ export default class ElectronApp {
   }
 
   async init(): Promise<void> {
-    this.ipc.init();
+    this.router.init();
 
     // vendor
     await this.vendorInit();
+
+    this.use(this.router.routes()).use(this.router.allowedMethods());
+
+    this.listen(3000, () => {
+      console.log("Server running on port 3000");
+    });
   }
 }

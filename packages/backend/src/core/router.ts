@@ -1,14 +1,19 @@
 import { injectable, multiInject } from "inversify";
 import { Controller } from "../interfaces.ts";
 import { TYPES } from "../types.ts";
+import Router from "@koa/router";
+import { success } from "../helper/utils.ts";
+import { error } from "console";
 // import { error, success } from "../helper/utils.ts";
 
 @injectable()
-export default class IpcHandlerService {
+export default class RouterHandlerService extends Router {
   constructor(
     @multiInject(TYPES.Controller)
     private readonly controllers: Controller[],
-  ) {}
+  ) {
+    super();
+  }
 
   private registerIpc(
     controller: Controller,
@@ -17,35 +22,35 @@ export default class IpcHandlerService {
     const property = controller[propertyKey];
     if (typeof property !== "function") return;
 
-    const channel: string = Reflect.getMetadata(
-      "ipc-channel",
+    const httpMethod: "get" | "post" = Reflect.getMetadata(
+      "http-method",
       controller,
       propertyKey,
     );
-    if (!channel) return;
+    if (!httpMethod) return;
 
-    const ipcMethod: "on" | "handle" = Reflect.getMetadata(
-      "ipc-method",
+    const routerPath = Reflect.getMetadata(
+      "router-path",
       controller,
       propertyKey,
     );
-    if (!ipcMethod) return;
+    if (!routerPath) return;
 
-    // ipcMain[ipcMethod](channel, async (...args: unknown[]) => {
-    //   try {
-    //     let res = property.call(controller, ...args);
-    //     if (res.then) {
-    //       res = await res;
-    //     }
-    //     return success(res);
-    //   } catch (e: unknown) {
-    //     if (e instanceof Error) {
-    //       return error(e.message);
-    //     } else {
-    //       return error(String(e));
-    //     }
-    //   }
-    // });
+    this[httpMethod](routerPath, async (context, next) => {
+      try {
+        let res = property.call(controller, context, next);
+        if (res.then) {
+          res = await res;
+        }
+        context.body = success(res);
+      } catch (e: unknown) {
+        if (e instanceof Error) {
+          context.body = error(e.message);
+        } else {
+          context.body = error(String(e));
+        }
+      }
+    });
   }
 
   init(): void {

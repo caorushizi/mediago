@@ -9,5 +9,5 @@
     "esModuleInterop": true,
     "resolveJsonModule": true
   },
-  "include": ["script", "app/package.json"]
+  "include": ["scripts", "gulpfile.ts"]
 }

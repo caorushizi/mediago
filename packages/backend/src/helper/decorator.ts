@@ -1,13 +1,13 @@
-export const handle = (route: string) => {
+export const get = (route: string) => {
   return (target: any, propertyKey: string): void => {
-    Reflect.defineMetadata("ipc-method", "handle", target, propertyKey);
-    Reflect.defineMetadata("ipc-channel", route, target, propertyKey);
+    Reflect.defineMetadata("http-method", "get", target, propertyKey);
+    Reflect.defineMetadata("router-path", route, target, propertyKey);
   };
 };
 
-export const on = (route: string) => {
+export const post = (route: string) => {
   return (target: any, propertyName: string): void => {
-    Reflect.defineMetadata("ipc-method", "on", target, propertyName);
-    Reflect.defineMetadata("ipc-channel", route, target, propertyName);
+    Reflect.defineMetadata("http-method", "post", target, propertyName);
+    Reflect.defineMetadata("router-path", route, target, propertyName);
   };
 };
