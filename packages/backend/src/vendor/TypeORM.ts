@@ -9,8 +9,12 @@ export default class DatabaseService implements Vendor {
 
   constructor() {
     this.appDataSource = new DataSource({
-      type: "better-sqlite3",
-      database: "fake.db",
+      type: "mysql",
+      host: "127.0.0.1",
+      port: 3306,
+      username: "root",
+      password: "123456",
+      database: "mediago",
       synchronize: true,
       logging: false,
       entities: [Favorite],

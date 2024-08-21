@@ -1,6 +1,6 @@
 export const TYPES = {
   ElectronApp: Symbol.for("ElectronApp"),
-  IpcHandlerService: Symbol.for("IpcHandlerService"),
+  RouterHandlerService: Symbol.for("RouterHandlerService"),
   Controller: Symbol.for("Controller"),
   // repository
   VideoRepository: Symbol.for("VideoRepository"),

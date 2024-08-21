@@ -5,7 +5,7 @@ import ElectronApp from "./app.ts";
 import { Controller } from "./interfaces.ts";
 import { TYPES } from "./types.ts";
 import TypeORM from "./vendor/TypeORM.ts";
-import IpcHandler from "./core/ipc.ts";
+import RouterHandler from "./core/router.ts";
 import HomeService from "./services/HomeService.ts";
 
 const container = new Container({
@@ -34,6 +34,9 @@ container
 container.bind<TypeORM>(TYPES.TypeORM).to(TypeORM);
 
 // core
-container.bind<IpcHandler>(TYPES.IpcHandlerService).to(IpcHandler);
+container
+  .bind<RouterHandler>(TYPES.RouterHandlerService)
+  .to(RouterHandler)
+  .inSingletonScope();
 
 export { container };
