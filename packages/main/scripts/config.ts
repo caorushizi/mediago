@@ -117,7 +117,7 @@ export function getReleaseConfig(): Configuration {
       icon: "../assets/icon.icns",
       target: [
         {
-          target: "dmg",
+          target: "default",
           arch: ["x64", "arm64"],
         },
       ],
