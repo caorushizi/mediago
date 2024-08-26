@@ -39,7 +39,7 @@
     "@commitlint/core": "^19.3.0",
     "@commitlint/cz-commitlint": "^19.2.0",
     "@commitlint/format": "^19.3.0",
-    "@eslint/js": "^8.57.0",
+    "@eslint/js": "^9.9.1",
     "@waline/client": "^3.2.0",
     "commitizen": "^4.3.0",
     "cross-env": "^7.0.3",
