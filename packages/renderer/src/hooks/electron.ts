@@ -4,8 +4,12 @@ import { ElectronApi } from "../../../main/types/preload";
 const eventFun = ["rendererEvent", "removeEventListener"];
 const eventMap = new Map();
 
-const api = Object.keys(window.electron).reduce<any>((res, funName) => {
+const api = Object.keys(window.electron || {}).reduce<any>((res, funName) => {
   const fun = async (...args: any[]) => {
+    if (!window.electron[funName]) {
+      return null;
+    }
+
     const electronFun: any = window.electron[funName];
     if (eventFun.includes(String(funName))) {
       return null;
@@ -42,10 +46,16 @@ export default function useElectron(): ElectronApi & IpcListener {
     ...api,
     addIpcListener: (eventName: string, func: any) => {
       const id = getIpcId(func);
+      if (!window.electron || !window.electron.rendererEvent) {
+        return;
+      }
       window.electron.rendererEvent(eventName, id, func);
     },
     removeIpcListener: (eventName: string, func: any) => {
       const id = getIpcId(func);
+      if (!window.electron || !window.electron.removeEventListener) {
+        return;
+      }
       window.electron.removeEventListener(eventName, id);
     },
   };
