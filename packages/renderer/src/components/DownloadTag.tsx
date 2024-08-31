@@ -11,7 +11,7 @@ export function DownloadTag({ icon, text, color }: DownloadTagProps) {
   return (
     <div
       className={cn(
-        "flex flex-row items-center gap-[3px] rounded-2xl rounded-bl-lg pl-1 pr-2",
+        "flex flex-shrink-0 flex-row items-center gap-[3px] rounded-2xl rounded-bl-lg pl-1 pr-2",
       )}
       style={{ background: color }}
     >

@@ -211,7 +211,11 @@ export function DownloadList({
         onDownloadItems={onDownloadItems}
         onCancelItems={onCancelItems}
       />
-      <div className={cn("flex w-full flex-1 flex-col gap-3 overflow-auto")}>
+      <div
+        className={cn(
+          "flex w-full flex-1 flex-shrink-0 flex-col gap-3 overflow-auto",
+        )}
+      >
         {data.map((item) => {
           let currProgress;
           if (
