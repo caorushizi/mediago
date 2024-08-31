@@ -229,9 +229,13 @@ const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
                 try {
                   await form.validateFields();
                   const values = form.getFieldsValue();
-                  const close = await onAddToList(values);
-                  if (close) {
-                    setModalOpen(false);
+                  try {
+                    const close = await onAddToList(values);
+                    if (close) {
+                      setModalOpen(false);
+                    }
+                  } catch (error) {
+                    messageApi.error(t("pleaseEnterCorrectFomeInfo"));
                   }
                 } catch (e: any) {
                   messageApi.error(e?.message);
@@ -247,12 +251,16 @@ const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
                 try {
                   await form.validateFields();
                   const values = form.getFieldsValue();
-                  const close = await onDownloadNow(values);
-                  if (close) {
-                    setModalOpen(false);
+                  try {
+                    const close = await onDownloadNow(values);
+                    if (close) {
+                      setModalOpen(false);
+                    }
+                  } catch (e: any) {
+                    messageApi.error(e?.message);
                   }
                 } catch (e: any) {
-                  messageApi.error(e?.message);
+                  messageApi.error(t("pleaseEnterCorrectFomeInfo"));
                 }
               }}
             >
@@ -279,6 +287,7 @@ const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
               rules={[
                 {
                   required: true,
+                  message: t("pleaseEnterVideoName"),
                 },
               ]}
             >
@@ -310,7 +319,7 @@ const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
                     rules={[
                       {
                         required: true,
-                        message: t("pleaseEnterVideoName"),
+                        message: t("pleaseEnterCorrectFomeInfo"),
                       },
                     ]}
                     tooltip={canChangeType && t("canUseMouseWheelToAdjust")}
