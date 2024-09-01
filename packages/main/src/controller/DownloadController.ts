@@ -27,7 +27,7 @@ export default class DownloadController implements Controller {
     @inject(TYPES.MainWindow)
     private readonly mainWindow: MainWindow,
     @inject(TYPES.WebviewService)
-    private readonly webviewService: WebviewService
+    private readonly webviewService: WebviewService,
   ) {}
 
   @handle("show-download-dialog")
@@ -36,7 +36,7 @@ export default class DownloadController implements Controller {
     this.webviewService.sendToWindow(
       "show-download-dialog",
       data,
-      image.toDataURL()
+      image?.toDataURL(),
     );
   }
 

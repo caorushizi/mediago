@@ -25,6 +25,7 @@ export default class WebviewService {
   private view: WebContentsView | null = null;
   private blocker?: ElectronBlocker;
   private defaultSession: string;
+  private viewShow = false;
 
   constructor(
     @inject(TYPES.MainWindow)
@@ -166,11 +167,13 @@ export default class WebviewService {
   show() {
     if (!this.view) return;
     this.window.contentView.addChildView(this.view);
+    this.viewShow = true;
   }
 
   hide() {
     if (!this.view) return;
     this.window.contentView.removeChildView(this.view);
+    this.viewShow = false;
   }
 
   loadURL(url: string) {
@@ -301,9 +304,12 @@ export default class WebviewService {
     this.logger.info(`[UA] 设置为${isMobile ? "移动端" : " pc 端"}`);
   }
 
-  captureView(): Promise<Electron.NativeImage> {
+  async captureView(): Promise<Electron.NativeImage | null> {
     if (!this.view) {
       throw new Error("未找到 view");
+    }
+    if (!this.viewShow) {
+      return null;
     }
     return this.view.webContents.capturePage();
   }

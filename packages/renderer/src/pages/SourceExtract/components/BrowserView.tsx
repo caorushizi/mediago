@@ -44,8 +44,10 @@ export function BrowserView() {
     ) => {
       // FIXME: 选择
       setCurrentDownloadForm(data[0]);
-
-      setPlaceHolder(image);
+      console.log("123123", image);
+      if (image) {
+        setPlaceHolder(image);
+      }
       setModalShow(true);
     };
 
@@ -147,7 +149,7 @@ export function BrowserView() {
     }
 
     // 模态框
-    if (modalShow) {
+    if (modalShow && placeHolder) {
       return <img src={placeHolder} className="h-full w-full" />;
     }
 
