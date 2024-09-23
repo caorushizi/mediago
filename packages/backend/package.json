@@ -20,7 +20,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@eslint/js": "^8.57.0",
+    "@eslint/js": "^9.11.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/fs-extra": "^11.0.4",
