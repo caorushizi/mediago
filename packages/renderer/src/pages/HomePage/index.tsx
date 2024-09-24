@@ -13,6 +13,7 @@ import {
   DownloadBg1,
   DownloadBg2,
   FolderIcon,
+  ExtractIcon,
 } from "@/assets/svg";
 import { Button } from "@/components/ui/button";
 import { Popover, QRCode } from "antd";
@@ -114,13 +115,14 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
         <div className="flex flex-row gap-2">
           {filter === DownloadFilter.list && appStore.openInNewWindow && (
             <Button onClick={() => showBrowserWindow()}>
-              {t("openBrowser")}
+              <ExtractIcon fill="#fff" />
+              {t("materialExtraction")}
             </Button>
           )}
           {filter === DownloadFilter.done && (
             <Popover content={content}>
               <Button>
-                {<QrcodeOutlined />}
+                <QrcodeOutlined />
                 {t("playOnMobile")}
               </Button>
             </Popover>
@@ -133,7 +135,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
             <DownloadForm
               destroyOnClose
               trigger={
-                <div className="relative flex cursor-pointer flex-row items-center gap-5 rounded-md bg-gradient-to-r from-[#24C1FF] to-[#823CFE] px-2 py-1 text-xs text-white">
+                <div className="relative flex cursor-pointer flex-row items-center gap-5 rounded-md bg-gradient-to-r from-[#24C1FF] to-[#823CFE] px-2 py-1 text-sm text-white">
                   <img
                     className="absolute bottom-0 left-2 top-0 h-full"
                     src={DownloadBg2}
@@ -142,7 +144,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
                     className="absolute bottom-0 left-0 top-0 h-full"
                     src={DownloadBg1}
                   />
-                  <DownloadIcon />
+                  <DownloadIcon fill="#137BF4" />
                   {t("newDownload")}
                 </div>
               }
