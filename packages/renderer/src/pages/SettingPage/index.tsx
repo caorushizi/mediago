@@ -2,10 +2,12 @@ import React, { PropsWithChildren, useEffect, useRef } from "react";
 import PageContainer from "../../components/PageContainer";
 import {
   Button,
+  Dropdown,
   Form,
   FormInstance,
   Input,
   InputNumber,
+  MenuProps,
   message,
   Select,
   Space,
@@ -14,8 +16,10 @@ import {
 } from "antd";
 import {
   ClearOutlined,
+  DownloadOutlined,
   FolderOpenOutlined,
   QuestionCircleOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import { selectAppStore, setAppStore } from "../../store";
 import { useDispatch, useSelector } from "react-redux";
@@ -49,6 +53,8 @@ const SettingPage: React.FC = () => {
     getEnvPath,
     openDir,
     clearWebviewCache,
+    exportFavorites,
+    importFavorites,
   } = useElectron();
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -98,6 +104,39 @@ const SettingPage: React.FC = () => {
       dispatch(setAppStore(values));
     } catch (e: any) {
       messageApi.error(e.message);
+    }
+  };
+
+  const items = [
+    {
+      key: "1",
+      label: (
+        <Space>
+          <UploadOutlined />
+          {t("importFavorite")}
+        </Space>
+      ),
+    },
+  ];
+
+  const onMenuClick: MenuProps["onClick"] = async (e) => {
+    const { key } = e;
+    if (key === "1") {
+      try {
+        await importFavorites();
+        messageApi.success(t("importFavoriteSuccess"));
+      } catch (e: any) {
+        messageApi.error(t("importFavoriteFailed"));
+      }
+    }
+  };
+
+  const handleExportFavorite = async () => {
+    try {
+      await exportFavorites();
+      messageApi.success(t("exportFavoriteSuccess"));
+    } catch (e: any) {
+      messageApi.error(t("exportFavoriteFailed"));
     }
   };
 
@@ -220,6 +259,13 @@ const SettingPage: React.FC = () => {
               >
                 {t("clearCache")}
               </Button>
+              <Dropdown.Button
+                menu={{ items, onClick: onMenuClick }}
+                onClick={handleExportFavorite}
+              >
+                <DownloadOutlined />
+                {t("exportFavorite")}
+              </Dropdown.Button>
             </Space>
           </Form.Item>
         </GroupWrapper>

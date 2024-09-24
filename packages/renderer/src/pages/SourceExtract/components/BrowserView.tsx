@@ -44,7 +44,6 @@ export function BrowserView() {
     ) => {
       // FIXME: 选择
       setCurrentDownloadForm(data[0]);
-      console.log("123123", image);
       if (image) {
         setPlaceHolder(image);
       }
@@ -128,6 +127,7 @@ export function BrowserView() {
     return (
       <DownloadForm
         isEdit
+        usePrevData
         ref={downloadForm}
         open={modalShow}
         onOpenChange={setModalShow}

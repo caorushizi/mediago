@@ -63,7 +63,8 @@ export function getReleaseConfig(): Configuration {
     buildVersion: process.env.APP_VERSION,
     appId: process.env.APP_ID,
     copyright: process.env.APP_COPYRIGHT,
-    artifactName: "${productName}-setup-${arch}-${buildVersion}.${ext}",
+    artifactName:
+      "${productName}-setup-${platform}-${arch}-${buildVersion}.${ext}",
     npmRebuild: true,
     directories: {
       output: "./release",
@@ -96,7 +97,12 @@ export function getReleaseConfig(): Configuration {
           target: "nsis",
           arch: ["x64"],
         },
+        "portable",
       ],
+    },
+    portable: {
+      artifactName:
+        "${productName}-portable-${platform}-${arch}-${buildVersion}.${ext}",
     },
     dmg: {
       contents: [

@@ -179,6 +179,12 @@ const electronApi = {
   openPlayerWindow(): Promise<void> {
     return ipcRenderer.invoke("open-player-window");
   },
+  exportFavorites(): Promise<void> {
+    return ipcRenderer.invoke("export-favorites");
+  },
+  importFavorites(): Promise<void> {
+    return ipcRenderer.invoke("import-favorites");
+  },
 };
 
 contextBridge.exposeInMainWorld(apiKey, electronApi);
