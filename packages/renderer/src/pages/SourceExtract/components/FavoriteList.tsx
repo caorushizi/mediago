@@ -94,7 +94,6 @@ export function FavoriteList() {
         payload: number;
       },
     ) => {
-      console.log(action, payload);
       if (action === "open") {
         const item = favoriteList.find((item) => item.id === payload);
         if (item) {
@@ -102,7 +101,6 @@ export function FavoriteList() {
         }
       } else if (action === "delete") {
         await removeFavorite(payload);
-        console.log("refresh");
         refresh();
       }
     };

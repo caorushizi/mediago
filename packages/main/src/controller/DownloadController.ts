@@ -1,12 +1,14 @@
 import { IpcMainEvent } from "electron/main";
 import { inject, injectable } from "inversify";
-import { handle } from "../helper/index.ts";
+import { handle, videoPattern } from "../helper/index.ts";
 import {
   type Controller,
   DownloadItem,
   DownloadItemPagination,
   Task,
   DownloadStatus,
+  VideoStat,
+  ListPagination,
 } from "../interfaces.ts";
 import { TYPES } from "../types.ts";
 import MainWindow from "../windows/MainWindow.ts";
@@ -14,6 +16,8 @@ import ElectronStore from "../vendor/ElectronStore.ts";
 import DownloadService from "../services/DownloadService.ts";
 import VideoRepository from "../repository/VideoRepository.ts";
 import WebviewService from "../services/WebviewService.ts";
+import path from "path";
+import { glob } from "glob";
 
 @injectable()
 export default class DownloadController implements Controller {
@@ -88,9 +92,30 @@ export default class DownloadController implements Controller {
   }
 
   @handle("get-download-items")
-  async getDownloadItems(e: IpcMainEvent, pagination: DownloadItemPagination) {
+  async getDownloadItems(
+    e: IpcMainEvent,
+    pagination: DownloadItemPagination,
+  ): Promise<ListPagination> {
     const videos = await this.videoRepository.findVideos(pagination);
-    return videos;
+
+    const result: ListPagination = {
+      total: videos.total,
+      list: [],
+    };
+
+    const local = this.store.get("local");
+    for (const video of videos.list) {
+      const final: VideoStat = { ...video };
+      if (video.status === DownloadStatus.Success) {
+        const pattern = path.join(local, `${video.name}.{${videoPattern}}`);
+        const files = await glob(pattern);
+        final.exists = files.length > 0;
+        final.file = files[0];
+      }
+      result.list.push(final);
+    }
+
+    return result;
   }
 
   @handle("start-download")

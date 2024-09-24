@@ -103,3 +103,13 @@ declare interface DownloadProgress {
 interface ObjectConstructor {
   keys<T>(o: T): (keyof T)[];
 }
+
+interface VideoStat extends DownloadItem {
+  exists?: boolean;
+  file?: string;
+}
+
+interface ListPagination {
+  total: number;
+  list: VideoStat[];
+}

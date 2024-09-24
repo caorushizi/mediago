@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "antd";
 import { Trans, useTranslation } from "react-i18next";
 import { Checkbox } from "@/components/ui/checkbox";
+import { DownloadFilter } from "@/types";
 
 interface Props {
   onSelectAll: (checked: boolean) => void;
@@ -10,6 +11,7 @@ interface Props {
   onDeleteItems: (id: number[]) => void;
   onDownloadItems: (id: number[]) => void;
   onCancelItems: () => void;
+  filter: DownloadFilter;
 }
 
 export function ListHeader({
@@ -19,6 +21,7 @@ export function ListHeader({
   onDeleteItems,
   onDownloadItems,
   onCancelItems,
+  filter,
 }: Props) {
   const { t } = useTranslation();
 
@@ -53,13 +56,15 @@ export function ListHeader({
         <Button disabled={disabled} onClick={() => onCancelItems()}>
           {t("cancel")}
         </Button>
-        <Button
-          disabled={disabled}
-          type="primary"
-          onClick={() => onDownloadItems(selected)}
-        >
-          {t("download")}
-        </Button>
+        {filter === DownloadFilter.list && (
+          <Button
+            disabled={disabled}
+            type="primary"
+            onClick={() => onDownloadItems(selected)}
+          >
+            {t("download")}
+          </Button>
+        )}
       </div>
     </div>
   );
