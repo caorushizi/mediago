@@ -4,7 +4,7 @@ import { getFavIcon } from "@/utils";
 import { PlusOutlined } from "@ant-design/icons";
 import { useRequest } from "ahooks";
 import { Form, Input, message, Modal } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { FavItem } from "./FavItem";
@@ -16,6 +16,8 @@ export function FavoriteList() {
     removeFavorite,
     webviewLoadURL,
     onFavoriteItemContextMenu,
+    addIpcListener,
+    removeIpcListener,
   } = useElectron();
   const { data: favoriteList = [], refresh } = useRequest(getFavorites);
   const { t } = useTranslation();
@@ -68,6 +70,48 @@ export function FavoriteList() {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
+  useEffect(() => {
+    const onClickLoadItem = (item: Favorite) => {
+      dispatch(
+        setBrowserStore({
+          url: item.url,
+          mode: PageMode.Browser,
+          status: BrowserStatus.Loading,
+        }),
+      );
+      webviewLoadURL(item.url);
+    };
+
+    const onFavoriteEvent = async (
+      e: unknown,
+      {
+        action,
+        payload,
+      }: {
+        action: string;
+        payload: number;
+      },
+    ) => {
+      console.log(action, payload);
+      if (action === "open") {
+        const item = favoriteList.find((item) => item.id === payload);
+        if (item) {
+          onClickLoadItem(item);
+        }
+      } else if (action === "delete") {
+        await removeFavorite(payload);
+        console.log("refresh");
+        refresh();
+      }
+    };
+
+    addIpcListener("favorite-item-event", onFavoriteEvent);
+
+    return () => {
+      removeIpcListener("favorite-item-event", onFavoriteEvent);
+    };
+  }, []);
 
   return (
     <div className="h-full w-full py-4">

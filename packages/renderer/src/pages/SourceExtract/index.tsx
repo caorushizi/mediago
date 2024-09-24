@@ -1,4 +1,4 @@
-import { useAsyncEffect, useRequest } from "ahooks";
+import { useAsyncEffect } from "ahooks";
 import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PageContainer from "../../components/PageContainer";
@@ -21,16 +21,12 @@ interface SourceExtractProps {
 
 const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   const {
-    getFavorites,
-    removeFavorite,
-    webviewLoadURL,
     addIpcListener,
     removeIpcListener,
     getSharedState,
     getAppStore: ipcGetAppStore,
   } = useElectron();
   const dispatch = useDispatch();
-  const { data: favoriteList = [], refresh } = useRequest(getFavorites);
   const store = useSelector(selectBrowserStore);
   const originTitle = useRef(document.title);
 
@@ -38,42 +34,6 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     const store = await ipcGetAppStore();
     dispatch(setAppStore(store));
   }, []);
-
-  const loadUrl = (url: string) => {
-    dispatch(
-      setBrowserStore({
-        url,
-        mode: PageMode.Browser,
-        status: BrowserStatus.Loading,
-      }),
-    );
-    webviewLoadURL(url);
-  };
-
-  const onClickLoadItem = (item: Favorite) => {
-    loadUrl(item.url);
-  };
-
-  const onFavoriteEvent = async (
-    e: unknown,
-    {
-      action,
-      payload,
-    }: {
-      action: string;
-      payload: number;
-    },
-  ) => {
-    if (action === "open") {
-      const item = favoriteList.find((item) => item.id === payload);
-      if (item) {
-        onClickLoadItem(item);
-      }
-    } else if (action === "delete") {
-      await removeFavorite(payload);
-      refresh();
-    }
-  };
 
   useAsyncEffect(async () => {
     const state = await getSharedState();
@@ -85,14 +45,12 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     addIpcListener("webview-fail-load", onFailLoad);
     addIpcListener("webview-did-navigate", onDidNavigate);
     addIpcListener("webview-did-navigate-in-page", onDidNavigateInPage);
-    addIpcListener("favorite-item-event", onFavoriteEvent);
 
     return () => {
       removeIpcListener("webview-dom-ready", onDomReady);
       removeIpcListener("webview-fail-load", onFailLoad);
       removeIpcListener("webview-did-navigate", onDidNavigate);
       removeIpcListener("webview-did-navigate-in-page", onDidNavigateInPage);
-      removeIpcListener("favorite-item-event", onFavoriteEvent);
     };
   }, [store.status]);
 
