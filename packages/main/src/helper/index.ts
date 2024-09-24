@@ -39,3 +39,5 @@ export * from "./variables.ts";
 export { on, handle } from "./decorator.ts";
 export { convertToAudio } from "./ffmpeg.ts";
 export { fetchWrapper as fetch };
+export { fileExists } from "./file.ts";
+export { videoPattern } from "./video.ts";

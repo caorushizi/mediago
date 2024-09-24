@@ -9,12 +9,17 @@ import {
   clipboard,
 } from "electron";
 import { Favorite } from "../entity/Favorite.ts";
-import { convertToAudio, db, workspace } from "../helper/index.ts";
+import {
+  convertToAudio,
+  db,
+  videoPattern,
+  workspace,
+} from "../helper/index.ts";
 import { inject, injectable } from "inversify";
 import { AppStore, EnvPath } from "../main.ts";
 import path from "path";
 import { handle, getLocalIP } from "../helper/index.ts";
-import { type Controller } from "../interfaces.ts";
+import { DownloadStatus, type Controller } from "../interfaces.ts";
 import { TYPES } from "../types.ts";
 import fs from "fs-extra";
 import MainWindow from "../windows/MainWindow.ts";
@@ -26,6 +31,7 @@ import VideoRepository from "../repository/VideoRepository.ts";
 import ConversionRepository from "../repository/ConversionRepository.ts";
 import { machineId } from "node-machine-id";
 import { nanoid } from "nanoid";
+import { glob } from "glob";
 
 @injectable()
 export default class HomeController implements Controller {
@@ -208,6 +214,31 @@ export default class HomeController implements Controller {
         },
       },
     ];
+
+    if (item.status === DownloadStatus.Success) {
+      const local = this.store.get("local");
+      const pattern = path.join(local, `${item.name}.{${videoPattern}}`);
+      const files = await glob(pattern);
+      const exists = files.length > 0;
+      if (exists) {
+        const file = files[0];
+        template.unshift(
+          {
+            label: "打开文件夹",
+            click: () => {
+              shell.showItemInFolder(file);
+            },
+          },
+          {
+            label: "打开文件",
+            click: () => {
+              shell.openPath(file);
+            },
+          },
+          { type: "separator" },
+        );
+      }
+    }
 
     const menu = Menu.buildFromTemplate(template);
     menu.popup();

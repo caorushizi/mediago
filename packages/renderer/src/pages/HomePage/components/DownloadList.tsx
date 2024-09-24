@@ -12,7 +12,7 @@ import Loading from "@/components/Loading";
 import { useMemoizedFn } from "ahooks";
 
 interface Props {
-  data: DownloadItem[];
+  data: VideoStat[];
   filter: DownloadFilter;
   refresh: () => void;
   loading: boolean;
@@ -211,6 +211,7 @@ export function DownloadList({
         onDeleteItems={onDeleteItems}
         onDownloadItems={onDownloadItems}
         onCancelItems={onCancelItems}
+        filter={filter}
       />
       {loading && <Loading />}
       <div

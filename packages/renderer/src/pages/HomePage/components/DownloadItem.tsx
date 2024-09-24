@@ -30,15 +30,12 @@ import {
 import Terminal from "@/components/DownloadTerminal";
 
 interface Props {
-  item: DownloadItem;
+  item: VideoStat;
   onSelectChange: (id: number) => void;
   selected: boolean;
   onStartDownload: (id: number) => void;
   onStopDownload: (item: number) => void;
-  onConfirmEdit: (
-    values: DownloadItem,
-    downloadNow?: boolean,
-  ) => Promise<boolean>;
+  onConfirmEdit: (values: VideoStat, downloadNow?: boolean) => Promise<boolean>;
   onContextMenu: (item: number) => void;
   progress?: DownloadProgress;
 }
@@ -100,7 +97,7 @@ export function DownloadItem({
       />
     );
   };
-  const renderActionButtons = (item: DownloadItem): ReactNode => {
+  const renderActionButtons = (item: VideoStat): ReactNode => {
     if (item.status === DownloadStatus.Ready) {
       return [
         renderTerminalBtn(item),
@@ -158,12 +155,13 @@ export function DownloadItem({
         key={"play"}
         icon={<PlayCircleOutlined />}
         title={t("playVideo")}
+        disabled={!item.exists}
         onClick={() => openPlayerWindow()}
       />,
     ];
   };
 
-  const renderTitle = (item: DownloadItem): ReactNode => {
+  const renderTitle = (item: VideoStat): ReactNode => {
     let tag = null;
     if (item.status === DownloadStatus.Downloading) {
       tag = (
@@ -174,7 +172,22 @@ export function DownloadItem({
         />
       );
     } else if (item.status === DownloadStatus.Success) {
-      tag = <DownloadTag text={t("downloadSuccess")} color="#09ce87" />;
+      tag = [
+        <DownloadTag
+          key={"success"}
+          text={t("downloadSuccess")}
+          color="#09ce87"
+        />,
+      ];
+      if (!item.exists) {
+        tag.push(
+          <DownloadTag
+            key={"notExists"}
+            text={t("fileNotExist")}
+            color="#9abbe2"
+          />,
+        );
+      }
     } else if (item.status === DownloadStatus.Failed) {
       tag = (
         <DownloadTag
@@ -241,6 +254,7 @@ export function DownloadItem({
         {
           "bg-gradient-to-r from-[#D0E8FF] to-[#F2F7FF] dark:from-[#27292F] dark:to-[#00244E]":
             selected,
+          "opacity-70": item.status === DownloadStatus.Success && !item.exists,
         },
       )}
       onContextMenu={() => onContextMenu(item.id)}

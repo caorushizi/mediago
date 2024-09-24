@@ -30,9 +30,11 @@ metas
 nocheck
 optimizelegibility
 pinia
+Qrcode
 redownload
 Redownload
 reduxjs
+rmvb
 Sider
 stylelint
 svgr
