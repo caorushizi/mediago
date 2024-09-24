@@ -177,7 +177,7 @@ export function ToolBar({ page }: Props) {
         icon={<HomeIcon fill={iconColor} />}
       />
       <IconButton
-        disabled={disabled}
+        disabled={store.mode === PageMode.Default}
         title={t("back")}
         onClick={onClickGoBack}
         icon={<BackIcon fill={iconColor} />}
