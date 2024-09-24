@@ -66,7 +66,7 @@ export function DownloadItem({
           <IconButton
             key="terminal"
             title={t("terminal")}
-            icon={<TerminalIcon fill="#707070" />}
+            icon={<TerminalIcon />}
           />
         </DrawerTrigger>
         <DrawerContent>
@@ -259,7 +259,7 @@ export function DownloadItem({
         )}
         <div className="relative flex flex-row items-center justify-between">
           {renderTitle(item)}
-          <div className="flex flex-row items-center gap-5 rounded-2xl rounded-r-lg bg-white px-4 py-1 dark:bg-[#3B3F48]">
+          <div className="flex flex-row items-center gap-3 rounded-md bg-white px-1.5 py-1.5 dark:bg-[#3B3F48]">
             {renderActionButtons(item)}
           </div>
         </div>

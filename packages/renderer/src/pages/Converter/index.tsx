@@ -9,6 +9,7 @@ import { Conversion } from "../../../../main/types/entity/Conversion";
 import { DeleteOutlined, SyncOutlined } from "@ant-design/icons";
 import { produce } from "immer";
 import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/IconButton";
 
 const Converter = () => {
   const { t } = useTranslation();
@@ -66,14 +67,14 @@ const Converter = () => {
         title={t("convertToAudio")}
         onClick={() => onClickConvertToAudio(item)}
       >
-        {<SyncOutlined spin={converting[item.id]} />}
+        <IconButton icon={<SyncOutlined spin={converting[item.id]} />} />
       </div>,
       <div
         key="delete"
         title={t("delete")}
         onClick={() => onDeleteConversion(item.id)}
       >
-        {<DeleteOutlined />}
+        <IconButton icon={<DeleteOutlined />} />
       </div>,
     ];
   };

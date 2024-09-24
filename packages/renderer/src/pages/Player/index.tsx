@@ -2,7 +2,7 @@ import { cn, http } from "@/utils";
 import { UnorderedListOutlined } from "@ant-design/icons";
 import { useAsyncEffect, useMemoizedFn } from "ahooks";
 import { Drawer, message } from "antd";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Player from "xgplayer";
 import "xgplayer/dist/index.min.css";
@@ -14,8 +14,6 @@ export default function PlayerPage() {
   const [currentVideo, setCurrentVideo] = useState("");
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {}, []);
 
   useAsyncEffect(async () => {
     let url = "";
