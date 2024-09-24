@@ -134,7 +134,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   return (
     <PageContainer
       className={cn("flex flex-col p-0", { "gap-2": !page })}
-      wrapperClassName={cn({ "p-0 bg-[#141415]": page })}
+      wrapperClassName={cn({ "p-0 bg-[#EBF0F5] dark:bg-[#141415]": page })}
     >
       <ToolBar page={page} />
       <div className="flex flex-1 overflow-hidden">
