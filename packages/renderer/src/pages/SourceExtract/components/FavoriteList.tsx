@@ -61,9 +61,10 @@ export function FavoriteList() {
       });
       favoriteAddForm.resetFields();
       refresh();
-      return true;
+
+      setIsModalOpen(false);
     } catch (err: any) {
-      messageApi.error(err.message);
+      messageApi.error(err.message || t("addFavoriteFailed"));
     }
   };
 
@@ -131,9 +132,7 @@ export function FavoriteList() {
         })}
         <FavItem
           key={"add"}
-          onClick={() => {
-            showModal();
-          }}
+          onClick={showModal}
           icon={<PlusOutlined />}
           title={t("addFavorite")}
         />
