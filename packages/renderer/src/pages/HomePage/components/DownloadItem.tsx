@@ -2,7 +2,7 @@ import { cn } from "@/utils";
 import React, { ReactNode } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DownloadStatus } from "@/types";
-import { Progress, Space } from "antd";
+import { Progress } from "antd";
 import { PauseCircleOutlined, PlayCircleOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -168,7 +168,7 @@ export function DownloadItem({
     if (item.status === DownloadStatus.Downloading) {
       tag = (
         <DownloadTag
-          icon={<DownloadIcon />}
+          icon={<DownloadIcon fill="#fff" width={14} height={14} />}
           text={t("downloading")}
           color="#127af3"
         />
@@ -215,13 +215,13 @@ export function DownloadItem({
       const { percent, speed } = progress;
 
       return (
-        <Space.Compact className="download-progress description" block>
+        <div className="flex flex-row items-center gap-3 text-xs">
           <Progress
             percent={Math.round(Number(percent))}
             strokeLinecap="butt"
           />
-          <div className="progress-speed">{speed}</div>
-        </Space.Compact>
+          {speed}
+        </div>
       );
     }
     return (
