@@ -19,6 +19,7 @@ import VideoRepository from "../repository/VideoRepository.ts";
 import { SniffingHelper, SourceParams } from "./SniffingHelperService.ts";
 import { resolve } from "path";
 import { readFileSync } from "fs-extra";
+import { isDeeplink } from "../helper/utils.ts";
 
 @injectable()
 export default class WebviewService {
@@ -70,8 +71,15 @@ export default class WebviewService {
     this.view.webContents.on("did-navigate", this.onDidNavigate);
     this.view.webContents.on("did-fail-load", this.onDidFailLoad);
     this.view.webContents.on("did-navigate-in-page", this.onDidNavigateInPage);
+    this.view.webContents.on("will-navigate", this.onWillNavigate);
     this.view.webContents.setWindowOpenHandler(this.onOpenNewWindow);
   }
+
+  onWillNavigate = (e: Event, url: string) => {
+    if (isDeeplink(url)) {
+      e.preventDefault();
+    }
+  };
 
   onDomReady = () => {
     if (!this.view) return;
