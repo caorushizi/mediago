@@ -45,7 +45,7 @@ export default class HomeController implements Controller {
     @inject(TYPES.WebviewService)
     private readonly webviewService: WebviewService,
     @inject(TYPES.ConversionRepository)
-    private readonly conversionRepository: ConversionRepository
+    private readonly conversionRepository: ConversionRepository,
   ) {}
 
   @handle("get-env-path")
@@ -292,6 +292,49 @@ export default class HomeController implements Controller {
       const newId = nanoid();
       this.store.set("machineId", newId);
       return newId;
+    }
+  }
+
+  @handle("export-favorites")
+  async exportFavorites() {
+    const favorites = await this.favoriteRepository.findFavorites();
+    const json = JSON.stringify(
+      favorites.map((i) => ({
+        title: i.title,
+        url: i.url,
+        icon: i.icon,
+      })),
+      null,
+      2,
+    );
+    const window = this.mainWindow.window;
+    if (!window) return Promise.reject("未找到主窗口");
+
+    const result = await dialog.showSaveDialog(window, {
+      title: "导出收藏夹",
+      defaultPath: "favorites.json",
+      filters: [{ name: "JSON", extensions: ["json"] }],
+    });
+
+    if (!result.canceled) {
+      await fs.writeFile(result.filePath, json);
+    }
+  }
+
+  @handle("import-favorites")
+  async importFavorites() {
+    const window = this.mainWindow.window;
+    if (!window) return Promise.reject("未找到主窗口");
+
+    const result = await dialog.showOpenDialog(window, {
+      properties: ["openFile"],
+      filters: [{ name: "JSON", extensions: ["json"] }],
+    });
+
+    if (!result.canceled) {
+      const filePath = result.filePaths[0];
+      const json = await fs.readJSON(filePath);
+      await this.favoriteRepository.importFavorites(json);
     }
   }
 }

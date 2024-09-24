@@ -39,4 +39,8 @@ export default class FavoriteRepository {
   async removeFavorite(id: number): Promise<void> {
     await this.db.manager.getRepository(Favorite).delete(id);
   }
+
+  async importFavorites(favorites: Favorite[]): Promise<void> {
+    await this.db.manager.save(Favorite, favorites);
+  }
 }
