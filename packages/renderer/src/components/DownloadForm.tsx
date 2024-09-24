@@ -20,10 +20,14 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import TextArea from "antd/es/input/TextArea";
+import { ConfigStore, useConfigStore } from "@/store/config";
+import { useShallow } from "zustand/react/shallow";
+import { useMemoizedFn } from "ahooks";
 
 export interface DownloadFormProps {
   trigger?: JSX.Element;
   isEdit?: boolean;
+  usePrevData?: boolean;
   item?: DownloadItem;
   open?: boolean;
   destroyOnClose?: boolean;
@@ -41,6 +45,8 @@ interface EpisodeNumberProps {
   value?: string;
   onChange?: (value: string) => void;
   canChangeType: boolean;
+  isEdit?: boolean;
+  usePrevData?: boolean;
 }
 
 export interface DownloadItemForm extends DownloadItem {
@@ -48,11 +54,21 @@ export interface DownloadItemForm extends DownloadItem {
   batchList?: string;
 }
 
+const videoTypeSelector = (s: ConfigStore) => ({
+  lastVideoType: s.lastVideoType,
+  lastVideoName: s.lastVideoName,
+  lastVideoNumber: s.lastVideoNumber,
+  setLastVideo: s.setLastVideo,
+});
+
 const EpisodeNumber: FC<EpisodeNumberProps> = ({
   value = "",
   onChange = () => {},
   canChangeType,
+  usePrevData,
 }) => {
+  const { lastVideoName, lastVideoNumber, lastVideoType, setLastVideo } =
+    useConfigStore(useShallow(videoTypeSelector));
   const { t } = useTranslation();
   const [type, setType] = useState("teleplay");
   const [name, setName] = useState("");
@@ -62,62 +78,108 @@ const EpisodeNumber: FC<EpisodeNumberProps> = ({
     [type, canChangeType],
   );
 
-  // FIXME: localforage
-  // await localforage.setItem<NumberOfEpisodes>("numberOfEpisodes", {
-  //   numberOfEpisodes,
-  //   teleplay,
-  // });
+  /**
+   * 初始化
+   * 三个地方会使用到这个组件
+   * 1. 新建下载： value 为空
+   * 2. 编辑下载： value 有值，编辑模式， 可以使用 canChangeType 判断是否为编辑模式
+   * 3. 视频嗅探： value 有值，但是不是编辑模式
+   */
+  useEffect(() => {
+    // 如果没有，使用上次的值
+    if (!value) {
+      const name = lastVideoName || "";
+      const number = lastVideoNumber || 1;
+      const type = lastVideoType || "teleplay";
 
-  const parseName = (value: string = "") => {
-    const res = {
-      name: "",
-      number: 1,
-    };
+      setName(name);
+      setNumber(number);
+      setType(type);
 
-    if (/_第(\d+)集$/.test(value)) {
-      const [, name, number] = value.match(/(.*?)_第(\d+)集$/);
-      res.name = name;
-      res.number = Number(number);
-    } else {
-      res.name = value;
+      if (type === "teleplay" && canChangeType) {
+        onChange(`${name}_第${number}集`);
+      } else {
+        onChange(name);
+      }
+
+      return;
     }
 
-    return res;
-  };
+    // 解析名称
+    const parseName = (value: string = "") => {
+      const res = {
+        name: "",
+        number: 1,
+        isTelePlay: false,
+      };
 
-  useEffect(() => {
-    const { name, number } = parseName(value);
+      if (/_第(\d+)集$/.test(value)) {
+        const [, name, number] = value.match(/(.*?)_第(\d+)集$/);
+        res.name = name;
+        res.number = Number(number);
+        res.isTelePlay = true;
+      } else {
+        res.name = value;
+      }
+
+      return res;
+    };
+    const { name, number, isTelePlay } = parseName(value);
+
+    if (usePrevData) {
+      setName(name);
+      setNumber(lastVideoNumber);
+      setType(lastVideoType);
+
+      if (lastVideoType === "teleplay" && canChangeType) {
+        onChange(`${name}_第${lastVideoNumber}集`);
+      } else {
+        onChange(name);
+      }
+      return;
+    }
+
     setName(name);
     setNumber(number);
-    if (isEpisode) {
-      onChange(`${name}_第${number}集`);
-    }
-  }, [value]);
+    setType(isTelePlay ? "teleplay" : "movie");
 
-  useEffect(() => {
-    if (!name || !number) return;
-    if (isEpisode) {
+    if (isTelePlay && canChangeType) {
       onChange(`${name}_第${number}集`);
     } else {
       onChange(name);
     }
-  }, [type]);
+  }, [value]);
 
-  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleNameChange = useMemoizedFn((e: ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
+    setLastVideo({ name: e.target.value });
+
     if (isEpisode) {
       onChange(`${e.target.value}_第${number}集`);
     } else {
       onChange(e.target.value);
     }
-  };
+  });
 
-  const onNumberChange = (val: number) => {
+  const onNumberChange = useMemoizedFn((val: number) => {
     setNumber(val);
+    setLastVideo({ number: val });
+
     if (isEpisode) {
       onChange(`${name}_第${val}集`);
     }
-  };
+  });
+
+  const handleChangeType = useMemoizedFn((type: string) => {
+    setLastVideo({ type });
+    setType(type);
+
+    if (type === "teleplay") {
+      onChange(`${name}_第${number}集`);
+    } else {
+      onChange(name);
+    }
+  });
 
   return (
     <Space.Compact block>
@@ -136,7 +198,7 @@ const EpisodeNumber: FC<EpisodeNumberProps> = ({
             },
           ]}
           value={type}
-          onChange={setType}
+          onChange={handleChangeType}
         />
       )}
       <Input
@@ -159,6 +221,11 @@ const EpisodeNumber: FC<EpisodeNumberProps> = ({
   );
 };
 
+const configSelector = (s: ConfigStore) => ({
+  lastDownloadTypes: s.lastDownloadTypes,
+  setLastDownloadTypes: s.setLastDownloadTypes,
+});
+
 const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
   function DownloadForm(props, ref) {
     const {
@@ -170,21 +237,30 @@ const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
       onAddToList,
       onDownloadNow,
       item,
+      usePrevData,
     } = props;
-    const [modalOpen, setModalOpen] = useState(false);
+    const [modalOpen, setModalOpen] = useState(open);
     const [form] = Form.useForm<DownloadItem>();
     const { t } = useTranslation();
     const [messageApi, contextHolder] = message.useMessage();
+    const { setLastDownloadTypes, lastDownloadTypes } = useConfigStore(
+      useShallow(configSelector),
+    );
 
     useEffect(() => {
       setModalOpen(open);
     }, [open]);
 
     useEffect(() => {
-      if (modalOpen) {
-        form.setFieldsValue(item);
+      if (modalOpen && item) {
+        form.setFieldsValue({
+          ...item,
+          type: lastDownloadTypes,
+        });
+      } else {
+        form.setFieldsValue({ type: lastDownloadTypes });
       }
-    }, [item, modalOpen]);
+    }, [modalOpen]);
 
     useImperativeHandle(ref, () => {
       return {
@@ -209,6 +285,47 @@ const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
       });
     };
 
+    const handleValuesChange = useMemoizedFn(
+      (values: Partial<DownloadItem>) => {
+        const { type } = values;
+        if (type) {
+          setLastDownloadTypes(type);
+        }
+      },
+    );
+
+    const handleAfterClose = useMemoizedFn((open: boolean) =>
+      onOpenChange?.(open),
+    );
+
+    const handleSubmit = useMemoizedFn(async () => {
+      try {
+        await form.validateFields();
+        const values = form.getFieldsValue();
+        const close = await onAddToList(values);
+        if (close) {
+          setModalOpen(false);
+        }
+      } catch (e: any) {
+        console.error(e);
+        messageApi.error(e?.message || t("pleaseEnterCorrectFomeInfo"));
+      }
+    });
+
+    const handleDownloadNow = useMemoizedFn(async () => {
+      try {
+        await form.validateFields();
+        const values = form.getFieldsValue();
+        const close = await onDownloadNow(values);
+        if (close) {
+          setModalOpen(false);
+        }
+      } catch (e: any) {
+        console.error(e);
+        messageApi.error(e?.message || t("pleaseEnterCorrectFomeInfo"));
+      }
+    });
+
     return (
       <>
         {contextHolder}
@@ -220,50 +337,13 @@ const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
           width={500}
           onClose={() => setModalOpen(false)}
           onCancel={() => setModalOpen(false)}
-          afterOpenChange={(open) => onOpenChange?.(open)}
+          afterOpenChange={handleAfterClose}
           destroyOnClose={destroyOnClose}
           footer={[
-            <Button
-              key="submit"
-              onClick={async () => {
-                try {
-                  await form.validateFields();
-                  const values = form.getFieldsValue();
-                  try {
-                    const close = await onAddToList(values);
-                    if (close) {
-                      setModalOpen(false);
-                    }
-                  } catch (error) {
-                    messageApi.error(t("pleaseEnterCorrectFomeInfo"));
-                  }
-                } catch (e: any) {
-                  messageApi.error(e?.message);
-                }
-              }}
-            >
+            <Button key="submit" onClick={handleSubmit}>
               {t("addToDownloadList")}
             </Button>,
-            <Button
-              key="link"
-              type="primary"
-              onClick={async () => {
-                try {
-                  await form.validateFields();
-                  const values = form.getFieldsValue();
-                  try {
-                    const close = await onDownloadNow(values);
-                    if (close) {
-                      setModalOpen(false);
-                    }
-                  } catch (e: any) {
-                    messageApi.error(e?.message);
-                  }
-                } catch (e: any) {
-                  messageApi.error(t("pleaseEnterCorrectFomeInfo"));
-                }
-              }}
-            >
+            <Button key="link" type="primary" onClick={handleDownloadNow}>
               {t("downloadNow")}
             </Button>,
           ]}
@@ -274,6 +354,7 @@ const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
             labelCol={{ span: 5 }}
             layout="horizontal"
             colon={false}
+            onValuesChange={handleValuesChange}
           >
             {!isEdit && (
               <Form.Item label={t("batchDownload")} name={"batch"}>
@@ -324,7 +405,11 @@ const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
                     ]}
                     tooltip={canChangeType && t("canUseMouseWheelToAdjust")}
                   >
-                    <EpisodeNumber canChangeType={canChangeType} />
+                    <EpisodeNumber
+                      canChangeType={canChangeType}
+                      isEdit={isEdit}
+                      usePrevData={usePrevData}
+                    />
                   </Form.Item>
                 );
               }}
