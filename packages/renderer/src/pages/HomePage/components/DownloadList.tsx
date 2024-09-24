@@ -9,6 +9,7 @@ import { ListPagination } from "./types";
 import useElectron from "@/hooks/electron";
 import { useTranslation } from "react-i18next";
 import Loading from "@/components/Loading";
+import { useMemoizedFn } from "ahooks";
 
 interface Props {
   data: DownloadItem[];
@@ -101,7 +102,7 @@ export function DownloadList({
     };
   }, []);
 
-  const handleItemSelectChange = (id: number) => {
+  const handleItemSelectChange = useMemoizedFn((id: number) => {
     setSelected(
       produce((draft) => {
         const index = draft.findIndex((i) => i === id);
@@ -112,7 +113,7 @@ export function DownloadList({
         }
       }),
     );
-  };
+  });
 
   const handleSelectAll = () => {
     setSelected(
@@ -136,18 +137,18 @@ export function DownloadList({
     return "indeterminate";
   }, [selected]);
 
-  const onStartDownload = async (id: number) => {
+  const onStartDownload = useMemoizedFn(async (id: number) => {
     await startDownload(id);
     messageApi.success(t("addTaskSuccess"));
     refresh();
-  };
+  });
 
-  const onStopDownload = async (id: number) => {
+  const onStopDownload = useMemoizedFn(async (id: number) => {
     await stopDownload(id);
     refresh();
-  };
+  });
 
-  const confirmAddItem = async (values: any, now?: boolean) => {
+  const confirmAddItem = useMemoizedFn(async (values: any, now?: boolean) => {
     const item = {
       id: values.id,
       name: values.name || moment(),
@@ -164,7 +165,11 @@ export function DownloadList({
 
     refresh();
     return true;
-  };
+  });
+
+  const handleContext = useMemoizedFn((item: number) => {
+    onDownloadListContextMenu(item);
+  });
 
   const onDeleteItems = async (ids: number[]) => {
     for (const id of ids) {
@@ -188,10 +193,6 @@ export function DownloadList({
     setSelected([]);
   };
 
-  if (loading) {
-    return <Loading />;
-  }
-
   if (data.length === 0) {
     return (
       <div className="flex h-full flex-1 flex-row items-center justify-center rounded-lg bg-white">
@@ -211,6 +212,7 @@ export function DownloadList({
         onDownloadItems={onDownloadItems}
         onCancelItems={onCancelItems}
       />
+      {loading && <Loading />}
       <div
         className={cn(
           "flex w-full flex-1 flex-shrink-0 flex-col gap-3 overflow-auto",
@@ -227,14 +229,14 @@ export function DownloadList({
           }
           return (
             <DownloadItem
-              key={item.name}
+              key={item.id}
               item={item}
               onSelectChange={handleItemSelectChange}
               selected={selected.includes(item.id)}
               onStartDownload={onStartDownload}
               onStopDownload={onStopDownload}
               onConfirmEdit={confirmAddItem}
-              onContextMenu={onDownloadListContextMenu}
+              onContextMenu={handleContext}
               progress={currProgress}
             />
           );
