@@ -67,9 +67,10 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       const items: Omit<DownloadItem, "id">[] = batchList
         .split("\n")
         .map((url: string, i: number) => {
+          const index = i + 1;
           return {
             url: url.trim(),
-            name: `${name}_${i}`,
+            name: `${name}_${index}`,
             headers,
             type,
           };

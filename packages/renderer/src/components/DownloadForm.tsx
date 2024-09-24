@@ -420,6 +420,7 @@ const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
                   return (
                     <Form.Item
                       label={t("videoLink")}
+                      name="batchList"
                       required
                       rules={[
                         {
@@ -429,7 +430,6 @@ const DownloadForm = forwardRef<DownloadFormRef, DownloadFormProps>(
                       ]}
                     >
                       <TextArea
-                        name="batchList"
                         rows={4}
                         placeholder={t("videoLikeDescription")}
                       />
