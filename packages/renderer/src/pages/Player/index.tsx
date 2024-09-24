@@ -1,39 +1,78 @@
 import { cn, http } from "@/utils";
-import { useAsyncEffect } from "ahooks";
-import React, { useRef, useState } from "react";
+import { UnorderedListOutlined } from "@ant-design/icons";
+import { useAsyncEffect, useMemoizedFn } from "ahooks";
+import { Drawer, message } from "antd";
+import React, { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Player from "xgplayer";
 import "xgplayer/dist/index.min.css";
 
 export default function PlayerPage() {
+  const [messageApi, contextHolder] = message.useMessage();
   const player = useRef<Player>();
   const [videoList, setVideoList] = useState([]);
   const [currentVideo, setCurrentVideo] = useState("");
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {}, []);
 
   useAsyncEffect(async () => {
-    const res = await http.get("http://localhost:3222/api");
-    setVideoList(res.data);
-    setCurrentVideo(res.data[0].url);
-
-    player.current = new Player({
-      id: "mse",
-      height: "100%",
-      width: "100%",
-      lang: "zh-cn",
-      url: res.data[0].url,
-    });
+    let url = "";
+    try {
+      const res = await http.get("http://localhost:3222/api");
+      setVideoList(res.data);
+      setCurrentVideo(res.data[0].url);
+      url = res.data[0].url;
+    } catch (e) {
+      messageApi.error(t("failToFetchVideoList"));
+    } finally {
+      player.current = new Player({
+        id: "mse",
+        height: "100%",
+        width: "100%",
+        lang: "zh-cn",
+        url,
+      });
+    }
   }, []);
 
   const handleVideoClick = (url: string) => {
     setCurrentVideo(url);
     player.current.src = url;
     player.current.play();
+
+    setOpen(false);
   };
 
+  const onClose = useMemoizedFn(() => {
+    setOpen(false);
+  });
+
+  const handleOpen = useMemoizedFn(() => {
+    setOpen(true);
+  });
+
   return (
-    <div className="flex h-full w-full dark:bg-[#141415]">
-      <div id="mse" className="h-full w-3/4"></div>
-      <div className="w-1/4 overflow-y-auto">
-        <ul>
+    <div className="group relative flex h-full w-full dark:bg-[#141415]">
+      {contextHolder}
+      <div
+        className="absolute right-5 top-5 z-50 hidden cursor-pointer items-center rounded-sm border border-white px-1.5 py-0.5 text-center group-hover:block"
+        onClick={handleOpen}
+      >
+        <UnorderedListOutlined className="text-white" />
+      </div>
+      <div id="mse" className="h-full w-full" />
+
+      <Drawer
+        title={t("playList")}
+        placement={"right"}
+        closable={false}
+        onClose={onClose}
+        open={open}
+        key={"right"}
+      >
+        <ul className="flex flex-col gap-1">
           {videoList.map((video, index) => (
             <li
               className={cn(
@@ -50,7 +89,7 @@ export default function PlayerPage() {
             </li>
           ))}
         </ul>
-      </div>
+      </Drawer>
     </div>
   );
 }
