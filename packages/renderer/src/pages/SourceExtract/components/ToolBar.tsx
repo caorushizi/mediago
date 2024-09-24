@@ -9,7 +9,7 @@ import {
 } from "@/store";
 import { cn, generateUrl, getFavIcon } from "@/utils";
 import { useRequest } from "ahooks";
-import { Input } from "antd";
+import { Input, Tooltip } from "antd";
 import React, { useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,6 +27,7 @@ import {
 } from "@/assets/svg";
 import { IconButton } from "@/components/IconButton";
 import { ThemeContext } from "@/context/ThemeContext";
+import { EyeInvisibleOutlined } from "@ant-design/icons";
 
 interface Props {
   page: boolean;
@@ -221,6 +222,13 @@ export function ToolBar({ page }: Props) {
         onKeyDown={onInputKeyDown}
         onContextMenu={onInputContextMenu}
         placeholder={t("pleaseEnterUrl")}
+        prefix={
+          appStore.privacy ? (
+            <Tooltip placement="top" title={t("privacy")}>
+              <EyeInvisibleOutlined />
+            </Tooltip>
+          ) : undefined
+        }
       />
       <IconButton
         title={t("visit")}
