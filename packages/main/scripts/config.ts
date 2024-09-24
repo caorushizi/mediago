@@ -97,7 +97,12 @@ export function getReleaseConfig(): Configuration {
           target: "nsis",
           arch: ["x64"],
         },
+        "portable",
       ],
+    },
+    portable: {
+      artifactName:
+        "${productName}-portable-${platform}-${arch}-${buildVersion}.${ext}",
     },
     dmg: {
       contents: [
