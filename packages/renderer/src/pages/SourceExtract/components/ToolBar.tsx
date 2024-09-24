@@ -7,7 +7,7 @@ import {
   setAppStore,
   setBrowserStore,
 } from "@/store";
-import { generateUrl, getFavIcon } from "@/utils";
+import { cn, generateUrl, getFavIcon } from "@/utils";
 import { useRequest } from "ahooks";
 import { Input } from "antd";
 import React, { useContext, useMemo } from "react";
@@ -150,7 +150,14 @@ export function ToolBar({ page }: Props) {
   const iconColor = theme === "dark" ? "white" : "black";
 
   return (
-    <div className="flex flex-row items-center gap-1 rounded-lg bg-white px-3 py-2 dark:bg-[#1F2024]">
+    <div
+      className={cn(
+        "flex flex-row items-center gap-1 bg-white px-3 py-2 dark:bg-[#1F2024]",
+        {
+          "rounded-lg": !page,
+        },
+      )}
+    >
       <IconButton
         title={t("switchToMobileMode")}
         onClick={onSetDefaultUA}

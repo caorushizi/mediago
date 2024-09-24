@@ -70,9 +70,9 @@ export function FavoriteList() {
   };
 
   return (
-    <>
+    <div className="h-full w-full py-4">
       {contextHolder}
-      <div className="grid h-full w-full grid-cols-2 place-items-center gap-4 overflow-auto md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="grid grid-cols-4 place-items-center gap-4 overflow-auto md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-9">
         {favoriteList.map((item) => {
           return (
             <FavItem
@@ -133,6 +133,6 @@ export function FavoriteList() {
           </Form.Item>
         </Form>
       </Modal>
-    </>
+    </div>
   );
 }
