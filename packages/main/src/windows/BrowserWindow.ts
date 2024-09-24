@@ -18,7 +18,7 @@ export default class BrowserWindow extends Window {
   ) {
     super({
       width: 1100,
-      minWidth: 414,
+      minWidth: 600,
       height: 680,
       minHeight: 680,
       show: false,

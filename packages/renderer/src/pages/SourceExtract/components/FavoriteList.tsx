@@ -4,7 +4,7 @@ import { getFavIcon } from "@/utils";
 import { PlusOutlined } from "@ant-design/icons";
 import { useRequest } from "ahooks";
 import { Form, Input, message, Modal } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { FavItem } from "./FavItem";
@@ -16,6 +16,8 @@ export function FavoriteList() {
     removeFavorite,
     webviewLoadURL,
     onFavoriteItemContextMenu,
+    addIpcListener,
+    removeIpcListener,
   } = useElectron();
   const { data: favoriteList = [], refresh } = useRequest(getFavorites);
   const { t } = useTranslation();
@@ -59,9 +61,10 @@ export function FavoriteList() {
       });
       favoriteAddForm.resetFields();
       refresh();
-      return true;
+
+      setIsModalOpen(false);
     } catch (err: any) {
-      messageApi.error(err.message);
+      messageApi.error(err.message || t("addFavoriteFailed"));
     }
   };
 
@@ -69,10 +72,50 @@ export function FavoriteList() {
     setIsModalOpen(false);
   };
 
+  useEffect(() => {
+    const onClickLoadItem = (item: Favorite) => {
+      dispatch(
+        setBrowserStore({
+          url: item.url,
+          mode: PageMode.Browser,
+          status: BrowserStatus.Loading,
+        }),
+      );
+      webviewLoadURL(item.url);
+    };
+
+    const onFavoriteEvent = async (
+      e: unknown,
+      {
+        action,
+        payload,
+      }: {
+        action: string;
+        payload: number;
+      },
+    ) => {
+      if (action === "open") {
+        const item = favoriteList.find((item) => item.id === payload);
+        if (item) {
+          onClickLoadItem(item);
+        }
+      } else if (action === "delete") {
+        await removeFavorite(payload);
+        refresh();
+      }
+    };
+
+    addIpcListener("favorite-item-event", onFavoriteEvent);
+
+    return () => {
+      removeIpcListener("favorite-item-event", onFavoriteEvent);
+    };
+  }, []);
+
   return (
-    <>
+    <div className="h-full w-full py-4">
       {contextHolder}
-      <div className="grid h-full w-full grid-cols-2 place-items-center gap-4 overflow-auto md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="grid grid-cols-4 place-items-center gap-4 overflow-auto md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-9">
         {favoriteList.map((item) => {
           return (
             <FavItem
@@ -87,9 +130,7 @@ export function FavoriteList() {
         })}
         <FavItem
           key={"add"}
-          onClick={() => {
-            showModal();
-          }}
+          onClick={showModal}
           icon={<PlusOutlined />}
           title={t("addFavorite")}
         />
@@ -133,6 +174,6 @@ export function FavoriteList() {
           </Form.Item>
         </Form>
       </Modal>
-    </>
+    </div>
   );
 }

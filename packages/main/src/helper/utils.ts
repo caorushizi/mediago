@@ -35,3 +35,14 @@ export function error(message = "fail"): IpcResponse {
     data: null,
   };
 }
+
+// 判断是否为 deeplink 的函数
+export function isDeeplink(url: string): boolean {
+  try {
+    const parsedUrl = new URL(url);
+    return parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:";
+  } catch (error) {
+    console.error(`无效的 URL: ${url}`);
+    return false;
+  }
+}

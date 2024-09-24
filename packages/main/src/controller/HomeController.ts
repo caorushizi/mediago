@@ -9,12 +9,17 @@ import {
   clipboard,
 } from "electron";
 import { Favorite } from "../entity/Favorite.ts";
-import { convertToAudio, db, workspace } from "../helper/index.ts";
+import {
+  convertToAudio,
+  db,
+  videoPattern,
+  workspace,
+} from "../helper/index.ts";
 import { inject, injectable } from "inversify";
 import { AppStore, EnvPath } from "../main.ts";
 import path from "path";
 import { handle, getLocalIP } from "../helper/index.ts";
-import { type Controller } from "../interfaces.ts";
+import { DownloadStatus, type Controller } from "../interfaces.ts";
 import { TYPES } from "../types.ts";
 import fs from "fs-extra";
 import MainWindow from "../windows/MainWindow.ts";
@@ -26,6 +31,7 @@ import VideoRepository from "../repository/VideoRepository.ts";
 import ConversionRepository from "../repository/ConversionRepository.ts";
 import { machineId } from "node-machine-id";
 import { nanoid } from "nanoid";
+import { glob } from "glob";
 
 @injectable()
 export default class HomeController implements Controller {
@@ -45,7 +51,7 @@ export default class HomeController implements Controller {
     @inject(TYPES.WebviewService)
     private readonly webviewService: WebviewService,
     @inject(TYPES.ConversionRepository)
-    private readonly conversionRepository: ConversionRepository
+    private readonly conversionRepository: ConversionRepository,
   ) {}
 
   @handle("get-env-path")
@@ -209,6 +215,31 @@ export default class HomeController implements Controller {
       },
     ];
 
+    if (item.status === DownloadStatus.Success) {
+      const local = this.store.get("local");
+      const pattern = path.join(local, `${item.name}.{${videoPattern}}`);
+      const files = await glob(pattern);
+      const exists = files.length > 0;
+      if (exists) {
+        const file = files[0];
+        template.unshift(
+          {
+            label: "打开文件夹",
+            click: () => {
+              shell.showItemInFolder(file);
+            },
+          },
+          {
+            label: "打开文件",
+            click: () => {
+              shell.openPath(file);
+            },
+          },
+          { type: "separator" },
+        );
+      }
+    }
+
     const menu = Menu.buildFromTemplate(template);
     menu.popup();
   }
@@ -292,6 +323,49 @@ export default class HomeController implements Controller {
       const newId = nanoid();
       this.store.set("machineId", newId);
       return newId;
+    }
+  }
+
+  @handle("export-favorites")
+  async exportFavorites() {
+    const favorites = await this.favoriteRepository.findFavorites();
+    const json = JSON.stringify(
+      favorites.map((i) => ({
+        title: i.title,
+        url: i.url,
+        icon: i.icon,
+      })),
+      null,
+      2,
+    );
+    const window = this.mainWindow.window;
+    if (!window) return Promise.reject("未找到主窗口");
+
+    const result = await dialog.showSaveDialog(window, {
+      title: "导出收藏夹",
+      defaultPath: "favorites.json",
+      filters: [{ name: "JSON", extensions: ["json"] }],
+    });
+
+    if (!result.canceled) {
+      await fs.writeFile(result.filePath, json);
+    }
+  }
+
+  @handle("import-favorites")
+  async importFavorites() {
+    const window = this.mainWindow.window;
+    if (!window) return Promise.reject("未找到主窗口");
+
+    const result = await dialog.showOpenDialog(window, {
+      properties: ["openFile"],
+      filters: [{ name: "JSON", extensions: ["json"] }],
+    });
+
+    if (!result.canceled) {
+      const filePath = result.filePaths[0];
+      const json = await fs.readJSON(filePath);
+      await this.favoriteRepository.importFavorites(json);
     }
   }
 }

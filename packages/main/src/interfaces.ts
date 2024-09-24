@@ -1,4 +1,5 @@
 import { Conversion } from "./entity/Conversion.ts";
+import { Video } from "./entity/Video.ts";
 
 export type Controller = Record<string | symbol, any>;
 
@@ -75,4 +76,14 @@ export interface DownloadParams {
   proxy?: string;
   deleteSegments?: boolean;
   callback: (progress: DownloadProgress) => void;
+}
+
+export interface VideoStat extends Video {
+  exists?: boolean;
+  file?: string;
+}
+
+export interface ListPagination {
+  total: number;
+  list: VideoStat[];
 }

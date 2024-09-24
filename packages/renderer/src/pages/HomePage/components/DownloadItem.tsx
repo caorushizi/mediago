@@ -2,7 +2,7 @@ import { cn } from "@/utils";
 import React, { ReactNode } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DownloadStatus } from "@/types";
-import { Progress, Space } from "antd";
+import { Progress } from "antd";
 import { PauseCircleOutlined, PlayCircleOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -30,15 +30,12 @@ import {
 import Terminal from "@/components/DownloadTerminal";
 
 interface Props {
-  item: DownloadItem;
+  item: VideoStat;
   onSelectChange: (id: number) => void;
   selected: boolean;
   onStartDownload: (id: number) => void;
   onStopDownload: (item: number) => void;
-  onConfirmEdit: (
-    values: DownloadItem,
-    downloadNow?: boolean,
-  ) => Promise<boolean>;
+  onConfirmEdit: (values: VideoStat, downloadNow?: boolean) => Promise<boolean>;
   onContextMenu: (item: number) => void;
   progress?: DownloadProgress;
 }
@@ -66,7 +63,7 @@ export function DownloadItem({
           <IconButton
             key="terminal"
             title={t("terminal")}
-            icon={<TerminalIcon fill="#707070" />}
+            icon={<TerminalIcon />}
           />
         </DrawerTrigger>
         <DrawerContent>
@@ -100,7 +97,7 @@ export function DownloadItem({
       />
     );
   };
-  const renderActionButtons = (item: DownloadItem): ReactNode => {
+  const renderActionButtons = (item: VideoStat): ReactNode => {
     if (item.status === DownloadStatus.Ready) {
       return [
         renderTerminalBtn(item),
@@ -158,23 +155,39 @@ export function DownloadItem({
         key={"play"}
         icon={<PlayCircleOutlined />}
         title={t("playVideo")}
+        disabled={!item.exists}
         onClick={() => openPlayerWindow()}
       />,
     ];
   };
 
-  const renderTitle = (item: DownloadItem): ReactNode => {
+  const renderTitle = (item: VideoStat): ReactNode => {
     let tag = null;
     if (item.status === DownloadStatus.Downloading) {
       tag = (
         <DownloadTag
-          icon={<DownloadIcon />}
+          icon={<DownloadIcon fill="#fff" width={14} height={14} />}
           text={t("downloading")}
           color="#127af3"
         />
       );
     } else if (item.status === DownloadStatus.Success) {
-      tag = <DownloadTag text={t("downloadSuccess")} color="#09ce87" />;
+      tag = [
+        <DownloadTag
+          key={"success"}
+          text={t("downloadSuccess")}
+          color="#09ce87"
+        />,
+      ];
+      if (!item.exists) {
+        tag.push(
+          <DownloadTag
+            key={"notExists"}
+            text={t("fileNotExist")}
+            color="#9abbe2"
+          />,
+        );
+      }
     } else if (item.status === DownloadStatus.Failed) {
       tag = (
         <DownloadTag
@@ -215,13 +228,13 @@ export function DownloadItem({
       const { percent, speed } = progress;
 
       return (
-        <Space.Compact className="download-progress description" block>
+        <div className="flex flex-row items-center gap-3 text-xs">
           <Progress
             percent={Math.round(Number(percent))}
             strokeLinecap="butt"
           />
-          <div className="progress-speed">{speed}</div>
-        </Space.Compact>
+          {speed}
+        </div>
       );
     }
     return (
@@ -241,6 +254,7 @@ export function DownloadItem({
         {
           "bg-gradient-to-r from-[#D0E8FF] to-[#F2F7FF] dark:from-[#27292F] dark:to-[#00244E]":
             selected,
+          "opacity-70": item.status === DownloadStatus.Success && !item.exists,
         },
       )}
       onContextMenu={() => onContextMenu(item.id)}
@@ -259,7 +273,7 @@ export function DownloadItem({
         )}
         <div className="relative flex flex-row items-center justify-between">
           {renderTitle(item)}
-          <div className="flex flex-row items-center gap-5 rounded-2xl rounded-r-lg bg-white px-4 py-1 dark:bg-[#3B3F48]">
+          <div className="flex flex-row items-center gap-3 rounded-md bg-white px-1.5 py-1.5 dark:bg-[#3B3F48]">
             {renderActionButtons(item)}
           </div>
         </div>
