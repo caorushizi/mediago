@@ -12,6 +12,7 @@ import {
   message,
   Modal,
   Progress,
+  Radio,
   Select,
   Space,
   Switch,
@@ -265,6 +266,12 @@ const SettingPage: React.FC = () => {
           >
             <Switch />
           </Form.Item>
+          <Form.Item label={t("closeMainWindow")} name="closeMainWindow">
+            <Radio.Group>
+              <Radio value={true}>{t("close")}</Radio>
+              <Radio value={false}>{t("minimizeToTray")}</Radio>
+            </Radio.Group>
+          </Form.Item>
         </GroupWrapper>
         <GroupWrapper title={t("browserSetting")}>
           <Form.Item name="proxy" label={t("proxySetting")}>
@@ -423,10 +430,10 @@ const SettingPage: React.FC = () => {
       >
         <div className="flex min-h-28 flex-col justify-center">
           {updateChecking
-            ? "正在检查更新"
+            ? t("checkingForUpdates")
             : updateAvailable
-              ? "有新版本"
-              : "当前已是最新版本"}
+              ? t("updateAvailable")
+              : t("updateNotAvailable")}
           {!updateChecking && updateAvailable && (
             <Progress percent={updateDownloaded ? 100 : downloadProgress} />
           )}
