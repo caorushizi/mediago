@@ -68,6 +68,7 @@
     "execa": "^9.1.0",
     "express": "^4.19.2",
     "fs-extra": "^11.2.0",
+    "i18next": "^23.11.5",
     "inversify": "^6.0.2",
     "lint-staged": "^15.2.5",
     "lodash": "^4.17.21",

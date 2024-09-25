@@ -116,8 +116,10 @@ i18n
           pleaseEnterCorrectVideoLink: "Please enter correct video link",
           pleaseEnterOnlineVideoUrlOrDragM3U8Here:
             "Please enter online network video URL, or drag M3U8 here",
-          videoLikeDescription: `Please enter the video link, make sure one line one, for example
-http://example.com/xxx.m3u8
+          videoLikeDescription: `Please enter video link, make sure one line one link
+Format: videoLink videoName(can be empty) for example:
+http://example.com/xxx.m3u8 movie1
+http://example.com/xxx.m3u8 movie2
 http://example.com/xxx.m3u8`,
           additionalHeadersDescription: `Please enter additional headers, make sure one line one header, for example:
 Origin: http://www.example.com
@@ -130,8 +132,8 @@ Referer: http://www.example.com`,
           autoUpgrade: "Auto Upgrade",
           autoUpgradeTooltip: "Take effect next time you start",
           consoleOutput: "Console",
-          downloadNow: "Download",
-          addToDownloadList: "Confirm",
+          downloadNow: "Download Now",
+          addToDownloadList: "Add to List",
           videoType: "Video Type",
           pleaseSelectVideoType: "Please select video type",
           numberOfEpisodes: "Number of episodes",
@@ -153,6 +155,14 @@ Referer: http://www.example.com`,
           addFavoriteFailed: "Add Favorite Failed",
           failToFetchVideoList: "Failed to fetch video list",
           playList: "Play List",
+          pleaseEnterCorrectBatchList: "Please enter correct batch list",
+          streamMedia: "Stream Media (m3u8)",
+          bilibiliMedia: "Bilibili Media",
+          checkUpdate: "Check Update",
+          allowBetaVersion: "Allow Beta Version",
+          updateModal: "Update",
+          update: "Update",
+          install: "Install",
         },
       },
       zh: {
@@ -251,8 +261,10 @@ Referer: http://www.example.com`,
           pleaseEnterCorrectVideoLink: "请输入正确的视频链接",
           pleaseEnterOnlineVideoUrlOrDragM3U8Here:
             "请输入在线网络视频URL，或者将M3U8拖拽至此",
-          videoLikeDescription: `请输入视频链接， 确保一行一个，例如：
-http://example.com/xxx.m3u8
+          videoLikeDescription: `请输入视频链接， 确保一行一个
+格式: 视频源 视频名称（可空） 例如：
+http://example.com/xxx.m3u8 电影1
+http://example.com/xxx.m3u8 电影2
 http://example.com/xxx.m3u8`,
           additionalHeadersDescription: `请输入附加标头，确保一行一个 Header， 例如：
 Origin: http://www.example.com
@@ -270,8 +282,8 @@ Referer: http://www.example.com`,
           autoUpgrade: "自动更新",
           autoUpgradeTooltip: "下次启动时生效",
           consoleOutput: "控制台",
-          downloadNow: "下载",
-          addToDownloadList: "确认",
+          downloadNow: "立即下载",
+          addToDownloadList: "添加到列表",
           videoType: "视频类型",
           pleaseSelectVideoType: "请选择视频类型",
           numberOfEpisodes: "集数",
@@ -292,6 +304,14 @@ Referer: http://www.example.com`,
           addFavoriteFailed: "添加收藏失败",
           failToFetchVideoList: "获取视频列表失败",
           playList: "播放列表",
+          pleaseEnterCorrectBatchList: "请输入正确的批量列表",
+          streamMedia: "流媒体(m3u8)",
+          bilibiliMedia: "哔哩哔哩",
+          checkUpdate: "检查更新",
+          allowBetaVersion: "允许升级测试版本",
+          updateModal: "更新",
+          update: "更新",
+          install: "安装",
         },
       },
     },

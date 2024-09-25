@@ -46,7 +46,14 @@ async function chmodBin() {
   }
 }
 
+async function copyUpdateConfig() {
+  const source = mainResolve("dev-app-update.yml");
+  const target = mainResolve("app/build/main/dev-app-update.yml");
+  fs.cpSync(source, target, { recursive: true });
+}
+
 const copy = gulp.parallel(copyBin, copySqlite);
+const devCopy = gulp.parallel(copyUpdateConfig);
 
 async function watchTask() {
   const app = new ElectronApp();
@@ -93,7 +100,7 @@ async function pack() {
 }
 
 // 开发环境
-export const dev = gulp.series(copy, chmodBin, watchTask);
+export const dev = gulp.series(copy, devCopy, chmodBin, watchTask);
 // 构建打包
 export const build = gulp.series(clean, copy, chmodBin, buildTask);
 // release

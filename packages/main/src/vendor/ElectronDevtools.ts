@@ -25,11 +25,11 @@ export default class DevToolsService implements Vendor {
     }
 
     try {
-      this.logger.debug("当前环境为开发环境，开始加载开发者工具");
+      this.logger.debug("Loading devtools");
       await install([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS]);
-      this.logger.debug("加载开发者工具成功");
+      this.logger.debug("Devtools loaded");
     } catch (err: unknown) {
-      this.logger.error("加载开发者工具失败", err);
+      this.logger.error("Failed to load devtools", err);
     }
   }
 }

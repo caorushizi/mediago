@@ -14,6 +14,7 @@ import TypeORM from "./vendor/TypeORM.ts";
 import ProtocolService from "./core/protocol.ts";
 import IpcHandlerService from "./core/ipc.ts";
 import { VideoService } from "./services/VideoService.ts";
+import i18n from "./i18n/index.ts";
 
 @injectable()
 export default class ElectronApp {
@@ -65,6 +66,7 @@ export default class ElectronApp {
     });
 
     this.initAppTheme();
+    this.initLanguage();
     this.resetDownloadStatus();
 
     this.initTray();
@@ -75,17 +77,28 @@ export default class ElectronApp {
     nativeTheme.themeSource = theme;
   }
 
+  initLanguage(): void {
+    const language = this.store.get("language");
+    i18n.changeLanguage(language);
+  }
+
   initTray() {
     const iconPath = path.resolve(__dirname, TrayIcon);
     const icon = nativeImage.createFromPath(iconPath);
     const tray = new Tray(icon);
-    tray.setToolTip("在线视频下载");
+    tray.setToolTip("Media Go");
     tray.addListener("click", () => {
       this.mainWindow.init();
     });
     const contextMenu = Menu.buildFromTemplate([
-      { label: "显示主窗口", click: () => this.mainWindow.init() },
-      { label: "退出 app", role: "quit" },
+      {
+        label: i18n.t("showMainWindow"),
+        click: () => this.mainWindow.init(),
+      },
+      {
+        label: i18n.t("exitApp"),
+        role: "quit",
+      },
     ]);
     tray.setContextMenu(contextMenu);
   }

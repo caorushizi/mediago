@@ -17,6 +17,7 @@ import {
 } from "../helper/index.ts";
 import * as pty from "node-pty";
 import stripAnsi from "strip-ansi";
+import i18n from "../i18n/index.ts";
 
 interface DownloadContext {
   // 是否为直播
@@ -50,6 +51,7 @@ interface Schema {
   type: string;
 }
 
+// FIXME: 多语言正则表达式
 const processList: Schema[] = [
   {
     type: "m3u8",
@@ -124,7 +126,7 @@ export default class DownloadService extends EventEmitter {
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
     @inject(TYPES.ElectronStore)
-    private readonly storeService: ElectronStore
+    private readonly storeService: ElectronStore,
   ) {
     super();
 
@@ -151,7 +153,7 @@ export default class DownloadService extends EventEmitter {
     try {
       await this.videoRepository.changeVideoStatus(
         task.id,
-        DownloadStatus.Downloading
+        DownloadStatus.Downloading,
       );
       this.emit("download-start", task.id);
 
@@ -188,7 +190,7 @@ export default class DownloadService extends EventEmitter {
 
       await this.videoRepository.changeVideoStatus(
         task.id,
-        DownloadStatus.Success
+        DownloadStatus.Success,
       );
       this.emit("download-success", task.id);
     } catch (err: any) {
@@ -197,7 +199,7 @@ export default class DownloadService extends EventEmitter {
         // 下载暂停
         await this.videoRepository.changeVideoStatus(
           task.id,
-          DownloadStatus.Stopped
+          DownloadStatus.Stopped,
         );
         this.emit("download-stop", task.id);
       } else {
@@ -205,7 +207,7 @@ export default class DownloadService extends EventEmitter {
         // 下载失败
         await this.videoRepository.changeVideoStatus(
           task.id,
-          DownloadStatus.Failed
+          DownloadStatus.Failed,
         );
         this.emit("download-failed", task.id, err);
       }
@@ -242,7 +244,7 @@ export default class DownloadService extends EventEmitter {
   private _execa(
     binPath: string,
     args: string[],
-    params: DownloadOptions
+    params: DownloadOptions,
   ): Promise<void> {
     const { abortSignal, onMessage, id } = params;
 
@@ -280,7 +282,7 @@ export default class DownloadService extends EventEmitter {
         if (exitCode === 0) {
           resolve();
         } else {
-          reject(new Error("未知错误"));
+          reject(new Error(i18n.t("unknownError")));
         }
       });
     });
@@ -399,7 +401,7 @@ export default class DownloadService extends EventEmitter {
       .filter((i) => i.type === params.type);
 
     if (program.length === 0) {
-      return Promise.reject(new Error("不支持的下载类型"));
+      return Promise.reject(new Error(i18n.t("unsupportedDownloadType")));
     }
 
     const schema = program[0];

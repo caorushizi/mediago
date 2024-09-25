@@ -32,6 +32,9 @@ import ConversionRepository from "../repository/ConversionRepository.ts";
 import { machineId } from "node-machine-id";
 import { nanoid } from "nanoid";
 import { glob } from "glob";
+import i18n from "../i18n/index.ts";
+import ElectronLogger from "../vendor/ElectronLogger.ts";
+import ElectronUpdater from "../vendor/ElectronUpdater.ts";
 
 @injectable()
 export default class HomeController implements Controller {
@@ -52,6 +55,10 @@ export default class HomeController implements Controller {
     private readonly webviewService: WebviewService,
     @inject(TYPES.ConversionRepository)
     private readonly conversionRepository: ConversionRepository,
+    @inject(TYPES.ElectronLogger)
+    private readonly logger: ElectronLogger,
+    @inject(TYPES.ElectronUpdater)
+    private readonly updater: ElectronUpdater,
   ) {}
 
   @handle("get-env-path")
@@ -95,14 +102,14 @@ export default class HomeController implements Controller {
     };
     const template: Array<MenuItemConstructorOptions | MenuItem> = [
       {
-        label: "打开",
+        label: i18n.t("open"),
         click: () => {
           send("open");
         },
       },
       { type: "separator" },
       {
-        label: "删除",
+        label: i18n.t("delete"),
         click: () => {
           send("delete");
         },
@@ -116,7 +123,7 @@ export default class HomeController implements Controller {
   @handle("select-download-dir")
   async selectDownloadDir(): Promise<string> {
     const window = this.mainWindow.window;
-    if (!window) return Promise.reject("未找到主窗口");
+    if (!window) return Promise.reject(i18n.t("noMainWindow"));
 
     const result = await dialog.showOpenDialog(window, {
       properties: ["openDirectory"],
@@ -158,6 +165,14 @@ export default class HomeController implements Controller {
     if (key === "privacy") {
       this.webviewService.setDefaultSession(val);
     }
+    // language
+    if (key === "language") {
+      i18n.changeLanguage(val);
+    }
+    // allowBeta
+    if (key === "allowBeta") {
+      this.updater.changeAllowBeta(val);
+    }
 
     this.store.set(key, val);
   }
@@ -183,32 +198,32 @@ export default class HomeController implements Controller {
     const item = await this.videoRepository.findVideo(id);
     const template: Array<MenuItemConstructorOptions | MenuItem> = [
       {
-        label: "拷贝链接地址",
+        label: i18n.t("copyLinkAddress"),
         click: () => {
           clipboard.writeText(item.url || "");
         },
       },
       {
-        label: "选择",
+        label: i18n.t("select"),
         click: () => {
           send("select");
         },
       },
       {
-        label: "下载",
+        label: i18n.t("download"),
         click: () => {
           send("download");
         },
       },
       {
-        label: "刷新",
+        label: i18n.t("refresh"),
         click: () => {
           send("refresh");
         },
       },
       { type: "separator" },
       {
-        label: "删除",
+        label: i18n.t("delete"),
         click: () => {
           send("delete");
         },
@@ -224,13 +239,13 @@ export default class HomeController implements Controller {
         const file = files[0];
         template.unshift(
           {
-            label: "打开文件夹",
+            label: i18n.t("openFolder"),
             click: () => {
               shell.showItemInFolder(file);
             },
           },
           {
-            label: "打开文件",
+            label: i18n.t("openFile"),
             click: () => {
               shell.openPath(file);
             },
@@ -256,7 +271,7 @@ export default class HomeController implements Controller {
     if (exist) {
       return await convertToAudio(input, output);
     } else {
-      return Promise.reject("未找到文件，可能是文件已经删除");
+      return Promise.reject(i18n.t("noFileFound"));
     }
   }
 
@@ -297,7 +312,7 @@ export default class HomeController implements Controller {
   @handle("select-file")
   async selectFile() {
     const window = this.mainWindow.window;
-    if (!window) return Promise.reject("未找到主窗口");
+    if (!window) return Promise.reject(i18n.t("noMainWindow"));
 
     const result = await dialog.showOpenDialog(window, {
       properties: ["openFile"],
@@ -339,10 +354,10 @@ export default class HomeController implements Controller {
       2,
     );
     const window = this.mainWindow.window;
-    if (!window) return Promise.reject("未找到主窗口");
+    if (!window) return Promise.reject(i18n.t("noMainWindow"));
 
     const result = await dialog.showSaveDialog(window, {
-      title: "导出收藏夹",
+      title: i18n.t("exportFavorites"),
       defaultPath: "favorites.json",
       filters: [{ name: "JSON", extensions: ["json"] }],
     });
@@ -355,7 +370,7 @@ export default class HomeController implements Controller {
   @handle("import-favorites")
   async importFavorites() {
     const window = this.mainWindow.window;
-    if (!window) return Promise.reject("未找到主窗口");
+    if (!window) return Promise.reject(i18n.t("noMainWindow"));
 
     const result = await dialog.showOpenDialog(window, {
       properties: ["openFile"],
@@ -367,5 +382,20 @@ export default class HomeController implements Controller {
       const json = await fs.readJSON(filePath);
       await this.favoriteRepository.importFavorites(json);
     }
+  }
+
+  @handle("check-update")
+  async checkUpdate() {
+    this.updater.manualUpdate();
+  }
+
+  @handle("start-update")
+  async startUpdate() {
+    this.updater.startDownload();
+  }
+
+  @handle("install-update")
+  async installUpdate() {
+    this.updater.install();
   }
 }

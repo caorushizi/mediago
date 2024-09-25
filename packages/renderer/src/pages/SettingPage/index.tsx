@@ -1,6 +1,7 @@
-import React, { PropsWithChildren, useEffect, useRef } from "react";
+import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
 import PageContainer from "../../components/PageContainer";
 import {
+  Badge,
   Button,
   Dropdown,
   Form,
@@ -9,6 +10,8 @@ import {
   InputNumber,
   MenuProps,
   message,
+  Modal,
+  Progress,
   Select,
   Space,
   Switch,
@@ -24,9 +27,11 @@ import {
 import { selectAppStore, setAppStore } from "../../store";
 import { useDispatch, useSelector } from "react-redux";
 import useElectron from "../../hooks/electron";
-import { useRequest } from "ahooks";
+import { useMemoizedFn, useRequest } from "ahooks";
 import { AppLanguage, AppTheme } from "../../types";
 import { useTranslation } from "react-i18next";
+import { SessionStore, useSessionStore } from "@/store/session";
+import { useShallow } from "zustand/react/shallow";
 
 const version = import.meta.env.APP_VERSION;
 
@@ -46,6 +51,11 @@ function GroupWrapper({ children, title }: GroupWrapperProps) {
   );
 }
 
+const sessionSelector = (s: SessionStore) => ({
+  updateAvailable: s.updateAvailable,
+  updateChecking: s.updateChecking,
+});
+
 const SettingPage: React.FC = () => {
   const {
     onSelectDownloadDir,
@@ -55,6 +65,11 @@ const SettingPage: React.FC = () => {
     clearWebviewCache,
     exportFavorites,
     importFavorites,
+    checkUpdate,
+    startUpdate,
+    addIpcListener,
+    removeIpcListener,
+    installUpdate,
   } = useElectron();
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -62,6 +77,12 @@ const SettingPage: React.FC = () => {
   const settings = useSelector(selectAppStore);
   const { data: envPath } = useRequest(getEnvPath);
   const [messageApi, contextHolder] = message.useMessage();
+  const { updateAvailable, updateChecking } = useSessionStore(
+    useShallow(sessionSelector),
+  );
+  const [openUpdateModal, setOpenUpdateModal] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState(0);
+  const [updateDownloaded, setUpdateDownloaded] = useState(false);
 
   useEffect(() => {
     formRef.current?.setFieldsValue(settings);
@@ -140,6 +161,39 @@ const SettingPage: React.FC = () => {
     }
   };
 
+  const handleCheckUpdate = useMemoizedFn(async () => {
+    setOpenUpdateModal(true);
+    await checkUpdate();
+  });
+
+  const handleHiddenUpdateModal = useMemoizedFn(() => {
+    setOpenUpdateModal(false);
+  });
+
+  const handleUpdate = useMemoizedFn(() => {
+    startUpdate();
+  });
+
+  const handleInstallUpdate = useMemoizedFn(() => {
+    installUpdate();
+  });
+
+  useEffect(() => {
+    const onDownloadProgress = (event: any, progress: any) => {
+      setDownloadProgress(progress.percent);
+    };
+    const onDownloaded = () => {
+      setUpdateDownloaded(true);
+    };
+    addIpcListener("updateDownloadProgress", onDownloadProgress);
+    addIpcListener("updateDownloaded", onDownloaded);
+
+    return () => {
+      removeIpcListener("updateDownloadProgress", onDownloadProgress);
+      removeIpcListener("updateDownloaded", onDownloaded);
+    };
+  }, []);
+
   return (
     <PageContainer title={t("setting")}>
       {contextHolder}
@@ -200,6 +254,9 @@ const SettingPage: React.FC = () => {
             )}
             name="autoUpgrade"
           >
+            <Switch />
+          </Form.Item>
+          <Form.Item label={t("allowBetaVersion")} name="allowBeta">
             <Switch />
           </Form.Item>
           <Form.Item
@@ -321,10 +378,60 @@ const SettingPage: React.FC = () => {
             </Space>
           </Form.Item>
           <Form.Item label={t("currentVersion")}>
-            <div>{version}</div>
+            <Space>
+              <div>{version}</div>
+              <Badge dot={updateAvailable}>
+                <Button type="text" onClick={handleCheckUpdate}>
+                  {t("checkUpdate")}
+                </Button>
+              </Badge>
+            </Space>
           </Form.Item>
         </GroupWrapper>
       </Form>
+
+      <Modal
+        title={t("updateModal")}
+        open={openUpdateModal}
+        onCancel={handleHiddenUpdateModal}
+        footer={
+          updateAvailable
+            ? [
+                <Button key="hidden" onClick={handleHiddenUpdateModal}>
+                  {t("close")}
+                </Button>,
+                updateDownloaded ? (
+                  <Button
+                    key="install"
+                    type="primary"
+                    onClick={handleInstallUpdate}
+                  >
+                    {t("install")}
+                  </Button>
+                ) : (
+                  <Button key="update" type="primary" onClick={handleUpdate}>
+                    {t("update")}
+                  </Button>
+                ),
+              ]
+            : [
+                <Button key="hidden" onClick={handleHiddenUpdateModal}>
+                  {t("close")}
+                </Button>,
+              ]
+        }
+      >
+        <div className="flex min-h-28 flex-col justify-center">
+          {updateChecking
+            ? "正在检查更新"
+            : updateAvailable
+              ? "有新版本"
+              : "当前已是最新版本"}
+          {!updateChecking && updateAvailable && (
+            <Progress percent={updateDownloaded ? 100 : downloadProgress} />
+          )}
+        </div>
+      </Modal>
     </PageContainer>
   );
 };

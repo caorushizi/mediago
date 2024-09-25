@@ -42,7 +42,6 @@ export function isDeeplink(url: string): boolean {
     const parsedUrl = new URL(url);
     return parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:";
   } catch (error) {
-    console.error(`无效的 URL: ${url}`);
     return false;
   }
 }
