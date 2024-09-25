@@ -49,6 +49,13 @@ export default class MainWindow extends Window {
     app.on("second-instance", this.secondInstance);
   }
 
+  closeMainWindow = () => {
+    const { closeMainWindow } = this.store.store;
+    if (closeMainWindow) {
+      app.quit();
+    }
+  };
+
   onDownloadReadyStart = async ({ id, isLive }: DownloadProgress) => {
     if (isLive) {
       await this.videoRepository.changeVideoIsLive(id);
@@ -74,6 +81,7 @@ export default class MainWindow extends Window {
 
     // 处理当前窗口改变大小
     this.window.on("resized", this.handleResize);
+    this.window.on("close", this.closeMainWindow);
   }
 
   handleResize = () => {
