@@ -185,6 +185,15 @@ const electronApi = {
   importFavorites(): Promise<void> {
     return ipcRenderer.invoke("import-favorites");
   },
+  checkUpdate(): Promise<void> {
+    return ipcRenderer.invoke("check-update");
+  },
+  startUpdate(): Promise<void> {
+    return ipcRenderer.invoke("start-update");
+  },
+  installUpdate(): Promise<void> {
+    return ipcRenderer.invoke("install-update");
+  },
 };
 
 contextBridge.exposeInMainWorld(apiKey, electronApi);

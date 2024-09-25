@@ -20,6 +20,7 @@ import { SniffingHelper, SourceParams } from "./SniffingHelperService.ts";
 import { resolve } from "path";
 import { readFileSync } from "fs-extra";
 import { isDeeplink } from "../helper/utils.ts";
+import i18n from "../i18n/index.ts";
 
 @injectable()
 export default class WebviewService {
@@ -147,7 +148,7 @@ export default class WebviewService {
 
   getPageInfo() {
     if (!this.view) {
-      throw new Error("未找到 view");
+      throw new Error(i18n.t("browserViewNotFound"));
     }
     return {
       title: this.view.webContents.getTitle(),
@@ -157,7 +158,7 @@ export default class WebviewService {
 
   getBounds(): Electron.Rectangle {
     if (!this.view) {
-      throw new Error("未找到 view");
+      throw new Error(i18n.t("browserViewNotFound"));
     }
     return this.view.getBounds();
   }
@@ -200,7 +201,7 @@ export default class WebviewService {
 
   async goBack() {
     if (!this.view) {
-      throw new Error("未找到 view");
+      throw new Error(i18n.t("browserViewNotFound"));
     }
     const { webContents } = this.view;
     if (webContents.canGoBack()) {
@@ -214,14 +215,14 @@ export default class WebviewService {
 
   async reload() {
     if (!this.view) {
-      throw new Error("未找到 view");
+      throw new Error(i18n.t("browserViewNotFound"));
     }
     this.view.webContents.reload();
   }
 
   async goHome() {
     if (!this.view) {
-      throw new Error("未找到 view");
+      throw new Error(i18n.t("browserViewNotFound"));
     }
     this.view.webContents.stop();
     this.view.webContents.clearHistory();
@@ -231,7 +232,7 @@ export default class WebviewService {
   get window() {
     if (this.browserWindow.window) return this.browserWindow.window;
     if (this.mainWindow.window) return this.mainWindow.window;
-    throw new Error("未找到当前窗口");
+    throw new Error(i18n.t("currentWindowNotFound"));
   }
 
   private get session() {
@@ -240,7 +241,7 @@ export default class WebviewService {
 
   private enableProxy(proxy: string) {
     if (!proxy) {
-      this.logger.error("[Proxy] 代理地址不能为空");
+      this.logger.error(`[Proxy] proxy address is empty`);
       return;
     }
 
@@ -250,12 +251,12 @@ export default class WebviewService {
     }
 
     this.session.setProxy({ proxyRules: proxy });
-    this.logger.info(`[Proxy] 代理开启（${proxy}）`);
+    this.logger.info(`[Proxy] enable proxy: ${proxy}`);
   }
 
   private disableProxy() {
     this.session.setProxy({ proxyRules: "" });
-    this.logger.info("[Proxy] 代理关闭");
+    this.logger.info(`[Proxy] disable proxy`);
   }
 
   setProxy(useProxy: boolean, proxy: string): void {
@@ -283,23 +284,23 @@ export default class WebviewService {
 
   private enableBlocking() {
     if (!this.blocker) {
-      this.logger.error("[AdBlocker] 开启失败（未初始化）");
+      this.logger.error(`[AdBlocker] enable failed(not initialized)`);
       return;
     }
     this.blocker.enableBlockingInSession(this.session);
-    this.logger.info("[AdBlocker] 开启");
+    this.logger.info(`[AdBlocker] enable`);
   }
 
   private disableBlocking() {
     if (!this.blocker) {
-      this.logger.error("[AdBlocker] 关闭失败（未初始化）");
+      this.logger.error(`[AdBlocker] disable failed(not initialized)`);
       return;
     }
     if (!this.blocker.isBlockingEnabled(this.session)) {
       return;
     }
     this.blocker.disableBlockingInSession(this.session);
-    this.logger.info("[AdBlocker] 关闭");
+    this.logger.info(`[AdBlocker] disable`);
   }
 
   setUserAgent(isMobile?: boolean) {
@@ -309,12 +310,12 @@ export default class WebviewService {
     } else {
       this.view.webContents.setUserAgent(pcUA);
     }
-    this.logger.info(`[UA] 设置为${isMobile ? "移动端" : " pc 端"}`);
+    this.logger.info(`[UA] User-Agent: ${isMobile ? "mobile" : "PC"}`);
   }
 
   async captureView(): Promise<Electron.NativeImage | null> {
     if (!this.view) {
-      throw new Error("未找到 view");
+      throw new Error(i18n.t("browserViewNotFound"));
     }
     if (!this.viewShow) {
       return null;
@@ -341,7 +342,7 @@ export default class WebviewService {
   }
 
   setDefaultSession(isPrivacy = false, init = false) {
-    this.logger.info(`[Session] ${isPrivacy ? "隐私" : "正常"}模式`);
+    this.logger.info(`[Session] ${isPrivacy ? "Privacy" : "Persist"} Mode`);
     if (isPrivacy) {
       this.defaultSession = PRIVACY_WEBVIEW;
     } else {

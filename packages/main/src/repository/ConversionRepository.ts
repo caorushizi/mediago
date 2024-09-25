@@ -3,12 +3,13 @@ import { ConversionPagination } from "../interfaces.ts";
 import { TYPES } from "../types.ts";
 import TypeORM from "../vendor/TypeORM.ts";
 import { Conversion } from "../entity/Conversion.ts";
+import i18n from "../i18n/index.ts";
 
 @injectable()
 export default class ConversionRepository {
   constructor(
     @inject(TYPES.TypeORM)
-    private readonly db: TypeORM
+    private readonly db: TypeORM,
   ) {}
 
   async findConversion(id: number) {
@@ -16,7 +17,7 @@ export default class ConversionRepository {
     const conversion = await repository.findOneBy({ id });
 
     if (!conversion) {
-      throw new Error("没有找到该转换任务");
+      throw new Error(i18n.t("noTaskFound"));
     }
 
     return conversion;

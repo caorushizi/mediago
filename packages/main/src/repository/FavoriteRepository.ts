@@ -2,6 +2,7 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../types.ts";
 import { Favorite } from "../entity/Favorite.ts";
 import TypeORM from "../vendor/TypeORM.ts";
+import i18n from "../i18n/index.ts";
 
 @injectable()
 export default class FavoriteRepository {
@@ -26,7 +27,7 @@ export default class FavoriteRepository {
     });
 
     if (exist) {
-      throw new Error("网址已经存在");
+      throw new Error(i18n.t("urlExist"));
     }
 
     const item = new Favorite();

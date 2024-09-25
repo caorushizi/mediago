@@ -4,7 +4,9 @@ import { TYPES } from "../types.ts";
 import isDev from "electron-is-dev";
 import ElectronLogger from "./ElectronLogger.ts";
 import { Vendor } from "../core/vendor.ts";
-import ElectronStore from "electron-store";
+import ElectronStore from "./ElectronStore.ts";
+import i18n from "../i18n/index.ts";
+import MainWindow from "../windows/MainWindow.ts";
 
 @injectable()
 export default class UpdateService implements Vendor {
@@ -12,25 +14,79 @@ export default class UpdateService implements Vendor {
     @inject(TYPES.ElectronLogger)
     private readonly logger: ElectronLogger,
     @inject(TYPES.ElectronStore)
-    private readonly store: ElectronStore
+    private readonly store: ElectronStore,
+    @inject(TYPES.MainWindow)
+    private readonly mainWindow: MainWindow,
   ) {}
 
   async init() {
-    if (isDev) return;
+    const { autoUpgrade, allowBeta } = this.store.store;
+    autoUpdater.disableWebInstaller = true;
+    autoUpdater.logger = this.logger.logger;
+    autoUpdater.allowPrerelease = allowBeta;
+    if (isDev) {
+      autoUpdater.forceDevUpdateConfig = true;
+    }
 
-    const { autoUpgrade } = this.store.store;
-    if (!autoUpgrade) return;
+    if (autoUpgrade) {
+      autoUpdater.autoDownload = true;
+      this.autoUpdate();
+    } else {
+      autoUpdater.autoDownload = false;
+      this.checkForUpdates();
+    }
 
+    autoUpdater.on("checking-for-update", () => {
+      this.mainWindow.send("checkingForUpdate");
+    });
+    autoUpdater.on("update-available", () => {
+      this.mainWindow.send("updateAvailable");
+    });
+    autoUpdater.on("update-not-available", () => {
+      this.mainWindow.send("updateNotAvailable");
+    });
+    autoUpdater.on("download-progress", (progress) => {
+      this.logger.info(`progress: ${progress.percent}`);
+      this.mainWindow.send("updateDownloadProgress", progress);
+    });
+    autoUpdater.on("update-downloaded", () => {
+      this.mainWindow.send("updateDownloaded");
+    });
+  }
+
+  async checkForUpdates() {
+    setTimeout(
+      () => {
+        autoUpdater.checkForUpdates();
+      },
+      1 * 1000 * 60,
+    );
+  }
+
+  async autoUpdate() {
     try {
-      autoUpdater.disableWebInstaller = true;
-      autoUpdater.logger = this.logger.logger;
-      autoUpdater.allowPrerelease = false;
       await autoUpdater.checkForUpdatesAndNotify({
-        title: "自动更新完成",
-        body: "下次重启时将会自动安装",
+        title: i18n.t("autoUpdateSuccess"),
+        body: i18n.t("nextTimeWillAutoInstall"),
       });
     } catch (e) {
-      this.logger.info("update error", e);
+      this.logger.error("update error", e);
     }
+  }
+
+  async changeAllowBeta(allowBeta: boolean) {
+    autoUpdater.allowPrerelease = allowBeta;
+  }
+
+  async manualUpdate() {
+    autoUpdater.checkForUpdates();
+  }
+
+  async startDownload() {
+    autoUpdater.downloadUpdate();
+  }
+
+  async install() {
+    autoUpdater.quitAndInstall();
   }
 }

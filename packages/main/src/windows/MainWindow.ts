@@ -11,6 +11,7 @@ import DownloadService from "../services/DownloadService.ts";
 import ElectronStore from "../vendor/ElectronStore.ts";
 import VideoRepository from "../repository/VideoRepository.ts";
 import { isWin } from "../helper/index.ts";
+import i18n from "../i18n/index.ts";
 
 @injectable()
 export default class MainWindow extends Window {
@@ -113,8 +114,10 @@ export default class MainWindow extends Window {
       const video = await this.videoRepository.findVideo(id);
 
       new Notification({
-        title: "下载成功",
-        body: `${video.name} 下载成功`,
+        title: i18n.t("downloadSuccess"),
+        body: i18n.t("videoDownloadSuccess", {
+          name: video.name,
+        }),
       }).show();
     }
 
@@ -127,11 +130,11 @@ export default class MainWindow extends Window {
       const video = await this.videoRepository.findVideo(id);
 
       new Notification({
-        title: "下载失败",
-        body: `${video.name} 下载失败`,
+        title: i18n.t("downloadFailed"),
+        body: i18n.t("videoDownloadFailed", { name: video.name }),
       }).show();
     }
-    this.logger.error("下载失败：", err);
+    this.logger.error("download failed: ", err);
     this.send("download-failed", id);
   };
 

@@ -43,7 +43,7 @@ export default class IpcHandlerService {
         }
         return success(res);
       } catch (e: unknown) {
-        this.logger.error(`处理 ipc [${channel}] 事件时异常： `, e);
+        this.logger.error(`process ipc [${channel}] failed: `, e);
         if (e instanceof Error) {
           return error(e.message);
         } else {
