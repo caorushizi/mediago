@@ -34,6 +34,7 @@ import { nanoid } from "nanoid";
 import { glob } from "glob";
 import i18n from "../i18n/index.ts";
 import ElectronLogger from "../vendor/ElectronLogger.ts";
+import ElectronUpdater from "../vendor/ElectronUpdater.ts";
 
 @injectable()
 export default class HomeController implements Controller {
@@ -56,6 +57,8 @@ export default class HomeController implements Controller {
     private readonly conversionRepository: ConversionRepository,
     @inject(TYPES.ElectronLogger)
     private readonly logger: ElectronLogger,
+    @inject(TYPES.ElectronUpdater)
+    private readonly updater: ElectronUpdater,
   ) {}
 
   @handle("get-env-path")
@@ -165,6 +168,10 @@ export default class HomeController implements Controller {
     // language
     if (key === "language") {
       i18n.changeLanguage(val);
+    }
+    // allowBeta
+    if (key === "allowBeta") {
+      this.updater.changeAllowBeta(val);
     }
 
     this.store.set(key, val);
@@ -375,5 +382,20 @@ export default class HomeController implements Controller {
       const json = await fs.readJSON(filePath);
       await this.favoriteRepository.importFavorites(json);
     }
+  }
+
+  @handle("check-update")
+  async checkUpdate() {
+    this.updater.manualUpdate();
+  }
+
+  @handle("start-update")
+  async startUpdate() {
+    this.updater.startDownload();
+  }
+
+  @handle("install-update")
+  async installUpdate() {
+    this.updater.install();
   }
 }
