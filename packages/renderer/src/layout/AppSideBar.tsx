@@ -1,9 +1,4 @@
-import React, {
-  cloneElement,
-  PropsWithChildren,
-  ReactElement,
-  useContext,
-} from "react";
+import React, { cloneElement, PropsWithChildren, ReactElement } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Badge } from "antd";
 import useElectron from "../hooks/electron";
@@ -20,7 +15,6 @@ import {
   ShareIcon,
 } from "@/assets/svg";
 import siderBg from "@/assets/images/sider-bg.png";
-import { ThemeContext } from "@/context/ThemeContext";
 
 function processLocation(pathname: string) {
   let name = pathname;
@@ -85,7 +79,6 @@ export function AppSideBar({ className }: Props) {
   const dispatch = useDispatch();
   const count = useSelector(selectCount);
   const appStore = useSelector(selectAppStore);
-  const theme = useContext(ThemeContext);
 
   const activeKey = processLocation(location.pathname);
 
@@ -152,10 +145,12 @@ export function AppSideBar({ className }: Props) {
           <span className="flex flex-1">{t("materialExtraction")}</span>
           <div
             title={t("openInNewWindow")}
-            className="hidden group-hover:block"
+            className="hidden hover:opacity-70 group-hover:block"
             onClick={(e) => handleExternalLink(e)}
           >
-            <ShareIcon fill={theme === "light" ? "#2c2f35" : "white"} />
+            <ShareIcon
+              fill={"/source" === location.pathname ? "#fff" : "#AAB5CB"}
+            />
           </div>
         </AppMenuItem>
       ),

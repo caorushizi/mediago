@@ -14,7 +14,7 @@ export default class DatabaseService implements Vendor {
 
   constructor(
     @inject(TYPES.ElectronLogger)
-    private readonly logger: ElectronLogger
+    private readonly logger: ElectronLogger,
   ) {
     this.appDataSource = new DataSource({
       type: "better-sqlite3",
@@ -28,7 +28,7 @@ export default class DatabaseService implements Vendor {
   }
 
   async init() {
-    this.logger.info("数据库地址是： ", db);
+    this.logger.info("db path: ", db);
     await this.appDataSource.initialize();
   }
 

@@ -100,7 +100,7 @@ export class SniffingHelper extends EventEmitter {
   }
 
   send = (item: SourceParams) => {
-    this.logger.info(`在窗口中捕获视频链接: ${item.url}`);
+    this.logger.info(`[SniffingHelper] send: ${item.url}`);
     // 等待 DOM 中浮窗加载完成
     // if (this.ready) {
     // } else {

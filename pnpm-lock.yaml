@@ -254,6 +254,9 @@ importers:
       fs-extra:
         specifier: ^11.2.0
         version: 11.2.0
+      i18next:
+        specifier: ^23.11.5
+        version: 23.11.5
       inversify:
         specifier: ^6.0.2
         version: 6.0.2

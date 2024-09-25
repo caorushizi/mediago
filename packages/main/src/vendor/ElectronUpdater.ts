@@ -5,6 +5,7 @@ import isDev from "electron-is-dev";
 import ElectronLogger from "./ElectronLogger.ts";
 import { Vendor } from "../core/vendor.ts";
 import ElectronStore from "electron-store";
+import i18n from "../i18n/index.ts";
 
 @injectable()
 export default class UpdateService implements Vendor {
@@ -12,7 +13,7 @@ export default class UpdateService implements Vendor {
     @inject(TYPES.ElectronLogger)
     private readonly logger: ElectronLogger,
     @inject(TYPES.ElectronStore)
-    private readonly store: ElectronStore
+    private readonly store: ElectronStore,
   ) {}
 
   async init() {
@@ -26,8 +27,8 @@ export default class UpdateService implements Vendor {
       autoUpdater.logger = this.logger.logger;
       autoUpdater.allowPrerelease = false;
       await autoUpdater.checkForUpdatesAndNotify({
-        title: "自动更新完成",
-        body: "下次重启时将会自动安装",
+        title: i18n.t("autoUpdateSuccess"),
+        body: i18n.t("nextTimeWillAutoInstall"),
       });
     } catch (e) {
       this.logger.info("update error", e);

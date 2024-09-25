@@ -172,11 +172,11 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
                 disabled={isEdit}
                 options={[
                   {
-                    label: "流媒体视频（m3u8）",
+                    label: t("streamMedia"),
                     value: "m3u8",
                   },
                   {
-                    label: "哔哩哔哩视频",
+                    label: t("bilibiliMedia"),
                     value: "bilibili",
                   },
                 ]}

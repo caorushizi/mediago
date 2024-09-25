@@ -11,6 +11,7 @@ import { TYPES } from "../types.ts";
 import WebviewService from "../services/WebviewService.ts";
 import ElectronStore from "../vendor/ElectronStore.ts";
 import { SniffingHelper } from "../services/SniffingHelperService.ts";
+import i18n from "../i18n/index.ts";
 
 @injectable()
 export default class WebviewController implements Controller {
@@ -20,7 +21,7 @@ export default class WebviewController implements Controller {
     @inject(TYPES.ElectronStore)
     private readonly store: ElectronStore,
     @inject(TYPES.SniffingHelper)
-    private readonly sniffingHelper: SniffingHelper
+    private readonly sniffingHelper: SniffingHelper,
   ) {}
 
   @handle("set-webview-bounds")
@@ -37,11 +38,11 @@ export default class WebviewController implements Controller {
   async webviewUrlContextMenu() {
     const template: Array<MenuItemConstructorOptions | MenuItem> = [
       {
-        label: "复制",
+        label: i18n.t("copy"),
         role: "copy",
       },
       {
-        label: "粘贴",
+        label: i18n.t("paste"),
         role: "paste",
       },
     ];

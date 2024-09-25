@@ -9,19 +9,20 @@ import {
 import { TYPES } from "../types.ts";
 import { In, Not } from "typeorm";
 import TypeORM from "../vendor/TypeORM.ts";
+import i18n from "../i18n/index.ts";
 
 @injectable()
 export default class VideoRepository {
   constructor(
     @inject(TYPES.TypeORM)
-    private readonly db: TypeORM
+    private readonly db: TypeORM,
   ) {}
 
   async addVideo(video: Omit<DownloadItem, "id">) {
     // 先判断有没有同名的视频
     const exist = await this.findVideoByName(video.name);
     if (exist) {
-      throw new Error("视频名称已存在，请更换视频名称");
+      throw new Error(i18n.t("videoExistsPleaseChangeName"));
     }
     const item = new Video();
     item.name = video.name;
@@ -49,7 +50,7 @@ export default class VideoRepository {
       .getRepository(Video)
       .findOneBy({ id: video.id });
     if (!item) {
-      throw new Error("视频不存在");
+      throw new Error(i18n.t("videoNotExists"));
     }
     item.name = video.name;
     item.url = video.url;
@@ -100,7 +101,7 @@ export default class VideoRepository {
     const video = await repository.findOneBy({ id });
 
     if (!video) {
-      throw new Error("没有找到该视频");
+      throw new Error(i18n.t("videoNotExists"));
     }
 
     return video;
