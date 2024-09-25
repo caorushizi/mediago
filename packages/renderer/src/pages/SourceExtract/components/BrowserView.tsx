@@ -12,7 +12,8 @@ import {
   selectBrowserStore,
   setBrowserStore,
 } from "@/store";
-import { generateUrl } from "@/utils";
+import { generateUrl, randomName } from "@/utils";
+import { useMemoizedFn } from "ahooks";
 import { Empty, Space, Spin, message } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -31,7 +32,6 @@ export function BrowserView() {
   const downloadForm = useRef<DownloadFormRef>(null);
   const store = useSelector(selectBrowserStore);
   const { t } = useTranslation();
-  const [modalShow, setModalShow] = useState(false);
   const [placeHolder, setPlaceHolder] = useState<string>("");
   const dispatch = useDispatch();
   const [messageApi, contextHolder] = message.useMessage();
@@ -42,12 +42,18 @@ export function BrowserView() {
       data: DownloadItem[],
       image: string,
     ) => {
-      // FIXME: 选择
-      setCurrentDownloadForm(data[0]);
       if (image) {
         setPlaceHolder(image);
       }
-      setModalShow(true);
+
+      const item = data[0];
+      downloadForm.current.openModal({
+        batch: false,
+        type: item.type,
+        url: item.url,
+        name: item.name,
+        headers: item.headers,
+      });
     };
 
     const onWebviewLinkMessage = async (e: unknown, data: any) => {
@@ -77,33 +83,24 @@ export function BrowserView() {
   const confirmDownload = async (now?: boolean) => {
     try {
       const data = downloadForm.current.getFieldsValue();
+      const item = {
+        name: data.name || randomName(),
+        url: data.url,
+        headers: data.headers,
+        type: data.type,
+      };
 
       if (now) {
-        await downloadNow(data);
+        await downloadNow(item);
       } else {
-        await addDownloadItem(data);
+        await addDownloadItem(item);
       }
-
-      // 提交成功后关闭弹窗
-      setModalShow(false);
 
       return true;
     } catch (e) {
       messageApi.error((e as any).message);
       return false;
     }
-  };
-
-  // 设置当前的下载表单
-  const setCurrentDownloadForm = async (data: DownloadItem) => {
-    const { type, url, name, headers } = data;
-
-    downloadForm.current.setFieldsValue({
-      type,
-      url,
-      name,
-      headers,
-    });
   };
 
   const loadUrl = (url: string) => {
@@ -122,21 +119,11 @@ export function BrowserView() {
     loadUrl(link);
   };
 
-  // 渲染表单
-  const renderModalForm = () => {
-    return (
-      <DownloadForm
-        isEdit
-        usePrevData
-        ref={downloadForm}
-        open={modalShow}
-        onOpenChange={setModalShow}
-        onDownloadNow={() => confirmDownload(true)}
-        onAddToList={() => confirmDownload()}
-        destroyOnClose
-      />
-    );
-  };
+  const handleFormVisibleChange = useMemoizedFn((visible: boolean) => {
+    if (!visible) {
+      setPlaceHolder("");
+    }
+  });
 
   const renderContent = () => {
     // 加载状态
@@ -149,7 +136,7 @@ export function BrowserView() {
     }
 
     // 模态框
-    if (modalShow && placeHolder) {
+    if (placeHolder) {
       return <img src={placeHolder} className="h-full w-full" />;
     }
 
@@ -233,7 +220,15 @@ export function BrowserView() {
         {renderContent()}
         {renderSidePanel()}
       </div>
-      {renderModalForm()}
+      <DownloadForm
+        isEdit
+        usePrevData
+        ref={downloadForm}
+        onDownloadNow={() => confirmDownload(true)}
+        onAddToList={() => confirmDownload()}
+        destroyOnClose
+        onFormVisibleChange={handleFormVisibleChange}
+      />
       {contextHolder}
     </div>
   );

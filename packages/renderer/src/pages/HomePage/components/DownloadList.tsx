@@ -1,5 +1,5 @@
-import { cn, moment } from "@/utils";
-import React, { useEffect, useMemo, useState } from "react";
+import { cn, randomName } from "@/utils";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { DownloadItem } from "./DownloadItem";
 import { ListHeader } from "./ListHeader";
 import { produce } from "immer";
@@ -10,6 +10,10 @@ import useElectron from "@/hooks/electron";
 import { useTranslation } from "react-i18next";
 import Loading from "@/components/Loading";
 import { useMemoizedFn } from "ahooks";
+import DownloadForm, {
+  DownloadFormRef,
+  DownloadFormType,
+} from "@/components/DownloadForm";
 
 interface Props {
   data: VideoStat[];
@@ -42,6 +46,7 @@ export function DownloadList({
   const [progress, setProgress] = useState<Record<number, DownloadProgress>>(
     {},
   );
+  const editFormRef = useRef<DownloadFormRef>(null);
 
   useEffect(() => {
     const onDownloadProgress = (e: unknown, currProgress: DownloadProgress) => {
@@ -148,24 +153,26 @@ export function DownloadList({
     refresh();
   });
 
-  const confirmAddItem = useMemoizedFn(async (values: any, now?: boolean) => {
-    const item = {
-      id: values.id,
-      name: values.name || moment(),
-      url: values.url,
-      headers: values.headers,
-      type: values.type,
-    };
+  const confirmAddItem = useMemoizedFn(
+    async (values: DownloadFormType, now?: boolean) => {
+      const item = {
+        id: values.id,
+        name: values.name || randomName(),
+        url: values.url,
+        headers: values.headers,
+        type: values.type,
+      };
 
-    if (now) {
-      await editDownloadNow(item);
-    } else {
-      await editDownloadItem(item);
-    }
+      if (now) {
+        await editDownloadNow(item);
+      } else {
+        await editDownloadItem(item);
+      }
 
-    refresh();
-    return true;
-  });
+      refresh();
+      return true;
+    },
+  );
 
   const handleContext = useMemoizedFn((item: number) => {
     onDownloadListContextMenu(item);
@@ -192,6 +199,18 @@ export function DownloadList({
   const onCancelItems = async () => {
     setSelected([]);
   };
+
+  const handleShowDownloadForm = useMemoizedFn((item: DownloadItem) => {
+    const values = {
+      batch: false,
+      id: item.id,
+      name: item.name,
+      url: item.url,
+      headers: item.headers,
+      type: item.type,
+    };
+    editFormRef.current.openModal(values);
+  });
 
   if (data.length === 0) {
     return (
@@ -236,14 +255,22 @@ export function DownloadList({
               selected={selected.includes(item.id)}
               onStartDownload={onStartDownload}
               onStopDownload={onStopDownload}
-              onConfirmEdit={confirmAddItem}
               onContextMenu={handleContext}
               progress={currProgress}
+              onShowEditForm={handleShowDownloadForm}
             />
           );
         })}
       </div>
       <Pagination {...pagination} />
+
+      <DownloadForm
+        ref={editFormRef}
+        key={"edit"}
+        isEdit
+        onAddToList={(values) => confirmAddItem(values)}
+        onDownloadNow={(values) => confirmAddItem(values, true)}
+      />
     </div>
   );
 }
