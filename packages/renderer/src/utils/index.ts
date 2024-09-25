@@ -2,9 +2,12 @@ import dayjs from "dayjs";
 import { isUrl } from "./url";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { customAlphabet } from "nanoid";
 
 export { http } from "./http";
 export { tdApp } from "./tdapp";
+
+const nanoid = customAlphabet("0123456789abcdefghijklmnopqrstuvwxyz", 10);
 
 export const requestImage = (url: string, timeout = 1000): Promise<void> => {
   return new Promise((resolve, reject) => {
@@ -60,4 +63,8 @@ export function getFileName(url: string) {
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+export function randomName() {
+  return dayjs().format("YYYYMMDD") + "-" + nanoid();
 }
