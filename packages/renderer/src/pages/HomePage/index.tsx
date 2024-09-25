@@ -93,7 +93,6 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
             type,
           };
         });
-      console.log("items", items);
       if (now) {
         await downloadItemsNow(items);
       } else {

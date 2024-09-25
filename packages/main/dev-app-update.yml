@@ -1,0 +1,3 @@
+provider: generic
+updaterCacheDirName: mediago-updater
+url: "http://127.0.0.1:9000/release"

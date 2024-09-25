@@ -54,6 +54,8 @@ i18n.init({
         videoDownloadFailed: "{{name}} download failed",
         showMainWindow: "Show main window",
         exitApp: "Exit app",
+        updateAvailable: "Update available.",
+        updateNotAvailable: "No updates available.",
       },
     },
     zh: {
@@ -102,6 +104,8 @@ i18n.init({
         videoDownloadFailed: "{{name}} 下载失败",
         showMainWindow: "显示主窗口",
         exitApp: "退出应用",
+        updateAvailable: "有可用更新。",
+        updateNotAvailable: "没有可用更新。",
       },
     },
   },

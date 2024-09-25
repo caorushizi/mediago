@@ -11,6 +11,8 @@ import { DownloadFilter } from "./types";
 import { tdApp } from "./utils";
 import { useAsyncEffect } from "ahooks";
 import { ThemeContext } from "./context/ThemeContext";
+import { SessionStore, useSessionStore } from "./store/session";
+import { useShallow } from "zustand/react/shallow";
 
 const AppLayout = lazy(() => import("./layout/App"));
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -23,10 +25,18 @@ function getAlgorithm(appTheme: "dark" | "light") {
   return appTheme === "dark" ? theme.darkAlgorithm : theme.defaultAlgorithm;
 }
 
+const sessionSelector = (s: SessionStore) => ({
+  setUpdateAvailable: s.setUpdateAvailable,
+  setUploadChecking: s.setUploadChecking,
+});
+
 const App: FC = () => {
   const dispatch = useDispatch();
   const [appTheme, setAppTheme] = React.useState<"dark" | "light">("light");
   const { addIpcListener, removeIpcListener, getMachineId } = useElectron();
+  const { setUpdateAvailable, setUploadChecking } = useSessionStore(
+    useShallow(sessionSelector),
+  );
 
   const themeChange = (event: MediaQueryListEvent) => {
     if (event.matches) {
@@ -50,14 +60,31 @@ const App: FC = () => {
   };
 
   useEffect(() => {
+    const updateAvailable = () => {
+      setUpdateAvailable(true);
+      setUploadChecking(false);
+    };
+    const updateNotAvailable = () => {
+      setUpdateAvailable(false);
+      setUploadChecking(false);
+    };
+    const checkingForUpdate = () => {
+      setUploadChecking(true);
+    };
     addIpcListener("store-change", onAppStoreChange);
     addIpcListener("download-item-notifier", onReceiveDownloadItem);
     addIpcListener("change-privacy", onChangePrivacy);
+    addIpcListener("updateAvailable", updateAvailable);
+    addIpcListener("updateNotAvailable", updateNotAvailable);
+    addIpcListener("checkingForUpdate", checkingForUpdate);
 
     return () => {
       removeIpcListener("store-change", onAppStoreChange);
       removeIpcListener("download-item-notifier", onReceiveDownloadItem);
       removeIpcListener("change-privacy", onChangePrivacy);
+      removeIpcListener("updateAvailable", updateAvailable);
+      removeIpcListener("updateNotAvailable", updateNotAvailable);
+      removeIpcListener("checkingForUpdate", checkingForUpdate);
     };
   }, []);
 

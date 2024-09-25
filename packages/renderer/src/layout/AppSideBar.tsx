@@ -15,6 +15,8 @@ import {
   ShareIcon,
 } from "@/assets/svg";
 import siderBg from "@/assets/images/sider-bg.png";
+import { SessionStore, useSessionStore } from "@/store/session";
+import { useShallow } from "zustand/react/shallow";
 
 function processLocation(pathname: string) {
   let name = pathname;
@@ -71,6 +73,10 @@ interface Props {
   className?: string;
 }
 
+const sessionSelector = (s: SessionStore) => ({
+  updateAvailable: s.updateAvailable,
+});
+
 export function AppSideBar({ className }: Props) {
   const { setAppStore: ipcSetAppStore, showBrowserWindow } = useElectron();
   const { t } = useTranslation();
@@ -79,6 +85,7 @@ export function AppSideBar({ className }: Props) {
   const dispatch = useDispatch();
   const count = useSelector(selectCount);
   const appStore = useSelector(selectAppStore);
+  const { updateAvailable } = useSessionStore(useShallow(sessionSelector));
 
   const activeKey = processLocation(location.pathname);
 
@@ -164,6 +171,7 @@ export function AppSideBar({ className }: Props) {
           icon={<SettingsIcon />}
         >
           <span>{t("setting")}</span>
+          <Badge dot={updateAvailable} offset={[-13, -3]} />
         </AppMenuItem>
       ),
       key: "settings",

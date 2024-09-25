@@ -58,6 +58,8 @@ declare interface AppStore {
   downloadProxySwitch: boolean;
   // 自动更新
   autoUpgrade: boolean;
+  // 允许使用beta版本
+  allowBeta: boolean;
 }
 
 declare interface BrowserStore {
