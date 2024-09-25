@@ -6,6 +6,7 @@ import localforage from "localforage";
 
 type State = {
   // 上次下载类型
+  lastIsBatch: boolean;
   lastDownloadTypes: DownloadType;
 
   // 上次选择的视频类型(只有 m3u8 可以缓存)
@@ -21,6 +22,7 @@ type Actions = {
     name?: string;
     number?: number;
   }) => void;
+  setLastIsBatch: (isBatch: boolean) => void;
 };
 
 export type ConfigStore = State & Actions;
@@ -28,6 +30,7 @@ export type ConfigStore = State & Actions;
 export const useConfigStore = create<State & Actions>()(
   persist(
     immer((set) => ({
+      lastIsBatch: false,
       lastDownloadTypes: DownloadType.m3u8,
       lastVideoType: "",
       lastVideoName: "",
@@ -42,6 +45,11 @@ export const useConfigStore = create<State & Actions>()(
           if (type) state.lastVideoType = type;
           if (name) state.lastVideoName = name;
           if (number) state.lastVideoNumber = number;
+        });
+      },
+      setLastIsBatch: (isBatch) => {
+        set((state) => {
+          state.lastIsBatch = isBatch;
         });
       },
     })),
