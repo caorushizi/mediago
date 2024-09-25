@@ -8,7 +8,6 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { selectAppStore } from "@/store";
 import selectedBg from "@/assets/images/select-item-bg.png";
-import DownloadForm from "@/components/DownloadForm";
 import {
   CloseIcon,
   DownloadIcon,
@@ -35,9 +34,9 @@ interface Props {
   selected: boolean;
   onStartDownload: (id: number) => void;
   onStopDownload: (item: number) => void;
-  onConfirmEdit: (values: VideoStat, downloadNow?: boolean) => Promise<boolean>;
   onContextMenu: (item: number) => void;
   progress?: DownloadProgress;
+  onShowEditForm?: (value: DownloadItem) => void;
 }
 
 export function DownloadItem({
@@ -46,8 +45,8 @@ export function DownloadItem({
   selected,
   onStartDownload,
   onStopDownload,
-  onConfirmEdit,
   onContextMenu,
+  onShowEditForm,
   progress,
 }: Props) {
   const appStore = useSelector(selectAppStore);
@@ -84,24 +83,23 @@ export function DownloadItem({
       </Drawer>
     );
   };
+
   // 编辑表单
-  const renderEditForm = (item: DownloadItem) => {
+  const renderEditIconBtn = (item: DownloadItem) => {
     return (
-      <DownloadForm
-        key={"edit"}
-        isEdit
-        item={item}
-        trigger={<IconButton title={t("edit")} icon={<EditIcon />} />}
-        onAddToList={(values) => onConfirmEdit(values)}
-        onDownloadNow={(values) => onConfirmEdit(values, true)}
+      <IconButton
+        title={t("edit")}
+        icon={<EditIcon />}
+        onClick={() => onShowEditForm(item)}
       />
     );
   };
+
   const renderActionButtons = (item: VideoStat): ReactNode => {
     if (item.status === DownloadStatus.Ready) {
       return [
         renderTerminalBtn(item),
-        renderEditForm(item),
+        renderEditIconBtn(item),
         <IconButton
           key="download"
           icon={<DownloadListIcon />}
@@ -124,7 +122,7 @@ export function DownloadItem({
     if (item.status === DownloadStatus.Failed) {
       return [
         renderTerminalBtn(item),
-        renderEditForm(item),
+        renderEditIconBtn(item),
         <IconButton
           key="redownload"
           title={t("redownload")}
@@ -139,7 +137,7 @@ export function DownloadItem({
     if (item.status === DownloadStatus.Stopped) {
       return [
         renderTerminalBtn(item),
-        renderEditForm(item),
+        renderEditIconBtn(item),
         <IconButton
           key="restart"
           icon={<DownloadListIcon />}
