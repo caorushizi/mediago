@@ -60,6 +60,8 @@ declare interface AppStore {
   autoUpgrade: boolean;
   // 允许使用beta版本
   allowBeta: boolean;
+  // 关闭主窗口
+  closeMainWindow: boolean;
 }
 
 declare interface BrowserStore {

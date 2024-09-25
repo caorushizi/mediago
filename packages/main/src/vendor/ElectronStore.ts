@@ -32,6 +32,7 @@ export default class StoreService extends Store<AppStore> implements Vendor {
         downloadProxySwitch: false,
         autoUpgrade: true,
         allowBeta: false,
+        closeMainWindow: false,
       },
     });
   }
