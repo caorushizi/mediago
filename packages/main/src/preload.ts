@@ -194,6 +194,9 @@ const electronApi = {
   installUpdate(): Promise<void> {
     return ipcRenderer.invoke("install-update");
   },
+  exportDownloadList(): Promise<void> {
+    return ipcRenderer.invoke("export-download-list");
+  },
 };
 
 contextBridge.exposeInMainWorld(apiKey, electronApi);
