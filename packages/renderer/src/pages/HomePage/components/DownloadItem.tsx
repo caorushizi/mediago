@@ -266,7 +266,7 @@ export function DownloadItem({
           <TerminalDrawer
             asChild
             trigger={
-              <div className="cursor-pointer truncate text-[#ff7373]">
+              <div className="cursor-pointer truncate text-[#ff7373] dark:text-[rgba(255,115,115,0.6)]">
                 {t("failReason")}: ... {item.log.slice(-100)}
               </div>
             }
