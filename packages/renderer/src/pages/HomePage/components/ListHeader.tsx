@@ -1,8 +1,10 @@
-import React from "react";
-import { Button } from "antd";
+import React, { useMemo } from "react";
+import { Button, Dropdown, MenuProps, message } from "antd";
 import { Trans, useTranslation } from "react-i18next";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DownloadFilter } from "@/types";
+import { useMemoizedFn } from "ahooks";
+import useElectron from "@/hooks/electron";
 
 interface Props {
   onSelectAll: (checked: boolean) => void;
@@ -23,12 +25,34 @@ export function ListHeader({
   onCancelItems,
   filter,
 }: Props) {
+  const [messageApi, contextHolder] = message.useMessage();
   const { t } = useTranslation();
-
-  const disabled = selected.length === 0;
+  const disabled = useMemo(() => selected.length === 0, [selected.length]);
+  const { exportDownloadList } = useElectron();
+  const items: MenuProps["items"] = useMemo(() => {
+    return [
+      {
+        key: "exportDownloadList",
+        label: t("exportDownloadList"),
+      },
+    ];
+  }, []);
+  const onMenuClick: MenuProps["onClick"] = useMemoizedFn(async (e) => {
+    console.log("click", e);
+    const { key } = e;
+    if (key === "exportDownloadList") {
+      try {
+        await exportDownloadList();
+      } catch (err) {
+        console.log(err);
+        messageApi.error(t("exportDownloadListFailed"));
+      }
+    }
+  });
 
   return (
     <div className="flex flex-row items-center justify-between pb-2 pl-3">
+      {contextHolder}
       <div className="flex flex-row items-center gap-3">
         <Checkbox checked={checked} onCheckedChange={onSelectAll} />
         <span
@@ -65,6 +89,13 @@ export function ListHeader({
             {t("download")}
           </Button>
         )}
+        <Dropdown
+          menu={{ items, onClick: onMenuClick }}
+          placement="bottomRight"
+          trigger={["click"]}
+        >
+          <Button type="primary">{t("more")}</Button>
+        </Dropdown>
       </div>
     </div>
   );
