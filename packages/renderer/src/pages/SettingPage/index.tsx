@@ -33,6 +33,8 @@ import { AppLanguage, AppTheme } from "../../types";
 import { useTranslation } from "react-i18next";
 import { SessionStore, useSessionStore } from "@/store/session";
 import { useShallow } from "zustand/react/shallow";
+import { tdApp } from "@/utils";
+import { CHECK_UPDATE } from "@/const";
 
 const version = import.meta.env.APP_VERSION;
 
@@ -163,6 +165,7 @@ const SettingPage: React.FC = () => {
   };
 
   const handleCheckUpdate = useMemoizedFn(async () => {
+    tdApp.onEvent(CHECK_UPDATE);
     setOpenUpdateModal(true);
     await checkUpdate();
   });

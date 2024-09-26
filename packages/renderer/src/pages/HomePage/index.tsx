@@ -18,7 +18,8 @@ import { QrcodeOutlined } from "@ant-design/icons";
 import { HomeDownloadButton } from "@/components/HomeDownloadButton";
 import { ConfigStore, useConfigStore } from "@/store/config";
 import { useShallow } from "zustand/react/shallow";
-import { randomName } from "@/utils";
+import { randomName, tdApp } from "@/utils";
+import { CLICK_DOWNLOAD } from "@/const";
 
 interface Props {
   filter?: DownloadFilter;
@@ -117,6 +118,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   };
 
   const handleOpenForm = useMemoizedFn(() => {
+    tdApp.onEvent(CLICK_DOWNLOAD);
     const item: DownloadFormType = {
       batch: lastIsBatch,
       type: lastDownloadTypes,
@@ -174,6 +176,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       />
 
       <DownloadForm
+        id="home"
         ref={newFormRef}
         destroyOnClose
         onAddToList={(values) => confirmAddItems(values)}
