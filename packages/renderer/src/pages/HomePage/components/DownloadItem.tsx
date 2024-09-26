@@ -20,7 +20,13 @@ import useElectron from "@/hooks/electron";
 import { DownloadTag } from "@/components/DownloadTag";
 import { IconButton } from "@/components/IconButton";
 import { useMemoizedFn } from "ahooks";
-import { PLAY_VIDEO } from "@/const";
+import {
+  CONTINUE_DOWNLOAD,
+  DOWNLOAD_NOW,
+  PLAY_VIDEO,
+  RESTART_DOWNLOAD,
+  STOP_DOWNLOAD,
+} from "@/const";
 import { TerminalDrawer } from "./TerminalDrawer";
 
 interface Props {
@@ -83,6 +89,26 @@ export function DownloadItem({
     tdApp.onEvent(PLAY_VIDEO);
   });
 
+  const handleDownloadNow = useMemoizedFn(() => {
+    onStartDownload(item.id);
+    tdApp.onEvent(DOWNLOAD_NOW);
+  });
+
+  const handleRestart = useMemoizedFn(() => {
+    onStartDownload(item.id);
+    tdApp.onEvent(RESTART_DOWNLOAD);
+  });
+
+  const handleContinue = useMemoizedFn(() => {
+    onStartDownload(item.id);
+    tdApp.onEvent(CONTINUE_DOWNLOAD);
+  });
+
+  const handleStop = useMemoizedFn(() => {
+    onStopDownload(item.id);
+    tdApp.onEvent(STOP_DOWNLOAD);
+  });
+
   const renderActionButtons = (item: VideoStat): ReactNode => {
     if (item.status === DownloadStatus.Ready) {
       return [
@@ -92,7 +118,7 @@ export function DownloadItem({
           key="download"
           icon={<DownloadListIcon />}
           title={t("download")}
-          onClick={() => onStartDownload(item.id)}
+          onClick={handleDownloadNow}
         />,
       ];
     }
@@ -103,7 +129,7 @@ export function DownloadItem({
           key="stop"
           title={t("pause")}
           icon={<PauseCircleOutlined />}
-          onClick={() => onStopDownload(item.id)}
+          onClick={handleStop}
         />,
       ];
     }
@@ -115,7 +141,7 @@ export function DownloadItem({
           key="redownload"
           title={t("redownload")}
           icon={<DownloadListIcon />}
-          onClick={() => onStartDownload(item.id)}
+          onClick={handleRestart}
         />,
       ];
     }
@@ -130,7 +156,7 @@ export function DownloadItem({
           key="restart"
           icon={<DownloadListIcon />}
           title={t("continueDownload")}
-          onClick={() => onStartDownload(item.id)}
+          onClick={handleContinue}
         />,
       ];
     }

@@ -146,36 +146,38 @@ export function FavoriteList() {
         width={500}
         destroyOnClose
       >
-        <Form<Favorite> form={favoriteAddForm} autoFocus>
-          <Form.Item
-            name="title"
-            label={t("siteName")}
-            rules={[
-              {
-                required: true,
-                message: t("pleaseEnterSiteName"),
-              },
-            ]}
-          >
-            <Input placeholder={t("pleaseEnterSiteName")} />
-          </Form.Item>
-          <Form.Item
-            name="url"
-            label={t("siteUrl")}
-            rules={[
-              {
-                required: true,
-                message: t("pleaseEnterSiteUrl"),
-              },
-              {
-                pattern: /^https?:\/\/.+/,
-                message: t("pleaseEnterCorrectUrl"),
-              },
-            ]}
-          >
-            <Input placeholder={t("pleaseEnterSiteUrl")} />
-          </Form.Item>
-        </Form>
+        <div className="flex min-h-36 flex-col justify-center">
+          <Form<Favorite> form={favoriteAddForm} autoFocus>
+            <Form.Item
+              name="title"
+              label={t("siteName")}
+              rules={[
+                {
+                  required: true,
+                  message: t("pleaseEnterSiteName"),
+                },
+              ]}
+            >
+              <Input placeholder={t("pleaseEnterSiteName")} />
+            </Form.Item>
+            <Form.Item
+              name="url"
+              label={t("siteUrl")}
+              rules={[
+                {
+                  required: true,
+                  message: t("pleaseEnterSiteUrl"),
+                },
+                {
+                  pattern: /^https?:\/\/.+/,
+                  message: t("pleaseEnterCorrectUrl"),
+                },
+              ]}
+            >
+              <Input placeholder={t("pleaseEnterSiteUrl")} />
+            </Form.Item>
+          </Form>
+        </div>
       </Modal>
     </div>
   );
