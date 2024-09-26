@@ -1,4 +1,4 @@
-import { cn, randomName } from "@/utils";
+import { cn, randomName, tdApp } from "@/utils";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { DownloadItem } from "./DownloadItem";
 import { ListHeader } from "./ListHeader";
@@ -14,6 +14,7 @@ import DownloadForm, {
   DownloadFormRef,
   DownloadFormType,
 } from "@/components/DownloadForm";
+import { EDIT_DOWNLOAD } from "@/const";
 
 interface Props {
   data: VideoStat[];
@@ -201,6 +202,7 @@ export function DownloadList({
   };
 
   const handleShowDownloadForm = useMemoizedFn((item: DownloadItem) => {
+    tdApp.onEvent(EDIT_DOWNLOAD);
     const values = {
       batch: false,
       id: item.id,
@@ -265,6 +267,7 @@ export function DownloadList({
       <Pagination {...pagination} />
 
       <DownloadForm
+        id="download-list"
         ref={editFormRef}
         key={"edit"}
         isEdit

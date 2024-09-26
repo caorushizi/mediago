@@ -1,20 +1,27 @@
-import React, { FC } from "react";
-import { Outlet } from "react-router-dom";
+import React, { FC, useEffect } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 import useElectron from "../hooks/electron";
 import { useDispatch } from "react-redux";
 import { setAppStore } from "../store";
 import { useAsyncEffect } from "ahooks";
 import { AppHeader } from "./AppHeader";
 import { AppSideBar } from "./AppSideBar";
+import { tdApp } from "@/utils";
+import { CHANGE_PAGE } from "@/const";
 
 const App: FC = () => {
   const { getAppStore: ipcGetAppStore } = useElectron();
   const dispatch = useDispatch();
+  const location = useLocation();
 
   useAsyncEffect(async () => {
     const store = await ipcGetAppStore();
     dispatch(setAppStore(store));
   }, []);
+
+  useEffect(() => {
+    tdApp.onEvent(CHANGE_PAGE, { page: location.pathname });
+  }, [location.pathname]);
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">

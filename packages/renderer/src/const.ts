@@ -1,0 +1,21 @@
+export const CHANGE_PAGE = "CHANGE_PAGE";
+export const CLICK_DOWNLOAD = "CLICK_DOWNLOAD";
+export const PAGE_LOAD = "PAGE_LOAD";
+export const ADD_TO_LIST = "ADD_TO_LIST";
+export const DOWNLOAD_NOW = "DOWNLOAD_NOW";
+export const DOWNLOAD_SUCCESS = "DOWNLOAD_SUCCESS";
+export const DOWNLOAD_FAIL = "DOWNLOAD_FAIL";
+export const EDIT_DOWNLOAD = "EDIT_DOWNLOAD";
+export const STOP_DOWNLOAD = "STOP_DOWNLOAD";
+export const PLAY_VIDEO = "PLAY_VIDEO";
+export const RESTART_DOWNLOAD = "RESTART_DOWNLOAD";
+export const CONTINUE_DOWNLOAD = "CONTINUE_DOWNLOAD";
+
+export const ADD_CONVERT_TASK = "ADD_CONVERT_TASK";
+export const START_CONVERT = "START_CONVERT";
+export const DELETE_CONVERT = "DELETE_CONVERT";
+
+export const ADD_FAVORITE = "ADD_FAVORITE";
+export const OPEN_FAVORITE = "OPEN_FAVORITE";
+export const OPEN_URL = "OPEN_URL";
+export const CHECK_UPDATE = "CHECK_UPDATE";

@@ -13,6 +13,7 @@ import { useAsyncEffect } from "ahooks";
 import { ThemeContext } from "./context/ThemeContext";
 import { SessionStore, useSessionStore } from "./store/session";
 import { useShallow } from "zustand/react/shallow";
+import { DOWNLOAD_FAIL, DOWNLOAD_SUCCESS, PAGE_LOAD } from "./const";
 
 const AppLayout = lazy(() => import("./layout/App"));
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -71,12 +72,20 @@ const App: FC = () => {
     const checkingForUpdate = () => {
       setUploadChecking(true);
     };
+    const onDownloadSuccess = () => {
+      tdApp.onEvent(DOWNLOAD_SUCCESS);
+    };
+    const onDownloadFailed = () => {
+      tdApp.onEvent(DOWNLOAD_FAIL);
+    };
     addIpcListener("store-change", onAppStoreChange);
     addIpcListener("download-item-notifier", onReceiveDownloadItem);
     addIpcListener("change-privacy", onChangePrivacy);
     addIpcListener("updateAvailable", updateAvailable);
     addIpcListener("updateNotAvailable", updateNotAvailable);
     addIpcListener("checkingForUpdate", checkingForUpdate);
+    addIpcListener("download-success", onDownloadSuccess);
+    addIpcListener("download-failed", onDownloadFailed);
 
     return () => {
       removeIpcListener("store-change", onAppStoreChange);
@@ -85,12 +94,14 @@ const App: FC = () => {
       removeIpcListener("updateAvailable", updateAvailable);
       removeIpcListener("updateNotAvailable", updateNotAvailable);
       removeIpcListener("checkingForUpdate", checkingForUpdate);
+      removeIpcListener("download-success", onDownloadSuccess);
+      removeIpcListener("download-failed", onDownloadFailed);
     };
   }, []);
 
   useAsyncEffect(async () => {
     const deviceId = await getMachineId();
-    tdApp.onEvent("页面加载", { deviceId });
+    tdApp.onEvent(PAGE_LOAD, { deviceId });
   }, []);
 
   useEffect(() => {

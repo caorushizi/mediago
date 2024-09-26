@@ -1,6 +1,6 @@
 import useElectron from "@/hooks/electron";
 import { BrowserStatus, PageMode, setBrowserStore } from "@/store";
-import { getFavIcon } from "@/utils";
+import { getFavIcon, tdApp } from "@/utils";
 import { PlusOutlined } from "@ant-design/icons";
 import { useRequest } from "ahooks";
 import { Form, Input, message, Modal } from "antd";
@@ -8,6 +8,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { FavItem } from "./FavItem";
+import { ADD_FAVORITE, OPEN_FAVORITE } from "@/const";
 
 export function FavoriteList() {
   const {
@@ -39,6 +40,7 @@ export function FavoriteList() {
 
   const onClickLoadItem = (item: Favorite) => {
     loadUrl(item.url);
+    tdApp.onEvent(OPEN_FAVORITE);
   };
 
   const handleRemoveFavorite = async (id: number) => {
@@ -48,6 +50,7 @@ export function FavoriteList() {
 
   const showModal = () => {
     setIsModalOpen(true);
+    tdApp.onEvent(ADD_FAVORITE);
   };
 
   const handleOk = async () => {
@@ -143,36 +146,38 @@ export function FavoriteList() {
         width={500}
         destroyOnClose
       >
-        <Form<Favorite> form={favoriteAddForm} autoFocus>
-          <Form.Item
-            name="title"
-            label={t("siteName")}
-            rules={[
-              {
-                required: true,
-                message: t("pleaseEnterSiteName"),
-              },
-            ]}
-          >
-            <Input placeholder={t("pleaseEnterSiteName")} />
-          </Form.Item>
-          <Form.Item
-            name="url"
-            label={t("siteUrl")}
-            rules={[
-              {
-                required: true,
-                message: t("pleaseEnterSiteUrl"),
-              },
-              {
-                pattern: /^https?:\/\/.+/,
-                message: t("pleaseEnterCorrectUrl"),
-              },
-            ]}
-          >
-            <Input placeholder={t("pleaseEnterSiteUrl")} />
-          </Form.Item>
-        </Form>
+        <div className="flex min-h-36 flex-col justify-center">
+          <Form<Favorite> form={favoriteAddForm} autoFocus>
+            <Form.Item
+              name="title"
+              label={t("siteName")}
+              rules={[
+                {
+                  required: true,
+                  message: t("pleaseEnterSiteName"),
+                },
+              ]}
+            >
+              <Input placeholder={t("pleaseEnterSiteName")} />
+            </Form.Item>
+            <Form.Item
+              name="url"
+              label={t("siteUrl")}
+              rules={[
+                {
+                  required: true,
+                  message: t("pleaseEnterSiteUrl"),
+                },
+                {
+                  pattern: /^https?:\/\/.+/,
+                  message: t("pleaseEnterCorrectUrl"),
+                },
+              ]}
+            >
+              <Input placeholder={t("pleaseEnterSiteUrl")} />
+            </Form.Item>
+          </Form>
+        </div>
       </Modal>
     </div>
   );

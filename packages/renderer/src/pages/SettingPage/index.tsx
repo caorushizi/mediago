@@ -33,6 +33,8 @@ import { AppLanguage, AppTheme } from "../../types";
 import { useTranslation } from "react-i18next";
 import { SessionStore, useSessionStore } from "@/store/session";
 import { useShallow } from "zustand/react/shallow";
+import { tdApp } from "@/utils";
+import { CHECK_UPDATE } from "@/const";
 
 const version = import.meta.env.APP_VERSION;
 
@@ -42,7 +44,7 @@ interface GroupWrapperProps extends PropsWithChildren {
 
 function GroupWrapper({ children, title }: GroupWrapperProps) {
   return (
-    <div className="rounded-lg bg-white p-2 dark:bg-[#1F2024]">
+    <div className="rounded-lg bg-white px-3 py-2 dark:bg-[#1F2024]">
       <div className="mb-5 flex flex-row items-center gap-2">
         <div className="h-4 w-1 rounded-full bg-[#127AF3]" />
         {title}
@@ -163,6 +165,7 @@ const SettingPage: React.FC = () => {
   };
 
   const handleCheckUpdate = useMemoizedFn(async () => {
+    tdApp.onEvent(CHECK_UPDATE);
     setOpenUpdateModal(true);
     await checkUpdate();
   });

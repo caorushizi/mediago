@@ -7,6 +7,8 @@ import { useShallow } from "zustand/react/shallow";
 import { useMemoizedFn } from "ahooks";
 import { DownloadType } from "@/types";
 import { EpisodeNumber } from "./EpisodeNumber";
+import { tdApp } from "@/utils";
+import { ADD_TO_LIST, DOWNLOAD_NOW } from "@/const";
 
 export interface DownloadFormType {
   batch?: boolean;
@@ -25,6 +27,7 @@ export interface DownloadFormProps {
   onAddToList: (values: DownloadFormType) => Promise<boolean | void>;
   onDownloadNow: (values: DownloadFormType) => Promise<boolean | void>;
   onFormVisibleChange?: (open: boolean) => void;
+  id: string;
 }
 
 export interface DownloadFormRef {
@@ -52,6 +55,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
       onDownloadNow,
       usePrevData,
       onFormVisibleChange,
+      id,
     },
     ref,
   ) {
@@ -100,6 +104,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
         if (close) {
           setModalOpen(false);
         }
+        tdApp.onEvent(ADD_TO_LIST, { id });
       } catch (e: any) {
         console.error(e);
         messageApi.error(e?.message || t("pleaseEnterCorrectFomeInfo"));
@@ -114,6 +119,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
         if (close) {
           setModalOpen(false);
         }
+        tdApp.onEvent(DOWNLOAD_NOW, { id });
       } catch (e: any) {
         console.error(e);
         messageApi.error(e?.message || t("pleaseEnterCorrectFomeInfo"));

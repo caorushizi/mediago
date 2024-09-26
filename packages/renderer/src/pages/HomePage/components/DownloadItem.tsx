@@ -1,4 +1,4 @@
-import { cn } from "@/utils";
+import { cn, tdApp } from "@/utils";
 import React, { ReactNode } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DownloadStatus } from "@/types";
@@ -9,7 +9,6 @@ import { useSelector } from "react-redux";
 import { selectAppStore } from "@/store";
 import selectedBg from "@/assets/images/select-item-bg.png";
 import {
-  CloseIcon,
   DownloadIcon,
   DownloadListIcon,
   EditIcon,
@@ -20,13 +19,15 @@ import {
 import useElectron from "@/hooks/electron";
 import { DownloadTag } from "@/components/DownloadTag";
 import { IconButton } from "@/components/IconButton";
+import { useMemoizedFn } from "ahooks";
 import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
-import Terminal from "@/components/DownloadTerminal";
+  CONTINUE_DOWNLOAD,
+  DOWNLOAD_NOW,
+  PLAY_VIDEO,
+  RESTART_DOWNLOAD,
+  STOP_DOWNLOAD,
+} from "@/const";
+import { TerminalDrawer } from "./TerminalDrawer";
 
 interface Props {
   item: VideoStat;
@@ -57,30 +58,18 @@ export function DownloadItem({
     if (!appStore.showTerminal) return null;
 
     return (
-      <Drawer handleOnly>
-        <DrawerTrigger>
+      <TerminalDrawer
+        trigger={
           <IconButton
             key="terminal"
             title={t("terminal")}
             icon={<TerminalIcon />}
           />
-        </DrawerTrigger>
-        <DrawerContent>
-          <Terminal
-            header={
-              <div className="flex flex-shrink-0 flex-row items-center justify-between">
-                {item.name}
-                <DrawerClose>
-                  <IconButton icon={<CloseIcon />} />
-                </DrawerClose>
-              </div>
-            }
-            className="h-[350px] overflow-hidden px-3"
-            id={item.id}
-            log={item.log}
-          />
-        </DrawerContent>
-      </Drawer>
+        }
+        title={item.name}
+        id={item.id}
+        log={item.log}
+      />
     );
   };
 
@@ -95,6 +84,31 @@ export function DownloadItem({
     );
   };
 
+  const handlePlay = useMemoizedFn(() => {
+    openPlayerWindow();
+    tdApp.onEvent(PLAY_VIDEO);
+  });
+
+  const handleDownloadNow = useMemoizedFn(() => {
+    onStartDownload(item.id);
+    tdApp.onEvent(DOWNLOAD_NOW);
+  });
+
+  const handleRestart = useMemoizedFn(() => {
+    onStartDownload(item.id);
+    tdApp.onEvent(RESTART_DOWNLOAD);
+  });
+
+  const handleContinue = useMemoizedFn(() => {
+    onStartDownload(item.id);
+    tdApp.onEvent(CONTINUE_DOWNLOAD);
+  });
+
+  const handleStop = useMemoizedFn(() => {
+    onStopDownload(item.id);
+    tdApp.onEvent(STOP_DOWNLOAD);
+  });
+
   const renderActionButtons = (item: VideoStat): ReactNode => {
     if (item.status === DownloadStatus.Ready) {
       return [
@@ -104,7 +118,7 @@ export function DownloadItem({
           key="download"
           icon={<DownloadListIcon />}
           title={t("download")}
-          onClick={() => onStartDownload(item.id)}
+          onClick={handleDownloadNow}
         />,
       ];
     }
@@ -115,7 +129,7 @@ export function DownloadItem({
           key="stop"
           title={t("pause")}
           icon={<PauseCircleOutlined />}
-          onClick={() => onStopDownload(item.id)}
+          onClick={handleStop}
         />,
       ];
     }
@@ -127,7 +141,7 @@ export function DownloadItem({
           key="redownload"
           title={t("redownload")}
           icon={<DownloadListIcon />}
-          onClick={() => onStartDownload(item.id)}
+          onClick={handleRestart}
         />,
       ];
     }
@@ -142,7 +156,7 @@ export function DownloadItem({
           key="restart"
           icon={<DownloadListIcon />}
           title={t("continueDownload")}
-          onClick={() => onStartDownload(item.id)}
+          onClick={handleContinue}
         />,
       ];
     }
@@ -154,7 +168,7 @@ export function DownloadItem({
         icon={<PlayCircleOutlined />}
         title={t("playVideo")}
         disabled={!item.exists}
-        onClick={() => openPlayerWindow()}
+        onClick={handlePlay}
       />,
     ];
   };
@@ -188,10 +202,18 @@ export function DownloadItem({
       }
     } else if (item.status === DownloadStatus.Failed) {
       tag = (
-        <DownloadTag
-          icon={<FailedIcon />}
-          text={t("downloadFailed")}
-          color="#ff7373"
+        <TerminalDrawer
+          trigger={
+            <DownloadTag
+              icon={<FailedIcon />}
+              text={t("downloadFailed")}
+              color="#ff7373"
+              className="cursor-pointer"
+            />
+          }
+          title={item.name}
+          id={item.id}
+          log={item.log}
         />
       );
     } else if (item.status === DownloadStatus.Stopped) {
@@ -237,10 +259,23 @@ export function DownloadItem({
     }
     return (
       <div
-        className="relative truncate text-xs text-[#B3B3B3] dark:text-[#515257]"
+        className="relative flex flex-col gap-1 truncate text-xs text-[#B3B3B3] dark:text-[#515257]"
         title={item.url}
       >
-        {item.url}
+        <div>{item.url}</div>
+        {item.status === DownloadStatus.Failed && (
+          <TerminalDrawer
+            asChild
+            trigger={
+              <div className="cursor-pointer truncate text-[#ff7373]">
+                {t("failReason")}: ... {item.log.slice(-100)}
+              </div>
+            }
+            title={item.name}
+            id={item.id}
+            log={item.log}
+          />
+        )}
       </div>
     );
   };
