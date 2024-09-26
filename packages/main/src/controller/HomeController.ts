@@ -398,4 +398,23 @@ export default class HomeController implements Controller {
   async installUpdate() {
     this.updater.install();
   }
+
+  @handle("export-download-list")
+  async exportDownloadList() {
+    const videos = await this.videoRepository.findAllVideos();
+
+    const txt = videos.map((video) => `${video.url} ${video.name}`).join("\n");
+    const window = this.mainWindow.window;
+    if (!window) return Promise.reject(i18n.t("noMainWindow"));
+
+    const result = await dialog.showSaveDialog(window, {
+      title: i18n.t("exportDownloadList"),
+      defaultPath: "download-list.txt",
+      filters: [{ name: "Text", extensions: ["txt"] }],
+    });
+
+    if (!result.canceled) {
+      await fs.writeFile(result.filePath, txt);
+    }
+  }
 }
