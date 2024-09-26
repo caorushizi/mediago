@@ -207,7 +207,10 @@ export function ToolBar({ page }: Props) {
           curIsFavorite ? (
             <FavFillIcon fill={iconColor} />
           ) : (
-            <FavIcon fill={iconColor} />
+            <FavIcon
+              fill={iconColor}
+              stroke={theme === "dark" ? "#B4B4B4" : "#020817"}
+            />
           )
         }
       />
