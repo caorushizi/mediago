@@ -3,6 +3,7 @@ import { DownloadStatus } from "./interfaces.ts";
 import { TYPES } from "./types.ts";
 import { Menu, Tray, app, nativeImage, nativeTheme } from "electron";
 import TrayIcon from "./tray-icon.png";
+import TrayIconLight from "./tray-icon-light.png";
 import path from "path";
 import MainWindow from "./windows/MainWindow.ts";
 import WebviewService from "./services/WebviewService.ts";
@@ -15,6 +16,7 @@ import ProtocolService from "./core/protocol.ts";
 import IpcHandlerService from "./core/ipc.ts";
 import { VideoService } from "./services/VideoService.ts";
 import i18n from "./i18n/index.ts";
+import { isMac } from "./helper/variables.ts";
 
 @injectable()
 export default class ElectronApp {
@@ -83,7 +85,7 @@ export default class ElectronApp {
   }
 
   initTray() {
-    const iconPath = path.resolve(__dirname, TrayIcon);
+    const iconPath = path.resolve(__dirname, isMac ? TrayIconLight : TrayIcon);
     const icon = nativeImage.createFromPath(iconPath);
     const tray = new Tray(icon);
     tray.setToolTip("Media Go");

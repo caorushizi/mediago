@@ -1,24 +1,34 @@
 import { useMount } from "ahooks";
 import { List, NavBar } from "antd-mobile";
-import axios from "axios";
 import { useRef, useState } from "react";
 import Player from "xgplayer";
 import "xgplayer/dist/index.min.css";
-import { cn } from "./utils";
+import { cn, http } from "./utils";
+
+interface VideoSource {
+  title: string;
+  url: string;
+}
 
 function App() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<VideoSource[]>([]);
   const player = useRef<Player>();
   const [currentVideo, setCurrentVideo] = useState("");
 
   useMount(async () => {
-    const { data } = await axios.get<any[]>("/api");
+    const { data } = await http.get<VideoSource[]>("/api");
+    console.log(data);
     setData(data);
-    setCurrentVideo(data[0].url);
+
+    let url = "";
+    if (data.length > 0) {
+      url = data[0].url;
+      setCurrentVideo(url);
+    }
 
     player.current = new Player({
       id: "mse",
-      url: data[0].url,
+      url: url,
       fluid: true,
       lang: "zh-cn",
     });
