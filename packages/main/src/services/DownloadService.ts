@@ -77,7 +77,7 @@ const processList: Schema[] = [
         argsName: ["--custom-proxy"],
       },
       __common__: {
-        argsName: ["--no-log"],
+        argsName: ["--no-log", "--auto-select"],
       },
     },
     consoleReg: {
