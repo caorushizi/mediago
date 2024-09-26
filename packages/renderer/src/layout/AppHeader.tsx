@@ -43,8 +43,8 @@ export function AppHeader({ className }: Props) {
           onClick={openHelpUrl}
         >
           <div className="flex flex-row items-center gap-2 rounded-full rounded-br-sm bg-[#F9FBFC] p-2 dark:bg-[#2F3035]">
-            <HelpIcon />
-            <span className="text-xs text-[#137BF4] dark:text-white">
+            <HelpIcon height={18} width={18} />
+            <span className="text-sm text-[#137BF4] dark:text-white">
               {t("help")}
             </span>
           </div>

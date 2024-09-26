@@ -1,4 +1,4 @@
-import { cn } from "@/utils";
+import { cn, tdApp } from "@/utils";
 import React, { ReactNode } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DownloadStatus } from "@/types";
@@ -27,6 +27,8 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import Terminal from "@/components/DownloadTerminal";
+import { useMemoizedFn } from "ahooks";
+import { PLAY_VIDEO } from "@/const";
 
 interface Props {
   item: VideoStat;
@@ -95,6 +97,11 @@ export function DownloadItem({
     );
   };
 
+  const handlePlay = useMemoizedFn(() => {
+    openPlayerWindow();
+    tdApp.onEvent(PLAY_VIDEO);
+  });
+
   const renderActionButtons = (item: VideoStat): ReactNode => {
     if (item.status === DownloadStatus.Ready) {
       return [
@@ -154,7 +161,7 @@ export function DownloadItem({
         icon={<PlayCircleOutlined />}
         title={t("playVideo")}
         disabled={!item.exists}
-        onClick={() => openPlayerWindow()}
+        onClick={handlePlay}
       />,
     ];
   };

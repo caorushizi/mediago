@@ -13,6 +13,7 @@ import { useAsyncEffect } from "ahooks";
 import { ThemeContext } from "./context/ThemeContext";
 import { SessionStore, useSessionStore } from "./store/session";
 import { useShallow } from "zustand/react/shallow";
+import { PAGE_LOAD } from "./const";
 
 const AppLayout = lazy(() => import("./layout/App"));
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -90,7 +91,7 @@ const App: FC = () => {
 
   useAsyncEffect(async () => {
     const deviceId = await getMachineId();
-    tdApp.onEvent("页面加载", { deviceId });
+    tdApp.onEvent(PAGE_LOAD, { deviceId });
   }, []);
 
   useEffect(() => {

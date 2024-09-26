@@ -221,6 +221,7 @@ export function BrowserView() {
         {renderSidePanel()}
       </div>
       <DownloadForm
+        id="browser"
         isEdit
         usePrevData
         ref={downloadForm}
