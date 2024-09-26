@@ -253,7 +253,7 @@ export function DownloadItem({
             percent={Math.round(Number(percent))}
             strokeLinecap="butt"
           />
-          {speed}
+          <span className="flex-shrink-0">{speed}</span>
         </div>
       );
     }

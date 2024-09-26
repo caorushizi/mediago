@@ -85,14 +85,14 @@ export default class WebviewService {
   onDomReady = () => {
     if (!this.view) return;
     const pageInfo = this.getPageInfo();
-    this.sniffingHelper.update(pageInfo);
+    this.sniffingHelper.reset(pageInfo);
     this.window.webContents.send("webview-dom-ready", pageInfo);
   };
 
   onDidNavigate = async () => {
     if (!this.view) return;
     const pageInfo = this.getPageInfo();
-    this.sniffingHelper.reset(pageInfo);
+    this.sniffingHelper.update(pageInfo);
     this.window.webContents.send("webview-did-navigate", pageInfo);
 
     try {
