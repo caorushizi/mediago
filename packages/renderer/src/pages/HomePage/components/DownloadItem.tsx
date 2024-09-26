@@ -174,6 +174,19 @@ export function DownloadItem({
   };
 
   const renderTitle = (item: VideoStat): ReactNode => {
+    return (
+      <div
+        className={cn("truncate text-sm dark:text-[#B4B4B4]", {
+          "text-[#127af3]": selected,
+        })}
+        title={item.name}
+      >
+        {item.name}
+      </div>
+    );
+  };
+
+  const handleRenderTag = useMemoizedFn(() => {
     let tag = null;
     if (item.status === DownloadStatus.Downloading) {
       tag = (
@@ -225,23 +238,15 @@ export function DownloadItem({
         />
       );
     }
-
     return (
-      <div className="flex flex-row gap-2">
-        <div
-          className={cn("text-sm dark:text-[#B4B4B4]", {
-            "text-[#127af3]": selected,
-          })}
-        >
-          {item.name}
-        </div>
+      <div className="flex flex-shrink-0 flex-grow flex-row gap-2">
         {item.isLive && (
           <DownloadTag text={t("liveResource")} color="#9abbe2" />
         )}
         {tag}
       </div>
     );
-  };
+  });
 
   const renderDescription = (item: DownloadItem): ReactNode => {
     if (progress) {
@@ -258,10 +263,10 @@ export function DownloadItem({
     }
     return (
       <div
-        className="relative flex flex-col gap-1 truncate text-xs text-[#B3B3B3] dark:text-[#515257]"
+        className="relative flex flex-col gap-1 text-xs text-[#B3B3B3] dark:text-[#515257]"
         title={item.url}
       >
-        <div>{item.url}</div>
+        <div className="truncate">{item.url}</div>
         {item.status === DownloadStatus.Failed && (
           <TerminalDrawer
             asChild
@@ -303,8 +308,9 @@ export function DownloadItem({
             className="absolute bottom-0 right-[126px] top-0 block h-full select-none"
           />
         )}
-        <div className="relative flex flex-row items-center justify-between">
+        <div className="relative flex flex-row items-center gap-2">
           {renderTitle(item)}
+          {handleRenderTag()}
           <div className="flex flex-row items-center gap-3 rounded-md bg-[#eff4fa] px-1.5 py-1.5 dark:bg-[#3B3F48]">
             {renderActionButtons(item)}
           </div>
