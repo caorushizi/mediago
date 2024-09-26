@@ -9,7 +9,6 @@ import { useSelector } from "react-redux";
 import { selectAppStore } from "@/store";
 import selectedBg from "@/assets/images/select-item-bg.png";
 import {
-  CloseIcon,
   DownloadIcon,
   DownloadListIcon,
   EditIcon,
@@ -20,15 +19,9 @@ import {
 import useElectron from "@/hooks/electron";
 import { DownloadTag } from "@/components/DownloadTag";
 import { IconButton } from "@/components/IconButton";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
-import Terminal from "@/components/DownloadTerminal";
 import { useMemoizedFn } from "ahooks";
 import { PLAY_VIDEO } from "@/const";
+import { TerminalDrawer } from "./TerminalDrawer";
 
 interface Props {
   item: VideoStat;
@@ -59,30 +52,18 @@ export function DownloadItem({
     if (!appStore.showTerminal) return null;
 
     return (
-      <Drawer handleOnly>
-        <DrawerTrigger>
+      <TerminalDrawer
+        trigger={
           <IconButton
             key="terminal"
             title={t("terminal")}
             icon={<TerminalIcon />}
           />
-        </DrawerTrigger>
-        <DrawerContent>
-          <Terminal
-            header={
-              <div className="flex flex-shrink-0 flex-row items-center justify-between">
-                {item.name}
-                <DrawerClose>
-                  <IconButton icon={<CloseIcon />} />
-                </DrawerClose>
-              </div>
-            }
-            className="h-[350px] overflow-hidden px-3"
-            id={item.id}
-            log={item.log}
-          />
-        </DrawerContent>
-      </Drawer>
+        }
+        title={item.name}
+        id={item.id}
+        log={item.log}
+      />
     );
   };
 
@@ -195,10 +176,18 @@ export function DownloadItem({
       }
     } else if (item.status === DownloadStatus.Failed) {
       tag = (
-        <DownloadTag
-          icon={<FailedIcon />}
-          text={t("downloadFailed")}
-          color="#ff7373"
+        <TerminalDrawer
+          trigger={
+            <DownloadTag
+              icon={<FailedIcon />}
+              text={t("downloadFailed")}
+              color="#ff7373"
+              className="cursor-pointer"
+            />
+          }
+          title={item.name}
+          id={item.id}
+          log={item.log}
         />
       );
     } else if (item.status === DownloadStatus.Stopped) {
@@ -244,10 +233,23 @@ export function DownloadItem({
     }
     return (
       <div
-        className="relative truncate text-xs text-[#B3B3B3] dark:text-[#515257]"
+        className="relative flex flex-col gap-1 truncate text-xs text-[#B3B3B3] dark:text-[#515257]"
         title={item.url}
       >
-        {item.url}
+        <div>{item.url}</div>
+        {item.status === DownloadStatus.Failed && (
+          <TerminalDrawer
+            asChild
+            trigger={
+              <div className="cursor-pointer truncate text-[#ff7373]">
+                {t("failReason")}: ... {item.log.slice(-100)}
+              </div>
+            }
+            title={item.name}
+            id={item.id}
+            log={item.log}
+          />
+        )}
       </div>
     );
   };
