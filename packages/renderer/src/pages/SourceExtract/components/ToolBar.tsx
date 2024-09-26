@@ -7,7 +7,7 @@ import {
   setAppStore,
   setBrowserStore,
 } from "@/store";
-import { cn, generateUrl, getFavIcon } from "@/utils";
+import { cn, generateUrl, getFavIcon, tdApp } from "@/utils";
 import { useRequest } from "ahooks";
 import { Input, Tooltip } from "antd";
 import React, { useContext, useMemo } from "react";
@@ -28,6 +28,7 @@ import {
 import { IconButton } from "@/components/IconButton";
 import { ThemeContext } from "@/context/ThemeContext";
 import { EyeInvisibleOutlined } from "@ant-design/icons";
+import { OPEN_URL } from "@/const";
 
 interface Props {
   page: boolean;
@@ -102,6 +103,7 @@ export function ToolBar({ page }: Props) {
   };
 
   const loadUrl = (url: string) => {
+    tdApp.onEvent(OPEN_URL);
     dispatch(
       setBrowserStore({
         url,
@@ -153,7 +155,7 @@ export function ToolBar({ page }: Props) {
   return (
     <div
       className={cn(
-        "flex flex-row items-center gap-1 bg-white px-3 py-2 dark:bg-[#1F2024]",
+        "flex flex-row items-center gap-2 bg-white px-3 py-2 dark:bg-[#1F2024]",
         {
           "rounded-lg": !page,
         },
