@@ -14,12 +14,7 @@ import DownloadForm, {
   DownloadFormRef,
   DownloadFormType,
 } from "@/components/DownloadForm";
-import {
-  DOWNLOAD_FAIL,
-  DOWNLOAD_SUCCESS,
-  EDIT_DOWNLOAD,
-  STOP_DOWNLOAD,
-} from "@/const";
+import { EDIT_DOWNLOAD } from "@/const";
 
 interface Props {
   data: VideoStat[];
@@ -63,11 +58,9 @@ export function DownloadList({
     };
     const onDownloadSuccess = () => {
       refresh();
-      tdApp.onEvent(DOWNLOAD_SUCCESS);
     };
     const onDownloadFailed = () => {
       refresh();
-      tdApp.onEvent(DOWNLOAD_FAIL);
     };
     const onDownloadStart = () => {
       refresh();
@@ -159,7 +152,6 @@ export function DownloadList({
   const onStopDownload = useMemoizedFn(async (id: number) => {
     await stopDownload(id);
     refresh();
-    tdApp.onEvent(STOP_DOWNLOAD);
   });
 
   const confirmAddItem = useMemoizedFn(
