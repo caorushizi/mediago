@@ -220,7 +220,7 @@ export function DownloadList({
 
   if (data.length === 0) {
     return (
-      <div className="flex h-full flex-1 flex-row items-center justify-center rounded-lg bg-white">
+      <div className="flex h-full flex-1 flex-row items-center justify-center rounded-lg bg-white dark:bg-[#1F2024]">
         <Empty />
       </div>
     );

@@ -246,14 +246,13 @@ export function DownloadItem({
   const renderDescription = (item: DownloadItem): ReactNode => {
     if (progress) {
       const { percent, speed } = progress;
+      const val = Math.round(Number(percent));
 
       return (
-        <div className="flex flex-row items-center gap-3 text-xs">
-          <Progress
-            percent={Math.round(Number(percent))}
-            strokeLinecap="butt"
-          />
-          <span className="flex-shrink-0">{speed}</span>
+        <div className="flex flex-row items-center gap-2 text-xs text-[rgba(0,0,0,0.88)] dark:text-[rgba(255,255,255,0.85)]">
+          <Progress percent={val} strokeLinecap="butt" showInfo={false} />
+          <div className="min-w-5 flex-shrink-0">{val}%</div>
+          <div className="min-w-20 flex-shrink-0">{speed}</div>
         </div>
       );
     }
@@ -306,7 +305,7 @@ export function DownloadItem({
         )}
         <div className="relative flex flex-row items-center justify-between">
           {renderTitle(item)}
-          <div className="flex flex-row items-center gap-3 rounded-md bg-white px-1.5 py-1.5 dark:bg-[#3B3F48]">
+          <div className="flex flex-row items-center gap-3 rounded-md bg-[#eff4fa] px-1.5 py-1.5 dark:bg-[#3B3F48]">
             {renderActionButtons(item)}
           </div>
         </div>
