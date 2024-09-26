@@ -72,6 +72,7 @@
     "inversify": "^6.0.2",
     "lint-staged": "^15.2.5",
     "lodash": "^4.17.21",
+    "lru-cache": "^11.0.1",
     "mime-types": "^2.1.35",
     "nanoid": "^5.0.7",
     "node-fetch": "^3.3.2",

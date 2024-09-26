@@ -85,7 +85,7 @@ export default class WebviewService {
   onDomReady = () => {
     if (!this.view) return;
     const pageInfo = this.getPageInfo();
-    this.sniffingHelper.reset(pageInfo);
+    this.sniffingHelper.update(pageInfo);
     this.window.webContents.send("webview-dom-ready", pageInfo);
   };
 
@@ -107,6 +107,8 @@ export default class WebviewService {
     } catch (err) {
       // empty
     }
+
+    this.sniffingHelper.checkPageInfo();
   };
 
   onDidFailLoad = (e: Event, code: number, desc: string) => {
