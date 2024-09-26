@@ -143,6 +143,10 @@ export function DownloadList({
     return "indeterminate";
   }, [selected]);
 
+  useEffect(() => {
+    setSelected([]);
+  }, [filter]);
+
   const onStartDownload = useMemoizedFn(async (id: number) => {
     await startDownload(id);
     messageApi.success(t("addTaskSuccess"));
