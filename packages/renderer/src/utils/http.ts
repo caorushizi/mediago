@@ -4,3 +4,18 @@ import axios from "axios";
 const http = axios.create({});
 
 export { http };
+
+const api = axios.create({
+  baseURL: import.meta.env.DEV ? "http://localhost:3000/api" : "/api",
+});
+
+api.interceptors.response.use(
+  ({ data }) => {
+    return Promise.resolve(data);
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
+
+export { api };

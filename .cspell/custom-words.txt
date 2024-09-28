@@ -6,6 +6,7 @@ aplus
 behaviour
 bili
 bilibili
+bodyparser
 bodys
 cancle
 cliqz
@@ -17,6 +18,7 @@ consola
 conventionalcommits
 datetime
 DDTHH
+deeplink
 execa
 idtype
 immer
@@ -53,4 +55,3 @@ watting
 Watting
 xgplayer
 zustand
-deeplink
