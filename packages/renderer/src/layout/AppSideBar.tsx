@@ -5,7 +5,7 @@ import useElectron from "../hooks/electron";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAppStore, setAppStore, clearCount, selectCount } from "../store";
 import { useTranslation } from "react-i18next";
-import { cn } from "@/utils";
+import { cn, isWeb } from "@/utils";
 import {
   ConverterIcon,
   DoneIcon,
@@ -103,7 +103,7 @@ export function AppSideBar({ className }: Props) {
     await showBrowserWindow();
   };
 
-  const items: MenuItem[] = [
+  const items1: MenuItem[] = [
     {
       label: (
         <AppMenuItem
@@ -178,6 +178,9 @@ export function AppSideBar({ className }: Props) {
       key: "settings",
     },
   ];
+  const items = items1.filter((i) =>
+    isWeb ? i.key !== "source" && i.key !== "converter" : true,
+  );
 
   const finalItems = items.filter((item) =>
     appStore.openInNewWindow ? item?.key !== "source" : true,
