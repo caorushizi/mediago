@@ -3,6 +3,9 @@ import { TYPES } from "./types.ts";
 import TypeORM from "./vendor/TypeORM.ts";
 import RouterHandlerService from "./core/router.ts";
 import Koa from "koa";
+import cors from "@koa/cors";
+import bodyParser from "koa-bodyparser";
+import Logger from "./vendor/Logger.ts";
 
 @injectable()
 export default class ElectronApp extends Koa {
@@ -11,6 +14,8 @@ export default class ElectronApp extends Koa {
     private readonly router: RouterHandlerService,
     @inject(TYPES.TypeORM)
     private readonly db: TypeORM,
+    @inject(TYPES.Logger)
+    private readonly logger: Logger,
   ) {
     super();
   }
@@ -25,10 +30,12 @@ export default class ElectronApp extends Koa {
     // vendor
     await this.vendorInit();
 
+    this.use(cors());
+    this.use(bodyParser());
     this.use(this.router.routes()).use(this.router.allowedMethods());
 
     this.listen(3000, () => {
-      console.log("Server running on port 3000");
+      this.logger.info("Server running on port 3000");
     });
   }
 }

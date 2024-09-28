@@ -2,9 +2,9 @@ import { injectable, multiInject } from "inversify";
 import { Controller } from "../interfaces.ts";
 import { TYPES } from "../types.ts";
 import Router from "@koa/router";
-import { success } from "../helper/utils.ts";
-import { error } from "console";
-// import { error, success } from "../helper/utils.ts";
+import { error, success } from "../helper/utils.ts";
+import { API_PREFIX } from "../const.ts";
+import path from "path";
 
 @injectable()
 export default class RouterHandlerService extends Router {
@@ -36,7 +36,11 @@ export default class RouterHandlerService extends Router {
     );
     if (!routerPath) return;
 
-    this[httpMethod](routerPath, async (context, next) => {
+    const finalPath = path
+      .join(API_PREFIX, routerPath)
+      .replace(/\\/g, "/")
+      .replace(/\/$/, "");
+    this[httpMethod](finalPath, async (context, next) => {
       try {
         let res = property.call(controller, context, next);
         if (res.then) {

@@ -18,7 +18,7 @@ import { QrcodeOutlined } from "@ant-design/icons";
 import { HomeDownloadButton } from "@/components/HomeDownloadButton";
 import { ConfigStore, useConfigStore } from "@/store/config";
 import { useShallow } from "zustand/react/shallow";
-import { randomName, tdApp } from "@/utils";
+import { isWeb, randomName, tdApp } from "@/utils";
 import { CLICK_DOWNLOAD } from "@/const";
 
 interface Props {
@@ -141,7 +141,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
               {t("materialExtraction")}
             </Button>
           )}
-          {filter === DownloadFilter.done && (
+          {filter === DownloadFilter.done && !isWeb && (
             <Popover
               content={
                 <div>
@@ -156,10 +156,12 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
               </Button>
             </Popover>
           )}
-          <Button onClick={() => openDir(appStore.local)}>
-            <FolderIcon />
-            {t("openFolder")}
-          </Button>
+          {!isWeb && (
+            <Button onClick={() => openDir(appStore.local)}>
+              <FolderIcon />
+              {t("openFolder")}
+            </Button>
+          )}
           {filter === DownloadFilter.list && (
             <HomeDownloadButton onClick={handleOpenForm} />
           )}

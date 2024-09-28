@@ -2,6 +2,8 @@ import { injectable } from "inversify";
 import { DataSource, EntityManager } from "typeorm";
 import { Favorite } from "../entity/Favorite.ts";
 import { Vendor } from "../core/vendor.ts";
+import { Video } from "../entity/Video.ts";
+import { Config } from "../entity/Config.ts";
 
 @injectable()
 export default class DatabaseService implements Vendor {
@@ -17,7 +19,8 @@ export default class DatabaseService implements Vendor {
       database: "mediago",
       synchronize: true,
       logging: false,
-      entities: [Favorite],
+      charset: "utf8mb4",
+      entities: [Favorite, Video, Config],
       migrations: [],
       subscribers: [],
     });

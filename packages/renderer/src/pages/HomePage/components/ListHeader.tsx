@@ -5,6 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { DownloadFilter } from "@/types";
 import { useMemoizedFn } from "ahooks";
 import useElectron from "@/hooks/electron";
+import { isWeb } from "@/utils";
 
 interface Props {
   onSelectAll: (checked: boolean) => void;
@@ -38,13 +39,11 @@ export function ListHeader({
     ];
   }, []);
   const onMenuClick: MenuProps["onClick"] = useMemoizedFn(async (e) => {
-    console.log("click", e);
     const { key } = e;
     if (key === "exportDownloadList") {
       try {
         await exportDownloadList();
       } catch (err) {
-        console.log(err);
         messageApi.error(t("exportDownloadListFailed"));
       }
     }
@@ -89,13 +88,15 @@ export function ListHeader({
             {t("download")}
           </Button>
         )}
-        <Dropdown
-          menu={{ items, onClick: onMenuClick }}
-          placement="bottomRight"
-          trigger={["click"]}
-        >
-          <Button type="primary">{t("more")}</Button>
-        </Dropdown>
+        {!isWeb && (
+          <Dropdown
+            menu={{ items, onClick: onMenuClick }}
+            placement="bottomRight"
+            trigger={["click"]}
+          >
+            <Button type="primary">{t("more")}</Button>
+          </Dropdown>
+        )}
       </div>
     </div>
   );
