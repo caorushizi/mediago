@@ -68,3 +68,6 @@ export function cn(...inputs: ClassValue[]) {
 export function randomName() {
   return dayjs().format("YYYYMMDD") + "-" + nanoid();
 }
+
+console.log("112233", import.meta.env);
+export const isWeb = import.meta.env.APP_TARGET === "web";
