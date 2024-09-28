@@ -33,7 +33,7 @@ import { AppLanguage, AppTheme } from "../../types";
 import { useTranslation } from "react-i18next";
 import { SessionStore, useSessionStore } from "@/store/session";
 import { useShallow } from "zustand/react/shallow";
-import { tdApp } from "@/utils";
+import { isWeb, tdApp } from "@/utils";
 import { CHECK_UPDATE } from "@/const";
 
 const version = import.meta.env.APP_VERSION;
@@ -198,19 +198,28 @@ const SettingPage: React.FC = () => {
     };
   }, []);
 
+  const handleClearWebviewCache = useMemoizedFn(async () => {
+    try {
+      await clearWebviewCache();
+      messageApi.success(t("clearCacheSuccess"));
+    } catch (err: any) {
+      messageApi.error(t("clearCacheFailed"));
+    }
+  });
+
   return (
     <PageContainer title={t("setting")}>
       {contextHolder}
       <Form<AppStore>
         ref={formRef}
         layout="horizontal"
-        // submitter={false}
-        labelCol={{ style: { width: "140px" } }}
         labelAlign={"left"}
         colon={false}
         initialValues={settings}
         onValuesChange={onFormValueChange}
         className="flex flex-col gap-2"
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 10 }}
       >
         <GroupWrapper title={t("basicSetting")}>
           <Form.Item name="local" label={renderButtonLabel()}>
@@ -242,101 +251,111 @@ const SettingPage: React.FC = () => {
               allowClear={false}
             />
           </Form.Item>
-          <Form.Item label={t("openInNewWindow")} name="openInNewWindow">
-            <Switch />
-          </Form.Item>
           <Form.Item label={t("downloadPrompt")} name="promptTone">
             <Switch />
           </Form.Item>
           <Form.Item label={t("showTerminal")} name="showTerminal">
             <Switch />
           </Form.Item>
-          <Form.Item
-            label={renderTooltipLabel(
-              t("autoUpgrade"),
-              t("autoUpgradeTooltip"),
-            )}
-            name="autoUpgrade"
-          >
-            <Switch />
-          </Form.Item>
-          <Form.Item label={t("allowBetaVersion")} name="allowBeta">
-            <Switch />
-          </Form.Item>
-          <Form.Item
-            label={renderTooltipLabel(t("privacy"), t("privacyTooltip"))}
-            name="privacy"
-          >
-            <Switch />
-          </Form.Item>
-          <Form.Item label={t("closeMainWindow")} name="closeMainWindow">
-            <Radio.Group>
-              <Radio value={true}>{t("close")}</Radio>
-              <Radio value={false}>{t("minimizeToTray")}</Radio>
-            </Radio.Group>
-          </Form.Item>
+          {!isWeb && (
+            <Form.Item
+              label={renderTooltipLabel(
+                t("autoUpgrade"),
+                t("autoUpgradeTooltip"),
+              )}
+              name="autoUpgrade"
+            >
+              <Switch />
+            </Form.Item>
+          )}
+          {!isWeb && (
+            <Form.Item label={t("allowBetaVersion")} name="allowBeta">
+              <Switch />
+            </Form.Item>
+          )}
+
+          {!isWeb && (
+            <Form.Item label={t("closeMainWindow")} name="closeMainWindow">
+              <Radio.Group>
+                <Radio value={true}>{t("close")}</Radio>
+                <Radio value={false}>{t("minimizeToTray")}</Radio>
+              </Radio.Group>
+            </Form.Item>
+          )}
         </GroupWrapper>
-        <GroupWrapper title={t("browserSetting")}>
-          <Form.Item name="proxy" label={t("proxySetting")}>
-            <Input width="xl" placeholder={t("pleaseEnterProxy")} />
-          </Form.Item>
-          <Form.Item
-            name="useProxy"
-            label={t("proxySwitch")}
-            rules={[
-              {
-                validator(rules, value) {
-                  if (value && formRef.current.getFieldValue("proxy") === "") {
-                    return Promise.reject(t("pleaseEnterProxyFirst"));
-                  }
-                  return Promise.resolve();
+        {!isWeb && (
+          <GroupWrapper title={t("browserSetting")}>
+            <Form.Item label={t("openInNewWindow")} name="openInNewWindow">
+              <Switch />
+            </Form.Item>
+            <Form.Item name="proxy" label={t("proxySetting")}>
+              <Input width="xl" placeholder={t("pleaseEnterProxy")} />
+            </Form.Item>
+            <Form.Item
+              name="useProxy"
+              label={t("proxySwitch")}
+              rules={[
+                {
+                  validator(rules, value) {
+                    if (
+                      value &&
+                      formRef.current.getFieldValue("proxy") === ""
+                    ) {
+                      return Promise.reject(t("pleaseEnterProxyFirst"));
+                    }
+                    return Promise.resolve();
+                  },
                 },
-              },
-            ]}
-          >
-            <Switch />
-          </Form.Item>
-          <Form.Item label={t("blockAds")} name="blockAds">
-            <Switch />
-          </Form.Item>
-          <Form.Item label={t("enterMobileMode")} name="isMobile">
-            <Switch />
-          </Form.Item>
-          <Form.Item
-            label={renderTooltipLabel(
-              t("useImmersiveSniffing"),
-              t("immersiveSniffingDescription"),
-            )}
-            name="useExtension"
-          >
-            <Switch />
-          </Form.Item>
-          <Form.Item label={t("moreAction")}>
-            <Space>
-              <Button
-                onClick={async () => {
-                  try {
-                    await clearWebviewCache();
-                    messageApi.success(t("clearCacheSuccess"));
-                  } catch (err) {
-                    messageApi.error(t("clearCacheFailed"));
-                  }
-                }}
-                icon={<ClearOutlined />}
-              >
-                {t("clearCache")}
-              </Button>
-              <Dropdown.Button
-                menu={{ items, onClick: onMenuClick }}
-                onClick={handleExportFavorite}
-              >
-                <DownloadOutlined />
-                {t("exportFavorite")}
-              </Dropdown.Button>
-            </Space>
-          </Form.Item>
-        </GroupWrapper>
+              ]}
+            >
+              <Switch />
+            </Form.Item>
+            <Form.Item label={t("blockAds")} name="blockAds">
+              <Switch />
+            </Form.Item>
+            <Form.Item label={t("enterMobileMode")} name="isMobile">
+              <Switch />
+            </Form.Item>
+            <Form.Item
+              label={renderTooltipLabel(
+                t("useImmersiveSniffing"),
+                t("immersiveSniffingDescription"),
+              )}
+              name="useExtension"
+            >
+              <Switch />
+            </Form.Item>
+            <Form.Item
+              label={renderTooltipLabel(t("privacy"), t("privacyTooltip"))}
+              name="privacy"
+            >
+              <Switch />
+            </Form.Item>
+            <Form.Item label={t("moreAction")}>
+              <Space>
+                <Button
+                  onClick={handleClearWebviewCache}
+                  icon={<ClearOutlined />}
+                >
+                  {t("clearCache")}
+                </Button>
+                <Dropdown.Button
+                  menu={{ items, onClick: onMenuClick }}
+                  onClick={handleExportFavorite}
+                >
+                  <DownloadOutlined />
+                  {t("exportFavorite")}
+                </Dropdown.Button>
+              </Space>
+            </Form.Item>
+          </GroupWrapper>
+        )}
         <GroupWrapper title={t("downloadSetting")}>
+          {isWeb && (
+            <Form.Item name="proxy" label={t("proxySetting")}>
+              <Input placeholder={t("pleaseEnterProxy")} />
+            </Form.Item>
+          )}
           <Form.Item
             name="downloadProxySwitch"
             label={t("downloadProxySwitch")}

@@ -99,13 +99,13 @@ const Converter = () => {
       className="rounded-lg bg-white dark:bg-[#1F2024]"
     >
       {contextHolder}
-      <div className="p-3">
+      <div className="flex flex-col gap-3 rounded-lg bg-white p-3 dark:bg-[#1F2024]">
         {data && data.list.length ? (
           data.list.map((item) => {
             return (
               <div
                 key={item.id}
-                className="flex flex-col gap-3 rounded-lg bg-[#FAFCFF] p-3 dark:bg-[#27292F]"
+                className="flex flex-1 flex-col gap-3 rounded-lg bg-[#FAFCFF] p-3 dark:bg-[#27292F]"
               >
                 <div className="flex flex-row items-center justify-between">
                   <div className="text-sm text-[#343434] dark:text-[#B4B4B4]">

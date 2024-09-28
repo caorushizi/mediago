@@ -8,7 +8,7 @@ import zhCN from "antd/locale/zh_CN";
 import useElectron from "./hooks/electron";
 import Loading from "./components/Loading";
 import { DownloadFilter } from "./types";
-import { tdApp } from "./utils";
+import { isWeb, tdApp } from "./utils";
 import { useAsyncEffect } from "ahooks";
 import { ThemeContext } from "./context/ThemeContext";
 import { SessionStore, useSessionStore } from "./store/session";
@@ -46,6 +46,8 @@ const App: FC = () => {
       setAppTheme("light");
     }
   };
+
+  console.log("App", isWeb);
 
   // 监听store变化
   const onAppStoreChange = (event: any, store: AppStore) => {
