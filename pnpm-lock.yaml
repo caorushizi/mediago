@@ -121,9 +121,15 @@ importers:
       nanoid:
         specifier: ^5.0.7
         version: 5.0.7
+      node-pty:
+        specifier: ^1.0.0
+        version: 1.0.0
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
+      strip-ansi:
+        specifier: ^7.1.0
+        version: 7.1.0
       typeorm:
         specifier: 0.3.20
         version: 0.3.20(better-sqlite3@9.6.0)(mysql2@3.11.0)
@@ -170,9 +176,6 @@ importers:
       '@types/node':
         specifier: ^20.12.12
         version: 20.12.12
-      '@types/node-fetch':
-        specifier: ^2.6.11
-        version: 2.6.11
       '@types/semver':
         specifier: ^7.5.8
         version: 7.5.8
@@ -195,7 +198,7 @@ importers:
         specifier: ^16.4.5
         version: 16.4.5
       esbuild:
-        specifier: ^0.21.4
+        specifier: 0.21.4
         version: 0.21.4
       esbuild-register:
         specifier: ^3.5.0
@@ -2744,8 +2747,8 @@ packages:
     resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
     engines: {node: '>=8'}
 
-  ansi-regex@6.0.1:
-    resolution: {integrity: sha512-n5M855fKb2SsfMIiFFoVrABHJC8QtHwVx+mHWP3QcEqBHYienj5dHSgjbxtC0WEZXYt4wcD6zrQElDPhFuZgfA==}
+  ansi-regex@6.1.0:
+    resolution: {integrity: sha512-7HSX4QQb4CspciLpVFwyRe79O3xsIZDDLER21kERQ71oaPodF8jL725AgJMFAYbooIqolJoRLuM81SpeUkpkvA==}
     engines: {node: '>=12'}
 
   ansi-styles@3.2.1:
@@ -9654,7 +9657,7 @@ snapshots:
 
   ansi-regex@5.0.1: {}
 
-  ansi-regex@6.0.1: {}
+  ansi-regex@6.1.0: {}
 
   ansi-styles@3.2.1:
     dependencies:
@@ -14274,7 +14277,7 @@ snapshots:
 
   strip-ansi@7.1.0:
     dependencies:
-      ansi-regex: 6.0.1
+      ansi-regex: 6.1.0
 
   strip-bom@4.0.0: {}
 
