@@ -1,8 +1,8 @@
 import { inject, injectable } from "inversify";
-import { ConfigParams, TYPES } from "../types";
-import TypeORM from "../vendor/TypeORM";
+import { ConfigParams, TYPES } from "../types.ts";
+import TypeORM from "../vendor/TypeORM.ts";
 import { Repository } from "typeorm";
-import { Config } from "../entity/Config";
+import { Config } from "../entity/Config.ts";
 
 @injectable()
 export default class ConfigRepository {

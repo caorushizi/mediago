@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { type Controller } from "../interfaces.ts";
 import { ConfigParams, TYPES } from "../types.ts";
 import FavoriteRepository from "../repository/FavoriteRepository.ts";
-import { get, post } from "../helper/decorator.ts";
+import { get, post } from "../helper/index.ts";
 import Logger from "../vendor/Logger.ts";
 import ConfigService from "../services/ConfigService.ts";
 import { Context } from "koa";

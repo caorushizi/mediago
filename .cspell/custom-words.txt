@@ -19,6 +19,7 @@ conventionalcommits
 datetime
 DDTHH
 deeplink
+esmfile
 execa
 idtype
 immer
@@ -31,6 +32,7 @@ mediago
 metas
 nocheck
 optimizelegibility
+outdir
 pinia
 Qrcode
 redownload

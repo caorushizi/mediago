@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
-import { ConfigParams, TYPES } from "../types";
-import ConfigRepository from "../repository/ConfigRepository";
+import { ConfigParams, TYPES } from "../types.ts";
+import ConfigRepository from "../repository/ConfigRepository.ts";
 
 @injectable()
 export default class ConfigService {

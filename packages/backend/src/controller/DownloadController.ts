@@ -2,14 +2,18 @@ import { inject, injectable } from "inversify";
 import {
   DownloadItem,
   DownloadItemPagination,
+  DownloadStatus,
+  Task,
   type Controller,
 } from "../interfaces.ts";
 import { TYPES } from "../types.ts";
 import FavoriteRepository from "../repository/FavoriteRepository.ts";
-import { get, post } from "../helper/decorator.ts";
+import { get, post } from "../helper/index.ts";
 import Logger from "../vendor/Logger.ts";
 import VideoRepository from "../repository/VideoRepository.ts";
 import { Context } from "koa";
+import ConfigService from "../services/ConfigService.ts";
+import DownloadService from "../services/DownloadService.ts";
 
 @injectable()
 export default class DownloadController implements Controller {
@@ -20,6 +24,10 @@ export default class DownloadController implements Controller {
     private readonly logger: Logger,
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
+    @inject(TYPES.ConfigService)
+    private readonly store: ConfigService,
+    @inject(TYPES.DownloadService)
+    private readonly downloadService: DownloadService,
   ) {}
 
   @get("/")
@@ -46,5 +54,28 @@ export default class DownloadController implements Controller {
     const pagination = ctx.request.body as DownloadItemPagination;
     const videos = await this.videoRepository.findVideos(pagination);
     return videos;
+  }
+
+  @post("start-download")
+  async startDownload(ctx: Context) {
+    const { vid } = ctx.request.body as { vid: number };
+    // 查找将要下载的视频
+    const video = await this.videoRepository.findVideo(vid);
+    const { name, url, headers, type } = video;
+    const { local, deleteSegments } = await this.store.getConfig();
+
+    const task: Task = {
+      id: vid,
+      params: {
+        url,
+        type,
+        local,
+        name,
+        headers,
+        deleteSegments,
+      },
+    };
+    await this.videoRepository.changeVideoStatus(vid, DownloadStatus.Watting);
+    this.downloadService.addTask(task);
   }
 }
