@@ -8,6 +8,7 @@
     "dev": "vite",
     "dev:web": "cross-env APP_TARGET=web vite --port 8557",
     "build": "tsc && vite build",
+    "build:web": "cross-env APP_TARGET=web vite build",
     "preview": "vite preview",
     "report": "vite-bundle-visualizer",
     "lint-staged": "lint-staged"

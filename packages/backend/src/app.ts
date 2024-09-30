@@ -10,6 +10,8 @@ import http from "http";
 import SocketIO from "./vendor/SocketIO.ts";
 import VideoRepository from "./repository/VideoRepository.ts";
 import { DownloadStatus } from "./interfaces.ts";
+import serve from "koa-static";
+import { STATIC_DIR } from "./const.ts";
 
 @injectable()
 export default class ElectronApp extends Koa {
@@ -42,6 +44,7 @@ export default class ElectronApp extends Koa {
       .use(bodyParser())
       .use(this.router.routes())
       .use(this.router.allowedMethods());
+    this.use(serve(STATIC_DIR));
 
     const server = http.createServer(this.callback());
 
