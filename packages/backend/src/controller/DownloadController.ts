@@ -61,6 +61,7 @@ export default class DownloadController implements Controller {
     const { vid } = ctx.request.body as { vid: number };
     // 查找将要下载的视频
     const video = await this.videoRepository.findVideo(vid);
+    console.log("video", video);
     const { name, url, headers, type } = video;
     const { local, deleteSegments } = await this.store.getConfig();
 

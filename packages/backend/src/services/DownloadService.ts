@@ -247,7 +247,6 @@ export default class DownloadService extends EventEmitter {
     const { abortSignal, onMessage, id } = params;
 
     return new Promise((resolve, reject) => {
-      console.log("binPath", binPath);
       const ptyProcess = pty.spawn(binPath, args, {
         name: "xterm-color",
         cols: 500,
@@ -264,8 +263,9 @@ export default class DownloadService extends EventEmitter {
         };
         ptyProcess.onData((data) => {
           try {
-            this.emit("download-message", id, data);
-            onMessage(ctx, stripAnsi(data));
+            const txt = stripAnsi(data);
+            this.emit("download-message", id, txt);
+            onMessage(ctx, txt);
           } catch (err) {
             reject(err);
           }

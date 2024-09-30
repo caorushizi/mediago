@@ -2,7 +2,7 @@ import HomeController from "./controller/HomeController.ts";
 import { Container } from "inversify";
 import FavoriteRepository from "./repository/FavoriteRepository.ts";
 import ElectronApp from "./app.ts";
-import { Controller, VideoResponse } from "./interfaces.ts";
+import { Controller } from "./interfaces.ts";
 import { TYPES } from "./types.ts";
 import TypeORM from "./vendor/TypeORM.ts";
 import RouterHandler from "./core/router.ts";
@@ -13,6 +13,7 @@ import VideoRepository from "./repository/VideoRepository.ts";
 import ConfigRepository from "./repository/ConfigRepository.ts";
 import ConfigService from "./services/ConfigService.ts";
 import DownloadService from "./services/DownloadService.ts";
+import SocketIO from "./vendor/SocketIO.ts";
 
 const container = new Container({
   skipBaseClassChecks: true,
@@ -44,6 +45,7 @@ container.bind<ConfigRepository>(TYPES.ConfigRepository).to(ConfigRepository);
 // vendor
 container.bind<TypeORM>(TYPES.TypeORM).to(TypeORM);
 container.bind<Logger>(TYPES.Logger).to(Logger);
+container.bind<SocketIO>(TYPES.SocketIO).to(SocketIO);
 
 // core
 container

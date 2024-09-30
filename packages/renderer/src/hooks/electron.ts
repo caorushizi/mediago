@@ -2,6 +2,7 @@ import { nanoid } from "nanoid";
 import { ElectronApi } from "../../../main/types/preload";
 import apis from "@/apis";
 import { isWeb } from "@/utils";
+import { socket } from "@/utils/http";
 
 const eventFun = ["rendererEvent", "removeEventListener"];
 const eventMap = new Map();
@@ -49,8 +50,12 @@ const getIpcId = (func: any) => {
 
 const ipc = isWeb
   ? {
-      addIpcListener: () => {},
-      removeIpcListener: () => {},
+      addIpcListener: (event: string, func: any) => {
+        socket.on(event, func);
+      },
+      removeIpcListener: (event: string, func: any) => {
+        socket.off(event, func);
+      },
     }
   : {
       addIpcListener: (eventName: string, func: any) => {

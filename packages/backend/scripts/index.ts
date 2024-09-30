@@ -32,7 +32,7 @@ async function watchTask() {
     .on("change", async () => {
       await main.rebuild();
     })
-    .on("error", (error) => {
+    .on("error", (error: any) => {
       consola.error(error);
     });
   return Promise.resolve();
