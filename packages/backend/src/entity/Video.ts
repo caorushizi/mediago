@@ -55,8 +55,8 @@ export class Video {
   status: DownloadStatus;
 
   @Column({
-    type: "varchar",
-    default: "",
+    type: "longtext",
+    nullable: true,
   })
   log: string;
 

@@ -2,6 +2,8 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 
+const isWeb = process.env.APP_TARGET === "web";
+
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
@@ -12,7 +14,9 @@ export default defineConfig({
   envDir: "../..",
   envPrefix: "APP",
   build: {
-    outDir: path.resolve(__dirname, "../main/app/build/renderer"),
+    outDir: isWeb
+      ? path.resolve(__dirname, "../backend/dist/app")
+      : path.resolve(__dirname, "../main/app/build/renderer"),
     emptyOutDir: true,
   },
   resolve: {
