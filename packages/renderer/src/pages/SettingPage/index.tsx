@@ -236,7 +236,7 @@ const SettingPage: React.FC = () => {
               placeholder={t("pleaseSelectDownloadDir")}
             />
           </Form.Item>
-          <Form.Item name="theme" label={t("downloaderTheme")}>
+          <Form.Item hidden={isWeb} name="theme" label={t("downloaderTheme")}>
             <Select
               options={[
                 { label: t("followSystem"), value: AppTheme.System },

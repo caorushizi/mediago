@@ -62,8 +62,8 @@ const apis: ElectronApi = {
   openUrl: async () => {
     return defaultResp;
   },
-  stopDownload: async () => {
-    return defaultResp;
+  stopDownload: async (id: number) => {
+    return api.post("stop-download", { id });
   },
   onDownloadListContextMenu: async () => {
     return defaultResp;
@@ -71,8 +71,8 @@ const apis: ElectronApi = {
   onFavoriteItemContextMenu: async () => {
     return defaultResp;
   },
-  deleteDownloadItem: async () => {
-    return defaultResp;
+  deleteDownloadItem: async (id: number) => {
+    return api.post("delete-download-item", { id });
   },
   convertToAudio: async () => {
     return defaultResp;
@@ -95,20 +95,20 @@ const apis: ElectronApi = {
   webviewUrlContextMenu: async () => {
     return defaultResp;
   },
-  downloadNow: async () => {
-    return defaultResp;
+  downloadNow: async (video: Omit<DownloadItem, "id">) => {
+    return api.post("download-now", video);
   },
-  downloadItemsNow: async () => {
-    return defaultResp;
+  downloadItemsNow: async (videos: Omit<DownloadItem, "id">[]) => {
+    return api.post("download-items-now", videos);
   },
-  editDownloadNow: async () => {
-    return defaultResp;
+  editDownloadNow: async (video: DownloadItem) => {
+    return api.post("edit-download-now", video);
   },
   combineToHomePage: async () => {
     return defaultResp;
   },
-  editDownloadItem: async () => {
-    return defaultResp;
+  editDownloadItem: async (video: DownloadItem) => {
+    return api.post("edit-download-item", video);
   },
   getLocalIP: async () => {
     return defaultResp;

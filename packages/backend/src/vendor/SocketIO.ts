@@ -22,9 +22,7 @@ export default class SocketIO implements Vendor {
     private readonly logger: Logger,
     @inject(TYPES.ConfigService)
     private readonly store: ConfigService,
-  ) {
-    console.log("SocketIO");
-  }
+  ) {}
 
   async init() {}
 
@@ -36,9 +34,7 @@ export default class SocketIO implements Vendor {
       },
     });
 
-    this.io.on("connection", () => {
-      console.log("a user connected");
-    });
+    this.io.on("connection", () => {});
 
     this.downloadService.on("download-ready-start", this.onDownloadReadyStart);
     this.downloadService.on("download-progress", this.onDownloadProgress);
@@ -50,7 +46,7 @@ export default class SocketIO implements Vendor {
   }
 
   async emit(event: string, ...data: any[]) {
-    this.io.emit(event, ...data);
+    this.io.emit(event, {}, ...data);
   }
 
   onDownloadReadyStart = async ({ id, isLive }: DownloadProgress) => {
