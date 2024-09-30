@@ -201,7 +201,7 @@ export default class DownloadService extends EventEmitter {
         );
         this.emit("download-stop", task.id);
       } else {
-        this.logger.info(`taskId: ${task.id} failed`);
+        this.logger.error(`taskId: ${task.id} failed`, err);
         // 下载失败
         await this.videoRepository.changeVideoStatus(
           task.id,
