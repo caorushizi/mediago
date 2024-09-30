@@ -59,7 +59,6 @@ export class Env {
 
   loadDotEnvDefined() {
     return Object.keys(this.env).reduce<Record<string, string>>((prev, cur) => {
-      if (!cur.startsWith("APP_")) return prev;
       prev[`process.env.${[cur]}`] = JSON.stringify(this.env[cur]);
       return prev;
     }, {});

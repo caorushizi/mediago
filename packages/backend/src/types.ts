@@ -1,5 +1,4 @@
-import { Config } from "./entity/Config";
-import { AppStore } from "./main";
+import { Config } from "./entity/Config.ts";
 
 export const TYPES = {
   ElectronApp: Symbol.for("ElectronApp"),
@@ -22,9 +21,11 @@ export const TYPES = {
   VideoService: Symbol.for("VideoService"),
   SniffingHelper: Symbol.for("SniffingHelper"),
   ConfigService: Symbol.for("ConfigService"),
+  DownloaderService: Symbol.for("DownloaderService"),
   // vendor
   TypeORM: Symbol.for("TypeORM"),
   Logger: Symbol.for("Logger"),
+  SocketIO: Symbol.for("SocketIO"),
 };
 
 export enum AppTheme {

@@ -4,6 +4,7 @@
     "composite": true,
     "forceConsistentCasingInFileNames": true,
     "module": "ES2015",
+    "lib": ["ES2015"],
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,

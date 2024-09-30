@@ -92,8 +92,12 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
       }
     });
 
-    const handleAfterClose = useMemoizedFn((open: boolean) => {
+    const afterOpenChange = useMemoizedFn((open: boolean) => {
       onFormVisibleChange?.(open);
+
+      if (!open) {
+        form.resetFields();
+      }
     });
 
     const handleSubmit = useMemoizedFn(async () => {
@@ -144,7 +148,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
           width={500}
           onClose={() => setModalOpen(false)}
           onCancel={() => setModalOpen(false)}
-          afterOpenChange={handleAfterClose}
+          afterOpenChange={afterOpenChange}
           destroyOnClose={destroyOnClose}
           footer={[
             <Button key="cancel" onClick={() => setModalOpen(false)}>
@@ -166,6 +170,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
             colon={false}
             onValuesChange={handleValuesChange}
           >
+            <Form.Item name="id" hidden />
             {!isEdit && (
               <Form.Item label={t("batchDownload")} name={"batch"}>
                 <Switch />

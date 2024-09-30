@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { AppLanguage, AppTheme } from "../types.ts";
+import { DOWNLOAD_DIR } from "../const.ts";
 
 @Entity({
   name: "config",
@@ -17,8 +18,7 @@ export class Config {
   @Column({
     type: "varchar",
     nullable: false,
-    unique: true,
-    default: "~/mediago",
+    default: DOWNLOAD_DIR,
   })
   local: string;
 
