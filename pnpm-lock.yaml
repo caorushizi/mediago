@@ -44,8 +44,8 @@ importers:
         specifier: ^8.8.3
         version: 8.8.3
       cz-git:
-        specifier: ^1.9.2
-        version: 1.9.2
+        specifier: ^1.10.0
+        version: 1.10.0
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
@@ -3522,8 +3522,8 @@ packages:
     resolution: {integrity: sha512-U466fIzU5U22eES5lTNiNbZ+d8dfcHcssH4o7QsdWaCcRs/feIPCxKYSWkYBNs5mny7MvEfwpTLWjvbm94hecw==}
     engines: {node: '>= 10'}
 
-  cz-git@1.9.2:
-    resolution: {integrity: sha512-HqwSIZBl/Vtlq56wsHuQHhQ0CF7rABEvhvbSAaGViLeM5YucLu5o+U2XLow1Y2bwIAfAIKZHfgg9fxP7P3XU3Q==}
+  cz-git@1.10.0:
+    resolution: {integrity: sha512-WJidM6BwqJXPi2KUBzkUgZwZYh9U5VP5tJSIZ5G4+CDDv0lzLo8vrOrsWItE12f3xpAvlZTeQipreSczuaxFRA==}
     engines: {node: '>=v12.20.0'}
 
   d@1.0.2:
@@ -10817,7 +10817,7 @@ snapshots:
       - '@types/node'
       - typescript
 
-  cz-git@1.9.2: {}
+  cz-git@1.10.0: {}
 
   d@1.0.2:
     dependencies:
