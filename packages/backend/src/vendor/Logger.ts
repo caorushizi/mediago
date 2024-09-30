@@ -1,5 +1,5 @@
-import { inject, injectable } from "inversify";
-import { Vendor } from "../core/vendor";
+import { injectable } from "inversify";
+import { Vendor } from "../core/vendor.ts";
 import winston from "winston";
 
 @injectable()

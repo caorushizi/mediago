@@ -1,16 +1,19 @@
-import { injectable, multiInject } from "inversify";
+import { inject, injectable, multiInject } from "inversify";
 import { Controller } from "../interfaces.ts";
 import { TYPES } from "../types.ts";
 import Router from "@koa/router";
 import { error, success } from "../helper/utils.ts";
 import { API_PREFIX } from "../const.ts";
 import path from "path";
+import Logger from "../vendor/Logger.ts";
 
 @injectable()
 export default class RouterHandlerService extends Router {
   constructor(
     @multiInject(TYPES.Controller)
     private readonly controllers: Controller[],
+    @inject(TYPES.Logger)
+    private readonly logger: Logger,
   ) {
     super();
   }
@@ -48,6 +51,7 @@ export default class RouterHandlerService extends Router {
         }
         context.body = success(res);
       } catch (e: unknown) {
+        this.logger.error(e);
         if (e instanceof Error) {
           context.body = error(e.message);
         } else {
