@@ -99,6 +99,10 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
     const handleSubmit = useMemoizedFn(async () => {
       try {
         await form.validateFields();
+      } catch (err) {
+        return;
+      }
+      try {
         const values = form.getFieldsValue();
         const close = await onAddToList(values);
         if (close) {
@@ -114,6 +118,10 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
     const handleDownloadNow = useMemoizedFn(async () => {
       try {
         await form.validateFields();
+      } catch (err) {
+        return;
+      }
+      try {
         const values = form.getFieldsValue();
         const close = await onDownloadNow(values);
         if (close) {

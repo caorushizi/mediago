@@ -1,3 +1,6 @@
+import { Config } from "./entity/Config";
+import { AppStore } from "./main";
+
 export const TYPES = {
   ElectronApp: Symbol.for("ElectronApp"),
   RouterHandlerService: Symbol.for("RouterHandlerService"),
@@ -6,6 +9,7 @@ export const TYPES = {
   VideoRepository: Symbol.for("VideoRepository"),
   FavoriteRepository: Symbol.for("FavoriteRepository"),
   ConversionRepository: Symbol.for("ConversionRepository"),
+  ConfigRepository: Symbol.for("ConfigRepository"),
   // windows
   BrowserWindow: Symbol.for("BrowserWindow"),
   MainWindow: Symbol.for("MainWindow"),
@@ -17,8 +21,10 @@ export const TYPES = {
   ProtocolService: Symbol.for("ProtocolService"),
   VideoService: Symbol.for("VideoService"),
   SniffingHelper: Symbol.for("SniffingHelper"),
+  ConfigService: Symbol.for("ConfigService"),
   // vendor
   TypeORM: Symbol.for("TypeORM"),
+  Logger: Symbol.for("Logger"),
 };
 
 export enum AppTheme {
@@ -31,4 +37,9 @@ export enum AppLanguage {
   System = "system",
   ZH = "zh",
   EN = "en",
+}
+
+export interface ConfigParams {
+  key: keyof Config;
+  val: Config[keyof Config];
 }

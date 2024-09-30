@@ -4,7 +4,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { customAlphabet } from "nanoid";
 
-export { http } from "./http";
+export { http, api } from "./http";
 export { tdApp } from "./tdapp";
 
 const nanoid = customAlphabet("0123456789abcdefghijklmnopqrstuvwxyz", 10);
@@ -69,5 +69,4 @@ export function randomName() {
   return dayjs().format("YYYYMMDD") + "-" + nanoid();
 }
 
-console.log("112233", import.meta.env);
 export const isWeb = import.meta.env.APP_TARGET === "web";

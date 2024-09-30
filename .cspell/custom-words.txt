@@ -6,6 +6,7 @@ aplus
 behaviour
 bili
 bilibili
+bodyparser
 bodys
 cancle
 cliqz
@@ -17,6 +18,8 @@ consola
 conventionalcommits
 datetime
 DDTHH
+deeplink
+esmfile
 execa
 idtype
 immer
@@ -29,6 +32,7 @@ mediago
 metas
 nocheck
 optimizelegibility
+outdir
 pinia
 Qrcode
 redownload
@@ -53,4 +57,3 @@ watting
 Watting
 xgplayer
 zustand
-deeplink

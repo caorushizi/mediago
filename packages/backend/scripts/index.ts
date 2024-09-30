@@ -3,14 +3,14 @@ import { mainResolve, Env } from "./utils";
 import gulp from "gulp";
 import * as esbuild from "esbuild";
 import consola from "consola";
-import { nodeOptions } from "./config";
+import { buildOptions } from "./config";
 // import fs from "fs";
 
 const env = Env.getInstance();
 env.loadDotEnvRuntime();
 
 async function clean() {
-  return deleteSync([mainResolve("app/dist")]);
+  return deleteSync([mainResolve("dist")]);
 }
 
 // async function copyBin() {
@@ -22,7 +22,7 @@ async function clean() {
 // const copy = gulp.parallel(copyBin);
 
 async function watchTask() {
-  const main = await esbuild.context(nodeOptions("src/index.ts"));
+  const main = await esbuild.context(buildOptions());
 
   const watcher = gulp.watch(["./src"]);
   watcher
@@ -39,11 +39,11 @@ async function watchTask() {
 }
 
 async function buildTask() {
-  await esbuild.build(nodeOptions("src/index.ts"));
+  await esbuild.build(buildOptions());
 }
 
 // 开发环境
 // TODO 暂时不拷贝 bin 文件夹
-export const dev = gulp.series(watchTask);
+export const dev = gulp.series(clean, watchTask);
 // 构建打包
 export const build = gulp.series(clean, buildTask);

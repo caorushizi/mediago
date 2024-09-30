@@ -47,8 +47,6 @@ const App: FC = () => {
     }
   };
 
-  console.log("App", isWeb);
-
   // 监听store变化
   const onAppStoreChange = (event: any, store: AppStore) => {
     dispatch(setAppStore(store));
@@ -125,7 +123,7 @@ const App: FC = () => {
     <ThemeContext.Provider value={appTheme}>
       <ConfigProvider
         locale={zhCN}
-        componentSize="small"
+        componentSize={isWeb ? undefined : "small"}
         theme={{ algorithm: getAlgorithm(appTheme) }}
       >
         <BrowserRouter>

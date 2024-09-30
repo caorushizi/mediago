@@ -1,21 +1,27 @@
 import { nanoid } from "nanoid";
 import { ElectronApi } from "../../../main/types/preload";
+import apis from "@/apis";
+import { isWeb } from "@/utils";
 
 const eventFun = ["rendererEvent", "removeEventListener"];
 const eventMap = new Map();
 
-const api = Object.keys(window.electron || {}).reduce<any>((res, funName) => {
+const apiFun = (isWeb ? apis : window.electron) || {};
+
+const api = Object.keys(apiFun).reduce<any>((res, funName) => {
   const fun = async (...args: any[]) => {
-    if (!window.electron[funName]) {
+    if (!apiFun[funName]) {
       return null;
     }
 
-    const electronFun: any = window.electron[funName];
+    const electronFun: any = apiFun[funName];
     if (eventFun.includes(String(funName))) {
       return null;
     }
 
+    console.info(`[useElectron] ${funName} called with`, args);
     const { code, data, message } = await electronFun(...args);
+    console.info(`[useElectron] ${funName} return`, { code, data, message });
     if (code !== 0) {
       return Promise.reject(new Error(message));
     }
@@ -41,22 +47,31 @@ const getIpcId = (func: any) => {
   return id;
 };
 
+const ipc = isWeb
+  ? {
+      addIpcListener: () => {},
+      removeIpcListener: () => {},
+    }
+  : {
+      addIpcListener: (eventName: string, func: any) => {
+        const id = getIpcId(func);
+        if (!window.electron || !window.electron.rendererEvent) {
+          return;
+        }
+        window.electron.rendererEvent(eventName, id, func);
+      },
+      removeIpcListener: (eventName: string, func: any) => {
+        const id = getIpcId(func);
+        if (!window.electron || !window.electron.removeEventListener) {
+          return;
+        }
+        window.electron.removeEventListener(eventName, id);
+      },
+    };
+
 export default function useElectron(): ElectronApi & IpcListener {
   return {
     ...api,
-    addIpcListener: (eventName: string, func: any) => {
-      const id = getIpcId(func);
-      if (!window.electron || !window.electron.rendererEvent) {
-        return;
-      }
-      window.electron.rendererEvent(eventName, id, func);
-    },
-    removeIpcListener: (eventName: string, func: any) => {
-      const id = getIpcId(func);
-      if (!window.electron || !window.electron.removeEventListener) {
-        return;
-      }
-      window.electron.removeEventListener(eventName, id);
-    },
+    ...ipc,
   };
 }
