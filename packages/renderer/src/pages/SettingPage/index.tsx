@@ -102,15 +102,19 @@ const SettingPage: React.FC = () => {
     }
   };
 
-  const renderButtonLabel = () => {
+  const renderButtonLabel = useMemoizedFn(() => {
+    if (isWeb) {
+      return t("localDir");
+    }
+
     return (
       <Button onClick={onSelectDir} icon={<FolderOpenOutlined />}>
         {t("selectFolder")}
       </Button>
     );
-  };
+  });
 
-  const renderTooltipLabel = (label: string, tooltip: string) => {
+  const renderTooltipLabel = useMemoizedFn((label: string, tooltip: string) => {
     return (
       <div className="flex flex-row items-center gap-1">
         <div className="item-label-text">{label}</div>
@@ -119,9 +123,9 @@ const SettingPage: React.FC = () => {
         </Tooltip>
       </div>
     );
-  };
+  });
 
-  const onFormValueChange = async (values: Partial<AppStore>) => {
+  const onFormValueChange = useMemoizedFn(async (values: Partial<AppStore>) => {
     try {
       for (const key of Object.keys(values)) {
         if (values[key] != null) {
@@ -132,7 +136,7 @@ const SettingPage: React.FC = () => {
     } catch (e: any) {
       messageApi.error(e.message);
     }
-  };
+  });
 
   const items = [
     {

@@ -56,8 +56,8 @@ const apis: ElectronApi = {
   getDownloadItems: async (p: DownloadItemPagination) => {
     return api.post("get-download-items", p);
   },
-  startDownload: async () => {
-    return defaultResp;
+  startDownload: async (vid: number) => {
+    return api.post("start-download", { vid });
   },
   openUrl: async () => {
     return defaultResp;
