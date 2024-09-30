@@ -21,6 +21,7 @@ export const TYPES = {
   VideoService: Symbol.for("VideoService"),
   SniffingHelper: Symbol.for("SniffingHelper"),
   ConfigService: Symbol.for("ConfigService"),
+  DownloaderService: Symbol.for("DownloaderService"),
   // vendor
   TypeORM: Symbol.for("TypeORM"),
   Logger: Symbol.for("Logger"),

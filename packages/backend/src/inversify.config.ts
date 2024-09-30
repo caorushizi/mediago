@@ -14,6 +14,7 @@ import ConfigRepository from "./repository/ConfigRepository.ts";
 import ConfigService from "./services/ConfigService.ts";
 import DownloadService from "./services/DownloadService.ts";
 import SocketIO from "./vendor/SocketIO.ts";
+import DownloaderService from "./services/DownloaderService.ts";
 
 const container = new Container({
   skipBaseClassChecks: true,
@@ -30,6 +31,9 @@ container
 container.bind<HomeService>(TYPES.HomeService).to(HomeService);
 container.bind<ConfigService>(TYPES.ConfigService).to(ConfigService);
 container.bind<DownloadService>(TYPES.DownloadService).to(DownloadService);
+container
+  .bind<DownloaderService>(TYPES.DownloaderService)
+  .to(DownloaderService);
 
 // controller
 container.bind<Controller>(TYPES.Controller).to(HomeController);

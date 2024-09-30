@@ -77,7 +77,7 @@ const processList: Schema[] = [
         argsName: ["--custom-proxy"],
       },
       __common__: {
-        argsName: ["--no-log", "--auto-select"],
+        argsName: ["--no-log", "--auto-select", "--ui-language", "zh-CN"],
       },
     },
     consoleReg: {
@@ -264,7 +264,7 @@ export default class DownloadService extends EventEmitter {
         ptyProcess.onData((data) => {
           try {
             const txt = stripAnsi(data);
-            this.emit("download-message", id, txt);
+            this.emit("download-message", id, data);
             onMessage(ctx, txt);
           } catch (err) {
             reject(err);

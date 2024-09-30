@@ -2,32 +2,27 @@ import { inject, injectable } from "inversify";
 import {
   DownloadItem,
   DownloadItemPagination,
-  DownloadStatus,
-  Task,
   type Controller,
 } from "../interfaces.ts";
 import { TYPES } from "../types.ts";
-import FavoriteRepository from "../repository/FavoriteRepository.ts";
 import { get, post } from "../helper/index.ts";
-import Logger from "../vendor/Logger.ts";
 import VideoRepository from "../repository/VideoRepository.ts";
 import { Context } from "koa";
-import ConfigService from "../services/ConfigService.ts";
+import DownloaderService from "../services/DownloaderService.ts";
 import DownloadService from "../services/DownloadService.ts";
+import Logger from "../vendor/Logger.ts";
 
 @injectable()
 export default class DownloadController implements Controller {
   constructor(
-    @inject(TYPES.FavoriteRepository)
-    private readonly favoriteRepository: FavoriteRepository,
-    @inject(TYPES.Logger)
-    private readonly logger: Logger,
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
-    @inject(TYPES.ConfigService)
-    private readonly store: ConfigService,
+    @inject(TYPES.DownloaderService)
+    private readonly downloaderService: DownloaderService,
     @inject(TYPES.DownloadService)
     private readonly downloadService: DownloadService,
+    @inject(TYPES.Logger)
+    private readonly logger: Logger,
   ) {}
 
   @get("/")
@@ -45,8 +40,7 @@ export default class DownloadController implements Controller {
   @post("add-download-items")
   async addDownloadItems(ctx: Context) {
     const videos = ctx.request.body as DownloadItem[];
-    const items = await this.videoRepository.addVideos(videos);
-    return items;
+    return this.downloaderService.addDownloadItems(videos);
   }
 
   @post("get-download-items")
@@ -59,24 +53,50 @@ export default class DownloadController implements Controller {
   @post("start-download")
   async startDownload(ctx: Context) {
     const { vid } = ctx.request.body as { vid: number };
-    // 查找将要下载的视频
-    const video = await this.videoRepository.findVideo(vid);
-    console.log("video", video);
-    const { name, url, headers, type } = video;
-    const { local, deleteSegments } = await this.store.getConfig();
+    await this.downloaderService.startDownload(vid);
+  }
 
-    const task: Task = {
-      id: vid,
-      params: {
-        url,
-        type,
-        local,
-        name,
-        headers,
-        deleteSegments,
-      },
-    };
-    await this.videoRepository.changeVideoStatus(vid, DownloadStatus.Watting);
-    this.downloadService.addTask(task);
+  @post("delete-download-item")
+  async deleteDownloadItem(ctx: Context) {
+    const { id } = ctx.request.body as { id: number };
+    await this.videoRepository.deleteDownloadItem(id);
+  }
+
+  @post("download-now")
+  async downloadNow(ctx: Context) {
+    const video = ctx.request.body as Omit<DownloadItem, "id">;
+    await this.downloaderService.downloadNow(video);
+  }
+
+  @post("download-items-now")
+  async downloadItemsNow(ctx: Context) {
+    const videos = ctx.request.body as Omit<DownloadItem, "id">[];
+    // 添加下载项
+    const items = await this.downloaderService.addDownloadItems(videos);
+    // 开始下载
+    items.forEach((item) => this.downloaderService.startDownload(item.id));
+    return items;
+  }
+
+  @post("edit-download-now")
+  async editDownloadNow(ctx: Context) {
+    const video = ctx.request.body as DownloadItem;
+    const item = await this.downloaderService.editDownloadItem(video);
+    await this.downloaderService.startDownload(item.id);
+    return item;
+  }
+
+  @post("edit-download-item")
+  async editDownloadItem(ctx: Context) {
+    const video = ctx.request.body as DownloadItem;
+    this.logger.info("editDownloadItem", video);
+    return this.downloaderService.editDownloadItem(video);
+  }
+
+  @post("stop-download")
+  async stopDownload(ctx: Context) {
+    const { id } = ctx.request.body as { id: number };
+
+    this.downloadService.stopTask(id);
   }
 }
