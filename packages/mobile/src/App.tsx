@@ -17,7 +17,6 @@ function App() {
 
   useMount(async () => {
     const { data } = await http.get<VideoSource[]>("/api");
-    console.log(data);
     setData(data);
 
     let url = "";

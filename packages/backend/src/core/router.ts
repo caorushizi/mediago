@@ -1,16 +1,19 @@
-import { injectable, multiInject } from "inversify";
+import { inject, injectable, multiInject } from "inversify";
 import { Controller } from "../interfaces.ts";
 import { TYPES } from "../types.ts";
 import Router from "@koa/router";
-import { success } from "../helper/utils.ts";
-import { error } from "console";
-// import { error, success } from "../helper/utils.ts";
+import { error, success } from "../helper/utils.ts";
+import { API_PREFIX } from "../const.ts";
+import path from "path";
+import Logger from "../vendor/Logger.ts";
 
 @injectable()
 export default class RouterHandlerService extends Router {
   constructor(
     @multiInject(TYPES.Controller)
     private readonly controllers: Controller[],
+    @inject(TYPES.Logger)
+    private readonly logger: Logger,
   ) {
     super();
   }
@@ -36,7 +39,11 @@ export default class RouterHandlerService extends Router {
     );
     if (!routerPath) return;
 
-    this[httpMethod](routerPath, async (context, next) => {
+    const finalPath = path
+      .join(API_PREFIX, routerPath)
+      .replace(/\\/g, "/")
+      .replace(/\/$/, "");
+    this[httpMethod](finalPath, async (context, next) => {
       try {
         let res = property.call(controller, context, next);
         if (res.then) {
@@ -44,6 +51,7 @@ export default class RouterHandlerService extends Router {
         }
         context.body = success(res);
       } catch (e: unknown) {
+        this.logger.error(e);
         if (e instanceof Error) {
           context.body = error(e.message);
         } else {

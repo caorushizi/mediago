@@ -40,9 +40,12 @@ const version = import.meta.env.APP_VERSION;
 
 interface GroupWrapperProps extends PropsWithChildren {
   title: string;
+  hidden?: boolean;
 }
 
-function GroupWrapper({ children, title }: GroupWrapperProps) {
+function GroupWrapper({ children, title, hidden }: GroupWrapperProps) {
+  if (hidden) return null;
+
   return (
     <div className="rounded-lg bg-white px-3 py-2 dark:bg-[#1F2024]">
       <div className="mb-5 flex flex-row items-center gap-2">
@@ -251,111 +254,115 @@ const SettingPage: React.FC = () => {
               allowClear={false}
             />
           </Form.Item>
-          <Form.Item label={t("downloadPrompt")} name="promptTone">
+          <Form.Item
+            hidden={isWeb}
+            label={t("downloadPrompt")}
+            name="promptTone"
+          >
             <Switch />
           </Form.Item>
-          <Form.Item label={t("showTerminal")} name="showTerminal">
+          <Form.Item
+            hidden={isWeb}
+            label={t("showTerminal")}
+            name="showTerminal"
+          >
             <Switch />
           </Form.Item>
-          {!isWeb && (
-            <Form.Item
-              label={renderTooltipLabel(
-                t("autoUpgrade"),
-                t("autoUpgradeTooltip"),
-              )}
-              name="autoUpgrade"
-            >
-              <Switch />
-            </Form.Item>
-          )}
-          {!isWeb && (
-            <Form.Item label={t("allowBetaVersion")} name="allowBeta">
-              <Switch />
-            </Form.Item>
-          )}
+          <Form.Item
+            hidden={isWeb}
+            label={renderTooltipLabel(
+              t("autoUpgrade"),
+              t("autoUpgradeTooltip"),
+            )}
+            name="autoUpgrade"
+          >
+            <Switch />
+          </Form.Item>
+          <Form.Item
+            hidden={isWeb}
+            label={t("allowBetaVersion")}
+            name="allowBeta"
+          >
+            <Switch />
+          </Form.Item>
 
-          {!isWeb && (
-            <Form.Item label={t("closeMainWindow")} name="closeMainWindow">
-              <Radio.Group>
-                <Radio value={true}>{t("close")}</Radio>
-                <Radio value={false}>{t("minimizeToTray")}</Radio>
-              </Radio.Group>
-            </Form.Item>
-          )}
+          <Form.Item
+            hidden={isWeb}
+            label={t("closeMainWindow")}
+            name="closeMainWindow"
+          >
+            <Radio.Group>
+              <Radio value={true}>{t("close")}</Radio>
+              <Radio value={false}>{t("minimizeToTray")}</Radio>
+            </Radio.Group>
+          </Form.Item>
         </GroupWrapper>
-        {!isWeb && (
-          <GroupWrapper title={t("browserSetting")}>
-            <Form.Item label={t("openInNewWindow")} name="openInNewWindow">
-              <Switch />
-            </Form.Item>
-            <Form.Item name="proxy" label={t("proxySetting")}>
-              <Input width="xl" placeholder={t("pleaseEnterProxy")} />
-            </Form.Item>
-            <Form.Item
-              name="useProxy"
-              label={t("proxySwitch")}
-              rules={[
-                {
-                  validator(rules, value) {
-                    if (
-                      value &&
-                      formRef.current.getFieldValue("proxy") === ""
-                    ) {
-                      return Promise.reject(t("pleaseEnterProxyFirst"));
-                    }
-                    return Promise.resolve();
-                  },
+        <GroupWrapper hidden={isWeb} title={t("browserSetting")}>
+          <Form.Item label={t("openInNewWindow")} name="openInNewWindow">
+            <Switch />
+          </Form.Item>
+          <Form.Item name="proxy" label={t("proxySetting")}>
+            <Input width="xl" placeholder={t("pleaseEnterProxy")} />
+          </Form.Item>
+          <Form.Item
+            name="useProxy"
+            label={t("proxySwitch")}
+            rules={[
+              {
+                validator(rules, value) {
+                  if (value && formRef.current.getFieldValue("proxy") === "") {
+                    return Promise.reject(t("pleaseEnterProxyFirst"));
+                  }
+                  return Promise.resolve();
                 },
-              ]}
-            >
-              <Switch />
-            </Form.Item>
-            <Form.Item label={t("blockAds")} name="blockAds">
-              <Switch />
-            </Form.Item>
-            <Form.Item label={t("enterMobileMode")} name="isMobile">
-              <Switch />
-            </Form.Item>
-            <Form.Item
-              label={renderTooltipLabel(
-                t("useImmersiveSniffing"),
-                t("immersiveSniffingDescription"),
-              )}
-              name="useExtension"
-            >
-              <Switch />
-            </Form.Item>
-            <Form.Item
-              label={renderTooltipLabel(t("privacy"), t("privacyTooltip"))}
-              name="privacy"
-            >
-              <Switch />
-            </Form.Item>
-            <Form.Item label={t("moreAction")}>
-              <Space>
-                <Button
-                  onClick={handleClearWebviewCache}
-                  icon={<ClearOutlined />}
-                >
-                  {t("clearCache")}
-                </Button>
-                <Dropdown.Button
-                  menu={{ items, onClick: onMenuClick }}
-                  onClick={handleExportFavorite}
-                >
-                  <DownloadOutlined />
-                  {t("exportFavorite")}
-                </Dropdown.Button>
-              </Space>
-            </Form.Item>
-          </GroupWrapper>
-        )}
+              },
+            ]}
+          >
+            <Switch />
+          </Form.Item>
+          <Form.Item label={t("blockAds")} name="blockAds">
+            <Switch />
+          </Form.Item>
+          <Form.Item label={t("enterMobileMode")} name="isMobile">
+            <Switch />
+          </Form.Item>
+          <Form.Item
+            label={renderTooltipLabel(
+              t("useImmersiveSniffing"),
+              t("immersiveSniffingDescription"),
+            )}
+            name="useExtension"
+          >
+            <Switch />
+          </Form.Item>
+          <Form.Item
+            label={renderTooltipLabel(t("privacy"), t("privacyTooltip"))}
+            name="privacy"
+          >
+            <Switch />
+          </Form.Item>
+          <Form.Item label={t("moreAction")}>
+            <Space>
+              <Button
+                onClick={handleClearWebviewCache}
+                icon={<ClearOutlined />}
+              >
+                {t("clearCache")}
+              </Button>
+              <Dropdown.Button
+                menu={{ items, onClick: onMenuClick }}
+                onClick={handleExportFavorite}
+              >
+                <DownloadOutlined />
+                {t("exportFavorite")}
+              </Dropdown.Button>
+            </Space>
+          </Form.Item>
+        </GroupWrapper>
         <GroupWrapper title={t("downloadSetting")}>
-          {isWeb && (
-            <Form.Item name="proxy" label={t("proxySetting")}>
-              <Input placeholder={t("pleaseEnterProxy")} />
-            </Form.Item>
-          )}
+          <Form.Item hidden={!isWeb} name="proxy" label={t("proxySetting")}>
+            <Input placeholder={t("pleaseEnterProxy")} />
+          </Form.Item>
           <Form.Item
             name="downloadProxySwitch"
             label={t("downloadProxySwitch")}
@@ -384,7 +391,7 @@ const SettingPage: React.FC = () => {
           >
             <InputNumber min={1} max={50} precision={0} />
           </Form.Item>
-          <Form.Item label={t("moreAction")}>
+          <Form.Item hidden={isWeb} label={t("moreAction")}>
             <Space>
               <Button
                 onClick={() => openDir(envPath.workspace)}
@@ -409,11 +416,13 @@ const SettingPage: React.FC = () => {
           <Form.Item label={t("currentVersion")}>
             <Space>
               <div>{version}</div>
-              <Badge dot={updateAvailable}>
-                <Button type="text" onClick={handleCheckUpdate}>
-                  {t("checkUpdate")}
-                </Button>
-              </Badge>
+              {!isWeb && (
+                <Badge dot={updateAvailable}>
+                  <Button type="text" onClick={handleCheckUpdate}>
+                    {t("checkUpdate")}
+                  </Button>
+                </Badge>
+              )}
             </Space>
           </Form.Item>
         </GroupWrapper>
