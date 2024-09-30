@@ -1,4 +1,5 @@
 import { resolve } from "path";
+import { BIN_DIR } from "../const.ts";
 
 export enum Platform {
   Windows = "win32",
@@ -14,7 +15,7 @@ export function resolveBin(path: string) {
   if (isWin) {
     path += ".exe";
   }
-  return resolve(__bin__, path);
+  return resolve(BIN_DIR, path);
 }
 
 export const appName = process.env.APP_NAME || "mediago";

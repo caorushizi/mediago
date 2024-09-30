@@ -12,11 +12,11 @@ export default class DatabaseService implements Vendor {
   constructor() {
     this.appDataSource = new DataSource({
       type: "mysql",
-      host: "127.0.0.1",
+      host: process.env.MYSQL_HOST,
       port: 3306,
-      username: "root",
-      password: "123456",
-      database: "mediago",
+      username: process.env.MYSQL_USER,
+      password: process.env.MYSQL_PASSWORD,
+      database: process.env.MYSQL_DATABASE,
       synchronize: true,
       logging: false,
       // charset: "utf8mb4",
