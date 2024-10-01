@@ -14,7 +14,7 @@ COPY ./packages/backend/package*.json ./
 RUN npm install --registry=https://registry.npmmirror.com
 
 # 暴露应用运行的端口
-EXPOSE 3000
+EXPOSE 8899
 
 # 启动应用
 CMD ["node", "server/index.js"]

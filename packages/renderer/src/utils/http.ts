@@ -7,7 +7,7 @@ const http = axios.create({});
 export { http };
 
 const api = axios.create({
-  baseURL: import.meta.env.DEV ? "http://localhost:3000/api" : "/api",
+  baseURL: import.meta.env.DEV ? "http://localhost:8899/api" : "/api",
 });
 
 api.interceptors.response.use(
@@ -19,6 +19,6 @@ api.interceptors.response.use(
   },
 );
 
-const socket = io("http://localhost:3000");
+const socket = io("http://localhost:8899");
 
 export { api, socket };
