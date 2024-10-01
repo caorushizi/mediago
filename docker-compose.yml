@@ -1,6 +1,6 @@
 services:
   app:
-    build: .
+    image: registry.cn-beijing.aliyuncs.com/caorushizi/mediago
     ports:
       - "3000:3000"
     environment:

@@ -17,6 +17,7 @@
     "build:renderer": "pnpm -F renderer run build",
     "build:mobile": "pnpm -F mobile run build",
     "docker:start": "docker-compose up -d --build",
+    "docker:build": "docker buildx build -t caorushizi/mediago:3.0.0-beta.2 .",
     "beta": "pnpm run build && pnpm -F mediago run pack",
     "release": "pnpm run build && pnpm -F main run release",
     "docs:dev": "vitepress dev docs",
