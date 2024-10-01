@@ -50,8 +50,8 @@ export default class ElectronApp extends Koa {
 
     this.socket.initSocketIO(server);
 
-    server.listen(3000, () => {
-      this.logger.info("Server running on port 3000");
+    server.listen(8899, () => {
+      this.logger.info("Server running on port 8899");
     });
   }
 

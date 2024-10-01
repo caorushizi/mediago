@@ -2,7 +2,7 @@ services:
   app:
     image: registry.cn-beijing.aliyuncs.com/caorushizi/mediago
     ports:
-      - "3000:3000"
+      - "8899:8899"
     environment:
       NODE_ENV: development
       MYSQL_HOST: mysql
