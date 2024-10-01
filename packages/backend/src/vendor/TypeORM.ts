@@ -19,7 +19,7 @@ export default class DatabaseService implements Vendor {
       database: process.env.MYSQL_DATABASE,
       synchronize: true,
       logging: false,
-      // charset: "utf8mb4",
+      charset: "utf8mb4",
       entities: [Favorite, Video, Config],
       migrations: [],
       subscribers: [],

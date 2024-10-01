@@ -1,4 +1,3 @@
-version: '3'
 services:
   app:
     build: .
@@ -11,7 +10,8 @@ services:
       MYSQL_PASSWORD: 123456
       MYSQL_DATABASE: mediago
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
 
   mysql:
     image: m.daocloud.io/docker.io/library/mysql:5.7
@@ -20,8 +20,16 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 123456
       MYSQL_DATABASE: mediago
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
     volumes:
       - mysql-data:/var/lib/mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   mysql-data:
