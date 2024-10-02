@@ -4,6 +4,7 @@ import { Favorite } from "../entity/Favorite.ts";
 import { Vendor } from "../core/vendor.ts";
 import { Video } from "../entity/Video.ts";
 import { Config } from "../entity/Config.ts";
+import { DB_PATH } from "../const.ts";
 
 @injectable()
 export default class DatabaseService implements Vendor {
@@ -11,15 +12,10 @@ export default class DatabaseService implements Vendor {
 
   constructor() {
     this.appDataSource = new DataSource({
-      type: "mysql",
-      host: process.env.MYSQL_HOST,
-      port: 3306,
-      username: process.env.MYSQL_USER,
-      password: process.env.MYSQL_PASSWORD,
-      database: process.env.MYSQL_DATABASE,
+      type: "better-sqlite3",
+      database: DB_PATH,
       synchronize: true,
       logging: false,
-      charset: "utf8mb4",
       entities: [Favorite, Video, Config],
       migrations: [],
       subscribers: [],

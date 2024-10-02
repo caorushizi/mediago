@@ -15,14 +15,14 @@ export class Video {
   id: number;
 
   @Column({
-    type: "varchar",
+    type: "text",
     nullable: true,
     unique: true,
   })
   name: string;
 
   @Column({
-    type: "varchar",
+    type: "text",
     nullable: false,
     default: DownloadType.m3u8,
   })
@@ -48,14 +48,14 @@ export class Video {
   isLive: boolean;
 
   @Column({
-    type: "varchar",
+    type: "text",
     nullable: false,
     default: DownloadStatus.Ready,
   })
   status: DownloadStatus;
 
   @Column({
-    type: "longtext",
+    type: "text",
     nullable: true,
   })
   log: string;
