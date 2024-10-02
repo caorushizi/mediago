@@ -8,6 +8,7 @@ bili
 bilibili
 bodyparser
 bodys
+buildx
 cancle
 cliqz
 clsx

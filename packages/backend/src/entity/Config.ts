@@ -16,14 +16,14 @@ export class Config {
   id: number;
 
   @Column({
-    type: "varchar",
+    type: "text",
     nullable: false,
     default: DOWNLOAD_DIR,
   })
   local: string;
 
   @Column({
-    type: "enum",
+    type: "text",
     enum: AppTheme,
     nullable: false,
     default: AppTheme.System,
@@ -31,7 +31,7 @@ export class Config {
   theme: AppTheme;
 
   @Column({
-    type: "enum",
+    type: "text",
     enum: AppLanguage,
     nullable: false,
     default: AppLanguage.System,
@@ -39,7 +39,7 @@ export class Config {
   language: AppLanguage;
 
   @Column({
-    type: "varchar",
+    type: "text",
     nullable: false,
     default: "",
   })

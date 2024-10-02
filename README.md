@@ -46,9 +46,13 @@ pnpm dev
 
 # 打包运行
 pnpm release
+
+# docker 启动
+docker run -d --name mediago -p 8899:8899 registry.cn-beijing.aliyuncs.com/caorushizi/mediago
 ```
 
 ## Releases
+
 **v2.2.3 (2024.7.06 发布)**
 
 - [windows mediago v2.2.3](https://github.com/caorushizi/mediago/releases/download/v2.2.3/mediago-setup-x64-2.2.3.exe)
