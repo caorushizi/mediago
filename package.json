@@ -8,8 +8,8 @@
   "type": "module",
   "scripts": {
     "dev": "tsx scripts/dev.ts && pnpm --parallel -F \"./packages/*\" run dev",
-    "dev:web": "pnpm -F backend run mysql && pnpm --parallel -F \"./packages/*\" run dev:web",
-    "start:web": "pnpm -F backend run mysql && pnpm -F backend start",
+    "dev:web": "pnpm --parallel -F \"./packages/*\" run dev:web",
+    "start:web": "pnpm -F backend start",
     "build": "tsx scripts/build.ts",
     "build:plugin": "pnpm -F plugin run build",
     "build:main": "pnpm -F main run build",

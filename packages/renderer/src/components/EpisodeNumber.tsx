@@ -50,7 +50,7 @@ export const EpisodeNumber: FC<EpisodeNumberProps> = ({
     if (!value) {
       const name = lastVideoName || "";
       const number = lastVideoNumber || 1;
-      const type = lastVideoType || "teleplay";
+      const type = lastVideoType || "movie";
 
       setName(name);
       setNumber(number);
