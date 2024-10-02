@@ -83,8 +83,8 @@ importers:
         specifier: ^1.7.2
         version: 1.7.2
       better-sqlite3:
-        specifier: ^11.3.0
-        version: 11.3.0
+        specifier: ^9.3.0
+        version: 9.6.0
       cheerio:
         specifier: 1.0.0-rc.12
         version: 1.0.0-rc.12
@@ -135,7 +135,7 @@ importers:
         version: 7.1.0
       typeorm:
         specifier: 0.3.20
-        version: 0.3.20(better-sqlite3@11.3.0)(mysql2@3.11.0)(sqlite3@5.1.7)
+        version: 0.3.20(better-sqlite3@9.6.0)(mysql2@3.11.0)(sqlite3@5.1.7)
       winston:
         specifier: ^3.14.2
         version: 3.14.2
@@ -3013,9 +3013,6 @@ packages:
   base64id@2.0.0:
     resolution: {integrity: sha512-lGe34o6EHj9y3Kts9R4ZYs/Gr+6N7MCaMlIFA3F1R2O5/m7K06AxfSeO5530PEERE6/WyEg3lsuyw4GHlPZHog==}
     engines: {node: ^4.5.0 || >= 5.9}
-
-  better-sqlite3@11.3.0:
-    resolution: {integrity: sha512-iHt9j8NPYF3oKCNOO5ZI4JwThjt3Z6J6XrcwG85VNMVzv1ByqrHWv5VILEbCMFWDsoHhXvQ7oC8vgRXFAKgl9w==}
 
   better-sqlite3@9.6.0:
     resolution: {integrity: sha512-yR5HATnqeYNVnkaUTf4bOP2dJSnyhP4puJN/QPRyx4YkBEEUxib422n2XzPqDEHjQQqazoYoADdAm5vE15+dAQ==}
@@ -10227,11 +10224,6 @@ snapshots:
 
   base64id@2.0.0: {}
 
-  better-sqlite3@11.3.0:
-    dependencies:
-      bindings: 1.5.0
-      prebuild-install: 7.1.2
-
   better-sqlite3@9.6.0:
     dependencies:
       bindings: 1.5.0
@@ -15071,30 +15063,6 @@ snapshots:
       has-proto: 1.0.3
       is-typed-array: 1.1.13
       possible-typed-array-names: 1.0.0
-
-  typeorm@0.3.20(better-sqlite3@11.3.0)(mysql2@3.11.0)(sqlite3@5.1.7):
-    dependencies:
-      '@sqltools/formatter': 1.2.5
-      app-root-path: 3.1.0
-      buffer: 6.0.3
-      chalk: 4.1.2
-      cli-highlight: 2.1.11
-      dayjs: 1.11.11
-      debug: 4.3.4(supports-color@5.5.0)
-      dotenv: 16.4.5
-      glob: 10.4.1
-      mkdirp: 2.1.6
-      reflect-metadata: 0.2.2
-      sha.js: 2.4.11
-      tslib: 2.6.2
-      uuid: 9.0.1
-      yargs: 17.7.2
-    optionalDependencies:
-      better-sqlite3: 11.3.0
-      mysql2: 3.11.0
-      sqlite3: 5.1.7
-    transitivePeerDependencies:
-      - supports-color
 
   typeorm@0.3.20(better-sqlite3@9.6.0)(mysql2@3.11.0)(sqlite3@5.1.7):
     dependencies:
