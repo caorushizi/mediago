@@ -324,8 +324,9 @@ export default class DownloadService extends EventEmitter {
         }
       }
 
-      if (key === "deleteSegments" && deleteSegments) {
-        argsName && spawnParams.push(...argsName);
+      if (key === "deleteSegments") {
+        argsName &&
+          argsName.forEach((i) => spawnParams.push(i, String(deleteSegments)));
       }
 
       if (key === "proxy" && proxy) {
