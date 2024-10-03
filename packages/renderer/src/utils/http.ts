@@ -1,5 +1,4 @@
 import axios from "axios";
-import { io } from "socket.io-client";
 
 // 创建 axios 实例
 const http = axios.create({});
@@ -19,6 +18,4 @@ api.interceptors.response.use(
   },
 );
 
-const socket = io("http://localhost:8899");
-
-export { api, socket };
+export { api };

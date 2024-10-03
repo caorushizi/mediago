@@ -11,6 +11,7 @@
     "build:web": "cross-env APP_TARGET=web vite build",
     "preview": "vite preview",
     "report": "vite-bundle-visualizer",
+    "types": "tsc",
     "lint-staged": "lint-staged"
   },
   "dependencies": {

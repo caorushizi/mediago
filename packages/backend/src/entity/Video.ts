@@ -56,7 +56,8 @@ export class Video {
 
   @Column({
     type: "text",
-    nullable: true,
+    nullable: false,
+    default: "",
   })
   log: string;
 

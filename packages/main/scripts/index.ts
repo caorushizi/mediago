@@ -9,6 +9,7 @@ import pkg from "../app/package.json";
 import * as builder from "electron-builder";
 import { globSync } from "glob";
 import fs from "fs";
+import { exec } from "child_process";
 
 const env = Env.getInstance();
 env.loadDotEnvRuntime();
@@ -21,6 +22,19 @@ async function clean() {
     mainResolve("app/plugin"),
     mainResolve("release"),
   ]);
+}
+
+function compileTypescript() {
+  exec("npx tsc", (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error: ${error.message}`);
+      return;
+    }
+    if (stderr) {
+      console.error(`Stderr: ${stderr}`);
+      return;
+    }
+  });
 }
 
 async function copySqlite() {
@@ -68,6 +82,8 @@ async function watchTask() {
       app.start();
     })
     .on("change", async () => {
+      compileTypescript();
+
       await main.rebuild();
       await preload.rebuild();
       app.restart();
