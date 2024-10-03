@@ -12,6 +12,7 @@ import VideoRepository from "./repository/VideoRepository.ts";
 import { DownloadStatus } from "./interfaces.ts";
 import serve from "koa-static";
 import { STATIC_DIR } from "./const.ts";
+import send from "koa-send";
 
 @injectable()
 export default class ElectronApp extends Koa {
@@ -45,6 +46,20 @@ export default class ElectronApp extends Koa {
       .use(this.router.routes())
       .use(this.router.allowedMethods());
     this.use(serve(STATIC_DIR));
+
+    // 处理静态文件和前端路由的中间件
+    this.use(async (ctx, next) => {
+      if (!ctx.path.startsWith("/api")) {
+        try {
+          await send(ctx, ctx.path, { root: STATIC_DIR });
+        } catch (err: any) {
+          if (err.status === 404) {
+            await send(ctx, "index.html", { root: STATIC_DIR });
+          }
+        }
+      }
+      await next();
+    });
 
     const server = http.createServer(this.callback());
 
