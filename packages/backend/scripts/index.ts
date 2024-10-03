@@ -14,7 +14,7 @@ async function clean() {
 }
 
 async function copyBin() {
-  const source = mainResolve("../main/bin", process.platform);
+  const source = mainResolve("../main/bin", "linux");
   const target = mainResolve("dist/server/bin");
   fs.cpSync(source, target, { recursive: true });
 }
