@@ -1,6 +1,6 @@
 #!/usr/bin/env zx
-
 import { $, echo } from "zx";
+$.verbose = true;
 
 echo("开始执行代码质量评估...\n");
 
