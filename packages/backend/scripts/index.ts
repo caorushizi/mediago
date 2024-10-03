@@ -1,10 +1,11 @@
 import { deleteSync } from "del";
-import { mainResolve, Env } from "./utils";
+import { mainResolve, Env, isDev } from "./utils";
 import gulp from "gulp";
 import * as esbuild from "esbuild";
 import consola from "consola";
 import { buildOptions } from "./config";
 import fs from "fs";
+import nodemon from "gulp-nodemon";
 
 const env = Env.getInstance();
 env.loadDotEnvRuntime();
@@ -13,8 +14,12 @@ async function clean() {
   return deleteSync([mainResolve("dist/server")]);
 }
 
+async function buildClean() {
+  return deleteSync([mainResolve("dist")]);
+}
+
 async function copyBin() {
-  const source = mainResolve("../main/bin", "linux");
+  const source = mainResolve("../main/bin", isDev ? process.platform : "linux");
   const target = mainResolve("dist/server/bin");
   fs.cpSync(source, target, { recursive: true });
 }
@@ -23,18 +28,18 @@ const copy = gulp.parallel(copyBin);
 
 async function watchTask() {
   const main = await esbuild.context(buildOptions());
+  await main.rebuild();
 
   const watcher = gulp.watch(["./src"]);
   watcher
-    .on("ready", async () => {
-      await main.rebuild();
-    })
     .on("change", async () => {
       await main.rebuild();
     })
     .on("error", (error: any) => {
       consola.error(error);
     });
+
+  nodemon();
   return Promise.resolve();
 }
 
@@ -43,7 +48,6 @@ async function buildTask() {
 }
 
 // 开发环境
-// TODO 暂时不拷贝 bin 文件夹
 export const dev = gulp.series(clean, copy, watchTask);
 // 构建打包
-export const build = gulp.series(clean, copy, buildTask);
+export const build = gulp.series(buildClean, copy, buildTask);

@@ -6,6 +6,7 @@ import { customAlphabet } from "nanoid";
 
 export { http, api } from "./http";
 export { tdApp } from "./tdapp";
+export { getSocket } from "./socket";
 
 const nanoid = customAlphabet("0123456789abcdefghijklmnopqrstuvwxyz", 10);
 
