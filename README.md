@@ -48,7 +48,7 @@ pnpm dev
 pnpm release
 
 # docker 启动
-docker run -d --name mediago -p 8899:8899 registry.cn-beijing.aliyuncs.com/caorushizi/mediago
+docker run -d --name mediago -p 8899:8899 -v /root/mediago:/root/mediago registry.cn-beijing.aliyuncs.com/caorushizi/mediago
 ```
 
 ## Releases
