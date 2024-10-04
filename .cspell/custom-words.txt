@@ -1,6 +1,7 @@
 acodec
 adblocker
 ahooks
+aliyuncs
 antd
 aplus
 behaviour

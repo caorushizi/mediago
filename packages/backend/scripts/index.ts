@@ -21,7 +21,16 @@ async function buildClean() {
 async function copyBin() {
   const source = mainResolve("../main/bin", isDev ? process.platform : "linux");
   const target = mainResolve("dist/server/bin");
-  fs.cpSync(source, target, { recursive: true });
+  fs.cpSync(source, target, {
+    recursive: true,
+    filter: (src) => {
+      if (!isDev && src.endsWith("ffmpeg")) {
+        return false;
+      }
+
+      return true;
+    },
+  });
 }
 
 const copy = gulp.parallel(copyBin);

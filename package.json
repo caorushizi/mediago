@@ -17,7 +17,7 @@
     "build:renderer": "pnpm -F renderer run build",
     "build:mobile": "pnpm -F mobile run build",
     "build:docker": "tsx scripts/web.ts && docker buildx build -t caorushizi/mediago:latest .",
-    "rebuild:web": "pnpm -F renderer run rebuild",
+    "rebuild:web": "pnpm -F backend rebuild",
     "rebuild:electron": "pnpm -F main run rebuild",
     "beta": "pnpm run build && pnpm -F mediago run pack",
     "release": "pnpm run build && pnpm -F main run release",
