@@ -16,10 +16,15 @@ export class Video {
 
   @Column({
     type: "text",
-    nullable: true,
-    unique: true,
+    nullable: false,
   })
   name: string;
+
+  @Column({
+    type: "text",
+    nullable: true,
+  })
+  folder?: string;
 
   @Column({
     type: "text",
@@ -38,7 +43,7 @@ export class Video {
     type: "text",
     nullable: true,
   })
-  headers: string;
+  headers?: string;
 
   @Column({
     type: "boolean",

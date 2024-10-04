@@ -8,6 +8,7 @@ export interface DownloadItem {
   headers?: string;
   status?: DownloadStatus;
   isLive?: boolean;
+  folder?: string;
 }
 
 export enum DownloadFilter {
@@ -68,4 +69,5 @@ export interface DownloadParams {
   proxy?: string;
   deleteSegments?: boolean;
   callback: (progress: DownloadProgress) => void;
+  folder?: string;
 }

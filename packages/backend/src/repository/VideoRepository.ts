@@ -29,16 +29,33 @@ export default class VideoRepository {
     item.url = video.url;
     item.type = video.type;
     video.headers && (item.headers = video.headers);
+    video.folder && (item.folder = video.folder);
     return await this.db.manager.save(item);
   }
 
   async addVideos(videos: Omit<DownloadItem, "id">[]) {
+    // 检查是否有同名的视频
+    const names = videos.map((item) => item.name);
+    const existItems = await this.db.appDataSource
+      .getRepository(Video)
+      .findBy({ name: In(names) });
+    if (existItems.length) {
+      const existNames = existItems.map((item) => item.name);
+      throw new Error(
+        i18n.t("videoExistsPleaseChangeName") +
+          "[" +
+          existNames.join(", ") +
+          "]",
+      );
+    }
+
     const items = videos.map((video) => {
       const item = new Video();
       item.name = video.name;
       item.url = video.url;
       item.type = video.type;
       video.headers && (item.headers = video.headers);
+      video.folder && (item.folder = video.folder);
       return item;
     });
     return await this.db.manager.save(items);
@@ -55,6 +72,7 @@ export default class VideoRepository {
     item.name = video.name;
     item.url = video.url;
     video.headers && (item.headers = video.headers);
+    video.folder && (item.folder = video.folder);
     return await this.db.manager.save(item);
   }
 
@@ -156,5 +174,16 @@ export default class VideoRepository {
   async getDownloadLog(id: number) {
     const video = await this.findVideo(id);
     return video.log;
+  }
+
+  async getVideoFolders() {
+    const videos = await this.db.appDataSource.getRepository(Video).find();
+    const folders = new Set<string>();
+    for (const video of videos) {
+      if (video.folder) {
+        folders.add(video.folder);
+      }
+    }
+    return Array.from(folders);
   }
 }

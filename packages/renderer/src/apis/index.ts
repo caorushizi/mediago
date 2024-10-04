@@ -173,6 +173,9 @@ const apis: ElectronApi = {
   exportDownloadList: async () => {
     return defaultResp;
   },
+  getVideoFolders: async () => {
+    return api.post("get-video-folders");
+  },
 };
 
 export default apis;

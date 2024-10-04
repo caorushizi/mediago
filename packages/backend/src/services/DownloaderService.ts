@@ -19,7 +19,7 @@ export default class DownloaderService {
   async startDownload(vid: number) {
     // 查找将要下载的视频
     const video = await this.videoRepository.findVideo(vid);
-    const { name, url, headers, type } = video;
+    const { name, url, headers, type, folder } = video;
     const { local, deleteSegments } = await this.store.getConfig();
 
     const task: Task = {
@@ -31,6 +31,7 @@ export default class DownloaderService {
         name,
         headers,
         deleteSegments,
+        folder,
       },
     };
     await this.videoRepository.changeVideoStatus(vid, DownloadStatus.Watting);
@@ -57,5 +58,9 @@ export default class DownloaderService {
 
   async editDownloadItem(video: DownloadItem) {
     return this.videoRepository.editVideo(video);
+  }
+
+  async getVideoFolders() {
+    return this.videoRepository.getVideoFolders();
   }
 }
