@@ -27,6 +27,8 @@ COPY --from=builder /app /app
 # COPY --from=deb_extractor /dpkg /
 RUN apt-get update && apt-get install -y libicu-dev
 
+RUN npm install pm2 -g
+
 EXPOSE 8899
 
-CMD ["server/index.js"]
+CMD ["pm2-runtime", "server/index.js"]

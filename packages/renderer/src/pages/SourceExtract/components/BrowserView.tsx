@@ -82,12 +82,14 @@ export function BrowserView() {
 
   const confirmDownload = async (now?: boolean) => {
     try {
-      const data = downloadForm.current.getFieldsValue();
+      const { name, url, headers, type, folder } =
+        downloadForm.current.getFieldsValue();
       const item = {
-        name: data.name || randomName(),
-        url: data.url,
-        headers: data.headers,
-        type: data.type,
+        name: name || randomName(),
+        url,
+        headers,
+        type,
+        folder,
       };
 
       if (now) {

@@ -417,4 +417,9 @@ export default class HomeController implements Controller {
       await fs.writeFile(result.filePath, txt);
     }
   }
+
+  @handle("get-video-folders")
+  async getVideoFolders() {
+    return this.videoRepository.getVideoFolders();
+  }
 }

@@ -5,7 +5,7 @@ import * as esbuild from "esbuild";
 import consola from "consola";
 import { buildOptions } from "./config";
 import fs from "fs";
-import nodemon from "gulp-nodemon";
+import spawn from "cross-spawn";
 
 const env = Env.getInstance();
 env.loadDotEnvRuntime();
@@ -39,7 +39,27 @@ async function watchTask() {
       consola.error(error);
     });
 
-  nodemon();
+  return Promise.resolve();
+}
+
+async function startNodemon() {
+  const nodemon = spawn("npm", ["start"], {
+    stdio: "pipe",
+  });
+
+  nodemon.stdout?.on("data", (data) => {
+    consola.log(data.toString());
+  });
+
+  // 监听 stderr 数据事件
+  nodemon.stderr?.on("data", (data) => {
+    consola.error(`stderr: ${data.toString()}`);
+  });
+
+  // 监听子进程的关闭事件
+  nodemon.on("close", (code) => {
+    consola.log(`子进程退出，退出码 ${code}`);
+  });
   return Promise.resolve();
 }
 
@@ -48,6 +68,6 @@ async function buildTask() {
 }
 
 // 开发环境
-export const dev = gulp.series(clean, copy, watchTask);
+export const dev = gulp.series(clean, copy, watchTask, startNodemon);
 // 构建打包
 export const build = gulp.series(buildClean, copy, buildTask);

@@ -11,5 +11,3 @@ await $`npm run types:renderer`;
 await $`npm run build:backend`;
 
 await $`npm run build:web`;
-
-await $`docker buildx build -t caorushizi/mediago:latest .`;
