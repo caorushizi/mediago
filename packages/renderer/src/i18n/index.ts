@@ -115,11 +115,11 @@ i18n
           pleaseEnterOnlineVideoUrl: "Please enter online network video URL",
           pleaseEnterCorrectVideoLink: "Please enter correct video link",
           pleaseEnterOnlineVideoUrlOrDragM3U8Here:
-            "Please enter online network video URL, or drag M3U8 here",
+            "Please enter online network video URL",
           videoLikeDescription: `Please enter video link, make sure one line one link
-Format: videoLink videoName(can be empty) for example:
-http://example.com/xxx.m3u8 movie1
-http://example.com/xxx.m3u8 movie2
+Format: link name(optional) folder(optional) for example:
+http://example.com/xxx.m3u8 movie1 folder1
+http://example.com/xxx.m3u8 movie2 folder2
 http://example.com/xxx.m3u8`,
           additionalHeadersDescription: `Please enter additional headers, make sure one line one header, for example:
 Origin: http://www.example.com
@@ -172,6 +172,9 @@ Referer: http://www.example.com`,
           viewDetails: "View Details",
           exportDownloadList: "Export Download List",
           exportDownloadListFailed: "Export Download List Failed",
+          folder: "Folder",
+          pleaseInputVideoFolder: "Please input video folder",
+          confirmChange: "Confirm Change",
         },
       },
       zh: {
@@ -268,12 +271,11 @@ Referer: http://www.example.com`,
           additionalHeaders: "附加标头",
           pleaseEnterOnlineVideoUrl: "请输入在线网络视频URL",
           pleaseEnterCorrectVideoLink: "请输入正确的视频链接",
-          pleaseEnterOnlineVideoUrlOrDragM3U8Here:
-            "请输入在线网络视频URL，或者将M3U8拖拽至此",
+          pleaseEnterOnlineVideoUrlOrDragM3U8Here: "请输入在线网络视频URL",
           videoLikeDescription: `请输入视频链接， 确保一行一个
-格式: 视频源 视频名称（可空） 例如：
-http://example.com/xxx.m3u8 电影1
-http://example.com/xxx.m3u8 电影2
+格式: 视频源 视频名称(可选) 文件夹名称(可选) 例如：
+http://example.com/xxx.m3u8 电影1 文件夹1
+http://example.com/xxx.m3u8 电影2 文件夹2
 http://example.com/xxx.m3u8`,
           additionalHeadersDescription: `请输入附加标头，确保一行一个 Header， 例如：
 Origin: http://www.example.com
@@ -330,6 +332,9 @@ Referer: http://www.example.com`,
           viewDetails: "查看详情",
           exportDownloadList: "导出下载列表",
           exportDownloadListFailed: "导出下载列表失败",
+          folder: "文件夹",
+          pleaseInputVideoFolder: "请输入视频文件夹",
+          confirmChange: "确认更改",
         },
       },
     },

@@ -160,12 +160,14 @@ export function DownloadList({
 
   const confirmAddItem = useMemoizedFn(
     async (values: DownloadFormType, now?: boolean) => {
+      const { id, name, url, headers, type, folder } = values;
       const item = {
-        id: values.id,
-        name: values.name || randomName(),
-        url: values.url,
-        headers: values.headers,
-        type: values.type,
+        id,
+        name: name || randomName(),
+        url,
+        headers,
+        type,
+        folder,
       };
 
       if (now) {
@@ -207,13 +209,15 @@ export function DownloadList({
 
   const handleShowDownloadForm = useMemoizedFn((item: DownloadItem) => {
     tdApp.onEvent(EDIT_DOWNLOAD);
+    const { id, name, url, headers, type, folder } = item;
     const values = {
       batch: false,
-      id: item.id,
-      name: item.name,
-      url: item.url,
-      headers: item.headers,
-      type: item.type,
+      id,
+      name,
+      url,
+      headers,
+      type,
+      folder,
     };
     editFormRef.current.openModal(values);
   });

@@ -122,7 +122,7 @@ export default class DownloadController implements Controller {
   async startDownload(e: IpcMainEvent, vid: number) {
     // 查找将要下载的视频
     const video = await this.videoRepository.findVideo(vid);
-    const { name, url, headers, type } = video;
+    const { name, url, headers, type, folder } = video;
     const local = this.store.get("local");
 
     // 从配置中添加参数
@@ -137,6 +137,7 @@ export default class DownloadController implements Controller {
         name,
         headers,
         deleteSegments,
+        folder,
       },
     };
     await this.videoRepository.changeVideoStatus(vid, DownloadStatus.Watting);

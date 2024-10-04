@@ -73,7 +73,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   });
 
   const confirmAddItems = async (values: DownloadFormType, now?: boolean) => {
-    const { batch, batchList = "", name, headers, type, url } = values;
+    const { batch, batchList = "", name, headers, type, url, folder } = values;
     if (batch) {
       /**
        * 这里需要解析 batchList
@@ -86,12 +86,13 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       const items: Omit<DownloadItem, "id">[] = batchList
         .split("\n")
         .map((line: string) => {
-          const [url, name] = line.trim().split(" ");
+          const [url, name, folder] = line.trim().split(" ");
           return {
             url: url.trim(),
             name: name || randomName(),
             headers,
             type,
+            folder,
           };
         });
       if (now) {
@@ -105,6 +106,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
         url,
         headers,
         type,
+        folder,
       };
       if (now) {
         await downloadNow(item);

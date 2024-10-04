@@ -18,6 +18,7 @@ import {
 import * as pty from "node-pty";
 import stripAnsi from "strip-ansi";
 import i18n from "../i18n/index.ts";
+import path from "path";
 
 interface DownloadContext {
   // 是否为直播
@@ -299,6 +300,7 @@ export default class DownloadService extends EventEmitter {
       headers,
       callback,
       proxy,
+      folder,
     } = params;
 
     const spawnParams = [];
@@ -309,7 +311,11 @@ export default class DownloadService extends EventEmitter {
         spawnParams.push(url);
       }
       if (key === "localDir") {
-        argsName && argsName.forEach((i) => spawnParams.push(i, local));
+        let finalLocal = local;
+        if (folder) {
+          finalLocal = path.join(local, folder);
+        }
+        argsName && argsName.forEach((i) => spawnParams.push(i, finalLocal));
       }
       if (key === "name") {
         argsName && argsName.forEach((i) => spawnParams.push(i, name));

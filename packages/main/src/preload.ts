@@ -197,6 +197,9 @@ const electronApi = {
   exportDownloadList(): Promise<void> {
     return ipcRenderer.invoke("export-download-list");
   },
+  getVideoFolders(): Promise<string[]> {
+    return ipcRenderer.invoke("get-video-folders");
+  },
 };
 
 contextBridge.exposeInMainWorld(apiKey, electronApi);
