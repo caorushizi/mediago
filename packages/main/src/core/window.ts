@@ -34,9 +34,6 @@ export default class Window {
   windowClose = () => {
     if (!this.window) return;
 
-    // 防止 webview 同时被销毁
-    this.window.setBrowserView(null);
-
     // 销毁窗口
     this.window = null;
   };

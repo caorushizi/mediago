@@ -1,8 +1,8 @@
-import { protocol } from "electron";
+import { app, protocol } from "electron";
 import isDev from "electron-is-dev";
 import { pathExists, readFile } from "fs-extra";
 import { injectable } from "inversify";
-import { join } from "path";
+import path, { join } from "path";
 import { URL } from "url";
 import { defaultScheme } from "../helper/index.ts";
 import mime from "mime-types";
@@ -26,5 +26,15 @@ export default class ProtocolService {
         headers: { "Content-Type": mimeType || "text/html" },
       });
     });
+
+    if (process.defaultApp) {
+      if (process.argv.length >= 2) {
+        app.setAsDefaultProtocolClient(defaultScheme, process.execPath, [
+          path.resolve(process.argv[1]),
+        ]);
+      }
+    } else {
+      app.setAsDefaultProtocolClient(defaultScheme);
+    }
   }
 }

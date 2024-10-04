@@ -1,8 +1,8 @@
-import React, { FC, useRef, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import PageContainer from "../../components/PageContainer";
 import { useMemoizedFn, useMount, usePagination } from "ahooks";
 import useElectron from "../../hooks/electron";
-import { DownloadFilter } from "../../types";
+import { DownloadFilter, DownloadType } from "../../types";
 import { useSelector } from "react-redux";
 import { selectAppStore } from "../../store";
 import { useTranslation } from "react-i18next";
@@ -18,8 +18,9 @@ import { QrcodeOutlined } from "@ant-design/icons";
 import { HomeDownloadButton } from "@/components/HomeDownloadButton";
 import { ConfigStore, useConfigStore } from "@/store/config";
 import { useShallow } from "zustand/react/shallow";
-import { isWeb, randomName, tdApp } from "@/utils";
+import { isDownloadType, isWeb, randomName, tdApp } from "@/utils";
 import { CLICK_DOWNLOAD } from "@/const";
+import { useLocation } from "react-router-dom";
 
 interface Props {
   filter?: DownloadFilter;
@@ -48,6 +49,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   const { lastIsBatch, lastDownloadTypes } = useConfigStore(
     useShallow(configSelector),
   );
+  const location = useLocation();
   const {
     data = { total: 0, list: [] },
     loading,
@@ -66,6 +68,22 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       refreshDeps: [filter],
     },
   );
+
+  useEffect(() => {
+    const search = new URLSearchParams(location.search);
+
+    // 新增
+    if (search.has("n")) {
+      const type = search.get("type");
+      const item: DownloadFormType = {
+        batch: false,
+        type: isDownloadType(type) ? type : DownloadType.m3u8,
+        url: search.get("url") || "",
+        name: search.get("name") || randomName(),
+      };
+      newFormRef.current?.openModal(item);
+    }
+  }, [location.search]);
 
   useMount(async () => {
     const ip = await getLocalIP();

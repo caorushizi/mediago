@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { DownloadStatus } from "./interfaces.ts";
 import { TYPES } from "./types.ts";
-import { Menu, Tray, app, nativeImage, nativeTheme } from "electron";
+import { Menu, Tray, app, nativeImage, nativeTheme, Event } from "electron";
 import TrayIcon from "./tray-icon.png";
 import TrayIconLight from "./tray-icon-light.png";
 import path from "path";
@@ -115,4 +115,9 @@ export default class ElectronApp {
       DownloadStatus.Failed,
     );
   }
+
+  secondInstance = (event: Event, commandLine: string[]) => {
+    const url = commandLine.pop() || "";
+    this.mainWindow.showWindow(url);
+  };
 }
