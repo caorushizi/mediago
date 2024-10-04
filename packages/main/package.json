@@ -10,6 +10,7 @@
     "pack": "cross-env NODE_ENV=development gulp release",
     "build": "cross-env NODE_ENV=production gulp build",
     "release": "cross-env NODE_ENV=production gulp release",
+    "rebuild": "electron-rebuild -f -w",
     "types": "tsc",
     "types:watch": "tsc -w",
     "lint-staged": "lint-staged"

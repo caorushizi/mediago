@@ -16,13 +16,11 @@ import {
   Select,
   Space,
   Switch,
-  Tooltip,
 } from "antd";
 import {
   ClearOutlined,
   DownloadOutlined,
   FolderOpenOutlined,
-  QuestionCircleOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
 import { selectAppStore, setAppStore } from "../../store";
@@ -111,17 +109,6 @@ const SettingPage: React.FC = () => {
       <Button onClick={onSelectDir} icon={<FolderOpenOutlined />}>
         {t("selectFolder")}
       </Button>
-    );
-  });
-
-  const renderTooltipLabel = useMemoizedFn((label: string, tooltip: string) => {
-    return (
-      <div className="flex flex-row items-center gap-1">
-        <div className="item-label-text">{label}</div>
-        <Tooltip title={tooltip} placement={"right"}>
-          <QuestionCircleOutlined />
-        </Tooltip>
-      </div>
     );
   });
 
@@ -274,10 +261,8 @@ const SettingPage: React.FC = () => {
           </Form.Item>
           <Form.Item
             hidden={isWeb}
-            label={renderTooltipLabel(
-              t("autoUpgrade"),
-              t("autoUpgradeTooltip"),
-            )}
+            label={t("autoUpgrade")}
+            tooltip={t("autoUpgradeTooltip")}
             name="autoUpgrade"
           >
             <Switch />
@@ -331,16 +316,15 @@ const SettingPage: React.FC = () => {
             <Switch />
           </Form.Item>
           <Form.Item
-            label={renderTooltipLabel(
-              t("useImmersiveSniffing"),
-              t("immersiveSniffingDescription"),
-            )}
+            label={t("useImmersiveSniffing")}
+            tooltip={t("immersiveSniffingDescription")}
             name="useExtension"
           >
             <Switch />
           </Form.Item>
           <Form.Item
-            label={renderTooltipLabel(t("privacy"), t("privacyTooltip"))}
+            label={t("privacy")}
+            tooltip={t("privacyTooltip")}
             name="privacy"
           >
             <Switch />
@@ -387,10 +371,8 @@ const SettingPage: React.FC = () => {
             <Switch />
           </Form.Item>
           <Form.Item
-            label={renderTooltipLabel(
-              t("maxRunner"),
-              t("maxRunnerDescription"),
-            )}
+            label={t("maxRunner")}
+            tooltip={t("maxRunnerDescription")}
             name="maxRunner"
           >
             <InputNumber min={1} max={50} precision={0} />

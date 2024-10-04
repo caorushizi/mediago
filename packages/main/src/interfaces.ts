@@ -10,6 +10,7 @@ export interface DownloadItem {
   url: string;
   headers?: string;
   status?: DownloadStatus;
+  folder?: string;
   isLive?: boolean;
 }
 
@@ -76,6 +77,7 @@ export interface DownloadParams {
   proxy?: string;
   deleteSegments?: boolean;
   callback: (progress: DownloadProgress) => void;
+  folder?: string;
 }
 
 export interface VideoStat extends Video {

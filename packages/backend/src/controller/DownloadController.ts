@@ -99,4 +99,9 @@ export default class DownloadController implements Controller {
 
     this.downloadService.stopTask(id);
   }
+
+  @post("get-video-folders")
+  async getVideoFolders() {
+    return this.downloaderService.getVideoFolders();
+  }
 }

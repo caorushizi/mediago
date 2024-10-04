@@ -181,6 +181,7 @@ export function DownloadItem({
         })}
         title={item.name}
       >
+        {item.folder ? item.folder + "/" : item.folder}
         {item.name}
       </div>
     );

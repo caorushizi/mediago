@@ -1,14 +1,24 @@
-import { Button, Form, Input, Modal, Select, Switch, message } from "antd";
+import {
+  AutoComplete,
+  Button,
+  Form,
+  Input,
+  Modal,
+  Select,
+  Switch,
+  message,
+} from "antd";
 import React, { forwardRef, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 import TextArea from "antd/es/input/TextArea";
 import { ConfigStore, useConfigStore } from "@/store/config";
 import { useShallow } from "zustand/react/shallow";
-import { useMemoizedFn } from "ahooks";
+import { useAsyncEffect, useMemoizedFn } from "ahooks";
 import { DownloadType } from "@/types";
 import { EpisodeNumber } from "./EpisodeNumber";
 import { tdApp } from "@/utils";
 import { ADD_TO_LIST, DOWNLOAD_NOW } from "@/const";
+import useElectron from "@/hooks/electron";
 
 export interface DownloadFormType {
   batch?: boolean;
@@ -18,6 +28,7 @@ export interface DownloadFormType {
   headers?: string;
   url?: string;
   id?: number;
+  folder?: string;
 }
 
 export interface DownloadFormProps {
@@ -46,6 +57,11 @@ const configSelector = (s: ConfigStore) => ({
   setLastIsBatch: s.setLastIsBatch,
 });
 
+interface Options {
+  label: string;
+  value: string;
+}
+
 export default forwardRef<DownloadFormRef, DownloadFormProps>(
   function DownloadForm(
     {
@@ -66,6 +82,22 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
     const { setLastDownloadTypes, setLastIsBatch } = useConfigStore(
       useShallow(configSelector),
     );
+    const [folders, setFolders] = useState<Options[]>([]);
+    const [videoFolders, setVideoFolders] = useState<string[]>([]);
+    const { getVideoFolders } = useElectron();
+
+    useAsyncEffect(async () => {
+      if (modalOpen) {
+        const folders = await getVideoFolders();
+        setVideoFolders(folders);
+        setFolders(() =>
+          folders.map((f) => ({
+            value: f,
+            label: f,
+          })),
+        );
+      }
+    }, [modalOpen]);
 
     useImperativeHandle(ref, () => {
       return {
@@ -138,6 +170,14 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
       }
     });
 
+    const handleSearch = useMemoizedFn((val: string) => {
+      return setFolders(() => {
+        const videoOptions = videoFolders.map((f) => ({ value: f, label: f }));
+        if (!val) return videoOptions;
+        return [{ value: val, label: val }, ...videoOptions];
+      });
+    });
+
     return (
       <>
         {contextHolder}
@@ -155,7 +195,9 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
               {t("cancel")}
             </Button>,
             <Button key="submit" onClick={handleSubmit}>
-              {t("addToDownloadList")}
+              {isEdit && !usePrevData
+                ? t("confirmChange")
+                : t("addToDownloadList")}
             </Button>,
             <Button key="link" type="primary" onClick={handleDownloadNow}>
               {t("downloadNow")}
@@ -171,11 +213,13 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
             onValuesChange={handleValuesChange}
           >
             <Form.Item name="id" hidden />
-            {!isEdit && (
-              <Form.Item label={t("batchDownload")} name={"batch"}>
-                <Switch />
-              </Form.Item>
-            )}
+            <Form.Item
+              hidden={isEdit}
+              label={t("batchDownload")}
+              name={"batch"}
+            >
+              <Switch />
+            </Form.Item>
             <Form.Item
               key="type"
               name="type"
@@ -234,98 +278,116 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
               }}
             </Form.Item>
             <Form.Item noStyle shouldUpdate>
-              {() => {
-                if (!isEdit && form.getFieldValue("batch")) {
-                  return (
-                    <Form.Item
-                      label={t("videoLink")}
-                      name="batchList"
-                      required
-                      rules={[
-                        {
-                          required: true,
-                          message: t("pleaseEnterVideoLink"),
-                        },
-                        {
-                          validator: (_, value) => {
-                            const lines = value.split("\n");
-                            for (const line of lines) {
-                              const params = line.trim().split(" ");
-                              if (params.length > 2) {
-                                return Promise.reject(
-                                  new Error(t("pleaseEnterCorrectBatchList")),
-                                );
-                              }
-                              const [url] = params;
-                              if (!/^(https?):\/\/.+/.test(url)) {
-                                return Promise.reject(
-                                  new Error(t("pleaseEnterCorrectBatchList")),
-                                );
-                              }
-                            }
-                            return Promise.resolve();
-                          },
-                        },
-                      ]}
-                    >
-                      <TextArea
-                        rows={5}
-                        placeholder={t("videoLikeDescription")}
-                      />
-                    </Form.Item>
-                  );
+              {(form) => {
+                if (isEdit || !form.getFieldValue("batch")) {
+                  return null;
                 }
+                return (
+                  <Form.Item
+                    label={t("videoLink")}
+                    name="batchList"
+                    required
+                    rules={[
+                      {
+                        required: true,
+                        message: t("pleaseEnterVideoLink"),
+                      },
+                      {
+                        validator: (_, value) => {
+                          const lines = value.split("\n");
+                          for (const line of lines) {
+                            const params = line.trim().split(" ");
+                            if (params.length > 3) {
+                              return Promise.reject(
+                                new Error(t("pleaseEnterCorrectBatchList")),
+                              );
+                            }
+                            const [url] = params;
+                            if (!/^(https?):\/\/.+/.test(url)) {
+                              return Promise.reject(
+                                new Error(t("pleaseEnterCorrectBatchList")),
+                              );
+                            }
+                          }
+                          return Promise.resolve();
+                        },
+                      },
+                    ]}
+                  >
+                    <TextArea
+                      rows={5}
+                      placeholder={t("videoLikeDescription")}
+                    />
+                  </Form.Item>
+                );
               }}
             </Form.Item>
             <Form.Item noStyle shouldUpdate>
               {(form) => {
-                if (isEdit || !form.getFieldValue("batch")) {
-                  return (
-                    <Form.Item
-                      name="url"
-                      label={t("videoLink")}
-                      required
-                      rules={[
-                        {
-                          required: true,
-                          message: t("pleaseEnterOnlineVideoUrl"),
-                        },
-                        {
-                          pattern: /^(file|https?):\/\/.+/,
-                          message: t("pleaseEnterCorrectVideoLink"),
-                        },
-                      ]}
-                    >
-                      <Input
-                        placeholder={t(
-                          "pleaseEnterOnlineVideoUrlOrDragM3U8Here",
-                        )}
-                        onDrop={(e) => {
-                          const file: any = e.dataTransfer.files[0];
-                          form.setFieldValue("url", `file://${file.path}`);
-                          form.validateFields(["url"]);
-                        }}
-                      />
-                    </Form.Item>
-                  );
+                if (form.getFieldValue("batch") && !isEdit) {
+                  return null;
                 }
+                return (
+                  <Form.Item
+                    name="url"
+                    label={t("videoLink")}
+                    required
+                    rules={[
+                      {
+                        required: true,
+                        message: t("pleaseEnterOnlineVideoUrl"),
+                      },
+                      {
+                        pattern: /^(file|https?):\/\/.+/,
+                        message: t("pleaseEnterCorrectVideoLink"),
+                      },
+                    ]}
+                  >
+                    <Input
+                      placeholder={t("pleaseEnterOnlineVideoUrlOrDragM3U8Here")}
+                      onDrop={(e) => {
+                        const file: any = e.dataTransfer.files[0];
+                        form.setFieldValue("url", `file://${file.path}`);
+                        form.validateFields(["url"]);
+                      }}
+                    />
+                  </Form.Item>
+                );
               }}
             </Form.Item>
             <Form.Item noStyle shouldUpdate>
-              {() => {
-                if (
-                  form.getFieldValue("type") === "m3u8" ||
-                  form.getFieldValue("batch")
-                ) {
-                  return (
-                    <Form.Item label={t("additionalHeaders")} name="headers">
-                      <TextArea
-                        rows={4}
-                        placeholder={t("additionalHeadersDescription")}
-                      />
-                    </Form.Item>
-                  );
+              {(form) => {
+                if (form.getFieldValue("batch")) {
+                  return null;
                 }
+                return (
+                  <Form.Item name="folder" label={t("folder")}>
+                    <AutoComplete
+                      placeholder={t("pleaseInputVideoFolder")}
+                      optionFilterProp="label"
+                      options={folders}
+                      onSearch={handleSearch}
+                    />
+                  </Form.Item>
+                );
+              }}
+            </Form.Item>
+            <Form.Item noStyle shouldUpdate>
+              {(form) => {
+                if (
+                  form.getFieldValue("type") !== "m3u8" &&
+                  !form.getFieldValue("batch")
+                ) {
+                  return null;
+                }
+                return (
+                  <Form.Item label={t("additionalHeaders")} name="headers">
+                    <TextArea
+                      rows={4}
+                      placeholder={t("additionalHeadersDescription")}
+                    />
+                  </Form.Item>
+                );
               }}
             </Form.Item>
           </Form>
