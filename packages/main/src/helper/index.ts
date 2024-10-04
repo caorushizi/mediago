@@ -34,6 +34,8 @@ function fetchWrapper(url: string) {
   return fetch(url, options);
 }
 
+export function noop() {}
+
 export { sleep, formatHeaders } from "./utils.ts";
 export * from "./variables.ts";
 export { on, handle } from "./decorator.ts";

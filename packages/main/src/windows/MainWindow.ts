@@ -10,8 +10,8 @@ import ElectronLogger from "../vendor/ElectronLogger.ts";
 import DownloadService from "../services/DownloadService.ts";
 import ElectronStore from "../vendor/ElectronStore.ts";
 import VideoRepository from "../repository/VideoRepository.ts";
-import { isWin } from "../helper/index.ts";
 import i18n from "../i18n/index.ts";
+import { isWin } from "../helper/variables.ts";
 
 @injectable()
 export default class MainWindow extends Window {
@@ -46,7 +46,6 @@ export default class MainWindow extends Window {
     this.downloadService.on("download-stop", this.onDownloadStop);
     this.downloadService.on("download-message", this.receiveMessage);
     this.store.onDidAnyChange(this.storeChange);
-    app.on("second-instance", this.secondInstance);
   }
 
   closeMainWindow = () => {
@@ -89,22 +88,6 @@ export default class MainWindow extends Window {
 
     const bounds = this.window.getBounds();
     this.store.set("mainBounds", _.omit(bounds, ["x", "y"]));
-  };
-
-  secondInstance = () => {
-    if (!this.window) return;
-    if (isWin) {
-      if (this.window) {
-        if (this.window.isMinimized()) {
-          this.window.restore();
-        }
-        if (this.window.isVisible()) {
-          this.window.focus();
-        } else {
-          this.window.show();
-        }
-      }
-    }
   };
 
   storeChange = (store: unknown) => {
@@ -167,5 +150,26 @@ export default class MainWindow extends Window {
     if (!this.window) return;
 
     this.window.webContents.send(channel, ...args);
+  }
+
+  showWindow(url?: string) {
+    if (isWin) {
+      if (this.window) {
+        if (this.window.isMinimized()) {
+          this.window.restore();
+        }
+        if (this.window.isVisible()) {
+          this.window.focus();
+        } else {
+          this.window.show();
+        }
+      } else {
+        this.init();
+      }
+
+      if (url) {
+        this.window!.loadURL(url);
+      }
+    }
   }
 }

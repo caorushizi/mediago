@@ -3,6 +3,7 @@ import { isUrl } from "./url";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { customAlphabet } from "nanoid";
+import { DownloadType } from "@/types";
 
 export { http, api } from "./http";
 export { tdApp } from "./tdapp";
@@ -71,3 +72,7 @@ export function randomName() {
 }
 
 export const isWeb = import.meta.env.APP_TARGET === "web";
+
+export function isDownloadType(value: string): value is DownloadType {
+  return Object.values(DownloadType).includes(value as DownloadType);
+}
