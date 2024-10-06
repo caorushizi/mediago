@@ -86,7 +86,7 @@ export function getReleaseConfig(): Configuration {
         to: "mobile",
       },
       {
-        from: "./app/bin/",
+        from: "./bin/${platform}/${arch}",
         to: "bin",
       },
     ],
@@ -124,11 +124,7 @@ export function getReleaseConfig(): Configuration {
       target: [
         {
           target: "dmg",
-          arch: ["x64", "arm64", "universal"],
-        },
-        {
-          target: "zip",
-          arch: ["x64", "arm64", "universal"],
+          arch: ["x64", "arm64"],
         },
       ],
     },
