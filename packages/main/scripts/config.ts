@@ -124,7 +124,7 @@ export function getReleaseConfig(): Configuration {
       target: [
         {
           target: "dmg",
-          arch: ["x64", "arm64"],
+          arch: [process.arch === "arm64" ? "arm64" : "x64"],
         },
       ],
     },
