@@ -30,6 +30,7 @@ export default defineConfig({
     nav: [
       { text: "Home", link: "/" },
       { text: "教程", link: "/guides" },
+      { text: "更新日志", link: "/changelog" },
     ],
 
     sidebar: [
@@ -38,10 +39,11 @@ export default defineConfig({
         items: [
           { text: "快速开始", link: "/guides" },
           { text: "使用说明", link: "/documents" },
+          { text: "更新日志", link: "/changelog" },
         ],
       },
       {
-        text: "其他",
+        text: "Q&A",
         items: [
           { text: "旧版本", link: "/history" },
           { text: "意见收集", link: "/proposal" },
