@@ -34,6 +34,10 @@ export default class SocketIO implements Vendor {
       },
     });
 
+    this.io.engine.on("headers", (headers) => {
+      headers["Access-Control-Allow-Private-Network"] = true;
+    });
+
     this.io.on("connection", () => {});
 
     this.downloadService.on("download-ready-start", this.onDownloadReadyStart);
