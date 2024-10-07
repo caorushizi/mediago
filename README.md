@@ -27,6 +27,7 @@
 - **✅&nbsp; 无需抓包**： 使用软件自带浏览器可以轻松嗅探网页中的视频资源，通过嗅探到的资源列表选择自己想要下载的资源，简单快速。
 - **📱&nbsp; 移动播放**： 可以轻松无缝的在 PC 和移动设备之前切换，下载完成后即可使用手机观看视频。
 - **⚡️&nbsp; 批量下载**： 支持同时下载多个视频和直播资源，高速带宽不闲置。
+- **🎉&nbsp; 支持 docker 部署**： 支持 docker 部署 web 端，方便快捷。
 
 ## Quickstart
 
@@ -47,74 +48,74 @@ pnpm dev
 # 打包运行
 pnpm release
 
+# 构建 docker 镜像
+docker buildx build -t caorushizi/mediago:latest .
+
 # docker 启动
 docker run -d --name mediago -p 8899:8899 -v /root/mediago:/root/mediago registry.cn-beijing.aliyuncs.com/caorushizi/mediago
 
-# 构建 docker 镜像
-docker buildx build -t caorushizi/mediago:latest .
 ```
 
 ## Releases
 
-**v2.2.3 (2024.7.06 发布)**
+### v3.0.0 (2024.10.7 发布)
 
-- [windows mediago v2.2.3](https://github.com/caorushizi/mediago/releases/download/v2.2.3/mediago-setup-x64-2.2.3.exe)
-- [macos mediago v2.2.3](https://github.com/caorushizi/mediago/releases/download/v2.2.3/mediago-setup-x64-2.2.3.dmg)
-- [linux mediago v2.2.3](https://github.com/caorushizi/mediago/releases/download/v2.2.3/mediago-setup-arm64-2.2.3.dmg)
+#### 软件下载
 
-**更新日志**
+- [【mediago】 windows v2.2.3](https://github.com/caorushizi/mediago/releases/download/v2.2.3/mediago-setup-x64-2.2.3.exe)
+- [【mediago】 macos arm64 v2.2.3](https://github.com/caorushizi/mediago/releases/download/v2.2.3/mediago-setup-x64-2.2.3.dmg)
+- [【mediago】 macos x64 v2.2.3](https://github.com/caorushizi/mediago/releases/download/v2.2.3/mediago-setup-x64-2.2.3.dmg)
+- [【mediago】 linux v2.2.3](https://github.com/caorushizi/mediago/releases/download/v2.2.3/mediago-setup-arm64-2.2.3.dmg)
+- 【mediago】 docker v3.0 `docker run`
 
-- 设置中添加【自动更新】开关：仅更新 release 版本，beta 版本不会自动更新
-- 下载表单中增加【批量更新】
-- 新增 Linux 版本发布
-- 载时自动选择清晰度最高的视频
-- 新增【清空缓存】&【无痕模式】
-- 自定义选择安装位置
-- 修复了一些 bug
+### 软件截图
 
-**v2.2.0 (2024.5.22 发布)**
+![首页](./images/changelog4.png)
 
-- [windows mediago v2.2.0](https://github.com/caorushizi/mediago/releases/download/v2.2.0/mediago-setup-2.2.0.exe)
-- [macos mediago v2.2.0](https://github.com/caorushizi/mediago/releases/download/v2.2.0/mediago-setup-2.2.0.dmg)
+### 重要更新
 
-**更新日志**
+- 支持 docker 部署 web 端
+- 更新桌面端 UI
 
-- 支持下载直播流
-- 支持哔哩哔哩视频下载
-- 优化沉浸式嗅探流程
-- 支持下载控制台输出
-- 修复了一些 bug
+### 更新日志
 
-**v2.0.2（2023.7.9 发布）**
-
-- [windows mediago v2.0.2](https://github.com/caorushizi/mediago/releases/download/v2.0.2/media-downloader-setup-2.0.2.exe)
-- [macos mediago v2.0.2](https://github.com/caorushizi/mediago/releases/download/v2.0.2/media-downloader-setup-2.0.2.dmg)
-
-**更新日志**
-
-- 暗黑模式
-- 更多下载配置
-- 支持请求标头自动带入
-- 支持开启广告过滤
-- 支持开启沉浸式嗅探
-- 支持切换手机和 PC 模式
-- 支持修改同时下载数量
-- 修复了一些 bug
+- 更新桌面端 UI
+- 支持 docker 部署 web 端
+- 新增视频播放，支持桌面端和移动端播放
+- 修复 mac 打开无法展示界面的问题
+- 优化了批量下载的交互
+- 添加了 windows 的便携版（免安装哦）
+- 优化了下载列表，支持页面中多个视频的嗅探
+- 支持收藏列表手动导入导出
+- 支持首页下载列表导出
+- 优化了【新建下载】表单的交互逻辑
+- 支持 UrlScheme 打开应用，并添加下载任务
+- 修复了一些 bug 并提升用户体验
 
 ## 软件截图
 
-![首页](https://static.ziying.site/v2.0.3-beta-home.png)
+![首页](https://static.ziying.site/images/home.png)
 
-![设置页面](https://static.ziying.site/v2.0.3-beta-settings.png)
+![首页-dark](https://static.ziying.site/images/home-dark.png)
 
-![资源提取](https://static.ziying.site/v2.0.3-beta-extract.png)
+![设置页面](https://static.ziying.site/images/settings.png)
+
+![资源提取](https://static.ziying.site/images/browser.png)
 
 ## 技术栈
 
+- react <https://react.dev/>
+- electron <https://www.electronjs.org>
+- koa <https://koajs.com>
 - vite <https://cn.vitejs.dev>
 - antd <https://ant.design>
-- electron <https://www.electronjs.org>
+- tailwindcss <https://tailwindcss.com>
+- shadcn <https://ui.shadcn.com/>
+- inversify <https://inversify.io>
+- typeorm <https://typeorm.io>
 
 ## 鸣谢
 
-N_m3u8DL-RE 来自于 <https://github.com/nilaoda/N_m3u8DL-RE>
+- N_m2u8DL-CLI 来自于 <https://github.com/nilaoda/N_m3u8DL-CLI>
+- N_m3u8DL-RE 来自于 <https://github.com/nilaoda/N_m3u8DL-RE>
+- mediago 来自于 <https://github.com/caorushizi/hls-downloader>
