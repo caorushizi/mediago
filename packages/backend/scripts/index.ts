@@ -19,7 +19,11 @@ async function buildClean() {
 }
 
 async function copyBin() {
-  const source = mainResolve("../main/bin", isDev ? process.platform : "linux");
+  const source = mainResolve(
+    "../main/bin",
+    isDev ? process.platform : "linux",
+    process.arch,
+  );
   const target = mainResolve("dist/server/bin");
   fs.cpSync(source, target, {
     recursive: true,
