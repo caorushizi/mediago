@@ -14,62 +14,46 @@ MediaGo QQ反馈群 1： 574209001
 
 MediaGo QQ反馈群 2： 921619626
 
-MediaGo 微信反馈群：[评论区查看](#waline)
+MediaGo 微信反馈群：[评论区查看](/guides.html#waline)
+:::
+
+::: info
+
+v3.0 是最新版本，大家的意见可以尽量在 3.0 版本中提出，我们会尽快修复。
+
 :::
 
 ## 下载安装
-**v2.2.3 (2024.7.06 发布)**
 
-- [windows mediago v2.2.3](https://github.com/caorushizi/mediago/releases/download/v2.2.3/mediago-setup-x64-2.2.3.exe)
-- [macos mediago v2.2.3](https://github.com/caorushizi/mediago/releases/download/v2.2.3/mediago-setup-x64-2.2.3.dmg)
-- [linux mediago v2.2.3](https://github.com/caorushizi/mediago/releases/download/v2.2.3/mediago-setup-arm64-2.2.3.dmg)
+### v3.0.0 (2024.10.7 发布)
 
-**更新日志**
+#### 软件下载
 
-- 设置中添加【自动更新】开关：仅更新 release 版本，beta 版本不会自动更新
-- 下载表单中增加【批量更新】
-- 新增 Linux 版本发布
-- 载时自动选择清晰度最高的视频
-- 新增【清空缓存】&【无痕模式】
-- 自定义选择安装位置
-- 修复了一些 bug
+- [【mediago】 windows x64 v2.2.3](https://github.com/caorushizi/mediago/releases/download/v2.2.3/mediago-setup-x64-2.2.3.exe)
+- [【mediago】 macos arm64 v2.2.3](https://github.com/caorushizi/mediago/releases/download/v2.2.3/mediago-setup-x64-2.2.3.dmg)
+- [【mediago】 macos x64 v2.2.3](https://github.com/caorushizi/mediago/releases/download/v2.2.3/mediago-setup-x64-2.2.3.dmg)
+- [【mediago】 linux x64 v2.2.3](https://github.com/caorushizi/mediago/releases/download/v2.2.3/mediago-setup-arm64-2.2.3.dmg)
+- 【mediago】 docker v3.0 `docker run`
 
-**v2.2.0 (2024.5.22 发布)**
+#### 重要更新
 
-- [windows mediago v2.2.0](https://github.com/caorushizi/mediago/releases/download/v2.2.0/mediago-setup-2.2.0.exe)
-- [macos mediago v2.2.0](https://github.com/caorushizi/mediago/releases/download/v2.2.0/mediago-setup-2.2.0.dmg)
+- 支持 docker 部署 web 端
+- 更新桌面端 UI
 
-**更新日志**
+#### 更新日志
 
-- 支持下载直播流
-- 支持哔哩哔哩视频下载
-- 优化沉浸式嗅探流程
-- 支持下载控制台输出
-- 修复了一些 bug
-
-**v2.0.1（2023.7.1 发布）**
-
-- [windows mediago v2.0.1](https://github.com/caorushizi/mediago/releases/download/v2.0.1/media-downloader-setup-2.0.1.exe)
-- [macos mediago v2.0.1](https://github.com/caorushizi/mediago/releases/download/v2.0.1/media-downloader-setup-2.0.1.dmg)
-
-**更新日志**
-
-- 暗黑模式
-- 更多下载配置
-- 支持请求标头自动带入
-- 支持开启广告过滤
-- 支持开启沉浸式嗅探
-- 支持切换手机和 PC 模式
-- 支持修改同时下载数量
-- 修复了一些 bug
-
-**v1.1.5（2022.2.5 发布）**
-
-- [windows mediago v1.1.5](https://github.com/caorushizi/mediago/releases/download/1.1.5/media-downloader-setup-1.1.4.exe)
-
-**更新日志**
-
-- 支持视频下载
+- 支持 docker 部署 web 端
+- 更新桌面端 UI
+- 新增视频播放，支持桌面端和移动端播放
+- 修复 mac 打开无法展示界面的问题
+- 优化了批量下载的交互
+- 添加了 windows 的便携版（免安装哦）
+- 优化了下载列表，支持页面中多个视频的嗅探
+- 支持收藏列表手动导入导出
+- 支持首页下载列表导出
+- 优化了【新建下载】表单的交互逻辑
+- 支持 UrlScheme 打开应用，并添加下载任务
+- 修复了一些 bug 并提升用户体验
 
 ## 操作说明
 
@@ -83,7 +67,7 @@ MediaGo 微信反馈群：[评论区查看](#waline)
 
    ![step 2](./images/guides-step2.png)
 
-3. 开始下载，即可下载视频
+3. 点击【立即下载】，即可下载视频
 
    ![step 3](./images/guides-step3.png)
 
@@ -93,7 +77,7 @@ MediaGo 微信反馈群：[评论区查看](#waline)
 
    ![step 1](./images/guides-step4.png)
 
-2. 在新建下载弹窗中填入【视频名称】和【m3u8 地址】即可
+2. 在新建下载弹窗中填入【视频名称】和【流媒体（m3u8）】或者【哔哩哔哩】即可
 
    ![step 2](./images/guides-step5.png)
 
@@ -101,25 +85,27 @@ MediaGo 微信反馈群：[评论区查看](#waline)
 
    ![step 3](./images/guides-step3.png)
 
-## 附加功能
+### 批量下载
 
-1. 下载完成后可以在下载列表中点击转换音频按钮将视频转换为音频
+   ![step 3](./images/guides-step6.png)
 
-   ![step 1](./images/addition-step1.png)
+### 附加功能
 
-2. 下载完成后播放视频
+1. 转换为音频
 
-   - PC 播放
+   ![step 1](./images/guides-step7.png)
 
-     ![step 2](./images/addition-step2.png)
+2. 后续会增加更多功能，敬请期待~
 
-   - 移动端播放
+### 播放视频
 
-     ![step 3](./images/addition-step3.png)
+- PC 播放
 
-3. 批量下载
+     ![step 2](./images/addition-step3.png)
 
-   ![step 3](./images/addition-step4.png)
+- 移动端播放
+
+     ![step 3](./images/addition-step4.png)
 
 ## 开始你的视频下载吧
 

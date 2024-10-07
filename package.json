@@ -47,7 +47,7 @@
     "@commitlint/cz-commitlint": "^19.2.0",
     "@commitlint/format": "^19.3.0",
     "@eslint/js": "^8.57.0",
-    "@waline/client": "^3.2.0",
+    "@waline/client": "^3.3.2",
     "commitizen": "^4.3.0",
     "cross-env": "^7.0.3",
     "cspell": "^8.8.3",
@@ -58,7 +58,7 @@
     "tsx": "^4.11.0",
     "typescript-eslint": "^7.10.0",
     "vitepress": "1.2.2",
-    "vue": "^3.4.27",
+    "vue": "^3.5.11",
     "zx": "^8.1.1"
   },
   "pnpm": {

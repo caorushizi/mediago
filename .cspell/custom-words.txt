@@ -41,6 +41,7 @@ redownload
 Redownload
 reduxjs
 rmvb
+shadcn
 Sider
 stylelint
 svgr
