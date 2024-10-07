@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, macos-11, ubuntu-latest]
+        os: [windows-latest, macos-14-large, ubuntu-latest]
 
     # create steps
     steps:
