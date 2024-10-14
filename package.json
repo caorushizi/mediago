@@ -50,7 +50,7 @@
     "@waline/client": "^3.3.2",
     "commitizen": "^4.3.0",
     "cross-env": "^7.0.3",
-    "cspell": "^8.8.3",
+    "cspell": "^8.15.1",
     "cz-git": "^1.9.2",
     "eslint": "^8.57.0",
     "globals": "^15.3.0",
