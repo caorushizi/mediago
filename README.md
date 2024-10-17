@@ -1,5 +1,3 @@
-<img src="https://socialify.git.ci/caorushizi/mediago/image?font=Inter&forks=1&issues=1&language=1&name=1&owner=1&pattern=Circuit%20Board&pulls=1&stargazers=1&theme=Auto" alt="MediaDownloader"/>
-
 <div align="center">
   <h1>MediaGo</h1>
   <a href="https://downloader.caorushizi.cn/guides.html?form=github">快速开始</a>
@@ -16,6 +14,12 @@
   <img alt="GitHub Downloads (all assets, latest release)" src="https://img.shields.io/github/downloads/caorushizi/mediago/latest/total">
   <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/caorushizi/mediago">
   <img alt="GitHub forks" src="https://img.shields.io/github/forks/caorushizi/mediago">
+  <br>
+  <br>
+  
+  <a href="https://trendshift.io/repositories/11083" target="_blank">
+    <img src="https://trendshift.io/api/badge/repositories/11083" alt="caorushizi%2Fmediago | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/>
+  </a>
 
   <hr />
 </div>
