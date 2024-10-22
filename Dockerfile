@@ -24,6 +24,15 @@ WORKDIR /app
 
 COPY --from=builder /app /app
 
+# create data dir and set permission of app and data dir for non-privileged user
+RUN mkdir /data && \
+    chmod -R 777 /app && \
+    chmod -R 777 /data
+
+# switch data dir
+# TODO: use DATA_DIR env instead of hardcoded HOME
+ENV HOME=/data
+
 # COPY --from=deb_extractor /dpkg /
 RUN apt-get update && \
     apt-get install -y libicu-dev ffmpeg && \
