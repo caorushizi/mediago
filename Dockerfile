@@ -25,7 +25,10 @@ WORKDIR /app
 COPY --from=builder /app /app
 
 # COPY --from=deb_extractor /dpkg /
-RUN apt-get update && apt-get install -y libicu-dev ffmpeg
+RUN apt-get update && \
+    apt-get install -y libicu-dev ffmpeg && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN npm install pm2 -g
 
