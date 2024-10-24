@@ -1,23 +1,29 @@
-FROM m.daocloud.io/docker.io/library/node:20 AS builder
+FROM m.daocloud.io/docker.io/library/node:20-bookworm-slim AS builder
+
+WORKDIR /build
+
+COPY . .
+
+RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/* && \
+    apt-get update && apt-get install -y \
+    git \
+    python3 \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/* && \
+    npm install -g pnpm --registry=https://registry.npmmirror.com && \
+    pnpm config set registry https://registry.npmmirror.com && \
+    pnpm install && \
+    cd packages/backend && pnpm run build
 
 WORKDIR /app
 
-COPY ./packages/backend/dist /app
+RUN mv /build/packages/backend/dist/* /app/. && \
+    mv /build/packages/backend/package.json . && \
+    pnpm install --prod && \
+    pnpm rebuild
 
-COPY ./packages/backend/package*.json ./
+RUN ls /app
 
-RUN npm install --omit=dev --registry=https://registry.npmmirror.com
-
-RUN npm rebuild
-
-# FROM m.daocloud.io/docker.io/library/debian:11-slim AS deb_extractor
-
-# RUN cd /tmp && \
-#   apt-get update && apt-get download libicu-dev && \
-#   mkdir /dpkg && \
-#   for deb in *.deb; do dpkg --extract $deb /dpkg || exit 10; done
-
-# FROM gcr.io/distroless/nodejs20-debian12
 FROM m.daocloud.io/docker.io/library/node:20-bookworm-slim
 
 WORKDIR /app
