@@ -18,11 +18,10 @@ RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/* &&
 WORKDIR /app
 
 RUN mv /build/packages/backend/dist/* /app/. && \
-    mv /build/packages/backend/package.json . && \
+    mv /build/packages/main/app/build/renderer /app/app && \
+    mv /build/packages/backend/package*.json . && \
     pnpm install --prod && \
     pnpm rebuild
-
-RUN ls /app
 
 FROM m.daocloud.io/docker.io/library/node:20-bookworm-slim
 
