@@ -39,7 +39,7 @@
     "@types/undertaker": "^1.2.11",
     "consola": "^3.2.3",
     "cross-env": "^7.0.3",
-    "cross-spawn": "^7.0.3",
+    "cross-spawn": "^7.0.5",
     "del": "^7.1.0",
     "dotenv": "^16.4.5",
     "esbuild": "0.21.4",
