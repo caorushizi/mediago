@@ -71,7 +71,7 @@
     "koa-static": "^5.0.0",
     "lodash": "^4.17.21",
     "mime-types": "^2.1.35",
-    "nanoid": "^5.0.7",
+    "nanoid": "^5.0.9",
     "node-pty": "^1.0.0",
     "reflect-metadata": "^0.2.2",
     "socket.io": "^4.8.0",
