@@ -63,7 +63,7 @@ export default class WebviewService {
       },
     });
     this.view.setBackgroundColor("#fff");
-    this.view.webContents.setAudioMuted(true);
+    this.view.webContents.setAudioMuted(false);
 
     const { isMobile } = this.store.store;
     this.setUserAgent(isMobile);
