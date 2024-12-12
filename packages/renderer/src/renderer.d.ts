@@ -82,6 +82,8 @@ declare interface AppStore {
   downloadProxySwitch?: boolean;
   // 自动更新
   autoUpgrade?: boolean;
+  // 浏览器中是否播放声音，默认静音
+  audioMuted?: boolean;
 }
 
 declare interface BrowserStore {

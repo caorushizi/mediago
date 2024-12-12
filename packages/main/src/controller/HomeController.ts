@@ -173,6 +173,10 @@ export default class HomeController implements Controller {
     if (key === "allowBeta") {
       this.updater.changeAllowBeta(val);
     }
+    // audio muted mode
+    if (key === "audioMuted") {
+      this.webviewService.setAudioMuted(val);
+    }
 
     this.store.set(key, val);
   }
