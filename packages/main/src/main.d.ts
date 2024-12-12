@@ -62,6 +62,8 @@ declare interface AppStore {
   allowBeta: boolean;
   // 关闭主窗口
   closeMainWindow: boolean;
+  // 浏览器中是否播放声音，默认静音
+  audioMuted: boolean;
 }
 
 declare interface BrowserStore {
