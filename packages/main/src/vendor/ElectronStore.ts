@@ -33,6 +33,7 @@ export default class StoreService extends Store<AppStore> implements Vendor {
         autoUpgrade: true,
         allowBeta: false,
         closeMainWindow: false,
+        audioMuted: true,
       },
     });
   }
