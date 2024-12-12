@@ -287,6 +287,9 @@ const SettingPage: React.FC = () => {
           </Form.Item>
         </GroupWrapper>
         <GroupWrapper hidden={isWeb} title={t("browserSetting")}>
+          <Form.Item label={t("audioMuted")} name="audioMuted">
+            <Switch />
+          </Form.Item>
           <Form.Item label={t("openInNewWindow")} name="openInNewWindow">
             <Switch />
           </Form.Item>

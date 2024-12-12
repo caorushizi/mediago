@@ -20,6 +20,7 @@ const initialState: AppStore = {
   machineId: "",
   downloadProxySwitch: false,
   autoUpgrade: true,
+  audioMuted: true,
 };
 
 export const appSlice = createSlice({

@@ -63,9 +63,8 @@ export default class WebviewService {
       },
     });
     this.view.setBackgroundColor("#fff");
-    this.view.webContents.setAudioMuted(false);
-
-    const { isMobile } = this.store.store;
+    const { isMobile, audioMuted } = this.store.store;
+    this.setAudioMuted(audioMuted);
     this.setUserAgent(isMobile);
 
     this.view.webContents.on("dom-ready", this.onDomReady);
@@ -303,6 +302,12 @@ export default class WebviewService {
     }
     this.blocker.disableBlockingInSession(this.session);
     this.logger.info(`[AdBlocker] disable`);
+  }
+
+  setAudioMuted(audioMuted?: boolean) {
+    if (!this.view) return;
+    this.view.webContents.setAudioMuted(audioMuted? true: false);
+    this.logger.info(`Play audio: ${!audioMuted}`);
   }
 
   setUserAgent(isMobile?: boolean) {
