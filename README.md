@@ -82,6 +82,14 @@ docker run -d --name mediago -p 8899:8899 -v /root/mediago:/root/mediago registr
 - [【mediago】 linux v3.0.0](https://static.ziying.site/mediago/mediago-setup-linux-amd64-3.0.0.deb)
 - 【mediago】 docker v3.0 `docker run -d --name mediago -p 8899:8899 -v /root/mediago:/root/mediago registry.cn-beijing.aliyuncs.com/caorushizi/mediago:v3.0.0`
 
+### docker 宝塔面板一键部署（推荐）
+
+1. 安装宝塔面板，前往 [宝塔面板](https://www.bt.cn/new/download.html?r=dk_mediago) 官网，选择正式版的脚本下载安装
+
+2. 安装后登录宝塔面板，在菜单栏中点击 `Docker`，首次进入会提示安装`Docker`服务，点击立即安装，按提示完成安装
+
+3. 安装完成后在应用商店中找到`MediaGo`，点击安装，配置域名等基本信息即可完成安装
+
 ### 软件截图
 
 ![首页](https://static.ziying.site/images/home.png)
