@@ -1,4 +1,4 @@
-import { cn, tdApp } from "@/utils";
+import { cn, tdApp, fromatDateTime } from "@/utils";
 import React, { ReactNode } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DownloadStatus } from "@/types";
@@ -268,6 +268,9 @@ export function DownloadItem({
         title={item.url}
       >
         <div className="truncate">{item.url}</div>
+        <div className="truncate">
+          {t("createdAt")} {fromatDateTime(item.createdDate)}
+        </div>
         {item.status === DownloadStatus.Failed && (
           <TerminalDrawer
             asChild
