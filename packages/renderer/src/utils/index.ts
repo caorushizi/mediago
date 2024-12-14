@@ -57,6 +57,13 @@ export function moment() {
   return dayjs().format("YYYY-MM-DDTHH:mm:ssZ");
 }
 
+export function fromatDateTime(
+  d: Date,
+  tmpStr: string = "YYYY/MM/DD HH:mm:ss",
+) {
+  return dayjs(d).format(tmpStr);
+}
+
 export function getFileName(url: string) {
   const urlObject = new URL(url);
   const name = urlObject.pathname.split("/").pop() || "";
