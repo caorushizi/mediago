@@ -5,11 +5,11 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import localforage from "localforage";
 
 type State = {
-  // 上次下载类型
+  // Last download type
   lastIsBatch: boolean;
   lastDownloadTypes: DownloadType;
 
-  // 上次选择的视频类型(只有 m3u8 可以缓存)
+  // Video type selected last time (only m3u8 can be cached)
   lastVideoType: string;
   lastVideoName: string;
   lastVideoNumber: number;

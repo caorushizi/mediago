@@ -50,7 +50,7 @@ export const browserSlice = createSlice({
           state[key] = payload[key] as never;
         }
       });
-      // FIXME: 异步函数
+      // FIXME: Asynchronous function
       setSharedState(convertPlainObject(state));
     },
     setSources(state: BrowserStore, action: PayloadAction<SourceData[]>) {

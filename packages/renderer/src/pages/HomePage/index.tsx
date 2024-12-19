@@ -72,7 +72,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   useEffect(() => {
     const search = new URLSearchParams(location.search);
 
-    // 新增
+    // new
     if (search.has("n")) {
       const type = search.get("type");
       const item: DownloadFormType = {
@@ -94,8 +94,8 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     const { batch, batchList = "", name, headers, type, url, folder } = values;
     if (batch) {
       /**
-       * 这里需要解析 batchList
-       * batchList 格式
+       * Here you need to parse the batchList
+       * The format is batchList
        * url1 name1\n
        * url2 name2\n
        * url3

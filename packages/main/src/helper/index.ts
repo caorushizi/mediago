@@ -6,12 +6,12 @@ export function getLocalIP() {
   const interfaces = os.networkInterfaces();
   let localIP = "";
 
-  // 遍历网络接口
+  // Traverse the network interface
   for (const key in interfaces) {
     const iface = interfaces[key];
     if (!iface) continue;
 
-    // 过滤出 IPv4 地址且非回环地址
+    // IPv4 addresses that are not loopback addresses are filtered out
     const filteredIface = iface.filter(
       (details) => details.family === "IPv4" && !details.internal,
     );

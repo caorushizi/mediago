@@ -64,7 +64,7 @@ export default class MainWindow extends Window {
 
   init(): void {
     if (this.window) {
-      // 如果窗口已经存在，则直接显示
+      // If the window already exists, it is displayed directly
       this.window.show();
       return;
     }
@@ -78,7 +78,7 @@ export default class MainWindow extends Window {
       this.window.setBounds(mainBounds);
     }
 
-    // 处理当前窗口改变大小
+    // Handle current window resize
     this.window.on("resized", this.handleResize);
     this.window.on("close", this.closeMainWindow);
   }
@@ -91,7 +91,7 @@ export default class MainWindow extends Window {
   };
 
   storeChange = (store: unknown) => {
-    // 向所有窗口发送通知
+    // Send notifications to all Windows
     this.send("store-change", store);
   };
 
@@ -138,7 +138,7 @@ export default class MainWindow extends Window {
   };
 
   receiveMessage = async (id: number, message: string) => {
-    // 将日志写入数据库中
+    // Write the log to the database
     await this.videoRepository.appendDownloadLog(id, message);
     const showTerminal = this.store.get("showTerminal");
     if (showTerminal) {

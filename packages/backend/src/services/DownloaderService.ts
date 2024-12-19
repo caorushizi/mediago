@@ -17,7 +17,7 @@ export default class DownloaderService {
   ) {}
 
   async startDownload(vid: number) {
-    // 查找将要下载的视频
+    // Find the video you want to download
     const video = await this.videoRepository.findVideo(vid);
     const { name, url, headers, type, folder } = video;
     const { local, deleteSegments } = await this.store.getConfig();
@@ -39,9 +39,9 @@ export default class DownloaderService {
   }
 
   async downloadNow(video: Omit<DownloadItem, "id">) {
-    // 添加下载项
+    // Add download
     const item = await this.addDownloadItem(video);
-    // 开始下载
+    // Start downloading
     await this.startDownload(item.id);
     return item;
   }

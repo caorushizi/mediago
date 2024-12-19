@@ -43,7 +43,7 @@ export default class WebviewService {
     @inject(TYPES.SniffingHelper)
     private readonly sniffingHelper: SniffingHelper,
   ) {
-    // 初始化 blocker
+    // Initialize the blocker
     this.initBlocker();
 
     const { useProxy, proxy, privacy } = this.store.store;
@@ -129,7 +129,7 @@ export default class WebviewService {
 
   onSource = async (item: SourceParams) => {
     if (!this.view) return;
-    // 这里需要判断是否使用浏览器插件
+    // Here you need to determine whether to use a browser plug-in
     const useExtension = this.store.get("useExtension");
     if (useExtension) {
       // this.view.webContents.send("webview-link-message", item);
@@ -142,7 +142,7 @@ export default class WebviewService {
       const res = await this.videoRepository.addVideo(item);
       const mainWebContents = this.mainWindow.window?.webContents;
       if (!mainWebContents) return;
-      // 这里向页面发送消息，通知页面更新
+      // This sends a message to the page notifying it of the update
       mainWebContents.send("download-item-notifier", res);
     }
   };
@@ -187,16 +187,16 @@ export default class WebviewService {
   }
 
   loadURL(url: string) {
-    // 开始加载 url
+    // Start loading url
     if (!this.view) {
       this.init();
     }
     if (!this.view) return;
 
-    // 1. 停止当前导航
+    // 1. Stop current navigation
     this.view.webContents.stop();
 
-    // 2. 加载新的 url
+    // 2. Load a new url
     this.view.webContents.loadURL(url);
   }
 
@@ -246,7 +246,7 @@ export default class WebviewService {
       return;
     }
 
-    // 处理 proxy 地址的合法性
+    // Process the validity of the proxy address
     if (!/https?:\/\//.test(proxy)) {
       proxy = `http://${proxy}`;
     }
@@ -306,7 +306,7 @@ export default class WebviewService {
 
   setAudioMuted(audioMuted?: boolean) {
     if (!this.view) return;
-    this.view.webContents.setAudioMuted(audioMuted? true: false);
+    this.view.webContents.setAudioMuted(audioMuted ? true : false);
     this.logger.info(`Play audio: ${!audioMuted}`);
   }
 
@@ -339,7 +339,7 @@ export default class WebviewService {
       this.view.webContents.close();
       this.window.contentView.removeChildView(this.view);
     }
-    // FIXME: 为了避免内存泄漏，这里需要销毁 view
+    // FIXME: To avoid memory leaks, the view needs to be destroyed here
     this.view = null;
   }
 
