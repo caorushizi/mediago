@@ -1,10 +1,10 @@
 <div align="center">
   <h1>MediaGo</h1>
-  <a href="https://downloader.caorushizi.cn/guides.html?form=github">早く始めます</a>
+  <a href="https://downloader.caorushizi.cn/jp/guides.html?form=github">早く始めます</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="https://downloader.caorushizi.cn/jp?form=github">公式サイトです</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://downloader.caorushizi.cn/documents.html?form=github">にやすりをかける</a>
+  <a href="https://downloader.caorushizi.cn/jp/documents.html?form=github">にやすりをかける</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="https://github.com/caorushizi/mediago/discussions">Discussions</a>
   <br>
