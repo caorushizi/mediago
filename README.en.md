@@ -1,10 +1,10 @@
 <div align="center">
   <h1>MediaGo</h1>
-  <a href="https://downloader.caorushizi.cn/guides.html?form=github">Quick start</a>
+  <a href="https://downloader.caorushizi.cn/en/guides.html?form=github">Quick start</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="https://downloader.caorushizi.cn/en?form=github">Website</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://downloader.caorushizi.cn/documents.html?form=github">Docs</a>
+  <a href="https://downloader.caorushizi.cn/en/documents.html?form=github">Docs</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="https://github.com/caorushizi/mediago/discussions">Discussions</a>
   <br>
