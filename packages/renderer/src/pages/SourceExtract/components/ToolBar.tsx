@@ -56,7 +56,7 @@ export function ToolBar({ page }: Props) {
   const disabled =
     store.status !== BrowserStatus.Loaded || store.mode !== PageMode.Browser;
 
-  // 设置默认UA
+  // Set default UA
   const onSetDefaultUA = () => {
     const nextMode = !appStore.isMobile;
     setUserAgent(nextMode);
@@ -85,7 +85,7 @@ export function ToolBar({ page }: Props) {
   const onClickGoBack = async () => {
     const back = await webviewGoBack();
     if (!back) {
-      // TODO: 重置标题
+      // TODO: Reset title
       // document.title = originTitle.current;
       dispatch(setBrowserStore({ url: "", title: "", mode: PageMode.Default }));
     }
@@ -140,7 +140,7 @@ export function ToolBar({ page }: Props) {
     refresh();
   };
 
-  // 合并到主页
+  // Merge to home page
   const onCombineToHome = () => {
     combineToHomePage(store);
   };

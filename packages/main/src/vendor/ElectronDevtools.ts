@@ -19,7 +19,7 @@ export default class DevToolsService implements Vendor {
     if (!isDev) {
       return;
     }
-    // 开发环境中可以通过设置环境变量来控制是否加载开发者工具
+    // In the development environment, you can set environment variables to control whether developer tools are loaded
     if (!process.env.LOAD_DEVTOOLS) {
       return;
     }

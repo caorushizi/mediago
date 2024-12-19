@@ -19,7 +19,7 @@ export default class VideoRepository {
   ) {}
 
   async addVideo(video: Omit<DownloadItem, "id">) {
-    // 先判断有没有同名的视频
+    // Let's see if there's a video with the same name
     const exist = await this.findVideoByName(video.name);
     if (exist) {
       throw new Error(i18n.t("videoExistsPleaseChangeName"));
@@ -34,7 +34,7 @@ export default class VideoRepository {
   }
 
   async addVideos(videos: Omit<DownloadItem, "id">[]) {
-    // 检查是否有同名的视频
+    // Check for videos with the same name
     const names = videos.map((item) => item.name);
     const existItems = await this.db.appDataSource
       .getRepository(Video)
@@ -61,7 +61,7 @@ export default class VideoRepository {
     return await this.db.manager.save(items);
   }
 
-  // 编辑视频
+  // Edit video
   async editVideo(video: DownloadItem) {
     const item = await this.db.appDataSource
       .getRepository(Video)
@@ -76,7 +76,7 @@ export default class VideoRepository {
     return await this.db.manager.save(item);
   }
 
-  // 查找所有视频
+  // Find all Videos
   async findAllVideos() {
     return await this.db.appDataSource.getRepository(Video).find({
       order: {

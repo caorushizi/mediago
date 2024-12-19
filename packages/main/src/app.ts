@@ -105,9 +105,9 @@ export default class ElectronApp {
     tray.setContextMenu(contextMenu);
   }
 
-  // 如果重启后还有正在下载的视频，就将状态改成下载失败
+  // If there are still videos being downloaded after the restart, change the status to download failed
   async resetDownloadStatus(): Promise<void> {
-    // 重启后如果还有 downloading 状态的数据， 全部重置为失败
+    // If data in the downloading state still fails after the restart, all downloads fail
     const videos = await this.videoRepository.findWattingAndDownloadingVideos();
     const videoIds = videos.map((video) => video.id);
     await this.videoRepository.changeVideoStatus(

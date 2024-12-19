@@ -51,7 +51,7 @@ async function copyBin() {
 }
 
 async function chmodBin() {
-  // 遍历文件夹下的所有文件，将文件的权限设置为 777
+  // Go through all the files in the folder and set the permissions on the files to 777
   if (isWin) return;
 
   const files = globSync(mainResolve("app/bin/*"));
@@ -115,9 +115,9 @@ async function pack() {
   await builder.build({ config });
 }
 
-// 开发环境
+// Development environment
 export const dev = gulp.series(devCopy, chmodBin, watchTask);
-// 构建打包
+// Build packaging
 export const build = gulp.series(clean, buildCopy, chmodBin, buildTask);
 // release
 export const release = gulp.series(pack);

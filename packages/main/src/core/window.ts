@@ -34,7 +34,7 @@ export default class Window {
   windowClose = () => {
     if (!this.window) return;
 
-    // 销毁窗口
+    // Destruction window
     this.window = null;
   };
 }

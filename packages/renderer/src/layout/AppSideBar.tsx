@@ -98,7 +98,7 @@ export function AppSideBar({ className }: Props) {
     if (location.pathname === "/source") {
       navigate("/");
     }
-    // FIXME: 有可能 webview 还没有完全隐藏
+    // FIXME: It is possible that the webview is not completely hidden yet
     await ipcSetAppStore("openInNewWindow", true);
     await showBrowserWindow();
   };

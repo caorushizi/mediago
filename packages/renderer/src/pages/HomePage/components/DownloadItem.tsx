@@ -73,7 +73,7 @@ export function DownloadItem({
     );
   };
 
-  // 编辑表单
+  // Edit form
   const renderEditIconBtn = (item: DownloadItem) => {
     return (
       <IconButton
@@ -161,7 +161,7 @@ export function DownloadItem({
       ];
     }
 
-    // 下载成功
+    // Download successfully
     return [
       <IconButton
         key={"play"}
