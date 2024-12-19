@@ -82,7 +82,7 @@ export default class SocketIO implements Vendor {
   };
 
   receiveMessage = async (id: number, message: string) => {
-    // 将日志写入数据库中
+    // Write the log to the database
     await this.videoRepository.appendDownloadLog(id, message);
   };
 }

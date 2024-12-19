@@ -71,9 +71,9 @@ export default class DownloadController implements Controller {
   @post("download-items-now")
   async downloadItemsNow(ctx: Context) {
     const videos = ctx.request.body as Omit<DownloadItem, "id">[];
-    // 添加下载项
+    // Add download
     const items = await this.downloaderService.addDownloadItems(videos);
-    // 开始下载
+    // Start downloading
     items.forEach((item) => this.downloaderService.startDownload(item.id));
     return items;
   }

@@ -17,7 +17,7 @@ export default class ProtocolService {
       let filePath = join(__dirname, "../renderer", pathName);
       const fileExist = await pathExists(filePath);
       if (!fileExist) {
-        // 如果没有找到文件，直接返回 index.html ， react history 模式
+        // If the file is not found, return index.html directly, react history mode
         filePath = join(__dirname, "../renderer/index.html");
       }
       const mimeType = mime.lookup(filePath);

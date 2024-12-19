@@ -21,13 +21,13 @@ import i18n from "../i18n/index.ts";
 import path from "path";
 
 interface DownloadContext {
-  // 是否为直播
+  // Whether it is live
   isLive: boolean;
-  // 下载进度
+  // Download progress
   percent: string;
-  // 下载速度
+  // Download speed
   speed: string;
-  // 是否已经 ready
+  // Ready
   ready: boolean;
 }
 
@@ -52,7 +52,7 @@ interface Schema {
   type: string;
 }
 
-// FIXME: 多语言正则表达式
+// FIXME: Multilingual regular expressions
 const processList: Schema[] = [
   {
     type: "m3u8",
@@ -203,7 +203,7 @@ export default class DownloadService extends EventEmitter {
     } catch (err: any) {
       if (err.message === "AbortError") {
         this.logger.info(`taskId: ${task.id} stopped`);
-        // 下载暂停
+        // Download pause
         await this.videoRepository.changeVideoStatus(
           task.id,
           DownloadStatus.Stopped,
@@ -211,7 +211,7 @@ export default class DownloadService extends EventEmitter {
         this.emit("download-stop", task.id);
       } else {
         this.logger.info(`taskId: ${task.id} failed`);
-        // 下载失败
+        // Download failure
         await this.videoRepository.changeVideoStatus(
           task.id,
           DownloadStatus.Failed,
@@ -221,7 +221,7 @@ export default class DownloadService extends EventEmitter {
     } finally {
       this.removeTask(task.id);
 
-      // 传输完成
+      // Transmission complete
       if (this.queue.length === 0 && this.active.length === 0) {
         // this.emit("download-finish");
       }
@@ -229,10 +229,10 @@ export default class DownloadService extends EventEmitter {
   }
 
   removeTask(id: number) {
-    // 处理当前正在活动的任务
+    // Process the currently active task
     const doneId = this.active.findIndex((i) => i.id === id);
     this.active.splice(doneId, 1);
-    // 处理完成的任务
+    // Process completed tasks
     if (this.active.length < this.limit) {
       this.runTask();
     }
@@ -358,16 +358,16 @@ export default class DownloadService extends EventEmitter {
     const percentReg = RegExp(consoleReg.percent, "g");
 
     const onMessage = (ctx: DownloadContext, message: string) => {
-      // 解析是否为直播资源
+      // Resolve whether it is a live resource
       if (isLiveReg.test(message)) {
         ctx.isLive = true;
       }
-      // 解析下载进度
+      // Parse download progress
       const [, percent] = percentReg.exec(message) || [];
       if (percent && Number(ctx.percent || 0) < Number(percent)) {
         ctx.percent = percent;
       }
-      // 解析下载速度
+      // Parsing download speed
       const [, speed] = speedReg.exec(message) || [];
       if (speed) {
         ctx.speed = speed;
