@@ -138,11 +138,11 @@ export class FloatButton extends LitElement {
   ): { left: number; top: number } => {
     if (!this.button) return { left: 0, top: 0 };
 
-    // 获取滚动条的宽度
+    // Gets the width of the scroll bar
     const scrollbarWidth =
       window.innerWidth - document.documentElement.clientWidth;
 
-    // 获取窗口的宽度和高度
+    // Gets the width and height of the window
     const windowWidth =
       window.innerWidth ||
       document.documentElement.clientWidth ||
@@ -152,7 +152,7 @@ export class FloatButton extends LitElement {
       document.documentElement.clientHeight ||
       document.body.clientHeight;
 
-    // 确保按钮不会被拖出屏幕
+    // Make sure the buttons don't get dragged off the screen
     if (newLeft < 0) {
       newLeft = 0;
     } else if (
@@ -180,7 +180,7 @@ export class FloatButton extends LitElement {
       const newLeft = event.clientX - this.offsetX;
       const newTop = event.clientY - this.offsetY;
 
-      // 使用 requestAnimationFrame 来优化性能
+      // Use requestAnimationFrame to optimize performance
       requestAnimationFrame(() => {
         if (!this.button) return;
 
@@ -215,7 +215,7 @@ function init() {
   floatButton.style.zIndex = "9999999999999";
   document.body.appendChild(floatButton);
 
-  // 向主进程发送插件准备好的消息
+  // Sends the plug-in prepared message to the main process
   pluginReady();
 }
 

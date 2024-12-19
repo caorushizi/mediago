@@ -64,12 +64,12 @@ async function startNodemon() {
     consola.log(data.toString());
   });
 
-  // 监听 stderr 数据事件
+  // Listen for stderr data events
   nodemon.stderr?.on("data", (data) => {
     consola.error(`stderr: ${data.toString()}`);
   });
 
-  // 监听子进程的关闭事件
+  // Listens for closing events of the child process
   nodemon.on("close", (code) => {
     consola.log(`子进程退出，退出码 ${code}`);
   });
@@ -80,7 +80,7 @@ async function buildTask() {
   await esbuild.build(buildOptions());
 }
 
-// 开发环境
+// Development environment
 export const dev = gulp.series(clean, copy, watchTask, startNodemon);
-// 构建打包
+// Build packaging
 export const build = gulp.series(buildClean, copy, buildTask);

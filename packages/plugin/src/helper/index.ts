@@ -34,7 +34,7 @@ export function showDownloadDialog(item: Omit<DownloadItem, "id">[]) {
   window.electron.showDownloadDialog(item);
 }
 
-// 通知主进程插件已经就绪
+// Notifies the main process that the plug-in is ready
 export function pluginReady() {
   window.electron.pluginReady();
 }

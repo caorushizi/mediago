@@ -36,7 +36,7 @@ export function error(message = "fail"): IpcResponse {
   };
 }
 
-// 判断是否为 deeplink 的函数
+// Determine whether it is a function of deeplink
 export function isDeeplink(url: string): boolean {
   try {
     const parsedUrl = new URL(url);

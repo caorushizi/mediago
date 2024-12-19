@@ -47,7 +47,7 @@ export default class DownloadController implements Controller {
   @handle("add-download-item")
   async addDownloadItem(e: IpcMainEvent, video: Omit<DownloadItem, "id">) {
     const item = await this.videoRepository.addVideo(video);
-    // 这里向页面发送消息，通知页面更新
+    // This sends a message to the page notifying it of the update
     this.mainWindow.send("download-item-notifier", item);
     return item;
   }
@@ -55,7 +55,7 @@ export default class DownloadController implements Controller {
   @handle("add-download-items")
   async addDownloadItems(e: IpcMainEvent, videos: Omit<DownloadItem, "id">[]) {
     const items = await this.videoRepository.addVideos(videos);
-    // 这里向页面发送消息，通知页面更新
+    // This sends a message to the page notifying it of the update
     this.mainWindow.send("download-item-notifier", items);
     return items;
   }
@@ -75,18 +75,18 @@ export default class DownloadController implements Controller {
 
   @handle("download-now")
   async downloadNow(e: IpcMainEvent, video: Omit<DownloadItem, "id">) {
-    // 添加下载项
+    // Add download
     const item = await this.addDownloadItem(e, video);
-    // 开始下载
+    // Start downloading
     await this.startDownload(e, item.id);
     return item;
   }
 
   @handle("download-items-now")
   async downloadItemsNow(e: IpcMainEvent, videos: Omit<DownloadItem, "id">[]) {
-    // 添加下载项
+    // Add download
     const items = await this.addDownloadItems(e, videos);
-    // 开始下载
+    // Start downloading
     items.forEach((item) => this.startDownload(e, item.id));
     return items;
   }
@@ -120,12 +120,12 @@ export default class DownloadController implements Controller {
 
   @handle("start-download")
   async startDownload(e: IpcMainEvent, vid: number) {
-    // 查找将要下载的视频
+    // Find the video you want to download
     const video = await this.videoRepository.findVideo(vid);
     const { name, url, headers, type, folder } = video;
     const local = this.store.get("local");
 
-    // 从配置中添加参数
+    // Add parameters from the configuration
     const deleteSegments = this.store.get("deleteSegments");
 
     const task: Task = {

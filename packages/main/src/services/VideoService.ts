@@ -27,7 +27,7 @@ export class VideoService {
     this.localIp = getLocalIP();
   }
 
-  // 使用glob搜索视频文件
+  // Use glob to search video files
   getVideoFiles = async () => {
     const files = await glob(this.videoDir + "/*.*");
     const videos = files
@@ -61,14 +61,14 @@ export class VideoService {
 
     app.use(express.static(mobileDir));
 
-    // 使用serve-handler处理静态文件请求的中间件
+    // Middleware that uses serve-handler to handle static file requests
     app.use(async (req, res) => {
       return serveHandler(req, res, {
         public: this.videoDir,
       });
     });
 
-    // 直接使用Koa的listen方法启动服务器
+    // Start the server directly using Koa's listen method
     app
       .listen(this.port, "0.0.0.0", () => {
         this.logger.info("Server is running on http://localhost:3222");

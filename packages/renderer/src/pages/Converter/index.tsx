@@ -63,7 +63,7 @@ const Converter = () => {
   });
 
   const renderActionButtons = (dom: ReactNode, item: Conversion): ReactNode => {
-    // 下载成功
+    // Download successfully
     return [
       <div
         key="convert"

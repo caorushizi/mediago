@@ -39,7 +39,7 @@ export default class BrowserWindow extends Window {
   handleNewWindowsVal = (newValue: unknown) => {
     if (!this.window) return;
 
-    // 向所有窗口发送通知
+    // Send notifications to all Windows
     if (newValue === false) {
       if (this.window && !this.window.isDestroyed()) {
         this.window.close();

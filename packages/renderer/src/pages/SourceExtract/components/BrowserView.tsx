@@ -128,7 +128,7 @@ export function BrowserView() {
   });
 
   const renderContent = () => {
-    // 加载状态
+    // Loaded state
     if (store.status === BrowserStatus.Loading) {
       return (
         <div className="flex h-full w-full flex-row items-center justify-center">
@@ -137,12 +137,12 @@ export function BrowserView() {
       );
     }
 
-    // 模态框
+    // Modal box
     if (placeHolder) {
       return <img src={placeHolder} className="h-full w-full" />;
     }
 
-    // 加载失败
+    // Load failure
     if (store.status === BrowserStatus.Failed) {
       return (
         <div className="flex h-full w-full flex-row items-center justify-center">
@@ -158,7 +158,7 @@ export function BrowserView() {
       );
     }
 
-    // 加载成功
+    // Load successfully
     if (store.status === BrowserStatus.Loaded) {
       return <WebView className="h-full w-full flex-1" />;
     }

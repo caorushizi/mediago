@@ -39,14 +39,14 @@ export const EpisodeNumber: FC<EpisodeNumberProps> = ({
   );
 
   /**
-   * 初始化
-   * 三个地方会使用到这个组件
-   * 1. 新建下载： value 为空
-   * 2. 编辑下载： value 有值，编辑模式， 可以使用 canChangeType 判断是否为编辑模式
-   * 3. 视频嗅探： value 有值，但是不是编辑模式
+   * initialize
+   * This component is used in three places
+   * 1. Create a new download: value is empty
+   * 2. Edit download: value There is a value, edit mode, yes以使用 canChangeType 判断是否为编辑模式
+   * 3. Video sniffing: value Has a value, but is not in edit mode式
    */
   useEffect(() => {
-    // 如果没有，使用上次的值
+    // If not, use the last value
     if (!value) {
       const name = lastVideoName || "";
       const number = lastVideoNumber || 1;
@@ -65,7 +65,7 @@ export const EpisodeNumber: FC<EpisodeNumberProps> = ({
       return;
     }
 
-    // 解析名称
+    // Resolve name
     const parseName = (value: string = "") => {
       const res = {
         name: "",

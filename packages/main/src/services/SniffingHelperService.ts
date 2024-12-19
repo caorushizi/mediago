@@ -37,7 +37,7 @@ const filterList: SourceFilter[] = [
     type: DownloadType.m3u8,
   },
   {
-    // TODO: 合集、列表、收藏夹
+    // TODO: Collections, lists, favorites
     hosts: [/^https?:\/\/(www\.)?bilibili.com\/video/],
     type: DownloadType.bilibili,
     schema: {
@@ -67,7 +67,7 @@ export class SniffingHelper extends EventEmitter {
   }
 
   checkPageInfo() {
-    // 发送 page 相关的信息
+    // Send page related information
     const sendPageInfo = () => {
       listLoop: for (const filter of filterList) {
         if (filter.hosts) {
