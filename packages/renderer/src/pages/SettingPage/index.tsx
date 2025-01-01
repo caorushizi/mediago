@@ -23,8 +23,11 @@ import {
   FolderOpenOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
-import { selectAppStore, setAppStore } from "../../store";
-import { useDispatch, useSelector } from "react-redux";
+import {
+  useAppStore,
+  appStoreSelector,
+  setAppStoreSelector,
+} from "@/store/app";
 import useElectron from "../../hooks/electron";
 import { useMemoizedFn, useRequest } from "ahooks";
 import { AppLanguage, AppTheme } from "../../types";
@@ -75,10 +78,10 @@ const SettingPage: React.FC = () => {
     removeIpcListener,
     installUpdate,
   } = useElectron();
-  const dispatch = useDispatch();
   const { t } = useTranslation();
   const formRef = useRef<FormInstance<AppStore>>();
-  const settings = useSelector(selectAppStore);
+  const settings = useAppStore(useShallow(appStoreSelector));
+  const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
   const { data: envPath } = useRequest(getEnvPath);
   const [messageApi, contextHolder] = message.useMessage();
   const { updateAvailable, updateChecking } = useSessionStore(
@@ -95,7 +98,7 @@ const SettingPage: React.FC = () => {
   const onSelectDir = async () => {
     const local = await onSelectDownloadDir();
     if (local) {
-      dispatch(setAppStore({ local }));
+      setAppStore({ local });
       formRef.current?.setFieldValue("local", local);
     }
   };
@@ -119,7 +122,7 @@ const SettingPage: React.FC = () => {
           await ipcSetAppStore(key, values[key]);
         }
       }
-      dispatch(setAppStore(values));
+      setAppStore(values);
     } catch (e: any) {
       messageApi.error(e.message);
     }

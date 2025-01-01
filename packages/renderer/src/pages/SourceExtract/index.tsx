@@ -1,19 +1,20 @@
 import { useAsyncEffect } from "ahooks";
 import React, { useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import PageContainer from "../../components/PageContainer";
 import useElectron from "../../hooks/electron";
-import {
-  BrowserStatus,
-  PageMode,
-  selectBrowserStore,
-  setAppStore,
-  setBrowserStore,
-} from "../../store";
 import { FavoriteList } from "./components/FavoriteList";
 import { BrowserView } from "./components/BrowserView";
 import { ToolBar } from "./components/ToolBar";
 import { cn } from "@/utils";
+import { useAppStore, setAppStoreSelector } from "@/store/app";
+import { useShallow } from "zustand/react/shallow";
+import {
+  BrowserStatus,
+  browserStoreSelector,
+  PageMode,
+  setBrowserSelector,
+  useBrowserStore,
+} from "@/store/browser";
 
 interface SourceExtractProps {
   page?: boolean;
@@ -26,18 +27,19 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     getSharedState,
     getAppStore: ipcGetAppStore,
   } = useElectron();
-  const dispatch = useDispatch();
-  const store = useSelector(selectBrowserStore);
+  const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
+  const store = useBrowserStore(useShallow(browserStoreSelector));
+  const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
   const originTitle = useRef(document.title);
 
   useAsyncEffect(async () => {
     const store = await ipcGetAppStore();
-    dispatch(setAppStore(store));
+    setAppStore(store);
   }, []);
 
   useAsyncEffect(async () => {
     const state = await getSharedState();
-    dispatch(setBrowserStore(state));
+    setBrowserStore(state);
   }, []);
 
   useEffect(() => {
@@ -56,7 +58,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
 
   const setPageInfo = ({ url, title }: UrlDetail) => {
     document.title = title;
-    dispatch(setBrowserStore({ url, title }));
+    setBrowserStore({ url, title });
   };
 
   const onDomReady = (e: unknown, info: UrlDetail) => {
@@ -64,18 +66,16 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   };
 
   const onFailLoad = (e: unknown, data: { code: number; desc: string }) => {
-    dispatch(
-      setBrowserStore({
-        status: BrowserStatus.Failed,
-        errCode: data.code,
-        errMsg: data.desc,
-      }),
-    );
+    setBrowserStore({
+      status: BrowserStatus.Failed,
+      errCode: data.code,
+      errMsg: data.desc,
+    });
   };
 
   const onDidNavigate = (e: unknown, info: UrlDetail) => {
     setPageInfo(info);
-    dispatch(setBrowserStore({ status: BrowserStatus.Loaded }));
+    setBrowserStore({ status: BrowserStatus.Loaded });
   };
 
   const onDidNavigateInPage = (e: unknown, info: UrlDetail) => {

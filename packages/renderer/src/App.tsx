@@ -1,8 +1,6 @@
 import { ConfigProvider, theme } from "antd";
 import React, { FC, Suspense, lazy, useEffect } from "react";
-import { useDispatch } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { setAppStore, increase, setBrowserStore, PageMode } from "./store";
 import "dayjs/locale/zh-cn";
 import zhCN from "antd/locale/zh_CN";
 import useElectron from "./hooks/electron";
@@ -14,6 +12,9 @@ import { ThemeContext } from "./context/ThemeContext";
 import { SessionStore, useSessionStore } from "./store/session";
 import { useShallow } from "zustand/react/shallow";
 import { DOWNLOAD_FAIL, DOWNLOAD_SUCCESS, PAGE_LOAD } from "./const";
+import { useAppStore, setAppStoreSelector } from "./store/app";
+import { PageMode, setBrowserSelector, useBrowserStore } from "./store/browser";
+import { downloadStoreSelector, useDownloadStore } from "./store/download";
 
 const AppLayout = lazy(() => import("./layout/App"));
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -32,12 +33,14 @@ const sessionSelector = (s: SessionStore) => ({
 });
 
 const App: FC = () => {
-  const dispatch = useDispatch();
   const [appTheme, setAppTheme] = React.useState<"dark" | "light">("light");
   const { addIpcListener, removeIpcListener, getMachineId } = useElectron();
   const { setUpdateAvailable, setUploadChecking } = useSessionStore(
     useShallow(sessionSelector),
   );
+  const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
+  const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
+  const { increase } = useDownloadStore(useShallow(downloadStoreSelector));
 
   const themeChange = (event: MediaQueryListEvent) => {
     if (event.matches) {
@@ -49,16 +52,18 @@ const App: FC = () => {
 
   // 监听store变化
   const onAppStoreChange = (event: any, store: AppStore) => {
-    dispatch(setAppStore(store));
+    setAppStore(store);
   };
 
   const onReceiveDownloadItem = () => {
-    dispatch(increase());
+    increase();
   };
 
   const onChangePrivacy = () => {
-    dispatch(setBrowserStore({ url: "", title: "", mode: PageMode.Default }));
+    setBrowserStore({ url: "", title: "", mode: PageMode.Default });
   };
+
+  console.log("App.tsx: onAppStoreChange", onAppStoreChange);
 
   useEffect(() => {
     const updateAvailable = () => {

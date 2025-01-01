@@ -3,8 +3,6 @@ import PageContainer from "../../components/PageContainer";
 import { useMemoizedFn, useMount, usePagination } from "ahooks";
 import useElectron from "../../hooks/electron";
 import { DownloadFilter, DownloadType } from "../../types";
-import { useSelector } from "react-redux";
-import { selectAppStore } from "../../store";
 import { useTranslation } from "react-i18next";
 import { DownloadList } from "./components";
 import DownloadForm, {
@@ -21,6 +19,7 @@ import { useShallow } from "zustand/react/shallow";
 import { isDownloadType, isWeb, randomName, tdApp } from "@/utils";
 import { CLICK_DOWNLOAD } from "@/const";
 import { useLocation } from "react-router-dom";
+import { useAppStore, appStoreSelector } from "@/store/app";
 
 interface Props {
   filter?: DownloadFilter;
@@ -42,7 +41,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     downloadNow,
     getLocalIP,
   } = useElectron();
-  const appStore = useSelector(selectAppStore);
+  const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
   const [localIP, setLocalIP] = useState<string>("");
   const newFormRef = useRef<DownloadFormRef>(null);
