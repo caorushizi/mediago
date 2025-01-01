@@ -1,18 +1,9 @@
 import useElectron from "@/hooks/electron";
-import {
-  BrowserStatus,
-  PageMode,
-  selectAppStore,
-  selectBrowserStore,
-  setAppStore,
-  setBrowserStore,
-} from "@/store";
 import { cn, generateUrl, getFavIcon, tdApp } from "@/utils";
 import { useRequest } from "ahooks";
 import { Input, Tooltip } from "antd";
 import React, { useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
 import {
   BackIcon,
   HomeIcon,
@@ -29,6 +20,19 @@ import { IconButton } from "@/components/IconButton";
 import { ThemeContext } from "@/context/ThemeContext";
 import { EyeInvisibleOutlined } from "@ant-design/icons";
 import { OPEN_URL } from "@/const";
+import {
+  useAppStore,
+  appStoreSelector,
+  setAppStoreSelector,
+} from "@/store/app";
+import { useShallow } from "zustand/react/shallow";
+import {
+  BrowserStatus,
+  browserStoreSelector,
+  PageMode,
+  setBrowserSelector,
+  useBrowserStore,
+} from "@/store/browser";
 
 interface Props {
   page: boolean;
@@ -47,10 +51,11 @@ export function ToolBar({ page }: Props) {
     webviewUrlContextMenu,
   } = useElectron();
   const theme = useContext(ThemeContext);
-  const store = useSelector(selectBrowserStore);
-  const appStore = useSelector(selectAppStore);
+  const store = useBrowserStore(useShallow(browserStoreSelector));
+  const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
+  const appStore = useAppStore(useShallow(appStoreSelector));
+  const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const { data: favoriteList = [], refresh } = useRequest(getFavorites);
 
   const disabled =
@@ -60,11 +65,9 @@ export function ToolBar({ page }: Props) {
   const onSetDefaultUA = () => {
     const nextMode = !appStore.isMobile;
     setUserAgent(nextMode);
-    dispatch(
-      setAppStore({
-        isMobile: nextMode,
-      }),
-    );
+    setAppStore({
+      isMobile: nextMode,
+    });
   };
 
   const curIsFavorite = useMemo(() => {
@@ -87,30 +90,26 @@ export function ToolBar({ page }: Props) {
     if (!back) {
       // TODO: Reset title
       // document.title = originTitle.current;
-      dispatch(setBrowserStore({ url: "", title: "", mode: PageMode.Default }));
+      setBrowserStore({ url: "", title: "", mode: PageMode.Default });
     }
   };
 
   const onClickGoHome = async () => {
     await webviewGoHome();
-    dispatch(
-      setBrowserStore({
-        url: "",
-        title: "",
-        mode: PageMode.Default,
-      }),
-    );
+    setBrowserStore({
+      url: "",
+      title: "",
+      mode: PageMode.Default,
+    });
   };
 
   const loadUrl = (url: string) => {
     tdApp.onEvent(OPEN_URL);
-    dispatch(
-      setBrowserStore({
-        url,
-        mode: PageMode.Browser,
-        status: BrowserStatus.Loading,
-      }),
-    );
+    setBrowserStore({
+      url,
+      mode: PageMode.Browser,
+      status: BrowserStatus.Loading,
+    });
     webviewLoadURL(url);
   };
 
@@ -219,7 +218,7 @@ export function ToolBar({ page }: Props) {
         value={store.url}
         onChange={(e) => {
           const url = e.target.value;
-          dispatch(setBrowserStore({ url }));
+          setBrowserStore({ url });
         }}
         onFocus={(e) => {
           e.target.select();

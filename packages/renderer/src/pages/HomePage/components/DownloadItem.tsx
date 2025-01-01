@@ -5,8 +5,6 @@ import { DownloadStatus } from "@/types";
 import { Progress } from "antd";
 import { PauseCircleOutlined, PlayCircleOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
-import { selectAppStore } from "@/store";
 import selectedBg from "@/assets/images/select-item-bg.png";
 import {
   DownloadIcon,
@@ -28,6 +26,8 @@ import {
   STOP_DOWNLOAD,
 } from "@/const";
 import { TerminalDrawer } from "./TerminalDrawer";
+import { useAppStore, appStoreSelector } from "@/store/app";
+import { useShallow } from "zustand/react/shallow";
 
 interface Props {
   item: VideoStat;
@@ -50,7 +50,7 @@ export function DownloadItem({
   onShowEditForm,
   progress,
 }: Props) {
-  const appStore = useSelector(selectAppStore);
+  const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
   const { openPlayerWindow } = useElectron();
 
