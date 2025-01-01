@@ -7,7 +7,7 @@ const external = [
   "nock",
   "aws-sdk",
   "mock-aws-s3",
-  "@cliqz/adblocker-electron-preload",
+  "@ghostery/adblocker-electron",
   "node-pty",
 ];
 
