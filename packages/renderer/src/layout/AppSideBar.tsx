@@ -2,8 +2,6 @@ import React, { cloneElement, PropsWithChildren, ReactElement } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Badge } from "antd";
 import useElectron from "../hooks/electron";
-import { useDispatch, useSelector } from "react-redux";
-import { selectAppStore, setAppStore, clearCount, selectCount } from "../store";
 import { useTranslation } from "react-i18next";
 import { cn, isWeb } from "@/utils";
 import {
@@ -17,6 +15,12 @@ import {
 import siderBg from "@/assets/images/sider-bg.png";
 import { SessionStore, useSessionStore } from "@/store/session";
 import { useShallow } from "zustand/react/shallow";
+import {
+  useAppStore,
+  appStoreSelector,
+  setAppStoreSelector,
+} from "@/store/app";
+import { downloadStoreSelector, useDownloadStore } from "@/store/download";
 
 function processLocation(pathname: string) {
   let name = pathname;
@@ -83,9 +87,11 @@ export function AppSideBar({ className }: Props) {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const count = useSelector(selectCount);
-  const appStore = useSelector(selectAppStore);
+  const { count, clearCount } = useDownloadStore(
+    useShallow(downloadStoreSelector),
+  );
+  const appStore = useAppStore(useShallow(appStoreSelector));
+  const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
   const { updateAvailable } = useSessionStore(useShallow(sessionSelector));
 
   const activeKey = processLocation(location.pathname);
@@ -94,7 +100,7 @@ export function AppSideBar({ className }: Props) {
     e.stopPropagation();
     e.preventDefault();
 
-    dispatch(setAppStore({ openInNewWindow: true }));
+    setAppStore({ openInNewWindow: true });
     if (location.pathname === "/source") {
       navigate("/");
     }
@@ -109,7 +115,7 @@ export function AppSideBar({ className }: Props) {
         <AppMenuItem
           link="/"
           onClick={() => {
-            dispatch(clearCount());
+            clearCount();
           }}
           activeKey={activeKey}
           icon={<ListIcon />}
