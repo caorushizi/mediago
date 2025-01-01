@@ -75,13 +75,23 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     // new
     if (search.has("n")) {
       const type = search.get("type");
-      const item: DownloadFormType = {
-        batch: false,
-        type: isDownloadType(type) ? type : DownloadType.m3u8,
-        url: search.get("url") || "",
-        name: search.get("name") || randomName(),
-      };
-      newFormRef.current?.openModal(item);
+      const silent = !!search.get("silent");
+      if (silent) {
+        const item: Omit<DownloadItem, "id"> = {
+          type: isDownloadType(type) ? type : DownloadType.m3u8,
+          url: search.get("url") || "",
+          name: search.get("name") || randomName(),
+        };
+        downloadNow(item);
+      } else {
+        const item: DownloadFormType = {
+          batch: false,
+          type: isDownloadType(type) ? type : DownloadType.m3u8,
+          url: search.get("url") || "",
+          name: search.get("name") || randomName(),
+        };
+        newFormRef.current?.openModal(item);
+      }
     }
   }, [location.search]);
 
