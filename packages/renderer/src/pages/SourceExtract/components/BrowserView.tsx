@@ -5,19 +5,18 @@ import { Button } from "@/components/ui/button";
 import WebView from "@/components/WebView";
 import useElectron from "@/hooks/electron";
 import {
-  addSource,
   BrowserStatus,
-  deleteSource,
+  browserStoreSelector,
   PageMode,
-  selectBrowserStore,
-  setBrowserStore,
-} from "@/store";
+  setBrowserSelector,
+  useBrowserStore,
+} from "@/store/browser";
 import { generateUrl, randomName } from "@/utils";
 import { useMemoizedFn } from "ahooks";
 import { Empty, Space, Spin, message, Splitter } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useShallow } from "zustand/react/shallow";
 
 export function BrowserView() {
   const {
@@ -30,10 +29,12 @@ export function BrowserView() {
     showDownloadDialog: ipcShowDownloadDialog,
   } = useElectron();
   const downloadForm = useRef<DownloadFormRef>(null);
-  const store = useSelector(selectBrowserStore);
+  const store = useBrowserStore(useShallow(browserStoreSelector));
+  const { addSource, setBrowserStore, deleteSource } = useBrowserStore(
+    useShallow(setBrowserSelector),
+  );
   const { t } = useTranslation();
   const [placeHolder, setPlaceHolder] = useState<string>("");
-  const dispatch = useDispatch();
   const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
@@ -57,7 +58,7 @@ export function BrowserView() {
     };
 
     const onWebviewLinkMessage = async (e: unknown, data: any) => {
-      dispatch(addSource(data));
+      addSource(data);
     };
 
     addIpcListener("show-download-dialog", onShowDownloadDialog);
@@ -71,13 +72,11 @@ export function BrowserView() {
 
   const onClickGoHome = async () => {
     await webviewGoHome();
-    dispatch(
-      setBrowserStore({
-        url: "",
-        title: "",
-        mode: PageMode.Default,
-      }),
-    );
+    setBrowserStore({
+      url: "",
+      title: "",
+      mode: PageMode.Default,
+    });
   };
 
   const confirmDownload = async (now?: boolean) => {
@@ -106,13 +105,11 @@ export function BrowserView() {
   };
 
   const loadUrl = (url: string) => {
-    dispatch(
-      setBrowserStore({
-        url,
-        mode: PageMode.Browser,
-        status: BrowserStatus.Loading,
-      }),
-    );
+    setBrowserStore({
+      url,
+      mode: PageMode.Browser,
+      status: BrowserStatus.Loading,
+    });
     webviewLoadURL(url);
   };
 
@@ -196,7 +193,7 @@ export function BrowserView() {
                   <IconButton
                     icon={<DeleteIcon />}
                     onClick={() => {
-                      dispatch(deleteSource(item.url));
+                      deleteSource(item.url);
                     }}
                   />
                 </div>

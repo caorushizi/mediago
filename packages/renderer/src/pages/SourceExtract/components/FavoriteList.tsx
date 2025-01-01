@@ -1,14 +1,19 @@
 import useElectron from "@/hooks/electron";
-import { BrowserStatus, PageMode, setBrowserStore } from "@/store";
 import { getFavIcon, tdApp } from "@/utils";
 import { PlusOutlined } from "@ant-design/icons";
 import { useRequest } from "ahooks";
 import { Form, Input, message, Modal } from "antd";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
 import { FavItem } from "./FavItem";
 import { ADD_FAVORITE, OPEN_FAVORITE } from "@/const";
+import {
+  BrowserStatus,
+  PageMode,
+  setBrowserSelector,
+  useBrowserStore,
+} from "@/store/browser";
+import { useShallow } from "zustand/react/shallow";
 
 export function FavoriteList() {
   const {
@@ -24,17 +29,15 @@ export function FavoriteList() {
   const { t } = useTranslation();
   const [messageApi, contextHolder] = message.useMessage();
   const [favoriteAddForm] = Form.useForm<Favorite>();
-  const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
 
   const loadUrl = (url: string) => {
-    dispatch(
-      setBrowserStore({
-        url,
-        mode: PageMode.Browser,
-        status: BrowserStatus.Loading,
-      }),
-    );
+    setBrowserStore({
+      url,
+      mode: PageMode.Browser,
+      status: BrowserStatus.Loading,
+    });
     webviewLoadURL(url);
   };
 
@@ -77,13 +80,11 @@ export function FavoriteList() {
 
   useEffect(() => {
     const onClickLoadItem = (item: Favorite) => {
-      dispatch(
-        setBrowserStore({
-          url: item.url,
-          mode: PageMode.Browser,
-          status: BrowserStatus.Loading,
-        }),
-      );
+      setBrowserStore({
+        url: item.url,
+        mode: PageMode.Browser,
+        status: BrowserStatus.Loading,
+      });
       webviewLoadURL(item.url);
     };
 

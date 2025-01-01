@@ -1,22 +1,22 @@
 import React, { FC, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import useElectron from "../hooks/electron";
-import { useDispatch } from "react-redux";
-import { setAppStore } from "../store";
 import { useAsyncEffect } from "ahooks";
 import { AppHeader } from "./AppHeader";
 import { AppSideBar } from "./AppSideBar";
 import { tdApp } from "@/utils";
 import { CHANGE_PAGE } from "@/const";
+import { useAppStore, setAppStoreSelector } from "@/store/app";
+import { useShallow } from "zustand/react/shallow";
 
 const App: FC = () => {
   const { getAppStore: ipcGetAppStore } = useElectron();
-  const dispatch = useDispatch();
   const location = useLocation();
+  const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
 
   useAsyncEffect(async () => {
     const store = await ipcGetAppStore();
-    dispatch(setAppStore(store));
+    setAppStore(store);
   }, []);
 
   useEffect(() => {
