@@ -14,7 +14,7 @@ import {
 } from "@/store";
 import { generateUrl, randomName } from "@/utils";
 import { useMemoizedFn } from "ahooks";
-import { Empty, Space, Spin, message } from "antd";
+import { Empty, Space, Spin, message, Splitter } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -172,7 +172,7 @@ export function BrowserView() {
     }
 
     return (
-      <div className="flex h-full min-w-60 max-w-60 flex-col gap-3 overflow-y-auto bg-white p-3 dark:bg-[#1F2024]">
+      <div className="flex h-full flex-col gap-3 overflow-y-auto bg-white p-3 dark:bg-[#1F2024]">
         {store.sources.map((item, index) => {
           return (
             <div
@@ -218,10 +218,14 @@ export function BrowserView() {
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <div className="flex h-full flex-1 gap-2">
-        {renderContent()}
-        {renderSidePanel()}
-      </div>
+      <Splitter className="flex h-full flex-1 gap-2">
+        <Splitter.Panel>{renderContent()}</Splitter.Panel>
+        {store.sources.length && (
+          <Splitter.Panel defaultSize={240} min="20%" max="70%">
+            {renderSidePanel()}
+          </Splitter.Panel>
+        )}
+      </Splitter>
       <DownloadForm
         id="browser"
         isEdit
