@@ -74,21 +74,28 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
 
     // new
     if (search.has("n")) {
-      const type = search.get("type");
+      const typeParam = search.get("type");
       const silent = !!search.get("silent");
+      const url = search.get("url") || "";
+      const name = search.get("name") || randomName();
+      const type = isDownloadType(typeParam) ? typeParam : DownloadType.m3u8;
+      const headers = decodeURIComponent(search.get("headers") || "");
+
       if (silent) {
         const item: Omit<DownloadItem, "id"> = {
-          type: isDownloadType(type) ? type : DownloadType.m3u8,
-          url: search.get("url") || "",
-          name: search.get("name") || randomName(),
+          type,
+          url,
+          name,
+          headers,
         };
         downloadNow(item);
       } else {
         const item: DownloadFormType = {
           batch: false,
-          type: isDownloadType(type) ? type : DownloadType.m3u8,
-          url: search.get("url") || "",
-          name: search.get("name") || randomName(),
+          type,
+          url,
+          name,
+          headers,
         };
         newFormRef.current?.openModal(item);
       }
