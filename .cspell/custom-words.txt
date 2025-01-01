@@ -23,6 +23,7 @@ DDTHH
 deeplink
 esmfile
 execa
+ghostery
 idtype
 immer
 inversify
