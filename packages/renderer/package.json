@@ -23,7 +23,7 @@
     "@xterm/addon-fit": "^0.10.0",
     "@xterm/xterm": "^5.5.0",
     "ahooks": "^3.8.0",
-    "antd": "^5.18.0",
+    "antd": "^5.22.7",
     "antd-style": "^3.6.2",
     "axios": "^1.7.2",
     "class-variance-authority": "^0.7.0",
