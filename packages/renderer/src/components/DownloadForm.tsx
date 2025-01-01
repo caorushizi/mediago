@@ -15,7 +15,6 @@ import { ConfigStore, useConfigStore } from "@/store/config";
 import { useShallow } from "zustand/react/shallow";
 import { useAsyncEffect, useMemoizedFn } from "ahooks";
 import { DownloadType } from "@/types";
-import { EpisodeNumber } from "./EpisodeNumber";
 import { tdApp } from "@/utils";
 import { ADD_TO_LIST, DOWNLOAD_NOW } from "@/const";
 import useElectron from "@/hooks/electron";
@@ -249,12 +248,10 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
             <Form.Item noStyle shouldUpdate>
               {(form) => {
                 const isBatch = form.getFieldValue("batch");
-                const isM3u8 = form.getFieldValue("type") === "m3u8";
                 if (isBatch) {
                   return null;
                 }
 
-                const canChangeType = isM3u8;
                 return (
                   <Form.Item
                     shouldUpdate
@@ -266,13 +263,8 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
                         message: t("pleaseEnterCorrectFomeInfo"),
                       },
                     ]}
-                    tooltip={canChangeType && t("canUseMouseWheelToAdjust")}
                   >
-                    <EpisodeNumber
-                      canChangeType={canChangeType}
-                      isEdit={isEdit}
-                      usePrevData={usePrevData}
-                    />
+                    <Input placeholder={t("pleaseEnterVideoName")} />
                   </Form.Item>
                 );
               }}
