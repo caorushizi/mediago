@@ -41,13 +41,13 @@ export const EpisodeNumber: FC<EpisodeNumberProps> = ({
   /**
    * initialize
    * This component is used in three places
-   * 1. Create a new download: value is empty
-   * 2. Edit download: value There is a value, edit mode, yes以使用 canChangeType 判断是否为编辑模式
-   * 3. Video sniffing: value Has a value, but is not in edit mode式
+   * 1. Create a new download
+   * 2. Edit download
+   * 3. Video sniffing
    */
   useEffect(() => {
     // If not, use the last value
-    if (!value) {
+    if (value == null) {
       const name = lastVideoName || "";
       const number = lastVideoNumber || 1;
       const type = lastVideoType || "movie";

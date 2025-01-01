@@ -58,7 +58,7 @@ export function moment() {
 }
 
 export function fromatDateTime(
-  d: Date,
+  d: string | number | Date,
   tmpStr: string = "YYYY/MM/DD HH:mm:ss",
 ) {
   return dayjs(d).format(tmpStr);
