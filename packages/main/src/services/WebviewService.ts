@@ -62,6 +62,11 @@ export default class WebviewService {
         preload: resolve(__dirname, "./preload.js"),
       },
     });
+
+    if (isDev) {
+      this.view.webContents.openDevTools();
+    }
+
     this.view.setBackgroundColor("#fff");
     const { isMobile, audioMuted } = this.store.store;
     this.setAudioMuted(audioMuted);
@@ -111,7 +116,8 @@ export default class WebviewService {
   };
 
   onDidFailLoad = (e: Event, code: number, desc: string) => {
-    this.window.webContents.send("webview-fail-load", { code, desc });
+    // this.window.webContents.send("webview-fail-load", { code, desc });
+    this.logger.error(`[Webview] fail load: ${code} ${desc}`);
   };
 
   onDidNavigateInPage = () => {
