@@ -68,9 +68,9 @@ const processList: Schema[] = [
       name: {
         argsName: ["--save-name"],
       },
-      // headers: {
-      //   argsName: ["--headers"],
-      // },
+      headers: {
+        argsName: ["--header"],
+      },
       deleteSegments: {
         argsName: ["--del-after-done"],
       },
@@ -329,13 +329,11 @@ export default class DownloadService extends EventEmitter {
         argsName && argsName.forEach((i) => spawnParams.push(i, name));
       }
 
-      if (key === "headers") {
-        if (headers) {
-          const h: Record<string, unknown> = JSON.parse(headers);
-          Object.entries(h).forEach(([k, v]) => {
-            spawnParams.push("--header", `${k}: ${v}`);
-          });
-        }
+      if (key === "headers" && headers) {
+        const headerArr: string[] = headers?.split("\n") || [];
+        headerArr.forEach((headerStr) => {
+          spawnParams.push("--header", headerStr);
+        });
       }
 
       if (key === "deleteSegments" && deleteSegments) {
