@@ -8,6 +8,7 @@ const external = [
   "aws-sdk",
   "mock-aws-s3",
   "@ghostery/adblocker-electron",
+  "tldts-experimental",
   "node-pty",
 ];
 
