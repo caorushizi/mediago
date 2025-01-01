@@ -106,6 +106,9 @@ const processList: Schema[] = [
       localDir: {
         argsName: ["--work-dir"],
       },
+      name: {
+        argsName: ["--file-pattern"],
+      },
     },
     consoleReg: {
       speed: "([\\d.]+\\s[GMK]B/s)",

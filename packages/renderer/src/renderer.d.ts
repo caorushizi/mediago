@@ -16,7 +16,7 @@ declare interface DownloadItem {
   isLive?: boolean;
   log?: string;
   folder?: string;
-  createdDate?: Date;
+  createdDate?: string;
 }
 
 declare interface VideoResponse {
