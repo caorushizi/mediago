@@ -10,7 +10,7 @@ import {
   pcUA,
   pluginPath,
 } from "../helper/index.ts";
-import { ElectronBlocker } from "@cliqz/adblocker-electron";
+import { ElectronBlocker } from "@ghostery/adblocker-electron";
 import ElectronLogger from "../vendor/ElectronLogger.ts";
 import ElectronStore from "../vendor/ElectronStore.ts";
 import MainWindow from "../windows/MainWindow.ts";
@@ -292,6 +292,9 @@ export default class WebviewService {
   private enableBlocking() {
     if (!this.blocker) {
       this.logger.error(`[AdBlocker] enable failed(not initialized)`);
+      return;
+    }
+    if (this.blocker.isBlockingEnabled(this.session)) {
       return;
     }
     this.blocker.enableBlockingInSession(this.session);
