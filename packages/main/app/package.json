@@ -7,8 +7,7 @@
   "homepage": "https://downloader.caorushizi.cn/",
   "license": "MIT",
   "dependencies": {
-    "@cliqz/adblocker-electron": "1.27.3",
-    "@cliqz/adblocker-electron-preload": "1.27.3",
+    "@ghostery/adblocker-electron": "^2.3.1",
     "node-pty": "^1.0.0"
   },
   "devDependencies": {

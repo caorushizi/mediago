@@ -55,8 +55,7 @@
     "typescript-eslint": "^7.10.0"
   },
   "dependencies": {
-    "@cliqz/adblocker-electron": "1.27.3",
-    "@cliqz/adblocker-electron-preload": "1.27.3",
+    "@ghostery/adblocker-electron": "^2.3.1",
     "axios": "^1.7.2",
     "better-sqlite3": "^9.6.0",
     "cheerio": "1.0.0-rc.12",

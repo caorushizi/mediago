@@ -1,0 +1,26 @@
+diff --git a/dist/commonjs/fetch.js b/dist/commonjs/fetch.js
+index b610f9d3accead5b44693333598783e425f33ed9..ec538d5a0f15686d6983cd06c989e1ffd9cea987 100644
+--- a/dist/commonjs/fetch.js
++++ b/dist/commonjs/fetch.js
+@@ -41,7 +41,7 @@ function fetchWithRetry(fetch, url) {
+ function fetchResource(fetch, url) {
+     return fetchWithRetry(fetch, url).then((response) => response.text());
+ }
+-const PREFIX = 'https://raw.githubusercontent.com/ghostery/adblocker/master/packages/adblocker/assets';
++const PREFIX = 'https://static.ziying.site/adblocker';
+ exports.adsLists = [
+     `${PREFIX}/easylist/easylist.txt`,
+     `${PREFIX}/peter-lowe/serverlist.txt`,
+diff --git a/dist/esm/fetch.js b/dist/esm/fetch.js
+index 2bc86ba508144053bda8d27fa663fdbe7846eed8..7a35c0d34945832dc09f0fc1b7429121ae2434eb 100644
+--- a/dist/esm/fetch.js
++++ b/dist/esm/fetch.js
+@@ -35,7 +35,7 @@ export function fetchWithRetry(fetch, url) {
+ function fetchResource(fetch, url) {
+     return fetchWithRetry(fetch, url).then((response) => response.text());
+ }
+-const PREFIX = 'https://raw.githubusercontent.com/ghostery/adblocker/master/packages/adblocker/assets';
++const PREFIX = 'https://static.ziying.site/adblocker';
+ export const adsLists = [
+     `${PREFIX}/easylist/easylist.txt`,
+     `${PREFIX}/peter-lowe/serverlist.txt`,

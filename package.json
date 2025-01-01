@@ -57,7 +57,7 @@
   },
   "pnpm": {
     "patchedDependencies": {
-      "@cliqz/adblocker@1.27.3": "patches/@cliqz__adblocker@1.27.3.patch"
+      "@ghostery/adblocker@2.3.1": "patches/@ghostery__adblocker@2.3.1.patch"
     }
   }
 }
