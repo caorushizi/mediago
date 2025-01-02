@@ -1,24 +1,53 @@
-import { DeleteIcon } from "@/assets/svg";
-import { IconButton } from "@/components/IconButton";
 import { Button } from "@/components/ui/button";
 import useElectron from "@/hooks/useElectron";
 import {
   browserStoreSelector,
   setBrowserSelector,
+  SourceData,
   useBrowserStore,
 } from "@/store/browser";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
+import { Button as AntdButton, App } from "antd";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { useMemoizedFn } from "ahooks";
 
 export function BrowserViewPanel() {
   const store = useBrowserStore(useShallow(browserStoreSelector));
-  const { deleteSource } = useBrowserStore(useShallow(setBrowserSelector));
+  const { deleteSource, clearSources } = useBrowserStore(
+    useShallow(setBrowserSelector),
+  );
   const { t } = useTranslation();
   const { showDownloadDialog } = useElectron();
+  const { downloadNow } = useElectron();
+  const { message } = App.useApp();
+
+  const handleClear = useMemoizedFn(() => {
+    clearSources();
+  });
+
+  const handleDownloadNow = useMemoizedFn(async (item: SourceData) => {
+    try {
+      const downloadItem: Omit<DownloadItem, "id"> = {
+        url: item.url,
+        name: item.name,
+        headers: item.headers,
+        type: item.type,
+      };
+      await downloadNow(downloadItem);
+    } catch (e) {
+      message.error((e as any).message);
+    }
+  });
 
   return (
     <div className="flex h-full flex-col gap-3 overflow-y-auto bg-white p-3 dark:bg-[#1F2024]">
+      <div>
+        <AntdButton size="small" danger onClick={handleClear}>
+          清空
+        </AntdButton>
+      </div>
       {store.sources.map((item, index) => {
         return (
           <div
@@ -38,14 +67,25 @@ export function BrowserViewPanel() {
               {item.url}
             </span>
             <div className="flex flex-row items-center justify-between gap-3">
-              <div>
-                <IconButton
-                  icon={<DeleteIcon />}
+              <div className="flex flex-row items-center gap-2">
+                <AntdButton
+                  icon={<DeleteOutlined />}
+                  type="text"
+                  size="small"
                   onClick={() => deleteSource(item.url)}
+                  title={t("delete")}
+                  danger
+                />
+                <AntdButton
+                  icon={<EditOutlined />}
+                  type="text"
+                  size="small"
+                  title={t("edit")}
+                  onClick={() => showDownloadDialog([item])}
                 />
               </div>
-              <Button size="sm" onClick={() => showDownloadDialog([item])}>
-                {t("addToDownloadList")}
+              <Button size="sm" onClick={() => handleDownloadNow(item)}>
+                {t("downloadNow")}
               </Button>
             </div>
           </div>
