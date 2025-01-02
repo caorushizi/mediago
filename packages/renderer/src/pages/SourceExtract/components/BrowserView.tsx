@@ -1,7 +1,7 @@
 import DownloadForm, { DownloadFormRef } from "@/components/DownloadForm";
 import { Button } from "@/components/ui/button";
 import WebView from "@/components/WebView";
-import useElectron from "@/hooks/electron";
+import useElectron from "@/hooks/useElectron";
 import {
   BrowserStatus,
   browserStoreSelector,

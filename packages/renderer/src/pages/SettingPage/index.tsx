@@ -1,5 +1,5 @@
 import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
-import PageContainer from "../../components/PageContainer";
+import PageContainer from "@/components/PageContainer";
 import {
   App,
   Badge,
@@ -28,9 +28,9 @@ import {
   appStoreSelector,
   setAppStoreSelector,
 } from "@/store/app";
-import useElectron from "../../hooks/electron";
+import useElectron from "@/hooks/useElectron";
 import { useMemoizedFn, useRequest } from "ahooks";
-import { AppLanguage, AppTheme } from "../../types";
+import { AppLanguage, AppTheme } from "@/types";
 import { useTranslation } from "react-i18next";
 import { updateSelector, useSessionStore } from "@/store/session";
 import { useShallow } from "zustand/react/shallow";

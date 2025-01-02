@@ -1,4 +1,4 @@
-import useElectron from "@/hooks/electron";
+import useElectron from "@/hooks/useElectron";
 import { cn, generateUrl, getFavIcon, tdApp } from "@/utils";
 import { useRequest } from "ahooks";
 import { Input, Tooltip } from "antd";

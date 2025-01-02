@@ -1,4 +1,4 @@
-import useElectron from "@/hooks/electron";
+import useElectron from "@/hooks/useElectron";
 import { getFavIcon, tdApp } from "@/utils";
 import { PlusOutlined } from "@ant-design/icons";
 import { useRequest } from "ahooks";

@@ -1,7 +1,7 @@
 import { DeleteIcon } from "@/assets/svg";
 import { IconButton } from "@/components/IconButton";
 import { Button } from "@/components/ui/button";
-import useElectron from "@/hooks/electron";
+import useElectron from "@/hooks/useElectron";
 import {
   browserStoreSelector,
   setBrowserSelector,
