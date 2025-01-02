@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, QRCode } from "antd";
 import { QrcodeOutlined } from "@ant-design/icons";
 import { HomeDownloadButton } from "@/components/HomeDownloadButton";
-import { ConfigStore, useConfigStore } from "@/store/config";
+import { downloadFormSelector, useConfigStore } from "@/store/config";
 import { useShallow } from "zustand/react/shallow";
 import { isDownloadType, isWeb, randomName, tdApp } from "@/utils";
 import { CLICK_DOWNLOAD } from "@/const";
@@ -24,11 +24,6 @@ import { useAppStore, appStoreSelector } from "@/store/app";
 interface Props {
   filter?: DownloadFilter;
 }
-
-const configSelector = (s: ConfigStore) => ({
-  lastIsBatch: s.lastIsBatch,
-  lastDownloadTypes: s.lastDownloadTypes,
-});
 
 const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   const {
@@ -46,7 +41,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   const [localIP, setLocalIP] = useState<string>("");
   const newFormRef = useRef<DownloadFormRef>(null);
   const { lastIsBatch, lastDownloadTypes } = useConfigStore(
-    useShallow(configSelector),
+    useShallow(downloadFormSelector),
   );
   const location = useLocation();
   const {

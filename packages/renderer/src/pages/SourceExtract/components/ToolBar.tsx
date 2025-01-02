@@ -2,7 +2,7 @@ import useElectron from "@/hooks/electron";
 import { cn, generateUrl, getFavIcon, tdApp } from "@/utils";
 import { useRequest } from "ahooks";
 import { Input, Tooltip } from "antd";
-import React, { useContext, useMemo } from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
   BackIcon,
@@ -17,7 +17,6 @@ import {
   PCIcon,
 } from "@/assets/svg";
 import { IconButton } from "@/components/IconButton";
-import { ThemeContext } from "@/context/ThemeContext";
 import { EyeInvisibleOutlined } from "@ant-design/icons";
 import { OPEN_URL } from "@/const";
 import {
@@ -33,6 +32,7 @@ import {
   setBrowserSelector,
   useBrowserStore,
 } from "@/store/browser";
+import { themeSelector, useSessionStore } from "@/store/session";
 
 interface Props {
   page: boolean;
@@ -50,7 +50,7 @@ export function ToolBar({ page }: Props) {
     setUserAgent,
     webviewUrlContextMenu,
   } = useElectron();
-  const theme = useContext(ThemeContext);
+  const { theme } = useSessionStore(useShallow(themeSelector));
   const store = useBrowserStore(useShallow(browserStoreSelector));
   const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
   const appStore = useAppStore(useShallow(appStoreSelector));

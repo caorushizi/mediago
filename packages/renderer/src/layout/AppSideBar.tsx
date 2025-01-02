@@ -13,7 +13,7 @@ import {
   ShareIcon,
 } from "@/assets/svg";
 import siderBg from "@/assets/images/sider-bg.png";
-import { SessionStore, useSessionStore } from "@/store/session";
+import { updateSelector, useSessionStore } from "@/store/session";
 import { useShallow } from "zustand/react/shallow";
 import {
   useAppStore,
@@ -78,10 +78,6 @@ interface Props {
   className?: string;
 }
 
-const sessionSelector = (s: SessionStore) => ({
-  updateAvailable: s.updateAvailable,
-});
-
 export function AppSideBar({ className }: Props) {
   const { setAppStore: ipcSetAppStore, showBrowserWindow } = useElectron();
   const { t } = useTranslation();
@@ -92,7 +88,7 @@ export function AppSideBar({ className }: Props) {
   );
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
-  const { updateAvailable } = useSessionStore(useShallow(sessionSelector));
+  const { updateAvailable } = useSessionStore(useShallow(updateSelector));
 
   const activeKey = processLocation(location.pathname);
 

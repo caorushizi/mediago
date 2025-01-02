@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Button, Dropdown, MenuProps, message } from "antd";
+import { App, Button, Dropdown, MenuProps } from "antd";
 import { Trans, useTranslation } from "react-i18next";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DownloadFilter } from "@/types";
@@ -26,7 +26,7 @@ export function ListHeader({
   onCancelItems,
   filter,
 }: Props) {
-  const [messageApi, contextHolder] = message.useMessage();
+  const { message } = App.useApp();
   const { t } = useTranslation();
   const disabled = useMemo(() => selected.length === 0, [selected.length]);
   const { exportDownloadList } = useElectron();
@@ -44,14 +44,13 @@ export function ListHeader({
       try {
         await exportDownloadList();
       } catch (err) {
-        messageApi.error(t("exportDownloadListFailed"));
+        message.error(t("exportDownloadListFailed"));
       }
     }
   });
 
   return (
     <div className="flex flex-row items-center justify-between pb-2 pl-3">
-      {contextHolder}
       <div className="flex flex-row items-center gap-3">
         <Checkbox checked={checked} onCheckedChange={onSelectAll} />
         <span

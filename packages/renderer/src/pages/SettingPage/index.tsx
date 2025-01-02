@@ -1,6 +1,7 @@
 import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
 import PageContainer from "../../components/PageContainer";
 import {
+  App,
   Badge,
   Button,
   Dropdown,
@@ -9,7 +10,6 @@ import {
   Input,
   InputNumber,
   MenuProps,
-  message,
   Modal,
   Progress,
   Radio,
@@ -32,7 +32,7 @@ import useElectron from "../../hooks/electron";
 import { useMemoizedFn, useRequest } from "ahooks";
 import { AppLanguage, AppTheme } from "../../types";
 import { useTranslation } from "react-i18next";
-import { SessionStore, useSessionStore } from "@/store/session";
+import { updateSelector, useSessionStore } from "@/store/session";
 import { useShallow } from "zustand/react/shallow";
 import { isWeb, tdApp } from "@/utils";
 import { CHECK_UPDATE } from "@/const";
@@ -58,11 +58,6 @@ function GroupWrapper({ children, title, hidden }: GroupWrapperProps) {
   );
 }
 
-const sessionSelector = (s: SessionStore) => ({
-  updateAvailable: s.updateAvailable,
-  updateChecking: s.updateChecking,
-});
-
 const SettingPage: React.FC = () => {
   const {
     onSelectDownloadDir,
@@ -83,9 +78,9 @@ const SettingPage: React.FC = () => {
   const settings = useAppStore(useShallow(appStoreSelector));
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
   const { data: envPath } = useRequest(getEnvPath);
-  const [messageApi, contextHolder] = message.useMessage();
+  const { message } = App.useApp();
   const { updateAvailable, updateChecking } = useSessionStore(
-    useShallow(sessionSelector),
+    useShallow(updateSelector),
   );
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
@@ -124,7 +119,7 @@ const SettingPage: React.FC = () => {
       }
       setAppStore(values);
     } catch (e: any) {
-      messageApi.error(e.message);
+      message.error(e.message);
     }
   });
 
@@ -145,9 +140,9 @@ const SettingPage: React.FC = () => {
     if (key === "1") {
       try {
         await importFavorites();
-        messageApi.success(t("importFavoriteSuccess"));
+        message.success(t("importFavoriteSuccess"));
       } catch (e: any) {
-        messageApi.error(t("importFavoriteFailed"));
+        message.error(t("importFavoriteFailed"));
       }
     }
   };
@@ -155,9 +150,9 @@ const SettingPage: React.FC = () => {
   const handleExportFavorite = async () => {
     try {
       await exportFavorites();
-      messageApi.success(t("exportFavoriteSuccess"));
+      message.success(t("exportFavoriteSuccess"));
     } catch (e: any) {
-      messageApi.error(t("exportFavoriteFailed"));
+      message.error(t("exportFavoriteFailed"));
     }
   };
 
@@ -198,15 +193,14 @@ const SettingPage: React.FC = () => {
   const handleClearWebviewCache = useMemoizedFn(async () => {
     try {
       await clearWebviewCache();
-      messageApi.success(t("clearCacheSuccess"));
+      message.success(t("clearCacheSuccess"));
     } catch (err: any) {
-      messageApi.error(t("clearCacheFailed"));
+      message.error(t("clearCacheFailed"));
     }
   });
 
   return (
     <PageContainer title={t("setting")}>
-      {contextHolder}
       <Form<AppStore>
         ref={formRef}
         layout="horizontal"

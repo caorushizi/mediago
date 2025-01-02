@@ -2,7 +2,7 @@ import useElectron from "@/hooks/electron";
 import { getFavIcon, tdApp } from "@/utils";
 import { PlusOutlined } from "@ant-design/icons";
 import { useRequest } from "ahooks";
-import { Form, Input, message, Modal } from "antd";
+import { App, Form, Input, Modal } from "antd";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FavItem } from "./FavItem";
@@ -27,7 +27,7 @@ export function FavoriteList() {
   } = useElectron();
   const { data: favoriteList = [], refresh } = useRequest(getFavorites);
   const { t } = useTranslation();
-  const [messageApi, contextHolder] = message.useMessage();
+  const { message } = App.useApp();
   const [favoriteAddForm] = Form.useForm<Favorite>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
@@ -70,7 +70,7 @@ export function FavoriteList() {
 
       setIsModalOpen(false);
     } catch (err: any) {
-      messageApi.error(err.message || t("addFavoriteFailed"));
+      message.error(err.message || t("addFavoriteFailed"));
     }
   };
 
@@ -118,7 +118,6 @@ export function FavoriteList() {
 
   return (
     <div className="h-full w-full py-4">
-      {contextHolder}
       <div className="grid grid-cols-4 place-items-center gap-4 overflow-auto md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-9">
         {favoriteList.map((item) => {
           return (

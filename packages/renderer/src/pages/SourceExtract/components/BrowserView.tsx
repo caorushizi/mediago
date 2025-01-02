@@ -1,6 +1,4 @@
-import { DeleteIcon } from "@/assets/svg";
 import DownloadForm, { DownloadFormRef } from "@/components/DownloadForm";
-import { IconButton } from "@/components/IconButton";
 import { Button } from "@/components/ui/button";
 import WebView from "@/components/WebView";
 import useElectron from "@/hooks/electron";
@@ -13,10 +11,11 @@ import {
 } from "@/store/browser";
 import { generateUrl, randomName } from "@/utils";
 import { useMemoizedFn } from "ahooks";
-import { Empty, Space, Spin, message, Splitter } from "antd";
+import { Empty, Space, Spin, Splitter, App } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
+import { BrowserViewPanel } from "./BrowserViewPanel";
 
 export function BrowserView() {
   const {
@@ -26,16 +25,15 @@ export function BrowserView() {
     webviewGoHome,
     downloadNow,
     addDownloadItem,
-    showDownloadDialog: ipcShowDownloadDialog,
   } = useElectron();
   const downloadForm = useRef<DownloadFormRef>(null);
   const store = useBrowserStore(useShallow(browserStoreSelector));
-  const { addSource, setBrowserStore, deleteSource } = useBrowserStore(
+  const { addSource, setBrowserStore } = useBrowserStore(
     useShallow(setBrowserSelector),
   );
   const { t } = useTranslation();
   const [placeHolder, setPlaceHolder] = useState<string>("");
-  const [messageApi, contextHolder] = message.useMessage();
+  const { message } = App.useApp();
 
   useEffect(() => {
     const onShowDownloadDialog = async (
@@ -70,16 +68,16 @@ export function BrowserView() {
     };
   }, [store.status]);
 
-  const onClickGoHome = async () => {
+  const onClickGoHome = useMemoizedFn(async () => {
     await webviewGoHome();
     setBrowserStore({
       url: "",
       title: "",
       mode: PageMode.Default,
     });
-  };
+  });
 
-  const confirmDownload = async (now?: boolean) => {
+  const confirmDownload = useMemoizedFn(async (now?: boolean) => {
     try {
       const { name, url, headers, type, folder } =
         downloadForm.current.getFieldsValue();
@@ -99,24 +97,24 @@ export function BrowserView() {
 
       return true;
     } catch (e) {
-      messageApi.error((e as any).message);
+      message.error((e as any).message);
       return false;
     }
-  };
+  });
 
-  const loadUrl = (url: string) => {
+  const loadUrl = useMemoizedFn((url: string) => {
     setBrowserStore({
       url,
       mode: PageMode.Browser,
       status: BrowserStatus.Loading,
     });
     webviewLoadURL(url);
-  };
+  });
 
-  const goto = () => {
+  const goto = useMemoizedFn(() => {
     const link = generateUrl(store.url);
     loadUrl(link);
-  };
+  });
 
   const handleFormVisibleChange = useMemoizedFn((visible: boolean) => {
     if (!visible) {
@@ -124,7 +122,7 @@ export function BrowserView() {
     }
   });
 
-  const renderContent = () => {
+  const renderContent = useMemoizedFn(() => {
     // Loaded state
     if (store.status === BrowserStatus.Loading) {
       return (
@@ -161,68 +159,20 @@ export function BrowserView() {
     }
 
     return null;
-  };
-
-  const renderSidePanel = () => {
-    if (store.sources.length === 0) {
-      return null;
-    }
-
-    return (
-      <div className="flex h-full flex-col gap-3 overflow-y-auto bg-white p-3 dark:bg-[#1F2024]">
-        {store.sources.map((item, index) => {
-          return (
-            <div
-              className="flex flex-col gap-2 rounded-lg bg-[#FAFCFF] p-2 dark:bg-[#27292F]"
-              key={index}
-            >
-              <span
-                className="line-clamp-2 cursor-default break-words text-sm text-[#343434] dark:text-[#B4B4B4]"
-                title={item.name}
-              >
-                {item.name}
-              </span>
-              <span
-                className="line-clamp-2 cursor-default break-words text-xs dark:text-[#515257]"
-                title={item.url}
-              >
-                {item.url}
-              </span>
-              <div className="flex flex-row items-center justify-between gap-3">
-                <div>
-                  <IconButton
-                    icon={<DeleteIcon />}
-                    onClick={() => {
-                      deleteSource(item.url);
-                    }}
-                  />
-                </div>
-                <Button
-                  size="sm"
-                  onClick={() => {
-                    ipcShowDownloadDialog([item]);
-                  }}
-                >
-                  {t("addToDownloadList")}
-                </Button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    );
-  };
+  });
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <Splitter className="flex h-full flex-1 gap-2">
-        <Splitter.Panel>{renderContent()}</Splitter.Panel>
-        {store.sources.length && (
-          <Splitter.Panel defaultSize={240} min="20%" max="70%">
-            {renderSidePanel()}
+      {!store.sources.length ? (
+        renderContent()
+      ) : (
+        <Splitter className="flex h-full flex-1 gap-2">
+          <Splitter.Panel>{renderContent()}</Splitter.Panel>
+          <Splitter.Panel min="20%" max="70%" defaultSize={240}>
+            <BrowserViewPanel />
           </Splitter.Panel>
-        )}
-      </Splitter>
+        </Splitter>
+      )}
       <DownloadForm
         id="browser"
         isEdit
@@ -233,7 +183,6 @@ export function BrowserView() {
         destroyOnClose
         onFormVisibleChange={handleFormVisibleChange}
       />
-      {contextHolder}
     </div>
   );
 }
