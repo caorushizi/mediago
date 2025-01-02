@@ -14,7 +14,7 @@ import {
   PauseIcon,
   TerminalIcon,
 } from "@/assets/svg";
-import useElectron from "@/hooks/electron";
+import useElectron from "@/hooks/useElectron";
 import { DownloadTag } from "@/components/DownloadTag";
 import { IconButton } from "@/components/IconButton";
 import { useMemoizedFn } from "ahooks";
@@ -54,7 +54,7 @@ export function DownloadItem({
   const { t } = useTranslation();
   const { openPlayerWindow } = useElectron();
 
-  const renderTerminalBtn = (item: DownloadItem) => {
+  const renderTerminalBtn = useMemoizedFn((item: DownloadItem) => {
     if (!appStore.showTerminal) return null;
 
     return (
@@ -71,10 +71,10 @@ export function DownloadItem({
         log={item.log}
       />
     );
-  };
+  });
 
   // Edit form
-  const renderEditIconBtn = (item: DownloadItem) => {
+  const renderEditIconBtn = useMemoizedFn((item: DownloadItem) => {
     return (
       <IconButton
         title={t("edit")}
@@ -82,7 +82,7 @@ export function DownloadItem({
         onClick={() => onShowEditForm(item)}
       />
     );
-  };
+  });
 
   const handlePlay = useMemoizedFn(() => {
     openPlayerWindow();
@@ -109,7 +109,7 @@ export function DownloadItem({
     tdApp.onEvent(STOP_DOWNLOAD);
   });
 
-  const renderActionButtons = (item: VideoStat): ReactNode => {
+  const renderActionButtons = useMemoizedFn((item: VideoStat): ReactNode => {
     if (item.status === DownloadStatus.Ready) {
       return [
         renderTerminalBtn(item),
@@ -171,9 +171,9 @@ export function DownloadItem({
         onClick={handlePlay}
       />,
     ];
-  };
+  });
 
-  const renderTitle = (item: VideoStat): ReactNode => {
+  const renderTitle = useMemoizedFn((item: VideoStat): ReactNode => {
     return (
       <div
         className={cn("truncate text-sm dark:text-[#B4B4B4]", {
@@ -185,7 +185,7 @@ export function DownloadItem({
         {item.name}
       </div>
     );
-  };
+  });
 
   const handleRenderTag = useMemoizedFn(() => {
     let tag = null;
@@ -249,7 +249,7 @@ export function DownloadItem({
     );
   });
 
-  const renderDescription = (item: DownloadItem): ReactNode => {
+  const renderDescription = useMemoizedFn((item: DownloadItem): ReactNode => {
     if (progress) {
       const { percent, speed } = progress;
       const val = Math.round(Number(percent));
@@ -286,7 +286,7 @@ export function DownloadItem({
         )}
       </div>
     );
-  };
+  });
 
   return (
     <div

@@ -1,9 +1,10 @@
-import useElectron from "../hooks/electron";
+import useElectron from "@/hooks/useElectron";
 import { DownloadType } from "@/types";
 import { convertPlainObject } from "@/utils";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
+// eslint-disable-next-line react-hooks/rules-of-hooks
 const { setSharedState } = useElectron();
 
 export enum PageMode {
@@ -42,6 +43,7 @@ type Actions = {
   addSource: (source: SourceData) => void;
   deleteSource: (url: string) => void;
   setSources: (sources: SourceData[]) => void;
+  clearSources: () => void;
 };
 
 export const useBrowserStore = create<BrowserStore & Actions>()(
@@ -68,6 +70,10 @@ export const useBrowserStore = create<BrowserStore & Actions>()(
       set((state) => {
         state.sources = sources;
       }),
+    clearSources: () =>
+      set((state) => {
+        state.sources = [];
+      }),
   })),
 );
 
@@ -89,5 +95,6 @@ export const setBrowserSelector = (state: BrowserStore & Actions) => {
     addSource: state.addSource,
     deleteSource: state.deleteSource,
     setSources: state.setSources,
+    clearSources: state.clearSources,
   };
 };
