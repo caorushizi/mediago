@@ -1,4 +1,9 @@
-import React, { cloneElement, PropsWithChildren, ReactElement } from "react";
+import React, {
+  cloneElement,
+  PropsWithChildren,
+  ReactElement,
+  useMemo,
+} from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Badge } from "antd";
 import useElectron from "@/hooks/useElectron";
@@ -21,6 +26,7 @@ import {
   setAppStoreSelector,
 } from "@/store/app";
 import { downloadStoreSelector, useDownloadStore } from "@/store/download";
+import { useMemoizedFn } from "ahooks";
 
 function processLocation(pathname: string) {
   let name = pathname;
@@ -51,7 +57,10 @@ function AppMenuItem({
   className,
   icon,
 }: AppMenuItemProps) {
-  const isActive = activeKey === processLocation(link);
+  const isActive = useMemo(() => {
+    return activeKey === processLocation(link);
+  }, [activeKey, link]);
+
   return (
     <Link
       to={link}
@@ -90,103 +99,123 @@ export function AppSideBar({ className }: Props) {
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
   const { updateAvailable } = useSessionStore(useShallow(updateSelector));
 
-  const activeKey = processLocation(location.pathname);
+  const activeKey = useMemo(
+    () => processLocation(location.pathname),
+    [location.pathname],
+  );
 
-  const handleExternalLink = async (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    e.preventDefault();
+  const handleExternalLink = useMemoizedFn(
+    async (e: React.MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation();
+      e.preventDefault();
 
-    setAppStore({ openInNewWindow: true });
-    if (location.pathname === "/source") {
-      navigate("/");
-    }
-    // FIXME: It is possible that the webview is not completely hidden yet
-    await ipcSetAppStore("openInNewWindow", true);
-    await showBrowserWindow();
-  };
+      setAppStore({ openInNewWindow: true });
+      if (location.pathname === "/source") {
+        navigate("/");
+      }
+      // FIXME: It is possible that the webview is not completely hidden yet
+      await ipcSetAppStore("openInNewWindow", true);
+      await showBrowserWindow();
+    },
+  );
 
-  const items1: MenuItem[] = [
-    {
-      label: (
-        <AppMenuItem
-          link="/"
-          onClick={() => {
-            clearCount();
-          }}
-          activeKey={activeKey}
-          icon={<ListIcon />}
-        >
-          <span>{t("downloadList")}</span>
-          {count > 0 && (
-            <Badge count={count} offset={[5, 1]} size="small"></Badge>
-          )}
-        </AppMenuItem>
-      ),
-      key: "home",
-    },
-    {
-      label: (
-        <AppMenuItem link="/done" activeKey={activeKey} icon={<DoneIcon />}>
-          <span>{t("downloadComplete")}</span>
-        </AppMenuItem>
-      ),
-      key: "done",
-    },
-    {
-      label: (
-        <AppMenuItem
-          link="/converter"
-          activeKey={activeKey}
-          icon={<ConverterIcon />}
-        >
-          <span>{t("converter")}</span>
-        </AppMenuItem>
-      ),
-      key: "converter",
-    },
-    {
-      label: (
-        <AppMenuItem
-          link="/source"
-          activeKey={activeKey}
-          className="group"
-          icon={<ExtractIcon />}
-        >
-          <span className="flex flex-1">{t("materialExtraction")}</span>
-          <div
-            title={t("openInNewWindow")}
-            className="hidden hover:opacity-70 group-hover:block"
-            onClick={(e) => handleExternalLink(e)}
+  const handleClearCount = useMemoizedFn(() => {
+    clearCount();
+  });
+
+  const items1: MenuItem[] = useMemo(() => {
+    return [
+      {
+        label: (
+          <AppMenuItem
+            link="/"
+            onClick={handleClearCount}
+            activeKey={activeKey}
+            icon={<ListIcon />}
           >
-            <ShareIcon
-              fill={"/source" === location.pathname ? "#fff" : "#AAB5CB"}
-            />
-          </div>
-        </AppMenuItem>
-      ),
-      key: "source",
-    },
-    {
-      label: (
-        <AppMenuItem
-          link="/settings"
-          activeKey={activeKey}
-          icon={<SettingsIcon />}
-        >
-          <span>{t("setting")}</span>
-          <Badge dot={updateAvailable} offset={[-13, -3]} />
-        </AppMenuItem>
-      ),
-      key: "settings",
-    },
-  ];
-  const items = items1.filter((i) =>
-    isWeb ? i.key !== "source" && i.key !== "converter" : true,
-  );
+            <span>{t("downloadList")}</span>
+            {count > 0 && (
+              <Badge count={count} offset={[5, 1]} size="small"></Badge>
+            )}
+          </AppMenuItem>
+        ),
+        key: "home",
+      },
+      {
+        label: (
+          <AppMenuItem link="/done" activeKey={activeKey} icon={<DoneIcon />}>
+            <span>{t("downloadComplete")}</span>
+          </AppMenuItem>
+        ),
+        key: "done",
+      },
+      {
+        label: (
+          <AppMenuItem
+            link="/converter"
+            activeKey={activeKey}
+            icon={<ConverterIcon />}
+          >
+            <span>{t("converter")}</span>
+          </AppMenuItem>
+        ),
+        key: "converter",
+      },
+      {
+        label: (
+          <AppMenuItem
+            link="/source"
+            activeKey={activeKey}
+            className="group"
+            icon={<ExtractIcon />}
+          >
+            <span className="flex flex-1">{t("materialExtraction")}</span>
+            <div
+              title={t("openInNewWindow")}
+              className="hidden hover:opacity-70 group-hover:block"
+              onClick={handleExternalLink}
+            >
+              <ShareIcon
+                fill={"/source" === location.pathname ? "#fff" : "#AAB5CB"}
+              />
+            </div>
+          </AppMenuItem>
+        ),
+        key: "source",
+      },
+      {
+        label: (
+          <AppMenuItem
+            link="/settings"
+            activeKey={activeKey}
+            icon={<SettingsIcon />}
+          >
+            <span>{t("setting")}</span>
+            <Badge dot={updateAvailable} offset={[-13, -3]} />
+          </AppMenuItem>
+        ),
+        key: "settings",
+      },
+    ];
+  }, [
+    activeKey,
+    count,
+    handleExternalLink,
+    location.pathname,
+    t,
+    updateAvailable,
+    handleClearCount,
+  ]);
 
-  const finalItems = items.filter((item) =>
-    appStore.openInNewWindow ? item?.key !== "source" : true,
-  );
+  const finalItems = useMemo(() => {
+    return items1
+      .filter((i) =>
+        isWeb ? i.key !== "source" && i.key !== "converter" : true,
+      )
+      .filter((item) =>
+        appStore.openInNewWindow ? item?.key !== "source" : true,
+      );
+  }, [items1, appStore.openInNewWindow]);
 
   return (
     <div

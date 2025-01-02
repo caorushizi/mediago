@@ -37,7 +37,8 @@ export function ListHeader({
         label: t("exportDownloadList"),
       },
     ];
-  }, []);
+  }, [t]);
+
   const onMenuClick: MenuProps["onClick"] = useMemoizedFn(async (e) => {
     const { key } = e;
     if (key === "exportDownloadList") {

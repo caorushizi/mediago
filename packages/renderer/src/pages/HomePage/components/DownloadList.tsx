@@ -121,7 +121,7 @@ export function DownloadList({
     );
   });
 
-  const handleSelectAll = () => {
+  const handleSelectAll = useMemoizedFn(() => {
     setSelected(
       produce((draft) => {
         if (draft.length) {
@@ -131,7 +131,7 @@ export function DownloadList({
         }
       }),
     );
-  };
+  });
 
   const listChecked = useMemo(() => {
     if (selected.length === 0) {
@@ -141,7 +141,7 @@ export function DownloadList({
       return true;
     }
     return "indeterminate";
-  }, [selected]);
+  }, [selected, data.length]);
 
   useEffect(() => {
     setSelected([]);
@@ -185,15 +185,15 @@ export function DownloadList({
     onDownloadListContextMenu(item);
   });
 
-  const onDeleteItems = async (ids: number[]) => {
+  const onDeleteItems = useMemoizedFn(async (ids: number[]) => {
     for (const id of ids) {
       await deleteDownloadItem(Number(id));
     }
     setSelected([]);
     refresh();
-  };
+  });
 
-  const onDownloadItems = async (ids: number[]) => {
+  const onDownloadItems = useMemoizedFn(async (ids: number[]) => {
     for (const id of ids) {
       await startDownload(Number(id));
     }
@@ -201,11 +201,11 @@ export function DownloadList({
     message.success(t("addTaskSuccess"));
     refresh();
     setSelected([]);
-  };
+  });
 
-  const onCancelItems = async () => {
+  const onCancelItems = useMemoizedFn(async () => {
     setSelected([]);
-  };
+  });
 
   const handleShowDownloadForm = useMemoizedFn((item: DownloadItem) => {
     tdApp.onEvent(EDIT_DOWNLOAD);

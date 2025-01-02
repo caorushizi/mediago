@@ -35,13 +35,13 @@ export default function PlayerPage() {
     }
   }, []);
 
-  const handleVideoClick = (url: string) => {
+  const handleVideoClick = useMemoizedFn((url: string) => {
     setCurrentVideo(url);
     player.current.src = url;
     player.current.play();
 
     setOpen(false);
-  };
+  });
 
   const onClose = useMemoizedFn(() => {
     setOpen(false);

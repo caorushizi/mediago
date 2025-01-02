@@ -101,52 +101,62 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     setLocalIP(ip);
   });
 
-  const confirmAddItems = async (values: DownloadFormType, now?: boolean) => {
-    const { batch, batchList = "", name, headers, type, url, folder } = values;
-    if (batch) {
-      /**
-       * Here you need to parse the batchList
-       * The format is batchList
-       * url1 name1\n
-       * url2 name2\n
-       * url3
-       * ...
-       */
-      const items: Omit<DownloadItem, "id">[] = batchList
-        .split("\n")
-        .map((line: string) => {
-          const [url, name, folder] = line.trim().split(" ");
-          return {
-            url: url.trim(),
-            name: name || randomName(),
-            headers,
-            type,
-            folder,
-          };
-        });
-      if (now) {
-        await downloadItemsNow(items);
-      } else {
-        await addDownloadItems(items);
-      }
-    } else {
-      const item: Omit<DownloadItem, "id"> = {
+  const confirmAddItems = useMemoizedFn(
+    async (values: DownloadFormType, now?: boolean) => {
+      const {
+        batch,
+        batchList = "",
         name,
-        url,
         headers,
         type,
+        url,
         folder,
-      };
-      if (now) {
-        await downloadNow(item);
+      } = values;
+      if (batch) {
+        /**
+         * Here you need to parse the batchList
+         * The format is batchList
+         * url1 name1\n
+         * url2 name2\n
+         * url3
+         * ...
+         */
+        const items: Omit<DownloadItem, "id">[] = batchList
+          .split("\n")
+          .map((line: string) => {
+            const [url, name, folder] = line.trim().split(" ");
+            return {
+              url: url.trim(),
+              name: name || randomName(),
+              headers,
+              type,
+              folder,
+            };
+          });
+        if (now) {
+          await downloadItemsNow(items);
+        } else {
+          await addDownloadItems(items);
+        }
       } else {
-        await addDownloadItem(item);
+        const item: Omit<DownloadItem, "id"> = {
+          name,
+          url,
+          headers,
+          type,
+          folder,
+        };
+        if (now) {
+          await downloadNow(item);
+        } else {
+          await addDownloadItem(item);
+        }
       }
-    }
 
-    refresh();
-    return true;
-  };
+      refresh();
+      return true;
+    },
+  );
 
   const handleOpenForm = useMemoizedFn(() => {
     tdApp.onEvent(CLICK_DOWNLOAD);

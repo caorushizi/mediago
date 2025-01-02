@@ -62,7 +62,7 @@ const Converter = () => {
     refresh();
   });
 
-  const renderActionButtons = (dom: ReactNode, item: Conversion): ReactNode => {
+  const renderActionButtons = useMemoizedFn((item: Conversion): ReactNode => {
     // Download successfully
     return [
       <div
@@ -80,7 +80,7 @@ const Converter = () => {
         <IconButton icon={<DeleteOutlined />} />
       </div>,
     ];
-  };
+  });
 
   const handleSelectFile = useMemoizedFn(async () => {
     const file = await selectFile();
@@ -111,7 +111,7 @@ const Converter = () => {
                     {item.name}
                   </div>
                   <div className="flex flex-row gap-3">
-                    {renderActionButtons(null, item)}
+                    {renderActionButtons(item)}
                   </div>
                 </div>
                 <div className="text-xs text-[#AAB5CB]">{item.path}</div>

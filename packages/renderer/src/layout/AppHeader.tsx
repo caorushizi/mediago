@@ -4,6 +4,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { HelpIcon } from "@/assets/svg";
 import LogoImg from "../assets/images/logo.png";
+import { useMemoizedFn } from "ahooks";
 
 interface Props {
   className?: string;
@@ -13,10 +14,10 @@ export function AppHeader({ className }: Props) {
   const { openUrl } = useElectron();
   const { t } = useTranslation();
 
-  const openHelpUrl = () => {
+  const openHelpUrl = useMemoizedFn(() => {
     const url = "https://downloader.caorushizi.cn/guides.html?form=client";
     openUrl(url);
-  };
+  });
 
   return (
     <div

@@ -1,6 +1,6 @@
 import useElectron from "@/hooks/useElectron";
 import { cn, generateUrl, getFavIcon, tdApp } from "@/utils";
-import { useRequest } from "ahooks";
+import { useMemoizedFn, useRequest } from "ahooks";
 import { Input, Tooltip } from "antd";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -62,48 +62,50 @@ export function ToolBar({ page }: Props) {
     store.status !== BrowserStatus.Loaded || store.mode !== PageMode.Browser;
 
   // Set default UA
-  const onSetDefaultUA = () => {
+  const onSetDefaultUA = useMemoizedFn(() => {
     const nextMode = !appStore.isMobile;
     setUserAgent(nextMode);
     setAppStore({
       isMobile: nextMode,
     });
-  };
+  });
 
   const curIsFavorite = useMemo(() => {
     return favoriteList.find((item) => item.url === store.url);
   }, [favoriteList, store.url]);
 
-  const onInputKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!store.url) {
-      return;
-    }
-    if (e.key !== "Enter") {
-      return;
-    }
+  const onInputKeyDown = useMemoizedFn(
+    async (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (!store.url) {
+        return;
+      }
+      if (e.key !== "Enter") {
+        return;
+      }
 
-    await goto();
-  };
+      await goto();
+    },
+  );
 
-  const onClickGoBack = async () => {
+  const onClickGoBack = useMemoizedFn(async () => {
     const back = await webviewGoBack();
     if (!back) {
       // TODO: Reset title
       // document.title = originTitle.current;
       setBrowserStore({ url: "", title: "", mode: PageMode.Default });
     }
-  };
+  });
 
-  const onClickGoHome = async () => {
+  const onClickGoHome = useMemoizedFn(async () => {
     await webviewGoHome();
     setBrowserStore({
       url: "",
       title: "",
       mode: PageMode.Default,
     });
-  };
+  });
 
-  const loadUrl = (url: string) => {
+  const loadUrl = useMemoizedFn((url: string) => {
     tdApp.onEvent(OPEN_URL);
     setBrowserStore({
       url,
@@ -111,21 +113,21 @@ export function ToolBar({ page }: Props) {
       status: BrowserStatus.Loading,
     });
     webviewLoadURL(url);
-  };
+  });
 
-  const onInputContextMenu = () => {
+  const onInputContextMenu = useMemoizedFn(() => {
     webviewUrlContextMenu();
-  };
+  });
 
-  const onClickEnter = async () => {
+  const onClickEnter = useMemoizedFn(async () => {
     if (!store.url) {
       return;
     }
 
     await goto();
-  };
+  });
 
-  const onClickAddFavorite = async () => {
+  const onClickAddFavorite = useMemoizedFn(async () => {
     if (curIsFavorite) {
       await removeFavorite(curIsFavorite.id);
     } else {
@@ -137,17 +139,17 @@ export function ToolBar({ page }: Props) {
       });
     }
     refresh();
-  };
+  });
 
   // Merge to home page
-  const onCombineToHome = () => {
+  const onCombineToHome = useMemoizedFn(() => {
     combineToHomePage(store);
-  };
+  });
 
-  const goto = () => {
+  const goto = useMemoizedFn(() => {
     const link = generateUrl(store.url);
     loadUrl(link);
-  };
+  });
 
   const iconColor = theme === "dark" ? "white" : "black";
 
