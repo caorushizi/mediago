@@ -1,7 +1,7 @@
 import React, { cloneElement, PropsWithChildren, ReactElement } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Badge } from "antd";
-import useElectron from "../hooks/electron";
+import useElectron from "@/hooks/useElectron";
 import { useTranslation } from "react-i18next";
 import { cn, isWeb } from "@/utils";
 import {

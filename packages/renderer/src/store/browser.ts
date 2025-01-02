@@ -1,4 +1,4 @@
-import useElectron from "../hooks/electron";
+import useElectron from "@/hooks/useElectron";
 import { DownloadType } from "@/types";
 import { convertPlainObject } from "@/utils";
 import { create } from "zustand";

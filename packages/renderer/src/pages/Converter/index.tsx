@@ -1,10 +1,10 @@
 import React, { ReactNode, useState } from "react";
-import PageContainer from "../../components/PageContainer";
+import PageContainer from "@/components/PageContainer";
 import { useTranslation } from "react-i18next";
 import { App, Empty } from "antd";
-import useElectron from "../../hooks/electron";
+import useElectron from "@/hooks/useElectron";
 import { useMemoizedFn, usePagination } from "ahooks";
-import { getFileName, tdApp } from "../../utils";
+import { getFileName, tdApp } from "@/utils";
 import { Conversion } from "../../../../main/types/entity/Conversion";
 import { DeleteOutlined, SyncOutlined } from "@ant-design/icons";
 import { produce } from "immer";

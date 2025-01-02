@@ -6,7 +6,7 @@ import { produce } from "immer";
 import { App, Empty, Pagination } from "antd";
 import { DownloadFilter } from "@/types";
 import { ListPagination } from "./types";
-import useElectron from "@/hooks/electron";
+import useElectron from "@/hooks/useElectron";
 import { useTranslation } from "react-i18next";
 import Loading from "@/components/Loading";
 import { useMemoizedFn } from "ahooks";

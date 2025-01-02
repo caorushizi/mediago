@@ -14,7 +14,7 @@ import {
   PauseIcon,
   TerminalIcon,
 } from "@/assets/svg";
-import useElectron from "@/hooks/electron";
+import useElectron from "@/hooks/useElectron";
 import { DownloadTag } from "@/components/DownloadTag";
 import { IconButton } from "@/components/IconButton";
 import { useMemoizedFn } from "ahooks";

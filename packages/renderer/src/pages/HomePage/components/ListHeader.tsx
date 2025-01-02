@@ -4,7 +4,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DownloadFilter } from "@/types";
 import { useMemoizedFn } from "ahooks";
-import useElectron from "@/hooks/electron";
+import useElectron from "@/hooks/useElectron";
 import { isWeb } from "@/utils";
 
 interface Props {

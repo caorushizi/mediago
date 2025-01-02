@@ -3,7 +3,7 @@ import React, { FC, Suspense, lazy, useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "dayjs/locale/zh-cn";
 import zhCN from "antd/locale/zh_CN";
-import useElectron from "./hooks/electron";
+import useElectron from "@/hooks/useElectron";
 import Loading from "./components/Loading";
 import { DownloadFilter } from "./types";
 import { isWeb, tdApp } from "./utils";

@@ -3,7 +3,7 @@ import "@xterm/xterm/css/xterm.css";
 import { Terminal as XTerminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 import { cn } from "@/utils";
-import useElectron from "@/hooks/electron";
+import useElectron from "@/hooks/useElectron";
 
 interface TerminalProps {
   className?: string;

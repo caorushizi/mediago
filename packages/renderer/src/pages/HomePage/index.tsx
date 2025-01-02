@@ -1,8 +1,8 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import PageContainer from "../../components/PageContainer";
+import PageContainer from "@/components/PageContainer";
 import { useMemoizedFn, useMount, usePagination } from "ahooks";
-import useElectron from "../../hooks/electron";
-import { DownloadFilter, DownloadType } from "../../types";
+import useElectron from "@/hooks/useElectron";
+import { DownloadFilter, DownloadType } from "@/types";
 import { useTranslation } from "react-i18next";
 import { DownloadList } from "./components";
 import DownloadForm, {

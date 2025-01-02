@@ -1,7 +1,7 @@
 import { useAsyncEffect } from "ahooks";
 import React, { useEffect, useRef } from "react";
-import PageContainer from "../../components/PageContainer";
-import useElectron from "../../hooks/electron";
+import PageContainer from "@/components/PageContainer";
+import useElectron from "@/hooks/useElectron";
 import { FavoriteList } from "./components/FavoriteList";
 import { BrowserView } from "./components/BrowserView";
 import { ToolBar } from "./components/ToolBar";

@@ -17,7 +17,7 @@ import { useAsyncEffect, useMemoizedFn } from "ahooks";
 import { DownloadType } from "@/types";
 import { tdApp } from "@/utils";
 import { ADD_TO_LIST, DOWNLOAD_NOW } from "@/const";
-import useElectron from "@/hooks/electron";
+import useElectron from "@/hooks/useElectron";
 
 export interface DownloadFormType {
   batch?: boolean;
