@@ -1,7 +1,7 @@
 import React, { ReactNode, useState } from "react";
 import PageContainer from "../../components/PageContainer";
 import { useTranslation } from "react-i18next";
-import { Empty, message } from "antd";
+import { App, Empty } from "antd";
 import useElectron from "../../hooks/electron";
 import { useMemoizedFn, usePagination } from "ahooks";
 import { getFileName, tdApp } from "../../utils";
@@ -21,7 +21,7 @@ const Converter = () => {
     convertToAudio,
     deleteConversion,
   } = useElectron();
-  const [messageApi, contextHolder] = message.useMessage();
+  const { message } = App.useApp();
   const [converting, setConverting] = useState<Record<number, boolean>>({});
 
   const { data, refresh } = usePagination(
@@ -45,9 +45,9 @@ const Converter = () => {
     tdApp.onEvent(START_CONVERT);
     try {
       await convertToAudio(item.id);
-      messageApi.success(t("convertSuccess"));
+      message.success(t("convertSuccess"));
     } catch (e: any) {
-      messageApi.error(e.message);
+      message.error(e.message);
     } finally {
       const nextState = produce((draft) => {
         draft[item.id] = false;
@@ -98,7 +98,6 @@ const Converter = () => {
       rightExtra={<Button onClick={handleSelectFile}>{t("addFile")}</Button>}
       className="rounded-lg bg-white dark:bg-[#1F2024]"
     >
-      {contextHolder}
       <div className="flex flex-col gap-3 rounded-lg bg-white p-3 dark:bg-[#1F2024]">
         {data && data.list.length ? (
           data.list.map((item) => {

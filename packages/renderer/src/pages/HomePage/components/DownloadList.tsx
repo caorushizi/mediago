@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { DownloadItem } from "./DownloadItem";
 import { ListHeader } from "./ListHeader";
 import { produce } from "immer";
-import { Empty, message, Pagination } from "antd";
+import { App, Empty, Pagination } from "antd";
 import { DownloadFilter } from "@/types";
 import { ListPagination } from "./types";
 import useElectron from "@/hooks/electron";
@@ -42,7 +42,7 @@ export function DownloadList({
     editDownloadItem,
     editDownloadNow,
   } = useElectron();
-  const [messageApi, contextHolder] = message.useMessage();
+  const { message } = App.useApp();
   const { t } = useTranslation();
   const [progress, setProgress] = useState<Record<number, DownloadProgress>>(
     {},
@@ -149,7 +149,7 @@ export function DownloadList({
 
   const onStartDownload = useMemoizedFn(async (id: number) => {
     await startDownload(id);
-    messageApi.success(t("addTaskSuccess"));
+    message.success(t("addTaskSuccess"));
     refresh();
   });
 
@@ -198,7 +198,7 @@ export function DownloadList({
       await startDownload(Number(id));
     }
 
-    messageApi.success(t("addTaskSuccess"));
+    message.success(t("addTaskSuccess"));
     refresh();
     setSelected([]);
   };
@@ -232,7 +232,6 @@ export function DownloadList({
 
   return (
     <div className="flex h-full flex-col gap-3 rounded-lg">
-      {contextHolder}
       <ListHeader
         selected={selected}
         checked={listChecked}

@@ -1,12 +1,8 @@
-import { ThemeContext } from "@/context/ThemeContext";
+import { themeSelector, useSessionStore } from "@/store/session";
 import { cn } from "@/utils";
 import { useMemoizedFn } from "ahooks";
-import React, {
-  cloneElement,
-  PropsWithChildren,
-  ReactElement,
-  useContext,
-} from "react";
+import React, { cloneElement, PropsWithChildren, ReactElement } from "react";
+import { useShallow } from "zustand/react/shallow";
 
 interface Props extends PropsWithChildren {
   title?: string;
@@ -23,7 +19,7 @@ export function IconButton({
   onClick,
   icon,
 }: Props) {
-  const theme = useContext(ThemeContext);
+  const { theme } = useSessionStore(useShallow(themeSelector));
   const handleClick = useMemoizedFn(() => {
     if (disabled) {
       return;
