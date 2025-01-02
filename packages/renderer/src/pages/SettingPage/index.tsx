@@ -90,13 +90,13 @@ const SettingPage: React.FC = () => {
     formRef.current?.setFieldsValue(settings);
   }, [settings]);
 
-  const onSelectDir = async () => {
+  const onSelectDir = useMemoizedFn(async () => {
     const local = await onSelectDownloadDir();
     if (local) {
       setAppStore({ local });
       formRef.current?.setFieldValue("local", local);
     }
-  };
+  });
 
   const renderButtonLabel = useMemoizedFn(() => {
     if (isWeb) {
@@ -135,7 +135,7 @@ const SettingPage: React.FC = () => {
     },
   ];
 
-  const onMenuClick: MenuProps["onClick"] = async (e) => {
+  const onMenuClick: MenuProps["onClick"] = useMemoizedFn(async (e) => {
     const { key } = e;
     if (key === "1") {
       try {
@@ -145,16 +145,16 @@ const SettingPage: React.FC = () => {
         message.error(t("importFavoriteFailed"));
       }
     }
-  };
+  });
 
-  const handleExportFavorite = async () => {
+  const handleExportFavorite = useMemoizedFn(async () => {
     try {
       await exportFavorites();
       message.success(t("exportFavoriteSuccess"));
     } catch (e: any) {
       message.error(t("exportFavoriteFailed"));
     }
-  };
+  });
 
   const handleCheckUpdate = useMemoizedFn(async () => {
     tdApp.onEvent(CHECK_UPDATE);

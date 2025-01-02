@@ -7,7 +7,7 @@ import useElectron from "@/hooks/useElectron";
 import Loading from "./components/Loading";
 import { DownloadFilter } from "./types";
 import { isWeb, tdApp } from "./utils";
-import { useAsyncEffect } from "ahooks";
+import { useAsyncEffect, useMemoizedFn } from "ahooks";
 import {
   themeSelector,
   updateSelector,
@@ -41,28 +41,26 @@ const App: FC = () => {
   const { increase } = useDownloadStore(useShallow(downloadStoreSelector));
   const { theme, setTheme } = useSessionStore(useShallow(themeSelector));
 
-  const themeChange = (event: MediaQueryListEvent) => {
+  const themeChange = useMemoizedFn((event: MediaQueryListEvent) => {
     if (event.matches) {
       setTheme("dark");
     } else {
       setTheme("light");
     }
-  };
+  });
 
   // 监听store变化
-  const onAppStoreChange = (event: any, store: AppStore) => {
+  const onAppStoreChange = useMemoizedFn((event: any, store: AppStore) => {
     setAppStore(store);
-  };
+  });
 
-  const onReceiveDownloadItem = () => {
+  const onReceiveDownloadItem = useMemoizedFn(() => {
     increase();
-  };
+  });
 
-  const onChangePrivacy = () => {
+  const onChangePrivacy = useMemoizedFn(() => {
     setBrowserStore({ url: "", title: "", mode: PageMode.Default });
-  };
-
-  console.log("App.tsx: onAppStoreChange", onAppStoreChange);
+  });
 
   useEffect(() => {
     const updateAvailable = () => {

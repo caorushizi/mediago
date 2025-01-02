@@ -1,7 +1,7 @@
 import useElectron from "@/hooks/useElectron";
 import { getFavIcon, tdApp } from "@/utils";
 import { PlusOutlined } from "@ant-design/icons";
-import { useRequest } from "ahooks";
+import { useMemoizedFn, useRequest } from "ahooks";
 import { App, Form, Input, Modal } from "antd";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -32,31 +32,31 @@ export function FavoriteList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
 
-  const loadUrl = (url: string) => {
+  const loadUrl = useMemoizedFn((url: string) => {
     setBrowserStore({
       url,
       mode: PageMode.Browser,
       status: BrowserStatus.Loading,
     });
     webviewLoadURL(url);
-  };
+  });
 
-  const onClickLoadItem = (item: Favorite) => {
+  const onClickLoadItem = useMemoizedFn((item: Favorite) => {
     loadUrl(item.url);
     tdApp.onEvent(OPEN_FAVORITE);
-  };
+  });
 
-  const handleRemoveFavorite = async (id: number) => {
+  const handleRemoveFavorite = useMemoizedFn(async (id: number) => {
     removeFavorite(id);
     refresh();
-  };
+  });
 
-  const showModal = () => {
+  const showModal = useMemoizedFn(() => {
     setIsModalOpen(true);
     tdApp.onEvent(ADD_FAVORITE);
-  };
+  });
 
-  const handleOk = async () => {
+  const handleOk = useMemoizedFn(async () => {
     try {
       const values = await favoriteAddForm.validateFields();
       const icon = await getFavIcon(values.url);
@@ -72,11 +72,11 @@ export function FavoriteList() {
     } catch (err: any) {
       message.error(err.message || t("addFavoriteFailed"));
     }
-  };
+  });
 
-  const handleCancel = () => {
+  const handleCancel = useMemoizedFn(() => {
     setIsModalOpen(false);
-  };
+  });
 
   useEffect(() => {
     const onClickLoadItem = (item: Favorite) => {
