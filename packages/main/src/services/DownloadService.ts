@@ -13,6 +13,7 @@ import VideoRepository from "../repository/VideoRepository.ts";
 import {
   Platform,
   biliDownloaderBin,
+  gopeedBin,
   m3u8DownloaderBin,
 } from "../helper/index.ts";
 import * as pty from "node-pty";
@@ -115,6 +116,29 @@ const processList: Schema[] = [
       percent: "([\\d.]+)%",
       error: "ERROR",
       start: "开始下载",
+      isLive: "检测到直播流",
+    },
+  },
+  {
+    type: "direct",
+    platform: [Platform.Linux, Platform.MacOS, Platform.Windows],
+    bin: gopeedBin,
+    args: {
+      localDir: {
+        argsName: ["-D"],
+      },
+      name: {
+        argsName: ["-N"],
+      },
+      url: {
+        argsName: null,
+      },
+    },
+    consoleReg: {
+      percent: "([\\d.]+)%",
+      speed: "([\\d.]+[GMK]Bps)",
+      error: "ERROR",
+      start: "保存文件名:",
       isLive: "检测到直播流",
     },
   },
