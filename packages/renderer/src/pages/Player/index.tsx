@@ -1,14 +1,14 @@
 import { cn, http } from "@/utils";
 import { UnorderedListOutlined } from "@ant-design/icons";
 import { useAsyncEffect, useMemoizedFn } from "ahooks";
-import { Drawer, message } from "antd";
+import { App, Drawer } from "antd";
 import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Player from "xgplayer";
 import "xgplayer/dist/index.min.css";
 
 export default function PlayerPage() {
-  const [messageApi, contextHolder] = message.useMessage();
+  const { message } = App.useApp();
   const player = useRef<Player>();
   const [videoList, setVideoList] = useState([]);
   const [currentVideo, setCurrentVideo] = useState("");
@@ -23,7 +23,7 @@ export default function PlayerPage() {
       setCurrentVideo(res.data[0].url);
       url = res.data[0].url;
     } catch (e) {
-      messageApi.error(t("failToFetchVideoList"));
+      message.error(t("failToFetchVideoList"));
     } finally {
       player.current = new Player({
         id: "mse",
@@ -35,13 +35,13 @@ export default function PlayerPage() {
     }
   }, []);
 
-  const handleVideoClick = (url: string) => {
+  const handleVideoClick = useMemoizedFn((url: string) => {
     setCurrentVideo(url);
     player.current.src = url;
     player.current.play();
 
     setOpen(false);
-  };
+  });
 
   const onClose = useMemoizedFn(() => {
     setOpen(false);
@@ -53,7 +53,6 @@ export default function PlayerPage() {
 
   return (
     <div className="group relative flex h-full w-full dark:bg-[#141415]">
-      {contextHolder}
       <div
         className="absolute right-5 top-5 z-50 hidden cursor-pointer items-center rounded-sm border border-white px-1.5 py-0.5 text-center group-hover:block"
         onClick={handleOpen}

@@ -76,15 +76,6 @@ docker run -d --name mediago -p 8899:8899 -v /root/mediago:/root/mediago registr
 - [【mediago】 linux v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-linux-amd64-3.0.0.deb)
 - 【mediago】 docker v3.0 `docker run -d --name mediago -p 8899:8899 -v /root/mediago:/root/mediago registry.cn-beijing.aliyuncs.com/caorushizi/mediago:v3.0.0`
 
-#### 国内下载
-
-- [【mediago】 windows(安装版) v3.0.0](https://static.ziying.site/mediago/mediago-setup-win32-x64-3.0.0.exe)
-- [【mediago】 windows(便携版) v3.0.0](https://static.ziying.site/mediago/mediago-portable-win32-x64-3.0.0.exe)
-- [【mediago】 macos arm64（apple 芯片） v3.0.0](https://static.ziying.site/mediago/mediago-setup-darwin-arm64-3.0.0.dmg)
-- [【mediago】 macos x64（intel 芯片） v3.0.0](https://static.ziying.site/mediago/mediago-setup-darwin-x64-3.0.0-beta.5.dmg)
-- [【mediago】 linux v3.0.0](https://static.ziying.site/mediago/mediago-setup-linux-amd64-3.0.0.deb)
-- 【mediago】 docker v3.0 `docker run -d --name mediago -p 8899:8899 -v /root/mediago:/root/mediago registry.cn-beijing.aliyuncs.com/caorushizi/mediago:v3.0.0`
-
 ### docker 宝塔面板一键部署（推荐）
 
 1. 安装宝塔面板，前往 [宝塔面板](https://www.bt.cn/new/download.html?r=dk_mediago) 官网，选择正式版的脚本下载安装
