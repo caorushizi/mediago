@@ -56,7 +56,10 @@ export function BrowserView() {
     };
 
     const onWebviewLinkMessage = async (e: unknown, data: any) => {
-      addSource(data);
+      addSource({
+        ...data,
+        name: data.name + `_${randomName()}`,
+      });
     };
 
     addIpcListener("show-download-dialog", onShowDownloadDialog);
