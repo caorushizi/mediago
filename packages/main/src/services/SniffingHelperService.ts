@@ -44,6 +44,10 @@ const filterList: SourceFilter[] = [
       name: "title",
     },
   },
+  {
+    matches: [/\.(mp4|mp3)/],
+    type: DownloadType.direct,
+  }
 ];
 
 @injectable()
