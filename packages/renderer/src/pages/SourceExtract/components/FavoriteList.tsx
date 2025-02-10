@@ -1,14 +1,19 @@
-import useElectron from "@/hooks/electron";
-import { BrowserStatus, PageMode, setBrowserStore } from "@/store";
+import useElectron from "@/hooks/useElectron";
 import { getFavIcon, tdApp } from "@/utils";
 import { PlusOutlined } from "@ant-design/icons";
-import { useRequest } from "ahooks";
-import { Form, Input, message, Modal } from "antd";
+import { useMemoizedFn, useRequest } from "ahooks";
+import { App, Form, Input, Modal } from "antd";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
 import { FavItem } from "./FavItem";
 import { ADD_FAVORITE, OPEN_FAVORITE } from "@/const";
+import {
+  BrowserStatus,
+  PageMode,
+  setBrowserSelector,
+  useBrowserStore,
+} from "@/store/browser";
+import { useShallow } from "zustand/react/shallow";
 
 export function FavoriteList() {
   const {
@@ -22,38 +27,36 @@ export function FavoriteList() {
   } = useElectron();
   const { data: favoriteList = [], refresh } = useRequest(getFavorites);
   const { t } = useTranslation();
-  const [messageApi, contextHolder] = message.useMessage();
+  const { message } = App.useApp();
   const [favoriteAddForm] = Form.useForm<Favorite>();
-  const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
 
-  const loadUrl = (url: string) => {
-    dispatch(
-      setBrowserStore({
-        url,
-        mode: PageMode.Browser,
-        status: BrowserStatus.Loading,
-      }),
-    );
+  const loadUrl = useMemoizedFn((url: string) => {
+    setBrowserStore({
+      url,
+      mode: PageMode.Browser,
+      status: BrowserStatus.Loading,
+    });
     webviewLoadURL(url);
-  };
+  });
 
-  const onClickLoadItem = (item: Favorite) => {
+  const onClickLoadItem = useMemoizedFn((item: Favorite) => {
     loadUrl(item.url);
     tdApp.onEvent(OPEN_FAVORITE);
-  };
+  });
 
-  const handleRemoveFavorite = async (id: number) => {
+  const handleRemoveFavorite = useMemoizedFn(async (id: number) => {
     removeFavorite(id);
     refresh();
-  };
+  });
 
-  const showModal = () => {
+  const showModal = useMemoizedFn(() => {
     setIsModalOpen(true);
     tdApp.onEvent(ADD_FAVORITE);
-  };
+  });
 
-  const handleOk = async () => {
+  const handleOk = useMemoizedFn(async () => {
     try {
       const values = await favoriteAddForm.validateFields();
       const icon = await getFavIcon(values.url);
@@ -67,23 +70,21 @@ export function FavoriteList() {
 
       setIsModalOpen(false);
     } catch (err: any) {
-      messageApi.error(err.message || t("addFavoriteFailed"));
+      message.error(err.message || t("addFavoriteFailed"));
     }
-  };
+  });
 
-  const handleCancel = () => {
+  const handleCancel = useMemoizedFn(() => {
     setIsModalOpen(false);
-  };
+  });
 
   useEffect(() => {
     const onClickLoadItem = (item: Favorite) => {
-      dispatch(
-        setBrowserStore({
-          url: item.url,
-          mode: PageMode.Browser,
-          status: BrowserStatus.Loading,
-        }),
-      );
+      setBrowserStore({
+        url: item.url,
+        mode: PageMode.Browser,
+        status: BrowserStatus.Loading,
+      });
       webviewLoadURL(item.url);
     };
 
@@ -117,7 +118,6 @@ export function FavoriteList() {
 
   return (
     <div className="h-full w-full py-4">
-      {contextHolder}
       <div className="grid grid-cols-4 place-items-center gap-4 overflow-auto md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-9">
         {favoriteList.map((item) => {
           return (

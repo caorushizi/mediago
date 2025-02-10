@@ -1,10 +1,8 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import PageContainer from "../../components/PageContainer";
+import PageContainer from "@/components/PageContainer";
 import { useMemoizedFn, useMount, usePagination } from "ahooks";
-import useElectron from "../../hooks/electron";
-import { DownloadFilter, DownloadType } from "../../types";
-import { useSelector } from "react-redux";
-import { selectAppStore } from "../../store";
+import useElectron from "@/hooks/useElectron";
+import { DownloadFilter, DownloadType } from "@/types";
 import { useTranslation } from "react-i18next";
 import { DownloadList } from "./components";
 import DownloadForm, {
@@ -16,20 +14,16 @@ import { Button } from "@/components/ui/button";
 import { Popover, QRCode } from "antd";
 import { QrcodeOutlined } from "@ant-design/icons";
 import { HomeDownloadButton } from "@/components/HomeDownloadButton";
-import { ConfigStore, useConfigStore } from "@/store/config";
+import { downloadFormSelector, useConfigStore } from "@/store/config";
 import { useShallow } from "zustand/react/shallow";
 import { isDownloadType, isWeb, randomName, tdApp } from "@/utils";
 import { CLICK_DOWNLOAD } from "@/const";
 import { useLocation } from "react-router-dom";
+import { useAppStore, appStoreSelector } from "@/store/app";
 
 interface Props {
   filter?: DownloadFilter;
 }
-
-const configSelector = (s: ConfigStore) => ({
-  lastIsBatch: s.lastIsBatch,
-  lastDownloadTypes: s.lastDownloadTypes,
-});
 
 const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   const {
@@ -42,12 +36,12 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     downloadNow,
     getLocalIP,
   } = useElectron();
-  const appStore = useSelector(selectAppStore);
+  const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
   const [localIP, setLocalIP] = useState<string>("");
   const newFormRef = useRef<DownloadFormRef>(null);
   const { lastIsBatch, lastDownloadTypes } = useConfigStore(
-    useShallow(configSelector),
+    useShallow(downloadFormSelector),
   );
   const location = useLocation();
   const {
@@ -74,14 +68,31 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
 
     // new
     if (search.has("n")) {
-      const type = search.get("type");
-      const item: DownloadFormType = {
-        batch: false,
-        type: isDownloadType(type) ? type : DownloadType.m3u8,
-        url: search.get("url") || "",
-        name: search.get("name") || randomName(),
-      };
-      newFormRef.current?.openModal(item);
+      const typeParam = search.get("type");
+      const silent = !!search.get("silent");
+      const url = search.get("url") || "";
+      const name = search.get("name") || randomName();
+      const type = isDownloadType(typeParam) ? typeParam : DownloadType.m3u8;
+      const headers = decodeURIComponent(search.get("headers") || "");
+
+      if (silent) {
+        const item: Omit<DownloadItem, "id"> = {
+          type,
+          url,
+          name,
+          headers,
+        };
+        downloadNow(item);
+      } else {
+        const item: DownloadFormType = {
+          batch: false,
+          type,
+          url,
+          name,
+          headers,
+        };
+        newFormRef.current?.openModal(item);
+      }
     }
   }, [location.search]);
 
@@ -90,52 +101,62 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     setLocalIP(ip);
   });
 
-  const confirmAddItems = async (values: DownloadFormType, now?: boolean) => {
-    const { batch, batchList = "", name, headers, type, url, folder } = values;
-    if (batch) {
-      /**
-       * Here you need to parse the batchList
-       * The format is batchList
-       * url1 name1\n
-       * url2 name2\n
-       * url3
-       * ...
-       */
-      const items: Omit<DownloadItem, "id">[] = batchList
-        .split("\n")
-        .map((line: string) => {
-          const [url, name, folder] = line.trim().split(" ");
-          return {
-            url: url.trim(),
-            name: name || randomName(),
-            headers,
-            type,
-            folder,
-          };
-        });
-      if (now) {
-        await downloadItemsNow(items);
-      } else {
-        await addDownloadItems(items);
-      }
-    } else {
-      const item: Omit<DownloadItem, "id"> = {
+  const confirmAddItems = useMemoizedFn(
+    async (values: DownloadFormType, now?: boolean) => {
+      const {
+        batch,
+        batchList = "",
         name,
-        url,
         headers,
         type,
+        url,
         folder,
-      };
-      if (now) {
-        await downloadNow(item);
+      } = values;
+      if (batch) {
+        /**
+         * Here you need to parse the batchList
+         * The format is batchList
+         * url1 name1\n
+         * url2 name2\n
+         * url3
+         * ...
+         */
+        const items: Omit<DownloadItem, "id">[] = batchList
+          .split("\n")
+          .map((line: string) => {
+            const [url, name, folder] = line.trim().split(" ");
+            return {
+              url: url.trim(),
+              name: name || randomName(),
+              headers,
+              type,
+              folder,
+            };
+          });
+        if (now) {
+          await downloadItemsNow(items);
+        } else {
+          await addDownloadItems(items);
+        }
       } else {
-        await addDownloadItem(item);
+        const item: Omit<DownloadItem, "id"> = {
+          name,
+          url,
+          headers,
+          type,
+          folder,
+        };
+        if (now) {
+          await downloadNow(item);
+        } else {
+          await addDownloadItem(item);
+        }
       }
-    }
 
-    refresh();
-    return true;
-  };
+      refresh();
+      return true;
+    },
+  );
 
   const handleOpenForm = useMemoizedFn(() => {
     tdApp.onEvent(CLICK_DOWNLOAD);

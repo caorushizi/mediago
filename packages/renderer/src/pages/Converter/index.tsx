@@ -1,10 +1,10 @@
 import React, { ReactNode, useState } from "react";
-import PageContainer from "../../components/PageContainer";
+import PageContainer from "@/components/PageContainer";
 import { useTranslation } from "react-i18next";
-import { Empty, message } from "antd";
-import useElectron from "../../hooks/electron";
+import { App, Empty } from "antd";
+import useElectron from "@/hooks/useElectron";
 import { useMemoizedFn, usePagination } from "ahooks";
-import { getFileName, tdApp } from "../../utils";
+import { getFileName, tdApp } from "@/utils";
 import { Conversion } from "../../../../main/types/entity/Conversion";
 import { DeleteOutlined, SyncOutlined } from "@ant-design/icons";
 import { produce } from "immer";
@@ -21,7 +21,7 @@ const Converter = () => {
     convertToAudio,
     deleteConversion,
   } = useElectron();
-  const [messageApi, contextHolder] = message.useMessage();
+  const { message } = App.useApp();
   const [converting, setConverting] = useState<Record<number, boolean>>({});
 
   const { data, refresh } = usePagination(
@@ -45,9 +45,9 @@ const Converter = () => {
     tdApp.onEvent(START_CONVERT);
     try {
       await convertToAudio(item.id);
-      messageApi.success(t("convertSuccess"));
+      message.success(t("convertSuccess"));
     } catch (e: any) {
-      messageApi.error(e.message);
+      message.error(e.message);
     } finally {
       const nextState = produce((draft) => {
         draft[item.id] = false;
@@ -62,7 +62,7 @@ const Converter = () => {
     refresh();
   });
 
-  const renderActionButtons = (dom: ReactNode, item: Conversion): ReactNode => {
+  const renderActionButtons = useMemoizedFn((item: Conversion): ReactNode => {
     // Download successfully
     return [
       <div
@@ -80,7 +80,7 @@ const Converter = () => {
         <IconButton icon={<DeleteOutlined />} />
       </div>,
     ];
-  };
+  });
 
   const handleSelectFile = useMemoizedFn(async () => {
     const file = await selectFile();
@@ -98,7 +98,6 @@ const Converter = () => {
       rightExtra={<Button onClick={handleSelectFile}>{t("addFile")}</Button>}
       className="rounded-lg bg-white dark:bg-[#1F2024]"
     >
-      {contextHolder}
       <div className="flex flex-col gap-3 rounded-lg bg-white p-3 dark:bg-[#1F2024]">
         {data && data.list.length ? (
           data.list.map((item) => {
@@ -112,7 +111,7 @@ const Converter = () => {
                     {item.name}
                   </div>
                   <div className="flex flex-row gap-3">
-                    {renderActionButtons(null, item)}
+                    {renderActionButtons(item)}
                   </div>
                 </div>
                 <div className="text-xs text-[#AAB5CB]">{item.path}</div>

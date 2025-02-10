@@ -83,3 +83,7 @@ export const isWeb = import.meta.env.APP_TARGET === "web";
 export function isDownloadType(value: string): value is DownloadType {
   return Object.values(DownloadType).includes(value as DownloadType);
 }
+
+export const convertPlainObject = (obj: unknown) => {
+  return JSON.parse(JSON.stringify(obj));
+};

@@ -1,18 +1,9 @@
-import useElectron from "@/hooks/electron";
-import {
-  BrowserStatus,
-  PageMode,
-  selectAppStore,
-  selectBrowserStore,
-  setAppStore,
-  setBrowserStore,
-} from "@/store";
+import useElectron from "@/hooks/useElectron";
 import { cn, generateUrl, getFavIcon, tdApp } from "@/utils";
-import { useRequest } from "ahooks";
+import { useMemoizedFn, useRequest } from "ahooks";
 import { Input, Tooltip } from "antd";
-import React, { useContext, useMemo } from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
 import {
   BackIcon,
   HomeIcon,
@@ -26,9 +17,22 @@ import {
   PCIcon,
 } from "@/assets/svg";
 import { IconButton } from "@/components/IconButton";
-import { ThemeContext } from "@/context/ThemeContext";
 import { EyeInvisibleOutlined } from "@ant-design/icons";
 import { OPEN_URL } from "@/const";
+import {
+  useAppStore,
+  appStoreSelector,
+  setAppStoreSelector,
+} from "@/store/app";
+import { useShallow } from "zustand/react/shallow";
+import {
+  BrowserStatus,
+  browserStoreSelector,
+  PageMode,
+  setBrowserSelector,
+  useBrowserStore,
+} from "@/store/browser";
+import { themeSelector, useSessionStore } from "@/store/session";
 
 interface Props {
   page: boolean;
@@ -46,87 +50,84 @@ export function ToolBar({ page }: Props) {
     setUserAgent,
     webviewUrlContextMenu,
   } = useElectron();
-  const theme = useContext(ThemeContext);
-  const store = useSelector(selectBrowserStore);
-  const appStore = useSelector(selectAppStore);
+  const { theme } = useSessionStore(useShallow(themeSelector));
+  const store = useBrowserStore(useShallow(browserStoreSelector));
+  const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
+  const appStore = useAppStore(useShallow(appStoreSelector));
+  const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const { data: favoriteList = [], refresh } = useRequest(getFavorites);
 
   const disabled =
     store.status !== BrowserStatus.Loaded || store.mode !== PageMode.Browser;
 
   // Set default UA
-  const onSetDefaultUA = () => {
+  const onSetDefaultUA = useMemoizedFn(() => {
     const nextMode = !appStore.isMobile;
     setUserAgent(nextMode);
-    dispatch(
-      setAppStore({
-        isMobile: nextMode,
-      }),
-    );
-  };
+    setAppStore({
+      isMobile: nextMode,
+    });
+  });
 
   const curIsFavorite = useMemo(() => {
     return favoriteList.find((item) => item.url === store.url);
   }, [favoriteList, store.url]);
 
-  const onInputKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!store.url) {
-      return;
-    }
-    if (e.key !== "Enter") {
-      return;
-    }
+  const onInputKeyDown = useMemoizedFn(
+    async (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (!store.url) {
+        return;
+      }
+      if (e.key !== "Enter") {
+        return;
+      }
 
-    await goto();
-  };
+      await goto();
+    },
+  );
 
-  const onClickGoBack = async () => {
+  const onClickGoBack = useMemoizedFn(async () => {
     const back = await webviewGoBack();
     if (!back) {
       // TODO: Reset title
       // document.title = originTitle.current;
-      dispatch(setBrowserStore({ url: "", title: "", mode: PageMode.Default }));
+      setBrowserStore({ url: "", title: "", mode: PageMode.Default });
     }
-  };
+  });
 
-  const onClickGoHome = async () => {
+  const onClickGoHome = useMemoizedFn(async () => {
     await webviewGoHome();
-    dispatch(
-      setBrowserStore({
-        url: "",
-        title: "",
-        mode: PageMode.Default,
-      }),
-    );
-  };
+    setBrowserStore({
+      url: "",
+      title: "",
+      mode: PageMode.Default,
+    });
+  });
 
-  const loadUrl = (url: string) => {
+  const loadUrl = useMemoizedFn((url: string) => {
     tdApp.onEvent(OPEN_URL);
-    dispatch(
-      setBrowserStore({
-        url,
-        mode: PageMode.Browser,
-        status: BrowserStatus.Loading,
-      }),
-    );
+    setBrowserStore({
+      url,
+      mode: PageMode.Browser,
+      status: BrowserStatus.Loading,
+    });
     webviewLoadURL(url);
-  };
+  });
 
-  const onInputContextMenu = () => {
+  const onInputContextMenu = useMemoizedFn(() => {
     webviewUrlContextMenu();
-  };
+  });
 
-  const onClickEnter = async () => {
+  const onClickEnter = useMemoizedFn(async () => {
     if (!store.url) {
       return;
     }
 
     await goto();
-  };
+  });
 
-  const onClickAddFavorite = async () => {
+  const onClickAddFavorite = useMemoizedFn(async () => {
     if (curIsFavorite) {
       await removeFavorite(curIsFavorite.id);
     } else {
@@ -138,17 +139,17 @@ export function ToolBar({ page }: Props) {
       });
     }
     refresh();
-  };
+  });
 
   // Merge to home page
-  const onCombineToHome = () => {
+  const onCombineToHome = useMemoizedFn(() => {
     combineToHomePage(store);
-  };
+  });
 
-  const goto = () => {
+  const goto = useMemoizedFn(() => {
     const link = generateUrl(store.url);
     loadUrl(link);
-  };
+  });
 
   const iconColor = theme === "dark" ? "white" : "black";
 
@@ -219,7 +220,7 @@ export function ToolBar({ page }: Props) {
         value={store.url}
         onChange={(e) => {
           const url = e.target.value;
-          dispatch(setBrowserStore({ url }));
+          setBrowserStore({ url });
         }}
         onFocus={(e) => {
           e.target.select();

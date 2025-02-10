@@ -3,10 +3,10 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { DownloadItem } from "./DownloadItem";
 import { ListHeader } from "./ListHeader";
 import { produce } from "immer";
-import { Empty, message, Pagination } from "antd";
+import { App, Empty, Pagination } from "antd";
 import { DownloadFilter } from "@/types";
 import { ListPagination } from "./types";
-import useElectron from "@/hooks/electron";
+import useElectron from "@/hooks/useElectron";
 import { useTranslation } from "react-i18next";
 import Loading from "@/components/Loading";
 import { useMemoizedFn } from "ahooks";
@@ -42,7 +42,7 @@ export function DownloadList({
     editDownloadItem,
     editDownloadNow,
   } = useElectron();
-  const [messageApi, contextHolder] = message.useMessage();
+  const { message } = App.useApp();
   const { t } = useTranslation();
   const [progress, setProgress] = useState<Record<number, DownloadProgress>>(
     {},
@@ -121,7 +121,7 @@ export function DownloadList({
     );
   });
 
-  const handleSelectAll = () => {
+  const handleSelectAll = useMemoizedFn(() => {
     setSelected(
       produce((draft) => {
         if (draft.length) {
@@ -131,7 +131,7 @@ export function DownloadList({
         }
       }),
     );
-  };
+  });
 
   const listChecked = useMemo(() => {
     if (selected.length === 0) {
@@ -141,7 +141,7 @@ export function DownloadList({
       return true;
     }
     return "indeterminate";
-  }, [selected]);
+  }, [selected, data.length]);
 
   useEffect(() => {
     setSelected([]);
@@ -149,7 +149,7 @@ export function DownloadList({
 
   const onStartDownload = useMemoizedFn(async (id: number) => {
     await startDownload(id);
-    messageApi.success(t("addTaskSuccess"));
+    message.success(t("addTaskSuccess"));
     refresh();
   });
 
@@ -185,27 +185,27 @@ export function DownloadList({
     onDownloadListContextMenu(item);
   });
 
-  const onDeleteItems = async (ids: number[]) => {
+  const onDeleteItems = useMemoizedFn(async (ids: number[]) => {
     for (const id of ids) {
       await deleteDownloadItem(Number(id));
     }
     setSelected([]);
     refresh();
-  };
+  });
 
-  const onDownloadItems = async (ids: number[]) => {
+  const onDownloadItems = useMemoizedFn(async (ids: number[]) => {
     for (const id of ids) {
       await startDownload(Number(id));
     }
 
-    messageApi.success(t("addTaskSuccess"));
+    message.success(t("addTaskSuccess"));
     refresh();
     setSelected([]);
-  };
+  });
 
-  const onCancelItems = async () => {
+  const onCancelItems = useMemoizedFn(async () => {
     setSelected([]);
-  };
+  });
 
   const handleShowDownloadForm = useMemoizedFn((item: DownloadItem) => {
     tdApp.onEvent(EDIT_DOWNLOAD);
@@ -232,7 +232,6 @@ export function DownloadList({
 
   return (
     <div className="flex h-full flex-col gap-3 rounded-lg">
-      {contextHolder}
       <ListHeader
         selected={selected}
         checked={listChecked}
