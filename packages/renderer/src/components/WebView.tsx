@@ -1,5 +1,5 @@
 import React, { FC, useRef, useEffect } from "react";
-import useElectron from "../hooks/electron";
+import useElectron from "@/hooks/useElectron";
 import { cn } from "@/utils";
 
 interface DivRect {
