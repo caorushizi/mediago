@@ -23,11 +23,11 @@
     "globals": "^15.3.0",
     "lint-staged": "^15.2.5",
     "stylelint": "^16.6.0",
-    "stylelint-config-standard": "^36.0.0",
+    "stylelint-config-standard": "^37.0.0",
     "stylelint-config-standard-scss": "^13.1.0",
     "typescript": "^5.4.5",
     "typescript-eslint": "^7.10.0",
-    "vite": "^5.2.11"
+    "vite": "^6.1.0"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": "eslint",

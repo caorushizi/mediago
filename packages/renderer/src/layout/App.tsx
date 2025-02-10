@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import useElectron from "../hooks/electron";
+import useElectron from "@/hooks/useElectron";
 import { useAsyncEffect } from "ahooks";
 import { AppHeader } from "./AppHeader";
 import { AppSideBar } from "./AppSideBar";
