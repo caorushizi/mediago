@@ -59,6 +59,7 @@ export function DownloadItem({
 
     return (
       <TerminalDrawer
+        key={"terminal"}
         trigger={
           <IconButton
             key="terminal"
