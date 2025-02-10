@@ -3,18 +3,22 @@ import React, { FC, Suspense, lazy, useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "dayjs/locale/zh-cn";
 import zhCN from "antd/locale/zh_CN";
-import useElectron from "./hooks/electron";
+import useElectron from "@/hooks/useElectron";
 import Loading from "./components/Loading";
 import { DownloadFilter } from "./types";
 import { isWeb, tdApp } from "./utils";
-import { useAsyncEffect } from "ahooks";
-import { ThemeContext } from "./context/ThemeContext";
-import { SessionStore, useSessionStore } from "./store/session";
+import { useAsyncEffect, useMemoizedFn } from "ahooks";
+import {
+  themeSelector,
+  updateSelector,
+  useSessionStore,
+} from "./store/session";
 import { useShallow } from "zustand/react/shallow";
 import { DOWNLOAD_FAIL, DOWNLOAD_SUCCESS, PAGE_LOAD } from "./const";
 import { useAppStore, setAppStoreSelector } from "./store/app";
 import { PageMode, setBrowserSelector, useBrowserStore } from "./store/browser";
 import { downloadStoreSelector, useDownloadStore } from "./store/download";
+import { App as AntdApp } from "antd";
 
 const AppLayout = lazy(() => import("./layout/App"));
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -27,43 +31,36 @@ function getAlgorithm(appTheme: "dark" | "light") {
   return appTheme === "dark" ? theme.darkAlgorithm : theme.defaultAlgorithm;
 }
 
-const sessionSelector = (s: SessionStore) => ({
-  setUpdateAvailable: s.setUpdateAvailable,
-  setUploadChecking: s.setUploadChecking,
-});
-
 const App: FC = () => {
-  const [appTheme, setAppTheme] = React.useState<"dark" | "light">("light");
   const { addIpcListener, removeIpcListener, getMachineId } = useElectron();
   const { setUpdateAvailable, setUploadChecking } = useSessionStore(
-    useShallow(sessionSelector),
+    useShallow(updateSelector),
   );
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
   const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
   const { increase } = useDownloadStore(useShallow(downloadStoreSelector));
+  const { theme, setTheme } = useSessionStore(useShallow(themeSelector));
 
-  const themeChange = (event: MediaQueryListEvent) => {
+  const themeChange = useMemoizedFn((event: MediaQueryListEvent) => {
     if (event.matches) {
-      setAppTheme("dark");
+      setTheme("dark");
     } else {
-      setAppTheme("light");
+      setTheme("light");
     }
-  };
+  });
 
   // 监听store变化
-  const onAppStoreChange = (event: any, store: AppStore) => {
+  const onAppStoreChange = useMemoizedFn((event: any, store: AppStore) => {
     setAppStore(store);
-  };
+  });
 
-  const onReceiveDownloadItem = () => {
+  const onReceiveDownloadItem = useMemoizedFn(() => {
     increase();
-  };
+  });
 
-  const onChangePrivacy = () => {
+  const onChangePrivacy = useMemoizedFn(() => {
     setBrowserStore({ url: "", title: "", mode: PageMode.Default });
-  };
-
-  console.log("App.tsx: onAppStoreChange", onAppStoreChange);
+  });
 
   useEffect(() => {
     const updateAvailable = () => {
@@ -114,9 +111,9 @@ const App: FC = () => {
     isDarkTheme.addEventListener("change", themeChange);
 
     if (isDarkTheme.matches) {
-      setAppTheme("dark");
+      setTheme("dark");
     } else {
-      setAppTheme("light");
+      setTheme("light");
     }
 
     return () => {
@@ -125,12 +122,12 @@ const App: FC = () => {
   }, []);
 
   return (
-    <ThemeContext.Provider value={appTheme}>
-      <ConfigProvider
-        locale={zhCN}
-        componentSize={isWeb ? undefined : "small"}
-        theme={{ algorithm: getAlgorithm(appTheme) }}
-      >
+    <ConfigProvider
+      locale={zhCN}
+      componentSize={isWeb ? undefined : "small"}
+      theme={{ algorithm: getAlgorithm(theme) }}
+    >
+      <AntdApp className="size-full overflow-hidden">
         <BrowserRouter>
           <Routes>
             <Route
@@ -201,8 +198,8 @@ const App: FC = () => {
             />
           </Routes>
         </BrowserRouter>
-      </ConfigProvider>
-    </ThemeContext.Provider>
+      </AntdApp>
+    </ConfigProvider>
   );
 };
 
