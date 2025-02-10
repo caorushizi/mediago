@@ -1,7 +1,7 @@
-import { useAsyncEffect } from "ahooks";
+import { useAsyncEffect, useMemoizedFn } from "ahooks";
 import React, { useEffect, useRef } from "react";
-import PageContainer from "../../components/PageContainer";
-import useElectron from "../../hooks/electron";
+import PageContainer from "@/components/PageContainer";
+import useElectron from "@/hooks/useElectron";
 import { FavoriteList } from "./components/FavoriteList";
 import { BrowserView } from "./components/BrowserView";
 import { ToolBar } from "./components/ToolBar";
@@ -56,38 +56,40 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     };
   }, [store.status]);
 
-  const setPageInfo = ({ url, title }: UrlDetail) => {
+  const setPageInfo = useMemoizedFn(({ url, title }: UrlDetail) => {
     document.title = title;
     setBrowserStore({ url, title });
-  };
+  });
 
-  const onDomReady = (e: unknown, info: UrlDetail) => {
+  const onDomReady = useMemoizedFn((e: unknown, info: UrlDetail) => {
     setPageInfo(info);
-  };
+  });
 
-  const onFailLoad = (e: unknown, data: { code: number; desc: string }) => {
-    setBrowserStore({
-      status: BrowserStatus.Failed,
-      errCode: data.code,
-      errMsg: data.desc,
-    });
-  };
+  const onFailLoad = useMemoizedFn(
+    (e: unknown, data: { code: number; desc: string }) => {
+      setBrowserStore({
+        status: BrowserStatus.Failed,
+        errCode: data.code,
+        errMsg: data.desc,
+      });
+    },
+  );
 
-  const onDidNavigate = (e: unknown, info: UrlDetail) => {
+  const onDidNavigate = useMemoizedFn((e: unknown, info: UrlDetail) => {
     setPageInfo(info);
     setBrowserStore({ status: BrowserStatus.Loaded });
-  };
+  });
 
-  const onDidNavigateInPage = (e: unknown, info: UrlDetail) => {
+  const onDidNavigateInPage = useMemoizedFn((e: unknown, info: UrlDetail) => {
     setPageInfo(info);
-  };
+  });
 
   useEffect(() => {
     document.title = store.title || document.title;
     return () => {
       document.title = originTitle.current;
     };
-  }, []);
+  }, [store.title]);
 
   return (
     <PageContainer
