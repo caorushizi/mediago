@@ -39,8 +39,13 @@ export interface DownloadOptions {
   id: number;
 }
 
+interface Args {
+  argsName: string[] | null;
+  postfix?: string;
+}
+
 interface Schema {
-  args: Record<string, { argsName: string[] | null }>;
+  args: Record<string, Args>;
   consoleReg: {
     percent: string;
     speed: string;
@@ -129,6 +134,7 @@ const processList: Schema[] = [
       },
       name: {
         argsName: ["-N"],
+        postfix: ".mp4",
       },
       url: {
         argsName: null,
@@ -136,9 +142,9 @@ const processList: Schema[] = [
     },
     consoleReg: {
       percent: "([\\d.]+)%",
-      speed: "([\\d.]+[GMK]Bps)",
-      error: "ERROR",
-      start: "保存文件名:",
+      speed: "([\\d.]+[GMK]B/s)",
+      error: "fail",
+      start: "downloading...",
       isLive: "检测到直播流",
     },
   },
@@ -338,7 +344,7 @@ export default class DownloadService extends EventEmitter {
 
     const spawnParams = [];
     for (const key of Object.keys(schema.args)) {
-      const { argsName } = schema.args[key];
+      const { argsName, postfix } = schema.args[key];
       if (key === "url") {
         argsName && spawnParams.push(...argsName);
         spawnParams.push(url);
@@ -351,7 +357,11 @@ export default class DownloadService extends EventEmitter {
         argsName && argsName.forEach((i) => spawnParams.push(i, finalLocal));
       }
       if (key === "name") {
-        argsName && argsName.forEach((i) => spawnParams.push(i, name));
+        let finalName = name;
+        if (postfix) {
+          finalName = `${name}${postfix}`;
+        }
+        argsName && argsName.forEach((i) => spawnParams.push(i, finalName));
       }
 
       if (key === "headers" && headers) {
