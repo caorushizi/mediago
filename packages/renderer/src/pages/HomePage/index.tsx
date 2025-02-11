@@ -2,7 +2,7 @@ import React, { FC, useEffect, useRef, useState } from "react";
 import PageContainer from "@/components/PageContainer";
 import { useMemoizedFn, useMount, usePagination } from "ahooks";
 import useElectron from "@/hooks/useElectron";
-import { DownloadFilter, DownloadType } from "@/types";
+import { DownloadFilter } from "@/types";
 import { useTranslation } from "react-i18next";
 import { DownloadList } from "./components";
 import DownloadForm, {
@@ -16,7 +16,13 @@ import { QrcodeOutlined } from "@ant-design/icons";
 import { HomeDownloadButton } from "@/components/HomeDownloadButton";
 import { downloadFormSelector, useConfigStore } from "@/store/config";
 import { useShallow } from "zustand/react/shallow";
-import { isDownloadType, isWeb, randomName, tdApp } from "@/utils";
+import {
+  isDownloadType,
+  isWeb,
+  randomName,
+  tdApp,
+  urlDownloadType,
+} from "@/utils";
 import { CLICK_DOWNLOAD } from "@/const";
 import { useLocation } from "react-router-dom";
 import { useAppStore, appStoreSelector } from "@/store/app";
@@ -71,8 +77,8 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       const typeParam = search.get("type");
       const silent = !!search.get("silent");
       const url = search.get("url") || "";
-      const name = search.get("name") || randomName();
-      const type = isDownloadType(typeParam) ? typeParam : DownloadType.m3u8;
+      const name = search.get("name") + randomName() || randomName();
+      const type = isDownloadType(typeParam) ? typeParam : urlDownloadType(url);
       const headers = decodeURIComponent(search.get("headers") || "");
 
       if (silent) {

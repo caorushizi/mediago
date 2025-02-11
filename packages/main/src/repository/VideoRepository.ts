@@ -20,10 +20,10 @@ export default class VideoRepository {
 
   async addVideo(video: Omit<DownloadItem, "id">) {
     // Let's see if there's a video with the same name
-    const exist = await this.findVideoByName(video.name);
-    if (exist) {
-      throw new Error(i18n.t("videoExistsPleaseChangeName"));
-    }
+    // const exist = await this.findVideoByName(video.name);
+    // if (exist) {
+    //   throw new Error(i18n.t("videoExistsPleaseChangeName"));
+    // }
     const item = new Video();
     item.name = video.name;
     item.url = video.url;
@@ -35,19 +35,19 @@ export default class VideoRepository {
 
   async addVideos(videos: Omit<DownloadItem, "id">[]) {
     // Check for videos with the same name
-    const names = videos.map((item) => item.name);
-    const existItems = await this.db.appDataSource
-      .getRepository(Video)
-      .findBy({ name: In(names) });
-    if (existItems.length) {
-      const existNames = existItems.map((item) => item.name);
-      throw new Error(
-        i18n.t("videoExistsPleaseChangeName") +
-          "[" +
-          existNames.join(", ") +
-          "]",
-      );
-    }
+    // const names = videos.map((item) => item.name);
+    // const existItems = await this.db.appDataSource
+    //   .getRepository(Video)
+    //   .findBy({ name: In(names) });
+    // if (existItems.length) {
+    //   const existNames = existItems.map((item) => item.name);
+    //   throw new Error(
+    //     i18n.t("videoExistsPleaseChangeName") +
+    //       "[" +
+    //       existNames.join(", ") +
+    //       "]",
+    //   );
+    // }
 
     const items = videos.map((video) => {
       const item = new Video();

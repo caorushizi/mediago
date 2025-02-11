@@ -13,6 +13,7 @@ import VideoRepository from "../repository/VideoRepository.ts";
 import {
   Platform,
   biliDownloaderBin,
+  gopeedBin,
   m3u8DownloaderBin,
 } from "../helper/index.ts";
 import * as pty from "node-pty";
@@ -38,8 +39,13 @@ export interface DownloadOptions {
   id: number;
 }
 
+interface Args {
+  argsName: string[] | null;
+  postfix?: string;
+}
+
 interface Schema {
-  args: Record<string, { argsName: string[] | null }>;
+  args: Record<string, Args>;
   consoleReg: {
     percent: string;
     speed: string;
@@ -115,6 +121,30 @@ const processList: Schema[] = [
       percent: "([\\d.]+)%",
       error: "ERROR",
       start: "开始下载",
+      isLive: "检测到直播流",
+    },
+  },
+  {
+    type: "direct",
+    platform: [Platform.Linux, Platform.MacOS, Platform.Windows],
+    bin: gopeedBin,
+    args: {
+      localDir: {
+        argsName: ["-D"],
+      },
+      name: {
+        argsName: ["-N"],
+        postfix: ".mp4",
+      },
+      url: {
+        argsName: null,
+      },
+    },
+    consoleReg: {
+      percent: "([\\d.]+)%",
+      speed: "([\\d.]+[GMK]B/s)",
+      error: "fail",
+      start: "downloading...",
       isLive: "检测到直播流",
     },
   },
@@ -314,7 +344,7 @@ export default class DownloadService extends EventEmitter {
 
     const spawnParams = [];
     for (const key of Object.keys(schema.args)) {
-      const { argsName } = schema.args[key];
+      const { argsName, postfix } = schema.args[key];
       if (key === "url") {
         argsName && spawnParams.push(...argsName);
         spawnParams.push(url);
@@ -327,7 +357,11 @@ export default class DownloadService extends EventEmitter {
         argsName && argsName.forEach((i) => spawnParams.push(i, finalLocal));
       }
       if (key === "name") {
-        argsName && argsName.forEach((i) => spawnParams.push(i, name));
+        let finalName = name;
+        if (postfix) {
+          finalName = `${name}${postfix}`;
+        }
+        argsName && argsName.forEach((i) => spawnParams.push(i, finalName));
       }
 
       if (key === "headers" && headers) {
