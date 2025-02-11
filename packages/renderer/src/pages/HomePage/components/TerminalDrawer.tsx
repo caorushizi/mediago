@@ -7,6 +7,7 @@ import {
   DrawerContent,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { useMemoizedFn } from "ahooks";
 import React from "react";
 
 interface Props {
@@ -18,10 +19,17 @@ interface Props {
 }
 
 export function TerminalDrawer({ trigger, title, id, log, asChild }: Props) {
+  const handleContextMenu = useMemoizedFn(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+    },
+  );
+
   return (
     <Drawer handleOnly>
       <DrawerTrigger asChild={asChild}>{trigger}</DrawerTrigger>
-      <DrawerContent className="px-3">
+      <DrawerContent className="px-3" onContextMenu={handleContextMenu}>
         <Terminal
           header={
             <div className="flex flex-shrink-0 flex-row items-center justify-between">

@@ -65,9 +65,9 @@ function AppMenuItem({
     <Link
       to={link}
       className={cn(
-        "flex h-10 flex-row items-center gap-3 rounded-lg bg-[#FAFCFF] px-3 text-sm text-[#636D7E] hover:bg-[#E1F0FF] dark:bg-[#2C2E33] dark:text-[rgba(255,255,255,0.85)] dark:hover:bg-[#3B3C41]",
+        "flex h-10 flex-row items-center gap-3 rounded-lg bg-[#FAFCFF] px-3 text-sm text-[#636D7E] hover:bg-[#E1F0FF] hover:text-[#636D7E] dark:bg-[#2C2E33] dark:text-[rgba(255,255,255,0.85)] dark:hover:bg-[#3B3C41] dark:hover:text-[rgba(255,255,255,0.85)]",
         {
-          "bg-gradient-to-r from-[#127AF3] to-[#06D5FB] text-white dark:text-white":
+          "bg-gradient-to-r from-[#127AF3] to-[#06D5FB] text-white hover:text-white dark:text-white":
             isActive,
         },
         className,

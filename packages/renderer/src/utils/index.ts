@@ -84,6 +84,16 @@ export function isDownloadType(value: string): value is DownloadType {
   return Object.values(DownloadType).includes(value as DownloadType);
 }
 
+export const urlDownloadType = (url: string): DownloadType => {
+  if (url.includes("bilibili")) {
+    return DownloadType.bilibili;
+  }
+  if (url.includes("m3u8")) {
+    return DownloadType.m3u8;
+  }
+  return DownloadType.direct;
+};
+
 export const convertPlainObject = (obj: unknown) => {
   return JSON.parse(JSON.stringify(obj));
 };

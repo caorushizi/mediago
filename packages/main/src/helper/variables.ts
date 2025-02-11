@@ -43,6 +43,7 @@ export const db = resolve(workspace, "app.db");
 export const ffmpegPath = resolveBin("ffmpeg");
 export const biliDownloaderBin = resolveBin("BBDown");
 export const m3u8DownloaderBin = resolveBin("N_m3u8DL-RE");
+export const gopeedBin = resolveBin("gopeed");
 
 // plugin path
 export const pluginPath = resolveStatic("plugin/index.js");
