@@ -20,6 +20,7 @@ import * as pty from "node-pty";
 import stripAnsi from "strip-ansi";
 import i18n from "../i18n/index.ts";
 import path from "path";
+import { getFileExtension } from "../helper/utils.ts";
 
 interface DownloadContext {
   // Whether it is live
@@ -134,7 +135,7 @@ const processList: Schema[] = [
       },
       name: {
         argsName: ["-N"],
-        postfix: ".mp4",
+        postfix: "@@AUTO@@",
       },
       url: {
         argsName: null,
@@ -166,7 +167,7 @@ export default class DownloadService extends EventEmitter {
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
     @inject(TYPES.ElectronStore)
-    private readonly storeService: ElectronStore,
+    private readonly storeService: ElectronStore
   ) {
     super();
 
@@ -193,7 +194,7 @@ export default class DownloadService extends EventEmitter {
     try {
       await this.videoRepository.changeVideoStatus(
         task.id,
-        DownloadStatus.Downloading,
+        DownloadStatus.Downloading
       );
       this.emit("download-start", task.id);
 
@@ -230,7 +231,7 @@ export default class DownloadService extends EventEmitter {
 
       await this.videoRepository.changeVideoStatus(
         task.id,
-        DownloadStatus.Success,
+        DownloadStatus.Success
       );
       this.emit("download-success", task.id);
     } catch (err: any) {
@@ -239,7 +240,7 @@ export default class DownloadService extends EventEmitter {
         // Download pause
         await this.videoRepository.changeVideoStatus(
           task.id,
-          DownloadStatus.Stopped,
+          DownloadStatus.Stopped
         );
         this.emit("download-stop", task.id);
       } else {
@@ -247,7 +248,7 @@ export default class DownloadService extends EventEmitter {
         // Download failure
         await this.videoRepository.changeVideoStatus(
           task.id,
-          DownloadStatus.Failed,
+          DownloadStatus.Failed
         );
         this.emit("download-failed", task.id, err);
       }
@@ -284,7 +285,7 @@ export default class DownloadService extends EventEmitter {
   private _execa(
     binPath: string,
     args: string[],
-    params: DownloadOptions,
+    params: DownloadOptions
   ): Promise<void> {
     const { abortSignal, onMessage, id } = params;
 
@@ -359,7 +360,12 @@ export default class DownloadService extends EventEmitter {
       if (key === "name") {
         let finalName = name;
         if (postfix) {
-          finalName = `${name}${postfix}`;
+          if (postfix === "@@AUTO@@") {
+            const extension = getFileExtension(url);
+            finalName = `${name}.${extension}`;
+          } else {
+            finalName = `${name}${postfix}`;
+          }
         }
         argsName && argsName.forEach((i) => spawnParams.push(i, finalName));
       }

@@ -76,7 +76,8 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     if (search.has("n")) {
       const typeParam = search.get("type");
       const silent = !!search.get("silent");
-      const url = search.get("url") || "";
+      const urlDecode = decodeURIComponent(search.get("encodedURL") || "");
+      const url = urlDecode || search.get("url") || "";
       const name = search.get("name") + randomName() || randomName();
       const type = isDownloadType(typeParam) ? typeParam : urlDownloadType(url);
       const headers = decodeURIComponent(search.get("headers") || "");
