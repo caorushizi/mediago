@@ -45,9 +45,11 @@ const filterList: SourceFilter[] = [
     },
   },
   {
-    matches: [/\.(mp4|mp3)/],
+    matches: [
+      /\.(mp4|flv|mov|avi|mkv|wmv|webm|mp3|m4a|aac|wav|ogg|m4b|m4p|m4r|m4b|m4p|m4r)/,
+    ],
     type: DownloadType.direct,
-  }
+  },
 ];
 
 @injectable()
@@ -57,7 +59,7 @@ export class SniffingHelper extends EventEmitter {
 
   constructor(
     @inject(TYPES.ElectronLogger)
-    private readonly logger: ElectronLogger,
+    private readonly logger: ElectronLogger
   ) {
     super();
   }
