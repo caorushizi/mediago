@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   '@ghostery/adblocker@2.3.1':
-    hash: 7gama4b5ctanzmxhpbpuvfbgfm
+    hash: 3f4423a95fa219a82781c8db60edf6eeb7d0a318bc63423bbab28bc08371f1b0
     path: patches/@ghostery__adblocker@2.3.1.patch
 
 importers:
@@ -425,7 +425,7 @@ importers:
     dependencies:
       '@ghostery/adblocker':
         specifier: ^2.3.1
-        version: 2.3.1(patch_hash=7gama4b5ctanzmxhpbpuvfbgfm)
+        version: 2.3.1(patch_hash=3f4423a95fa219a82781c8db60edf6eeb7d0a318bc63423bbab28bc08371f1b0)
       '@ghostery/adblocker-content':
         specifier: ^2.3.1
         version: 2.3.1
@@ -8522,14 +8522,14 @@ snapshots:
 
   '@ghostery/adblocker-electron@2.3.1(electron@30.0.8)':
     dependencies:
-      '@ghostery/adblocker': 2.3.1(patch_hash=7gama4b5ctanzmxhpbpuvfbgfm)
+      '@ghostery/adblocker': 2.3.1(patch_hash=3f4423a95fa219a82781c8db60edf6eeb7d0a318bc63423bbab28bc08371f1b0)
       '@ghostery/adblocker-electron-preload': 2.3.1(electron@30.0.8)
       electron: 30.0.8
       tldts-experimental: 6.1.70
 
   '@ghostery/adblocker-extended-selectors@2.3.1': {}
 
-  '@ghostery/adblocker@2.3.1(patch_hash=7gama4b5ctanzmxhpbpuvfbgfm)':
+  '@ghostery/adblocker@2.3.1(patch_hash=3f4423a95fa219a82781c8db60edf6eeb7d0a318bc63423bbab28bc08371f1b0)':
     dependencies:
       '@ghostery/adblocker-content': 2.3.1
       '@ghostery/adblocker-extended-selectors': 2.3.1
