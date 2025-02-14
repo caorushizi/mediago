@@ -102,6 +102,8 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       }
     }
   }, [location.search]);
+
+  // mac ipc event get url params in macos schceme
   useEffect(() => {
     const handleUrlEvent = (url: string) => {
       const searchParams = new URLSearchParams(url.split("?")[1]);
@@ -119,12 +121,10 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       }
     };
 
-    // 注册监听器
     window.electron.onUrlParams(handleUrlEvent);
 
-    // 清理监听器（组件卸载时）
     return () => {
-      window.electron.onUrlParams(handleUrlEvent); // 确保移除监听器
+      window.electron.onUrlParams(handleUrlEvent);
     };
   }, []);
 
