@@ -102,6 +102,31 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       }
     }
   }, [location.search]);
+  useEffect(() => {
+    const handleUrlEvent = (url: string) => {
+      const searchParams = new URLSearchParams(url.split("?")[1]);
+      if (searchParams.get("n") === "true") {
+        const name = searchParams.get("name") || randomName();
+        const urlParam = searchParams.get("url") || "";
+        const item: DownloadFormType = {
+          batch: false,
+          type: urlDownloadType(urlParam),
+          url: urlParam,
+          name,
+          headers: "",
+        };
+        newFormRef.current?.openModal(item);
+      }
+    };
+
+    // 注册监听器
+    window.electron.onUrlParams(handleUrlEvent);
+
+    // 清理监听器（组件卸载时）
+    return () => {
+      window.electron.onUrlParams(handleUrlEvent); // 确保移除监听器
+    };
+  }, []);
 
   useMount(async () => {
     const ip = await getLocalIP();
