@@ -1,7 +1,15 @@
 import { inject, injectable } from "inversify";
 import { DownloadStatus } from "./interfaces.ts";
 import { TYPES } from "./types.ts";
-import { Menu, Tray, app, nativeImage, nativeTheme, Event } from "electron";
+import {
+  Menu,
+  Tray,
+  app,
+  nativeImage,
+  nativeTheme,
+  Event,
+  BrowserWindow,
+} from "electron";
 import TrayIcon from "./tray-icon.png";
 import TrayIconLight from "./tray-icon-light.png";
 import path from "path";
@@ -64,7 +72,9 @@ export default class ElectronApp {
     await this.serviceInit();
 
     app.on("activate", () => {
-      this.mainWindow.init();
+      if (BrowserWindow.getAllWindows().length === 0) {
+        this.mainWindow.init();
+      }
     });
 
     this.initAppTheme();
@@ -120,4 +130,12 @@ export default class ElectronApp {
     const url = commandLine.pop() || "";
     this.mainWindow.showWindow(url);
   };
+
+  handleOpenUrl(url: string): void {
+    this.mainWindow.handleUrl(url);
+  }
+
+  send(url: string): void {
+    this.mainWindow.send("url-params", url);
+  }
 }

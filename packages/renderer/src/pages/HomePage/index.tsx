@@ -103,6 +103,31 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     }
   }, [location.search]);
 
+  // mac ipc event get url params in macos schceme
+  useEffect(() => {
+    const handleUrlEvent = (url: string) => {
+      const searchParams = new URLSearchParams(url.split("?")[1]);
+      if (searchParams.get("n") === "true") {
+        const name = searchParams.get("name") || randomName();
+        const urlParam = searchParams.get("url") || "";
+        const item: DownloadFormType = {
+          batch: false,
+          type: urlDownloadType(urlParam),
+          url: urlParam,
+          name,
+          headers: "",
+        };
+        newFormRef.current?.openModal(item);
+      }
+    };
+
+    window.electron.onUrlParams(handleUrlEvent);
+
+    return () => {
+      window.electron.onUrlParams(handleUrlEvent);
+    };
+  }, []);
+
   useMount(async () => {
     const ip = await getLocalIP();
     setLocalIP(ip);
