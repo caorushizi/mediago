@@ -16,6 +16,7 @@ import { isWin } from "../helper/variables.ts";
 @injectable()
 export default class MainWindow extends Window {
   url = isDev ? "http://localhost:8555/" : "mediago://index.html/";
+  private initialUrl: string | null = null;
   constructor(
     @inject(TYPES.ElectronLogger)
     private readonly logger: ElectronLogger,
@@ -81,6 +82,32 @@ export default class MainWindow extends Window {
     // Handle current window resize
     this.window.on("resized", this.handleResize);
     this.window.on("close", this.closeMainWindow);
+    // if (process.defaultApp) {
+    //   // dev
+    //   if (process.argv.length >= 2) {
+    //     const urlArg = process.argv.find((arg) => arg.startsWith("mediago://"));
+    //     if (urlArg) {
+    //       this.initialUrl = urlArg;
+    //     }
+    //   }
+    // } else {
+    //   // prod
+    //   if (process.argv.length >= 2) {
+    //     const urlArg = process.argv[1];
+    //     if (urlArg.startsWith("mediago://")) {
+    //       this.initialUrl = urlArg;
+    //     }
+    //   }
+    // }
+    // this.window.webContents.on("did-finish-load", () => {
+    //   if (this.initialUrl) {
+    //     this.send("url-params", this.initialUrl);
+    //   }
+    // });
+
+    // if (this.initialUrl) {
+    //   this.window.webContents.send("url-params", this.initialUrl);
+    // }
   }
 
   handleResize = () => {
@@ -150,6 +177,13 @@ export default class MainWindow extends Window {
     if (!this.window) return;
 
     this.window.webContents.send(channel, ...args);
+    if (!this.window) {
+      this.init(); // If the window is closed, reinitialize the window
+    }
+
+    if (this.window) {
+      this.window.webContents.send(channel, ...args); // Send message to renderer process
+    }
   }
 
   showWindow(url?: string) {
@@ -170,6 +204,26 @@ export default class MainWindow extends Window {
       if (url) {
         this.window!.loadURL(url);
       }
+    }
+  }
+
+  // Handle URL in the form of mediago://
+  handleUrl(url: string) {
+    if (!this.window) {
+      this.init();
+    }
+
+    if (this.window) {
+      if (this.window.isMinimized()) {
+        this.window.restore();
+      }
+      this.window.focus();
+    }
+
+    this.send("url-params", url); // Send the URL to the renderer process
+
+    if (url) {
+      this.window!.loadURL(url);
     }
   }
 }

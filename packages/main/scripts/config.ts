@@ -128,6 +128,14 @@ export function getReleaseConfig(): Configuration {
           arch: [process.arch === "arm64" ? "arm64" : "x64"],
         },
       ],
+      extendInfo: {
+        CFBundleURLTypes: [
+          {
+            CFBundleURLName: "Mediago URL Scheme",
+            CFBundleURLSchemes: ["mediago"],
+          },
+        ],
+      },
     },
     linux: {
       category: "Utility",
