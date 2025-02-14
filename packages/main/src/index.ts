@@ -26,7 +26,7 @@ const start = async (): Promise<void> => {
   const mediago = container.get<ElectronApp>(TYPES.ElectronApp);
   // let initialUrl: string = "";
   // if (process.defaultApp) {
-  //   // 在开发环境中，检查命令行参数
+  //   // dev
   //   if (process.argv.length >= 2) {
   //     const urlArg = process.argv.find((arg) => arg.startsWith("mediago://"));
   //     if (urlArg) {
@@ -34,7 +34,7 @@ const start = async (): Promise<void> => {
   //     }
   //   }
   // } else {
-  //   // 在生产环境中，检查命令行参数
+  //   // prod
   //   if (process.argv.length >= 2) {
   //     const urlArg = process.argv[1];
   //     if (urlArg.startsWith("mediago://")) {

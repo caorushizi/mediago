@@ -16,7 +16,7 @@ import { isWin } from "../helper/variables.ts";
 @injectable()
 export default class MainWindow extends Window {
   url = isDev ? "http://localhost:8555/" : "mediago://index.html/";
-  private initialUrl: string | null = null; // 将 initialUrl 提升为成员变量
+  private initialUrl: string | null = null;
   constructor(
     @inject(TYPES.ElectronLogger)
     private readonly logger: ElectronLogger,
@@ -83,7 +83,7 @@ export default class MainWindow extends Window {
     this.window.on("resized", this.handleResize);
     this.window.on("close", this.closeMainWindow);
     // if (process.defaultApp) {
-    //   // 在开发环境中，检查命令行参数
+    //   // dev
     //   if (process.argv.length >= 2) {
     //     const urlArg = process.argv.find((arg) => arg.startsWith("mediago://"));
     //     if (urlArg) {
@@ -91,7 +91,7 @@ export default class MainWindow extends Window {
     //     }
     //   }
     // } else {
-    //   // 在生产环境中，检查命令行参数
+    //   // prod
     //   if (process.argv.length >= 2) {
     //     const urlArg = process.argv[1];
     //     if (urlArg.startsWith("mediago://")) {
@@ -178,11 +178,11 @@ export default class MainWindow extends Window {
 
     this.window.webContents.send(channel, ...args);
     if (!this.window) {
-      this.init(); // 如果窗口未初始化，先初始化窗口
+      this.init(); // If the window is closed, reinitialize the window
     }
 
     if (this.window) {
-      this.window.webContents.send(channel, ...args); // 确保窗口存在后再发送消息
+      this.window.webContents.send(channel, ...args); // Send message to renderer process
     }
   }
 
@@ -207,10 +207,10 @@ export default class MainWindow extends Window {
     }
   }
 
-  // 处理 URL 参数
+  // Handle URL in the form of mediago://
   handleUrl(url: string) {
     if (!this.window) {
-      this.init(); // 如果窗口未初始化，先初始化窗口
+      this.init();
     }
 
     if (this.window) {
@@ -220,10 +220,10 @@ export default class MainWindow extends Window {
       this.window.focus();
     }
 
-    this.send("url-params", url); // 发送 URL 参数
+    this.send("url-params", url); // Send the URL to the renderer process
 
     if (url) {
-      this.window!.loadURL(url); // 加载 URL
+      this.window!.loadURL(url);
     }
   }
 }
