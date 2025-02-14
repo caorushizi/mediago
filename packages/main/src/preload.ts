@@ -200,6 +200,11 @@ const electronApi = {
   getVideoFolders(): Promise<string[]> {
     return ipcRenderer.invoke("get-video-folders");
   },
+  onUrlParams(callback: (url: string) => void): void {
+    ipcRenderer.on("url-params", (event, url) => {
+      callback(url);
+    });
+  },
 };
 
 contextBridge.exposeInMainWorld(apiKey, electronApi);

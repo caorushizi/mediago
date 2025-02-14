@@ -59,5 +59,8 @@
     "patchedDependencies": {
       "@ghostery/adblocker@2.3.1": "patches/@ghostery__adblocker@2.3.1.patch"
     }
+  },
+  "dependencies": {
+    "react-dom": "18.3.1"
   }
 }
