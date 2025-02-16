@@ -4,6 +4,7 @@ import { BILIBILI_DOWNLOAD_BUTTON, showDownloadDialog } from "../helper";
 import $ from "jquery";
 import { DownloadType } from "../types";
 
+let videoIndex = 0;
 @customElement("bilibili-button")
 export class BilibiliButton extends LitElement {
   @property({ type: Number })
@@ -49,21 +50,38 @@ export class BilibiliButton extends LitElement {
 }
 
 function bilibili() {
-  const videoCards = document.querySelectorAll(".bili-video-card");
+  const videoCards = document.querySelectorAll(".bili-video-card__wrap");
+  // Clean up all the old buttons first
+  if (document.querySelectorAll("bilibili-button").length > 0) {
+    videoCards.forEach((card) => {
+      const oldButtons = card.querySelectorAll("bilibili-button");
+      oldButtons.forEach((button) => button.remove());
+    });
+  }
+
   videoCards.forEach((card, index) => {
+    if (card.classList.contains("__scale-wrap")) {
+      return;
+    }
+
     const imageDOM = card.querySelector(BILIBILI_DOWNLOAD_BUTTON);
     if (!imageDOM) return;
 
     const oldBtn = card.querySelectorAll("bilibili-button");
     if (oldBtn.length) return;
 
-    const isAd = $(card).find(".bili-video-card__info--ad");
-    if (isAd.length) return;
-
+    // AD skip, handle index
+    const isAd = card.querySelectorAll(".bili-video-card__info--ad");
+    if (isAd.length > 0) {
+      videoIndex++;
+      return;
+    }
     const downloadButton = document.createElement("bilibili-button");
-    downloadButton.index = index;
+    downloadButton.index = videoIndex;
     card.appendChild(downloadButton);
+    videoIndex++;
   });
+  videoIndex = 0;
 }
 
 if (location.hostname === "www.bilibili.com") {
@@ -71,4 +89,8 @@ if (location.hostname === "www.bilibili.com") {
   setInterval(() => {
     bilibili();
   }, 3000);
+  // When you resize, the element changes
+  window.addEventListener("resize", () => {
+    bilibili();
+  });
 }
