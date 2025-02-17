@@ -180,6 +180,9 @@ const apis: ElectronApi = {
     // Implement the logic for handling URL parameters here
     // For now, you can leave it as a placeholder
   },
+  getPageTitle: async () => {
+    return api.post("get-page-title");
+  },
 };
 
 export default apis;
