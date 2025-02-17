@@ -4,3 +4,4 @@ node_modules
 .parcel-cache
 .vitepress
 *.tsno.mjs
+.DS_Store
