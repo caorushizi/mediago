@@ -206,6 +206,9 @@ const electronApi = {
       callback(url);
     });
   },
+  getPageTitle(url: string): Promise<any> {
+    return ipcRenderer.invoke("get-page-title", url);
+  },
 };
 
 contextBridge.exposeInMainWorld(apiKey, electronApi);

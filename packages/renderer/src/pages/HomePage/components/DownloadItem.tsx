@@ -175,6 +175,7 @@ export function DownloadItem({
   });
 
   const renderTitle = useMemoizedFn((item: VideoStat): ReactNode => {
+    // console.log("====item", item);
     return (
       <div
         className={cn("truncate text-sm dark:text-[#B4B4B4]", {

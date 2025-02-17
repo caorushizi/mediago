@@ -252,7 +252,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
                   label={t("videoName")}
                   rules={[
                     {
-                      required: true,
+                      required: form.getFieldsValue().type !== "bilibili",
                       message: t("pleaseEnterCorrectFomeInfo"),
                     },
                   ]}
