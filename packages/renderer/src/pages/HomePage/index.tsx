@@ -133,46 +133,54 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     setLocalIP(ip);
   });
 
+  // 首先添加一个获取页面标题的辅助函数
+  const getPageTitle = async (url: string): Promise<string> => {
+    try {
+      const { data } = await window.electron.getPageTitle(url);
+      return data.data;
+    } catch (error) {
+      console.error("Failed to fetch page title:", error);
+      return "";
+    }
+  };
+
+  // 修改后的 confirmAddItems 函数
   const confirmAddItems = useMemoizedFn(
     async (values: DownloadFormType, now?: boolean) => {
       const {
         batch,
         batchList = "",
-        name,
+        name = "",
         headers,
         type,
         url,
         folder,
       } = values;
+
       if (batch) {
-        /**
-         * Here you need to parse the batchList
-         * The format is batchList
-         * url1 name1\n
-         * url2 name2\n
-         * url3
-         * ...
-         */
-        const items: Omit<DownloadItem, "id">[] = batchList
-          .split("\n")
-          .map((line: string) => {
-            const [url, name, folder] = line.trim().split(" ");
+        const items: Omit<DownloadItem, "id">[] = await Promise.all(
+          batchList.split("\n").map(async (line: string) => {
+            const [url, customName, folder] = line.trim().split(" ");
+            const pageTitle = await getPageTitle(url.trim());
             return {
               url: url.trim(),
-              name: name || randomName(),
+              name: customName?.trim() || pageTitle || randomName(),
               headers,
               type,
               folder,
             };
-          });
+          }),
+        );
+
         if (now) {
           await downloadItemsNow(items);
         } else {
           await addDownloadItems(items);
         }
       } else {
+        const pageTitle = await getPageTitle(url);
         const item: Omit<DownloadItem, "id"> = {
-          name,
+          name: name || pageTitle || randomName(),
           url,
           headers,
           type,

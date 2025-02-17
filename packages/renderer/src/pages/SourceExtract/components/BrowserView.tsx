@@ -82,8 +82,13 @@ export function BrowserView() {
 
   const confirmDownload = useMemoizedFn(async (now?: boolean) => {
     try {
-      const { name, url, headers, type, folder } =
-        downloadForm.current.getFieldsValue();
+      const {
+        name = "",
+        url,
+        headers,
+        type,
+        folder,
+      } = downloadForm.current.getFieldsValue();
       const item = {
         name: name || randomName(),
         url,
