@@ -59,7 +59,7 @@ function bilibili() {
     });
   }
 
-  videoCards.forEach((card, index) => {
+  videoCards.forEach((card) => {
     if (card.classList.contains("__scale-wrap")) {
       return;
     }
