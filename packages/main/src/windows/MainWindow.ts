@@ -25,7 +25,7 @@ export default class MainWindow extends Window {
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
     @inject(TYPES.ElectronStore)
-    private readonly store: ElectronStore,
+    private readonly store: ElectronStore
   ) {
     super({
       width: 1100,
@@ -177,13 +177,13 @@ export default class MainWindow extends Window {
     if (!this.window) return;
 
     this.window.webContents.send(channel, ...args);
-    if (!this.window) {
-      this.init(); // If the window is closed, reinitialize the window
-    }
+    // if (!this.window) {
+    //   this.init(); // If the window is closed, reinitialize the window
+    // }
 
-    if (this.window) {
-      this.window.webContents.send(channel, ...args); // Send message to renderer process
-    }
+    // if (this.window) {
+    //   this.window.webContents.send(channel, ...args); // Send message to renderer process
+    // }
   }
 
   showWindow(url?: string) {

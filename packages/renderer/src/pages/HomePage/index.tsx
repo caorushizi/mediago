@@ -41,6 +41,8 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     downloadItemsNow,
     downloadNow,
     getLocalIP,
+    addIpcListener,
+    removeIpcListener,
   } = useElectron();
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
@@ -105,7 +107,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
 
   // mac ipc event get url params in macos schceme
   useEffect(() => {
-    const handleUrlEvent = (url: string) => {
+    const handleUrlEvent = (event: unknown, url: string) => {
       const searchParams = new URLSearchParams(url.split("?")[1]);
       if (searchParams.get("n") === "true") {
         const name = searchParams.get("name") || randomName();
@@ -121,10 +123,9 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       }
     };
 
-    window.electron.onUrlParams(handleUrlEvent);
-
+    addIpcListener("url-params", handleUrlEvent);
     return () => {
-      window.electron.onUrlParams(handleUrlEvent);
+      removeIpcListener("url-params", handleUrlEvent);
     };
   }, []);
 
