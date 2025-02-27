@@ -84,6 +84,8 @@ const processList: Schema[] = [
           "--ui-language",
           "zh-CN",
           "--live-real-time-merge",
+          "--check-segments-count",
+          "false",
         ],
       },
     },
@@ -136,7 +138,7 @@ export default class DownloadService extends EventEmitter {
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
     @inject(TYPES.ConfigService)
-    private readonly storeService: ConfigService,
+    private readonly storeService: ConfigService
   ) {
     super();
 
@@ -160,7 +162,7 @@ export default class DownloadService extends EventEmitter {
     try {
       await this.videoRepository.changeVideoStatus(
         task.id,
-        DownloadStatus.Downloading,
+        DownloadStatus.Downloading
       );
       this.emit("download-start", task.id);
 
@@ -198,7 +200,7 @@ export default class DownloadService extends EventEmitter {
 
       await this.videoRepository.changeVideoStatus(
         task.id,
-        DownloadStatus.Success,
+        DownloadStatus.Success
       );
       this.emit("download-success", task.id);
     } catch (err: any) {
@@ -207,7 +209,7 @@ export default class DownloadService extends EventEmitter {
         // Download pause
         await this.videoRepository.changeVideoStatus(
           task.id,
-          DownloadStatus.Stopped,
+          DownloadStatus.Stopped
         );
         this.emit("download-stop", task.id);
       } else {
@@ -215,7 +217,7 @@ export default class DownloadService extends EventEmitter {
         // Download failure
         await this.videoRepository.changeVideoStatus(
           task.id,
-          DownloadStatus.Failed,
+          DownloadStatus.Failed
         );
         this.emit("download-failed", task.id, err);
       }
@@ -252,7 +254,7 @@ export default class DownloadService extends EventEmitter {
   private _execa(
     binPath: string,
     args: string[],
-    params: DownloadOptions,
+    params: DownloadOptions
   ): Promise<void> {
     const { abortSignal, onMessage, id } = params;
 
