@@ -160,7 +160,7 @@ export function DownloadList({
 
   const confirmAddItem = useMemoizedFn(
     async (values: DownloadFormType, now?: boolean) => {
-      const { id, name, url, headers, type, folder } = values;
+      const { id, name = "", url, headers, type, folder } = values;
       const item = {
         id,
         name: name || randomName(),
