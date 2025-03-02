@@ -41,6 +41,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     downloadItemsNow,
     downloadNow,
     getLocalIP,
+    getPageTitle,
     addIpcListener,
     removeIpcListener,
   } = useElectron();
@@ -139,41 +140,39 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       const {
         batch,
         batchList = "",
-        name,
+        name = "",
         headers,
         type,
         url,
         folder,
       } = values;
+
       if (batch) {
-        /**
-         * Here you need to parse the batchList
-         * The format is batchList
-         * url1 name1\n
-         * url2 name2\n
-         * url3
-         * ...
-         */
-        const items: Omit<DownloadItem, "id">[] = batchList
-          .split("\n")
-          .map((line: string) => {
-            const [url, name, folder] = line.trim().split(" ");
+        const items: Omit<DownloadItem, "id">[] = await Promise.all(
+          batchList.split("\n").map(async (line: string) => {
+            const [url, customName, folder] = line.trim().split(" ");
+            const { data } = await getPageTitle(url.trim());
+            const pageTitle = data;
             return {
               url: url.trim(),
-              name: name || randomName(),
+              name: customName?.trim() || pageTitle || randomName(),
               headers,
               type,
               folder,
             };
-          });
+          }),
+        );
+
         if (now) {
           await downloadItemsNow(items);
         } else {
           await addDownloadItems(items);
         }
       } else {
+        const { data } = await getPageTitle(url);
+        const pageTitle = data;
         const item: Omit<DownloadItem, "id"> = {
-          name,
+          name: name || pageTitle || randomName(),
           url,
           headers,
           type,

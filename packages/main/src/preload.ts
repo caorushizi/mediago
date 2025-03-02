@@ -201,11 +201,14 @@ const electronApi = {
     return ipcRenderer.invoke("get-video-folders");
   },
   // ipc with main process to get url params
-  // onUrlParams(callback: (url: string) => void): void {
-  //   ipcRenderer.on("url-params", (event, url) => {
-  //     callback(url);
-  //   });
-  // },
+  //   onUrlParams(callback: (url: string) => void): void {
+  //     ipcRenderer.on("url-params", (event, url) => {
+  //       callback(url);
+  //     });
+  //   },
+  getPageTitle(url: string): Promise<any> {
+    return ipcRenderer.invoke("get-page-title", url);
+  },
 };
 
 contextBridge.exposeInMainWorld(apiKey, electronApi);
