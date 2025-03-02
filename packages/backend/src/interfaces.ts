@@ -9,6 +9,7 @@ export interface DownloadItem {
   status?: DownloadStatus;
   isLive?: boolean;
   folder?: string;
+  client?: boolean;
 }
 
 export enum DownloadFilter {
