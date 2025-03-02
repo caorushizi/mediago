@@ -91,6 +91,8 @@ const processList: Schema[] = [
           "--ui-language",
           "zh-CN",
           "--live-real-time-merge",
+          "--check-segments-count",
+          "false",
         ],
       },
     },
