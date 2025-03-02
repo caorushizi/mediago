@@ -21,7 +21,7 @@ export default class SocketIO implements Vendor {
     @inject(TYPES.Logger)
     private readonly logger: Logger,
     @inject(TYPES.ConfigService)
-    private readonly store: ConfigService,
+    private readonly store: ConfigService
   ) {}
 
   async init() {}
@@ -84,5 +84,9 @@ export default class SocketIO implements Vendor {
   receiveMessage = async (id: number, message: string) => {
     // Write the log to the database
     await this.videoRepository.appendDownloadLog(id, message);
+  };
+
+  refreshList = async () => {
+    this.emit("refresh-list");
   };
 }

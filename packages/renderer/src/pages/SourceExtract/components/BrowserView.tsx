@@ -16,7 +16,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import { BrowserViewPanel } from "./BrowserViewPanel";
-
+import axios from "axios";
+import { appStoreSelector, useAppStore } from "@/store/app";
 export function BrowserView() {
   const {
     webviewLoadURL,
@@ -31,6 +32,7 @@ export function BrowserView() {
   const { addSource, setBrowserStore } = useBrowserStore(
     useShallow(setBrowserSelector),
   );
+  const { dockerUrl } = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
   const [placeHolder, setPlaceHolder] = useState<string>("");
   const { message } = App.useApp();
@@ -80,35 +82,41 @@ export function BrowserView() {
     });
   });
 
-  const confirmDownload = useMemoizedFn(async (now?: boolean) => {
-    try {
-      const {
-        name = "",
-        url,
-        headers,
-        type,
-        folder,
-      } = downloadForm.current.getFieldsValue();
-      const item = {
-        name: name || randomName(),
-        url,
-        headers,
-        type,
-        folder,
-      };
+  const confirmDownload = useMemoizedFn(
+    async (now?: boolean, isDocker?: boolean) => {
+      try {
+        const {
+          name = "",
+          url,
+          headers,
+          type,
+          folder,
+        } = downloadForm.current.getFieldsValue();
+        const item = {
+          name: name || randomName(),
+          url,
+          headers,
+          type,
+          folder,
+        };
 
-      if (now) {
-        await downloadNow(item);
-      } else {
-        await addDownloadItem(item);
+        if (now) {
+          if (isDocker) {
+            await axios.post(dockerUrl + "/api/add-download-item", item);
+          } else {
+            await downloadNow(item);
+          }
+        } else {
+          await addDownloadItem(item);
+        }
+
+        return true;
+      } catch (e) {
+        message.error((e as any).message);
+        return false;
       }
-
-      return true;
-    } catch (e) {
-      message.error((e as any).message);
-      return false;
-    }
-  });
+    },
+  );
 
   const loadUrl = useMemoizedFn((url: string) => {
     setBrowserStore({
@@ -190,6 +198,7 @@ export function BrowserView() {
         onAddToList={() => confirmDownload()}
         destroyOnClose
         onFormVisibleChange={handleFormVisibleChange}
+        onAddToDocker={() => confirmDownload(false, true)}
       />
     </div>
   );
