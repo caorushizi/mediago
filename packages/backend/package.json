@@ -65,7 +65,7 @@
     "fs-extra": "^11.2.0",
     "i18next": "^23.11.5",
     "inversify": "^6.0.2",
-    "koa": "^2.15.3",
+    "koa": "^2.15.4",
     "koa-bodyparser": "^4.4.1",
     "koa-send": "^5.0.1",
     "koa-static": "^5.0.0",
