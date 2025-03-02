@@ -41,6 +41,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     downloadItemsNow,
     downloadNow,
     getLocalIP,
+    getPageTitle,
   } = useElectron();
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
@@ -133,18 +134,6 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     setLocalIP(ip);
   });
 
-  // 首先添加一个获取页面标题的辅助函数
-  const getPageTitle = async (url: string): Promise<string> => {
-    try {
-      const { data } = await window.electron.getPageTitle(url);
-      return data.data;
-    } catch (error) {
-      console.error("Failed to fetch page title:", error);
-      return "";
-    }
-  };
-
-  // 修改后的 confirmAddItems 函数
   const confirmAddItems = useMemoizedFn(
     async (values: DownloadFormType, now?: boolean) => {
       const {
@@ -161,7 +150,8 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
         const items: Omit<DownloadItem, "id">[] = await Promise.all(
           batchList.split("\n").map(async (line: string) => {
             const [url, customName, folder] = line.trim().split(" ");
-            const pageTitle = await getPageTitle(url.trim());
+            const { data } = await getPageTitle(url.trim());
+            const pageTitle = data;
             return {
               url: url.trim(),
               name: customName?.trim() || pageTitle || randomName(),
@@ -178,7 +168,8 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
           await addDownloadItems(items);
         }
       } else {
-        const pageTitle = await getPageTitle(url);
+        const { data } = await getPageTitle(url);
+        const pageTitle = data;
         const item: Omit<DownloadItem, "id"> = {
           name: name || pageTitle || randomName(),
           url,
