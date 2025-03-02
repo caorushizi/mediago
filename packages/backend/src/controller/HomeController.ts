@@ -18,7 +18,7 @@ export default class HomeController implements Controller {
     @inject(TYPES.ConfigService)
     private readonly config: ConfigService,
     @inject(TYPES.SocketIO)
-    private readonly socket: SocketIO,
+    private readonly socket: SocketIO
   ) {}
 
   @get("/")
@@ -47,5 +47,10 @@ export default class HomeController implements Controller {
 
     this.socket.emit("socket-test", message);
     return message;
+  }
+
+  @post("get-page-title")
+  async getPageTitle() {
+    return "";
   }
 }

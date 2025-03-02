@@ -34,6 +34,8 @@ export default class StoreService extends Store<AppStore> implements Vendor {
         allowBeta: false,
         closeMainWindow: false,
         audioMuted: true,
+        enableDocker: false,
+        dockerUrl: "",
       },
     });
   }

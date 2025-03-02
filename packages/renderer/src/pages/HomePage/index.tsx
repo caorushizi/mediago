@@ -26,6 +26,7 @@ import {
 import { CLICK_DOWNLOAD } from "@/const";
 import { useLocation } from "react-router-dom";
 import { useAppStore, appStoreSelector } from "@/store/app";
+import axios from "axios";
 
 interface Props {
   filter?: DownloadFilter;
@@ -71,6 +72,13 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       refreshDeps: [filter],
     },
   );
+
+  useEffect(() => {
+    addIpcListener("refresh-list", refresh);
+    return () => {
+      removeIpcListener("refresh-list", refresh);
+    };
+  }, []);
 
   useEffect(() => {
     const search = new URLSearchParams(location.search);
@@ -136,7 +144,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   });
 
   const confirmAddItems = useMemoizedFn(
-    async (values: DownloadFormType, now?: boolean) => {
+    async (values: DownloadFormType, now?: boolean, isDocker?: boolean) => {
       const {
         batch,
         batchList = "",
@@ -163,7 +171,10 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
           }),
         );
 
-        if (now) {
+        if (isDocker) {
+          const { dockerUrl } = appStore;
+          await axios.post(dockerUrl + "/api/add-download-items", items);
+        } else if (now) {
           await downloadItemsNow(items);
         } else {
           await addDownloadItems(items);
@@ -178,14 +189,19 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
           type,
           folder,
         };
-        if (now) {
+        if (isDocker) {
+          const { dockerUrl } = appStore;
+          await axios.post(dockerUrl + "/api/add-download-item", item);
+        } else if (now) {
           await downloadNow(item);
         } else {
           await addDownloadItem(item);
         }
       }
 
-      refresh();
+      if (!isDocker) {
+        refresh();
+      }
       return true;
     },
   );
@@ -256,6 +272,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
         destroyOnClose
         onAddToList={(values) => confirmAddItems(values)}
         onDownloadNow={(values) => confirmAddItems(values, true)}
+        onAddToDocker={(values) => confirmAddItems(values, false, true)}
       />
     </PageContainer>
   );

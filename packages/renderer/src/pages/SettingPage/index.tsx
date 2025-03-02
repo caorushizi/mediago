@@ -412,6 +412,14 @@ const SettingPage: React.FC = () => {
             </Space>
           </Form.Item>
         </GroupWrapper>
+        <GroupWrapper title={t("dockerSetting")}>
+          <Form.Item hidden={isWeb} name="dockerUrl" label={t("dockerUrl")}>
+            <Input placeholder={t("pleaseEnterDockerUrl")} />
+          </Form.Item>
+          <Form.Item label={t("enableDocker")} name="enableDocker">
+            <Switch />
+          </Form.Item>
+        </GroupWrapper>
       </Form>
 
       <Modal
