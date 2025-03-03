@@ -18,6 +18,8 @@ import { DownloadType } from "@/types";
 import { tdApp } from "@/utils";
 import { ADD_TO_LIST, DOWNLOAD_NOW } from "@/const";
 import useElectron from "@/hooks/useElectron";
+import { appStoreSelector, useAppStore } from "@/store/app";
+import { DockerOutlined } from "@ant-design/icons";
 
 export interface DownloadFormType {
   batch?: boolean;
@@ -36,6 +38,7 @@ export interface DownloadFormProps {
   destroyOnClose?: boolean;
   onAddToList: (values: DownloadFormType) => Promise<boolean | void>;
   onDownloadNow: (values: DownloadFormType) => Promise<boolean | void>;
+  onAddToDocker?: (values: DownloadFormType) => Promise<boolean | void>;
   onFormVisibleChange?: (open: boolean) => void;
   id: string;
 }
@@ -63,12 +66,14 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
       destroyOnClose,
       onAddToList,
       onDownloadNow,
+      onAddToDocker,
       usePrevData,
       onFormVisibleChange,
       id,
     },
     ref,
   ) {
+    const { enableDocker } = useAppStore(useShallow(appStoreSelector));
     const [modalOpen, setModalOpen] = useState(false);
     const [form] = Form.useForm<DownloadFormType>();
     const { t } = useTranslation();
@@ -145,6 +150,22 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
       }
     });
 
+    const handleAddToDocker = useMemoizedFn(async () => {
+      try {
+        await form.validateFields();
+      } catch (err) {
+        return;
+      }
+
+      try {
+        const values = form.getFieldsValue();
+        await onAddToDocker?.(values);
+        message.success(t("addToDockerSuccess"));
+      } catch (e: any) {
+        console.error(e);
+      }
+    });
+
     const handleDownloadNow = useMemoizedFn(async () => {
       try {
         await form.validateFields();
@@ -186,6 +207,15 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
           <Button key="cancel" onClick={() => setModalOpen(false)}>
             {t("cancel")}
           </Button>,
+          enableDocker && (
+            <Button
+              key="docker"
+              onClick={handleAddToDocker}
+              icon={<DockerOutlined />}
+            >
+              {t("addToDocker")}
+            </Button>
+          ),
           <Button key="submit" onClick={handleSubmit}>
             {isEdit && !usePrevData
               ? t("confirmChange")

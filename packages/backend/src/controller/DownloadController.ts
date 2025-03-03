@@ -11,6 +11,7 @@ import { Context } from "koa";
 import DownloaderService from "../services/DownloaderService.ts";
 import DownloadService from "../services/DownloadService.ts";
 import Logger from "../vendor/Logger.ts";
+import SocketIO from "../vendor/SocketIO.ts";
 
 @injectable()
 export default class DownloadController implements Controller {
@@ -23,6 +24,8 @@ export default class DownloadController implements Controller {
     private readonly downloadService: DownloadService,
     @inject(TYPES.Logger)
     private readonly logger: Logger,
+    @inject(TYPES.SocketIO)
+    private readonly socket: SocketIO
   ) {}
 
   @get("/")
@@ -34,13 +37,20 @@ export default class DownloadController implements Controller {
   async addDownloadItem(ctx: Context) {
     const video = ctx.request.body as DownloadItem;
     const item = await this.videoRepository.addVideo(video);
+
+    this.socket.refreshList();
+
     return item;
   }
 
   @post("add-download-items")
   async addDownloadItems(ctx: Context) {
     const videos = ctx.request.body as DownloadItem[];
-    return this.downloaderService.addDownloadItems(videos);
+    const items = await this.downloaderService.addDownloadItems(videos);
+
+    this.socket.refreshList();
+
+    return items;
   }
 
   @post("get-download-items")

@@ -59,7 +59,7 @@ pnpm release
 docker buildx build -t caorushizi/mediago:latest .
 
 # docker 启动
-docker run -d --name mediago -p 8899:8899 -v /root/mediago:/root/mediago registry.cn-beijing.aliyuncs.com/caorushizi/mediago
+docker run -d --name mediago -p 8899:8899 -v mediago-data:/root/mediago registry.cn-beijing.aliyuncs.com/caorushizi/mediago
 
 ```
 
