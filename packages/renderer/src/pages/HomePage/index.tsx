@@ -159,8 +159,11 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
         const items: Omit<DownloadItem, "id">[] = await Promise.all(
           batchList.split("\n").map(async (line: string) => {
             const [url, customName, folder] = line.trim().split(" ");
-            const { data } = await getPageTitle(url.trim());
-            const pageTitle = data;
+            let pageTitle = "";
+            if (!name) {
+              const { data } = await getPageTitle(url.trim());
+              pageTitle = data;
+            }
             return {
               url: url.trim(),
               name: customName?.trim() || pageTitle || randomName(),
@@ -180,8 +183,11 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
           await addDownloadItems(items);
         }
       } else {
-        const { data } = await getPageTitle(url);
-        const pageTitle = data;
+        let pageTitle = "";
+        if (!name) {
+          const { data } = await getPageTitle(url);
+          pageTitle = data;
+        }
         const item: Omit<DownloadItem, "id"> = {
           name: name || pageTitle || randomName(),
           url,
