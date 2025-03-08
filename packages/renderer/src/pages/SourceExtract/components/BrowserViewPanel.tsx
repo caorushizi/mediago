@@ -10,11 +10,17 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import { Button as AntdButton, App } from "antd";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  DockerOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
 import { useMemoizedFn } from "ahooks";
+import { appStoreSelector, useAppStore } from "@/store/app";
 
 export function BrowserViewPanel() {
   const store = useBrowserStore(useShallow(browserStoreSelector));
+  const { enableDocker } = useAppStore(useShallow(appStoreSelector));
   const { deleteSource, clearSources } = useBrowserStore(
     useShallow(setBrowserSelector),
   );
@@ -83,6 +89,15 @@ export function BrowserViewPanel() {
                   title={t("edit")}
                   onClick={() => showDownloadDialog([item])}
                 />
+                {enableDocker && (
+                  <AntdButton
+                    icon={<DockerOutlined />}
+                    type="text"
+                    size="small"
+                    title={t("edit")}
+                    onClick={() => showDownloadDialog([item])}
+                  />
+                )}
               </div>
               <Button size="sm" onClick={() => handleDownloadNow(item)}>
                 {t("downloadNow")}

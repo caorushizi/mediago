@@ -176,12 +176,12 @@ const apis: ElectronApi = {
   getVideoFolders: async () => {
     return api.post("get-video-folders");
   },
-  onUrlParams: (callback: (url: string) => void) => {
-    // Implement the logic for handling URL parameters here
-    // For now, you can leave it as a placeholder
-  },
-  getPageTitle: async () => {
-    return api.post("get-page-title");
+  // onUrlParams: (callback: (url: string) => void) => {
+  //   // Implement the logic for handling URL parameters here
+  //   // For now, you can leave it as a placeholder
+  // },
+  getPageTitle: async (url: string) => {
+    return api.post("get-page-title", { url });
   },
 };
 
