@@ -85,6 +85,10 @@ declare interface AppStore {
   autoUpgrade?: boolean;
   // Whether to play sounds in the browser. The default value is mute
   audioMuted?: boolean;
+  // Whether to enable Docker
+  enableDocker?: boolean;
+  // Docker URL
+  dockerUrl?: string;
 }
 
 declare interface BrowserStore {
