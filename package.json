@@ -54,7 +54,7 @@
     "husky": "^9.0.11",
     "tsx": "^4.11.0",
     "typescript-eslint": "^7.10.0",
-    "zx": "^8.1.1"
+    "zx": "^8.5.3"
   },
   "pnpm": {
     "patchedDependencies": {
