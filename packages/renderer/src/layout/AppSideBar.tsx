@@ -65,7 +65,7 @@ function AppMenuItem({
     <Link
       to={link}
       className={cn(
-        "flex h-10 flex-row items-center gap-3 rounded-lg bg-[#FAFCFF] px-3 text-sm text-[#636D7E] hover:bg-[#E1F0FF] hover:text-[#636D7E] dark:bg-[#2C2E33] dark:text-[rgba(255,255,255,0.85)] dark:hover:bg-[#3B3C41] dark:hover:text-[rgba(255,255,255,0.85)]",
+        "flex h-10 flex-row items-center gap-1 rounded-lg bg-[#FAFCFF] px-3 text-sm text-[#636D7E] hover:bg-[#E1F0FF] hover:text-[#636D7E] dark:bg-[#2C2E33] dark:text-[rgba(255,255,255,0.85)] dark:hover:bg-[#3B3C41] dark:hover:text-[rgba(255,255,255,0.85)]",
         {
           "bg-gradient-to-r from-[#127AF3] to-[#06D5FB] text-white hover:text-white dark:text-white":
             isActive,
@@ -224,13 +224,13 @@ export function AppSideBar({ className }: Props) {
         className,
       )}
     >
-      <div className="relative z-10 flex w-[180px] flex-col gap-3">
+      <div className="relative z-10 flex flex-row sm:flex-col sm:w-[180px] gap-3">
         {finalItems.map((item) => cloneElement(item.label, { key: item.key }))}
       </div>
 
       <img
         src={siderBg}
-        className="pointer-events-none absolute bottom-0 left-0 right-0 select-none"
+        className="pointer-events-none absolute bottom-0 left-0 right-0 select-none w-full"
       />
     </div>
   );
