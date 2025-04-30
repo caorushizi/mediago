@@ -70,7 +70,7 @@
     "tailwindcss": "^3.4.4",
     "typescript": "~5.4.5",
     "typescript-eslint": "^7.10.0",
-    "vite": "^6.1.0",
+    "vite": "^6.1.6",
     "vite-bundle-visualizer": "^1.2.1",
     "xgplayer": "^3.0.19"
   },
