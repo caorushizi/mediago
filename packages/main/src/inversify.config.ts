@@ -11,7 +11,7 @@ import { TYPES } from "./types.ts";
 import MainWindow from "./windows/MainWindow.ts";
 import BrowserWindow from "./windows/BrowserWindow.ts";
 import { SniffingHelper } from "./services/SniffingHelperService.ts";
-import DownloadService from "./services/DownloadService.ts";
+import TaskQueueService from "./services/TaskQueueService.ts";
 import ElectronLogger from "./vendor/ElectronLogger.ts";
 import ElectronUpdater from "./vendor/ElectronUpdater.ts";
 import TypeORM from "./vendor/TypeORM.ts";
@@ -24,6 +24,7 @@ import ConversionRepository from "./repository/ConversionRepository.ts";
 import { VideoService } from "./services/VideoService.ts";
 import PlayerWindow from "./windows/PlayerWindow.ts";
 import PlayerController from "./controller/PlayerController.ts";
+import DownloaderService from "./services/DownloaderService.ts";
 
 const container = new Container({
   skipBaseClassChecks: true,
@@ -35,7 +36,10 @@ container.bind<ElectronApp>(TYPES.ElectronApp).to(ElectronApp);
 
 // services
 container.bind<WebviewService>(TYPES.WebviewService).to(WebviewService);
-container.bind<DownloadService>(TYPES.DownloadService).to(DownloadService);
+container.bind<TaskQueueService>(TYPES.TaskQueueService).to(TaskQueueService);
+container
+  .bind<DownloaderService>(TYPES.DownloaderService)
+  .to(DownloaderService);
 container.bind<SniffingHelper>(TYPES.SniffingHelper).to(SniffingHelper);
 container.bind<VideoService>(TYPES.VideoService).to(VideoService);
 
