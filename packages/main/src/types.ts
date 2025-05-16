@@ -12,7 +12,8 @@ export const TYPES = {
   PlayerWindow: Symbol.for("PlayerWindow"),
   // services
   WebviewService: Symbol.for("WebviewService"),
-  DownloadService: Symbol.for("DownloadService"),
+  TaskQueueService: Symbol.for("TaskQueueService"),
+  DownloaderService: Symbol.for("DownloaderService"),
   SessionService: Symbol.for("SessionService"),
   ProtocolService: Symbol.for("ProtocolService"),
   VideoService: Symbol.for("VideoService"),
@@ -35,4 +36,23 @@ export enum AppLanguage {
   System = "system",
   ZH = "zh",
   EN = "en",
+}
+
+export interface DownloadContext {
+  // Whether it is live
+  isLive: boolean;
+  // Download progress
+  percent: string;
+  // Download speed
+  speed: string;
+  // Ready
+  ready: boolean;
+}
+
+export interface ExecOptions {
+  binPath: string;
+  args: string[];
+  abortSignal: AbortController;
+  encoding?: string;
+  onMessage?: (ctx: DownloadContext, message: string) => void;
 }

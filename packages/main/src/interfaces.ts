@@ -78,7 +78,7 @@ export interface DownloadParams {
   abortSignal: AbortController;
   proxy?: string;
   deleteSegments?: boolean;
-  callback: (progress: DownloadProgress) => void;
+  callback: (type: string, data: any) => void;
   folder?: string;
 }
 

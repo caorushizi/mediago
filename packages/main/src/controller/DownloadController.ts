@@ -13,7 +13,7 @@ import {
 import { TYPES } from "../types.ts";
 import MainWindow from "../windows/MainWindow.ts";
 import ElectronStore from "../vendor/ElectronStore.ts";
-import DownloadService from "../services/DownloadService.ts";
+import TaskQueueService from "../services/TaskQueueService.ts";
 import VideoRepository from "../repository/VideoRepository.ts";
 import WebviewService from "../services/WebviewService.ts";
 import path from "path";
@@ -26,12 +26,12 @@ export default class DownloadController implements Controller {
     private readonly store: ElectronStore,
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
-    @inject(TYPES.DownloadService)
-    private readonly downloadService: DownloadService,
+    @inject(TYPES.TaskQueueService)
+    private readonly taskQueue: TaskQueueService,
     @inject(TYPES.MainWindow)
     private readonly mainWindow: MainWindow,
     @inject(TYPES.WebviewService)
-    private readonly webviewService: WebviewService,
+    private readonly webviewService: WebviewService
   ) {}
 
   @handle("show-download-dialog")
@@ -40,7 +40,7 @@ export default class DownloadController implements Controller {
     this.webviewService.sendToWindow(
       "show-download-dialog",
       data,
-      image?.toDataURL(),
+      image?.toDataURL()
     );
   }
 
@@ -94,7 +94,7 @@ export default class DownloadController implements Controller {
   @handle("get-download-items")
   async getDownloadItems(
     e: IpcMainEvent,
-    pagination: DownloadItemPagination,
+    pagination: DownloadItemPagination
   ): Promise<ListPagination> {
     const videos = await this.videoRepository.findVideos(pagination);
 
@@ -141,12 +141,12 @@ export default class DownloadController implements Controller {
       },
     };
     await this.videoRepository.changeVideoStatus(vid, DownloadStatus.Watting);
-    this.downloadService.addTask(task);
+    this.taskQueue.addTask(task);
   }
 
   @handle("stop-download")
   async stopDownload(e: IpcMainEvent, id: number) {
-    this.downloadService.stopTask(id);
+    this.taskQueue.stopTask(id);
   }
 
   @handle("delete-download-item")
