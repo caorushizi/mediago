@@ -1,5 +1,5 @@
 import { cn, tdApp, fromatDateTime } from "@/utils";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useMemo } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DownloadStatus } from "@/types";
 import { Progress } from "antd";
@@ -38,6 +38,7 @@ interface Props {
   onContextMenu: (item: number) => void;
   progress?: DownloadProgress;
   onShowEditForm?: (value: DownloadItem) => void;
+  downloadStatus?: DownloadStatus;
 }
 
 export function DownloadItem({
@@ -48,11 +49,16 @@ export function DownloadItem({
   onStopDownload,
   onContextMenu,
   onShowEditForm,
+  downloadStatus,
   progress,
 }: Props) {
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
   const { openPlayerWindow } = useElectron();
+
+  const currStatus = useMemo(() => {
+    return downloadStatus || item.status;
+  }, [item, downloadStatus]);
 
   const renderTerminalBtn = useMemoizedFn((item: DownloadItem) => {
     if (!appStore.showTerminal) return null;
@@ -111,7 +117,7 @@ export function DownloadItem({
   });
 
   const renderActionButtons = useMemoizedFn((item: VideoStat): ReactNode => {
-    if (item.status === DownloadStatus.Ready) {
+    if (currStatus === DownloadStatus.Ready) {
       return [
         renderTerminalBtn(item),
         renderEditIconBtn(item),
@@ -123,7 +129,7 @@ export function DownloadItem({
         />,
       ];
     }
-    if (item.status === DownloadStatus.Downloading) {
+    if (currStatus === DownloadStatus.Downloading) {
       return [
         renderTerminalBtn(item),
         <IconButton
@@ -134,7 +140,7 @@ export function DownloadItem({
         />,
       ];
     }
-    if (item.status === DownloadStatus.Failed) {
+    if (currStatus === DownloadStatus.Failed) {
       return [
         renderTerminalBtn(item),
         renderEditIconBtn(item),
@@ -146,10 +152,10 @@ export function DownloadItem({
         />,
       ];
     }
-    if (item.status === DownloadStatus.Watting) {
+    if (currStatus === DownloadStatus.Watting) {
       return [t("watting")];
     }
-    if (item.status === DownloadStatus.Stopped) {
+    if (currStatus === DownloadStatus.Stopped) {
       return [
         renderTerminalBtn(item),
         renderEditIconBtn(item),
@@ -191,7 +197,7 @@ export function DownloadItem({
 
   const handleRenderTag = useMemoizedFn(() => {
     let tag = null;
-    if (item.status === DownloadStatus.Downloading) {
+    if (currStatus === DownloadStatus.Downloading) {
       tag = (
         <DownloadTag
           icon={<DownloadIcon fill="#fff" width={14} height={14} />}
@@ -199,7 +205,7 @@ export function DownloadItem({
           color="#127af3"
         />
       );
-    } else if (item.status === DownloadStatus.Success) {
+    } else if (currStatus === DownloadStatus.Success) {
       tag = [
         <DownloadTag
           key={"success"}
@@ -216,7 +222,7 @@ export function DownloadItem({
           />,
         );
       }
-    } else if (item.status === DownloadStatus.Failed) {
+    } else if (currStatus === DownloadStatus.Failed) {
       tag = (
         <TerminalDrawer
           trigger={
@@ -232,7 +238,7 @@ export function DownloadItem({
           log={item.log}
         />
       );
-    } else if (item.status === DownloadStatus.Stopped) {
+    } else if (currStatus === DownloadStatus.Stopped) {
       tag = (
         <DownloadTag
           icon={<PauseIcon />}
@@ -273,7 +279,7 @@ export function DownloadItem({
         <div className="truncate">
           {t("createdAt")} {fromatDateTime(item.createdDate)}
         </div>
-        {item.status === DownloadStatus.Failed && (
+        {currStatus === DownloadStatus.Failed && (
           <TerminalDrawer
             asChild
             trigger={
@@ -297,7 +303,7 @@ export function DownloadItem({
         {
           "bg-gradient-to-r from-[#D0E8FF] to-[#F2F7FF] dark:from-[#27292F] dark:to-[#00244E]":
             selected,
-          "opacity-70": item.status === DownloadStatus.Success && !item.exists,
+          "opacity-70": currStatus === DownloadStatus.Success && !item.exists,
         },
       )}
       onContextMenu={() => onContextMenu(item.id)}
