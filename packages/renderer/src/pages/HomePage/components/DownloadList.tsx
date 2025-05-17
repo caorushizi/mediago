@@ -58,10 +58,29 @@ export function DownloadList({
   const { t } = useTranslation();
   const [downloadState, setDownloadState] = useState<DownloadState>({});
   const editFormRef = useRef<DownloadFormRef>(null);
+  const lastState = useRef<DownloadState>({});
 
   useEffect(() => {
     const onDownloadStateUpdate = (e: unknown, state: DownloadState) => {
+      console.log("onDownloadStateUpdate", state);
+
+      // 如果状态和之前的状态发生变化，那么就需要刷新一次， 需要比较所有资源
+      const newState = Object.values(state);
+      const oldState = Object.values(lastState.current);
+      if (newState.length !== oldState.length) {
+        refresh();
+      }
+
+      for (const item of newState) {
+        const oldItem = oldState.find((i) => i.id === item.id);
+        if (oldItem?.status !== item.status) {
+          refresh();
+          break;
+        }
+      }
+
       setDownloadState(state);
+      lastState.current = state;
     };
 
     const onDownloadMenuEvent = async (
@@ -242,6 +261,7 @@ export function DownloadList({
               onStopDownload={onStopDownload}
               onContextMenu={handleContext}
               onShowEditForm={handleShowDownloadForm}
+              downloadStatus={state?.status}
               progress={
                 state
                   ? {

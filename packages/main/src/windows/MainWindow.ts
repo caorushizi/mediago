@@ -62,7 +62,7 @@ export default class MainWindow extends Window {
     this.taskQueue.on("download-failed", this.onDownloadFailed);
     this.taskQueue.on("download-start", this.onDownloadStart);
     this.taskQueue.on("download-stop", this.onDownloadStop);
-    this.taskQueue.on("download-message", this.receiveMessage);
+    this.taskQueue.on("download-message", this.onDownloadMessage);
     this.store.onDidAnyChange(this.storeChange);
 
     // 使用节流函数定期发送状态更新
@@ -207,21 +207,18 @@ export default class MainWindow extends Window {
   };
 
   onDownloadFailed = async (id: number, err: unknown) => {
-    this.logger.info(`taskId: ${id} failed`);
+    this.logger.info(`taskId: ${id} failed`, err);
     await this.videoRepository.changeVideoStatus(id, DownloadStatus.Failed);
     this.updateDownloadState(id, { status: DownloadStatus.Failed });
 
     const promptTone = this.store.get("promptTone");
     if (promptTone) {
       const video = await this.videoRepository.findVideo(id);
-      this.updateDownloadState(id, { name: video.name });
-
       new Notification({
         title: i18n.t("downloadFailed"),
         body: i18n.t("videoDownloadFailed", { name: video.name }),
       }).show();
     }
-    this.logger.error("download failed: ", err);
 
     // 延迟清理状态，确保前端有足够时间处理最后的失败状态
     setTimeout(() => {
@@ -249,7 +246,7 @@ export default class MainWindow extends Window {
     }, 5000);
   };
 
-  receiveMessage = async (id: number, message: string) => {
+  onDownloadMessage = async (id: number, message: string) => {
     await this.videoRepository.appendDownloadLog(id, message);
     const showTerminal = this.store.get("showTerminal");
     if (showTerminal) {
