@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
-import { DownloadStatus } from "./interfaces.ts";
-import { TYPES } from "./types.ts";
+import { DownloadStatus } from "@mediago/shared/common";
+import { TYPES } from "@mediago/shared/node";
 import {
   Menu,
   Tray,
@@ -10,21 +10,21 @@ import {
   Event,
   BrowserWindow,
 } from "electron";
-import TrayIcon from "./tray-icon.png";
-import TrayIconLight from "./tray-icon-light.png";
+import TrayIcon from "../assets/tray-icon.png";
+import TrayIconLight from "../assets/tray-icon-light.png";
 import path from "path";
 import MainWindow from "./windows/MainWindow.ts";
 import WebviewService from "./services/WebviewService.ts";
-import VideoRepository from "./repository/VideoRepository.ts";
+import { VideoRepository } from "@mediago/shared/node";
 import ElectronDevtools from "./vendor/ElectronDevtools.ts";
 import ElectronStore from "./vendor/ElectronStore.ts";
 import ElectronUpdater from "./vendor/ElectronUpdater.ts";
-import TypeORM from "./vendor/TypeORM.ts";
+import { TypeORM } from "@mediago/shared/node";
 import ProtocolService from "./core/protocol.ts";
 import IpcHandlerService from "./core/ipc.ts";
 import { VideoService } from "./services/VideoService.ts";
-import i18n from "./i18n/index.ts";
-import { isMac } from "./helper/variables.ts";
+import { i18n } from "@mediago/shared/common";
+import { db, isMac } from "./helper/variables.ts";
 
 @injectable()
 export default class ElectronApp {
@@ -48,7 +48,7 @@ export default class ElectronApp {
     @inject(TYPES.ElectronStore)
     private readonly store: ElectronStore,
     @inject(TYPES.VideoService)
-    private readonly videoService: VideoService,
+    private readonly videoService: VideoService
   ) {}
 
   private async serviceInit(): Promise<void> {
@@ -57,7 +57,7 @@ export default class ElectronApp {
   }
 
   private async vendorInit() {
-    await this.db.init();
+    await this.db.init({ dbPath: db });
     this.updater.init();
     this.devTools.init();
   }
@@ -122,7 +122,7 @@ export default class ElectronApp {
     const videoIds = videos.map((video) => video.id);
     await this.videoRepository.changeVideoStatus(
       videoIds,
-      DownloadStatus.Failed,
+      DownloadStatus.Failed
     );
   }
 

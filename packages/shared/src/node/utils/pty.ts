@@ -1,14 +1,22 @@
-import { DownloadContext, ExecOptions } from "../types.ts";
 import * as pty from "node-pty";
 import stripAnsi from "strip-ansi";
-import i18n from "../i18n/index.ts";
+import i18n from "../../common/i18n/index.ts";
 
-export function execa({
-  abortSignal,
+export interface PTYRunnerOptions<T> {
+  abortController: AbortController;
+  onMessage: (ctx: T, data: string) => void;
+  binPath: string;
+  args: string[];
+  ctx: T;
+}
+
+export function ptyRunner<T>({
+  abortController,
   onMessage,
   binPath,
   args,
-}: ExecOptions): Promise<void> {
+  ctx,
+}: PTYRunnerOptions<T>): Promise<void> {
   return new Promise((resolve, reject) => {
     const ptyProcess = pty.spawn(binPath, args, {
       name: "xterm-color",
@@ -18,12 +26,6 @@ export function execa({
     });
 
     if (onMessage) {
-      const ctx: DownloadContext = {
-        ready: false,
-        isLive: false,
-        percent: "",
-        speed: "",
-      };
       ptyProcess.onData((data) => {
         try {
           onMessage(ctx, stripAnsi(data));
@@ -33,7 +35,7 @@ export function execa({
       });
     }
 
-    abortSignal.signal.addEventListener("abort", () => {
+    abortController.signal.addEventListener("abort", () => {
       ptyProcess.kill();
       reject(new Error("AbortError"));
     });

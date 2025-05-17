@@ -81,6 +81,7 @@
     "reflect-metadata": "^0.2.2",
     "serve-handler": "^6.1.5",
     "strip-ansi": "^7.1.0",
-    "typeorm": "0.3.20"
+    "typeorm": "0.3.20",
+    "@mediago/shared": "workspace:*"
   }
 }

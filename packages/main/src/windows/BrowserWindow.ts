@@ -1,7 +1,7 @@
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import { resolve } from "path";
-import { TYPES } from "../types.ts";
+import { TYPES } from "@mediago/shared/node";
 import _ from "lodash";
 import Window from "../core/window.ts";
 import ElectronStore from "../vendor/ElectronStore.ts";
@@ -14,7 +14,7 @@ export default class BrowserWindow extends Window {
 
   constructor(
     @inject(TYPES.ElectronStore)
-    private readonly store: ElectronStore,
+    private readonly store: ElectronStore
   ) {
     super({
       width: 1100,

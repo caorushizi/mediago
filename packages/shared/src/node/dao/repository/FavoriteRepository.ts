@@ -1,14 +1,14 @@
 import { inject, injectable } from "inversify";
-import { TYPES } from "../types.ts";
 import { Favorite } from "../entity/Favorite.ts";
-import TypeORM from "../vendor/TypeORM.ts";
-import i18n from "../i18n/index.ts";
+import TypeORM from "../../vendor/TypeORM.ts";
+import { i18n } from "../../../common/index.ts";
+import { TYPES } from "../../types/index.ts";
 
 @injectable()
 export default class FavoriteRepository {
   constructor(
     @inject(TYPES.TypeORM)
-    private readonly db: TypeORM,
+    private readonly db: TypeORM
   ) {}
 
   async findFavorites(): Promise<Favorite[]> {

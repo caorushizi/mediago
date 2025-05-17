@@ -1,19 +1,19 @@
 import { inject, injectable } from "inversify";
-import { ConversionPagination } from "../interfaces.ts";
-import { TYPES } from "../types.ts";
-import TypeORM from "../vendor/TypeORM.ts";
+import { ConversionPagination } from "../../../common/types/index.ts";
+import { TYPES } from "../../types/index.ts";
+import TypeORM from "../../vendor/TypeORM.ts";
 import { Conversion } from "../entity/Conversion.ts";
-import i18n from "../i18n/index.ts";
+import { i18n } from "../../../common/index.ts";
 
 @injectable()
 export default class ConversionRepository {
   constructor(
     @inject(TYPES.TypeORM)
-    private readonly db: TypeORM,
+    private readonly db: TypeORM
   ) {}
 
   async findConversion(id: number) {
-    const repository = this.db.appDataSource.getRepository(Conversion);
+    const repository = this.db.manager.getRepository(Conversion);
     const conversion = await repository.findOneBy({ id });
 
     if (!conversion) {
@@ -26,7 +26,7 @@ export default class ConversionRepository {
   async getConversions(pagination: ConversionPagination) {
     const { current = 0, pageSize = 50 } = pagination;
 
-    const [items, count] = await this.db.appDataSource
+    const [items, count] = await this.db.manager
       .getRepository(Conversion)
       .findAndCount({
         order: {
@@ -42,10 +42,10 @@ export default class ConversionRepository {
   }
 
   async addConversion(conversion: Conversion) {
-    await this.db.appDataSource.getRepository(Conversion).save(conversion);
+    await this.db.manager.getRepository(Conversion).save(conversion);
   }
 
   async deleteConversion(id: number) {
-    await this.db.appDataSource.getRepository(Conversion).delete({ id });
+    await this.db.manager.getRepository(Conversion).delete({ id });
   }
 }

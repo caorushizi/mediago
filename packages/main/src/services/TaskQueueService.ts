@@ -1,9 +1,9 @@
 import EventEmitter from "events";
 import { inject, injectable } from "inversify";
-import { DownloadParams, Task } from "../interfaces.ts";
-import { TYPES } from "../types.ts";
+import { DownloadParams, Task } from "@mediago/shared/common";
+import { TYPES } from "@mediago/shared/node";
 import ElectronStore from "../vendor/ElectronStore.ts";
-import i18n from "../i18n/index.ts";
+import { i18n } from "@mediago/shared/common";
 import { processList } from "../config/download.ts";
 import DownloaderService from "./DownloaderService.ts";
 

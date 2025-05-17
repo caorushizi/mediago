@@ -1,14 +1,14 @@
 import { inject, injectable } from "inversify";
-import { execa } from "../helper/exec.ts";
-import { DownloadContext, TYPES } from "../types.ts";
+import { ptyRunner } from "@mediago/shared/node";
+import { TYPES } from "@mediago/shared/node";
 import { getFileExtension } from "../helper/utils.ts";
 import path from "path";
-import { DownloadParams } from "../interfaces.ts";
+import { DownloadParams, DownloadContext } from "@mediago/shared/common";
 import { Schema } from "../config/download.ts";
 import ElectronLogger from "../vendor/ElectronLogger.ts";
 
 @injectable()
-export default class DoService {
+export default class DownloaderService {
   constructor(
     @inject(TYPES.ElectronLogger)
     private readonly logger: ElectronLogger
@@ -17,7 +17,7 @@ export default class DoService {
   async download(params: DownloadParams, schema: Schema): Promise<void> {
     const {
       id,
-      abortSignal,
+      abortSignal: abortController,
       url,
       local,
       name,
@@ -129,11 +129,17 @@ export default class DoService {
     };
 
     this.logger.debug("download params: ", spawnParams.join(" "));
-    await execa({
-      abortSignal,
+    await ptyRunner({
+      abortController,
       onMessage,
       binPath: schema.bin,
       args: spawnParams,
+      ctx: {
+        ready: false,
+        isLive: false,
+        percent: "",
+        speed: "",
+      },
     });
   }
 }
