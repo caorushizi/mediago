@@ -59,7 +59,17 @@
   "pnpm": {
     "patchedDependencies": {
       "@ghostery/adblocker@2.3.1": "patches/@ghostery__adblocker@2.3.1.patch"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@swc/core",
+      "better-sqlite3",
+      "core-js",
+      "electron",
+      "es5-ext",
+      "esbuild",
+      "node-pty",
+      "sqlite3"
+    ]
   },
   "dependencies": {
     "react-dom": "18.3.1"

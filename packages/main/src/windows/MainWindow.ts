@@ -2,15 +2,15 @@ import { Menu, Notification, app } from "electron";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import { resolve } from "path";
-import { TYPES } from "../types.ts";
-import { DownloadProgress, DownloadStatus } from "../interfaces.ts";
+import { TYPES } from "@mediago/shared/node";
+import { DownloadProgress, DownloadStatus } from "@mediago/shared/common";
 import _ from "lodash";
 import Window from "../core/window.ts";
 import ElectronLogger from "../vendor/ElectronLogger.ts";
 import TaskQueueService from "../services/TaskQueueService.ts";
 import ElectronStore from "../vendor/ElectronStore.ts";
-import VideoRepository from "../repository/VideoRepository.ts";
-import i18n from "../i18n/index.ts";
+import { VideoRepository } from "@mediago/shared/node";
+import { i18n } from "@mediago/shared/common";
 import { isWin } from "../helper/variables.ts";
 
 interface DownloadItemState {

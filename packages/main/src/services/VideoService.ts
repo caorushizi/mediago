@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import serveHandler from "serve-handler";
 import { glob } from "glob";
-import { TYPES } from "../types.ts";
+import { TYPES } from "@mediago/shared/node";
 import StoreService from "../vendor/ElectronStore.ts";
 import mime from "mime-types";
 import path from "path";
@@ -21,7 +21,7 @@ export class VideoService {
     @inject(TYPES.ElectronStore)
     private readonly store: StoreService,
     @inject(TYPES.ElectronLogger)
-    private readonly logger: ElectronLogger,
+    private readonly logger: ElectronLogger
   ) {
     this.videoDir = this.store.get("local");
     this.localIp = getLocalIP();
@@ -39,7 +39,9 @@ export class VideoService {
         const fileName = path.basename(file);
         return {
           title: fileName,
-          url: `http://${this.localIp}:${this.port}/${encodeURIComponent(fileName)}`,
+          url: `http://${this.localIp}:${this.port}/${encodeURIComponent(
+            fileName
+          )}`,
         };
       });
     return videos;
@@ -75,7 +77,7 @@ export class VideoService {
       })
       .on("error", (err) => {
         this.logger.error(
-          `Server failed to start on http://localhost:3222, error: ${err}`,
+          `Server failed to start on http://localhost:3222, error: ${err}`
         );
       });
   }

@@ -2,7 +2,7 @@ import "reflect-metadata";
 import { app, protocol } from "electron";
 import { defaultScheme, noop } from "./helper/index.ts";
 import { container } from "./inversify.config.ts";
-import { TYPES } from "./types.ts";
+import { TYPES } from "@mediago/shared/node";
 import ElectronApp from "./app.ts";
 
 const gotTheLock = app.requestSingleInstanceLock();

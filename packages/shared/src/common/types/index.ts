@@ -1,5 +1,4 @@
-import { Conversion } from "./entity/Conversion.ts";
-import { Video } from "./entity/Video.ts";
+import type { Conversion, Video } from "../../node/dao/entity/index.ts";
 
 export type Controller = Record<string | symbol, any>;
 
@@ -90,4 +89,35 @@ export interface VideoStat extends Video {
 export interface ListPagination {
   total: number;
   list: VideoStat[];
+}
+
+export enum AppTheme {
+  System = "system",
+  Light = "light",
+  Dark = "dark",
+}
+
+export enum AppLanguage {
+  System = "system",
+  ZH = "zh",
+  EN = "en",
+}
+
+export interface DownloadContext {
+  // Whether it is live
+  isLive: boolean;
+  // Download progress
+  percent: string;
+  // Download speed
+  speed: string;
+  // Ready
+  ready: boolean;
+}
+
+export interface ExecOptions {
+  binPath: string;
+  args: string[];
+  abortSignal: AbortController;
+  encoding?: string;
+  onMessage?: (ctx: DownloadContext, message: string) => void;
 }

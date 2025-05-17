@@ -3,10 +3,9 @@ import { injectable } from "inversify";
 import dayjs from "dayjs";
 import path from "path";
 import { appName, workspace } from "../helper/index.ts";
-import { Vendor } from "../core/vendor.ts";
 
 @injectable()
-export default class ElectronLogger implements Vendor {
+export default class ElectronLogger {
   logger: Logger;
 
   constructor() {

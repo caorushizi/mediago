@@ -1,16 +1,20 @@
 import { contextBridge, ipcRenderer } from "electron/renderer";
 import { shell } from "electron/common";
-import { AppStore, BrowserStore, EnvPath } from "./main.ts";
-import { type Favorite } from "./entity/Favorite.ts";
 import {
   ConversionPagination,
   ConversionResponse,
   VideoResponse,
   type DownloadItem,
   type DownloadItemPagination,
-} from "./interfaces.ts";
-import { Video } from "./entity/Video.ts";
-import { Conversion } from "./entity/Conversion.ts";
+} from "@mediago/shared/common";
+import {
+  Favorite,
+  Video,
+  Conversion,
+  EnvPath,
+  AppStore,
+  BrowserStore,
+} from "@mediago/shared/node";
 
 const apiFunctions: Record<string, any> = {};
 

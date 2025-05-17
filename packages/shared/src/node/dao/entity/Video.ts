@@ -1,4 +1,4 @@
-import { DownloadStatus, DownloadType } from "../interfaces.ts";
+import { DownloadStatus, DownloadType } from "../../../common/types/index.ts";
 import {
   Column,
   CreateDateColumn,
@@ -12,27 +12,27 @@ import {
 })
 export class Video {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({
     type: "text",
     nullable: false,
     unique: true,
   })
-  name: string;
+  name!: string;
 
   @Column({
     type: "text",
     nullable: false,
     default: DownloadType.m3u8,
   })
-  type: DownloadType;
+  type!: DownloadType;
 
   @Column({
     type: "text",
     nullable: false,
   })
-  url: string;
+  url!: string;
 
   @Column({
     type: "text",
@@ -51,24 +51,24 @@ export class Video {
     default: false,
     nullable: false,
   })
-  isLive: boolean;
+  isLive!: boolean;
 
   @Column({
     type: "text",
     nullable: false,
     default: DownloadStatus.Ready,
   })
-  status: DownloadStatus;
+  status!: DownloadStatus;
 
   @Column({
     type: "text",
     default: "",
   })
-  log: string;
+  log!: string;
 
   @CreateDateColumn()
-  createdDate: Date;
+  createdDate!: Date;
 
   @UpdateDateColumn()
-  updatedDate: Date;
+  updatedDate!: Date;
 }

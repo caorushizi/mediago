@@ -7,28 +7,33 @@ import {
 } from "typeorm";
 
 @Entity({
-  name: "conversion",
+  name: "favorite",
 })
-export class Conversion {
+export class Favorite {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
+
+  @Column({
+    type: "text",
+    nullable: false,
+  })
+  title!: string;
+
+  @Column({
+    type: "text",
+    nullable: false,
+  })
+  url!: string;
 
   @Column({
     type: "text",
     nullable: true,
   })
-  name: string;
-
-  @Column({
-    type: "text",
-    nullable: false,
-    default: "",
-  })
-  path: string;
+  icon?: string;
 
   @CreateDateColumn()
-  createdDate?: Date;
+  createdDate!: Date;
 
   @UpdateDateColumn()
-  updatedDate?: Date;
+  updatedDate!: Date;
 }

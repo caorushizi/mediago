@@ -7,14 +7,13 @@ import {
   DownloadItemPagination,
   Task,
   DownloadStatus,
-  VideoStat,
   ListPagination,
-} from "../interfaces.ts";
-import { TYPES } from "../types.ts";
+} from "@mediago/shared/common";
+import { TYPES } from "@mediago/shared/node";
 import MainWindow from "../windows/MainWindow.ts";
 import ElectronStore from "../vendor/ElectronStore.ts";
 import TaskQueueService from "../services/TaskQueueService.ts";
-import VideoRepository from "../repository/VideoRepository.ts";
+import { VideoRepository } from "@mediago/shared/node";
 import WebviewService from "../services/WebviewService.ts";
 import path from "path";
 import { glob } from "glob";
@@ -105,7 +104,8 @@ export default class DownloadController implements Controller {
 
     const local = this.store.get("local");
     for (const video of videos.list) {
-      const final: VideoStat = { ...video };
+      // FIXME: type
+      const final: any = { ...video };
       if (video.status === DownloadStatus.Success) {
         const pattern = path.join(local, `${video.name}.{${videoPattern}}`);
         const files = await glob(pattern);

@@ -1,22 +1,21 @@
 import { autoUpdater } from "electron-updater";
 import { inject, injectable } from "inversify";
-import { TYPES } from "../types.ts";
+import { TYPES } from "@mediago/shared/node";
 import isDev from "electron-is-dev";
 import ElectronLogger from "./ElectronLogger.ts";
-import { Vendor } from "../core/vendor.ts";
 import ElectronStore from "./ElectronStore.ts";
-import i18n from "../i18n/index.ts";
+import { i18n } from "@mediago/shared/common";
 import MainWindow from "../windows/MainWindow.ts";
 
 @injectable()
-export default class UpdateService implements Vendor {
+export default class UpdateService {
   constructor(
     @inject(TYPES.ElectronLogger)
     private readonly logger: ElectronLogger,
     @inject(TYPES.ElectronStore)
     private readonly store: ElectronStore,
     @inject(TYPES.MainWindow)
-    private readonly mainWindow: MainWindow,
+    private readonly mainWindow: MainWindow
   ) {}
 
   async init() {
@@ -55,12 +54,9 @@ export default class UpdateService implements Vendor {
   }
 
   async checkForUpdates() {
-    setTimeout(
-      () => {
-        autoUpdater.checkForUpdates();
-      },
-      1 * 1000 * 60,
-    );
+    setTimeout(() => {
+      autoUpdater.checkForUpdates();
+    }, 1 * 1000 * 60);
   }
 
   async autoUpdate() {

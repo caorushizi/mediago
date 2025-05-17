@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
-import { DownloadType } from "../interfaces.ts";
-import { TYPES } from "../types.ts";
+import { DownloadType } from "@mediago/shared/common";
+import { TYPES } from "@mediago/shared/node";
 import ElectronLogger from "../vendor/ElectronLogger.ts";
 import EventEmitter from "events";
 import { OnSendHeadersListenerDetails, session } from "electron";

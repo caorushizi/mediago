@@ -5,17 +5,17 @@ import {
   DownloadItem,
   DownloadItemPagination,
   DownloadStatus,
-} from "../interfaces.ts";
-import { TYPES } from "../types.ts";
+} from "../../../common/types/index.ts";
+import { TYPES } from "../../types/index.ts";
 import { In, Not } from "typeorm";
-import TypeORM from "../vendor/TypeORM.ts";
-import i18n from "../i18n/index.ts";
+import TypeORM from "../../vendor/TypeORM.ts";
+import { i18n } from "../../../common/index.ts";
 
 @injectable()
 export default class VideoRepository {
   constructor(
     @inject(TYPES.TypeORM)
-    private readonly db: TypeORM,
+    private readonly db: TypeORM
   ) {}
 
   async addVideo(video: Omit<DownloadItem, "id">) {
@@ -63,9 +63,9 @@ export default class VideoRepository {
 
   // Edit video
   async editVideo(video: DownloadItem) {
-    const item = await this.db.appDataSource
-      .getRepository(Video)
-      .findOneBy({ id: video.id });
+    const item = await this.db.manager.getRepository(Video).findOneBy({
+      id: video.id,
+    });
     if (!item) {
       throw new Error(i18n.t("videoNotExists"));
     }
@@ -78,7 +78,7 @@ export default class VideoRepository {
 
   // Find all Videos
   async findAllVideos() {
-    return await this.db.appDataSource.getRepository(Video).find({
+    return await this.db.manager.getRepository(Video).find({
       order: {
         createdDate: "DESC",
       },
@@ -96,7 +96,7 @@ export default class VideoRepository {
         ? DownloadStatus.Success
         : Not(DownloadStatus.Success);
 
-    const [items, count] = await this.db.appDataSource
+    const [items, count] = await this.db.manager
       .getRepository(Video)
       .findAndCount({
         where: {
@@ -115,7 +115,7 @@ export default class VideoRepository {
   }
 
   async findVideo(id: number) {
-    const repository = this.db.appDataSource.getRepository(Video);
+    const repository = this.db.manager.getRepository(Video);
     const video = await repository.findOneBy({ id });
 
     if (!video) {
@@ -126,14 +126,14 @@ export default class VideoRepository {
   }
 
   async findVideoByName(name: string) {
-    return this.db.appDataSource.getRepository(Video).findOneBy({
+    return this.db.manager.getRepository(Video).findOneBy({
       name,
     });
   }
 
   async changeVideoStatus(id: number | number[], status: DownloadStatus) {
     const ids = !Array.isArray(id) ? [id] : id;
-    const videoRepository = this.db.appDataSource.getRepository(Video);
+    const videoRepository = this.db.manager.getRepository(Video);
     const videos = await videoRepository.findBy({ id: In(ids) });
     for (const video of videos) {
       video.status = status;
@@ -148,7 +148,7 @@ export default class VideoRepository {
   }
 
   async findWattingAndDownloadingVideos() {
-    return await this.db.appDataSource.getRepository(Video).find({
+    return await this.db.manager.getRepository(Video).find({
       where: {
         status: In([DownloadStatus.Downloading, DownloadStatus.Watting]),
       },
@@ -156,11 +156,11 @@ export default class VideoRepository {
   }
 
   async deleteDownloadItem(id: number) {
-    return await this.db.appDataSource.getRepository(Video).delete(id);
+    return await this.db.manager.getRepository(Video).delete(id);
   }
 
   async findVideoByUrl(url: string) {
-    return this.db.appDataSource.getRepository(Video).findOneBy({
+    return this.db.manager.getRepository(Video).findOneBy({
       url,
     });
   }
@@ -177,7 +177,7 @@ export default class VideoRepository {
   }
 
   async getVideoFolders() {
-    const videos = await this.db.appDataSource.getRepository(Video).find();
+    const videos = await this.db.manager.getRepository(Video).find();
     const folders = new Set<string>();
     for (const video of videos) {
       if (video.folder) {
