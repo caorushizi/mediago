@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import { DownloadItem } from "../../../main/types/interfaces";
+import { DownloadItem } from "@mediago/shared/common";
 
 const eventMap = new Map();
 

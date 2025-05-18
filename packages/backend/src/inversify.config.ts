@@ -1,20 +1,20 @@
 import HomeController from "./controller/HomeController.ts";
 import { Container } from "inversify";
-import FavoriteRepository from "./repository/FavoriteRepository.ts";
+import {
+  FavoriteRepository,
+  TaskQueueService,
+  TypeORM,
+  VideoRepository,
+  DownloaderService,
+} from "@mediago/shared/node";
 import ElectronApp from "./app.ts";
-import { Controller } from "./interfaces.ts";
-import { TYPES } from "./types.ts";
-import TypeORM from "./vendor/TypeORM.ts";
+import { Controller } from "@mediago/shared/common";
+import { TYPES } from "@mediago/shared/node";
 import RouterHandler from "./core/router.ts";
-import HomeService from "./services/HomeService.ts";
 import Logger from "./vendor/Logger.ts";
 import DownloadController from "./controller/DownloadController.ts";
-import VideoRepository from "./repository/VideoRepository.ts";
-import ConfigRepository from "./repository/ConfigRepository.ts";
-import ConfigService from "./services/ConfigService.ts";
-import DownloadService from "./services/DownloadService.ts";
+import StoreService from "./vendor/Store.ts";
 import SocketIO from "./vendor/SocketIO.ts";
-import DownloaderService from "./services/DownloaderService.ts";
 
 const container = new Container({
   skipBaseClassChecks: true,
@@ -28,9 +28,8 @@ container
   .inSingletonScope();
 
 // services
-container.bind<HomeService>(TYPES.HomeService).to(HomeService);
-container.bind<ConfigService>(TYPES.ConfigService).to(ConfigService);
-container.bind<DownloadService>(TYPES.DownloadService).to(DownloadService);
+container.bind<StoreService>(TYPES.StoreService).to(StoreService);
+container.bind<TaskQueueService>(TYPES.TaskQueueService).to(TaskQueueService);
 container
   .bind<DownloaderService>(TYPES.DownloaderService)
   .to(DownloaderService);
@@ -44,7 +43,6 @@ container
   .bind<FavoriteRepository>(TYPES.FavoriteRepository)
   .to(FavoriteRepository);
 container.bind<VideoRepository>(TYPES.VideoRepository).to(VideoRepository);
-container.bind<ConfigRepository>(TYPES.ConfigRepository).to(ConfigRepository);
 
 // vendor
 container.bind<TypeORM>(TYPES.TypeORM).to(TypeORM);

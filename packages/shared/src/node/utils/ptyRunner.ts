@@ -1,14 +1,7 @@
 import * as pty from "node-pty";
 import stripAnsi from "strip-ansi";
 import i18n from "../../common/i18n/index.ts";
-
-export interface PTYRunnerOptions<T> {
-  abortController: AbortController;
-  onMessage: (ctx: T, data: string) => void;
-  binPath: string;
-  args: string[];
-  ctx: T;
-}
+import { RunnerOptions } from "../types/index.ts";
 
 export function ptyRunner<T>({
   abortController,
@@ -16,7 +9,7 @@ export function ptyRunner<T>({
   binPath,
   args,
   ctx,
-}: PTYRunnerOptions<T>): Promise<void> {
+}: RunnerOptions<T>): Promise<void> {
   return new Promise((resolve, reject) => {
     const ptyProcess = pty.spawn(binPath, args, {
       name: "xterm-color",

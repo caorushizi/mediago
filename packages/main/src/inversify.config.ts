@@ -6,6 +6,8 @@ import {
   FavoriteRepository,
   VideoRepository,
   ConversionRepository,
+  TaskQueueService,
+  DownloaderService,
 } from "@mediago/shared/node";
 import WebviewService from "./services/WebviewService.ts";
 import ElectronApp from "./app.ts";
@@ -14,7 +16,6 @@ import { TYPES } from "@mediago/shared/node";
 import MainWindow from "./windows/MainWindow.ts";
 import BrowserWindow from "./windows/BrowserWindow.ts";
 import { SniffingHelper } from "./services/SniffingHelperService.ts";
-import TaskQueueService from "./services/TaskQueueService.ts";
 import ElectronLogger from "./vendor/ElectronLogger.ts";
 import ElectronUpdater from "./vendor/ElectronUpdater.ts";
 import ElectronDevtools from "./vendor/ElectronDevtools.ts";
@@ -25,7 +26,6 @@ import ConversionController from "./controller/ConversionController.ts";
 import { VideoService } from "./services/VideoService.ts";
 import PlayerWindow from "./windows/PlayerWindow.ts";
 import PlayerController from "./controller/PlayerController.ts";
-import DownloaderService from "./services/DownloaderService.ts";
 import { TypeORM } from "@mediago/shared/node";
 
 const container = new Container({

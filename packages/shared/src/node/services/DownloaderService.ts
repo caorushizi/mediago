@@ -1,20 +1,24 @@
-import { inject, injectable } from "inversify";
+import { injectable } from "inversify";
 import { ptyRunner } from "@mediago/shared/node";
-import { TYPES } from "@mediago/shared/node";
-import { getFileExtension } from "../helper/utils.ts";
+import { DownloadType, getFileExtension } from "../../common/index.ts";
 import path from "path";
 import { DownloadParams, DownloadContext } from "@mediago/shared/common";
-import { Schema } from "../config/download.ts";
-import ElectronLogger from "../vendor/ElectronLogger.ts";
+import { DownloadSchema } from "../types/index.ts";
 
 @injectable()
 export default class DownloaderService {
-  constructor(
-    @inject(TYPES.ElectronLogger)
-    private readonly logger: ElectronLogger
-  ) {}
+  private binMap?: Record<DownloadType, string>;
 
-  async download(params: DownloadParams, schema: Schema): Promise<void> {
+  constructor() {}
+
+  public init(binMap: Record<DownloadType, string>) {
+    this.binMap = binMap;
+  }
+
+  async download(
+    params: DownloadParams,
+    schema: DownloadSchema
+  ): Promise<void> {
     const {
       id,
       abortSignal: abortController,
@@ -128,11 +132,17 @@ export default class DownloaderService {
       }
     };
 
-    this.logger.debug("download params: ", spawnParams.join(" "));
+    if (!this.binMap) {
+      throw new Error("binMap is not initialized");
+    }
+
+    const binPath = this.binMap[params.type];
+
+    // TODO: logger
     await ptyRunner({
       abortController,
       onMessage,
-      binPath: schema.bin,
+      binPath,
       args: spawnParams,
       ctx: {
         ready: false,

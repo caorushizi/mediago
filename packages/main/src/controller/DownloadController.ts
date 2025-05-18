@@ -12,8 +12,7 @@ import {
 import { TYPES } from "@mediago/shared/node";
 import MainWindow from "../windows/MainWindow.ts";
 import ElectronStore from "../vendor/ElectronStore.ts";
-import TaskQueueService from "../services/TaskQueueService.ts";
-import { VideoRepository } from "@mediago/shared/node";
+import { VideoRepository, TaskQueueService } from "@mediago/shared/node";
 import WebviewService from "../services/WebviewService.ts";
 import path from "path";
 import { glob } from "glob";

@@ -2,35 +2,51 @@ import EventEmitter from "events";
 import { inject, injectable } from "inversify";
 import { DownloadParams, Task } from "@mediago/shared/common";
 import { TYPES } from "@mediago/shared/node";
-import ElectronStore from "../vendor/ElectronStore.ts";
 import { i18n } from "@mediago/shared/common";
-import { processList } from "../config/download.ts";
+import { downloadSchemaList } from "../config/download.ts";
 import DownloaderService from "./DownloaderService.ts";
 
+/**
+ * Task queue service
+ *
+ * @description
+ * 1. Add task
+ * 2. Stop task
+ * 3. Execute task
+ * 4. Process task
+ * 5. Remove task
+ */
 @injectable()
 export default class TaskQueueService extends EventEmitter {
   private queue: Task[] = [];
 
   private active: Task[] = [];
 
-  private limit: number;
+  // TODO: config
+  private limit: number = 2;
+
+  private proxy: string = "";
 
   private signal: Record<number, AbortController> = {};
 
   constructor(
-    @inject(TYPES.ElectronStore)
-    private readonly storeService: ElectronStore,
     @inject(TYPES.DownloaderService)
     private readonly downloaderService: DownloaderService
   ) {
     super();
+  }
 
-    const maxRunner = this.storeService.get("maxRunner");
+  public init({ maxRunner, proxy }: { maxRunner: number; proxy: string }) {
     this.limit = maxRunner;
+    this.proxy = proxy;
+  }
 
-    this.storeService.onDidChange("maxRunner", (maxRunner) => {
-      maxRunner && (this.limit = maxRunner);
-    });
+  public changeMaxRunner(maxRunner: number) {
+    this.limit = maxRunner;
+  }
+
+  public changeProxy(proxy: string) {
+    this.proxy = proxy;
   }
 
   async addTask(task: Task) {
@@ -72,12 +88,8 @@ export default class TaskQueueService extends EventEmitter {
         id: task.id,
         abortSignal: controller,
         callback,
+        proxy: this.proxy,
       };
-
-      const { proxy, downloadProxySwitch } = this.storeService.store;
-      if (downloadProxySwitch && proxy) {
-        params.proxy = proxy;
-      }
 
       await this.process(params);
       delete this.signal[task.id];
@@ -119,7 +131,7 @@ export default class TaskQueueService extends EventEmitter {
   }
 
   async process(params: DownloadParams): Promise<void> {
-    const program = processList
+    const program = downloadSchemaList
       .filter((i) => i.platform.includes(process.platform))
       .filter((i) => i.type === params.type);
 
