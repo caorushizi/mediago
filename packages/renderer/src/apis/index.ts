@@ -1,5 +1,5 @@
 import { api } from "@/utils";
-import { ElectronApi } from "../../../main/types/preload";
+import { ElectronApi } from "@mediago/shared/common";
 
 const defaultResp = {
   code: 0,

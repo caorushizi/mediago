@@ -11,10 +11,5 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["src/common", "src/browser"],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
-    }
-  ]
+  "include": ["src/common", "src/browser"]
 }

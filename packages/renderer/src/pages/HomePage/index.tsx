@@ -161,7 +161,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
             const [url, customName, folder] = line.trim().split(" ");
             let pageTitle = "";
             if (!name) {
-              const { data } = await getPageTitle(url.trim());
+              const data = await getPageTitle(url.trim());
               pageTitle = data;
             }
             return {
@@ -185,7 +185,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       } else {
         let pageTitle = "";
         if (!name) {
-          const { data } = await getPageTitle(url);
+          const data = await getPageTitle(url);
           pageTitle = data;
         }
         const item: Omit<DownloadItem, "id"> = {

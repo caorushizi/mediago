@@ -84,6 +84,7 @@ export function DownloadItem({
   const renderEditIconBtn = useMemoizedFn((item: DownloadItem) => {
     return (
       <IconButton
+        key={"edit"}
         title={t("edit")}
         icon={<EditIcon />}
         onClick={() => onShowEditForm(item)}

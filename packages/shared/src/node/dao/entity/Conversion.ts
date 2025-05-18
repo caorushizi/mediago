@@ -27,8 +27,8 @@ export class Conversion {
   path!: string;
 
   @CreateDateColumn()
-  createdDate!: Date;
+  createdDate?: Date;
 
   @UpdateDateColumn()
-  updatedDate!: Date;
+  updatedDate?: Date;
 }

@@ -5,7 +5,7 @@ import { App, Empty } from "antd";
 import useElectron from "@/hooks/useElectron";
 import { useMemoizedFn, usePagination } from "ahooks";
 import { getFileName, tdApp } from "@/utils";
-import { Conversion } from "../../../../main/types/entity/Conversion";
+import type { Conversion } from "@mediago/shared/node";
 import { DeleteOutlined, SyncOutlined } from "@ant-design/icons";
 import { produce } from "immer";
 import { Button } from "@/components/ui/button";

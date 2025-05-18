@@ -1,7 +1,7 @@
 import i18n from "i18next";
 
 i18n.init({
-  debug: process.env.NODE_ENV === "development",
+  // debug: process.env.NODE_ENV === "development",
   fallbackLng: "zh",
   interpolation: {
     escapeValue: false,
