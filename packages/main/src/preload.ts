@@ -3,6 +3,7 @@ import { shell } from "electron/common";
 import {
   ConversionPagination,
   ConversionResponse,
+  ElectronApi,
   VideoResponse,
   type DownloadItem,
   type DownloadItemPagination,
@@ -20,9 +21,7 @@ const apiFunctions: Record<string, any> = {};
 
 const apiKey = "electron";
 
-export type ElectronApi = typeof electronApi;
-
-const electronApi = {
+const electronApi: ElectronApi = {
   getEnvPath(): Promise<EnvPath> {
     return ipcRenderer.invoke("get-env-path");
   },

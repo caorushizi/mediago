@@ -24,11 +24,17 @@ export const TYPES = {
   ProtocolService: Symbol.for("ProtocolService"),
   VideoService: Symbol.for("VideoService"),
   SniffingHelper: Symbol.for("SniffingHelper"),
-  // vendor
+  // vendor electron
   ElectronLogger: Symbol.for("ElectronLogger"),
   ElectronUpdater: Symbol.for("ElectronUpdater"),
   ElectronStore: Symbol.for("ElectronStore"),
   ElectronDevtools: Symbol.for("ElectronDevtools"),
+  // vendor web
+  SocketIO: Symbol.for("SocketIO"),
+  Logger: Symbol.for("Logger"),
+  StoreService: Symbol.for("StoreService"),
+  RouterHandlerService: Symbol.for("RouterHandlerService"),
+  // vendor typeorm
   TypeORM: Symbol.for("TypeORM"),
 };
 
@@ -52,7 +58,7 @@ export interface WebSource {
   headers?: string;
 }
 
-interface Rectangle {
+export interface Rectangle {
   // Docs: https://electronjs.org/docs/api/structures/rectangle
 
   /**
@@ -124,4 +130,33 @@ export interface AppStore {
 export interface BrowserStore {
   url: string;
   sourceList: WebSource[];
+}
+
+/**
+ * Download schema
+ */
+export interface DownloadSchema {
+  args: Record<string, Args>;
+  consoleReg: {
+    percent: string;
+    speed: string;
+    error: string;
+    start: string;
+    isLive: string;
+  };
+  platform: string[];
+  type: string;
+}
+
+export interface Args {
+  argsName: string[] | null;
+  postfix?: string;
+}
+
+export interface RunnerOptions<T> {
+  abortController: AbortController;
+  onMessage: (ctx: T, data: string) => void;
+  binPath: string;
+  args: string[];
+  ctx: T;
 }

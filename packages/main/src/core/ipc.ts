@@ -3,7 +3,7 @@ import { inject, injectable, multiInject } from "inversify";
 import { Controller } from "@mediago/shared/common";
 import { TYPES } from "@mediago/shared/node";
 import ElectronLogger from "../vendor/ElectronLogger.ts";
-import { error, success } from "../helper/utils.ts";
+import { error, success } from "../helper/index.ts";
 
 @injectable()
 export default class IpcHandlerService {

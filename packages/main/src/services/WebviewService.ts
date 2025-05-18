@@ -6,6 +6,7 @@ import {
   PERSIST_WEBVIEW,
   PRIVACY_WEBVIEW,
   fetch,
+  isDeeplink,
   mobileUA,
   pcUA,
   pluginPath,
@@ -19,7 +20,6 @@ import { VideoRepository } from "@mediago/shared/node";
 import { SniffingHelper, SourceParams } from "./SniffingHelperService.ts";
 import { resolve } from "path";
 import { readFileSync } from "fs-extra";
-import { isDeeplink } from "../helper/utils.ts";
 import { i18n } from "@mediago/shared/common";
 
 @injectable()

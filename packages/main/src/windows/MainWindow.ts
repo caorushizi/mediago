@@ -7,9 +7,8 @@ import { DownloadProgress, DownloadStatus } from "@mediago/shared/common";
 import _ from "lodash";
 import Window from "../core/window.ts";
 import ElectronLogger from "../vendor/ElectronLogger.ts";
-import TaskQueueService from "../services/TaskQueueService.ts";
 import ElectronStore from "../vendor/ElectronStore.ts";
-import { VideoRepository } from "@mediago/shared/node";
+import { VideoRepository, TaskQueueService } from "@mediago/shared/node";
 import { i18n } from "@mediago/shared/common";
 import { isWin } from "../helper/variables.ts";
 

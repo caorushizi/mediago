@@ -1,4 +1,5 @@
 import type { Conversion, Video } from "../../node/dao/entity/index.ts";
+export type { ElectronApi } from "./electronApi.ts";
 
 export type Controller = Record<string | symbol, any>;
 
@@ -120,4 +121,13 @@ export interface ExecOptions {
   abortSignal: AbortController;
   encoding?: string;
   onMessage?: (ctx: DownloadContext, message: string) => void;
+}
+
+/**
+ * Platform
+ */
+export enum Platform {
+  Windows = "win32",
+  MacOS = "darwin",
+  Linux = "linux",
 }

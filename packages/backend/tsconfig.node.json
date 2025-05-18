@@ -4,12 +4,10 @@
     "composite": true,
     "forceConsistentCasingInFileNames": true,
     "module": "ES2015",
-    "lib": ["ES2015"],
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "typeRoots": ["node_modules/@types"]
+    "resolveJsonModule": true
   },
-  "include": ["gulpfile.ts", "scripts"]
+  "include": ["scripts", "gulpfile.ts"]
 }

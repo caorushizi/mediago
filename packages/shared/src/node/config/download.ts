@@ -1,35 +1,11 @@
-import {
-  biliDownloaderBin,
-  gopeedBin,
-  m3u8DownloaderBin,
-  Platform,
-} from "../helper/index.ts";
-
-export interface Args {
-  argsName: string[] | null;
-  postfix?: string;
-}
-
-export interface Schema {
-  args: Record<string, Args>;
-  consoleReg: {
-    percent: string;
-    speed: string;
-    error: string;
-    start: string;
-    isLive: string;
-  };
-  bin: string;
-  platform: string[];
-  type: string;
-}
+import { Platform } from "../../common/types/index.ts";
+import { DownloadSchema } from "../types/index.ts";
 
 // FIXME: Multilingual regular expressions
-export const processList: Schema[] = [
+export const downloadSchemaList: DownloadSchema[] = [
   {
     type: "m3u8",
     platform: [Platform.MacOS, Platform.Linux, Platform.Windows],
-    bin: m3u8DownloaderBin,
     args: {
       url: {
         argsName: null,
@@ -72,7 +48,6 @@ export const processList: Schema[] = [
   {
     type: "bilibili",
     platform: [Platform.Linux, Platform.MacOS, Platform.Windows],
-    bin: biliDownloaderBin,
     args: {
       url: {
         argsName: null,
@@ -95,7 +70,6 @@ export const processList: Schema[] = [
   {
     type: "direct",
     platform: [Platform.Linux, Platform.MacOS, Platform.Windows],
-    bin: gopeedBin,
     args: {
       localDir: {
         argsName: ["-D"],

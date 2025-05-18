@@ -44,7 +44,8 @@
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.1",
-    "zustand": "5.0.0-rc.2"
+    "zustand": "5.0.0-rc.2",
+    "@mediago/shared": "workspace:*"
   },
   "devDependencies": {
     "@eslint/compat": "^1.0.1",

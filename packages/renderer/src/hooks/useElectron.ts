@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import { ElectronApi } from "../../../main/types/preload";
+import { ElectronApi } from "@mediago/shared/common";
 import apis from "@/apis";
 import { isWeb } from "@/utils";
 import { getSocket } from "@/utils";
@@ -20,9 +20,13 @@ const api = Object.keys(apiFun).reduce<any>((res, funName) => {
       return null;
     }
 
-    console.info(`[useElectron] ${funName} called with`, args);
+    console.info(`[useElectron] ${String(funName)} called with`, args);
     const { code, data, message } = await electronFun(...args);
-    console.info(`[useElectron] ${funName} return`, { code, data, message });
+    console.info(`[useElectron] ${String(funName)} return`, {
+      code,
+      data,
+      message,
+    });
     if (code !== 0) {
       return Promise.reject(new Error(message));
     }

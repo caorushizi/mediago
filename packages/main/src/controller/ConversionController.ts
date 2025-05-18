@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { ConversionPagination, type Controller } from "@mediago/shared/common";
 import { TYPES, ConversionRepository, Conversion } from "@mediago/shared/node";
-import { handle } from "../helper/decorator.ts";
+import { handle } from "../helper/index.ts";
 import { IpcMainEvent } from "electron/main";
 
 @injectable()

@@ -1,3 +1,4 @@
+import { DownloadType } from "@mediago/shared/common";
 import { app } from "electron";
 import isDev from "electron-is-dev";
 import { resolve } from "path";
@@ -44,6 +45,11 @@ export const ffmpegPath = resolveBin("ffmpeg");
 export const biliDownloaderBin = resolveBin("BBDown");
 export const m3u8DownloaderBin = resolveBin("N_m3u8DL-RE");
 export const gopeedBin = resolveBin("gopeed");
+export const binMap = {
+  [DownloadType.bilibili]: biliDownloaderBin,
+  [DownloadType.m3u8]: m3u8DownloaderBin,
+  [DownloadType.direct]: gopeedBin,
+};
 
 // plugin path
 export const pluginPath = resolveStatic("plugin/index.js");

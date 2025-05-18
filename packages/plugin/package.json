@@ -27,7 +27,8 @@
     "stylelint-config-standard-scss": "^13.1.0",
     "typescript": "^5.4.5",
     "typescript-eslint": "^7.10.0",
-    "vite": "^6.1.0"
+    "vite": "^6.1.0",
+    "@mediago/shared": "workspace:*"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": "eslint",

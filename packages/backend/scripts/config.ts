@@ -1,5 +1,6 @@
 import { Env, isDev, mainResolve } from "./utils";
 import esbuild from "esbuild";
+import nodeExternalsPlugin from "esbuild-node-externals";
 
 export function buildOptions(): esbuild.BuildOptions {
   const getDefine = (): Record<string, string> => {
@@ -22,9 +23,14 @@ export function buildOptions(): esbuild.BuildOptions {
     outdir: mainResolve("dist/server"),
     loader: { ".png": "file" },
     minify: process.env.NODE_ENV === "production",
-    packages: "external",
+    // packages: "external",
     format: "esm",
     target: ["node20"],
     platform: "node",
+    plugins: [
+      nodeExternalsPlugin({
+        allowList: ["@mediago/shared"],
+      }),
+    ],
   };
 }

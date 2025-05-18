@@ -1,6 +1,10 @@
 import { inject, injectable } from "inversify";
 import { DownloadStatus } from "@mediago/shared/common";
-import { TYPES } from "@mediago/shared/node";
+import {
+  DownloaderService,
+  TaskQueueService,
+  TYPES,
+} from "@mediago/shared/node";
 import {
   Menu,
   Tray,
@@ -24,7 +28,7 @@ import ProtocolService from "./core/protocol.ts";
 import IpcHandlerService from "./core/ipc.ts";
 import { VideoService } from "./services/VideoService.ts";
 import { i18n } from "@mediago/shared/common";
-import { db, isMac } from "./helper/variables.ts";
+import { binMap, db, isMac } from "./helper/variables.ts";
 
 @injectable()
 export default class ElectronApp {
@@ -48,7 +52,11 @@ export default class ElectronApp {
     @inject(TYPES.ElectronStore)
     private readonly store: ElectronStore,
     @inject(TYPES.VideoService)
-    private readonly videoService: VideoService
+    private readonly videoService: VideoService,
+    @inject(TYPES.TaskQueueService)
+    private readonly taskQueue: TaskQueueService,
+    @inject(TYPES.DownloaderService)
+    private readonly downloader: DownloaderService
   ) {}
 
   private async serviceInit(): Promise<void> {
@@ -80,6 +88,23 @@ export default class ElectronApp {
     this.initAppTheme();
     this.initLanguage();
     this.resetDownloadStatus();
+
+    // 初始化下载器
+    this.downloader.init(binMap);
+
+    // 初始化任务队列
+    this.taskQueue.init({
+      maxRunner: this.store.get("maxRunner"),
+      proxy: this.store.get("proxy"),
+    });
+
+    this.store.onDidChange("maxRunner", (maxRunner) => {
+      this.taskQueue.changeMaxRunner(maxRunner || 2);
+    });
+
+    this.store.onDidChange("proxy", (proxy) => {
+      this.taskQueue.changeProxy(proxy || "");
+    });
 
     this.initTray();
   }
