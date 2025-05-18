@@ -1,18 +1,17 @@
 import { inject, injectable } from "inversify";
-import { TYPES } from "../types.ts";
+import { TYPES } from "@mediago/shared/node";
 import isDev from "electron-is-dev";
 import install, {
   REDUX_DEVTOOLS,
   REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
 import ElectronLogger from "./ElectronLogger.ts";
-import { Vendor } from "../core/vendor.ts";
 
 @injectable()
-export default class DevToolsService implements Vendor {
+export default class DevToolsService {
   constructor(
     @inject(TYPES.ElectronLogger)
-    private readonly logger: ElectronLogger,
+    private readonly logger: ElectronLogger
   ) {}
 
   async init() {

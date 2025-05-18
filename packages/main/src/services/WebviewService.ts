@@ -1,11 +1,12 @@
 import { Event, HandlerDetails, WebContentsView, session } from "electron";
 import { inject, injectable } from "inversify";
-import { TYPES } from "../types.ts";
+import { TYPES } from "@mediago/shared/node";
 import isDev from "electron-is-dev";
 import {
   PERSIST_WEBVIEW,
   PRIVACY_WEBVIEW,
   fetch,
+  isDeeplink,
   mobileUA,
   pcUA,
   pluginPath,
@@ -15,12 +16,11 @@ import ElectronLogger from "../vendor/ElectronLogger.ts";
 import ElectronStore from "../vendor/ElectronStore.ts";
 import MainWindow from "../windows/MainWindow.ts";
 import BrowserWindow from "../windows/BrowserWindow.ts";
-import VideoRepository from "../repository/VideoRepository.ts";
+import { VideoRepository } from "@mediago/shared/node";
 import { SniffingHelper, SourceParams } from "./SniffingHelperService.ts";
 import { resolve } from "path";
 import { readFileSync } from "fs-extra";
-import { isDeeplink } from "../helper/utils.ts";
-import i18n from "../i18n/index.ts";
+import { i18n } from "@mediago/shared/common";
 
 @injectable()
 export default class WebviewService {
@@ -41,7 +41,7 @@ export default class WebviewService {
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
     @inject(TYPES.SniffingHelper)
-    private readonly sniffingHelper: SniffingHelper,
+    private readonly sniffingHelper: SniffingHelper
   ) {
     // Initialize the blocker
     this.initBlocker();

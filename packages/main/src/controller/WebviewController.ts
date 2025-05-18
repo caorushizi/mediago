@@ -6,12 +6,12 @@ import {
 } from "electron";
 import { inject, injectable } from "inversify";
 import { handle } from "../helper/index.ts";
-import { type Controller } from "../interfaces.ts";
-import { TYPES } from "../types.ts";
+import { type Controller } from "@mediago/shared/common";
+import { TYPES } from "@mediago/shared/node";
 import WebviewService from "../services/WebviewService.ts";
 import ElectronStore from "../vendor/ElectronStore.ts";
 import { SniffingHelper } from "../services/SniffingHelperService.ts";
-import i18n from "../i18n/index.ts";
+import { i18n } from "@mediago/shared/common";
 
 @injectable()
 export default class WebviewController implements Controller {
@@ -21,7 +21,7 @@ export default class WebviewController implements Controller {
     @inject(TYPES.ElectronStore)
     private readonly store: ElectronStore,
     @inject(TYPES.SniffingHelper)
-    private readonly sniffingHelper: SniffingHelper,
+    private readonly sniffingHelper: SniffingHelper
   ) {}
 
   @handle("set-webview-bounds")

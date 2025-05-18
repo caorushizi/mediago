@@ -1,12 +1,11 @@
 import Store from "electron-store";
 import { injectable } from "inversify";
-import { AppStore } from "../main.ts";
 import { download, workspace } from "../helper/index.ts";
-import { AppLanguage, AppTheme } from "../types.ts";
-import { Vendor } from "../core/vendor.ts";
+import { AppLanguage, AppTheme } from "@mediago/shared/common";
+import { AppStore } from "@mediago/shared/node";
 
 @injectable()
-export default class StoreService extends Store<AppStore> implements Vendor {
+export default class StoreService extends Store<AppStore> {
   constructor() {
     super({
       name: "config",

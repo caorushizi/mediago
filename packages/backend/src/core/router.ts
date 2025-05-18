@@ -1,9 +1,9 @@
 import { inject, injectable, multiInject } from "inversify";
-import { Controller } from "../interfaces.ts";
-import { TYPES } from "../types.ts";
+import { Controller } from "@mediago/shared/common";
+import { TYPES } from "@mediago/shared/node";
 import Router from "@koa/router";
-import { error, success } from "../helper/utils.ts";
-import { API_PREFIX } from "../const.ts";
+import { error, success } from "../helper/index.ts";
+import { API_PREFIX } from "../helper/variables.ts";
 import path from "path";
 import Logger from "../vendor/Logger.ts";
 
@@ -13,14 +13,14 @@ export default class RouterHandlerService extends Router {
     @multiInject(TYPES.Controller)
     private readonly controllers: Controller[],
     @inject(TYPES.Logger)
-    private readonly logger: Logger,
+    private readonly logger: Logger
   ) {
     super();
   }
 
   private registerIpc(
     controller: Controller,
-    propertyKey: string | symbol,
+    propertyKey: string | symbol
   ): void {
     const property = controller[propertyKey];
     if (typeof property !== "function") return;
@@ -28,14 +28,14 @@ export default class RouterHandlerService extends Router {
     const httpMethod: "get" | "post" = Reflect.getMetadata(
       "http-method",
       controller,
-      propertyKey,
+      propertyKey
     );
     if (!httpMethod) return;
 
     const routerPath = Reflect.getMetadata(
       "router-path",
       controller,
-      propertyKey,
+      propertyKey
     );
     if (!routerPath) return;
 
@@ -65,7 +65,7 @@ export default class RouterHandlerService extends Router {
     for (const controller of this.controllers) {
       const Class = Object.getPrototypeOf(controller);
       Object.getOwnPropertyNames(Class).forEach((propertyKey) =>
-        this.registerIpc(controller, propertyKey),
+        this.registerIpc(controller, propertyKey)
       );
     }
   }

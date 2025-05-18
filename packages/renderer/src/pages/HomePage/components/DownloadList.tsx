@@ -4,7 +4,7 @@ import { DownloadItem } from "./DownloadItem";
 import { ListHeader } from "./ListHeader";
 import { produce } from "immer";
 import { App, Empty, Pagination } from "antd";
-import { DownloadFilter } from "@/types";
+import { DownloadFilter, DownloadStatus } from "@/types";
 import { ListPagination } from "./types";
 import useElectron from "@/hooks/useElectron";
 import { useTranslation } from "react-i18next";
@@ -15,6 +15,18 @@ import DownloadForm, {
   DownloadFormType,
 } from "@/components/DownloadForm";
 import { EDIT_DOWNLOAD } from "@/const";
+
+interface DownloadState {
+  [key: number]: {
+    id: number;
+    status: DownloadStatus;
+    progress: number;
+    isLive?: boolean;
+    messages: string[];
+    name?: string;
+    speed?: string;
+  };
+}
 
 interface Props {
   data: VideoStat[];
@@ -44,27 +56,33 @@ export function DownloadList({
   } = useElectron();
   const { message } = App.useApp();
   const { t } = useTranslation();
-  const [progress, setProgress] = useState<Record<number, DownloadProgress>>(
-    {},
-  );
+  const [downloadState, setDownloadState] = useState<DownloadState>({});
   const editFormRef = useRef<DownloadFormRef>(null);
+  const lastState = useRef<DownloadState>({});
 
   useEffect(() => {
-    const onDownloadProgress = (e: unknown, currProgress: DownloadProgress) => {
-      const nextState = produce((draft) => {
-        draft[currProgress.id] = currProgress;
-      });
-      setProgress(nextState);
+    const onDownloadStateUpdate = (e: unknown, state: DownloadState) => {
+      console.log("onDownloadStateUpdate", state);
+
+      // 如果状态和之前的状态发生变化，那么就需要刷新一次， 需要比较所有资源
+      const newState = Object.values(state);
+      const oldState = Object.values(lastState.current);
+      if (newState.length !== oldState.length) {
+        refresh();
+      }
+
+      for (const item of newState) {
+        const oldItem = oldState.find((i) => i.id === item.id);
+        if (oldItem?.status !== item.status) {
+          refresh();
+          break;
+        }
+      }
+
+      setDownloadState(state);
+      lastState.current = state;
     };
-    const onDownloadSuccess = () => {
-      refresh();
-    };
-    const onDownloadFailed = () => {
-      refresh();
-    };
-    const onDownloadStart = () => {
-      refresh();
-    };
+
     const onDownloadMenuEvent = async (
       e: unknown,
       params: { action: string; payload: number },
@@ -82,29 +100,13 @@ export function DownloadList({
         refresh();
       }
     };
-    const onReceiveDownloadItem = () => {
-      refresh();
-    };
-    const onChangeVideoIsLive = () => {
-      refresh();
-    };
 
-    addIpcListener("download-progress", onDownloadProgress);
-    addIpcListener("download-success", onDownloadSuccess);
-    addIpcListener("download-failed", onDownloadFailed);
-    addIpcListener("download-start", onDownloadStart);
+    addIpcListener("download-state-update", onDownloadStateUpdate);
     addIpcListener("download-item-event", onDownloadMenuEvent);
-    addIpcListener("download-item-notifier", onReceiveDownloadItem);
-    addIpcListener("change-video-is-live", onChangeVideoIsLive);
 
     return () => {
-      removeIpcListener("download-progress", onDownloadProgress);
-      removeIpcListener("download-success", onDownloadSuccess);
-      removeIpcListener("download-failed", onDownloadFailed);
-      removeIpcListener("download-start", onDownloadStart);
+      removeIpcListener("download-state-update", onDownloadStateUpdate);
       removeIpcListener("download-item-event", onDownloadMenuEvent);
-      removeIpcListener("download-item-notifier", onReceiveDownloadItem);
-      removeIpcListener("change-video-is-live", onChangeVideoIsLive);
     };
   }, []);
 
@@ -248,35 +250,40 @@ export function DownloadList({
         )}
       >
         {data.map((item) => {
-          let currProgress;
-          if (
-            progress[item.id] &&
-            filter === DownloadFilter.list &&
-            !item.isLive
-          ) {
-            currProgress = progress[item.id];
-          }
+          const state = downloadState[item.id];
           return (
             <DownloadItem
               key={item.id}
               item={item}
-              onSelectChange={handleItemSelectChange}
               selected={selected.includes(item.id)}
+              onSelectChange={handleItemSelectChange}
               onStartDownload={onStartDownload}
               onStopDownload={onStopDownload}
               onContextMenu={handleContext}
-              progress={currProgress}
               onShowEditForm={handleShowDownloadForm}
+              downloadStatus={state?.status}
+              progress={
+                state
+                  ? {
+                      id: item.id,
+                      percent: state.progress.toString(),
+                      speed: state.speed || "0 MB/s",
+                      isLive: state.isLive || false,
+                    }
+                  : undefined
+              }
             />
           );
         })}
       </div>
-      <Pagination {...pagination} />
-
+      <Pagination
+        className="flex justify-end"
+        {...pagination}
+        showSizeChanger={false}
+      />
       <DownloadForm
         id="download-list"
         ref={editFormRef}
-        key={"edit"}
         isEdit
         onAddToList={(values) => confirmAddItem(values)}
         onDownloadNow={(values) => confirmAddItem(values, true)}

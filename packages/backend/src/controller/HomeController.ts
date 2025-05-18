@@ -1,13 +1,13 @@
 import { inject, injectable } from "inversify";
-import { type Controller } from "../interfaces.ts";
-import { ConfigParams, TYPES } from "../types.ts";
-import FavoriteRepository from "../repository/FavoriteRepository.ts";
+import { type Controller } from "@mediago/shared/common";
+import { TYPES } from "@mediago/shared/node";
 import { get, post } from "../helper/index.ts";
 import Logger from "../vendor/Logger.ts";
-import ConfigService from "../services/ConfigService.ts";
+import StoreService from "../vendor/Store.ts";
 import { Context } from "koa";
 import SocketIO from "../vendor/SocketIO.ts";
 import axios from "axios";
+import { FavoriteRepository } from "@mediago/shared/node";
 
 @injectable()
 export default class HomeController implements Controller {
@@ -16,8 +16,8 @@ export default class HomeController implements Controller {
     private readonly favoriteRepository: FavoriteRepository,
     @inject(TYPES.Logger)
     private readonly logger: Logger,
-    @inject(TYPES.ConfigService)
-    private readonly config: ConfigService,
+    @inject(TYPES.StoreService)
+    private readonly store: StoreService,
     @inject(TYPES.SocketIO)
     private readonly socket: SocketIO
   ) {}
@@ -29,14 +29,14 @@ export default class HomeController implements Controller {
 
   @post("get-app-store")
   async getAppStore() {
-    const store = await this.config.getConfig();
+    const store = await this.store.store;
     return store;
   }
 
   @post("set-app-store")
   async setAppStore(ctx: Context) {
-    const params = ctx.request.body as ConfigParams;
-    this.config.setConfig(params);
+    const params = ctx.request.body as { key: string; val: any };
+    this.store.set(params.key, params.val);
     this.logger.info("set app store");
     return false;
   }
