@@ -101,6 +101,9 @@ export function DownloadList({
       }
     };
 
+    addIpcListener("test", (e: unknown, data: string) => {
+      console.log("test", data);
+    });
     addIpcListener("download-state-update", onDownloadStateUpdate);
     addIpcListener("download-item-event", onDownloadMenuEvent);
 

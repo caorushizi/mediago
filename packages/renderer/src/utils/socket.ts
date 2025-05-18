@@ -6,12 +6,7 @@ export function getSocket() {
     return _instance;
   }
 
-  _instance = io({
-    host: "http://localhost:8899",
-    extraHeaders: {
-      "Access-Control-Request-Private-Network": "true",
-    },
-  });
+  _instance = io("http://localhost:8899");
 
   return _instance;
 }
