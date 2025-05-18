@@ -1,5 +1,5 @@
 import { BilibiliButton } from "./components";
-import { ElectronApi } from "../../main/types/preload";
+import { ElectronApi } from "@mediago/shared/common";
 
 export enum DownloadType {
   m3u8 = "m3u8",
@@ -23,7 +23,7 @@ declare global {
       onEvent: (
         eventId: string,
         label: "",
-        mapKv: Record<string, string>,
+        mapKv: Record<string, string>
       ) => void;
     };
     clarity?: any;

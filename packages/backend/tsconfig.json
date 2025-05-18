@@ -13,10 +13,10 @@
     "strictPropertyInitialization": false,
     "typeRoots": ["node_modules/@types"],
     "declaration": true,
-    "emitDeclarationOnly": true,
     "declarationDir": "./types",
     "outDir": "app/output/build/main",
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    "noEmit": true
   },
   "include": ["src"],
   "references": [

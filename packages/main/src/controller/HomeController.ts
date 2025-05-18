@@ -8,7 +8,6 @@ import {
   shell,
   clipboard,
 } from "electron";
-import { Favorite } from "../entity/Favorite.ts";
 import {
   convertToAudio,
   db,
@@ -16,23 +15,26 @@ import {
   workspace,
 } from "../helper/index.ts";
 import { inject, injectable } from "inversify";
-import { AppStore, EnvPath } from "../main.ts";
+import { AppStore, EnvPath } from "@mediago/shared/node";
 import path from "path";
 import { handle, getLocalIP } from "../helper/index.ts";
-import { DownloadStatus, type Controller } from "../interfaces.ts";
-import { TYPES } from "../types.ts";
+import { DownloadStatus, type Controller } from "@mediago/shared/common";
+import { TYPES } from "@mediago/shared/node";
 import fs from "fs-extra";
 import MainWindow from "../windows/MainWindow.ts";
 import BrowserWindow from "../windows/BrowserWindow.ts";
 import ElectronStore from "../vendor/ElectronStore.ts";
 import WebviewService from "../services/WebviewService.ts";
-import FavoriteRepository from "../repository/FavoriteRepository.ts";
-import VideoRepository from "../repository/VideoRepository.ts";
-import ConversionRepository from "../repository/ConversionRepository.ts";
+import {
+  FavoriteRepository,
+  VideoRepository,
+  ConversionRepository,
+  Favorite,
+} from "@mediago/shared/node";
 import { machineId } from "node-machine-id";
 import { nanoid } from "nanoid";
 import { glob } from "glob";
-import i18n from "../i18n/index.ts";
+import { i18n } from "@mediago/shared/common";
 import ElectronLogger from "../vendor/ElectronLogger.ts";
 import ElectronUpdater from "../vendor/ElectronUpdater.ts";
 import axios from "axios";
@@ -59,7 +61,7 @@ export default class HomeController implements Controller {
     @inject(TYPES.ElectronLogger)
     private readonly logger: ElectronLogger,
     @inject(TYPES.ElectronUpdater)
-    private readonly updater: ElectronUpdater,
+    private readonly updater: ElectronUpdater
   ) {}
 
   @handle("get-env-path")
@@ -255,7 +257,7 @@ export default class HomeController implements Controller {
               shell.openPath(file);
             },
           },
-          { type: "separator" },
+          { type: "separator" }
         );
       }
     }
@@ -356,7 +358,7 @@ export default class HomeController implements Controller {
         icon: i.icon,
       })),
       null,
-      2,
+      2
     );
     const window = this.mainWindow.window;
     if (!window) return Promise.reject(i18n.t("noMainWindow"));
@@ -431,7 +433,7 @@ export default class HomeController implements Controller {
   @handle("get-page-title")
   async getPageTitle(
     event: IpcMainEvent,
-    url: string,
+    url: string
   ): Promise<{ data: string }> {
     try {
       console.log("Getting title for URL:", url);

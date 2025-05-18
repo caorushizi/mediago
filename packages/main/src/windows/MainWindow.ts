@@ -2,26 +2,42 @@ import { Menu, Notification, app } from "electron";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import { resolve } from "path";
-import { TYPES } from "../types.ts";
-import { DownloadProgress } from "../interfaces.ts";
+import { TYPES } from "@mediago/shared/node";
+import { DownloadProgress, DownloadStatus } from "@mediago/shared/common";
 import _ from "lodash";
 import Window from "../core/window.ts";
 import ElectronLogger from "../vendor/ElectronLogger.ts";
-import DownloadService from "../services/DownloadService.ts";
 import ElectronStore from "../vendor/ElectronStore.ts";
-import VideoRepository from "../repository/VideoRepository.ts";
-import i18n from "../i18n/index.ts";
+import { VideoRepository, TaskQueueService } from "@mediago/shared/node";
+import { i18n } from "@mediago/shared/common";
 import { isWin } from "../helper/variables.ts";
+
+interface DownloadItemState {
+  id: number;
+  status: DownloadStatus;
+  progress: number;
+  isLive?: boolean;
+  messages: string[];
+  name?: string;
+  speed?: string;
+}
+
+interface DownloadState {
+  [key: number]: DownloadItemState;
+}
 
 @injectable()
 export default class MainWindow extends Window {
   url = isDev ? "http://localhost:8555/" : "mediago://index.html/";
   private initialUrl: string | null = null;
+  private downloadState: DownloadState = {};
+  private readonly THROTTLE_TIME = 500; // 500ms 的节流时间
+
   constructor(
     @inject(TYPES.ElectronLogger)
     private readonly logger: ElectronLogger,
-    @inject(TYPES.DownloadService)
-    private readonly downloadService: DownloadService,
+    @inject(TYPES.TaskQueueService)
+    private readonly taskQueue: TaskQueueService,
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
     @inject(TYPES.ElectronStore)
@@ -39,15 +55,43 @@ export default class MainWindow extends Window {
       },
     });
 
-    this.downloadService.on("download-ready-start", this.onDownloadReadyStart);
-    this.downloadService.on("download-progress", this.onDownloadProgress);
-    this.downloadService.on("download-success", this.onDownloadSuccess);
-    this.downloadService.on("download-failed", this.onDownloadFailed);
-    this.downloadService.on("download-start", this.onDownloadStart);
-    this.downloadService.on("download-stop", this.onDownloadStop);
-    this.downloadService.on("download-message", this.receiveMessage);
+    this.taskQueue.on("download-ready-start", this.onDownloadReadyStart);
+    this.taskQueue.on("download-progress", this.onDownloadProgress);
+    this.taskQueue.on("download-success", this.onDownloadSuccess);
+    this.taskQueue.on("download-failed", this.onDownloadFailed);
+    this.taskQueue.on("download-start", this.onDownloadStart);
+    this.taskQueue.on("download-stop", this.onDownloadStop);
+    this.taskQueue.on("download-message", this.onDownloadMessage);
     this.store.onDidAnyChange(this.storeChange);
+
+    // 使用节流函数定期发送状态更新
+    this.sendStateUpdate = _.throttle(this.sendStateUpdate, this.THROTTLE_TIME);
   }
+
+  private sendStateUpdate = () => {
+    this.send("download-state-update", this.downloadState);
+  };
+
+  private updateDownloadState = (
+    id: number,
+    updates: Partial<DownloadItemState>
+  ) => {
+    if (!this.downloadState[id]) {
+      this.downloadState[id] = {
+        id,
+        status: DownloadStatus.Ready,
+        progress: 0,
+        messages: [],
+      };
+    }
+
+    this.downloadState[id] = {
+      ...this.downloadState[id],
+      ...updates,
+    };
+
+    this.sendStateUpdate();
+  };
 
   closeMainWindow = () => {
     const { closeMainWindow } = this.store.store;
@@ -59,7 +103,7 @@ export default class MainWindow extends Window {
   onDownloadReadyStart = async ({ id, isLive }: DownloadProgress) => {
     if (isLive) {
       await this.videoRepository.changeVideoIsLive(id);
-      this.send("change-video-is-live", { id });
+      this.updateDownloadState(id, { isLive });
     }
   };
 
@@ -123,13 +167,29 @@ export default class MainWindow extends Window {
   };
 
   onDownloadProgress = (progress: DownloadProgress) => {
-    this.send("download-progress", progress);
+    this.updateDownloadState(progress.id, {
+      progress: Number(progress.percent) || 0,
+      speed: progress.speed,
+      isLive: progress.isLive,
+    });
+  };
+
+  private cleanupDownloadState = (id: number) => {
+    if (this.downloadState[id]) {
+      delete this.downloadState[id];
+      this.sendStateUpdate();
+    }
   };
 
   onDownloadSuccess = async (id: number) => {
+    this.logger.info(`taskId: ${id} success`);
+    await this.videoRepository.changeVideoStatus(id, DownloadStatus.Success);
+    this.updateDownloadState(id, { status: DownloadStatus.Success });
+
     const promptTone = this.store.get("promptTone");
     if (promptTone) {
       const video = await this.videoRepository.findVideo(id);
+      this.updateDownloadState(id, { name: video.name });
 
       new Notification({
         title: i18n.t("downloadSuccess"),
@@ -139,37 +199,59 @@ export default class MainWindow extends Window {
       }).show();
     }
 
-    this.send("download-success", id);
+    // 延迟清理状态，确保前端有足够时间处理最后的成功状态
+    setTimeout(() => {
+      this.cleanupDownloadState(id);
+    }, 5000);
   };
 
   onDownloadFailed = async (id: number, err: unknown) => {
+    this.logger.info(`taskId: ${id} failed`, err);
+    await this.videoRepository.changeVideoStatus(id, DownloadStatus.Failed);
+    this.updateDownloadState(id, { status: DownloadStatus.Failed });
+
     const promptTone = this.store.get("promptTone");
     if (promptTone) {
       const video = await this.videoRepository.findVideo(id);
-
       new Notification({
         title: i18n.t("downloadFailed"),
         body: i18n.t("videoDownloadFailed", { name: video.name }),
       }).show();
     }
-    this.logger.error("download failed: ", err);
-    this.send("download-failed", id);
+
+    // 延迟清理状态，确保前端有足够时间处理最后的失败状态
+    setTimeout(() => {
+      this.cleanupDownloadState(id);
+    }, 5000);
   };
 
   onDownloadStart = async (id: number) => {
-    this.send("download-start", id);
+    this.logger.info(`taskId: ${id} start`);
+    await this.videoRepository.changeVideoStatus(
+      id,
+      DownloadStatus.Downloading
+    );
+    this.updateDownloadState(id, { status: DownloadStatus.Downloading });
   };
 
   onDownloadStop = async (id: number) => {
-    this.send("download-stop", id);
+    this.logger.info(`taskId: ${id} stopped`);
+    await this.videoRepository.changeVideoStatus(id, DownloadStatus.Stopped);
+    this.updateDownloadState(id, { status: DownloadStatus.Stopped });
+
+    // 延迟清理状态，确保前端有足够时间处理最后的停止状态
+    setTimeout(() => {
+      this.cleanupDownloadState(id);
+    }, 5000);
   };
 
-  receiveMessage = async (id: number, message: string) => {
-    // Write the log to the database
+  onDownloadMessage = async (id: number, message: string) => {
     await this.videoRepository.appendDownloadLog(id, message);
     const showTerminal = this.store.get("showTerminal");
     if (showTerminal) {
-      this.send("download-message", id, message);
+      this.updateDownloadState(id, {
+        messages: [...(this.downloadState[id]?.messages || []), message],
+      });
     }
   };
 

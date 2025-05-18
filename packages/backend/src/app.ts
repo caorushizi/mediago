@@ -1,6 +1,5 @@
 import { inject, injectable } from "inversify";
-import { TYPES } from "./types.ts";
-import TypeORM from "./vendor/TypeORM.ts";
+import { TYPES } from "@mediago/shared/node";
 import RouterHandlerService from "./core/router.ts";
 import Koa from "koa";
 import cors from "@koa/cors";
@@ -8,11 +7,18 @@ import bodyParser from "koa-bodyparser";
 import Logger from "./vendor/Logger.ts";
 import http from "http";
 import SocketIO from "./vendor/SocketIO.ts";
-import VideoRepository from "./repository/VideoRepository.ts";
-import { DownloadStatus } from "./interfaces.ts";
+import {
+  VideoRepository,
+  TypeORM,
+  DownloaderService,
+  TaskQueueService,
+} from "@mediago/shared/node";
+import { DownloadStatus } from "@mediago/shared/common";
 import serve from "koa-static";
-import { STATIC_DIR } from "./const.ts";
+import { DB_PATH, STATIC_DIR } from "./helper/variables.ts";
 import send from "koa-send";
+import StoreService from "./vendor/Store.ts";
+import { binMap } from "./helper/variables.ts";
 
 @injectable()
 export default class ElectronApp extends Koa {
@@ -27,12 +33,18 @@ export default class ElectronApp extends Koa {
     private readonly socket: SocketIO,
     @inject(TYPES.VideoRepository)
     private readonly videoRepository: VideoRepository,
+    @inject(TYPES.DownloaderService)
+    private readonly downloaderService: DownloaderService,
+    @inject(TYPES.TaskQueueService)
+    private readonly taskQueueService: TaskQueueService,
+    @inject(TYPES.StoreService)
+    private readonly store: StoreService
   ) {
     super();
   }
 
   private async vendorInit() {
-    await this.db.init();
+    await this.db.init({ dbPath: DB_PATH });
   }
 
   async init(): Promise<void> {
@@ -65,6 +77,20 @@ export default class ElectronApp extends Koa {
 
     this.socket.initSocketIO(server);
 
+    this.taskQueueService.init({
+      maxRunner: this.store.get("maxRunner"),
+      proxy: this.store.get("proxy"),
+    });
+
+    this.store.onDidChange("maxRunner", (maxRunner) => {
+      this.taskQueueService.changeMaxRunner(maxRunner || 1);
+    });
+    this.store.onDidChange("proxy", (proxy) => {
+      this.taskQueueService.changeProxy(proxy || "");
+    });
+
+    this.downloaderService.init(binMap);
+
     server.listen(8899, () => {
       this.logger.info("Server running on port 8899");
     });
@@ -77,7 +103,7 @@ export default class ElectronApp extends Koa {
     const videoIds = videos.map((video) => video.id);
     await this.videoRepository.changeVideoStatus(
       videoIds,
-      DownloadStatus.Failed,
+      DownloadStatus.Failed
     );
   }
 }

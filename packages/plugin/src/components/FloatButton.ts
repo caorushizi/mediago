@@ -10,8 +10,8 @@ import {
   removeIpcListener,
   showDownloadDialog,
 } from "../helper";
-import { DownloadType } from "../../../main/types/interfaces";
 import { classMap } from "lit/directives/class-map.js";
+import { DownloadType } from "../types";
 
 interface SourceData {
   id: number;
@@ -134,7 +134,7 @@ export class FloatButton extends LitElement {
 
   getPosition = (
     newLeft: number,
-    newTop: number,
+    newTop: number
   ): { left: number; top: number } => {
     if (!this.button) return { left: 0, top: 0 };
 

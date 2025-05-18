@@ -1,6 +1,10 @@
 import { inject, injectable } from "inversify";
-import { DownloadStatus } from "./interfaces.ts";
-import { TYPES } from "./types.ts";
+import { DownloadStatus } from "@mediago/shared/common";
+import {
+  DownloaderService,
+  TaskQueueService,
+  TYPES,
+} from "@mediago/shared/node";
 import {
   Menu,
   Tray,
@@ -10,21 +14,21 @@ import {
   Event,
   BrowserWindow,
 } from "electron";
-import TrayIcon from "./tray-icon.png";
-import TrayIconLight from "./tray-icon-light.png";
+import TrayIcon from "../assets/tray-icon.png";
+import TrayIconLight from "../assets/tray-icon-light.png";
 import path from "path";
 import MainWindow from "./windows/MainWindow.ts";
 import WebviewService from "./services/WebviewService.ts";
-import VideoRepository from "./repository/VideoRepository.ts";
+import { VideoRepository } from "@mediago/shared/node";
 import ElectronDevtools from "./vendor/ElectronDevtools.ts";
 import ElectronStore from "./vendor/ElectronStore.ts";
 import ElectronUpdater from "./vendor/ElectronUpdater.ts";
-import TypeORM from "./vendor/TypeORM.ts";
+import { TypeORM } from "@mediago/shared/node";
 import ProtocolService from "./core/protocol.ts";
 import IpcHandlerService from "./core/ipc.ts";
 import { VideoService } from "./services/VideoService.ts";
-import i18n from "./i18n/index.ts";
-import { isMac } from "./helper/variables.ts";
+import { i18n } from "@mediago/shared/common";
+import { binMap, db, isMac } from "./helper/variables.ts";
 
 @injectable()
 export default class ElectronApp {
@@ -49,6 +53,10 @@ export default class ElectronApp {
     private readonly store: ElectronStore,
     @inject(TYPES.VideoService)
     private readonly videoService: VideoService,
+    @inject(TYPES.TaskQueueService)
+    private readonly taskQueue: TaskQueueService,
+    @inject(TYPES.DownloaderService)
+    private readonly downloader: DownloaderService
   ) {}
 
   private async serviceInit(): Promise<void> {
@@ -57,7 +65,7 @@ export default class ElectronApp {
   }
 
   private async vendorInit() {
-    await this.db.init();
+    await this.db.init({ dbPath: db });
     this.updater.init();
     this.devTools.init();
   }
@@ -80,6 +88,23 @@ export default class ElectronApp {
     this.initAppTheme();
     this.initLanguage();
     this.resetDownloadStatus();
+
+    // 初始化下载器
+    this.downloader.init(binMap);
+
+    // 初始化任务队列
+    this.taskQueue.init({
+      maxRunner: this.store.get("maxRunner"),
+      proxy: this.store.get("proxy"),
+    });
+
+    this.store.onDidChange("maxRunner", (maxRunner) => {
+      this.taskQueue.changeMaxRunner(maxRunner || 2);
+    });
+
+    this.store.onDidChange("proxy", (proxy) => {
+      this.taskQueue.changeProxy(proxy || "");
+    });
 
     this.initTray();
   }
@@ -122,7 +147,7 @@ export default class ElectronApp {
     const videoIds = videos.map((video) => video.id);
     await this.videoRepository.changeVideoStatus(
       videoIds,
-      DownloadStatus.Failed,
+      DownloadStatus.Failed
     );
   }
 

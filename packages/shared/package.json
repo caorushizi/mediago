@@ -1,0 +1,26 @@
+{
+  "name": "@mediago/shared",
+  "version": "1.0.0",
+  "description": "Shared code for MediaGo project",
+  "type": "module",
+  "exports": {
+    "./node": "./src/node/index.ts",
+    "./common": "./src/common/index.ts",
+    "./browser": "./src/browser/index.ts"
+  },
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.8.1",
+  "dependencies": {
+    "i18next": "^23.11.5",
+    "inversify": "^6.0.2",
+    "node-pty": "^1.0.0",
+    "strip-ansi": "^7.1.0",
+    "typeorm": "0.3.20"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.12"
+  }
+}
