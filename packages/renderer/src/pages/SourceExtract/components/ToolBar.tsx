@@ -143,7 +143,7 @@ export function ToolBar({ page }: Props) {
 
   // Merge to home page
   const onCombineToHome = useMemoizedFn(() => {
-    combineToHomePage(store);
+    combineToHomePage(store as any);
   });
 
   const goto = useMemoizedFn(() => {

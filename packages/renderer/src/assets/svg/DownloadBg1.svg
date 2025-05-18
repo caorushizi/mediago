@@ -3,7 +3,8 @@
     d="M0 5C0 2.23858 2.23858 0 5 0H29.3967C31.0283 0 32.5572 0.796055 33.4929 2.13269L40.4929 12.1327C41.698 13.8543 41.698 16.1457 40.4929 17.8673L33.4929 27.8673C32.5572 29.2039 31.0283 30 29.3967 30H5C2.23858 30 0 27.7614 0 25V5Z"
     fill="url(#paint0_linear_5_668)" />
   <defs>
-    <linearGradient id="paint0_linear_5_668" x1="0" y1="15" x2="45" y2="15" gradientUnits="userSpaceOnUse">
+    <linearGradient id="paint0_linear_5_668" x1="0" y1="15" x2="45" y2="15"
+      gradientUnits="userSpaceOnUse">
       <stop stop-color="#24C1FF" stop-opacity="0" />
       <stop offset="1" stop-color="white" />
     </linearGradient>
