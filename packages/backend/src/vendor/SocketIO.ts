@@ -54,12 +54,6 @@ export default class SocketIO implements Vendor {
       },
     });
 
-    this.io.engine.on("headers", (headers) => {
-      headers["Access-Control-Allow-Private-Network"] = true;
-    });
-
-    this.io.on("connection", () => {});
-
     this.taskQueueService.on("download-ready-start", this.onDownloadReadyStart);
     this.taskQueueService.on("download-progress", this.onDownloadProgress);
     this.taskQueueService.on("download-success", this.onDownloadSuccess);
@@ -70,7 +64,7 @@ export default class SocketIO implements Vendor {
   }
 
   private sendStateUpdate = () => {
-    this.io.emit("download-state-update", this.downloadState);
+    this.io.emit("download-state-update", "message", this.downloadState);
   };
 
   private updateDownloadState = (

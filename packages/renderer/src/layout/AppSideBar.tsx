@@ -224,13 +224,13 @@ export function AppSideBar({ className }: Props) {
         className,
       )}
     >
-      <div className="relative z-10 flex flex-row sm:flex-col sm:w-[180px] gap-3">
+      <div className="relative z-10 flex flex-row gap-3 sm:w-[180px] sm:flex-col">
         {finalItems.map((item) => cloneElement(item.label, { key: item.key }))}
       </div>
 
       <img
         src={siderBg}
-        className="pointer-events-none absolute bottom-0 left-0 right-0 select-none w-full"
+        className="pointer-events-none absolute bottom-0 left-0 right-0 w-full select-none"
       />
     </div>
   );

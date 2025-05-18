@@ -5,3 +5,4 @@ node_modules
 .vitepress
 *.tsno.mjs
 .DS_Store
+log
