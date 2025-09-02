@@ -178,7 +178,6 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(function DownloadF
       key={isEdit ? "edit" : "new"}
       title={isEdit ? t("editDownload") : t("newDownload")}
       width={500}
-      onClose={() => setModalOpen(false)}
       onCancel={() => setModalOpen(false)}
       afterOpenChange={afterOpenChange}
       destroyOnClose={destroyOnClose}

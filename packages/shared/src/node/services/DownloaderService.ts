@@ -8,6 +8,9 @@ import { DownloadSchema } from "../types/index.ts";
 @injectable()
 export default class DownloaderService {
   private binMap?: Record<DownloadType, string>;
+  private lastProgressUpdate = new Map<number, { percent: string; speed: string; timestamp: number }>();
+  private readonly PROGRESS_THROTTLE_MS = 200; // 200ms 进度更新节流
+  private readonly MIN_PROGRESS_DIFF = 0.5; // 最小进度差异 0.5%
 
   constructor() {}
 
@@ -83,6 +86,29 @@ export default class DownloaderService {
     const speedReg = RegExp(consoleReg.speed, "g");
     const percentReg = RegExp(consoleReg.percent, "g");
 
+    // 智能进度更新检查
+    const shouldUpdateProgress = (id: number, newPercent: string, newSpeed: string): boolean => {
+      const now = Date.now();
+      const lastUpdate = this.lastProgressUpdate.get(id);
+      
+      if (!lastUpdate) {
+        return true; // 首次更新
+      }
+      
+      // 时间节流检查
+      if (now - lastUpdate.timestamp < this.PROGRESS_THROTTLE_MS) {
+        return false;
+      }
+      
+      // 进度差异检查
+      const percentDiff = Math.abs(Number(newPercent) - Number(lastUpdate.percent));
+      if (percentDiff < this.MIN_PROGRESS_DIFF && newSpeed === lastUpdate.speed) {
+        return false;
+      }
+      
+      return true;
+    };
+
     const onMessage = (ctx: DownloadContext, message: string) => {
       callback("message", { id, message });
 
@@ -118,13 +144,26 @@ export default class DownloaderService {
       }
 
       if (ctx.ready && (ctx.percent || ctx.speed)) {
-        callback("progress", {
-          id,
-          type: "progress",
-          percent: ctx.percent || "",
-          speed: ctx.speed || "",
-          isLive: ctx.isLive,
-        });
+        const currentPercent = ctx.percent || "";
+        const currentSpeed = ctx.speed || "";
+        
+        // 智能节流：只有在满足更新条件时才发送进度更新
+        if (shouldUpdateProgress(id, currentPercent, currentSpeed)) {
+          callback("progress", {
+            id,
+            type: "progress",
+            percent: currentPercent,
+            speed: currentSpeed,
+            isLive: ctx.isLive,
+          });
+          
+          // 更新最后进度记录
+          this.lastProgressUpdate.set(id, {
+            percent: currentPercent,
+            speed: currentSpeed,
+            timestamp: Date.now()
+          });
+        }
       }
     };
 
@@ -134,18 +173,23 @@ export default class DownloaderService {
 
     const binPath = this.binMap[params.type];
 
-    // TODO: logger
-    await ptyRunner({
-      abortController,
-      onMessage,
-      binPath,
-      args: spawnParams,
-      ctx: {
-        ready: false,
-        isLive: false,
-        percent: "",
-        speed: "",
-      },
-    });
+    try {
+      // TODO: logger
+      await ptyRunner({
+        abortController,
+        onMessage,
+        binPath,
+        args: spawnParams,
+        ctx: {
+          ready: false,
+          isLive: false,
+          percent: "",
+          speed: "",
+        },
+      });
+    } finally {
+      // 清理进度追踪记录
+      this.lastProgressUpdate.delete(id);
+    }
   }
 }

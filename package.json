@@ -9,6 +9,7 @@
   "packageManager": "pnpm@10.15.0",
   "scripts": {
     "dev": "turbo build --filter=plugin --filter=mobile && turbo dev --parallel",
+    "dev:docker": "cd docker && docker-compose up webapi",
     "dev:web": "turbo dev:web --parallel",
     "build": "turbo build",
     "build:plugin": "turbo build --filter=plugin",
@@ -18,7 +19,7 @@
     "build:renderer": "turbo build --filter=frontend",
     "build:mobile": "turbo build --filter=mobile",
     "build:web-release": "turbo types && turbo build --filter=webapi --filter=frontend",
-    "build:docker": "pnpm build:web-release && docker build -t caorushizi/mediago:latest .",
+    "build:docker": "pnpm build:web-release && docker build -f docker/Dockerfile -t caorushizi/mediago:latest .",
     "rebuild:web": "turbo rebuild --filter=webapi",
     "rebuild:electron": "turbo rebuild --filter=electron",
     "beta": "turbo build && pnpm -F main run pack",
