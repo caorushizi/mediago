@@ -8,7 +8,7 @@ import { TYPES } from "../../types/index.ts";
 export default class FavoriteRepository {
   constructor(
     @inject(TYPES.TypeORM)
-    private readonly db: TypeORM
+    private readonly db: TypeORM,
   ) {}
 
   async findFavorites(): Promise<Favorite[]> {
