@@ -17,6 +17,5 @@
     "noEmit": true,
     "jsx": "react",
     "typeRoots": ["node_modules/@types"]
-  },
-  "include": ["scripts"]
+  }
 }

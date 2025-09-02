@@ -17,16 +17,14 @@ This is a monorepo using **Turborepo + pnpm workspaces** with the following stru
 ```
 mediago/
 ├── apps/                    # Applications
-│   ├── main/               # Electron main process (Node.js backend for desktop app)
-│   ├── renderer/           # Frontend UI (React + Vite, used for both Electron renderer and web)
-│   ├── backend/            # Standalone web server (Koa.js, for Docker/web deployments)
+│   ├── electron/           # Electron main process (Node.js backend for desktop app)
+│   ├── frontend/           # Frontend UI (React + Vite, used for both Electron renderer and web)
+│   ├── webapi/             # Standalone web server (Koa.js, for Docker/web deployments)
 │   ├── mobile/             # Mobile-specific components
 │   └── plugin/             # Browser plugin for resource detection
-├── packages/               # Shared packages
-│   ├── shared/             # Shared utilities and types across apps
-│   └── config/             # Shared configuration (tsconfig, build configs)
-└── tools/                  # Build tools and utilities
-    └── scripts/            # Custom build scripts
+└── packages/               # Shared packages
+    ├── shared/             # Shared utilities and types across apps
+    └── config/             # Shared configuration (tsconfig, build configs)
 ```
 
 ## Key Technologies
@@ -56,7 +54,7 @@ pnpm dev:web
 pnpm build
 
 # Individual app builds
-pnpm build:main      # Electron main process
+pnpm build:electron  # Electron main process
 pnpm build:renderer  # Frontend (Electron renderer)
 pnpm build:web       # Frontend (web version) 
 pnpm build:backend   # Standalone web server
@@ -70,8 +68,8 @@ pnpm build:web-release # Build web version for Docker
 
 # Type checking (across all packages)
 pnpm types          # All packages type checking
-pnpm types:renderer # Renderer package types
-pnpm types:watch    # Watch mode for main package
+pnpm types:renderer # Frontend package types
+pnpm types:watch    # Watch mode for electron package
 
 # Code quality (powered by Turbo + Biome)
 pnpm lint           # Lint all packages
@@ -91,23 +89,24 @@ docker run -d --name mediago -p 8899:8899 -v mediago-data:/root/mediago registry
 - **Task dependencies**: Automatic build order based on dependencies
 - **Remote caching**: Optional remote cache for team efficiency
 
-## Build Scripts
+## Turborepo Build Management
 
-Custom build scripts are located in `tools/scripts/`:
-- `tools/scripts/dev.ts` - Development build (builds plugin and mobile only)
-- `tools/scripts/build.ts` - Production build (builds all packages in order)
-- `tools/scripts/web.ts` - Web release build
+All build tasks are managed by Turborepo with intelligent caching and parallel execution:
+- **Dependency-based builds**: Packages build in the correct order based on dependencies
+- **Incremental builds**: Only rebuild changed packages and their dependents
+- **Parallel execution**: Multiple packages can build simultaneously
+- **Smart caching**: Avoid rebuilding unchanged code
 
 ## Package-Specific Commands
 
 Run commands in specific packages using Turbo filters:
 ```bash
 # Single package
-turbo build --filter=renderer
-turbo dev --filter=main
+turbo build --filter=frontend
+turbo dev --filter=electron
 
 # Multiple packages
-turbo lint --filter=main --filter=renderer
+turbo lint --filter=electron --filter=frontend
 
 # All packages in apps/
 turbo build --filter="apps/*"
@@ -128,8 +127,8 @@ No specific test commands are configured in the root package.json. Check individ
 ## Architecture Notes
 
 - **App-centric design**: Main applications in `apps/`, shared code in `packages/`
-- **Unified UI**: `renderer` package provides UI for both Electron and web platforms
-- **Independent services**: `backend` can run standalone in Docker
+- **Unified UI**: `frontend` package provides UI for both Electron and web platforms
+- **Independent services**: `webapi` can run standalone in Docker
 - **Dependency injection**: Uses Inversify across the codebase
 - **Data persistence**: TypeORM with SQLite
 - **Real-time communication**: Socket.io between frontend and backend
