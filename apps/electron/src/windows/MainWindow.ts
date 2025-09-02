@@ -31,7 +31,11 @@ export default class MainWindow extends Window {
   url = isDev ? "http://localhost:8555/" : "mediago://index.html/";
   private initialUrl: string | null = null;
   private downloadState: DownloadState = {};
-  private readonly THROTTLE_TIME = 500; // 500ms 的节流时间
+  private lastSentState: DownloadState = {}; // 记录上次发送的状态
+  private pendingUpdates = new Set<number>(); // 待处理的更新队列
+  private readonly THROTTLE_TIME = 300; // 减少到 300ms 以提高响应性
+  private readonly PROGRESS_THRESHOLD = 1; // 进度变化阈值 1%
+  private sendStateUpdate: () => void; // 节流函数
 
   constructor(
     @inject(TYPES.ElectronLogger)
@@ -64,12 +68,65 @@ export default class MainWindow extends Window {
     this.taskQueue.on("download-message", this.onDownloadMessage);
     this.store.onDidAnyChange(this.storeChange);
 
-    // 使用节流函数定期发送状态更新
-    this.sendStateUpdate = _.throttle(this.sendStateUpdate, this.THROTTLE_TIME);
+    // 使用节流函数定期发送状态更新，并添加批量处理
+    this.sendStateUpdate = _.throttle(this.sendBatchStateUpdate.bind(this), this.THROTTLE_TIME);
   }
 
-  private sendStateUpdate = () => {
-    this.send("download-state-update", this.downloadState);
+  // 检查状态是否有实质性变化
+  private hasSignificantChange = (id: number, updates: Partial<DownloadItemState>): boolean => {
+    const current = this.downloadState[id];
+    const lastSent = this.lastSentState[id];
+    
+    // 状态变化总是需要发送
+    if (updates.status !== undefined && updates.status !== current?.status) {
+      return true;
+    }
+    
+    // 实时流状态变化需要发送
+    if (updates.isLive !== undefined && updates.isLive !== current?.isLive) {
+      return true;
+    }
+    
+    // 进度变化超过阈值才发送
+    if (updates.progress !== undefined && lastSent) {
+      const progressDiff = Math.abs(updates.progress - (lastSent.progress || 0));
+      if (progressDiff >= this.PROGRESS_THRESHOLD) {
+        return true;
+      }
+    }
+    
+    // 首次进度更新
+    if (updates.progress !== undefined && !lastSent) {
+      return true;
+    }
+    
+    // 消息更新（但需要检查是否真的有新消息）
+    if (updates.messages !== undefined) {
+      const currentMsgCount = current?.messages?.length || 0;
+      const newMsgCount = updates.messages.length;
+      return newMsgCount > currentMsgCount;
+    }
+    
+    return false;
+  };
+
+  // 批量发送状态更新
+  private sendBatchStateUpdate = () => {
+    if (this.pendingUpdates.size === 0) return;
+    
+    // 发送当前完整的状态，包括清理信息
+    const updatedState: DownloadState = { ...this.downloadState };
+    
+    // 如果有状态需要更新，发送完整的当前状态
+    if (this.pendingUpdates.size > 0) {
+      this.send("download-state-update", updatedState);
+      
+      // 更新已发送状态的记录
+      this.lastSentState = { ...updatedState };
+    }
+    
+    // 清空待处理队列
+    this.pendingUpdates.clear();
   };
 
   private updateDownloadState = (id: number, updates: Partial<DownloadItemState>) => {
@@ -87,7 +144,11 @@ export default class MainWindow extends Window {
       ...updates,
     };
 
-    this.sendStateUpdate();
+    // 检查是否有实质性变化
+    if (this.hasSignificantChange(id, updates)) {
+      this.pendingUpdates.add(id);
+      this.sendStateUpdate();
+    }
   };
 
   closeMainWindow = () => {
@@ -174,6 +235,8 @@ export default class MainWindow extends Window {
   private cleanupDownloadState = (id: number) => {
     if (this.downloadState[id]) {
       delete this.downloadState[id];
+      delete this.lastSentState[id]; // 同时清理发送状态记录
+      this.pendingUpdates.add(id); // 标记需要发送清理状态
       this.sendStateUpdate();
     }
   };

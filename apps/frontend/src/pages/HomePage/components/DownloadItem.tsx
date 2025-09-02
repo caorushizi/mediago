@@ -1,5 +1,5 @@
 import { cn, tdApp, fromatDateTime } from "@/utils";
-import React, { ReactNode, useMemo } from "react";
+import React, { ReactNode, useMemo, memo } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DownloadStatus } from "@/types";
 import { Progress } from "antd";
@@ -28,7 +28,7 @@ interface Props {
   downloadStatus?: DownloadStatus;
 }
 
-export function DownloadItem({
+const DownloadItemComponent = ({
   item,
   onSelectChange,
   selected,
@@ -38,7 +38,7 @@ export function DownloadItem({
   onShowEditForm,
   downloadStatus,
   progress,
-}: Props) {
+}: Props) => {
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
   const { openPlayerWindow } = useElectron();
@@ -247,4 +247,23 @@ export function DownloadItem({
       </div>
     </div>
   );
-}
+};
+
+// 使用 memo 优化组件性能，只在 props 真正变化时重新渲染
+export const DownloadItem = memo(DownloadItemComponent, (prevProps, nextProps) => {
+  // 自定义比较函数，只有关键属性变化时才重新渲染
+  const itemChanged = prevProps.item.id !== nextProps.item.id ||
+    prevProps.item.name !== nextProps.item.name ||
+    prevProps.item.status !== nextProps.item.status ||
+    prevProps.item.exists !== nextProps.item.exists;
+  
+  const propsChanged = prevProps.selected !== nextProps.selected ||
+    prevProps.downloadStatus !== nextProps.downloadStatus;
+    
+  const progressChanged = (prevProps.progress?.percent !== nextProps.progress?.percent) ||
+    (prevProps.progress?.speed !== nextProps.progress?.speed) ||
+    (prevProps.progress?.isLive !== nextProps.progress?.isLive);
+  
+  // 如果没有任何关键属性变化，则不需要重新渲染
+  return !itemChanged && !propsChanged && !progressChanged;
+});
