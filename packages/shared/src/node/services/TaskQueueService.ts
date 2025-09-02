@@ -31,7 +31,7 @@ export default class TaskQueueService extends EventEmitter {
 
   constructor(
     @inject(TYPES.DownloaderService)
-    private readonly downloaderService: DownloaderService
+    private readonly downloaderService: DownloaderService,
   ) {
     super();
   }

@@ -9,7 +9,7 @@ import { i18n } from "../../../common/index.ts";
 export default class ConversionRepository {
   constructor(
     @inject(TYPES.TypeORM)
-    private readonly db: TypeORM
+    private readonly db: TypeORM,
   ) {}
 
   async findConversion(id: number) {
@@ -26,15 +26,13 @@ export default class ConversionRepository {
   async getConversions(pagination: ConversionPagination) {
     const { current = 0, pageSize = 50 } = pagination;
 
-    const [items, count] = await this.db.manager
-      .getRepository(Conversion)
-      .findAndCount({
-        order: {
-          createdDate: "ASC",
-        },
-        skip: (current - 1) * pageSize,
-        take: pageSize,
-      });
+    const [items, count] = await this.db.manager.getRepository(Conversion).findAndCount({
+      order: {
+        createdDate: "ASC",
+      },
+      skip: (current - 1) * pageSize,
+      take: pageSize,
+    });
     return {
       total: count,
       list: items,

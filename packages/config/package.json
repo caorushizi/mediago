@@ -1,0 +1,24 @@
+{
+  "name": "@mediago/config",
+  "version": "1.0.0",
+  "description": "Shared configuration for MediaGo project",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./tsconfig": "./tsconfig.json",
+    "./biome": "./biome.json",
+    "./vite": "./src/vite.config.base.ts"
+  },
+  "files": [
+    "src",
+    "tsconfig.json",
+    "biome.json"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "typescript": "^5.4.5"
+  }
+}

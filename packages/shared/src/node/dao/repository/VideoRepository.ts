@@ -1,11 +1,6 @@
 import { Video } from "../entity/Video.ts";
 import { inject, injectable } from "inversify";
-import {
-  DownloadFilter,
-  DownloadItem,
-  DownloadItemPagination,
-  DownloadStatus,
-} from "../../../common/types/index.ts";
+import { DownloadFilter, DownloadItem, DownloadItemPagination, DownloadStatus } from "../../../common/types/index.ts";
 import { TYPES } from "../../types/index.ts";
 import { In, Not } from "typeorm";
 import TypeORM from "../../vendor/TypeORM.ts";
@@ -15,7 +10,7 @@ import { i18n } from "../../../common/index.ts";
 export default class VideoRepository {
   constructor(
     @inject(TYPES.TypeORM)
-    private readonly db: TypeORM
+    private readonly db: TypeORM,
   ) {}
 
   async addVideo(video: Omit<DownloadItem, "id">) {
@@ -86,28 +81,19 @@ export default class VideoRepository {
   }
 
   async findVideos(pagination: DownloadItemPagination) {
-    const {
-      current = 0,
-      pageSize = 50,
-      filter = DownloadFilter.list,
-    } = pagination;
-    const filterCondition =
-      filter === DownloadFilter.done
-        ? DownloadStatus.Success
-        : Not(DownloadStatus.Success);
+    const { current = 0, pageSize = 50, filter = DownloadFilter.list } = pagination;
+    const filterCondition = filter === DownloadFilter.done ? DownloadStatus.Success : Not(DownloadStatus.Success);
 
-    const [items, count] = await this.db.manager
-      .getRepository(Video)
-      .findAndCount({
-        where: {
-          status: filterCondition,
-        },
-        order: {
-          createdDate: "ASC",
-        },
-        skip: (current - 1) * pageSize,
-        take: pageSize,
-      });
+    const [items, count] = await this.db.manager.getRepository(Video).findAndCount({
+      where: {
+        status: filterCondition,
+      },
+      order: {
+        createdDate: "ASC",
+      },
+      skip: (current - 1) * pageSize,
+      take: pageSize,
+    });
     return {
       total: count,
       list: items,
