@@ -10,8 +10,7 @@
       "apps/**/src/**/*.{js,jsx,ts,tsx,json,css,scss}",
       "packages/**/src/**/*.{js,jsx,ts,tsx,json,css,scss}",
       "apps/**/*.{js,jsx,ts,tsx,json}",
-      "packages/**/*.{js,jsx,ts,tsx,json}",
-      "tools/scripts/*.ts"
+      "packages/**/*.{js,jsx,ts,tsx,json}"
     ]
   },
   "linter": {
