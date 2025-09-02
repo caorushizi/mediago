@@ -29,6 +29,9 @@
     "commit": "git-cz",
     "commitlint": "commitlint --edit",
     "spellcheck": "cspell \"packages/**/src/**/*.{ts,tsx}\"",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
     "lint-staged": "pnpm --recursive -F \"./packages/*\" run lint-staged"
   },
   "keywords": [],
@@ -39,21 +42,19 @@
     }
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.2.2",
     "@commitlint/cli": "^19.3.0",
     "@commitlint/config-conventional": "^19.2.2",
     "@commitlint/core": "^19.3.0",
     "@commitlint/cz-commitlint": "^19.2.0",
     "@commitlint/format": "^19.3.0",
-    "@eslint/js": "^8.57.0",
     "commitizen": "^4.3.0",
     "cross-env": "^7.0.3",
     "cspell": "^8.8.3",
     "cz-git": "^1.9.2",
-    "eslint": "^8.57.0",
-    "globals": "^15.3.0",
     "husky": "^9.0.11",
+    "lint-staged": "^16.1.6",
     "tsx": "^4.11.0",
-    "typescript-eslint": "^7.10.0",
     "zx": "^8.1.1"
   },
   "pnpm": {
