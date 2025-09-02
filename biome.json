@@ -7,9 +7,11 @@
   },
   "files": {
     "includes": [
+      "apps/**/src/**/*.{js,jsx,ts,tsx,json,css,scss}",
       "packages/**/src/**/*.{js,jsx,ts,tsx,json,css,scss}",
+      "apps/**/*.{js,jsx,ts,tsx,json}",
       "packages/**/*.{js,jsx,ts,tsx,json}",
-      "scripts/*.ts"
+      "tools/scripts/*.ts"
     ]
   },
   "linter": {
@@ -74,10 +76,7 @@
   },
   "overrides": [
     {
-      "includes": [
-        "packages/renderer/**/*.{js,jsx,ts,tsx}",
-        "packages/mobile/**/*.{js,jsx,ts,tsx}"
-      ],
+      "includes": ["apps/renderer/**/*.{js,jsx,ts,tsx}", "apps/mobile/**/*.{js,jsx,ts,tsx}"],
       "linter": {
         "rules": {
           "correctness": {
@@ -88,7 +87,7 @@
       }
     },
     {
-      "includes": ["packages/plugin/**/*.{css,scss}"],
+      "includes": ["apps/plugin/**/*.{css,scss}"],
       "css": {
         "linter": {
           "enabled": true

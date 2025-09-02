@@ -15,10 +15,7 @@ export default class DownloaderService {
     this.binMap = binMap;
   }
 
-  async download(
-    params: DownloadParams,
-    schema: DownloadSchema
-  ): Promise<void> {
+  async download(params: DownloadParams, schema: DownloadSchema): Promise<void> {
     const {
       id,
       abortSignal: abortController,
@@ -67,8 +64,7 @@ export default class DownloaderService {
       }
 
       if (key === "deleteSegments") {
-        argsName &&
-          argsName.forEach((i) => spawnParams.push(i, String(deleteSegments)));
+        argsName && argsName.forEach((i) => spawnParams.push(i, String(deleteSegments)));
       }
 
       if (key === "proxy" && proxy) {

@@ -6,3 +6,4 @@ node_modules
 *.tsno.mjs
 .DS_Store
 log
+.turbo

@@ -1,28 +1,12 @@
-import type {
-  Conversion,
-  Favorite,
-  Video,
-} from "../../node/dao/entity/index.ts";
-import type {
-  AppStore,
-  BrowserStore,
-  EnvPath,
-  Rectangle,
-} from "../../node/types/index.ts";
+import type { Conversion, Favorite, Video } from "../../node/dao/entity/index.ts";
+import type { AppStore, BrowserStore, EnvPath, Rectangle } from "../../node/types/index.ts";
 import { VideoResponse } from "../index.ts";
-import {
-  ConversionPagination,
-  ConversionResponse,
-  DownloadItem,
-  DownloadItemPagination,
-} from "./index.ts";
+import { ConversionPagination, ConversionResponse, DownloadItem, DownloadItemPagination } from "./index.ts";
 
 export interface ElectronApi {
   getEnvPath(): Promise<EnvPath>;
   getFavorites(): Promise<Favorite[]>;
-  addFavorite(
-    favorite: Omit<Favorite, "id" | "createdDate" | "updatedDate">
-  ): Promise<Favorite>;
+  addFavorite(favorite: Omit<Favorite, "id" | "createdDate" | "updatedDate">): Promise<Favorite>;
   removeFavorite(id: number): Promise<void>;
   setWebviewBounds(rect: Rectangle): Promise<void>;
   webviewGoBack(): Promise<boolean>;
@@ -31,10 +15,7 @@ export interface ElectronApi {
   webviewGoHome(): Promise<void>;
   getAppStore(): Promise<AppStore>;
   onSelectDownloadDir(): Promise<string>;
-  setAppStore(
-    key: keyof AppStore,
-    val: AppStore[keyof AppStore]
-  ): Promise<void>;
+  setAppStore(key: keyof AppStore, val: AppStore[keyof AppStore]): Promise<void>;
   openDir(dir?: string): Promise<void>;
   addDownloadItem(video: Omit<DownloadItem, "id">): Promise<Video>;
   addDownloadItems(videos: Omit<DownloadItem, "id">[]): Promise<Video[]>;
@@ -49,7 +30,7 @@ export interface ElectronApi {
   rendererEvent(
     channel: string,
     funcId: string,
-    listener: (...args: unknown[]) => void // More specific than 'any'
+    listener: (...args: unknown[]) => void, // More specific than 'any'
   ): void;
   removeEventListener(channel: string, funcId: string): void;
   showBrowserWindow(): Promise<void>;

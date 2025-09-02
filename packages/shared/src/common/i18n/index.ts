@@ -25,8 +25,7 @@ i18n.init({
         paste: "Paste",
         noTaskFound: "No task found",
         urlExist: "Url already exists",
-        videoExistsPleaseChangeName:
-          "Video name already exists, please change the video name",
+        videoExistsPleaseChangeName: "Video name already exists, please change the video name",
         videoNotExists: "Video does not exist",
         unknownError: "Unknown error",
         unsupportedDownloadType: "Unsupported download type",
@@ -42,8 +41,7 @@ i18n.init({
         disableADBlocker: "[AdBlocker] Disable AD Blocker",
         ua: '[UA] User-Agent: "{{ua}}"',
         session: "[Session] {{mode}} Mode",
-        currentEnvironmentIsDevelopment:
-          "Current environment is development, start loading developer tools",
+        currentEnvironmentIsDevelopment: "Current environment is development, start loading developer tools",
         loadDevToolsSuccess: "Load developer tools successfully",
         loadDevToolsFailed: "Failed to load developer tools",
         autoUpdateSuccess: "Auto update success",
@@ -92,8 +90,7 @@ i18n.init({
         disableADBlocker: "[AdBlocker] 关闭 AD Blocker",
         ua: '[UA] User-Agent: "{{ua}}"',
         session: "[Session] {{mode}} 模式",
-        currentEnvironmentIsDevelopment:
-          "当前环境为开发环境，开始加载开发者工具",
+        currentEnvironmentIsDevelopment: "当前环境为开发环境，开始加载开发者工具",
         loadDevToolsSuccess: "加载开发者工具成功",
         loadDevToolsFailed: "加载开发者工具失败",
         autoUpdateSuccess: "自动更新成功",
