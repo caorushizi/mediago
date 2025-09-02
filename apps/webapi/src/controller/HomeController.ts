@@ -46,7 +46,7 @@ export default class HomeController implements Controller {
     const { message } = ctx.request.body as { message: string };
     this.logger.info(message);
 
-    this.socket.emit("socket-test", message);
+    this.socket.io.emit("socket-test", message);
     return message;
   }
 

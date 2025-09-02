@@ -22,6 +22,10 @@
       "cache": false,
       "persistent": true
     },
+    "dev:docker": {
+      "cache": false,
+      "persistent": true
+    },
     "lint": {
       "dependsOn": ["^build"]
     },

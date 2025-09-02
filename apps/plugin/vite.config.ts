@@ -11,7 +11,7 @@ export default defineConfig({
       fileName: () => "index.js",
       formats: ["cjs"],
     },
-    outDir: path.resolve(__dirname, "../main/app/plugin"),
+    outDir: path.resolve(__dirname, "../electron/app/plugin"),
     emptyOutDir: true,
     rollupOptions: {},
   },
