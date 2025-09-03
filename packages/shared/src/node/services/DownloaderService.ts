@@ -8,14 +8,16 @@ import { DownloadSchema } from "../types/index.ts";
 @injectable()
 export default class DownloaderService {
   private binMap?: Record<DownloadType, string>;
+  private runner?: any;
   private lastProgressUpdate = new Map<number, { percent: string; speed: string; timestamp: number }>();
   private readonly PROGRESS_THROTTLE_MS = 200; // 200ms 进度更新节流
   private readonly MIN_PROGRESS_DIFF = 0.5; // 最小进度差异 0.5%
 
   constructor() {}
 
-  public init(binMap: Record<DownloadType, string>) {
+  public init(binMap: Record<DownloadType, string>, runner: typeof ptyRunner) {
     this.binMap = binMap;
+    this.runner = runner;
   }
 
   async download(params: DownloadParams, schema: DownloadSchema): Promise<void> {
@@ -90,22 +92,22 @@ export default class DownloaderService {
     const shouldUpdateProgress = (id: number, newPercent: string, newSpeed: string): boolean => {
       const now = Date.now();
       const lastUpdate = this.lastProgressUpdate.get(id);
-      
+
       if (!lastUpdate) {
         return true; // 首次更新
       }
-      
+
       // 时间节流检查
       if (now - lastUpdate.timestamp < this.PROGRESS_THROTTLE_MS) {
         return false;
       }
-      
+
       // 进度差异检查
       const percentDiff = Math.abs(Number(newPercent) - Number(lastUpdate.percent));
       if (percentDiff < this.MIN_PROGRESS_DIFF && newSpeed === lastUpdate.speed) {
         return false;
       }
-      
+
       return true;
     };
 
@@ -146,7 +148,7 @@ export default class DownloaderService {
       if (ctx.ready && (ctx.percent || ctx.speed)) {
         const currentPercent = ctx.percent || "";
         const currentSpeed = ctx.speed || "";
-        
+
         // 智能节流：只有在满足更新条件时才发送进度更新
         if (shouldUpdateProgress(id, currentPercent, currentSpeed)) {
           callback("progress", {
@@ -156,12 +158,12 @@ export default class DownloaderService {
             speed: currentSpeed,
             isLive: ctx.isLive,
           });
-          
+
           // 更新最后进度记录
           this.lastProgressUpdate.set(id, {
             percent: currentPercent,
             speed: currentSpeed,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           });
         }
       }
@@ -175,7 +177,7 @@ export default class DownloaderService {
 
     try {
       // TODO: logger
-      await ptyRunner({
+      await this.runner?.({
         abortController,
         onMessage,
         binPath,

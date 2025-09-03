@@ -58,179 +58,7 @@ importers:
         specifier: ^8.1.1
         version: 8.8.1
 
-  apps/backend:
-    dependencies:
-      '@koa/cors':
-        specifier: ^5.0.0
-        version: 5.0.0
-      '@koa/router':
-        specifier: ^12.0.1
-        version: 12.0.2
-      '@mediago/shared':
-        specifier: workspace:*
-        version: link:../../packages/shared
-      axios:
-        specifier: ^1.7.2
-        version: 1.11.0
-      better-sqlite3:
-        specifier: ^9.3.0
-        version: 9.6.0
-      cheerio:
-        specifier: 1.0.0-rc.12
-        version: 1.0.0-rc.12
-      conf:
-        specifier: ^13.1.0
-        version: 13.1.0
-      dayjs:
-        specifier: ^1.11.11
-        version: 1.11.18
-      execa:
-        specifier: ^9.1.0
-        version: 9.6.0
-      fs-extra:
-        specifier: ^11.2.0
-        version: 11.3.1
-      i18next:
-        specifier: ^23.11.5
-        version: 23.16.8
-      inversify:
-        specifier: ^6.0.2
-        version: 6.2.2(reflect-metadata@0.2.2)
-      koa:
-        specifier: ^2.15.3
-        version: 2.16.2
-      koa-bodyparser:
-        specifier: ^4.4.1
-        version: 4.4.1
-      koa-send:
-        specifier: ^5.0.1
-        version: 5.0.1
-      koa-static:
-        specifier: ^5.0.0
-        version: 5.0.0
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
-      mime-types:
-        specifier: ^2.1.35
-        version: 2.1.35
-      nanoid:
-        specifier: ^5.0.7
-        version: 5.1.5
-      node-pty:
-        specifier: ^1.0.0
-        version: 1.0.0
-      reflect-metadata:
-        specifier: ^0.2.2
-        version: 0.2.2
-      socket.io:
-        specifier: ^4.8.0
-        version: 4.8.1
-      strip-ansi:
-        specifier: ^7.1.0
-        version: 7.1.0
-      typeorm:
-        specifier: 0.3.20
-        version: 0.3.20(better-sqlite3@9.6.0)
-      winston:
-        specifier: ^3.14.2
-        version: 3.17.0
-    devDependencies:
-      '@types/cors':
-        specifier: ^2.8.17
-        version: 2.8.19
-      '@types/cross-spawn':
-        specifier: ^6.0.6
-        version: 6.0.6
-      '@types/express':
-        specifier: ^4.17.21
-        version: 4.17.23
-      '@types/fs-extra':
-        specifier: ^11.0.4
-        version: 11.0.4
-      '@types/glob':
-        specifier: ^8.1.0
-        version: 8.1.0
-      '@types/gulp':
-        specifier: ^4.0.17
-        version: 4.0.17
-      '@types/koa':
-        specifier: ^2.15.0
-        version: 2.15.0
-      '@types/koa-bodyparser':
-        specifier: ^4.3.12
-        version: 4.3.12
-      '@types/koa-send':
-        specifier: ^4.1.6
-        version: 4.1.6
-      '@types/koa-static':
-        specifier: ^4.0.4
-        version: 4.0.4
-      '@types/koa__cors':
-        specifier: ^5.0.0
-        version: 5.0.0
-      '@types/koa__router':
-        specifier: ^12.0.4
-        version: 12.0.4
-      '@types/lodash':
-        specifier: ^4.17.4
-        version: 4.17.20
-      '@types/mime-types':
-        specifier: ^2.1.4
-        version: 2.1.4
-      '@types/node':
-        specifier: ^20.12.12
-        version: 20.19.11
-      '@types/semver':
-        specifier: ^7.5.8
-        version: 7.7.0
-      '@types/serve-handler':
-        specifier: ^6.1.4
-        version: 6.1.4
-      '@types/undertaker':
-        specifier: ^1.2.11
-        version: 1.2.11
-      consola:
-        specifier: ^3.2.3
-        version: 3.4.2
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
-      cross-spawn:
-        specifier: ^7.0.3
-        version: 7.0.6
-      del:
-        specifier: ^7.1.0
-        version: 7.1.0
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.6.1
-      esbuild:
-        specifier: 0.21.4
-        version: 0.21.4
-      esbuild-node-externals:
-        specifier: ^1.18.0
-        version: 1.18.0(esbuild@0.21.4)
-      esbuild-register:
-        specifier: ^3.5.0
-        version: 3.6.0(esbuild@0.21.4)
-      glob:
-        specifier: ^10.4.1
-        version: 10.4.5
-      gulp:
-        specifier: ^5.0.0
-        version: 5.0.1
-      nodemon:
-        specifier: ^3.1.4
-        version: 3.1.10
-      semver:
-        specifier: ^7.6.2
-        version: 7.7.2
-      typescript:
-        specifier: ^5.4.5
-        version: 5.4.5
-
-  apps/main:
+  apps/electron:
     dependencies:
       '@ghostery/adblocker-electron':
         specifier: 2.3.1
@@ -242,8 +70,8 @@ importers:
         specifier: ^1.7.2
         version: 1.11.0
       better-sqlite3:
-        specifier: ^9.6.0
-        version: 9.6.0
+        specifier: ^10.1.0
+        version: 10.1.0
       cheerio:
         specifier: 1.0.0-rc.12
         version: 1.0.0-rc.12
@@ -299,7 +127,7 @@ importers:
         specifier: ^1.1.12
         version: 1.1.12
       node-pty:
-        specifier: ^1.0.0
+        specifier: 1.0.0
         version: 1.0.0
       reflect-metadata:
         specifier: ^0.2.2
@@ -311,8 +139,8 @@ importers:
         specifier: ^7.1.0
         version: 7.1.0
       typeorm:
-        specifier: 0.3.20
-        version: 0.3.20(better-sqlite3@9.6.0)
+        specifier: 0.3.26
+        version: 0.3.26(babel-plugin-macros@3.1.0)(better-sqlite3@10.1.0)(reflect-metadata@0.2.2)
     devDependencies:
       '@electron/rebuild':
         specifier: ^3.6.0
@@ -399,87 +227,7 @@ importers:
         specifier: ^5.4.5
         version: 5.4.5
 
-  apps/mobile:
-    dependencies:
-      ahooks:
-        specifier: ^3.8.0
-        version: 3.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      antd-mobile:
-        specifier: ^5.37.1
-        version: 5.40.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      axios:
-        specifier: ^1.7.2
-        version: 1.11.0
-      clsx:
-        specifier: ^2.1.1
-        version: 2.1.1
-      react:
-        specifier: ^18.3.1
-        version: 18.3.1
-      react-dom:
-        specifier: ^18.3.1
-        version: 18.3.1(react@18.3.1)
-      tailwind-merge:
-        specifier: ^2.3.0
-        version: 2.6.0
-      xgplayer:
-        specifier: ^3.0.19
-        version: 3.0.23(core-js@3.45.1)
-    devDependencies:
-      '@types/react':
-        specifier: ^18.3.3
-        version: 18.3.24
-      '@types/react-dom':
-        specifier: ^18.3.0
-        version: 18.3.7(@types/react@18.3.24)
-      '@vitejs/plugin-react-swc':
-        specifier: ^3.5.0
-        version: 3.11.0(vite@6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.91.0)(tsx@4.20.5)(yaml@2.8.1))
-      autoprefixer:
-        specifier: ^10.4.19
-        version: 10.4.21(postcss@8.5.6)
-      postcss:
-        specifier: ^8.4.39
-        version: 8.5.6
-      tailwindcss:
-        specifier: ^3.4.4
-        version: 3.4.17
-      typescript:
-        specifier: ^5.2.2
-        version: 5.4.5
-      vite:
-        specifier: ^6.1.0
-        version: 6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.91.0)(tsx@4.20.5)(yaml@2.8.1)
-
-  apps/plugin:
-    dependencies:
-      jquery:
-        specifier: ^3.7.1
-        version: 3.7.1
-      lit:
-        specifier: ^3.1.3
-        version: 3.3.1
-      nanoid:
-        specifier: ^5.0.7
-        version: 5.1.5
-    devDependencies:
-      '@mediago/shared':
-        specifier: workspace:*
-        version: link:../../packages/shared
-      '@types/jquery':
-        specifier: ^3.5.30
-        version: 3.5.33
-      '@types/node':
-        specifier: ^20.12.12
-        version: 20.19.11
-      typescript:
-        specifier: ^5.4.5
-        version: 5.4.5
-      vite:
-        specifier: ^6.1.0
-        version: 6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.91.0)(tsx@4.20.5)(yaml@2.8.1)
-
-  apps/renderer:
+  apps/frontend:
     dependencies:
       '@ant-design/icons':
         specifier: ^5.3.7
@@ -592,7 +340,7 @@ importers:
         version: 1.2.3
       '@vitejs/plugin-react-swc':
         specifier: ^3.7.0
-        version: 3.11.0(vite@6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.91.0)(tsx@4.20.5)(yaml@2.8.1))
+        version: 3.11.0(vite@6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.92.0)(tsx@4.20.5)(yaml@2.8.1))
       autoprefixer:
         specifier: ^10.4.19
         version: 10.4.21(postcss@8.5.6)
@@ -604,7 +352,7 @@ importers:
         version: 8.5.6
       sass:
         specifier: ^1.77.2
-        version: 1.91.0
+        version: 1.92.0
       tailwindcss:
         specifier: ^3.4.4
         version: 3.4.17
@@ -613,13 +361,265 @@ importers:
         version: 5.4.5
       vite:
         specifier: ^6.1.0
-        version: 6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.91.0)(tsx@4.20.5)(yaml@2.8.1)
+        version: 6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.92.0)(tsx@4.20.5)(yaml@2.8.1)
       vite-bundle-visualizer:
         specifier: ^1.2.1
         version: 1.2.1(rollup@4.50.0)
       xgplayer:
         specifier: ^3.0.19
         version: 3.0.23(core-js@3.45.1)
+
+  apps/mobile:
+    dependencies:
+      ahooks:
+        specifier: ^3.8.0
+        version: 3.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      antd-mobile:
+        specifier: ^5.37.1
+        version: 5.40.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      axios:
+        specifier: ^1.7.2
+        version: 1.11.0
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
+      tailwind-merge:
+        specifier: ^2.3.0
+        version: 2.6.0
+      xgplayer:
+        specifier: ^3.0.19
+        version: 3.0.23(core-js@3.45.1)
+    devDependencies:
+      '@types/react':
+        specifier: ^18.3.3
+        version: 18.3.24
+      '@types/react-dom':
+        specifier: ^18.3.0
+        version: 18.3.7(@types/react@18.3.24)
+      '@vitejs/plugin-react-swc':
+        specifier: ^3.5.0
+        version: 3.11.0(vite@6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.92.0)(tsx@4.20.5)(yaml@2.8.1))
+      autoprefixer:
+        specifier: ^10.4.19
+        version: 10.4.21(postcss@8.5.6)
+      postcss:
+        specifier: ^8.4.39
+        version: 8.5.6
+      tailwindcss:
+        specifier: ^3.4.4
+        version: 3.4.17
+      typescript:
+        specifier: ^5.2.2
+        version: 5.4.5
+      vite:
+        specifier: ^6.1.0
+        version: 6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.92.0)(tsx@4.20.5)(yaml@2.8.1)
+
+  apps/plugin:
+    dependencies:
+      jquery:
+        specifier: ^3.7.1
+        version: 3.7.1
+      lit:
+        specifier: ^3.1.3
+        version: 3.3.1
+      nanoid:
+        specifier: ^5.0.7
+        version: 5.1.5
+    devDependencies:
+      '@mediago/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      '@types/jquery':
+        specifier: ^3.5.30
+        version: 3.5.33
+      '@types/node':
+        specifier: ^20.12.12
+        version: 20.19.11
+      typescript:
+        specifier: ^5.4.5
+        version: 5.4.5
+      vite:
+        specifier: ^6.1.0
+        version: 6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.92.0)(tsx@4.20.5)(yaml@2.8.1)
+
+  apps/webapi:
+    dependencies:
+      '@koa/cors':
+        specifier: ^5.0.0
+        version: 5.0.0
+      '@koa/router':
+        specifier: ^12.0.1
+        version: 12.0.2
+      '@mediago/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      axios:
+        specifier: ^1.7.2
+        version: 1.11.0
+      better-sqlite3:
+        specifier: ^9.3.0
+        version: 9.6.0
+      cheerio:
+        specifier: 1.0.0-rc.12
+        version: 1.0.0-rc.12
+      conf:
+        specifier: ^13.1.0
+        version: 13.1.0
+      dayjs:
+        specifier: ^1.11.11
+        version: 1.11.18
+      execa:
+        specifier: ^9.1.0
+        version: 9.6.0
+      fs-extra:
+        specifier: ^11.2.0
+        version: 11.3.1
+      i18next:
+        specifier: ^23.11.5
+        version: 23.16.8
+      inversify:
+        specifier: ^6.0.2
+        version: 6.2.2(reflect-metadata@0.2.2)
+      koa:
+        specifier: ^2.15.3
+        version: 2.16.2
+      koa-bodyparser:
+        specifier: ^4.4.1
+        version: 4.4.1
+      koa-send:
+        specifier: ^5.0.1
+        version: 5.0.1
+      koa-static:
+        specifier: ^5.0.0
+        version: 5.0.0
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      mime-types:
+        specifier: ^2.1.35
+        version: 2.1.35
+      nanoid:
+        specifier: ^5.0.7
+        version: 5.1.5
+      node-pty:
+        specifier: 1.1.0-beta34
+        version: 1.1.0-beta34
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
+      socket.io:
+        specifier: ^4.8.0
+        version: 4.8.1
+      strip-ansi:
+        specifier: ^7.1.0
+        version: 7.1.0
+      typeorm:
+        specifier: 0.3.20
+        version: 0.3.20(better-sqlite3@9.6.0)
+      winston:
+        specifier: ^3.14.2
+        version: 3.17.0
+    devDependencies:
+      '@types/cors':
+        specifier: ^2.8.17
+        version: 2.8.19
+      '@types/cross-spawn':
+        specifier: ^6.0.6
+        version: 6.0.6
+      '@types/express':
+        specifier: ^4.17.21
+        version: 4.17.23
+      '@types/fs-extra':
+        specifier: ^11.0.4
+        version: 11.0.4
+      '@types/glob':
+        specifier: ^8.1.0
+        version: 8.1.0
+      '@types/gulp':
+        specifier: ^4.0.17
+        version: 4.0.17
+      '@types/koa':
+        specifier: ^2.15.0
+        version: 2.15.0
+      '@types/koa-bodyparser':
+        specifier: ^4.3.12
+        version: 4.3.12
+      '@types/koa-send':
+        specifier: ^4.1.6
+        version: 4.1.6
+      '@types/koa-static':
+        specifier: ^4.0.4
+        version: 4.0.4
+      '@types/koa__cors':
+        specifier: ^5.0.0
+        version: 5.0.0
+      '@types/koa__router':
+        specifier: ^12.0.4
+        version: 12.0.4
+      '@types/lodash':
+        specifier: ^4.17.4
+        version: 4.17.20
+      '@types/mime-types':
+        specifier: ^2.1.4
+        version: 2.1.4
+      '@types/node':
+        specifier: ^20.12.12
+        version: 20.19.11
+      '@types/semver':
+        specifier: ^7.5.8
+        version: 7.7.0
+      '@types/serve-handler':
+        specifier: ^6.1.4
+        version: 6.1.4
+      '@types/undertaker':
+        specifier: ^1.2.11
+        version: 1.2.11
+      consola:
+        specifier: ^3.2.3
+        version: 3.4.2
+      cross-env:
+        specifier: ^7.0.3
+        version: 7.0.3
+      cross-spawn:
+        specifier: ^7.0.3
+        version: 7.0.6
+      del:
+        specifier: ^7.1.0
+        version: 7.1.0
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.6.1
+      esbuild:
+        specifier: 0.21.4
+        version: 0.21.4
+      esbuild-node-externals:
+        specifier: ^1.18.0
+        version: 1.18.0(esbuild@0.21.4)
+      esbuild-register:
+        specifier: ^3.5.0
+        version: 3.6.0(esbuild@0.21.4)
+      glob:
+        specifier: ^10.4.1
+        version: 10.4.5
+      gulp:
+        specifier: ^5.0.0
+        version: 5.0.1
+      nodemon:
+        specifier: ^3.1.4
+        version: 3.1.10
+      semver:
+        specifier: ^7.6.2
+        version: 7.7.2
+      typescript:
+        specifier: ^5.4.5
+        version: 5.4.5
 
   packages/config:
     devDependencies:
@@ -638,9 +638,6 @@ importers:
       inversify:
         specifier: ^6.0.2
         version: 6.2.2(reflect-metadata@0.2.2)
-      node-pty:
-        specifier: ^1.0.0
-        version: 1.0.0
       strip-ansi:
         specifier: ^7.1.0
         version: 7.1.0
@@ -2547,6 +2544,10 @@ packages:
     resolution: {integrity: sha512-bN798gFfQX+viw3R7yrGWRqnrN2oRkEkUjjl4JNn4E8GxxbjtG3FbrEIIY3l8/hrwUwIeCZvi4QuOTP4MErVug==}
     engines: {node: '>=12'}
 
+  ansis@3.17.0:
+    resolution: {integrity: sha512-0qWUglt9JEqLFr3w1I1pbrChn1grhaiAR2ocX1PP/flRmxgtwTzPFFFnfIlD6aMOLQZgSuCRlidD70lvx8yhzg==}
+    engines: {node: '>=14'}
+
   antd-mobile-icons@0.3.0:
     resolution: {integrity: sha512-rqINQpJWZWrva9moCd1Ye695MZYWmqLPE+bY8d2xLRy7iSQwPsinCdZYjpUPp2zL/LnKYSyXxP2ut2A+DC+whQ==}
 
@@ -2708,6 +2709,9 @@ packages:
   base64id@2.0.0:
     resolution: {integrity: sha512-lGe34o6EHj9y3Kts9R4ZYs/Gr+6N7MCaMlIFA3F1R2O5/m7K06AxfSeO5530PEERE6/WyEg3lsuyw4GHlPZHog==}
     engines: {node: ^4.5.0 || >= 5.9}
+
+  better-sqlite3@10.1.0:
+    resolution: {integrity: sha512-hqpHJaCfKEZFaAWdMh6crdzRWyzQzfP6Ih8TYI0vFn01a6ZTDSbJIMXN+6AMBaBOh99DzUy8l3PsV9R3qnJDng==}
 
   better-sqlite3@9.6.0:
     resolution: {integrity: sha512-yR5HATnqeYNVnkaUTf4bOP2dJSnyhP4puJN/QPRyx4YkBEEUxib422n2XzPqDEHjQQqazoYoADdAm5vE15+dAQ==}
@@ -3293,6 +3297,14 @@ packages:
   dedent@0.7.0:
     resolution: {integrity: sha512-Q6fKUPqnAHAyhiUgFU7BUzLiv0kd8saH9al7tnu5Q/okj6dnupxyTgFIBjVzJATdfIAm9NAsvXNzjaKa+bxVyA==}
 
+  dedent@1.6.0:
+    resolution: {integrity: sha512-F1Z+5UCFpmQUzJa11agbyPVMbpgT/qA3/SKyJ1jyBgm7dUcUEa8v9JwDkerSQXfakBwFljIxhOJqGkjUwZ9FSA==}
+    peerDependencies:
+      babel-plugin-macros: ^3.1.0
+    peerDependenciesMeta:
+      babel-plugin-macros:
+        optional: true
+
   deep-equal@1.0.1:
     resolution: {integrity: sha512-bHtC0iYvWhyaTzvV3CZgPeZQqCOBGyGsVV7v4eevpdkLHfiSrXUdBG+qAuSz4RI70sszvjQ1QSZ98An1yNwpSw==}
 
@@ -3478,8 +3490,8 @@ packages:
     resolution: {integrity: sha512-7LZ2dR3N3bF93G2c4x+1NZ/8fpsKv6bKrMxeOQWLqdRbxvopxVqy9QXQy9axSV2O3P1kVGTj1q2wq5/W4isiOg==}
     engines: {node: '>=20'}
 
-  electron-to-chromium@1.5.211:
-    resolution: {integrity: sha512-IGBvimJkotaLzFnwIVgW9/UD/AOJ2tByUmeOrtqBfACSbAw5b1G0XpvdaieKyc7ULmbwXVx+4e4Be8pOPBrYkw==}
+  electron-to-chromium@1.5.213:
+    resolution: {integrity: sha512-xr9eRzSLNa4neDO0xVFrkXu3vyIzG4Ay08dApecw42Z1NbmCt+keEpXdvlYGVe0wtvY5dhW0Ay0lY0IOfsCg0Q==}
 
   electron-updater@6.6.2:
     resolution: {integrity: sha512-Cr4GDOkbAUqRHP5/oeOmH/L2Bn6+FQPxVLZtPbcmKZC63a1F3uu5EefYOssgZXG3u/zBlubbJ5PJdITdMVggbw==}
@@ -4869,6 +4881,9 @@ packages:
   node-pty@1.0.0:
     resolution: {integrity: sha512-wtBMWWS7dFZm/VgqElrTvtfMq4GzJ6+edFI0Y0zyzygUSZMgZdraDUMUhCIvkjhJjme15qWmbyJbtAx4ot4uZA==}
 
+  node-pty@1.1.0-beta34:
+    resolution: {integrity: sha512-RraDtX9RS1G1I5iO7e4YIOIA4arzd4ZVCD4mZr7+szaNupoTg9fxDCRr0EanqS0Qlzgm3PIdHNbPmblJguJuyg==}
+
   node-releases@2.0.19:
     resolution: {integrity: sha512-xxOWJsBKtzAq7DY0J+DTzuz58K8e7sJbdgwkbMWQe8UYB6ekmsQ45q0M/tJDsGaZmbC+l7n57UV8Hl5tHxO9uw==}
 
@@ -5746,8 +5761,8 @@ packages:
   sanitize-filename@1.6.3:
     resolution: {integrity: sha512-y/52Mcy7aw3gRm7IrcGDFx/bCk4AhRh2eI9luHOQM86nZsqwiRkkq2GekHXBBD+SmPidc8i2PqtYZl+pWJ8Oeg==}
 
-  sass@1.91.0:
-    resolution: {integrity: sha512-aFOZHGf+ur+bp1bCHZ+u8otKGh77ZtmFyXDo4tlYvT7PWql41Kwd8wdkPqhhT+h2879IVblcHFglIMofsFd1EA==}
+  sass@1.92.0:
+    resolution: {integrity: sha512-KDNI0BxgIRDAfJgzNm5wuy+4yOCIZyrUbjSpiU/JItfih+KGXAVefKL53MTml054MmBA3DDKIBMSI/7XLxZJ3A==}
     engines: {node: '>=14.0.0'}
     hasBin: true
 
@@ -5932,6 +5947,10 @@ packages:
 
   sprintf-js@1.1.3:
     resolution: {integrity: sha512-Oo+0REFV59/rz3gfJNKQiBlwfHaSESl1pcGyABQsnnIfWOFt6JNj5gCog2U6MLZ//IGYD+nA8nI+mTShREReaA==}
+
+  sql-highlight@6.1.0:
+    resolution: {integrity: sha512-ed7OK4e9ywpE7pgRMkMQmZDPKSVdm0oX5IEtZiKnFucSF0zu6c80GZBe38UqHuVhTWJ9xsKgSMjCG2bml86KvA==}
+    engines: {node: '>=14'}
 
   ssri@9.0.1:
     resolution: {integrity: sha512-o57Wcn66jMQvfHG1FlYbWeZWW/dHZhJXjpIcTfXldXEk5nz5lStPo3mK0OJQfGR3RbZUlbISexbljkJzuEj/8Q==}
@@ -6302,6 +6321,62 @@ packages:
       typeorm-aurora-data-api-driver:
         optional: true
 
+  typeorm@0.3.26:
+    resolution: {integrity: sha512-o2RrBNn3lczx1qv4j+JliVMmtkPSqEGpG0UuZkt9tCfWkoXKu8MZnjvp2GjWPll1SehwemQw6xrbVRhmOglj8Q==}
+    engines: {node: '>=16.13.0'}
+    hasBin: true
+    peerDependencies:
+      '@google-cloud/spanner': ^5.18.0 || ^6.0.0 || ^7.0.0
+      '@sap/hana-client': ^2.14.22
+      better-sqlite3: ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0
+      ioredis: ^5.0.4
+      mongodb: ^5.8.0 || ^6.0.0
+      mssql: ^9.1.1 || ^10.0.1 || ^11.0.1
+      mysql2: ^2.2.5 || ^3.0.1
+      oracledb: ^6.3.0
+      pg: ^8.5.1
+      pg-native: ^3.0.0
+      pg-query-stream: ^4.0.0
+      redis: ^3.1.1 || ^4.0.0 || ^5.0.14
+      reflect-metadata: ^0.1.14 || ^0.2.0
+      sql.js: ^1.4.0
+      sqlite3: ^5.0.3
+      ts-node: ^10.7.0
+      typeorm-aurora-data-api-driver: ^2.0.0 || ^3.0.0
+    peerDependenciesMeta:
+      '@google-cloud/spanner':
+        optional: true
+      '@sap/hana-client':
+        optional: true
+      better-sqlite3:
+        optional: true
+      ioredis:
+        optional: true
+      mongodb:
+        optional: true
+      mssql:
+        optional: true
+      mysql2:
+        optional: true
+      oracledb:
+        optional: true
+      pg:
+        optional: true
+      pg-native:
+        optional: true
+      pg-query-stream:
+        optional: true
+      redis:
+        optional: true
+      sql.js:
+        optional: true
+      sqlite3:
+        optional: true
+      ts-node:
+        optional: true
+      typeorm-aurora-data-api-driver:
+        optional: true
+
   typescript@5.4.5:
     resolution: {integrity: sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==}
     engines: {node: '>=14.17'}
@@ -6412,6 +6487,10 @@ packages:
   utils-merge@1.0.1:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
+
+  uuid@11.1.0:
+    resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
+    hasBin: true
 
   uuid@9.0.1:
     resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
@@ -8402,11 +8481,11 @@ snapshots:
       '@use-gesture/core': 10.3.0
       react: 18.3.1
 
-  '@vitejs/plugin-react-swc@3.11.0(vite@6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.91.0)(tsx@4.20.5)(yaml@2.8.1))':
+  '@vitejs/plugin-react-swc@3.11.0(vite@6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.92.0)(tsx@4.20.5)(yaml@2.8.1))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-beta.27
       '@swc/core': 1.13.5
-      vite: 6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.91.0)(tsx@4.20.5)(yaml@2.8.1)
+      vite: 6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.92.0)(tsx@4.20.5)(yaml@2.8.1)
     transitivePeerDependencies:
       - '@swc/helpers'
 
@@ -8512,6 +8591,8 @@ snapshots:
       color-convert: 2.0.1
 
   ansi-styles@6.2.1: {}
+
+  ansis@3.17.0: {}
 
   antd-mobile-icons@0.3.0: {}
 
@@ -8799,6 +8880,11 @@ snapshots:
 
   base64id@2.0.0: {}
 
+  better-sqlite3@10.1.0:
+    dependencies:
+      bindings: 1.5.0
+      prebuild-install: 7.1.3
+
   better-sqlite3@9.6.0:
     dependencies:
       bindings: 1.5.0
@@ -8866,7 +8952,7 @@ snapshots:
   browserslist@4.25.4:
     dependencies:
       caniuse-lite: 1.0.30001739
-      electron-to-chromium: 1.5.211
+      electron-to-chromium: 1.5.213
       node-releases: 2.0.19
       update-browserslist-db: 1.1.3(browserslist@4.25.4)
 
@@ -9526,6 +9612,10 @@ snapshots:
 
   dedent@0.7.0: {}
 
+  dedent@1.6.0(babel-plugin-macros@3.1.0):
+    optionalDependencies:
+      babel-plugin-macros: 3.1.0
+
   deep-equal@1.0.1: {}
 
   deep-extend@0.6.0: {}
@@ -9741,7 +9831,7 @@ snapshots:
       conf: 12.0.0
       type-fest: 4.41.0
 
-  electron-to-chromium@1.5.211: {}
+  electron-to-chromium@1.5.213: {}
 
   electron-updater@6.6.2:
     dependencies:
@@ -11239,8 +11329,7 @@ snapshots:
   node-addon-api@1.7.2:
     optional: true
 
-  node-addon-api@7.1.1:
-    optional: true
+  node-addon-api@7.1.1: {}
 
   node-api-version@0.2.1:
     dependencies:
@@ -11259,6 +11348,10 @@ snapshots:
   node-pty@1.0.0:
     dependencies:
       nan: 2.23.0
+
+  node-pty@1.1.0-beta34:
+    dependencies:
+      node-addon-api: 7.1.1
 
   node-releases@2.0.19: {}
 
@@ -12205,7 +12298,7 @@ snapshots:
     dependencies:
       truncate-utf8-bytes: 1.0.2
 
-  sass@1.91.0:
+  sass@1.92.0:
     dependencies:
       chokidar: 4.0.3
       immutable: 5.1.3
@@ -12451,6 +12544,8 @@ snapshots:
 
   sprintf-js@1.1.3:
     optional: true
+
+  sql-highlight@6.1.0: {}
 
   ssri@9.0.1:
     dependencies:
@@ -12794,6 +12889,29 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  typeorm@0.3.26(babel-plugin-macros@3.1.0)(better-sqlite3@10.1.0)(reflect-metadata@0.2.2):
+    dependencies:
+      '@sqltools/formatter': 1.2.5
+      ansis: 3.17.0
+      app-root-path: 3.1.0
+      buffer: 6.0.3
+      dayjs: 1.11.18
+      debug: 4.4.1(supports-color@5.5.0)
+      dedent: 1.6.0(babel-plugin-macros@3.1.0)
+      dotenv: 16.6.1
+      glob: 10.4.5
+      reflect-metadata: 0.2.2
+      sha.js: 2.4.12
+      sql-highlight: 6.1.0
+      tslib: 2.8.1
+      uuid: 11.1.0
+      yargs: 17.7.2
+    optionalDependencies:
+      better-sqlite3: 10.1.0
+    transitivePeerDependencies:
+      - babel-plugin-macros
+      - supports-color
+
   typescript@5.4.5: {}
 
   uint8array-extras@0.3.0: {}
@@ -12878,6 +12996,8 @@ snapshots:
 
   utils-merge@1.0.1: {}
 
+  uuid@11.1.0: {}
+
   uuid@9.0.1: {}
 
   v8flags@4.0.1: {}
@@ -12951,7 +13071,7 @@ snapshots:
       - rollup
       - supports-color
 
-  vite@6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.91.0)(tsx@4.20.5)(yaml@2.8.1):
+  vite@6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.92.0)(tsx@4.20.5)(yaml@2.8.1):
     dependencies:
       esbuild: 0.25.9
       fdir: 6.5.0(picomatch@4.0.3)
@@ -12963,7 +13083,7 @@ snapshots:
       '@types/node': 20.19.11
       fsevents: 2.3.3
       jiti: 2.5.1
-      sass: 1.91.0
+      sass: 1.92.0
       tsx: 4.20.5
       yaml: 2.8.1
 

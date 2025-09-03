@@ -70,7 +70,7 @@
     "lodash": "^4.17.21",
     "mime-types": "^2.1.35",
     "nanoid": "^5.0.7",
-    "node-pty": "^1.0.0",
+    "node-pty": "1.1.0-beta34",
     "reflect-metadata": "^0.2.2",
     "socket.io": "^4.8.0",
     "strip-ansi": "^7.1.0",

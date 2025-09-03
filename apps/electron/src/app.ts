@@ -17,6 +17,7 @@ import IpcHandlerService from "./core/ipc.ts";
 import { VideoService } from "./services/VideoService.ts";
 import { i18n } from "@mediago/shared/common";
 import { binMap, db, isMac } from "./helper/variables.ts";
+import { ptyRunner } from "./helper/ptyRunner.ts";
 
 @injectable()
 export default class ElectronApp {
@@ -78,7 +79,7 @@ export default class ElectronApp {
     this.resetDownloadStatus();
 
     // 初始化下载器
-    this.downloader.init(binMap);
+    this.downloader.init(binMap, ptyRunner);
 
     // 初始化任务队列
     this.taskQueue.init({

@@ -16,7 +16,6 @@
   "dependencies": {
     "i18next": "^23.11.5",
     "inversify": "^6.0.2",
-    "node-pty": "^1.0.0",
     "strip-ansi": "^7.1.0",
     "typeorm": "0.3.20"
   },
