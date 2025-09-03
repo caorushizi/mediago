@@ -1,19 +1,24 @@
-import { inject, injectable } from "inversify";
-import { TYPES } from "@mediago/shared/node";
-import RouterHandlerService from "./core/router.ts";
-import Koa from "koa";
 import cors from "@koa/cors";
-import bodyParser from "koa-bodyparser";
-import Logger from "./vendor/Logger.ts";
-import http from "http";
-import SocketIO from "./vendor/SocketIO.ts";
-import { VideoRepository, TypeORM, DownloaderService, TaskQueueService } from "@mediago/shared/node";
 import { DownloadStatus } from "@mediago/shared/common";
-import serve from "koa-static";
-import { DB_PATH, STATIC_DIR } from "./helper/variables.ts";
+import {
+  type DownloaderService,
+  type TaskQueueService,
+  TYPES,
+  type TypeORM,
+  type VideoRepository,
+} from "@mediago/shared/node";
+import http from "http";
+import { inject, injectable } from "inversify";
+import Koa from "koa";
+import bodyParser from "koa-bodyparser";
 import send from "koa-send";
-import StoreService from "./vendor/Store.ts";
-import { binMap } from "./helper/variables.ts";
+import serve from "koa-static";
+import type RouterHandlerService from "./core/router.ts";
+import { ptyRunner } from "./helper/ptyRunner.ts";
+import { binMap, DB_PATH, STATIC_DIR } from "./helper/variables.ts";
+import type Logger from "./vendor/Logger.ts";
+import type SocketIO from "./vendor/SocketIO.ts";
+import type StoreService from "./vendor/Store.ts";
 
 @injectable()
 export default class ElectronApp extends Koa {
@@ -81,7 +86,7 @@ export default class ElectronApp extends Koa {
       this.taskQueueService.changeProxy(proxy || "");
     });
 
-    this.downloaderService.init(binMap);
+    this.downloaderService.init(binMap, ptyRunner);
 
     server.listen(8899, () => {
       this.logger.info("Server running on port 8899");

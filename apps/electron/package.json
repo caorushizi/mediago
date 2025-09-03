@@ -1,5 +1,5 @@
 {
-  "name": "main",
+  "name": "electron",
   "version": "0.1.0",
   "description": "在线视频下载器",
   "type": "module",
@@ -53,7 +53,7 @@
     "@ghostery/adblocker-electron": "2.3.1",
     "@mediago/shared": "workspace:*",
     "axios": "^1.7.2",
-    "better-sqlite3": "^9.6.0",
+    "better-sqlite3": "^10.1.0",
     "cheerio": "1.0.0-rc.12",
     "cors": "^2.8.5",
     "dayjs": "^1.11.11",
@@ -72,10 +72,10 @@
     "nanoid": "^5.0.7",
     "node-fetch": "^3.3.2",
     "node-machine-id": "^1.1.12",
-    "node-pty": "^1.0.0",
+    "node-pty": "1.0.0",
     "reflect-metadata": "^0.2.2",
     "serve-handler": "^6.1.5",
     "strip-ansi": "^7.1.0",
-    "typeorm": "0.3.20"
+    "typeorm": "0.3.26"
   }
 }
