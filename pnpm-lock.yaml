@@ -58,7 +58,53 @@ importers:
         specifier: ^8.1.1
         version: 8.8.1
 
-  apps/electron:
+  app:
+    dependencies:
+      '@ghostery/adblocker':
+        specifier: 2.3.1
+        version: 2.3.1
+      '@ghostery/adblocker-content':
+        specifier: 2.3.1
+        version: 2.3.1
+      '@ghostery/adblocker-electron':
+        specifier: 2.3.1
+        version: 2.3.1(electron@30.0.8)
+      '@ghostery/adblocker-electron-preload':
+        specifier: 2.3.1
+        version: 2.3.1(electron@30.0.8)
+      '@ghostery/adblocker-extended-selectors':
+        specifier: 2.3.1
+        version: 2.3.1
+      '@remusao/guess-url-type':
+        specifier: ^1.3.0
+        version: 1.3.0
+      '@remusao/small':
+        specifier: ^1.3.0
+        version: 1.3.0
+      '@remusao/smaz':
+        specifier: ^1.10.0
+        version: 1.10.0
+      '@remusao/smaz-compress':
+        specifier: ^1.10.0
+        version: 1.10.0
+      '@remusao/smaz-decompress':
+        specifier: ^1.10.0
+        version: 1.10.0
+      '@remusao/trie':
+        specifier: ^1.5.0
+        version: 1.5.0
+      node-pty:
+        specifier: ^1.0.0
+        version: 1.0.0
+      tldts-experimental:
+        specifier: ^6.1.70
+        version: 6.1.86
+    devDependencies:
+      electron:
+        specifier: 30.0.8
+        version: 30.0.8
+
+  apps/backend-electron:
     dependencies:
       '@ghostery/adblocker-electron':
         specifier: 2.3.1
@@ -227,229 +273,7 @@ importers:
         specifier: ^5.4.5
         version: 5.4.5
 
-  apps/frontend:
-    dependencies:
-      '@ant-design/icons':
-        specifier: ^5.3.7
-        version: 5.6.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@mediago/shared':
-        specifier: workspace:*
-        version: link:../../packages/shared
-      '@radix-ui/react-checkbox':
-        specifier: ^1.1.1
-        version: 1.3.3(@types/react-dom@18.3.7(@types/react@18.3.24))(@types/react@18.3.24)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@radix-ui/react-dialog':
-        specifier: ^1.1.1
-        version: 1.1.15(@types/react-dom@18.3.7(@types/react@18.3.24))(@types/react@18.3.24)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@radix-ui/react-slot':
-        specifier: ^1.1.0
-        version: 1.2.3(@types/react@18.3.24)(react@18.3.1)
-      '@xterm/addon-fit':
-        specifier: ^0.10.0
-        version: 0.10.0(@xterm/xterm@5.5.0)
-      '@xterm/xterm':
-        specifier: ^5.5.0
-        version: 5.5.0
-      ahooks:
-        specifier: ^3.8.0
-        version: 3.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      antd:
-        specifier: ^5.22.7
-        version: 5.27.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      antd-style:
-        specifier: ^3.6.2
-        version: 3.7.1(@types/react@18.3.24)(antd@5.27.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      axios:
-        specifier: ^1.7.2
-        version: 1.11.0
-      class-variance-authority:
-        specifier: ^0.7.0
-        version: 0.7.1
-      clsx:
-        specifier: ^2.1.1
-        version: 2.1.1
-      dayjs:
-        specifier: ^1.11.11
-        version: 1.11.18
-      i18next:
-        specifier: ^23.11.5
-        version: 23.16.8
-      i18next-browser-languagedetector:
-        specifier: ^8.0.2
-        version: 8.2.0
-      immer:
-        specifier: ^10.1.1
-        version: 10.1.3
-      localforage:
-        specifier: ^1.10.0
-        version: 1.10.0
-      lucide-react:
-        specifier: ^0.400.0
-        version: 0.400.0(react@18.3.1)
-      match-sorter:
-        specifier: ^6.3.4
-        version: 6.4.0
-      nanoid:
-        specifier: ^5.0.7
-        version: 5.1.5
-      react:
-        specifier: ^18.3.1
-        version: 18.3.1
-      react-dom:
-        specifier: ^18.3.1
-        version: 18.3.1(react@18.3.1)
-      react-i18next:
-        specifier: ^14.1.2
-        version: 14.1.3(i18next@23.16.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-router-dom:
-        specifier: ^6.23.1
-        version: 6.30.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      socket.io-client:
-        specifier: ^4.8.1
-        version: 4.8.1
-      sort-by:
-        specifier: ^1.2.0
-        version: 1.2.0
-      tailwind-merge:
-        specifier: ^2.3.0
-        version: 2.6.0
-      tailwindcss-animate:
-        specifier: ^1.0.7
-        version: 1.0.7(tailwindcss@3.4.17)
-      vaul:
-        specifier: ^0.9.1
-        version: 0.9.9(@types/react-dom@18.3.7(@types/react@18.3.24))(@types/react@18.3.24)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      zustand:
-        specifier: 5.0.0-rc.2
-        version: 5.0.0-rc.2(@types/react@18.3.24)(immer@10.1.3)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))
-    devDependencies:
-      '@types/node':
-        specifier: ^20.12.12
-        version: 20.19.11
-      '@types/react':
-        specifier: ^18.3.3
-        version: 18.3.24
-      '@types/react-dom':
-        specifier: ^18.3.0
-        version: 18.3.7(@types/react@18.3.24)
-      '@types/react-redux':
-        specifier: ^7.1.33
-        version: 7.1.34
-      '@types/sort-by':
-        specifier: ^1.2.3
-        version: 1.2.3
-      '@vitejs/plugin-react-swc':
-        specifier: ^3.7.0
-        version: 3.11.0(vite@6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.92.0)(tsx@4.20.5)(yaml@2.8.1))
-      autoprefixer:
-        specifier: ^10.4.19
-        version: 10.4.21(postcss@8.5.6)
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
-      postcss:
-        specifier: ^8.4.39
-        version: 8.5.6
-      sass:
-        specifier: ^1.77.2
-        version: 1.92.0
-      tailwindcss:
-        specifier: ^3.4.4
-        version: 3.4.17
-      typescript:
-        specifier: ~5.4.5
-        version: 5.4.5
-      vite:
-        specifier: ^6.1.0
-        version: 6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.92.0)(tsx@4.20.5)(yaml@2.8.1)
-      vite-bundle-visualizer:
-        specifier: ^1.2.1
-        version: 1.2.1(rollup@4.50.0)
-      xgplayer:
-        specifier: ^3.0.19
-        version: 3.0.23(core-js@3.45.1)
-
-  apps/mobile:
-    dependencies:
-      ahooks:
-        specifier: ^3.8.0
-        version: 3.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      antd-mobile:
-        specifier: ^5.37.1
-        version: 5.40.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      axios:
-        specifier: ^1.7.2
-        version: 1.11.0
-      clsx:
-        specifier: ^2.1.1
-        version: 2.1.1
-      react:
-        specifier: ^18.3.1
-        version: 18.3.1
-      react-dom:
-        specifier: ^18.3.1
-        version: 18.3.1(react@18.3.1)
-      tailwind-merge:
-        specifier: ^2.3.0
-        version: 2.6.0
-      xgplayer:
-        specifier: ^3.0.19
-        version: 3.0.23(core-js@3.45.1)
-    devDependencies:
-      '@types/react':
-        specifier: ^18.3.3
-        version: 18.3.24
-      '@types/react-dom':
-        specifier: ^18.3.0
-        version: 18.3.7(@types/react@18.3.24)
-      '@vitejs/plugin-react-swc':
-        specifier: ^3.5.0
-        version: 3.11.0(vite@6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.92.0)(tsx@4.20.5)(yaml@2.8.1))
-      autoprefixer:
-        specifier: ^10.4.19
-        version: 10.4.21(postcss@8.5.6)
-      postcss:
-        specifier: ^8.4.39
-        version: 8.5.6
-      tailwindcss:
-        specifier: ^3.4.4
-        version: 3.4.17
-      typescript:
-        specifier: ^5.2.2
-        version: 5.4.5
-      vite:
-        specifier: ^6.1.0
-        version: 6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.92.0)(tsx@4.20.5)(yaml@2.8.1)
-
-  apps/plugin:
-    dependencies:
-      jquery:
-        specifier: ^3.7.1
-        version: 3.7.1
-      lit:
-        specifier: ^3.1.3
-        version: 3.3.1
-      nanoid:
-        specifier: ^5.0.7
-        version: 5.1.5
-    devDependencies:
-      '@mediago/shared':
-        specifier: workspace:*
-        version: link:../../packages/shared
-      '@types/jquery':
-        specifier: ^3.5.30
-        version: 3.5.33
-      '@types/node':
-        specifier: ^20.12.12
-        version: 20.19.11
-      typescript:
-        specifier: ^5.4.5
-        version: 5.4.5
-      vite:
-        specifier: ^6.1.0
-        version: 6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.92.0)(tsx@4.20.5)(yaml@2.8.1)
-
-  apps/webapi:
+  apps/backend-web:
     dependencies:
       '@koa/cors':
         specifier: ^5.0.0
@@ -621,6 +445,200 @@ importers:
         specifier: ^5.4.5
         version: 5.4.5
 
+  apps/frontend-main:
+    dependencies:
+      '@ant-design/icons':
+        specifier: ^5.3.7
+        version: 5.6.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@mediago/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      '@radix-ui/react-checkbox':
+        specifier: ^1.1.1
+        version: 1.3.3(@types/react-dom@18.3.7(@types/react@18.3.24))(@types/react@18.3.24)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-dialog':
+        specifier: ^1.1.1
+        version: 1.1.15(@types/react-dom@18.3.7(@types/react@18.3.24))(@types/react@18.3.24)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-slot':
+        specifier: ^1.1.0
+        version: 1.2.3(@types/react@18.3.24)(react@18.3.1)
+      '@xterm/addon-fit':
+        specifier: ^0.10.0
+        version: 0.10.0(@xterm/xterm@5.5.0)
+      '@xterm/xterm':
+        specifier: ^5.5.0
+        version: 5.5.0
+      ahooks:
+        specifier: ^3.8.0
+        version: 3.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      antd:
+        specifier: ^5.22.7
+        version: 5.27.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      antd-style:
+        specifier: ^3.6.2
+        version: 3.7.1(@types/react@18.3.24)(antd@5.27.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      axios:
+        specifier: ^1.7.2
+        version: 1.11.0
+      class-variance-authority:
+        specifier: ^0.7.0
+        version: 0.7.1
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      dayjs:
+        specifier: ^1.11.11
+        version: 1.11.18
+      i18next:
+        specifier: ^23.11.5
+        version: 23.16.8
+      i18next-browser-languagedetector:
+        specifier: ^8.0.2
+        version: 8.2.0
+      immer:
+        specifier: ^10.1.1
+        version: 10.1.3
+      localforage:
+        specifier: ^1.10.0
+        version: 1.10.0
+      lucide-react:
+        specifier: ^0.400.0
+        version: 0.400.0(react@18.3.1)
+      match-sorter:
+        specifier: ^6.3.4
+        version: 6.4.0
+      nanoid:
+        specifier: ^5.0.7
+        version: 5.1.5
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
+      react-i18next:
+        specifier: ^14.1.2
+        version: 14.1.3(i18next@23.16.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-router-dom:
+        specifier: ^6.23.1
+        version: 6.30.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      socket.io-client:
+        specifier: ^4.8.1
+        version: 4.8.1
+      sort-by:
+        specifier: ^1.2.0
+        version: 1.2.0
+      tailwind-merge:
+        specifier: ^2.3.0
+        version: 2.6.0
+      tailwindcss-animate:
+        specifier: ^1.0.7
+        version: 1.0.7(tailwindcss@3.4.17)
+      vaul:
+        specifier: ^0.9.1
+        version: 0.9.9(@types/react-dom@18.3.7(@types/react@18.3.24))(@types/react@18.3.24)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      zustand:
+        specifier: 5.0.0-rc.2
+        version: 5.0.0-rc.2(@types/react@18.3.24)(immer@10.1.3)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))
+    devDependencies:
+      '@types/node':
+        specifier: ^20.12.12
+        version: 20.19.11
+      '@types/react':
+        specifier: ^18.3.3
+        version: 18.3.24
+      '@types/react-dom':
+        specifier: ^18.3.0
+        version: 18.3.7(@types/react@18.3.24)
+      '@types/react-redux':
+        specifier: ^7.1.33
+        version: 7.1.34
+      '@types/sort-by':
+        specifier: ^1.2.3
+        version: 1.2.3
+      '@vitejs/plugin-react-swc':
+        specifier: ^3.7.0
+        version: 3.11.0(vite@6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.92.0)(tsx@4.20.5)(yaml@2.8.1))
+      autoprefixer:
+        specifier: ^10.4.19
+        version: 10.4.21(postcss@8.5.6)
+      cross-env:
+        specifier: ^7.0.3
+        version: 7.0.3
+      postcss:
+        specifier: ^8.4.39
+        version: 8.5.6
+      sass:
+        specifier: ^1.77.2
+        version: 1.92.0
+      tailwindcss:
+        specifier: ^3.4.4
+        version: 3.4.17
+      typescript:
+        specifier: ~5.4.5
+        version: 5.4.5
+      vite:
+        specifier: ^6.1.0
+        version: 6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.92.0)(tsx@4.20.5)(yaml@2.8.1)
+      vite-bundle-visualizer:
+        specifier: ^1.2.1
+        version: 1.2.1(rollup@4.50.0)
+      xgplayer:
+        specifier: ^3.0.19
+        version: 3.0.23(core-js@3.45.1)
+
+  apps/frontend-mobile:
+    dependencies:
+      ahooks:
+        specifier: ^3.8.0
+        version: 3.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      antd-mobile:
+        specifier: ^5.37.1
+        version: 5.40.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      axios:
+        specifier: ^1.7.2
+        version: 1.11.0
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
+      tailwind-merge:
+        specifier: ^2.3.0
+        version: 2.6.0
+      xgplayer:
+        specifier: ^3.0.19
+        version: 3.0.23(core-js@3.45.1)
+    devDependencies:
+      '@types/react':
+        specifier: ^18.3.3
+        version: 18.3.24
+      '@types/react-dom':
+        specifier: ^18.3.0
+        version: 18.3.7(@types/react@18.3.24)
+      '@vitejs/plugin-react-swc':
+        specifier: ^3.5.0
+        version: 3.11.0(vite@6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.92.0)(tsx@4.20.5)(yaml@2.8.1))
+      autoprefixer:
+        specifier: ^10.4.19
+        version: 10.4.21(postcss@8.5.6)
+      postcss:
+        specifier: ^8.4.39
+        version: 8.5.6
+      tailwindcss:
+        specifier: ^3.4.4
+        version: 3.4.17
+      typescript:
+        specifier: ^5.2.2
+        version: 5.4.5
+      vite:
+        specifier: ^6.1.0
+        version: 6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.92.0)(tsx@4.20.5)(yaml@2.8.1)
+
   packages/config:
     devDependencies:
       '@types/node':
@@ -629,6 +647,34 @@ importers:
       typescript:
         specifier: ^5.4.5
         version: 5.4.5
+
+  packages/extension:
+    dependencies:
+      jquery:
+        specifier: ^3.7.1
+        version: 3.7.1
+      lit:
+        specifier: ^3.1.3
+        version: 3.3.1
+      nanoid:
+        specifier: ^5.0.7
+        version: 5.1.5
+    devDependencies:
+      '@mediago/shared':
+        specifier: workspace:*
+        version: link:../shared
+      '@types/jquery':
+        specifier: ^3.5.30
+        version: 3.5.33
+      '@types/node':
+        specifier: ^20.12.12
+        version: 20.19.11
+      typescript:
+        specifier: ^5.4.5
+        version: 5.4.5
+      vite:
+        specifier: ^6.1.0
+        version: 6.3.5(@types/node@20.19.11)(jiti@2.5.1)(sass@1.92.0)(tsx@4.20.5)(yaml@2.8.1)
 
   packages/shared:
     dependencies:
@@ -1493,11 +1539,11 @@ packages:
   '@gar/promisify@1.1.3':
     resolution: {integrity: sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==}
 
-  '@ghostery/adblocker-content@2.11.6':
-    resolution: {integrity: sha512-K+hJR27fYpRGoUQnza2p0BmN86htN1ASoRxF73mAdf1CNDSyfPNCNlpoKt83Z9CbYBdEglXOWItazB9hRMs7gw==}
+  '@ghostery/adblocker-content@2.3.1':
+    resolution: {integrity: sha512-8ZTY1sEE218b0EMk3Q9fv/cWwUxunSCyBOaKuviEmJY5EyvPa1VbGPuTq/Qdvo1kduD8nLEzCwgWhcT3F3TT0Q==}
 
-  '@ghostery/adblocker-electron-preload@2.11.6':
-    resolution: {integrity: sha512-WU6vbixwgBtoc6Sx2jn/X5pw9vj3IXoYPhuE/Rm+TrD2nO/ywAOiNV0XkQp3hIHxpJ4GXv/VDJM3Cy6cX41Nhg==}
+  '@ghostery/adblocker-electron-preload@2.3.1':
+    resolution: {integrity: sha512-ljNnxNJiX0PaNzlH3kH7R5jAmeRqZm0nlyvPshGFft/sF2YOSpbwQnIIF55V/cg7rM6rWLuv6FEKh+xprL5dLw==}
     peerDependencies:
       electron: '>11'
 
@@ -1506,14 +1552,11 @@ packages:
     peerDependencies:
       electron: '>11'
 
-  '@ghostery/adblocker-extended-selectors@2.11.6':
-    resolution: {integrity: sha512-jFKNwwWYYxMHaIqGCLO/sR8oRBcGcVD3bCLPZ9wLBoTMTtCnwdXRlMxWwnNi7Bw5PSw7aw8w6hcEfHdcbdU+Qw==}
+  '@ghostery/adblocker-extended-selectors@2.3.1':
+    resolution: {integrity: sha512-hDNiOd/1V4b6NTkNnMkZUUmhMwwo8+5rpSUtQUFzCCCzy+v5izHt4rBr2RGeK5L1pNq0NbFxZJjBHFDbiQiS1A==}
 
-  '@ghostery/adblocker@2.11.6':
-    resolution: {integrity: sha512-fUkLvWDObCMjjwUHw0/jt3N11wT7FBWJVFUXsUN4Do7J3Henp63JZQw1RYv2Y15NT0idVERR9IhbjJdd3/w48w==}
-
-  '@ghostery/url-parser@1.3.0':
-    resolution: {integrity: sha512-FEzdSeiva0Mt3bR4xePFzthhjT4IzvA5QTvS1xXkNyLpMGeq40mb3V2fSs0ZItRaP9IybZthDfHUSbQ1HLdx4Q==}
+  '@ghostery/adblocker@2.3.1':
+    resolution: {integrity: sha512-6k8ZFHjYII54a32qrKwhnTbrPfR+KPgM6GlyAiEm8OCZoewN1cfBfSw5GVpzaAB2yJ4DzazmP8Wq/UBvEk5mHg==}
 
   '@gulpjs/messages@1.1.0':
     resolution: {integrity: sha512-Ys9sazDatyTgZVb4xPlDufLweJ/Os2uHWOv+Caxvy2O85JcnT4M3vc73bi8pdLWlv3fdWQz3pdI9tVwo8rQQSg==}
@@ -1981,23 +2024,23 @@ packages:
     resolution: {integrity: sha512-O3rHJzAQKamUz1fvE0Qaw0xSFqsA/yafi2iqeE0pvdFtCO1viYx8QL6f3Ln/aCCTLxs68SLf0KPM9eSeM8yBnA==}
     engines: {node: '>=14.0.0'}
 
-  '@remusao/guess-url-type@2.1.0':
-    resolution: {integrity: sha512-zI3dlTUxpjvx2GCxp9nLOSK5yEIqDCpxlAVGwb2Y49RKkS72oeNaxxo+VWS5+XQ5+Mf8Zfp9ZXIlk+G5eoEN8A==}
+  '@remusao/guess-url-type@1.3.0':
+    resolution: {integrity: sha512-SNSJGxH5ckvxb3EUHj4DqlAm/bxNxNv2kx/AESZva/9VfcBokwKNS+C4D1lQdWIDM1R3d3UG+xmVzlkNG8CPTQ==}
 
-  '@remusao/small@2.1.0':
-    resolution: {integrity: sha512-Y1kyjZp7JU7dXdyOdxHVNfoTr1XLZJTyQP36/esZUU/WRWq9XY0PV2HsE3CsIHuaTf4pvgWv2pvzvnZ//UHIJQ==}
+  '@remusao/small@1.3.0':
+    resolution: {integrity: sha512-bydAhJI+ywmg5xMUcbqoR8KahetcfkFywEZpsyFZ8EBofilvWxbXnMSe4vnjDI1Y+SWxnNhR4AL/2BAXkf4b8A==}
 
-  '@remusao/smaz-compress@2.2.0':
-    resolution: {integrity: sha512-TXpTPgILRUYOt2rEe0+9PC12xULPvBqeMpmipzB9A7oM4fa9Ztvy9lLYzPTd7tiQEeoNa1pmxihpKfJtsxnM/w==}
+  '@remusao/smaz-compress@1.10.0':
+    resolution: {integrity: sha512-E/lC8OSU+3bQrUl64vlLyPzIxo7dxF2RvNBe9KzcM4ax43J/d+YMinmMztHyCIHqRbz7rBCtkp3c0KfeIbHmEg==}
 
-  '@remusao/smaz-decompress@2.2.0':
-    resolution: {integrity: sha512-ERAPwxPaA0/yg4hkNU7T2S+lnp9jj1sApcQMtOyROvOQyo+Zuh6Hn/oRcXr8mmjlYzyRaC7E6r3mT1nrdHR6pg==}
+  '@remusao/smaz-decompress@1.10.0':
+    resolution: {integrity: sha512-aA5ImUH480Pcs5/cOgToKmFnzi7osSNG6ft+7DdmQTaQEEst3nLq3JLlBEk+gwidURymjbx6DYs60LHaZ415VQ==}
 
-  '@remusao/smaz@2.2.0':
-    resolution: {integrity: sha512-eSd3Qs0ELP/e7tU1SI5RWXcCn9KjDgvBY+KtWbL4i2QvvHhJOfdIt4v0AA3S5BbLWAr5dCEC7C4LUfogDm6q/Q==}
+  '@remusao/smaz@1.10.0':
+    resolution: {integrity: sha512-GQzCxmmMpLkyZwcwNgz8TpuBEWl0RUQa8IcvKiYlPxuyYKqyqPkCr0hlHI15ckn3kDUPS68VmTVgyPnLNrdVmg==}
 
-  '@remusao/trie@2.1.0':
-    resolution: {integrity: sha512-Er3Q8q0/2OcCJPQYJOPLmCuqO0wu7cav3SPtpjlxSbjFi1x+A1pZkkLD6c9q2rGEkGW/tkrRzfrhNMt8VQjzXg==}
+  '@remusao/trie@1.5.0':
+    resolution: {integrity: sha512-UX+3utJKgwCsg6sUozjxd38gNMVRXrY4TNX9VvCdSrlZBS1nZjRPi98ON3QjRAdf6KCguJFyQARRsulTeqQiPg==}
 
   '@rolldown/pluginutils@1.0.0-beta.27':
     resolution: {integrity: sha512-+d0F4MKMCbeVUJwG96uQ4SgAznZNSq93I3V+9NHA4OpvqG8mRCpGdKmK8l/dl02h2CCDHwW2FqilnTyDcAnqjA==}
@@ -6134,14 +6177,8 @@ packages:
   tldts-core@6.1.86:
     resolution: {integrity: sha512-Je6p7pkk+KMzMv2XXKmAE3McmolOQFdxkKw0R8EYNr7sELW46JqnNeTX8ybPiQgvg1ymCoF8LXs5fzFaZvJPTA==}
 
-  tldts-core@7.0.12:
-    resolution: {integrity: sha512-3K76aXywJFduGRsOYoY5JzINLs/WMlOkeDwPL+8OCPq2Rh39gkSDtWAxdJQlWjpun/xF/LHf29yqCi6VC/rHDA==}
-
   tldts-experimental@6.1.86:
     resolution: {integrity: sha512-X3N3+SrwSajvANDyIBFa6tf/nO0VoqaXvvINSnQkZMGbzNlD+9G7Xb24Mtk3ZBVZJRGY7UynAJJL8kRVt6Z46Q==}
-
-  tldts-experimental@7.0.12:
-    resolution: {integrity: sha512-riDDp/JrJJuh/2GV1Tgg6OnOwcWlgleBKi4/xkhd0DW7tvvmNjmWXCh2nj7Z2G1k9S/AGN4RiiPRbvhGJUCxeg==}
 
   tmp-promise@3.0.3:
     resolution: {integrity: sha512-RwM7MoPojPxsOBYnyd2hy0bxtIlVrihNs9pj5SUvY8Zz1sQcQG2tG1hSr8PDxfgEB8RNKDhqbIlroIarSNDNsQ==}
@@ -7583,37 +7620,32 @@ snapshots:
 
   '@gar/promisify@1.1.3': {}
 
-  '@ghostery/adblocker-content@2.11.6':
+  '@ghostery/adblocker-content@2.3.1':
     dependencies:
-      '@ghostery/adblocker-extended-selectors': 2.11.6
+      '@ghostery/adblocker-extended-selectors': 2.3.1
 
-  '@ghostery/adblocker-electron-preload@2.11.6(electron@30.0.8)':
+  '@ghostery/adblocker-electron-preload@2.3.1(electron@30.0.8)':
     dependencies:
-      '@ghostery/adblocker-content': 2.11.6
+      '@ghostery/adblocker-content': 2.3.1
       electron: 30.0.8
 
   '@ghostery/adblocker-electron@2.3.1(electron@30.0.8)':
     dependencies:
-      '@ghostery/adblocker': 2.11.6
-      '@ghostery/adblocker-electron-preload': 2.11.6(electron@30.0.8)
+      '@ghostery/adblocker': 2.3.1
+      '@ghostery/adblocker-electron-preload': 2.3.1(electron@30.0.8)
       electron: 30.0.8
       tldts-experimental: 6.1.86
 
-  '@ghostery/adblocker-extended-selectors@2.11.6': {}
+  '@ghostery/adblocker-extended-selectors@2.3.1': {}
 
-  '@ghostery/adblocker@2.11.6':
+  '@ghostery/adblocker@2.3.1':
     dependencies:
-      '@ghostery/adblocker-content': 2.11.6
-      '@ghostery/adblocker-extended-selectors': 2.11.6
-      '@ghostery/url-parser': 1.3.0
-      '@remusao/guess-url-type': 2.1.0
-      '@remusao/small': 2.1.0
-      '@remusao/smaz': 2.2.0
-      tldts-experimental: 7.0.12
-
-  '@ghostery/url-parser@1.3.0':
-    dependencies:
-      tldts-experimental: 7.0.12
+      '@ghostery/adblocker-content': 2.3.1
+      '@ghostery/adblocker-extended-selectors': 2.3.1
+      '@remusao/guess-url-type': 1.3.0
+      '@remusao/small': 1.3.0
+      '@remusao/smaz': 1.10.0
+      tldts-experimental: 6.1.86
 
   '@gulpjs/messages@1.1.0': {}
 
@@ -8058,22 +8090,22 @@ snapshots:
 
   '@remix-run/router@1.23.0': {}
 
-  '@remusao/guess-url-type@2.1.0': {}
+  '@remusao/guess-url-type@1.3.0': {}
 
-  '@remusao/small@2.1.0': {}
+  '@remusao/small@1.3.0': {}
 
-  '@remusao/smaz-compress@2.2.0':
+  '@remusao/smaz-compress@1.10.0':
     dependencies:
-      '@remusao/trie': 2.1.0
+      '@remusao/trie': 1.5.0
 
-  '@remusao/smaz-decompress@2.2.0': {}
+  '@remusao/smaz-decompress@1.10.0': {}
 
-  '@remusao/smaz@2.2.0':
+  '@remusao/smaz@1.10.0':
     dependencies:
-      '@remusao/smaz-compress': 2.2.0
-      '@remusao/smaz-decompress': 2.2.0
+      '@remusao/smaz-compress': 1.10.0
+      '@remusao/smaz-decompress': 1.10.0
 
-  '@remusao/trie@2.1.0': {}
+  '@remusao/trie@1.5.0': {}
 
   '@rolldown/pluginutils@1.0.0-beta.27': {}
 
@@ -12755,15 +12787,9 @@ snapshots:
 
   tldts-core@6.1.86: {}
 
-  tldts-core@7.0.12: {}
-
   tldts-experimental@6.1.86:
     dependencies:
       tldts-core: 6.1.86
-
-  tldts-experimental@7.0.12:
-    dependencies:
-      tldts-core: 7.0.12
 
   tmp-promise@3.0.3:
     dependencies:

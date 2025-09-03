@@ -1,9 +1,9 @@
 import { inject, injectable } from "inversify";
-import { ConversionPagination } from "../../../common/types/index.ts";
-import { TYPES } from "../../types/index.ts";
-import TypeORM from "../../vendor/TypeORM.ts";
-import { Conversion } from "../entity/Conversion.ts";
-import { i18n } from "../../../common/index.ts";
+import { i18n } from "../../../common";
+import type { ConversionPagination } from "../../../common/types/index";
+import { TYPES } from "../../types";
+import type TypeORM from "../../vendor/TypeORM";
+import { Conversion } from "../entity/Conversion";
 
 @injectable()
 export default class ConversionRepository {
