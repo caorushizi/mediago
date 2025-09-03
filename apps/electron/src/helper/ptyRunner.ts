@@ -1,7 +1,7 @@
+import { i18n } from "@mediago/shared/common";
+import type { RunnerOptions } from "@mediago/shared/node";
 import * as pty from "node-pty";
 import stripAnsi from "strip-ansi";
-import i18n from "../../common/i18n/index.ts";
-import { RunnerOptions } from "../types/index.ts";
 
 export function ptyRunner<T>({ abortController, onMessage, binPath, args, ctx }: RunnerOptions<T>): Promise<void> {
   return new Promise((resolve, reject) => {
