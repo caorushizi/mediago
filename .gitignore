@@ -2,7 +2,6 @@ node_modules
 *.local
 .idea
 .parcel-cache
-.vitepress
 *.tsno.mjs
 .DS_Store
 log
