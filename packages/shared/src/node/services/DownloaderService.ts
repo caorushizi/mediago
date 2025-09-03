@@ -1,9 +1,9 @@
+import type { DownloadContext, DownloadParams } from "@mediago/shared/common";
+import type { ptyRunner } from "@mediago/shared/node";
 import { injectable } from "inversify";
-import { ptyRunner } from "@mediago/shared/node";
-import { DownloadType, getFileExtension } from "../../common/index.ts";
 import path from "path";
-import { DownloadParams, DownloadContext } from "@mediago/shared/common";
-import { DownloadSchema } from "../types/index.ts";
+import { type DownloadType, getFileExtension } from "../../common/index";
+import type { DownloadSchema } from "../types/index";
 
 @injectable()
 export default class DownloaderService {

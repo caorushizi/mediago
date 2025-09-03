@@ -1,8 +1,8 @@
 import { inject, injectable } from "inversify";
-import { Favorite } from "../entity/Favorite.ts";
-import TypeORM from "../../vendor/TypeORM.ts";
-import { i18n } from "../../../common/index.ts";
-import { TYPES } from "../../types/index.ts";
+import { i18n } from "../../../common/index.js";
+import { TYPES } from "../../types/index.js";
+import type TypeORM from "../../vendor/TypeORM";
+import { Favorite } from "../entity/Favorite.js";
 
 @injectable()
 export default class FavoriteRepository {

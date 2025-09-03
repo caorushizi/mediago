@@ -1,4 +1,4 @@
-import { AppLanguage, AppTheme, DownloadType } from "../../common/types/index.ts";
+import type { AppLanguage, AppTheme, DownloadType } from "../../common/types/index";
 
 export const TYPES = {
   ElectronApp: Symbol.for("ElectronApp"),

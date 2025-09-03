@@ -1,5 +1,6 @@
-import type { Conversion, Video } from "../../node/dao/entity/index.ts";
-export type { ElectronApi } from "./electronApi.ts";
+import type { Conversion, Video } from "../../node/dao/entity/index";
+
+export type { ElectronApi } from "./electronApi";
 
 export type Controller = Record<string | symbol, any>;
 

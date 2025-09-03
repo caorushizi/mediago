@@ -1,7 +1,7 @@
-import type { Conversion, Favorite, Video } from "../../node/dao/entity/index.ts";
-import type { AppStore, BrowserStore, EnvPath, Rectangle } from "../../node/types/index.ts";
-import { VideoResponse } from "../index.ts";
-import { ConversionPagination, ConversionResponse, DownloadItem, DownloadItemPagination } from "./index.ts";
+import type { Conversion, Favorite, Video } from "../../node/dao/entity/index";
+import type { AppStore, BrowserStore, EnvPath, Rectangle } from "../../node/types/index";
+import type { VideoResponse } from "../index";
+import type { ConversionPagination, ConversionResponse, DownloadItem, DownloadItemPagination } from "./index";
 
 export interface ElectronApi {
   getEnvPath(): Promise<EnvPath>;

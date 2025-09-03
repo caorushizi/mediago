@@ -1,1 +1,1 @@
-export { default as TypeORM } from "./TypeORM.ts";
+export { default as TypeORM } from "./TypeORM";

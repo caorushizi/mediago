@@ -1,5 +1,0 @@
-{
-  "watch": ["dist"],
-  "ext": "js",
-  "exec": "npx cross-env NODE_ENV=development node dist/server/index.js"
-}

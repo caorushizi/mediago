@@ -1,6 +1,6 @@
 import { injectable } from "inversify";
-import { DataSource, EntityManager } from "typeorm";
-import { Video, Favorite, Conversion } from "../dao/entity/index.ts";
+import { DataSource, type EntityManager } from "typeorm";
+import { Conversion, Favorite, Video } from "../dao/entity/index.js";
 
 @injectable()
 export default class DatabaseService {

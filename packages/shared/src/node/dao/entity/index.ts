@@ -1,3 +1,3 @@
-export * from "./Conversion.ts";
-export * from "./Favorite.ts";
-export * from "./Video.ts";
+export * from "./Conversion";
+export * from "./Favorite";
+export * from "./Video";

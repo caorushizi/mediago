@@ -1,5 +1,5 @@
-import { DownloadStatus, DownloadType } from "../../../common/types/index.ts";
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { DownloadStatus, DownloadType } from "../../../common/types/index";
 
 @Entity({
   name: "video",
