@@ -1,2 +1,2 @@
-export * from "./repository/index.ts";
-export * from "./entity/index.ts";
+export * from "./entity/index";
+export * from "./repository/index";

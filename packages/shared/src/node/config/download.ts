@@ -1,5 +1,5 @@
-import { Platform } from "../../common/types/index.ts";
-import { DownloadSchema } from "../types/index.ts";
+import { Platform } from "../../common/types";
+import type { DownloadSchema } from "../types/index";
 
 // FIXME: Multilingual regular expressions
 export const downloadSchemaList: DownloadSchema[] = [

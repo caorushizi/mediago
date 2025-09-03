@@ -1,10 +1,9 @@
+import { type DownloadParams, i18n, type Task } from "@mediago/shared/common";
+import { TYPES } from "@mediago/shared/node";
 import EventEmitter from "events";
 import { inject, injectable } from "inversify";
-import { DownloadParams, Task } from "@mediago/shared/common";
-import { TYPES } from "@mediago/shared/node";
-import { i18n } from "@mediago/shared/common";
-import { downloadSchemaList } from "../config/download.ts";
-import DownloaderService from "./DownloaderService.ts";
+import { downloadSchemaList } from "../config/download";
+import type DownloaderService from "./DownloaderService";
 
 /**
  * Task queue service
