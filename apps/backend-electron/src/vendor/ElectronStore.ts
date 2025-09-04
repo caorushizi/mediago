@@ -1,3 +1,4 @@
+import { provide } from "@inversifyjs/binding-decorators";
 import { AppLanguage, AppTheme } from "@mediago/shared/common";
 import type { AppStore } from "@mediago/shared/node";
 import Store from "electron-store";
@@ -5,6 +6,7 @@ import { injectable } from "inversify";
 import { download, workspace } from "../helper/index";
 
 @injectable()
+@provide()
 export default class StoreService extends Store<AppStore> {
   constructor() {
     super({

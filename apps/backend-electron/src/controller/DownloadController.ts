@@ -1,3 +1,5 @@
+import path from "node:path";
+import { provide } from "@inversifyjs/binding-decorators";
 import {
   type Controller,
   type DownloadItem,
@@ -6,28 +8,28 @@ import {
   type ListPagination,
   type Task,
 } from "@mediago/shared/common";
-import { type TaskQueueService, TYPES, type VideoRepository } from "@mediago/shared/node";
+import { TaskQueueService, TYPES, VideoRepository } from "@mediago/shared/node";
 import type { IpcMainEvent } from "electron/main";
 import { glob } from "glob";
 import { inject, injectable } from "inversify";
-import path from "path";
 import { handle, videoPattern } from "../helper/index";
-import type WebviewService from "../services/WebviewService";
-import type ElectronStore from "../vendor/ElectronStore";
-import type MainWindow from "../windows/MainWindow";
+import WebviewService from "../services/WebviewService";
+import ElectronStore from "../vendor/ElectronStore";
+import MainWindow from "../windows/MainWindow";
 
 @injectable()
+@provide(TYPES.Controller)
 export default class DownloadController implements Controller {
   constructor(
-    @inject(TYPES.ElectronStore)
+    @inject(ElectronStore)
     private readonly store: ElectronStore,
-    @inject(TYPES.VideoRepository)
+    @inject(VideoRepository)
     private readonly videoRepository: VideoRepository,
-    @inject(TYPES.TaskQueueService)
+    @inject(TaskQueueService)
     private readonly taskQueue: TaskQueueService,
-    @inject(TYPES.MainWindow)
+    @inject(MainWindow)
     private readonly mainWindow: MainWindow,
-    @inject(TYPES.WebviewService)
+    @inject(WebviewService)
     private readonly webviewService: WebviewService,
   ) {}
 

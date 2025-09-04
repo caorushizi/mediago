@@ -1,5 +1,6 @@
 import path, { join } from "node:path";
 import { URL } from "node:url";
+import { provide } from "@inversifyjs/binding-decorators";
 import { app, protocol } from "electron";
 import isDev from "electron-is-dev";
 import { pathExists, readFile } from "fs-extra";
@@ -8,6 +9,7 @@ import mime from "mime-types";
 import { defaultScheme } from "../helper/index";
 
 @injectable()
+@provide()
 export default class ProtocolService {
   create(): void {
     if (isDev) return;

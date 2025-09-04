@@ -109,9 +109,12 @@ importers:
       '@ghostery/adblocker-electron':
         specifier: 2.3.1
         version: 2.3.1(electron@30.0.8)
+      '@inversifyjs/binding-decorators':
+        specifier: ^1.1.3
+        version: 1.1.3(inversify@7.9.1(reflect-metadata@0.2.2))(reflect-metadata@0.2.2)
       '@mediago/electron-preload':
         specifier: workspace:*
-        version: link:../../packages/preload
+        version: link:../../packages/electron-preload
       '@mediago/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -155,8 +158,8 @@ importers:
         specifier: ^23.11.5
         version: 23.16.8
       inversify:
-        specifier: ^6.0.2
-        version: 6.2.2(reflect-metadata@0.2.2)
+        specifier: ^7.9.1
+        version: 7.9.1(reflect-metadata@0.2.2)
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -278,6 +281,9 @@ importers:
 
   apps/backend-web:
     dependencies:
+      '@inversifyjs/binding-decorators':
+        specifier: ^1.1.3
+        version: 1.1.3(inversify@7.9.1(reflect-metadata@0.2.2))(reflect-metadata@0.2.2)
       '@koa/cors':
         specifier: ^5.0.0
         version: 5.0.0
@@ -312,8 +318,8 @@ importers:
         specifier: ^23.11.5
         version: 23.16.8
       inversify:
-        specifier: ^6.0.2
-        version: 6.2.2(reflect-metadata@0.2.2)
+        specifier: ^7.9.1
+        version: 7.9.1(reflect-metadata@0.2.2)
       koa:
         specifier: ^2.15.3
         version: 2.16.2
@@ -685,6 +691,28 @@ importers:
         specifier: ^5.4.5
         version: 5.4.5
 
+  packages/electron-preload:
+    dependencies:
+      '@mediago/shared':
+        specifier: workspace:*
+        version: link:../shared
+    devDependencies:
+      '@types/node':
+        specifier: ^20.12.12
+        version: 20.19.11
+      electron:
+        specifier: 30.0.8
+        version: 30.0.8
+      esbuild:
+        specifier: ^0.21.4
+        version: 0.21.4
+      tsx:
+        specifier: ^4.11.0
+        version: 4.20.5
+      typescript:
+        specifier: ^5.4.5
+        version: 5.4.5
+
   packages/extension:
     dependencies:
       jquery:
@@ -713,36 +741,17 @@ importers:
         specifier: ^6.1.0
         version: 6.3.5(@types/node@20.19.11)(jiti@2.5.1)(lightningcss@1.30.1)(sass@1.92.0)(tsx@4.20.5)(yaml@2.8.1)
 
-  packages/preload:
-    dependencies:
-      '@mediago/shared':
-        specifier: workspace:*
-        version: link:../shared
-    devDependencies:
-      '@types/node':
-        specifier: ^20.12.12
-        version: 20.19.11
-      electron:
-        specifier: 30.0.8
-        version: 30.0.8
-      esbuild:
-        specifier: ^0.21.4
-        version: 0.21.4
-      tsx:
-        specifier: ^4.11.0
-        version: 4.20.5
-      typescript:
-        specifier: ^5.4.5
-        version: 5.4.5
-
   packages/shared:
     dependencies:
+      '@inversifyjs/binding-decorators':
+        specifier: ^1.1.3
+        version: 1.1.3(inversify@7.9.1(reflect-metadata@0.2.2))(reflect-metadata@0.2.2)
       i18next:
         specifier: ^23.11.5
         version: 23.16.8
       inversify:
-        specifier: ^6.0.2
-        version: 6.2.2(reflect-metadata@0.2.2)
+        specifier: ^7.9.1
+        version: 7.9.1(reflect-metadata@0.2.2)
       strip-ansi:
         specifier: ^7.1.0
         version: 7.1.0
@@ -1846,14 +1855,30 @@ packages:
       vue-i18n:
         optional: true
 
-  '@inversifyjs/common@1.4.0':
-    resolution: {integrity: sha512-qfRJ/3iOlCL/VfJq8+4o5X4oA14cZSBbpAmHsYj8EsIit1xDndoOl0xKOyglKtQD4u4gdNVxMHx4RWARk/I4QA==}
+  '@inversifyjs/binding-decorators@1.1.3':
+    resolution: {integrity: sha512-5sVF9sUTgi2JcBuVuKvbSU5yimnimOLqz09ab1QBKPOkOcL8th7gFP7CtiynvVRycAiPGYOERSNuvUUTUHHN6g==}
+    peerDependencies:
+      inversify: ^7.6.1
 
-  '@inversifyjs/core@1.3.5':
-    resolution: {integrity: sha512-B4MFXabhNTAmrfgB+yeD6wd/GIvmvWC6IQ8Rh/j2C3Ix69kmqwz9pr8Jt3E+Nho9aEHOQCZaGmrALgtqRd+oEQ==}
+  '@inversifyjs/common@1.5.2':
+    resolution: {integrity: sha512-WlzR9xGadABS9gtgZQ+luoZ8V6qm4Ii6RQfcfC9Ho2SOlE6ZuemFo7PKJvKI0ikm8cmKbU8hw5UK6E4qovH21w==}
 
-  '@inversifyjs/reflect-metadata-utils@0.2.4':
-    resolution: {integrity: sha512-u95rV3lKfG+NT2Uy/5vNzoDujos8vN8O18SSA5UyhxsGYd4GLQn/eUsGXfOsfa7m34eKrDelTKRUX1m/BcNX5w==}
+  '@inversifyjs/container@1.12.7':
+    resolution: {integrity: sha512-gmZCrg+4FnC0K16b1oKp+HER50WCcvJ29x6S9GC5duVfIfrTve704Gx5Plj1sAiovRbY9d45TEFN96zH/QQrpg==}
+    peerDependencies:
+      reflect-metadata: ~0.2.2
+
+  '@inversifyjs/core@8.0.0':
+    resolution: {integrity: sha512-rYmI6lT9NbhujCRu/cMRAqvpM+I0leYmgHidA418f8VbMeRexxr9WbjPb8KaUG/dQpTUzHkHDxh+0ocp/fb+Ng==}
+
+  '@inversifyjs/plugin@0.2.0':
+    resolution: {integrity: sha512-R/JAdkTSD819pV1zi0HP54mWHyX+H2m8SxldXRgPQarS3ySV4KPyRdosWcfB8Se0JJZWZLHYiUNiS6JvMWSPjw==}
+
+  '@inversifyjs/prototype-utils@0.1.2':
+    resolution: {integrity: sha512-WZAEycwVd8zVCPCQ7GRzuQmjYF7X5zbjI9cGigDbBoTHJ8y5US9om00IAp0RYislO+fYkMzgcB2SnlIVIzyESA==}
+
+  '@inversifyjs/reflect-metadata-utils@1.3.0':
+    resolution: {integrity: sha512-JJVnIRq75+nF8FP4WwFPdVQ4sgqf09acXbODi3B7vVtJo+0Mo0YQOOdSWw/cHmbP8+5MAKi4PBYOK3yqn4tGNg==}
     peerDependencies:
       reflect-metadata: 0.2.2
 
@@ -4990,8 +5015,8 @@ packages:
   intersection-observer@0.12.2:
     resolution: {integrity: sha512-7m1vEcPCxXYI8HqnL8CKI6siDyD+eIWSwgB3DZA+ZTogxk9I4CDnj4wilt9x/+/QbHI4YG5YZNmC6458/e9Ktg==}
 
-  inversify@6.2.2:
-    resolution: {integrity: sha512-KB836KHbZ9WrUnB8ax5MtadOwnqQYa+ZJO3KWbPFgcr4RIEnHM621VaqFZzOZd9+U7ln6upt9n0wJei7x2BNqw==}
+  inversify@7.9.1:
+    resolution: {integrity: sha512-+x7saeEKDDakWwhtLHAPYPXxCSMI4xTQBJqkTYC6AZHMw+3SpUu7p8hma8pfhazgRHoSB1tENKwtIOLi+uOQUg==}
     peerDependencies:
       reflect-metadata: ~0.2.2
 
@@ -9021,16 +9046,38 @@ snapshots:
       vue: 3.5.21(typescript@5.4.5)
       vue-i18n: 11.1.11(vue@3.5.21(typescript@5.4.5))
 
-  '@inversifyjs/common@1.4.0': {}
-
-  '@inversifyjs/core@1.3.5(reflect-metadata@0.2.2)':
+  '@inversifyjs/binding-decorators@1.1.3(inversify@7.9.1(reflect-metadata@0.2.2))(reflect-metadata@0.2.2)':
     dependencies:
-      '@inversifyjs/common': 1.4.0
-      '@inversifyjs/reflect-metadata-utils': 0.2.4(reflect-metadata@0.2.2)
+      '@inversifyjs/reflect-metadata-utils': 1.3.0(reflect-metadata@0.2.2)
+      inversify: 7.9.1(reflect-metadata@0.2.2)
     transitivePeerDependencies:
       - reflect-metadata
 
-  '@inversifyjs/reflect-metadata-utils@0.2.4(reflect-metadata@0.2.2)':
+  '@inversifyjs/common@1.5.2': {}
+
+  '@inversifyjs/container@1.12.7(reflect-metadata@0.2.2)':
+    dependencies:
+      '@inversifyjs/common': 1.5.2
+      '@inversifyjs/core': 8.0.0(reflect-metadata@0.2.2)
+      '@inversifyjs/plugin': 0.2.0
+      '@inversifyjs/reflect-metadata-utils': 1.3.0(reflect-metadata@0.2.2)
+      reflect-metadata: 0.2.2
+
+  '@inversifyjs/core@8.0.0(reflect-metadata@0.2.2)':
+    dependencies:
+      '@inversifyjs/common': 1.5.2
+      '@inversifyjs/prototype-utils': 0.1.2
+      '@inversifyjs/reflect-metadata-utils': 1.3.0(reflect-metadata@0.2.2)
+    transitivePeerDependencies:
+      - reflect-metadata
+
+  '@inversifyjs/plugin@0.2.0': {}
+
+  '@inversifyjs/prototype-utils@0.1.2':
+    dependencies:
+      '@inversifyjs/common': 1.5.2
+
+  '@inversifyjs/reflect-metadata-utils@1.3.0(reflect-metadata@0.2.2)':
     dependencies:
       reflect-metadata: 0.2.2
 
@@ -12663,10 +12710,11 @@ snapshots:
 
   intersection-observer@0.12.2: {}
 
-  inversify@6.2.2(reflect-metadata@0.2.2):
+  inversify@7.9.1(reflect-metadata@0.2.2):
     dependencies:
-      '@inversifyjs/common': 1.4.0
-      '@inversifyjs/core': 1.3.5(reflect-metadata@0.2.2)
+      '@inversifyjs/common': 1.5.2
+      '@inversifyjs/container': 1.12.7(reflect-metadata@0.2.2)
+      '@inversifyjs/core': 8.0.0(reflect-metadata@0.2.2)
       reflect-metadata: 0.2.2
 
   ip-address@10.0.1: {}
