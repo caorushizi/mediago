@@ -1,15 +1,4 @@
 {
-  "compilerOptions": {
-    "target": "es2016",
-    "experimentalDecorators": true,
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "allowImportingTsExtensions": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true
-  },
+  "extends": "../config/tsconfig.node.json",
   "include": ["src/common", "src/browser"]
 }
