@@ -1,22 +1,9 @@
 {
+  "extends": "../../packages/config/tsconfig.node.json",
   "compilerOptions": {
-    "target": "ES2015",
-    "module": "NodeNext",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "moduleResolution": "NodeNext",
-    "strictPropertyInitialization": false,
-    "typeRoots": ["node_modules/@types"],
     "declaration": true,
     "declarationDir": "./types",
-    "outDir": "app/output/build/main",
-    "allowImportingTsExtensions": true,
-    "noEmit": true
+    "outDir": "app/output/build/main"
   },
   "include": ["src"],
   "references": [

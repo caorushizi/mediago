@@ -1,7 +1,6 @@
+import path from "node:path";
 import type { DownloadContext, DownloadParams } from "@mediago/shared/common";
-import type { ptyRunner } from "@mediago/shared/node";
 import { injectable } from "inversify";
-import path from "path";
 import { type DownloadType, getFileExtension } from "../../common/index";
 import type { DownloadSchema } from "../types/index";
 
@@ -13,9 +12,7 @@ export default class DownloaderService {
   private readonly PROGRESS_THROTTLE_MS = 200; // 200ms 进度更新节流
   private readonly MIN_PROGRESS_DIFF = 0.5; // 最小进度差异 0.5%
 
-  constructor() {}
-
-  public init(binMap: Record<DownloadType, string>, runner: typeof ptyRunner) {
+  public init(binMap: Record<DownloadType, string>, runner: unknown) {
     this.binMap = binMap;
     this.runner = runner;
   }
@@ -46,7 +43,9 @@ export default class DownloaderService {
         if (folder) {
           finalLocal = path.join(local, folder);
         }
-        argsName && argsName.forEach((i) => spawnParams.push(i, finalLocal));
+        argsName?.forEach((i) => {
+          spawnParams.push(i, finalLocal);
+        });
       }
       if (key === "name") {
         let finalName = name;
@@ -58,7 +57,9 @@ export default class DownloaderService {
             finalName = `${name}${postfix}`;
           }
         }
-        argsName && argsName.forEach((i) => spawnParams.push(i, finalName));
+        argsName?.forEach((i) => {
+          spawnParams.push(i, finalName);
+        });
       }
 
       if (key === "headers" && headers) {
@@ -69,11 +70,15 @@ export default class DownloaderService {
       }
 
       if (key === "deleteSegments") {
-        argsName && argsName.forEach((i) => spawnParams.push(i, String(deleteSegments)));
+        argsName?.forEach((i) => {
+          spawnParams.push(i, String(deleteSegments));
+        });
       }
 
       if (key === "proxy" && proxy) {
-        argsName && argsName.forEach((i) => spawnParams.push(i, proxy));
+        argsName?.forEach((i) => {
+          spawnParams.push(i, proxy);
+        });
       }
 
       if (key === "__common__") {
