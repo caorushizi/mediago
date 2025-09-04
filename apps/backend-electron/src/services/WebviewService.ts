@@ -1,19 +1,21 @@
 import { resolve } from "node:path";
 import { ElectronBlocker } from "@ghostery/adblocker-electron";
+import { provide } from "@inversifyjs/binding-decorators";
 import { i18n } from "@mediago/shared/common";
-import { TYPES, type VideoRepository } from "@mediago/shared/node";
+import { VideoRepository } from "@mediago/shared/node";
 import { type Event, type HandlerDetails, session, WebContentsView } from "electron";
 import isDev from "electron-is-dev";
 import { readFileSync } from "fs-extra";
 import { inject, injectable } from "inversify";
 import { fetch, isDeeplink, mobileUA, PERSIST_WEBVIEW, PRIVACY_WEBVIEW, pcUA, pluginPath } from "../helper/index";
-import type ElectronLogger from "../vendor/ElectronLogger";
-import type ElectronStore from "../vendor/ElectronStore";
-import type BrowserWindow from "../windows/BrowserWindow";
-import type MainWindow from "../windows/MainWindow";
-import type { SniffingHelper, SourceParams } from "./SniffingHelperService";
+import ElectronLogger from "../vendor/ElectronLogger";
+import ElectronStore from "../vendor/ElectronStore";
+import BrowserWindow from "../windows/BrowserWindow";
+import MainWindow from "../windows/MainWindow";
+import { SniffingHelper, type SourceParams } from "./SniffingHelperService";
 
 @injectable()
+@provide()
 export default class WebviewService {
   private view: WebContentsView | null = null;
   private blocker?: ElectronBlocker;
@@ -21,17 +23,17 @@ export default class WebviewService {
   private viewShow = false;
 
   constructor(
-    @inject(TYPES.MainWindow)
+    @inject(MainWindow)
     private readonly mainWindow: MainWindow,
-    @inject(TYPES.ElectronLogger)
+    @inject(ElectronLogger)
     private readonly logger: ElectronLogger,
-    @inject(TYPES.BrowserWindow)
+    @inject(BrowserWindow)
     private readonly browserWindow: BrowserWindow,
-    @inject(TYPES.ElectronStore)
+    @inject(ElectronStore)
     private readonly store: ElectronStore,
-    @inject(TYPES.VideoRepository)
+    @inject(VideoRepository)
     private readonly videoRepository: VideoRepository,
-    @inject(TYPES.SniffingHelper)
+    @inject(SniffingHelper)
     private readonly sniffingHelper: SniffingHelper,
   ) {
     // Initialize the blocker

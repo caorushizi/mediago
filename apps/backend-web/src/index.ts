@@ -1,7 +1,10 @@
 import "reflect-metadata";
-import { TYPES } from "@mediago/shared/node";
-import type ElectronApp from "./app";
-import { container } from "./inversify.config";
+import { Container } from "inversify";
+import ElectronApp from "./app";
 
-const mediago = container.get<ElectronApp>(TYPES.ElectronApp);
+const container = new Container({
+  defaultScope: "Singleton",
+});
+
+const mediago = container.get(ElectronApp);
 mediago.init();

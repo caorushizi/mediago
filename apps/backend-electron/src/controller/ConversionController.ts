@@ -1,13 +1,15 @@
+import { provide } from "@inversifyjs/binding-decorators";
 import type { Controller, ConversionPagination } from "@mediago/shared/common";
-import { type Conversion, type ConversionRepository, TYPES } from "@mediago/shared/node";
+import { type Conversion, ConversionRepository, TYPES } from "@mediago/shared/node";
 import type { IpcMainEvent } from "electron/main";
 import { inject, injectable } from "inversify";
 import { handle } from "../helper/index";
 
 @injectable()
+@provide(TYPES.Controller)
 export default class ConversionController implements Controller {
   constructor(
-    @inject(TYPES.ConversionRepository)
+    @inject(ConversionRepository)
     private readonly conversionRepository: ConversionRepository,
   ) {}
 

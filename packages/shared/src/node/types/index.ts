@@ -1,37 +1,7 @@
 import type { AppLanguage, AppTheme, DownloadType } from "../../common/types/index";
 
 export const TYPES = {
-  ElectronApp: Symbol.for("ElectronApp"),
-  IpcHandlerService: Symbol.for("IpcHandlerService"),
   Controller: Symbol.for("Controller"),
-  // repository
-  VideoRepository: Symbol.for("VideoRepository"),
-  FavoriteRepository: Symbol.for("FavoriteRepository"),
-  ConversionRepository: Symbol.for("ConversionRepository"),
-  // windows
-  BrowserWindow: Symbol.for("BrowserWindow"),
-  MainWindow: Symbol.for("MainWindow"),
-  PlayerWindow: Symbol.for("PlayerWindow"),
-  // services
-  WebviewService: Symbol.for("WebviewService"),
-  TaskQueueService: Symbol.for("TaskQueueService"),
-  DownloaderService: Symbol.for("DownloaderService"),
-  SessionService: Symbol.for("SessionService"),
-  ProtocolService: Symbol.for("ProtocolService"),
-  VideoService: Symbol.for("VideoService"),
-  SniffingHelper: Symbol.for("SniffingHelper"),
-  // vendor electron
-  ElectronLogger: Symbol.for("ElectronLogger"),
-  ElectronUpdater: Symbol.for("ElectronUpdater"),
-  ElectronStore: Symbol.for("ElectronStore"),
-  ElectronDevtools: Symbol.for("ElectronDevtools"),
-  // vendor web
-  SocketIO: Symbol.for("SocketIO"),
-  Logger: Symbol.for("Logger"),
-  StoreService: Symbol.for("StoreService"),
-  RouterHandlerService: Symbol.for("RouterHandlerService"),
-  // vendor typeorm
-  TypeORM: Symbol.for("TypeORM"),
 };
 
 export interface EnvPath {

@@ -1,16 +1,18 @@
+import { provide } from "@inversifyjs/binding-decorators";
 import type { Controller } from "@mediago/shared/common";
 import { TYPES } from "@mediago/shared/node";
 import { ipcMain } from "electron";
 import { inject, injectable, multiInject } from "inversify";
 import { error, success } from "../helper/index";
-import type ElectronLogger from "../vendor/ElectronLogger";
+import ElectronLogger from "../vendor/ElectronLogger";
 
 @injectable()
+@provide()
 export default class IpcHandlerService {
   constructor(
     @multiInject(TYPES.Controller)
     private readonly controllers: Controller[],
-    @inject(TYPES.ElectronLogger)
+    @inject(ElectronLogger)
     private readonly logger: ElectronLogger,
   ) {}
 

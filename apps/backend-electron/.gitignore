@@ -4,5 +4,5 @@ build
 dist
 bin/Logs
 release
-types
+./types
 .DS_Store

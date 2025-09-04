@@ -1,8 +1,10 @@
+import { provide } from "@inversifyjs/binding-decorators";
 import { injectable } from "inversify";
 import { DataSource, type EntityManager } from "typeorm";
 import { Conversion, Favorite, Video } from "../dao/entity/index.js";
 
 @injectable()
+@provide()
 export default class DatabaseService {
   private appDataSource?: DataSource;
 

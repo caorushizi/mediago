@@ -1,23 +1,25 @@
+import { provide } from "@inversifyjs/binding-decorators";
 import type { Controller } from "@mediago/shared/common";
-import { type FavoriteRepository, TYPES } from "@mediago/shared/node";
+import { FavoriteRepository, TYPES } from "@mediago/shared/node";
 import axios from "axios";
 import { inject, injectable } from "inversify";
 import type { Context } from "koa";
 import { get, post } from "../helper/index";
-import type Logger from "../vendor/Logger";
-import type SocketIO from "../vendor/SocketIO";
-import type StoreService from "../vendor/Store";
+import Logger from "../vendor/Logger";
+import SocketIO from "../vendor/SocketIO";
+import StoreService from "../vendor/Store";
 
 @injectable()
+@provide(TYPES.Controller)
 export default class HomeController implements Controller {
   constructor(
-    @inject(TYPES.FavoriteRepository)
+    @inject(FavoriteRepository)
     private readonly favoriteRepository: FavoriteRepository,
-    @inject(TYPES.Logger)
+    @inject(Logger)
     private readonly logger: Logger,
-    @inject(TYPES.StoreService)
+    @inject(StoreService)
     private readonly store: StoreService,
-    @inject(TYPES.SocketIO)
+    @inject(SocketIO)
     private readonly socket: SocketIO,
   ) {}
 

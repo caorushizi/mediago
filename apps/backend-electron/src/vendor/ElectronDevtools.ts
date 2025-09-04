@@ -1,13 +1,14 @@
-import { TYPES } from "@mediago/shared/node";
+import { provide } from "@inversifyjs/binding-decorators";
 import install, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from "electron-devtools-installer";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
-import type ElectronLogger from "./ElectronLogger";
+import ElectronLogger from "./ElectronLogger";
 
 @injectable()
+@provide()
 export default class DevToolsService {
   constructor(
-    @inject(TYPES.ElectronLogger)
+    @inject(ElectronLogger)
     private readonly logger: ElectronLogger,
   ) {}
 

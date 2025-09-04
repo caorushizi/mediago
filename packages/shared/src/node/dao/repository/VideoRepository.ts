@@ -1,3 +1,4 @@
+import { provide } from "@inversifyjs/binding-decorators";
 import { inject, injectable } from "inversify";
 import { In, Not } from "typeorm";
 import { i18n } from "../../../common/index";
@@ -7,14 +8,14 @@ import {
   type DownloadItemPagination,
   DownloadStatus,
 } from "../../../common/types/index";
-import { TYPES } from "../../types/index";
-import type TypeORM from "../../vendor/TypeORM";
+import TypeORM from "../../vendor/TypeORM";
 import { Video } from "../entity/Video";
 
 @injectable()
+@provide()
 export default class VideoRepository {
   constructor(
-    @inject(TYPES.TypeORM)
+    @inject(TypeORM)
     private readonly db: TypeORM,
   ) {}
 
@@ -28,8 +29,12 @@ export default class VideoRepository {
     item.name = video.name;
     item.url = video.url;
     item.type = video.type;
-    video.headers && (item.headers = video.headers);
-    video.folder && (item.folder = video.folder);
+    if (video.headers) {
+      item.headers = video.headers;
+    }
+    if (video.folder) {
+      item.folder = video.folder;
+    }
     return await this.db.manager.save(item);
   }
 
@@ -54,8 +59,12 @@ export default class VideoRepository {
       item.name = video.name;
       item.url = video.url;
       item.type = video.type;
-      video.headers && (item.headers = video.headers);
-      video.folder && (item.folder = video.folder);
+      if (video.headers) {
+        item.headers = video.headers;
+      }
+      if (video.folder) {
+        item.folder = video.folder;
+      }
       return item;
     });
     return await this.db.manager.save(items);
@@ -71,8 +80,12 @@ export default class VideoRepository {
     }
     item.name = video.name;
     item.url = video.url;
-    video.folder && (item.folder = video.folder);
-    video.headers && (item.headers = video.headers);
+    if (video.headers) {
+      item.headers = video.headers;
+    }
+    if (video.folder) {
+      item.folder = video.folder;
+    }
     return await this.db.manager.save(item);
   }
 

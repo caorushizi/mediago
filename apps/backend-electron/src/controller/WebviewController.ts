@@ -1,20 +1,22 @@
+import { provide } from "@inversifyjs/binding-decorators";
 import { type Controller, i18n } from "@mediago/shared/common";
 import { TYPES } from "@mediago/shared/node";
 import { type IpcMainEvent, Menu, type MenuItem, type MenuItemConstructorOptions } from "electron";
 import { inject, injectable } from "inversify";
 import { handle } from "../helper/index";
-import type { SniffingHelper } from "../services/SniffingHelperService";
-import type WebviewService from "../services/WebviewService";
-import type ElectronStore from "../vendor/ElectronStore";
+import { SniffingHelper } from "../services/SniffingHelperService";
+import WebviewService from "../services/WebviewService";
+import ElectronStore from "../vendor/ElectronStore";
 
 @injectable()
+@provide(TYPES.Controller)
 export default class WebviewController implements Controller {
   constructor(
-    @inject(TYPES.WebviewService)
+    @inject(WebviewService)
     private readonly webview: WebviewService,
-    @inject(TYPES.ElectronStore)
+    @inject(ElectronStore)
     private readonly store: ElectronStore,
-    @inject(TYPES.SniffingHelper)
+    @inject(SniffingHelper)
     private readonly sniffingHelper: SniffingHelper,
   ) {}
 

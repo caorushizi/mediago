@@ -1,14 +1,15 @@
 import { resolve } from "node:path";
+import { provide } from "@inversifyjs/binding-decorators";
 import { type DownloadProgress, DownloadStatus, i18n } from "@mediago/shared/common";
-import { type TaskQueueService, TYPES, type VideoRepository } from "@mediago/shared/node";
+import { TaskQueueService, TYPES, VideoRepository } from "@mediago/shared/node";
 import { app, Menu, Notification } from "electron";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import _ from "lodash";
 import Window from "../core/window";
 import { isWin } from "../helper/variables";
-import type ElectronLogger from "../vendor/ElectronLogger";
-import type ElectronStore from "../vendor/ElectronStore";
+import ElectronLogger from "../vendor/ElectronLogger";
+import ElectronStore from "../vendor/ElectronStore";
 
 interface DownloadItemState {
   id: number;
@@ -25,6 +26,7 @@ interface DownloadState {
 }
 
 @injectable()
+@provide()
 export default class MainWindow extends Window {
   url = isDev ? "http://localhost:8555/" : "mediago://index.html/";
   private initialUrl: string | null = null;
@@ -36,13 +38,13 @@ export default class MainWindow extends Window {
   private sendStateUpdate: () => void; // 节流函数
 
   constructor(
-    @inject(TYPES.ElectronLogger)
+    @inject(ElectronLogger)
     private readonly logger: ElectronLogger,
-    @inject(TYPES.TaskQueueService)
+    @inject(TaskQueueService)
     private readonly taskQueue: TaskQueueService,
-    @inject(TYPES.VideoRepository)
+    @inject(VideoRepository)
     private readonly videoRepository: VideoRepository,
-    @inject(TYPES.ElectronStore)
+    @inject(ElectronStore)
     private readonly store: ElectronStore,
   ) {
     super({

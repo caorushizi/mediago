@@ -1,17 +1,18 @@
 import { resolve } from "node:path";
-import { TYPES } from "@mediago/shared/node";
+import { provide } from "@inversifyjs/binding-decorators";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import _ from "lodash";
 import Window from "../core/window";
-import type ElectronStore from "../vendor/ElectronStore";
+import ElectronStore from "../vendor/ElectronStore";
 
 @injectable()
+@provide()
 export default class BrowserWindow extends Window {
   url = isDev ? "http://localhost:8555/player" : "mediago://index.html/player";
 
   constructor(
-    @inject(TYPES.ElectronStore)
+    @inject(ElectronStore)
     private readonly store: ElectronStore,
   ) {
     super({

@@ -1,13 +1,14 @@
+import { provide } from "@inversifyjs/binding-decorators";
 import { inject, injectable } from "inversify";
 import { i18n } from "../../../common/index.js";
-import { TYPES } from "../../types/index.js";
-import type TypeORM from "../../vendor/TypeORM";
+import TypeORM from "../../vendor/TypeORM";
 import { Favorite } from "../entity/Favorite.js";
 
 @injectable()
+@provide()
 export default class FavoriteRepository {
   constructor(
-    @inject(TYPES.TypeORM)
+    @inject(TypeORM)
     private readonly db: TypeORM,
   ) {}
 

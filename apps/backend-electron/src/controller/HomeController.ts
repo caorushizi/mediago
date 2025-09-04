@@ -1,12 +1,14 @@
+import path from "node:path";
+import { provide } from "@inversifyjs/binding-decorators";
 import { type Controller, DownloadStatus, i18n } from "@mediago/shared/common";
 import {
   type AppStore,
-  type ConversionRepository,
+  ConversionRepository,
   type EnvPath,
   type Favorite,
-  type FavoriteRepository,
+  FavoriteRepository,
   TYPES,
-  type VideoRepository,
+  VideoRepository,
 } from "@mediago/shared/node";
 import axios from "axios";
 import {
@@ -24,37 +26,37 @@ import { glob } from "glob";
 import { inject, injectable } from "inversify";
 import { nanoid } from "nanoid";
 import { machineId } from "node-machine-id";
-import path from "path";
 import { convertToAudio, db, getLocalIP, handle, videoPattern, workspace } from "../helper/index";
-import type WebviewService from "../services/WebviewService";
-import type ElectronLogger from "../vendor/ElectronLogger";
-import type ElectronStore from "../vendor/ElectronStore";
-import type ElectronUpdater from "../vendor/ElectronUpdater";
-import type BrowserWindow from "../windows/BrowserWindow";
-import type MainWindow from "../windows/MainWindow";
+import WebviewService from "../services/WebviewService";
+import ElectronLogger from "../vendor/ElectronLogger";
+import ElectronStore from "../vendor/ElectronStore";
+import ElectronUpdater from "../vendor/ElectronUpdater";
+import BrowserWindow from "../windows/BrowserWindow";
+import MainWindow from "../windows/MainWindow";
 
 @injectable()
+@provide(TYPES.Controller)
 export default class HomeController implements Controller {
   private sharedState: Record<string, unknown> = {};
 
   constructor(
-    @inject(TYPES.ElectronStore)
+    @inject(ElectronStore)
     private readonly store: ElectronStore,
-    @inject(TYPES.FavoriteRepository)
+    @inject(FavoriteRepository)
     private readonly favoriteRepository: FavoriteRepository,
-    @inject(TYPES.MainWindow)
+    @inject(MainWindow)
     private readonly mainWindow: MainWindow,
-    @inject(TYPES.VideoRepository)
+    @inject(VideoRepository)
     private readonly videoRepository: VideoRepository,
-    @inject(TYPES.BrowserWindow)
+    @inject(BrowserWindow)
     private readonly browserWindow: BrowserWindow,
-    @inject(TYPES.WebviewService)
+    @inject(WebviewService)
     private readonly webviewService: WebviewService,
-    @inject(TYPES.ConversionRepository)
+    @inject(ConversionRepository)
     private readonly conversionRepository: ConversionRepository,
-    @inject(TYPES.ElectronLogger)
+    @inject(ElectronLogger)
     private readonly logger: ElectronLogger,
-    @inject(TYPES.ElectronUpdater)
+    @inject(ElectronUpdater)
     private readonly updater: ElectronUpdater,
   ) {}
 

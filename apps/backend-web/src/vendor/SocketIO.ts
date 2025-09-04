@@ -1,12 +1,13 @@
+import type http from "node:http";
+import { provide } from "@inversifyjs/binding-decorators";
 import { type DownloadProgress, DownloadStatus } from "@mediago/shared/common";
-import { type TaskQueueService, TYPES, type VideoRepository } from "@mediago/shared/node";
-import type http from "http";
+import { TaskQueueService, VideoRepository } from "@mediago/shared/node";
 import { inject, injectable } from "inversify";
 import _ from "lodash";
 import { Server } from "socket.io";
 import type { Vendor } from "../core/vendor";
-import type Logger from "./Logger";
-import type StoreService from "./Store";
+import Logger from "./Logger";
+import StoreService from "./Store";
 
 interface DownloadItemState {
   id: number;
@@ -23,6 +24,7 @@ interface DownloadState {
 }
 
 @injectable()
+@provide()
 export default class SocketIO implements Vendor {
   io: Server;
   private readonly THROTTLE_TIME = 300; // 减少到 300ms 以提高响应性
@@ -33,13 +35,13 @@ export default class SocketIO implements Vendor {
   private sendStateUpdate: () => void; // 节流函数
 
   constructor(
-    @inject(TYPES.TaskQueueService)
+    @inject(TaskQueueService)
     private readonly taskQueueService: TaskQueueService,
-    @inject(TYPES.VideoRepository)
+    @inject(VideoRepository)
     private readonly videoRepository: VideoRepository,
-    @inject(TYPES.Logger)
+    @inject(Logger)
     private readonly logger: Logger,
-    @inject(TYPES.StoreService)
+    @inject(StoreService)
     private readonly store: StoreService,
   ) {
     // 使用节流函数优化状态更新，并添加批量处理

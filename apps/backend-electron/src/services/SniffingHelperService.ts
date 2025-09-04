@@ -1,10 +1,10 @@
 import EventEmitter from "node:events";
+import { provide } from "@inversifyjs/binding-decorators";
 import { DownloadType } from "@mediago/shared/common";
-import { TYPES } from "@mediago/shared/node";
 import { type OnSendHeadersListenerDetails, session } from "electron";
 import { inject, injectable } from "inversify";
 import { formatHeaders, PERSIST_WEBVIEW, PRIVACY_WEBVIEW, urlCache } from "../helper/index";
-import type ElectronLogger from "../vendor/ElectronLogger";
+import ElectronLogger from "../vendor/ElectronLogger";
 
 export interface SourceParams {
   url: string;
@@ -46,12 +46,13 @@ const filterList: SourceFilter[] = [
 ];
 
 @injectable()
+@provide()
 export class SniffingHelper extends EventEmitter {
   private pageInfo: PageInfo = { title: "", url: "" };
   private readonly prepareDelay = 1000;
 
   constructor(
-    @inject(TYPES.ElectronLogger)
+    @inject(ElectronLogger)
     private readonly logger: ElectronLogger,
   ) {
     super();

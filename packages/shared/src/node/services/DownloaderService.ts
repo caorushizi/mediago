@@ -1,10 +1,12 @@
 import path from "node:path";
+import { provide } from "@inversifyjs/binding-decorators";
 import type { DownloadContext, DownloadParams } from "@mediago/shared/common";
 import { injectable } from "inversify";
 import { type DownloadType, getFileExtension } from "../../common/index";
 import type { DownloadSchema } from "../types/index";
 
 @injectable()
+@provide()
 export default class DownloaderService {
   private binMap?: Record<DownloadType, string>;
   private runner?: any;

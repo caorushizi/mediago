@@ -1,18 +1,20 @@
 import path from "node:path";
+import { provide } from "@inversifyjs/binding-decorators";
 import Router from "@koa/router";
 import type { Controller } from "@mediago/shared/common";
 import { TYPES } from "@mediago/shared/node";
 import { inject, injectable, multiInject } from "inversify";
 import { error, success } from "../helper/index";
 import { API_PREFIX } from "../helper/variables";
-import type Logger from "../vendor/Logger";
+import Logger from "../vendor/Logger";
 
 @injectable()
+@provide()
 export default class RouterHandlerService extends Router {
   constructor(
     @multiInject(TYPES.Controller)
     private readonly controllers: Controller[],
-    @inject(TYPES.Logger)
+    @inject(Logger)
     private readonly logger: Logger,
   ) {
     super();

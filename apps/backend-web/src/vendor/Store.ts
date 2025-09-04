@@ -1,3 +1,4 @@
+import { provide } from "@inversifyjs/binding-decorators";
 import { AppLanguage, AppTheme } from "@mediago/shared/common";
 import type { AppStore } from "@mediago/shared/node";
 import Conf from "conf";
@@ -5,6 +6,7 @@ import { injectable } from "inversify";
 import { DOWNLOAD_DIR, WORKSPACE } from "../helper/variables";
 
 @injectable()
+@provide()
 export default class StoreService extends Conf<AppStore> {
   constructor() {
     super({

@@ -1,20 +1,21 @@
+import { provide } from "@inversifyjs/binding-decorators";
 import { i18n } from "@mediago/shared/common";
-import { TYPES } from "@mediago/shared/node";
 import isDev from "electron-is-dev";
 import { autoUpdater } from "electron-updater";
 import { inject, injectable } from "inversify";
-import type MainWindow from "../windows/MainWindow";
-import type ElectronLogger from "./ElectronLogger";
-import type ElectronStore from "./ElectronStore";
+import MainWindow from "../windows/MainWindow";
+import ElectronLogger from "./ElectronLogger";
+import ElectronStore from "./ElectronStore";
 
 @injectable()
+@provide()
 export default class UpdateService {
   constructor(
-    @inject(TYPES.ElectronLogger)
+    @inject(ElectronLogger)
     private readonly logger: ElectronLogger,
-    @inject(TYPES.ElectronStore)
+    @inject(ElectronStore)
     private readonly store: ElectronStore,
-    @inject(TYPES.MainWindow)
+    @inject(MainWindow)
     private readonly mainWindow: MainWindow,
   ) {}
 
