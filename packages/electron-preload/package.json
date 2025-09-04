@@ -1,0 +1,33 @@
+{
+  "name": "@mediago/electron-preload",
+  "version": "0.1.0",
+  "description": "Electron preload script for MediaGo",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc && tsx build.ts",
+    "types": "tsc",
+    "dev": "tsc --watch",
+    "lint-staged": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json}": "biome check --write --files-ignore-unknown=true"
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "esbuild": "^0.21.4",
+    "electron": "30.0.8",
+    "tsx": "^4.11.0",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@mediago/shared": "workspace:*"
+  },
+  "peerDependencies": {
+    "electron": ">=28.0.0"
+  }
+}
