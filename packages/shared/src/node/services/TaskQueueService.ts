@@ -1,9 +1,9 @@
+import { provide } from "@inversifyjs/binding-decorators";
 import { type DownloadParams, i18n, type Task } from "@mediago/shared/common";
-import { TYPES } from "@mediago/shared/node";
 import EventEmitter from "events";
 import { inject, injectable } from "inversify";
 import { downloadSchemaList } from "../config/download";
-import type DownloaderService from "./DownloaderService";
+import DownloaderService from "./DownloaderService";
 
 /**
  * Task queue service
@@ -16,6 +16,7 @@ import type DownloaderService from "./DownloaderService";
  * 5. Remove task
  */
 @injectable()
+@provide()
 export default class TaskQueueService extends EventEmitter {
   private queue: Task[] = [];
 
@@ -29,7 +30,7 @@ export default class TaskQueueService extends EventEmitter {
   private signal: Record<number, AbortController> = {};
 
   constructor(
-    @inject(TYPES.DownloaderService)
+    @inject(DownloaderService)
     private readonly downloaderService: DownloaderService,
   ) {
     super();

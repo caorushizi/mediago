@@ -1,43 +1,39 @@
 import http from "node:http";
+import { provide } from "@inversifyjs/binding-decorators";
 import cors from "@koa/cors";
 import { DownloadStatus } from "@mediago/shared/common";
-import {
-  type DownloaderService,
-  type TaskQueueService,
-  TYPES,
-  type TypeORM,
-  type VideoRepository,
-} from "@mediago/shared/node";
+import { DownloaderService, TaskQueueService, TypeORM, VideoRepository } from "@mediago/shared/node";
 import { inject, injectable } from "inversify";
 import Koa from "koa";
 import bodyParser from "koa-bodyparser";
 import send from "koa-send";
 import serve from "koa-static";
-import type RouterHandlerService from "./core/router";
+import RouterHandlerService from "./core/router";
 import { ptyRunner } from "./helper/ptyRunner";
 import { binMap, DB_PATH, STATIC_DIR } from "./helper/variables";
-import type Logger from "./vendor/Logger";
-import type SocketIO from "./vendor/SocketIO";
-import type StoreService from "./vendor/Store";
+import Logger from "./vendor/Logger";
+import SocketIO from "./vendor/SocketIO";
+import StoreService from "./vendor/Store";
 
 @injectable()
+@provide()
 export default class ElectronApp extends Koa {
   constructor(
-    @inject(TYPES.RouterHandlerService)
+    @inject(RouterHandlerService)
     private readonly router: RouterHandlerService,
-    @inject(TYPES.TypeORM)
+    @inject(TypeORM)
     private readonly db: TypeORM,
-    @inject(TYPES.Logger)
+    @inject(Logger)
     private readonly logger: Logger,
-    @inject(TYPES.SocketIO)
+    @inject(SocketIO)
     private readonly socket: SocketIO,
-    @inject(TYPES.VideoRepository)
+    @inject(VideoRepository)
     private readonly videoRepository: VideoRepository,
-    @inject(TYPES.DownloaderService)
+    @inject(DownloaderService)
     private readonly downloaderService: DownloaderService,
-    @inject(TYPES.TaskQueueService)
+    @inject(TaskQueueService)
     private readonly taskQueueService: TaskQueueService,
-    @inject(TYPES.StoreService)
+    @inject(StoreService)
     private readonly store: StoreService,
   ) {
     super();

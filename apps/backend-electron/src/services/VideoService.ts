@@ -1,5 +1,5 @@
 import path from "node:path";
-import { TYPES } from "@mediago/shared/node";
+import { provide } from "@inversifyjs/binding-decorators";
 import cors from "cors";
 import express from "express";
 import { glob } from "glob";
@@ -8,19 +8,20 @@ import mime from "mime-types";
 import serveHandler from "serve-handler";
 import { getLocalIP } from "../helper/index";
 import { mobileDir } from "../helper/variables";
-import type ElectronLogger from "../vendor/ElectronLogger";
-import type StoreService from "../vendor/ElectronStore";
+import ElectronLogger from "../vendor/ElectronLogger";
+import ElectronStore from "../vendor/ElectronStore";
 
 @injectable()
+@provide()
 export class VideoService {
   private port = 3222;
   private videoDir: string;
   private localIp: string;
 
   constructor(
-    @inject(TYPES.ElectronStore)
-    private readonly store: StoreService,
-    @inject(TYPES.ElectronLogger)
+    @inject(ElectronStore)
+    private readonly store: ElectronStore,
+    @inject(ElectronLogger)
     private readonly logger: ElectronLogger,
   ) {
     this.videoDir = this.store.get("local");

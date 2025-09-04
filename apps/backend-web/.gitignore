@@ -4,6 +4,7 @@ build
 dist
 bin/Logs
 release
-types
 log
 bin
+
+types/*

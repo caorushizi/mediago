@@ -27,6 +27,7 @@ ghostery
 idtype
 immer
 inversify
+inversifyjs
 KHTML
 languagedetector
 localforage

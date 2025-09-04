@@ -1,8 +1,10 @@
+import { provide } from "@inversifyjs/binding-decorators";
 import { injectable } from "inversify";
 import winston from "winston";
 import type { Vendor } from "../core/vendor";
 
 @injectable()
+@provide()
 export default class Logger implements Vendor {
   logger: winston.Logger;
 

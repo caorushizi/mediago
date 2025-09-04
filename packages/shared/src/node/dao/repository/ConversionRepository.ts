@@ -1,14 +1,15 @@
+import { provide } from "@inversifyjs/binding-decorators";
 import { inject, injectable } from "inversify";
 import { i18n } from "../../../common";
 import type { ConversionPagination } from "../../../common/types/index";
-import { TYPES } from "../../types";
-import type TypeORM from "../../vendor/TypeORM";
+import TypeORM from "../../vendor/TypeORM";
 import { Conversion } from "../entity/Conversion";
 
 @injectable()
+@provide()
 export default class ConversionRepository {
   constructor(
-    @inject(TYPES.TypeORM)
+    @inject(TypeORM)
     private readonly db: TypeORM,
   ) {}
 

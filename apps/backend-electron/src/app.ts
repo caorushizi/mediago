@@ -1,53 +1,49 @@
 import path from "node:path";
+import { provide } from "@inversifyjs/binding-decorators";
 import { DownloadStatus, i18n } from "@mediago/shared/common";
-import {
-  type DownloaderService,
-  type TaskQueueService,
-  TYPES,
-  type TypeORM,
-  type VideoRepository,
-} from "@mediago/shared/node";
+import { DownloaderService, TaskQueueService, TypeORM, VideoRepository } from "@mediago/shared/node";
 import { app, BrowserWindow, type Event, Menu, nativeImage, nativeTheme, Tray } from "electron";
 import { inject, injectable } from "inversify";
 import TrayIcon from "../assets/tray-icon.png";
 import TrayIconLight from "../assets/tray-icon-light.png";
-import type IpcHandlerService from "./core/ipc";
-import type ProtocolService from "./core/protocol";
+import IpcHandlerService from "./core/ipc";
+import ProtocolService from "./core/protocol";
 import { ptyRunner } from "./helper/ptyRunner";
 import { binMap, db, isMac } from "./helper/variables";
-import type { VideoService } from "./services/VideoService";
-import type WebviewService from "./services/WebviewService";
-import type ElectronDevtools from "./vendor/ElectronDevtools";
-import type ElectronStore from "./vendor/ElectronStore";
-import type ElectronUpdater from "./vendor/ElectronUpdater";
-import type MainWindow from "./windows/MainWindow";
+import { VideoService } from "./services/VideoService";
+import WebviewService from "./services/WebviewService";
+import ElectronDevtools from "./vendor/ElectronDevtools";
+import ElectronStore from "./vendor/ElectronStore";
+import ElectronUpdater from "./vendor/ElectronUpdater";
+import MainWindow from "./windows/MainWindow";
 
 @injectable()
+@provide()
 export default class ElectronApp {
   constructor(
-    @inject(TYPES.MainWindow)
+    @inject(MainWindow)
     private readonly mainWindow: MainWindow,
-    @inject(TYPES.ProtocolService)
+    @inject(ProtocolService)
     private readonly protocol: ProtocolService,
-    @inject(TYPES.ElectronUpdater)
+    @inject(ElectronUpdater)
     private readonly updater: ElectronUpdater,
-    @inject(TYPES.IpcHandlerService)
+    @inject(IpcHandlerService)
     private readonly ipc: IpcHandlerService,
-    @inject(TYPES.TypeORM)
+    @inject(TypeORM)
     private readonly db: TypeORM,
-    @inject(TYPES.WebviewService)
+    @inject(WebviewService)
     private readonly webview: WebviewService,
-    @inject(TYPES.VideoRepository)
+    @inject(VideoRepository)
     private readonly videoRepository: VideoRepository,
-    @inject(TYPES.ElectronDevtools)
+    @inject(ElectronDevtools)
     private readonly devTools: ElectronDevtools,
-    @inject(TYPES.ElectronStore)
+    @inject(ElectronStore)
     private readonly store: ElectronStore,
-    @inject(TYPES.VideoService)
+    @inject(VideoService)
     private readonly videoService: VideoService,
-    @inject(TYPES.TaskQueueService)
+    @inject(TaskQueueService)
     private readonly taskQueue: TaskQueueService,
-    @inject(TYPES.DownloaderService)
+    @inject(DownloaderService)
     private readonly downloader: DownloaderService,
   ) {}
 

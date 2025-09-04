@@ -1,3 +1,4 @@
+import { provide } from "@inversifyjs/binding-decorators";
 import {
   type Controller,
   type DownloadItem,
@@ -5,26 +6,27 @@ import {
   DownloadStatus,
   type Task,
 } from "@mediago/shared/common";
-import { type TaskQueueService, TYPES, type VideoRepository } from "@mediago/shared/node";
+import { TaskQueueService, TYPES, VideoRepository } from "@mediago/shared/node";
 import { inject, injectable } from "inversify";
 import type { Context } from "koa";
 import { get, post } from "../helper/index";
-import type Logger from "../vendor/Logger";
-import type SocketIO from "../vendor/SocketIO";
-import type StoreService from "../vendor/Store";
+import Logger from "../vendor/Logger";
+import SocketIO from "../vendor/SocketIO";
+import StoreService from "../vendor/Store";
 
 @injectable()
+@provide(TYPES.Controller)
 export default class DownloadController implements Controller {
   constructor(
-    @inject(TYPES.VideoRepository)
+    @inject(VideoRepository)
     private readonly videoRepository: VideoRepository,
-    @inject(TYPES.TaskQueueService)
+    @inject(TaskQueueService)
     private readonly taskQueueService: TaskQueueService,
-    @inject(TYPES.Logger)
+    @inject(Logger)
     private readonly logger: Logger,
-    @inject(TYPES.SocketIO)
+    @inject(SocketIO)
     private readonly socket: SocketIO,
-    @inject(TYPES.StoreService)
+    @inject(StoreService)
     private readonly store: StoreService,
   ) {}
 

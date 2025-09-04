@@ -1,9 +1,13 @@
 import "reflect-metadata";
-import { TYPES } from "@mediago/shared/node";
+import { buildProviderModule } from "@inversifyjs/binding-decorators";
 import { app, protocol } from "electron";
-import type ElectronApp from "./app";
+import { Container } from "inversify";
+import ElectronApp from "./app";
 import { defaultScheme, noop } from "./helper/index";
-import { container } from "./inversify.config";
+
+const container = new Container({
+  defaultScope: "Singleton",
+});
 
 const gotTheLock = app.requestSingleInstanceLock();
 app.setAsDefaultProtocolClient("mediago");
@@ -23,7 +27,8 @@ const start = async (): Promise<void> => {
     },
   ]);
   await app.whenReady();
-  const mediago = container.get<ElectronApp>(TYPES.ElectronApp);
+  await container.load(buildProviderModule());
+  const mediago = container.get(ElectronApp);
   // let initialUrl: string = "";
   // if (process.defaultApp) {
   //   // dev
