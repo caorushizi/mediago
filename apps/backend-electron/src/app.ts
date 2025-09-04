@@ -16,6 +16,7 @@ import ElectronDevtools from "./vendor/ElectronDevtools";
 import ElectronStore from "./vendor/ElectronStore";
 import ElectronUpdater from "./vendor/ElectronUpdater";
 import MainWindow from "./windows/MainWindow";
+import "./controller";
 
 @injectable()
 @provide()

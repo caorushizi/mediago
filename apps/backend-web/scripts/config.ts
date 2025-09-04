@@ -25,7 +25,7 @@ export function buildOptions(): esbuild.BuildOptions {
     minify: process.env.NODE_ENV === "production",
     // packages: "external",
     format: "esm",
-    target: ["node20"],
+    target: ["node16"],
     platform: "node",
     plugins: [
       nodeExternalsPlugin({

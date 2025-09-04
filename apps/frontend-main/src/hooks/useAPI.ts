@@ -1,5 +1,5 @@
 import type { ElectronApi } from "@mediago/shared/common";
-import { apiAdapter, ipcAdapter, type IpcListener } from "@/adapters";
+import { apiAdapter, type IpcListener, ipcAdapter } from "./adapters";
 
 const eventFun = ["rendererEvent", "removeEventListener"];
 

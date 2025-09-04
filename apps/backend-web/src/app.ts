@@ -14,6 +14,7 @@ import { binMap, DB_PATH, STATIC_DIR } from "./helper/variables";
 import Logger from "./vendor/Logger";
 import SocketIO from "./vendor/SocketIO";
 import StoreService from "./vendor/Store";
+import "./controller";
 
 @injectable()
 @provide()
