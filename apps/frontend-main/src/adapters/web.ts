@@ -1,5 +1,10 @@
 import type { ElectronApi } from "@mediago/shared/common";
-import { api } from "@/utils";
+import { api, getSocket } from "@/utils";
+
+interface IpcListener {
+  addIpcListener: (eventName: string, func: any) => void;
+  removeIpcListener: (eventName: string, func: any) => void;
+}
 
 const defaultResp = {
   code: 0,
@@ -7,7 +12,12 @@ const defaultResp = {
   data: {},
 } as any;
 
-const apis: ElectronApi = {
+/**
+ * Web 环境适配器
+ * 为不支持的 Electron 特定功能提供默认实现
+ * 对于支持的功能调用后端 HTTP API
+ */
+export const webAdapter: ElectronApi = {
   getEnvPath: async () => {
     return defaultResp;
   },
@@ -176,13 +186,24 @@ const apis: ElectronApi = {
   getVideoFolders: async () => {
     return api.post("get-video-folders");
   },
-  // onUrlParams: (callback: (url: string) => void) => {
-  //   // Implement the logic for handling URL parameters here
-  //   // For now, you can leave it as a placeholder
-  // },
   getPageTitle: async (url: string) => {
     return api.post("get-page-title", { url });
   },
 };
 
-export default apis;
+/**
+ * Web 环境 IPC 适配器
+ * 使用 Socket.io 进行通信
+ */
+export const webIpcAdapter: IpcListener = {
+  addIpcListener: (event: string, func: any) => {
+    const socket = getSocket();
+    socket.on(event, func);
+  },
+  removeIpcListener: (event: string, func: any) => {
+    const socket = getSocket();
+    socket.off(event, func);
+  },
+};
+
+export type { IpcListener };
