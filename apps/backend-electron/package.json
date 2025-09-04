@@ -51,6 +51,7 @@
   },
   "dependencies": {
     "@ghostery/adblocker-electron": "2.3.1",
+    "@mediago/electron-preload": "workspace:*",
     "@mediago/shared": "workspace:*",
     "axios": "^1.7.2",
     "better-sqlite3": "^10.1.0",

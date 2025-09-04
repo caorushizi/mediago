@@ -72,7 +72,7 @@ const buildCopy = gulp.parallel(copySqlite);
 async function watchTask() {
   const app = new ElectronApp();
   const main = await esbuild.context(nodeOptions("src/index.ts"));
-  const preload = await esbuild.context(browserOptions("src/preload.ts"));
+  const preload = await esbuild.context(browserOptions("../../packages/electron-preload/src/preload.ts"));
 
   const watcher = gulp.watch(["./src"]);
   watcher
@@ -96,7 +96,7 @@ async function watchTask() {
 
 async function buildTask() {
   await esbuild.build(nodeOptions("src/index.ts"));
-  await esbuild.build(browserOptions("src/preload.ts"));
+  await esbuild.build(browserOptions("../../packages/electron-preload/src/preload.ts"));
 }
 
 async function pack() {

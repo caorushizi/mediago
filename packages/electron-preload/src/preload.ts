@@ -189,15 +189,13 @@ const electronApi: ElectronApi = {
   getVideoFolders(): Promise<string[]> {
     return ipcRenderer.invoke("get-video-folders");
   },
-  // ipc with main process to get url params
-  //   onUrlParams(callback: (url: string) => void): void {
-  //     ipcRenderer.on("url-params", (event, url) => {
-  //       callback(url);
-  //     });
-  //   },
   getPageTitle(url: string): Promise<any> {
     return ipcRenderer.invoke("get-page-title", url);
   },
 };
 
 contextBridge.exposeInMainWorld(apiKey, electronApi);
+
+// Export for external use
+export { electronApi };
+export type { ElectronApi };
