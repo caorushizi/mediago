@@ -1,4 +1,4 @@
-import type { AppLanguage, AppTheme, DownloadType } from "../../common/types/index";
+import type { AppLanguage, AppTheme, DownloadType } from "@mediago/shared-common";
 
 export const TYPES = {
   Controller: Symbol.for("Controller"),

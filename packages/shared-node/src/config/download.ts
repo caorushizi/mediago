@@ -1,4 +1,4 @@
-import { Platform } from "../../common/types";
+import { Platform } from "@mediago/shared-common";
 import type { DownloadSchema } from "../types/index";
 
 // FIXME: Multilingual regular expressions

@@ -1,4 +1,4 @@
-import { MEDIAGO_EVENT, MEDIAGO_METHOD } from "../../common";
+import { MEDIAGO_EVENT, MEDIAGO_METHOD } from "@mediago/shared-common";
 
 export const handle = (route: string) => {
   return (target: any, propertyName: string): void => {

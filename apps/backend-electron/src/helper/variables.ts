@@ -1,5 +1,5 @@
 import { resolve } from "node:path";
-import { DownloadType } from "@mediago/shared/common";
+import { DownloadType } from "@mediago/shared-common";
 import { app } from "electron";
 import isDev from "electron-is-dev";
 

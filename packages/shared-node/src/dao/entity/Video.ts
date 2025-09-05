@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { DownloadStatus, DownloadType } from "../../../common/types/index";
+import { DownloadStatus, DownloadType } from "@mediago/shared-common";
 
 @Entity({
   name: "video",

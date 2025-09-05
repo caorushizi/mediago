@@ -1,4 +1,4 @@
-import type { ElectronApi } from "@mediago/shared/common";
+import type { ElectronApi } from "@mediago/shared-common";
 import { api, getSocket } from "@/utils";
 
 interface IpcListener {

@@ -1,6 +1,6 @@
 import { provide } from "@inversifyjs/binding-decorators";
-import { type Controller, type DownloadItem, type DownloadItemPagination } from "@mediago/shared/common";
-import { DownloadManagementService, handle, TYPES } from "@mediago/shared/node";
+import { type Controller, type DownloadItem, type DownloadItemPagination } from "@mediago/shared-common";
+import { DownloadManagementService, handle, TYPES } from "@mediago/shared-node";
 import { inject, injectable } from "inversify";
 import Logger from "../vendor/Logger";
 import SocketIO from "../vendor/SocketIO";

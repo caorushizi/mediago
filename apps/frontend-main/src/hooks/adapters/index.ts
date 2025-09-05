@@ -1,4 +1,4 @@
-import type { ElectronApi } from "@mediago/shared/common";
+import type { ElectronApi } from "@mediago/shared-common";
 import { isWeb } from "@/utils";
 import { electronAdapter, electronIpcAdapter } from "./electron";
 import { webAdapter, webIpcAdapter } from "./web";

@@ -1,5 +1,5 @@
 import { DeleteOutlined, SyncOutlined } from "@ant-design/icons";
-import type { Conversion } from "@mediago/shared/node";
+import type { Conversion } from "@mediago/shared-node";
 import { useMemoizedFn, usePagination } from "ahooks";
 import { App, Empty } from "antd";
 import { produce } from "immer";

@@ -1,6 +1,6 @@
 import { provide } from "@inversifyjs/binding-decorators";
 import { inject, injectable } from "inversify";
-import type { ConversionPagination } from "@mediago/shared/common";
+import type { ConversionPagination } from "@mediago/shared-common";
 import ConversionRepository from "../dao/repository/ConversionRepository";
 import type { Conversion } from "../dao/entity/Conversion";
 import { TYPES } from "../types";

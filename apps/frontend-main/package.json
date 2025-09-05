@@ -17,6 +17,8 @@
   "dependencies": {
     "@ant-design/icons": "^5.3.7",
     "@mediago/shared": "workspace:*",
+    "@mediago/shared-common": "workspace:*",
+    "@mediago/shared-node": "workspace:*",
     "@radix-ui/react-checkbox": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-slot": "^1.1.0",
