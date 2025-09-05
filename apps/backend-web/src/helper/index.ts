@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
 import EventEmitter from "node:events";
 import os from "node:os";
 import { ffmpegPath } from "./variables";
+import { MEDIAGO_METHOD, MEDIAGO_EVENT } from "@mediago/shared/common";
 
 export async function sleep(second = 1): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, second * 1000));
@@ -85,16 +86,9 @@ export function getLocalIP() {
 
 export * from "./variables";
 
-export const get = (route: string) => {
-  return (target: any, propertyKey: string): void => {
-    Reflect.defineMetadata("http-method", "get", target, propertyKey);
-    Reflect.defineMetadata("router-path", route, target, propertyKey);
-  };
-};
-
-export const post = (route: string) => {
+export const handle = (route: string) => {
   return (target: any, propertyName: string): void => {
-    Reflect.defineMetadata("http-method", "post", target, propertyName);
-    Reflect.defineMetadata("router-path", route, target, propertyName);
+    Reflect.defineMetadata(MEDIAGO_METHOD, "handle", target, propertyName);
+    Reflect.defineMetadata(MEDIAGO_EVENT, route, target, propertyName);
   };
 };
