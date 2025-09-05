@@ -2,6 +2,9 @@ import type { AppLanguage, AppTheme, DownloadType } from "../../common/types/ind
 
 export const TYPES = {
   Controller: Symbol.for("Controller"),
+  ConversionService: Symbol.for("ConversionService"),
+  DownloadManagementService: Symbol.for("DownloadManagementService"),
+  FavoriteManagementService: Symbol.for("FavoriteManagementService"),
 };
 
 export interface EnvPath {

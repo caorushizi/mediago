@@ -12,11 +12,7 @@ import { DOWNLOAD_FAIL, DOWNLOAD_SUCCESS, PAGE_LOAD } from "./const";
 import { setAppStoreSelector, useAppStore } from "./store/app";
 import { PageMode, setBrowserSelector, useBrowserStore } from "./store/browser";
 import { downloadStoreSelector, useDownloadStore } from "./store/download";
-import {
-  themeSelector,
-  updateSelector,
-  useSessionStore,
-} from "./store/session";
+import { themeSelector, updateSelector, useSessionStore } from "./store/session";
 import { DownloadFilter } from "./types";
 import { isWeb, tdApp } from "./utils";
 
@@ -33,9 +29,7 @@ function getAlgorithm(appTheme: "dark" | "light") {
 
 const App: FC = () => {
   const { addIpcListener, removeIpcListener, getMachineId } = useElectron();
-  const { setUpdateAvailable, setUploadChecking } = useSessionStore(
-    useShallow(updateSelector)
-  );
+  const { setUpdateAvailable, setUploadChecking } = useSessionStore(useShallow(updateSelector));
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
   const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
   const { increase } = useDownloadStore(useShallow(downloadStoreSelector));

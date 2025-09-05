@@ -24,9 +24,7 @@ const PageContainer: FC<PageContainerProps> = ({
       {title && (
         <div className="flex flex-row items-center justify-between rounded-lg bg-white p-3 dark:bg-[#1F2024]">
           <div className="flex flex-row gap-3">
-            <div className="text-sm text-[#343434] dark:text-white">
-              {title}
-            </div>
+            <div className="text-sm text-[#343434] dark:text-white">{title}</div>
             {titleExtra && <div>{titleExtra}</div>}
           </div>
           {rightExtra && <div>{rightExtra}</div>}

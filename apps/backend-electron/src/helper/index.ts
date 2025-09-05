@@ -1,7 +1,6 @@
 import fs from "node:fs/promises";
 import https from "node:https";
 import os from "node:os";
-import { MEDIAGO_EVENT, MEDIAGO_METHOD } from "@mediago/shared/common";
 import { spawn } from "child_process";
 import EventEmitter from "events";
 import { LRUCache } from "lru-cache";
@@ -164,11 +163,4 @@ export const convertToAudio = async (input: string, output: string): Promise<voi
       }
     });
   });
-};
-
-export const handle = (route: string) => {
-  return (target: any, propertyKey: string): void => {
-    Reflect.defineMetadata(MEDIAGO_METHOD, "handle", target, propertyKey);
-    Reflect.defineMetadata(MEDIAGO_EVENT, route, target, propertyKey);
-  };
 };

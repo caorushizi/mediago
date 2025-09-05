@@ -12,13 +12,7 @@ interface Props extends PropsWithChildren {
 }
 
 // IconButton
-export function IconButton({
-  children,
-  disabled,
-  title,
-  onClick,
-  icon,
-}: Props) {
+export function IconButton({ children, disabled, title, onClick, icon }: Props) {
   const { theme } = useSessionStore(useShallow(themeSelector));
   const handleClick = useMemoizedFn(() => {
     if (disabled) {
@@ -34,17 +28,14 @@ export function IconButton({
         {
           "cursor-not-allowed": disabled,
           "opacity-50": disabled,
-        }
+        },
       )}
       title={title}
       onClick={handleClick}
     >
       {icon &&
         cloneElement(icon, {
-          className: cn(
-            "w-full h-full text-[#020817] dark:text-[#B4B4B4]",
-            icon.props.className
-          ),
+          className: cn("w-full h-full text-[#020817] dark:text-[#B4B4B4]", icon.props.className),
           fill: theme === "dark" ? "#B4B4B4" : "#020817",
         })}
       {children}

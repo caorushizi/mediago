@@ -1,13 +1,6 @@
 export function DeleteIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <path
         d="M3.93405 5.08333V13.2675C3.9342 13.4175 3.99387 13.5614 4.09995 13.6674C4.20603 13.7735 4.34986 13.8332 4.49988 13.8333H11.5174C11.8301 13.8333 12.0832 13.5796 12.0832 13.2675V5.08333H3.93405ZM11.5174 15H4.49988C3.54497 15 2.76738 14.223 2.76738 13.2675V3.91667H13.2499V13.2675C13.2499 14.223 12.4729 15 11.5174 15Z"
         fill="#707070"

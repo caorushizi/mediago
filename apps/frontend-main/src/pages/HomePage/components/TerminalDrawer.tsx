@@ -3,12 +3,7 @@ import type React from "react";
 import { CloseIcon } from "@/assets/svg";
 import Terminal from "@/components/DownloadTerminal";
 import { IconButton } from "@/components/IconButton";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
+import { Drawer, DrawerClose, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 
 interface Props {
   trigger: React.ReactNode;
@@ -19,12 +14,10 @@ interface Props {
 }
 
 export function TerminalDrawer({ trigger, title, id, log, asChild }: Props) {
-  const handleContextMenu = useMemoizedFn(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-  );
+  const handleContextMenu = useMemoizedFn((e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  });
 
   return (
     <Drawer handleOnly>

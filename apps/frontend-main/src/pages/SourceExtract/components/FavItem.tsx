@@ -12,14 +12,7 @@ interface Props {
   title?: string;
 }
 
-export function FavItem({
-  onContextMenu,
-  onClick,
-  onClose,
-  src,
-  icon,
-  title,
-}: Props) {
+export function FavItem({ onContextMenu, onClick, onClose, src, icon, title }: Props) {
   return (
     <div
       className="group relative flex min-h-28 w-28 cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden"
@@ -47,10 +40,7 @@ export function FavItem({
           className="bg-white text-[#27292F] dark:bg-[#27292F] dark:text-white"
         />
       </div>
-      <div
-        className="w-full truncate text-center text-sm text-[#636D7E]"
-        title={title}
-      >
+      <div className="w-full truncate text-center text-sm text-[#636D7E]" title={title}>
         {title}
       </div>
     </div>
