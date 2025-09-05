@@ -4,11 +4,12 @@ import { type Controller, DownloadStatus, i18n } from "@mediago/shared/common";
 import {
   type AppStore,
   ConversionRepository,
+  DownloadManagementService,
   type EnvPath,
   type Favorite,
-  FavoriteRepository,
+  FavoriteManagementService,
+  handle,
   TYPES,
-  VideoRepository,
 } from "@mediago/shared/node";
 import axios from "axios";
 import {
@@ -26,7 +27,7 @@ import { glob } from "glob";
 import { inject, injectable } from "inversify";
 import { nanoid } from "nanoid";
 import { machineId } from "node-machine-id";
-import { convertToAudio, db, getLocalIP, handle, videoPattern, workspace } from "../helper/index";
+import { convertToAudio, db, getLocalIP, videoPattern, workspace } from "../helper/index";
 import WebviewService from "../services/WebviewService";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";
@@ -42,12 +43,12 @@ export default class HomeController implements Controller {
   constructor(
     @inject(ElectronStore)
     private readonly store: ElectronStore,
-    @inject(FavoriteRepository)
-    private readonly favoriteRepository: FavoriteRepository,
+    @inject(TYPES.FavoriteManagementService)
+    private readonly favoriteService: FavoriteManagementService,
     @inject(MainWindow)
     private readonly mainWindow: MainWindow,
-    @inject(VideoRepository)
-    private readonly videoRepository: VideoRepository,
+    @inject(TYPES.DownloadManagementService)
+    private readonly downloadService: DownloadManagementService,
     @inject(BrowserWindow)
     private readonly browserWindow: BrowserWindow,
     @inject(WebviewService)
@@ -73,17 +74,17 @@ export default class HomeController implements Controller {
 
   @handle("get-favorites")
   getFavorites() {
-    return this.favoriteRepository.findFavorites();
+    return this.favoriteService.getFavorites();
   }
 
   @handle("add-favorite")
   addFavorite(e: IpcMainEvent, favorite: Favorite) {
-    return this.favoriteRepository.addFavorite(favorite);
+    return this.favoriteService.addFavorite(favorite);
   }
 
   @handle("remove-favorite")
   removeFavorite(e: IpcMainEvent, id: number): Promise<void> {
-    return this.favoriteRepository.removeFavorite(id);
+    return this.favoriteService.removeFavorite(id);
   }
 
   @handle("get-app-store")
@@ -198,12 +199,13 @@ export default class HomeController implements Controller {
         payload: id,
       });
     };
-    const item = await this.videoRepository.findVideo(id);
+    const item = await this.downloadService.getDownloadItems({ current: 1, pageSize: 1 }, this.store.get("local"), "");
+    const video = item.list.find((v: any) => v.id === id);
     const template: Array<MenuItemConstructorOptions | MenuItem> = [
       {
         label: i18n.t("copyLinkAddress"),
         click: () => {
-          clipboard.writeText(item.url || "");
+          clipboard.writeText(video?.url || "");
         },
       },
       {
@@ -233,29 +235,22 @@ export default class HomeController implements Controller {
       },
     ];
 
-    if (item.status === DownloadStatus.Success) {
-      const local = this.store.get("local");
-      const pattern = path.join(local, `${item.name}.{${videoPattern}}`);
-      const files = await glob(pattern);
-      const exists = files.length > 0;
-      if (exists) {
-        const file = files[0];
-        template.unshift(
-          {
-            label: i18n.t("openFolder"),
-            click: () => {
-              shell.showItemInFolder(file);
-            },
+    if (video?.status === DownloadStatus.Success && video?.exists && video?.file) {
+      template.unshift(
+        {
+          label: i18n.t("openFolder"),
+          click: () => {
+            shell.showItemInFolder(video.file!);
           },
-          {
-            label: i18n.t("openFile"),
-            click: () => {
-              shell.openPath(file);
-            },
+        },
+        {
+          label: i18n.t("openFile"),
+          click: () => {
+            shell.openPath(video.file!);
           },
-          { type: "separator" },
-        );
-      }
+        },
+        { type: "separator" },
+      );
     }
 
     const menu = Menu.buildFromTemplate(template);
@@ -308,8 +303,7 @@ export default class HomeController implements Controller {
 
   @handle("get-download-log")
   async getDownloadLog(event: IpcMainEvent, id: number) {
-    const video = await this.videoRepository.findVideo(id);
-    return video.log || "";
+    return await this.downloadService.getDownloadLog(id);
   }
 
   @handle("select-file")
@@ -346,16 +340,7 @@ export default class HomeController implements Controller {
 
   @handle("export-favorites")
   async exportFavorites() {
-    const favorites = await this.favoriteRepository.findFavorites();
-    const json = JSON.stringify(
-      favorites.map((i) => ({
-        title: i.title,
-        url: i.url,
-        icon: i.icon,
-      })),
-      null,
-      2,
-    );
+    const json = await this.favoriteService.exportFavorites();
     const window = this.mainWindow.window;
     if (!window) return Promise.reject(i18n.t("noMainWindow"));
 
@@ -383,7 +368,7 @@ export default class HomeController implements Controller {
     if (!result.canceled) {
       const filePath = result.filePaths[0];
       const json = await fs.readJSON(filePath);
-      await this.favoriteRepository.importFavorites(json);
+      await this.favoriteService.importFavorites(json);
     }
   }
 
@@ -404,9 +389,7 @@ export default class HomeController implements Controller {
 
   @handle("export-download-list")
   async exportDownloadList() {
-    const videos = await this.videoRepository.findAllVideos();
-
-    const txt = videos.map((video) => `${video.url} ${video.name}`).join("\n");
+    const txt = await this.downloadService.exportDownloadList();
     const window = this.mainWindow.window;
     if (!window) return Promise.reject(i18n.t("noMainWindow"));
 
@@ -423,7 +406,7 @@ export default class HomeController implements Controller {
 
   @handle("get-video-folders")
   async getVideoFolders() {
-    return this.videoRepository.getVideoFolders();
+    return this.downloadService.getVideoFolders();
   }
 
   @handle("get-page-title")

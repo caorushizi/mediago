@@ -20,18 +20,8 @@ import {
 import { IconButton } from "@/components/IconButton";
 import { OPEN_URL } from "@/const";
 import useElectron from "@/hooks/useElectron";
-import {
-  appStoreSelector,
-  setAppStoreSelector,
-  useAppStore,
-} from "@/store/app";
-import {
-  BrowserStatus,
-  browserStoreSelector,
-  PageMode,
-  setBrowserSelector,
-  useBrowserStore,
-} from "@/store/browser";
+import { appStoreSelector, setAppStoreSelector, useAppStore } from "@/store/app";
+import { BrowserStatus, browserStoreSelector, PageMode, setBrowserSelector, useBrowserStore } from "@/store/browser";
 import { themeSelector, useSessionStore } from "@/store/session";
 import { cn, generateUrl, getFavIcon, tdApp } from "@/utils";
 
@@ -59,8 +49,7 @@ export function ToolBar({ page }: Props) {
   const { t } = useTranslation();
   const { data: favoriteList = [], refresh } = useRequest(getFavorites);
 
-  const disabled =
-    store.status !== BrowserStatus.Loaded || store.mode !== PageMode.Browser;
+  const disabled = store.status !== BrowserStatus.Loaded || store.mode !== PageMode.Browser;
 
   // Set default UA
   const onSetDefaultUA = useMemoizedFn(() => {
@@ -75,18 +64,16 @@ export function ToolBar({ page }: Props) {
     return favoriteList.find((item) => item.url === store.url);
   }, [favoriteList, store.url]);
 
-  const onInputKeyDown = useMemoizedFn(
-    async (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (!store.url) {
-        return;
-      }
-      if (e.key !== "Enter") {
-        return;
-      }
-
-      await goto();
+  const onInputKeyDown = useMemoizedFn(async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!store.url) {
+      return;
     }
-  );
+    if (e.key !== "Enter") {
+      return;
+    }
+
+    await goto();
+  });
 
   const onClickGoBack = useMemoizedFn(async () => {
     const back = await webviewGoBack();
@@ -156,50 +143,26 @@ export function ToolBar({ page }: Props) {
 
   return (
     <div
-      className={cn(
-        "flex flex-row items-center gap-2 bg-white px-3 py-2 dark:bg-[#1F2024]",
-        {
-          "rounded-lg": !page,
-        }
-      )}
+      className={cn("flex flex-row items-center gap-2 bg-white px-3 py-2 dark:bg-[#1F2024]", {
+        "rounded-lg": !page,
+      })}
     >
       <IconButton
         title={t("switchToMobileMode")}
         onClick={onSetDefaultUA}
-        icon={
-          appStore.isMobile ? (
-            <PhoneIcon fill={iconColor} />
-          ) : (
-            <PCIcon fill={iconColor} />
-          )
-        }
+        icon={appStore.isMobile ? <PhoneIcon fill={iconColor} /> : <PCIcon fill={iconColor} />}
       />
-      <IconButton
-        disabled={disabled}
-        title={t("home")}
-        onClick={onClickGoHome}
-        icon={<HomeIcon fill={iconColor} />}
-      />
+      <IconButton disabled={disabled} title={t("home")} onClick={onClickGoHome} icon={<HomeIcon fill={iconColor} />} />
       <IconButton
         disabled={store.mode === PageMode.Default}
         title={t("back")}
         onClick={onClickGoBack}
         icon={<BackIcon fill={iconColor} />}
       />
-      {store.mode === PageMode.Browser &&
-      store.status === BrowserStatus.Loading ? (
-        <IconButton
-          title={t("cancle")}
-          onClick={onClickGoHome}
-          icon={<CloseIcon fill={iconColor} />}
-        />
+      {store.mode === PageMode.Browser && store.status === BrowserStatus.Loading ? (
+        <IconButton title={t("cancle")} onClick={onClickGoHome} icon={<CloseIcon fill={iconColor} />} />
       ) : (
-        <IconButton
-          disabled={disabled}
-          title={t("refresh")}
-          onClick={goto}
-          icon={<RefreshIcon fill={iconColor} />}
-        />
+        <IconButton disabled={disabled} title={t("refresh")} onClick={goto} icon={<RefreshIcon fill={iconColor} />} />
       )}
       <IconButton
         title={curIsFavorite ? t("cancelFavorite") : t("favorite")}
@@ -209,10 +172,7 @@ export function ToolBar({ page }: Props) {
           curIsFavorite ? (
             <FavFillIcon fill={iconColor} />
           ) : (
-            <FavIcon
-              fill={iconColor}
-              stroke={theme === "dark" ? "#B4B4B4" : "#020817"}
-            />
+            <FavIcon fill={iconColor} stroke={theme === "dark" ? "#B4B4B4" : "#020817"} />
           )
         }
       />

@@ -1,18 +1,14 @@
-import path from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
 import {
   type Controller,
   type DownloadItem,
   type DownloadItemPagination,
-  DownloadStatus,
   type ListPagination,
-  type Task,
 } from "@mediago/shared/common";
-import { TaskQueueService, TYPES, VideoRepository } from "@mediago/shared/node";
+import { DownloadManagementService, handle, TYPES } from "@mediago/shared/node";
 import type { IpcMainEvent } from "electron/main";
-import { glob } from "glob";
 import { inject, injectable } from "inversify";
-import { handle, videoPattern } from "../helper/index";
+import { videoPattern } from "../helper/index";
 import WebviewService from "../services/WebviewService";
 import ElectronStore from "../vendor/ElectronStore";
 import MainWindow from "../windows/MainWindow";
@@ -23,10 +19,8 @@ export default class DownloadController implements Controller {
   constructor(
     @inject(ElectronStore)
     private readonly store: ElectronStore,
-    @inject(VideoRepository)
-    private readonly videoRepository: VideoRepository,
-    @inject(TaskQueueService)
-    private readonly taskQueue: TaskQueueService,
+    @inject(TYPES.DownloadManagementService)
+    private readonly downloadService: DownloadManagementService,
     @inject(MainWindow)
     private readonly mainWindow: MainWindow,
     @inject(WebviewService)
@@ -41,7 +35,7 @@ export default class DownloadController implements Controller {
 
   @handle("add-download-item")
   async addDownloadItem(e: IpcMainEvent, video: Omit<DownloadItem, "id">) {
-    const item = await this.videoRepository.addVideo(video);
+    const item = await this.downloadService.addDownloadItem(video);
     // This sends a message to the page notifying it of the update
     this.mainWindow.send("download-item-notifier", item);
     return item;
@@ -49,7 +43,7 @@ export default class DownloadController implements Controller {
 
   @handle("add-download-items")
   async addDownloadItems(e: IpcMainEvent, videos: Omit<DownloadItem, "id">[]) {
-    const items = await this.videoRepository.addVideos(videos);
+    const items = await this.downloadService.addDownloadItems(videos);
     // This sends a message to the page notifying it of the update
     this.mainWindow.send("download-item-notifier", items);
     return items;
@@ -57,7 +51,7 @@ export default class DownloadController implements Controller {
 
   @handle("edit-download-item")
   async editDownloadItem(e: IpcMainEvent, video: DownloadItem) {
-    const item = await this.videoRepository.editVideo(video);
+    const item = await this.downloadService.editDownloadItem(video);
     return item;
   }
 
@@ -90,62 +84,24 @@ export default class DownloadController implements Controller {
 
   @handle("get-download-items")
   async getDownloadItems(e: IpcMainEvent, pagination: DownloadItemPagination): Promise<ListPagination> {
-    const videos = await this.videoRepository.findVideos(pagination);
-
-    const result: ListPagination = {
-      total: videos.total,
-      list: [],
-    };
-
     const local = this.store.get("local");
-    for (const video of videos.list) {
-      // FIXME: type
-      const final: any = { ...video };
-      if (video.status === DownloadStatus.Success) {
-        const pattern = path.join(local, `${video.name}.{${videoPattern}}`);
-        const files = await glob(pattern);
-        final.exists = files.length > 0;
-        final.file = files[0];
-      }
-      result.list.push(final);
-    }
-
-    return result;
+    return await this.downloadService.getDownloadItems(pagination, local, videoPattern);
   }
 
   @handle("start-download")
   async startDownload(e: IpcMainEvent, vid: number) {
-    // Find the video you want to download
-    const video = await this.videoRepository.findVideo(vid);
-    const { name, url, headers, type, folder } = video;
     const local = this.store.get("local");
-
-    // Add parameters from the configuration
     const deleteSegments = this.store.get("deleteSegments");
-
-    const task: Task = {
-      id: vid,
-      params: {
-        url,
-        type,
-        local,
-        name,
-        headers,
-        deleteSegments,
-        folder,
-      },
-    };
-    await this.videoRepository.changeVideoStatus(vid, DownloadStatus.Watting);
-    this.taskQueue.addTask(task);
+    await this.downloadService.startDownload(vid, local, deleteSegments);
   }
 
   @handle("stop-download")
   async stopDownload(e: IpcMainEvent, id: number) {
-    this.taskQueue.stopTask(id);
+    this.downloadService.stopDownload(id);
   }
 
   @handle("delete-download-item")
   async deleteDownloadItem(e: IpcMainEvent, id: number) {
-    return await this.videoRepository.deleteDownloadItem(id);
+    return await this.downloadService.deleteDownloadItem(id);
   }
 }

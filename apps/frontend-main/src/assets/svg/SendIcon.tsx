@@ -1,13 +1,6 @@
 export function SendIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 20 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <g clipPath="url(#clip0_5_1593)">
         <g filter="url(#filter0_d_5_1593)">
           <path
@@ -36,21 +29,9 @@ export function SendIcon(props: React.SVGProps<SVGSVGElement>) {
           <feOffset dy="1" />
           <feGaussianBlur stdDeviation="1" />
           <feComposite in2="hardAlpha" operator="out" />
-          <feColorMatrix
-            type="matrix"
-            values="0 0 0 0 0.725 0 0 0 0 0.852111 0 0 0 0 1 0 0 0 1 0"
-          />
-          <feBlend
-            mode="normal"
-            in2="BackgroundImageFix"
-            result="effect1_dropShadow_5_1593"
-          />
-          <feBlend
-            mode="normal"
-            in="SourceGraphic"
-            in2="effect1_dropShadow_5_1593"
-            result="shape"
-          />
+          <feColorMatrix type="matrix" values="0 0 0 0 0.725 0 0 0 0 0.852111 0 0 0 0 1 0 0 0 1 0" />
+          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_5_1593" />
+          <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_5_1593" result="shape" />
         </filter>
         <clipPath id="clip0_5_1593">
           <rect width="20" height="20" fill="white" />

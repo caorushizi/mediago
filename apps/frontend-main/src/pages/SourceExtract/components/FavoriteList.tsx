@@ -6,12 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import { ADD_FAVORITE, OPEN_FAVORITE } from "@/const";
 import useElectron from "@/hooks/useElectron";
-import {
-  BrowserStatus,
-  PageMode,
-  setBrowserSelector,
-  useBrowserStore,
-} from "@/store/browser";
+import { BrowserStatus, PageMode, setBrowserSelector, useBrowserStore } from "@/store/browser";
 import { getFavIcon, tdApp } from "@/utils";
 import { FavItem } from "./FavItem";
 
@@ -96,7 +91,7 @@ export function FavoriteList() {
       }: {
         action: string;
         payload: number;
-      }
+      },
     ) => {
       if (action === "open") {
         const item = favoriteList.find((item) => item.id === payload);
@@ -131,12 +126,7 @@ export function FavoriteList() {
             />
           );
         })}
-        <FavItem
-          key={"add"}
-          onClick={showModal}
-          icon={<PlusOutlined />}
-          title={t("addFavorite")}
-        />
+        <FavItem key={"add"} onClick={showModal} icon={<PlusOutlined />} title={t("addFavorite")} />
       </div>
       <Modal
         open={isModalOpen}

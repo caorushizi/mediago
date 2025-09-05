@@ -33,7 +33,7 @@ export default class RouterHandlerService extends Router {
     const finalPath = path.join(API_PREFIX, routerPath).replace(/\\/g, "/").replace(/\/$/, "");
     this.post(finalPath, async (context, next) => {
       try {
-        let res = property.call(controller, context, next);
+        let res = property.call(controller, context.request.body, context, next);
         if (res.then) {
           res = await res;
         }

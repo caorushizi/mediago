@@ -9,40 +9,22 @@ import { Button } from "@/components/ui/button";
 import WebView from "@/components/WebView";
 import useElectron from "@/hooks/useElectron";
 import { appStoreSelector, useAppStore } from "@/store/app";
-import {
-  BrowserStatus,
-  browserStoreSelector,
-  PageMode,
-  setBrowserSelector,
-  useBrowserStore,
-} from "@/store/browser";
+import { BrowserStatus, browserStoreSelector, PageMode, setBrowserSelector, useBrowserStore } from "@/store/browser";
 import { generateUrl, randomName } from "@/utils";
 import { BrowserViewPanel } from "./BrowserViewPanel";
 export function BrowserView() {
-  const {
-    webviewLoadURL,
-    addIpcListener,
-    removeIpcListener,
-    webviewGoHome,
-    downloadNow,
-    addDownloadItem,
-  } = useElectron();
+  const { webviewLoadURL, addIpcListener, removeIpcListener, webviewGoHome, downloadNow, addDownloadItem } =
+    useElectron();
   const downloadForm = useRef<DownloadFormRef>(null);
   const store = useBrowserStore(useShallow(browserStoreSelector));
-  const { addSource, setBrowserStore } = useBrowserStore(
-    useShallow(setBrowserSelector)
-  );
+  const { addSource, setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
   const { dockerUrl } = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
   const [placeHolder, setPlaceHolder] = useState<string>("");
   const { message } = App.useApp();
 
   useEffect(() => {
-    const onShowDownloadDialog = async (
-      e: unknown,
-      data: DownloadItem[],
-      image: string
-    ) => {
+    const onShowDownloadDialog = async (e: unknown, data: DownloadItem[], image: string) => {
       if (image) {
         setPlaceHolder(image);
       }
@@ -82,41 +64,33 @@ export function BrowserView() {
     });
   });
 
-  const confirmDownload = useMemoizedFn(
-    async (now?: boolean, isDocker?: boolean) => {
-      try {
-        const {
-          name = "",
-          url,
-          headers,
-          type,
-          folder,
-        } = downloadForm.current.getFieldsValue();
-        const item = {
-          name: name || randomName(),
-          url,
-          headers,
-          type,
-          folder,
-        };
+  const confirmDownload = useMemoizedFn(async (now?: boolean, isDocker?: boolean) => {
+    try {
+      const { name = "", url, headers, type, folder } = downloadForm.current.getFieldsValue();
+      const item = {
+        name: name || randomName(),
+        url,
+        headers,
+        type,
+        folder,
+      };
 
-        if (now) {
-          if (isDocker) {
-            await axios.post(dockerUrl + "/api/add-download-item", item);
-          } else {
-            await downloadNow(item);
-          }
+      if (now) {
+        if (isDocker) {
+          await axios.post(dockerUrl + "/api/add-download-item", item);
         } else {
-          await addDownloadItem(item);
+          await downloadNow(item);
         }
-
-        return true;
-      } catch (e) {
-        message.error((e as any).message);
-        return false;
+      } else {
+        await addDownloadItem(item);
       }
+
+      return true;
+    } catch (e) {
+      message.error((e as any).message);
+      return false;
     }
-  );
+  });
 
   const loadUrl = useMemoizedFn((url: string) => {
     setBrowserStore({
@@ -157,11 +131,7 @@ export function BrowserView() {
     if (store.status === BrowserStatus.Failed) {
       return (
         <div className="flex h-full w-full flex-row items-center justify-center">
-          <Empty
-            description={`${store.errMsg || t("loadFailed")} (${
-              store.errCode
-            })`}
-          >
+          <Empty description={`${store.errMsg || t("loadFailed")} (${store.errCode})`}>
             <Space>
               <Button onClick={onClickGoHome}>{t("backToHome")}</Button>
               <Button onClick={goto}>{t("refresh")}</Button>

@@ -1,9 +1,4 @@
-import {
-  ClearOutlined,
-  DownloadOutlined,
-  FolderOpenOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import { ClearOutlined, DownloadOutlined, FolderOpenOutlined, UploadOutlined } from "@ant-design/icons";
 import { useMemoizedFn, useRequest } from "ahooks";
 import {
   App,
@@ -29,11 +24,7 @@ import { useShallow } from "zustand/react/shallow";
 import PageContainer from "@/components/PageContainer";
 import { CHECK_UPDATE } from "@/const";
 import useElectron from "@/hooks/useElectron";
-import {
-  appStoreSelector,
-  setAppStoreSelector,
-  useAppStore,
-} from "@/store/app";
+import { appStoreSelector, setAppStoreSelector, useAppStore } from "@/store/app";
 import { updateSelector, useSessionStore } from "@/store/session";
 import { AppLanguage, AppTheme } from "@/types";
 import { isWeb, tdApp } from "@/utils";
@@ -80,9 +71,7 @@ const SettingPage: React.FC = () => {
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
   const { data: envPath } = useRequest(getEnvPath);
   const { message } = App.useApp();
-  const { updateAvailable, updateChecking } = useSessionStore(
-    useShallow(updateSelector)
-  );
+  const { updateAvailable, updateChecking } = useSessionStore(useShallow(updateSelector));
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [updateDownloaded, setUpdateDownloaded] = useState(false);
@@ -215,11 +204,7 @@ const SettingPage: React.FC = () => {
       >
         <GroupWrapper title={t("basicSetting")}>
           <Form.Item name="local" label={renderButtonLabel()}>
-            <Input
-              width="xl"
-              disabled
-              placeholder={t("pleaseSelectDownloadDir")}
-            />
+            <Input width="xl" disabled placeholder={t("pleaseSelectDownloadDir")} />
           </Form.Item>
           <Form.Item hidden={isWeb} name="theme" label={t("downloaderTheme")}>
             <Select
@@ -243,41 +228,20 @@ const SettingPage: React.FC = () => {
               allowClear={false}
             />
           </Form.Item>
-          <Form.Item
-            hidden={isWeb}
-            label={t("downloadPrompt")}
-            name="promptTone"
-          >
+          <Form.Item hidden={isWeb} label={t("downloadPrompt")} name="promptTone">
             <Switch />
           </Form.Item>
-          <Form.Item
-            hidden={isWeb}
-            label={t("showTerminal")}
-            name="showTerminal"
-          >
+          <Form.Item hidden={isWeb} label={t("showTerminal")} name="showTerminal">
             <Switch />
           </Form.Item>
-          <Form.Item
-            hidden={isWeb}
-            label={t("autoUpgrade")}
-            tooltip={t("autoUpgradeTooltip")}
-            name="autoUpgrade"
-          >
+          <Form.Item hidden={isWeb} label={t("autoUpgrade")} tooltip={t("autoUpgradeTooltip")} name="autoUpgrade">
             <Switch />
           </Form.Item>
-          <Form.Item
-            hidden={isWeb}
-            label={t("allowBetaVersion")}
-            name="allowBeta"
-          >
+          <Form.Item hidden={isWeb} label={t("allowBetaVersion")} name="allowBeta">
             <Switch />
           </Form.Item>
 
-          <Form.Item
-            hidden={isWeb}
-            label={t("closeMainWindow")}
-            name="closeMainWindow"
-          >
+          <Form.Item hidden={isWeb} label={t("closeMainWindow")} name="closeMainWindow">
             <Radio.Group>
               <Radio value={true}>{t("close")}</Radio>
               <Radio value={false}>{t("minimizeToTray")}</Radio>
@@ -316,32 +280,18 @@ const SettingPage: React.FC = () => {
           <Form.Item label={t("enterMobileMode")} name="isMobile">
             <Switch />
           </Form.Item>
-          <Form.Item
-            label={t("useImmersiveSniffing")}
-            tooltip={t("immersiveSniffingDescription")}
-            name="useExtension"
-          >
+          <Form.Item label={t("useImmersiveSniffing")} tooltip={t("immersiveSniffingDescription")} name="useExtension">
             <Switch />
           </Form.Item>
-          <Form.Item
-            label={t("privacy")}
-            tooltip={t("privacyTooltip")}
-            name="privacy"
-          >
+          <Form.Item label={t("privacy")} tooltip={t("privacyTooltip")} name="privacy">
             <Switch />
           </Form.Item>
           <Form.Item label={t("moreAction")}>
             <Space>
-              <Button
-                onClick={handleClearWebviewCache}
-                icon={<ClearOutlined />}
-              >
+              <Button onClick={handleClearWebviewCache} icon={<ClearOutlined />}>
                 {t("clearCache")}
               </Button>
-              <Dropdown.Button
-                menu={{ items, onClick: onMenuClick }}
-                onClick={handleExportFavorite}
-              >
+              <Dropdown.Button menu={{ items, onClick: onMenuClick }} onClick={handleExportFavorite}>
                 <DownloadOutlined />
                 {t("exportFavorite")}
               </Dropdown.Button>
@@ -371,31 +321,18 @@ const SettingPage: React.FC = () => {
           <Form.Item label={t("deleteSegments")} name="deleteSegments">
             <Switch />
           </Form.Item>
-          <Form.Item
-            label={t("maxRunner")}
-            tooltip={t("maxRunnerDescription")}
-            name="maxRunner"
-          >
+          <Form.Item label={t("maxRunner")} tooltip={t("maxRunnerDescription")} name="maxRunner">
             <InputNumber min={1} max={50} precision={0} />
           </Form.Item>
           <Form.Item hidden={isWeb} label={t("moreAction")}>
             <Space>
-              <Button
-                onClick={() => openDir(envPath.workspace)}
-                icon={<FolderOpenOutlined />}
-              >
+              <Button onClick={() => openDir(envPath.workspace)} icon={<FolderOpenOutlined />}>
                 {t("configDir")}
               </Button>
-              <Button
-                onClick={() => openDir(envPath.binPath)}
-                icon={<FolderOpenOutlined />}
-              >
+              <Button onClick={() => openDir(envPath.binPath)} icon={<FolderOpenOutlined />}>
                 {t("binPath")}
               </Button>
-              <Button
-                onClick={() => openDir(settings.local)}
-                icon={<FolderOpenOutlined />}
-              >
+              <Button onClick={() => openDir(settings.local)} icon={<FolderOpenOutlined />}>
                 {t("localDir")}
               </Button>
             </Space>
@@ -434,11 +371,7 @@ const SettingPage: React.FC = () => {
                   {t("close")}
                 </Button>,
                 updateDownloaded ? (
-                  <Button
-                    key="install"
-                    type="primary"
-                    onClick={handleInstallUpdate}
-                  >
+                  <Button key="install" type="primary" onClick={handleInstallUpdate}>
                     {t("install")}
                   </Button>
                 ) : (
@@ -455,14 +388,8 @@ const SettingPage: React.FC = () => {
         }
       >
         <div className="flex min-h-28 flex-col justify-center">
-          {updateChecking
-            ? t("checkingForUpdates")
-            : updateAvailable
-            ? t("updateAvailable")
-            : t("updateNotAvailable")}
-          {!updateChecking && updateAvailable && (
-            <Progress percent={updateDownloaded ? 100 : downloadProgress} />
-          )}
+          {updateChecking ? t("checkingForUpdates") : updateAvailable ? t("updateAvailable") : t("updateNotAvailable")}
+          {!updateChecking && updateAvailable && <Progress percent={updateDownloaded ? 100 : downloadProgress} />}
         </div>
       </Modal>
     </PageContainer>

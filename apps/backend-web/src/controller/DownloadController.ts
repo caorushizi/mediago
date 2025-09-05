@@ -1,15 +1,7 @@
 import { provide } from "@inversifyjs/binding-decorators";
-import {
-  type Controller,
-  type DownloadItem,
-  type DownloadItemPagination,
-  DownloadStatus,
-  type Task,
-} from "@mediago/shared/common";
-import { TaskQueueService, TYPES, VideoRepository } from "@mediago/shared/node";
+import { type Controller, type DownloadItem, type DownloadItemPagination } from "@mediago/shared/common";
+import { DownloadManagementService, handle, TYPES } from "@mediago/shared/node";
 import { inject, injectable } from "inversify";
-import type { Context } from "koa";
-import { handle } from "../helper/index";
 import Logger from "../vendor/Logger";
 import SocketIO from "../vendor/SocketIO";
 import StoreService from "../vendor/Store";
@@ -18,10 +10,8 @@ import StoreService from "../vendor/Store";
 @provide(TYPES.Controller)
 export default class DownloadController implements Controller {
   constructor(
-    @inject(VideoRepository)
-    private readonly videoRepository: VideoRepository,
-    @inject(TaskQueueService)
-    private readonly taskQueueService: TaskQueueService,
+    @inject(TYPES.DownloadManagementService)
+    private readonly downloadService: DownloadManagementService,
     @inject(Logger)
     private readonly logger: Logger,
     @inject(SocketIO)
@@ -31,9 +21,8 @@ export default class DownloadController implements Controller {
   ) {}
 
   @handle("add-download-item")
-  async addDownloadItem(ctx: Context) {
-    const video = ctx.request.body as DownloadItem;
-    const item = await this.videoRepository.addVideo(video);
+  async addDownloadItem(video: DownloadItem) {
+    const item = await this.downloadService.addDownloadItem(video);
 
     this.socket.refreshList();
 
@@ -41,9 +30,8 @@ export default class DownloadController implements Controller {
   }
 
   @handle("add-download-items")
-  async addDownloadItems(ctx: Context) {
-    const videos = ctx.request.body as DownloadItem[];
-    const items = await this.addDownloadItems1(videos);
+  async addDownloadItems(videos: DownloadItem[]) {
+    const items = await this.downloadService.addDownloadItems(videos);
 
     this.socket.refreshList();
 
@@ -51,115 +39,65 @@ export default class DownloadController implements Controller {
   }
 
   @handle("get-download-items")
-  async getDownloadItems(ctx: Context) {
-    const pagination = ctx.request.body as DownloadItemPagination;
-    const videos = await this.videoRepository.findVideos(pagination);
-    return videos;
+  async getDownloadItems(pagination: DownloadItemPagination) {
+    const local = await this.store.get("local");
+    return await this.downloadService.getDownloadItems(pagination, local, "mp4,mkv,avi,mov,wmv,flv,webm,m4v");
   }
 
   @handle("start-download")
-  async startDownload(ctx: Context) {
-    const { vid } = ctx.request.body as { vid: number };
-    await this.startDownload1(vid);
+  async startDownload({ vid }: { vid: number }) {
+    const local = await this.store.get("local");
+    const deleteSegments = await this.store.get("deleteSegments");
+    await this.downloadService.startDownload(vid, local, deleteSegments);
   }
 
   @handle("delete-download-item")
-  async deleteDownloadItem(ctx: Context) {
-    const { id } = ctx.request.body as { id: number };
-    await this.videoRepository.deleteDownloadItem(id);
+  async deleteDownloadItem({ id }: { id: number }) {
+    await this.downloadService.deleteDownloadItem(id);
   }
 
   @handle("download-now")
-  async downloadNow(ctx: Context) {
-    const video = ctx.request.body as Omit<DownloadItem, "id">;
-    await this.downloadNow1(video);
+  async downloadNow(video: Omit<DownloadItem, "id">) {
+    const item = await this.downloadService.addDownloadItem(video);
+    const local = await this.store.get("local");
+    const deleteSegments = await this.store.get("deleteSegments");
+    await this.downloadService.startDownload(item.id, local, deleteSegments);
+    return item;
   }
 
   @handle("download-items-now")
-  async downloadItemsNow(ctx: Context) {
-    const videos = ctx.request.body as Omit<DownloadItem, "id">[];
-    // Add download
-    const items = await this.addDownloadItems1(videos);
-    // Start downloading
+  async downloadItemsNow(videos: Omit<DownloadItem, "id">[]) {
+    const items = await this.downloadService.addDownloadItems(videos);
+    const local = await this.store.get("local");
+    const deleteSegments = await this.store.get("deleteSegments");
     items.forEach((item: any) => {
-      this.startDownload1(item.id);
+      this.downloadService.startDownload(item.id, local, deleteSegments);
     });
     return items;
   }
 
   @handle("edit-download-now")
-  async editDownloadNow(ctx: Context) {
-    const video = ctx.request.body as DownloadItem;
-    const item = await this.editDownloadItem1(video);
-    await this.startDownload1(item.id);
+  async editDownloadNow(video: DownloadItem) {
+    const item = await this.downloadService.editDownloadItem(video);
+    const local = await this.store.get("local");
+    const deleteSegments = await this.store.get("deleteSegments");
+    await this.downloadService.startDownload(item.id, local, deleteSegments);
     return item;
   }
 
   @handle("edit-download-item")
-  async editDownloadItem(ctx: Context) {
-    const video = ctx.request.body as DownloadItem;
+  async editDownloadItem(video: DownloadItem) {
     this.logger.info("editDownloadItem", video);
-    return this.editDownloadItem1(video);
+    return this.downloadService.editDownloadItem(video);
   }
 
   @handle("stop-download")
-  async stopDownload(ctx: Context) {
-    const { id } = ctx.request.body as { id: number };
-
-    this.taskQueueService.stopTask(id);
+  async stopDownload({ id }: { id: number }) {
+    this.downloadService.stopDownload(id);
   }
 
   @handle("get-video-folders")
   async getVideoFolders() {
-    return this.getVideoFolders1();
-  }
-
-  private async startDownload1(vid: number) {
-    // Find the video you want to download
-    const video = await this.videoRepository.findVideo(vid);
-    const { name, url, headers, type, folder } = video;
-    const local = await this.store.get("local");
-    const deleteSegments = await this.store.get("deleteSegments");
-
-    const task: Task = {
-      id: vid,
-      params: {
-        url,
-        type,
-        local,
-        name,
-        headers,
-        deleteSegments,
-        folder,
-      },
-    };
-    await this.videoRepository.changeVideoStatus(vid, DownloadStatus.Watting);
-    this.taskQueueService.addTask(task);
-  }
-
-  async downloadNow1(video: Omit<DownloadItem, "id">) {
-    // Add download
-    const item = await this.addDownloadItem1(video);
-    // Start downloading
-    await this.startDownload1(item.id);
-    return item;
-  }
-
-  async addDownloadItem1(video: Omit<DownloadItem, "id">) {
-    const item = await this.videoRepository.addVideo(video);
-    return item;
-  }
-
-  async addDownloadItems1(videos: Omit<DownloadItem, "id">[]) {
-    const items = await this.videoRepository.addVideos(videos);
-    return items;
-  }
-
-  async editDownloadItem1(video: DownloadItem) {
-    return this.videoRepository.editVideo(video);
-  }
-
-  async getVideoFolders1() {
-    return this.videoRepository.getVideoFolders();
+    return this.downloadService.getVideoFolders();
   }
 }
