@@ -6,7 +6,7 @@ import { app, BrowserWindow, type Event, Menu, nativeImage, nativeTheme, Tray } 
 import { inject, injectable } from "inversify";
 import TrayIcon from "../assets/tray-icon.png";
 import TrayIconLight from "../assets/tray-icon-light.png";
-import IpcHandlerService from "./core/ipc";
+import ElectronRouter from "./core/router";
 import ProtocolService from "./core/protocol";
 import { ptyRunner } from "./helper/ptyRunner";
 import { binMap, db, isMac } from "./helper/variables";
@@ -28,8 +28,8 @@ export default class ElectronApp {
     private readonly protocol: ProtocolService,
     @inject(ElectronUpdater)
     private readonly updater: ElectronUpdater,
-    @inject(IpcHandlerService)
-    private readonly ipc: IpcHandlerService,
+    @inject(ElectronRouter)
+    private readonly router: ElectronRouter,
     @inject(TypeORM)
     private readonly db: TypeORM,
     @inject(WebviewService)
@@ -61,7 +61,7 @@ export default class ElectronApp {
 
   async init(): Promise<void> {
     this.protocol.create();
-    this.ipc.init();
+    this.router.init();
 
     // vendor
     await this.vendorInit();

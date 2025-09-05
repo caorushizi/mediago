@@ -1,7 +1,7 @@
 import path from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
 import Router from "@koa/router";
-import type { Controller } from "@mediago/shared/common";
+import { MEDIAGO_EVENT, MEDIAGO_METHOD, type Controller } from "@mediago/shared/common";
 import { TYPES } from "@mediago/shared/node";
 import { inject, injectable, multiInject } from "inversify";
 import { error, success } from "../helper/index";
@@ -24,14 +24,14 @@ export default class RouterHandlerService extends Router {
     const property = controller[propertyKey];
     if (typeof property !== "function") return;
 
-    const httpMethod: "get" | "post" = Reflect.getMetadata("http-method", controller, propertyKey);
-    if (!httpMethod) return;
+    const httpMethod: "handle" = Reflect.getMetadata(MEDIAGO_METHOD, controller, propertyKey);
+    if (!httpMethod || httpMethod !== "handle") return;
 
-    const routerPath = Reflect.getMetadata("router-path", controller, propertyKey);
+    const routerPath = Reflect.getMetadata(MEDIAGO_EVENT, controller, propertyKey);
     if (!routerPath) return;
 
     const finalPath = path.join(API_PREFIX, routerPath).replace(/\\/g, "/").replace(/\/$/, "");
-    this[httpMethod](finalPath, async (context, next) => {
+    this.post(finalPath, async (context, next) => {
       try {
         let res = property.call(controller, context, next);
         if (res.then) {

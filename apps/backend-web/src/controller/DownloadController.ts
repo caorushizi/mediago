@@ -9,7 +9,7 @@ import {
 import { TaskQueueService, TYPES, VideoRepository } from "@mediago/shared/node";
 import { inject, injectable } from "inversify";
 import type { Context } from "koa";
-import { get, post } from "../helper/index";
+import { handle } from "../helper/index";
 import Logger from "../vendor/Logger";
 import SocketIO from "../vendor/SocketIO";
 import StoreService from "../vendor/Store";
@@ -30,12 +30,7 @@ export default class DownloadController implements Controller {
     private readonly store: StoreService,
   ) {}
 
-  @get("/")
-  async getFavorites() {
-    return false;
-  }
-
-  @post("add-download-item")
+  @handle("add-download-item")
   async addDownloadItem(ctx: Context) {
     const video = ctx.request.body as DownloadItem;
     const item = await this.videoRepository.addVideo(video);
@@ -45,7 +40,7 @@ export default class DownloadController implements Controller {
     return item;
   }
 
-  @post("add-download-items")
+  @handle("add-download-items")
   async addDownloadItems(ctx: Context) {
     const videos = ctx.request.body as DownloadItem[];
     const items = await this.addDownloadItems1(videos);
@@ -55,32 +50,32 @@ export default class DownloadController implements Controller {
     return items;
   }
 
-  @post("get-download-items")
+  @handle("get-download-items")
   async getDownloadItems(ctx: Context) {
     const pagination = ctx.request.body as DownloadItemPagination;
     const videos = await this.videoRepository.findVideos(pagination);
     return videos;
   }
 
-  @post("start-download")
+  @handle("start-download")
   async startDownload(ctx: Context) {
     const { vid } = ctx.request.body as { vid: number };
     await this.startDownload1(vid);
   }
 
-  @post("delete-download-item")
+  @handle("delete-download-item")
   async deleteDownloadItem(ctx: Context) {
     const { id } = ctx.request.body as { id: number };
     await this.videoRepository.deleteDownloadItem(id);
   }
 
-  @post("download-now")
+  @handle("download-now")
   async downloadNow(ctx: Context) {
     const video = ctx.request.body as Omit<DownloadItem, "id">;
     await this.downloadNow1(video);
   }
 
-  @post("download-items-now")
+  @handle("download-items-now")
   async downloadItemsNow(ctx: Context) {
     const videos = ctx.request.body as Omit<DownloadItem, "id">[];
     // Add download
@@ -92,7 +87,7 @@ export default class DownloadController implements Controller {
     return items;
   }
 
-  @post("edit-download-now")
+  @handle("edit-download-now")
   async editDownloadNow(ctx: Context) {
     const video = ctx.request.body as DownloadItem;
     const item = await this.editDownloadItem1(video);
@@ -100,21 +95,21 @@ export default class DownloadController implements Controller {
     return item;
   }
 
-  @post("edit-download-item")
+  @handle("edit-download-item")
   async editDownloadItem(ctx: Context) {
     const video = ctx.request.body as DownloadItem;
     this.logger.info("editDownloadItem", video);
     return this.editDownloadItem1(video);
   }
 
-  @post("stop-download")
+  @handle("stop-download")
   async stopDownload(ctx: Context) {
     const { id } = ctx.request.body as { id: number };
 
     this.taskQueueService.stopTask(id);
   }
 
-  @post("get-video-folders")
+  @handle("get-video-folders")
   async getVideoFolders() {
     return this.getVideoFolders1();
   }

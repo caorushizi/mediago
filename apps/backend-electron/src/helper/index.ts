@@ -1,12 +1,15 @@
+import fs from "node:fs/promises";
 import https from "node:https";
 import os from "node:os";
+import { MEDIAGO_EVENT, MEDIAGO_METHOD } from "@mediago/shared/common";
+import { spawn } from "child_process";
+import EventEmitter from "events";
 import { LRUCache } from "lru-cache";
 import fetch from "node-fetch";
+import { ffmpegPath } from "./variables";
 
 export * from "./variables";
 export { fetchWrapper as fetch };
-
-import fs from "node:fs/promises";
 
 export function getLocalIP() {
   const interfaces = os.networkInterfaces();
@@ -48,10 +51,6 @@ const options: LRUCache.OptionsMaxLimit<string, boolean, unknown> = {
 };
 
 export const urlCache = new LRUCache(options);
-
-import { spawn } from "child_process";
-import EventEmitter from "events";
-import { ffmpegPath } from "./variables";
 
 export async function sleep(second = 1): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, second * 1000));
@@ -169,14 +168,7 @@ export const convertToAudio = async (input: string, output: string): Promise<voi
 
 export const handle = (route: string) => {
   return (target: any, propertyKey: string): void => {
-    Reflect.defineMetadata("ipc-method", "handle", target, propertyKey);
-    Reflect.defineMetadata("ipc-channel", route, target, propertyKey);
-  };
-};
-
-export const on = (route: string) => {
-  return (target: any, propertyName: string): void => {
-    Reflect.defineMetadata("ipc-method", "on", target, propertyName);
-    Reflect.defineMetadata("ipc-channel", route, target, propertyName);
+    Reflect.defineMetadata(MEDIAGO_METHOD, "handle", target, propertyKey);
+    Reflect.defineMetadata(MEDIAGO_EVENT, route, target, propertyKey);
   };
 };
