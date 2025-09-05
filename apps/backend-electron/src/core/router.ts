@@ -1,14 +1,15 @@
 import { provide } from "@inversifyjs/binding-decorators";
-import type { Controller } from "@mediago/shared/common";
+import { MEDIAGO_EVENT, MEDIAGO_METHOD, type Controller } from "@mediago/shared/common";
 import { TYPES } from "@mediago/shared/node";
 import { ipcMain } from "electron";
 import { inject, injectable, multiInject } from "inversify";
 import { error, success } from "../helper/index";
 import ElectronLogger from "../vendor/ElectronLogger";
+import { MediaGoRouter } from "../types/core";
 
 @injectable()
 @provide()
-export default class IpcHandlerService {
+export default class ElectronRouter implements MediaGoRouter {
   constructor(
     @multiInject(TYPES.Controller)
     private readonly controllers: Controller[],
@@ -20,10 +21,10 @@ export default class IpcHandlerService {
     const property = controller[propertyKey];
     if (typeof property !== "function") return;
 
-    const channel: string = Reflect.getMetadata("ipc-channel", controller, propertyKey);
+    const channel: string = Reflect.getMetadata(MEDIAGO_EVENT, controller, propertyKey);
     if (!channel) return;
 
-    const ipcMethod: "on" | "handle" = Reflect.getMetadata("ipc-method", controller, propertyKey);
+    const ipcMethod: "on" | "handle" = Reflect.getMetadata(MEDIAGO_METHOD, controller, propertyKey);
     if (!ipcMethod) return;
 
     ipcMain[ipcMethod](channel, async (...args: unknown[]) => {

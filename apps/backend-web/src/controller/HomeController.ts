@@ -4,7 +4,7 @@ import { FavoriteRepository, TYPES } from "@mediago/shared/node";
 import axios from "axios";
 import { inject, injectable } from "inversify";
 import type { Context } from "koa";
-import { get, post } from "../helper/index";
+import { handle } from "../helper/index";
 import Logger from "../vendor/Logger";
 import SocketIO from "../vendor/SocketIO";
 import StoreService from "../vendor/Store";
@@ -23,18 +23,13 @@ export default class HomeController implements Controller {
     private readonly socket: SocketIO,
   ) {}
 
-  @get("/")
-  async getFavorites() {
-    return false;
-  }
-
-  @post("get-app-store")
+  @handle("get-app-store")
   async getAppStore() {
     const store = await this.store.store;
     return store;
   }
 
-  @post("set-app-store")
+  @handle("set-app-store")
   async setAppStore(ctx: Context) {
     const params = ctx.request.body as { key: string; val: any };
     this.store.set(params.key, params.val);
@@ -42,7 +37,7 @@ export default class HomeController implements Controller {
     return false;
   }
 
-  @post("socket-test")
+  @handle("socket-test")
   async socketTest(ctx: Context) {
     const { message } = ctx.request.body as { message: string };
     this.logger.info(message);
@@ -51,7 +46,7 @@ export default class HomeController implements Controller {
     return message;
   }
 
-  @post("get-page-title")
+  @handle("get-page-title")
   async getPageTitle(ctx: Context) {
     try {
       const { url } = ctx.request.body as { url: string };
