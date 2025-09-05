@@ -1,7 +1,7 @@
 import { provide } from "@inversifyjs/binding-decorators";
 import { inject, injectable } from "inversify";
-import { i18n } from "../../../common";
-import type { ConversionPagination } from "../../../common/types/index";
+import { i18n } from "@mediago/shared-common";
+import type { ConversionPagination } from "@mediago/shared-common";
 import TypeORM from "../../vendor/TypeORM";
 import { Conversion } from "../entity/Conversion";
 

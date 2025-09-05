@@ -1,7 +1,7 @@
 import type http from "node:http";
 import { provide } from "@inversifyjs/binding-decorators";
-import { type DownloadProgress, DownloadStatus } from "@mediago/shared/common";
-import { TaskQueueService, VideoRepository } from "@mediago/shared/node";
+import { type DownloadProgress, DownloadStatus } from "@mediago/shared-common";
+import { TaskQueueService, VideoRepository } from "@mediago/shared-node";
 import { inject, injectable } from "inversify";
 import _ from "lodash";
 import { Server } from "socket.io";

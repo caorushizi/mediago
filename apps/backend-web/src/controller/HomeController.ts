@@ -1,6 +1,6 @@
 import { provide } from "@inversifyjs/binding-decorators";
-import type { Controller } from "@mediago/shared/common";
-import { type Favorite, FavoriteManagementService, handle, TYPES } from "@mediago/shared/node";
+import type { Controller } from "@mediago/shared-common";
+import { type Favorite, FavoriteManagementService, handle, TYPES } from "@mediago/shared-node";
 import axios from "axios";
 import { inject, injectable } from "inversify";
 import Logger from "../vendor/Logger";

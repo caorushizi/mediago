@@ -1,8 +1,8 @@
 import http from "node:http";
 import { provide } from "@inversifyjs/binding-decorators";
 import cors from "@koa/cors";
-import { DownloadStatus } from "@mediago/shared/common";
-import { DownloaderService, TaskQueueService, TypeORM, VideoRepository } from "@mediago/shared/node";
+import { DownloadStatus } from "@mediago/shared-common";
+import { DownloaderService, TaskQueueService, TypeORM, VideoRepository } from "@mediago/shared-node";
 import { inject, injectable } from "inversify";
 import Koa from "koa";
 import bodyParser from "koa-bodyparser";

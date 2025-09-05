@@ -1,0 +1,27 @@
+{
+  "name": "@mediago/shared-node",
+  "version": "1.0.0",
+  "description": "Node.js shared code for MediaGo project",
+  "type": "module",
+  "main": "./src/index.ts",
+  "scripts": {
+    "types": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.8.1",
+  "dependencies": {
+    "@inversifyjs/binding-decorators": "^1.1.3",
+    "@mediago/shared": "workspace:*",
+    "@mediago/shared-common": "workspace:*",
+    "glob": "^10.4.5",
+    "inversify": "^7.9.1",
+    "strip-ansi": "^7.1.0",
+    "typeorm": "0.3.20"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "typescript": "^5.4.5"
+  }
+}

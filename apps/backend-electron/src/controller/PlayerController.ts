@@ -1,6 +1,6 @@
 import { provide } from "@inversifyjs/binding-decorators";
-import type { Controller } from "@mediago/shared/common";
-import { handle, TYPES } from "@mediago/shared/node";
+import type { Controller } from "@mediago/shared-common";
+import { handle, TYPES } from "@mediago/shared-node";
 import { inject, injectable } from "inversify";
 import PlayerWindow from "../windows/PlayerWindow";
 

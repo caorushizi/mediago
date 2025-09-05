@@ -25,7 +25,9 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "@mediago/shared": "workspace:*"
+    "@mediago/shared": "workspace:*",
+    "@mediago/shared-common": "workspace:*",
+    "@mediago/shared-node": "workspace:*"
   },
   "peerDependencies": {
     "electron": ">=28.0.0"

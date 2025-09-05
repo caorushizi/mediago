@@ -1,5 +1,5 @@
-import { i18n } from "@mediago/shared/common";
-import type { RunnerOptions } from "@mediago/shared/node";
+import { i18n } from "@mediago/shared-common";
+import type { RunnerOptions } from "@mediago/shared-node";
 import * as pty from "node-pty";
 import stripAnsi from "strip-ansi";
 

@@ -118,6 +118,12 @@ importers:
       '@mediago/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@mediago/shared-common':
+        specifier: workspace:*
+        version: link:../../packages/shared-common
+      '@mediago/shared-node':
+        specifier: workspace:*
+        version: link:../../packages/shared-node
       axios:
         specifier: ^1.7.2
         version: 1.11.0
@@ -293,6 +299,12 @@ importers:
       '@mediago/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@mediago/shared-common':
+        specifier: workspace:*
+        version: link:../../packages/shared-common
+      '@mediago/shared-node':
+        specifier: workspace:*
+        version: link:../../packages/shared-node
       axios:
         specifier: ^1.7.2
         version: 1.11.0
@@ -462,6 +474,12 @@ importers:
       '@mediago/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@mediago/shared-common':
+        specifier: workspace:*
+        version: link:../../packages/shared-common
+      '@mediago/shared-node':
+        specifier: workspace:*
+        version: link:../../packages/shared-node
       '@radix-ui/react-checkbox':
         specifier: ^1.1.1
         version: 1.3.3(@types/react-dom@18.3.7(@types/react@18.3.24))(@types/react@18.3.24)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -696,6 +714,12 @@ importers:
       '@mediago/shared':
         specifier: workspace:*
         version: link:../shared
+      '@mediago/shared-common':
+        specifier: workspace:*
+        version: link:../shared-common
+      '@mediago/shared-node':
+        specifier: workspace:*
+        version: link:../shared-node
     devDependencies:
       '@types/node':
         specifier: ^20.12.12
@@ -715,6 +739,9 @@ importers:
 
   packages/extension:
     dependencies:
+      '@mediago/shared-common':
+        specifier: workspace:*
+        version: link:../shared-common
       jquery:
         specifier: ^3.7.1
         version: 3.7.1
@@ -765,6 +792,59 @@ importers:
       '@types/node':
         specifier: ^20.12.12
         version: 20.19.11
+
+  packages/shared-browser:
+    devDependencies:
+      '@types/node':
+        specifier: ^20.12.12
+        version: 20.19.11
+      typescript:
+        specifier: ^5.4.5
+        version: 5.4.5
+
+  packages/shared-common:
+    dependencies:
+      i18next:
+        specifier: ^23.11.5
+        version: 23.16.8
+    devDependencies:
+      '@types/node':
+        specifier: ^20.12.12
+        version: 20.19.11
+      typescript:
+        specifier: ^5.4.5
+        version: 5.4.5
+
+  packages/shared-node:
+    dependencies:
+      '@inversifyjs/binding-decorators':
+        specifier: ^1.1.3
+        version: 1.1.3(inversify@7.9.1(reflect-metadata@0.2.2))(reflect-metadata@0.2.2)
+      '@mediago/shared':
+        specifier: workspace:*
+        version: link:../shared
+      '@mediago/shared-common':
+        specifier: workspace:*
+        version: link:../shared-common
+      glob:
+        specifier: ^10.4.5
+        version: 10.4.5
+      inversify:
+        specifier: ^7.9.1
+        version: 7.9.1(reflect-metadata@0.2.2)
+      strip-ansi:
+        specifier: ^7.1.0
+        version: 7.1.0
+      typeorm:
+        specifier: 0.3.20
+        version: 0.3.20(better-sqlite3@9.6.0)
+    devDependencies:
+      '@types/node':
+        specifier: ^20.12.12
+        version: 20.19.11
+      typescript:
+        specifier: ^5.4.5
+        version: 5.4.5
 
 packages:
 

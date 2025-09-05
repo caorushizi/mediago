@@ -1,6 +1,6 @@
 import EventEmitter from "node:events";
 import { provide } from "@inversifyjs/binding-decorators";
-import { DownloadType } from "@mediago/shared/common";
+import { DownloadType } from "@mediago/shared-common";
 import { type OnSendHeadersListenerDetails, session } from "electron";
 import { inject, injectable } from "inversify";
 import { formatHeaders, PERSIST_WEBVIEW, PRIVACY_WEBVIEW, urlCache } from "../helper/index";

@@ -5,8 +5,8 @@ import type {
   DownloadItemPagination,
   ElectronApi,
   VideoResponse,
-} from "@mediago/shared/common";
-import type { AppStore, BrowserStore, Conversion, EnvPath, Favorite, Video } from "@mediago/shared/node";
+} from "@mediago/shared-common";
+import type { AppStore, BrowserStore, Conversion, EnvPath, Favorite, Video } from "@mediago/shared-node";
 import { shell } from "electron/common";
 import { contextBridge, ipcRenderer } from "electron/renderer";
 

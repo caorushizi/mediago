@@ -1,4 +1,4 @@
-import type { DownloadItem } from "@mediago/shared/common";
+import type { DownloadItem } from "@mediago/shared-common";
 import { nanoid } from "nanoid";
 
 const eventMap = new Map();

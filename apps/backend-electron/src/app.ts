@@ -1,7 +1,7 @@
 import path from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
-import { DownloadStatus, i18n } from "@mediago/shared/common";
-import { DownloaderService, TaskQueueService, TypeORM, VideoRepository } from "@mediago/shared/node";
+import { DownloadStatus, i18n } from "@mediago/shared-common";
+import { DownloaderService, TaskQueueService, TypeORM, VideoRepository } from "@mediago/shared-node";
 import { app, BrowserWindow, type Event, Menu, nativeImage, nativeTheme, Tray } from "electron";
 import { inject, injectable } from "inversify";
 import TrayIcon from "../assets/tray-icon.png";

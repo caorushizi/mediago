@@ -1,5 +1,5 @@
-import type { Conversion, Favorite, Video } from "../../node/dao/entity/index";
-import type { AppStore, BrowserStore, EnvPath, Rectangle } from "../../node/types/index";
+import type { Conversion, Favorite, Video } from "./entities";
+import type { AppStore, BrowserStore, EnvPath, Rectangle } from "./node";
 import type { VideoResponse } from "../index";
 import type { ConversionPagination, ConversionResponse, DownloadItem, DownloadItemPagination } from "./index";
 

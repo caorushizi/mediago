@@ -1,4 +1,4 @@
-import type { Conversion, Video } from "../../node/dao/entity/index";
+import type { Conversion, Video } from "./entities";
 
 export type { ElectronApi } from "./electronApi";
 

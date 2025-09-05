@@ -1,8 +1,8 @@
 import { provide } from "@inversifyjs/binding-decorators";
 import { inject, injectable } from "inversify";
-import { i18n } from "../../../common/index.js";
+import { i18n } from "@mediago/shared-common";
 import TypeORM from "../../vendor/TypeORM";
-import { Favorite } from "../entity/Favorite.js";
+import { Favorite } from "../entity/Favorite";
 
 @injectable()
 @provide()
