@@ -1,6 +1,6 @@
 import { provide } from "@inversifyjs/binding-decorators";
-import { MEDIAGO_EVENT, MEDIAGO_METHOD, type Controller } from "@mediago/shared/common";
-import { TYPES } from "@mediago/shared/node";
+import { MEDIAGO_EVENT, MEDIAGO_METHOD, type Controller } from "@mediago/shared-common";
+import { TYPES } from "@mediago/shared-node";
 import { ipcMain } from "electron";
 import { inject, injectable, multiInject } from "inversify";
 import { error, success } from "../helper/index";

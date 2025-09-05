@@ -1,6 +1,6 @@
 import { provide } from "@inversifyjs/binding-decorators";
-import { type Controller, i18n } from "@mediago/shared/common";
-import { handle, TYPES } from "@mediago/shared/node";
+import { type Controller, i18n } from "@mediago/shared-common";
+import { handle, TYPES } from "@mediago/shared-node";
 import { type IpcMainEvent, Menu, type MenuItem, type MenuItemConstructorOptions } from "electron";
 import { inject, injectable } from "inversify";
 import { SniffingHelper } from "../services/SniffingHelperService";

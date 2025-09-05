@@ -1,7 +1,7 @@
 import { provide } from "@inversifyjs/binding-decorators";
-import type { Controller, ConversionPagination } from "@mediago/shared/common";
-import { ConversionService, handle, TYPES } from "@mediago/shared/node";
-import type { Conversion } from "@mediago/shared/node";
+import type { Controller, ConversionPagination } from "@mediago/shared-common";
+import { ConversionService, handle, TYPES } from "@mediago/shared-node";
+import type { Conversion } from "@mediago/shared-node";
 import type { IpcMainEvent } from "electron/main";
 import { inject, injectable } from "inversify";
 

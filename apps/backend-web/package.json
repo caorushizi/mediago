@@ -55,6 +55,8 @@
     "@koa/cors": "^5.0.0",
     "@koa/router": "^12.0.1",
     "@mediago/shared": "workspace:*",
+    "@mediago/shared-common": "workspace:*",
+    "@mediago/shared-node": "workspace:*",
     "axios": "^1.7.2",
     "better-sqlite3": "^9.3.0",
     "cheerio": "1.0.0-rc.12",

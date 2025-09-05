@@ -4,8 +4,8 @@ import {
   type DownloadItem,
   type DownloadItemPagination,
   type ListPagination,
-} from "@mediago/shared/common";
-import { DownloadManagementService, handle, TYPES } from "@mediago/shared/node";
+} from "@mediago/shared-common";
+import { DownloadManagementService, handle, TYPES } from "@mediago/shared-node";
 import type { IpcMainEvent } from "electron/main";
 import { inject, injectable } from "inversify";
 import { videoPattern } from "../helper/index";

@@ -1,6 +1,6 @@
 import path from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
-import { type Controller, DownloadStatus, i18n } from "@mediago/shared/common";
+import { type Controller, DownloadStatus, i18n } from "@mediago/shared-common";
 import {
   type AppStore,
   ConversionRepository,
@@ -10,7 +10,7 @@ import {
   FavoriteManagementService,
   handle,
   TYPES,
-} from "@mediago/shared/node";
+} from "@mediago/shared-node";
 import axios from "axios";
 import {
   clipboard,

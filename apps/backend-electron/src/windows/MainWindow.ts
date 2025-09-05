@@ -1,7 +1,7 @@
 import { resolve } from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
-import { type DownloadProgress, DownloadStatus, i18n } from "@mediago/shared/common";
-import { TaskQueueService, TYPES, VideoRepository } from "@mediago/shared/node";
+import { type DownloadProgress, DownloadStatus, i18n } from "@mediago/shared-common";
+import { TaskQueueService, TYPES, VideoRepository } from "@mediago/shared-node";
 import { app, Menu, Notification } from "electron";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";

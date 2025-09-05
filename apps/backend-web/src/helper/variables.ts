@@ -1,7 +1,7 @@
 import os from "node:os";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { DownloadType } from "@mediago/shared/common";
+import { DownloadType } from "@mediago/shared-common";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
