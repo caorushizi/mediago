@@ -14,13 +14,7 @@ import { getFileName, tdApp } from "@/utils";
 
 const Converter = () => {
   const { t } = useTranslation();
-  const {
-    selectFile,
-    getConversions,
-    addConversion,
-    convertToAudio,
-    deleteConversion,
-  } = useElectron();
+  const { selectFile, getConversions, addConversion, convertToAudio, deleteConversion } = useElectron();
   const { message } = App.useApp();
   const [converting, setConverting] = useState<Record<number, boolean>>({});
 
@@ -34,7 +28,7 @@ const Converter = () => {
     {
       defaultPageSize: 50,
       refreshDeps: [],
-    }
+    },
   );
 
   const onClickConvertToAudio = useMemoizedFn(async (item: Conversion) => {
@@ -65,18 +59,10 @@ const Converter = () => {
   const renderActionButtons = useMemoizedFn((item: Conversion): ReactNode => {
     // Download successfully
     return [
-      <div
-        key="convert"
-        title={t("convertToAudio")}
-        onClick={() => onClickConvertToAudio(item)}
-      >
+      <div key="convert" title={t("convertToAudio")} onClick={() => onClickConvertToAudio(item)}>
         <IconButton icon={<SyncOutlined spin={converting[item.id]} />} />
       </div>,
-      <div
-        key="delete"
-        title={t("delete")}
-        onClick={() => onDeleteConversion(item.id)}
-      >
+      <div key="delete" title={t("delete")} onClick={() => onDeleteConversion(item.id)}>
         <IconButton icon={<DeleteOutlined />} />
       </div>,
     ];
@@ -102,17 +88,10 @@ const Converter = () => {
         {data && data.list.length ? (
           data.list.map((item) => {
             return (
-              <div
-                key={item.id}
-                className="flex flex-1 flex-col gap-3 rounded-lg bg-[#FAFCFF] p-3 dark:bg-[#27292F]"
-              >
+              <div key={item.id} className="flex flex-1 flex-col gap-3 rounded-lg bg-[#FAFCFF] p-3 dark:bg-[#27292F]">
                 <div className="flex flex-row items-center justify-between">
-                  <div className="text-sm text-[#343434] dark:text-[#B4B4B4]">
-                    {item.name}
-                  </div>
-                  <div className="flex flex-row gap-3">
-                    {renderActionButtons(item)}
-                  </div>
+                  <div className="text-sm text-[#343434] dark:text-[#B4B4B4]">{item.name}</div>
+                  <div className="flex flex-row gap-3">{renderActionButtons(item)}</div>
                 </div>
                 <div className="text-xs text-[#AAB5CB]">{item.path}</div>
               </div>

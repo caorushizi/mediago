@@ -1,10 +1,8 @@
 import { provide } from "@inversifyjs/binding-decorators";
 import type { Controller } from "@mediago/shared/common";
-import { FavoriteRepository, TYPES } from "@mediago/shared/node";
+import { type Favorite, FavoriteManagementService, handle, TYPES } from "@mediago/shared/node";
 import axios from "axios";
 import { inject, injectable } from "inversify";
-import type { Context } from "koa";
-import { handle } from "../helper/index";
 import Logger from "../vendor/Logger";
 import SocketIO from "../vendor/SocketIO";
 import StoreService from "../vendor/Store";
@@ -13,8 +11,8 @@ import StoreService from "../vendor/Store";
 @provide(TYPES.Controller)
 export default class HomeController implements Controller {
   constructor(
-    @inject(FavoriteRepository)
-    private readonly favoriteRepository: FavoriteRepository,
+    @inject(TYPES.FavoriteManagementService)
+    private readonly favoriteService: FavoriteManagementService,
     @inject(Logger)
     private readonly logger: Logger,
     @inject(StoreService)
@@ -30,16 +28,14 @@ export default class HomeController implements Controller {
   }
 
   @handle("set-app-store")
-  async setAppStore(ctx: Context) {
-    const params = ctx.request.body as { key: string; val: any };
+  async setAppStore(params: { key: string; val: any }) {
     this.store.set(params.key, params.val);
     this.logger.info("set app store");
     return false;
   }
 
   @handle("socket-test")
-  async socketTest(ctx: Context) {
-    const { message } = ctx.request.body as { message: string };
+  async socketTest({ message }: { message: string }) {
     this.logger.info(message);
 
     this.socket.io.emit("socket-test", message);
@@ -47,10 +43,8 @@ export default class HomeController implements Controller {
   }
 
   @handle("get-page-title")
-  async getPageTitle(ctx: Context) {
+  async getPageTitle({ url }: { url: string }) {
     try {
-      const { url } = ctx.request.body as { url: string };
-
       const response = await axios.get(url, {
         timeout: 10000,
         maxRedirects: 5,
@@ -83,5 +77,30 @@ export default class HomeController implements Controller {
       console.error("Error fetching page title:", error);
       return { data: "无标题" };
     }
+  }
+
+  @handle("get-favorites")
+  async getFavorites() {
+    return this.favoriteService.getFavorites();
+  }
+
+  @handle("add-favorite")
+  async addFavorite(favorite: Favorite) {
+    return this.favoriteService.addFavorite(favorite);
+  }
+
+  @handle("remove-favorite")
+  async removeFavorite({ id }: { id: number }) {
+    return this.favoriteService.removeFavorite(id);
+  }
+
+  @handle("export-favorites")
+  async exportFavorites() {
+    return this.favoriteService.exportFavorites();
+  }
+
+  @handle("import-favorites")
+  async importFavorites(favorites: any[]) {
+    await this.favoriteService.importFavorites(favorites);
   }
 }
