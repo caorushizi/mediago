@@ -17,8 +17,7 @@ export interface ElectronApi {
   onSelectDownloadDir(): Promise<string>;
   setAppStore(key: keyof AppStore, val: AppStore[keyof AppStore]): Promise<void>;
   openDir(dir?: string): Promise<void>;
-  addDownloadItem(video: Omit<DownloadItem, "id">): Promise<Video>;
-  addDownloadItems(videos: Omit<DownloadItem, "id">[]): Promise<Video[]>;
+  addDownloadItems(videos: Omit<DownloadItem, "id">[], startDownload?: boolean): Promise<Video[]>;
   getDownloadItems(p: DownloadItemPagination): Promise<VideoResponse>;
   startDownload(vid: number): Promise<void>;
   openUrl(url: string): Promise<void>;
@@ -37,11 +36,8 @@ export interface ElectronApi {
   webviewHide(): Promise<void>;
   webviewShow(): Promise<void>;
   webviewUrlContextMenu(): Promise<void>;
-  downloadNow(video: Omit<DownloadItem, "id">): Promise<void>;
-  downloadItemsNow(videos: Omit<DownloadItem, "id">[]): Promise<void>;
-  editDownloadNow(video: DownloadItem): Promise<void>;
   combineToHomePage(store: BrowserStore): Promise<void>;
-  editDownloadItem(video: DownloadItem): Promise<void>;
+  editDownloadItem(video: DownloadItem, startDownload?: boolean): Promise<void>;
   getLocalIP(): Promise<string>;
   openBrowser(url: string): Promise<void>;
   selectFile(): Promise<string>;

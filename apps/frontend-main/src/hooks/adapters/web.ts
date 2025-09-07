@@ -57,11 +57,8 @@ export const webAdapter: ElectronApi = {
   openDir: async () => {
     return defaultResp;
   },
-  addDownloadItem: async (item: Omit<DownloadItem, "id">) => {
-    return api.post("add-download-item", item);
-  },
-  addDownloadItems: async (items: Omit<DownloadItem, "id">[]) => {
-    return api.post("add-download-items", items);
+  addDownloadItems: async (items: Omit<DownloadItem, "id">[], startDownload?: boolean) => {
+    return api.post("add-download-items", { videos: items, startDownload });
   },
   getDownloadItems: async (p: DownloadItemPagination) => {
     return api.post("get-download-items", p);
@@ -105,20 +102,11 @@ export const webAdapter: ElectronApi = {
   webviewUrlContextMenu: async () => {
     return defaultResp;
   },
-  downloadNow: async (video: Omit<DownloadItem, "id">) => {
-    return api.post("download-now", video);
-  },
-  downloadItemsNow: async (videos: Omit<DownloadItem, "id">[]) => {
-    return api.post("download-items-now", videos);
-  },
-  editDownloadNow: async (video: DownloadItem) => {
-    return api.post("edit-download-now", video);
-  },
   combineToHomePage: async () => {
     return defaultResp;
   },
-  editDownloadItem: async (video: DownloadItem) => {
-    return api.post("edit-download-item", video);
+  editDownloadItem: async (video: DownloadItem, startDownload?: boolean) => {
+    return api.post("edit-download-item", { video, startDownload });
   },
   getLocalIP: async () => {
     return defaultResp;

@@ -33,54 +33,40 @@ export default class DownloadController implements Controller {
     this.webviewService.sendToWindow("show-download-dialog", data, image?.toDataURL());
   }
 
-  @handle("add-download-item")
-  async addDownloadItem(e: IpcMainEvent, video: Omit<DownloadItem, "id">) {
-    const item = await this.downloadService.addDownloadItem(video);
-    // This sends a message to the page notifying it of the update
-    this.mainWindow.send("download-item-notifier", item);
-    return item;
-  }
 
   @handle("add-download-items")
-  async addDownloadItems(e: IpcMainEvent, videos: Omit<DownloadItem, "id">[]) {
+  async addDownloadItems(e: IpcMainEvent, videos: Omit<DownloadItem, "id">[], startDownload?: boolean) {
     const items = await this.downloadService.addDownloadItems(videos);
     // This sends a message to the page notifying it of the update
     this.mainWindow.send("download-item-notifier", items);
+    
+    // Start downloading immediately if requested
+    if (startDownload) {
+      const local = this.store.get("local");
+      const deleteSegments = this.store.get("deleteSegments");
+      items.forEach((item) => {
+        this.downloadService.startDownload(item.id, local, deleteSegments);
+      });
+    }
+    
     return items;
   }
 
   @handle("edit-download-item")
-  async editDownloadItem(e: IpcMainEvent, video: DownloadItem) {
+  async editDownloadItem(e: IpcMainEvent, video: DownloadItem, startDownload?: boolean) {
     const item = await this.downloadService.editDownloadItem(video);
+    
+    // Start downloading immediately if requested
+    if (startDownload) {
+      const local = this.store.get("local");
+      const deleteSegments = this.store.get("deleteSegments");
+      await this.downloadService.startDownload(item.id, local, deleteSegments);
+    }
+    
     return item;
   }
 
-  @handle("edit-download-now")
-  async editDownloadNow(e: IpcMainEvent, video: DownloadItem) {
-    const item = await this.editDownloadItem(e, video);
-    await this.startDownload(e, item.id);
-    return item;
-  }
 
-  @handle("download-now")
-  async downloadNow(e: IpcMainEvent, video: Omit<DownloadItem, "id">) {
-    // Add download
-    const item = await this.addDownloadItem(e, video);
-    // Start downloading
-    await this.startDownload(e, item.id);
-    return item;
-  }
-
-  @handle("download-items-now")
-  async downloadItemsNow(e: IpcMainEvent, videos: Omit<DownloadItem, "id">[]) {
-    // Add download
-    const items = await this.addDownloadItems(e, videos);
-    // Start downloading
-    items.forEach((item) => {
-      this.startDownload(e, item.id);
-    });
-    return items;
-  }
 
   @handle("get-download-items")
   async getDownloadItems(e: IpcMainEvent, pagination: DownloadItemPagination): Promise<ListPagination> {

@@ -28,10 +28,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     getDownloadItems,
     openDir,
     showBrowserWindow,
-    addDownloadItem,
     addDownloadItems,
-    downloadItemsNow,
-    downloadNow,
     getLocalIP,
     getPageTitle,
     addIpcListener,
@@ -88,8 +85,9 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
           url,
           name,
           headers,
+          folder: "",
         };
-        downloadNow(item);
+        addDownloadItems([item], true);
       } else {
         const item: DownloadFormType = {
           batch: false,
@@ -156,11 +154,12 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
 
       if (isDocker) {
         const { dockerUrl } = appStore;
-        await axios.post(dockerUrl + "/api/add-download-items", items);
-      } else if (now) {
-        await downloadItemsNow(items);
+        await axios.post(dockerUrl + "/api/add-download-items", { 
+          videos: items, 
+          startDownload: now 
+        });
       } else {
-        await addDownloadItems(items);
+        await addDownloadItems(items, now);
       }
     } else {
       let pageTitle = "";
@@ -177,11 +176,12 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       };
       if (isDocker) {
         const { dockerUrl } = appStore;
-        await axios.post(dockerUrl + "/api/add-download-item", item);
-      } else if (now) {
-        await downloadNow(item);
+        await axios.post(dockerUrl + "/api/add-download-items", { 
+          videos: [item], 
+          startDownload: now 
+        });
       } else {
-        await addDownloadItem(item);
+        await addDownloadItems([item], now);
       }
     }
 

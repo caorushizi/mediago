@@ -43,7 +43,6 @@ export function DownloadList({ data, filter, refresh, loading, pagination }: Pro
     onDownloadListContextMenu,
     deleteDownloadItem,
     editDownloadItem,
-    editDownloadNow,
   } = useElectron();
   const { message } = App.useApp();
   const { t } = useTranslation();
@@ -313,11 +312,7 @@ export function DownloadList({ data, filter, refresh, loading, pagination }: Pro
       folder,
     };
 
-    if (now) {
-      await editDownloadNow(item);
-    } else {
-      await editDownloadItem(item);
-    }
+    await editDownloadItem(item, now);
 
     refresh();
     return true;
