@@ -13,7 +13,7 @@ import { BrowserStatus, browserStoreSelector, PageMode, setBrowserSelector, useB
 import { generateUrl, randomName } from "@/utils";
 import { BrowserViewPanel } from "./BrowserViewPanel";
 export function BrowserView() {
-  const { webviewLoadURL, addIpcListener, removeIpcListener, webviewGoHome, downloadNow, addDownloadItem } =
+  const { webviewLoadURL, addIpcListener, removeIpcListener, webviewGoHome, addDownloadItems } =
     useElectron();
   const downloadForm = useRef<DownloadFormRef>(null);
   const store = useBrowserStore(useShallow(browserStoreSelector));
@@ -66,7 +66,7 @@ export function BrowserView() {
 
   const confirmDownload = useMemoizedFn(async (now?: boolean, isDocker?: boolean) => {
     try {
-      const { name = "", url, headers, type, folder } = downloadForm.current.getFieldsValue();
+      const { name = "", url = "", headers = "", type, folder = "" } = downloadForm.current.getFieldsValue();
       const item = {
         name: name || randomName(),
         url,
@@ -75,14 +75,13 @@ export function BrowserView() {
         folder,
       };
 
-      if (now) {
-        if (isDocker) {
-          await axios.post(dockerUrl + "/api/add-download-item", item);
-        } else {
-          await downloadNow(item);
-        }
+      if (isDocker) {
+        await axios.post(dockerUrl + "/api/add-download-items", { 
+          videos: [item], 
+          startDownload: now 
+        });
       } else {
-        await addDownloadItem(item);
+        await addDownloadItems([item], now);
       }
 
       return true;
