@@ -55,11 +55,8 @@ const electronApi: ElectronApi = {
     if (!dir) return;
     return ipcRenderer.invoke("open-dir", dir);
   },
-  addDownloadItem(video: Omit<DownloadItem, "id">): Promise<Video> {
-    return ipcRenderer.invoke("add-download-item", video);
-  },
-  addDownloadItems(videos: Omit<DownloadItem, "id">[]): Promise<Video[]> {
-    return ipcRenderer.invoke("add-download-items", videos);
+  addDownloadItems(videos: Omit<DownloadItem, "id">[], startDownload?: boolean): Promise<Video[]> {
+    return ipcRenderer.invoke("add-download-items", videos, startDownload);
   },
   getDownloadItems(p: DownloadItemPagination): Promise<VideoResponse> {
     return ipcRenderer.invoke("get-download-items", p);
@@ -108,20 +105,11 @@ const electronApi: ElectronApi = {
   webviewUrlContextMenu(): Promise<void> {
     return ipcRenderer.invoke("webview-url-contextmenu");
   },
-  downloadNow(video: Omit<DownloadItem, "id">): Promise<void> {
-    return ipcRenderer.invoke("download-now", video);
-  },
-  downloadItemsNow(videos: Omit<DownloadItem, "id">[]): Promise<void> {
-    return ipcRenderer.invoke("download-items-now", videos);
-  },
-  editDownloadNow(video: DownloadItem): Promise<void> {
-    return ipcRenderer.invoke("edit-download-now", video);
-  },
   combineToHomePage(store: BrowserStore): Promise<void> {
     return ipcRenderer.invoke("combine-to-home-page", store);
   },
-  editDownloadItem(video: DownloadItem): Promise<void> {
-    return ipcRenderer.invoke("edit-download-item", video);
+  editDownloadItem(video: DownloadItem, startDownload?: boolean): Promise<void> {
+    return ipcRenderer.invoke("edit-download-item", video, startDownload);
   },
   getLocalIP(): Promise<string> {
     return ipcRenderer.invoke("get-local-ip");

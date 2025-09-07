@@ -14,7 +14,7 @@ export function BrowserViewPanel() {
   const { deleteSource, clearSources } = useBrowserStore(useShallow(setBrowserSelector));
   const { t } = useTranslation();
   const { showDownloadDialog } = useElectron();
-  const { downloadNow } = useElectron();
+  const { addDownloadItems } = useElectron();
   const { message } = App.useApp();
 
   const handleClear = useMemoizedFn(() => {
@@ -28,8 +28,9 @@ export function BrowserViewPanel() {
         name: item.name,
         headers: item.headers,
         type: item.type,
+        folder: "",
       };
-      await downloadNow(downloadItem);
+      await addDownloadItems([downloadItem], true);
     } catch (e) {
       message.error((e as any).message);
     }
