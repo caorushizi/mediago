@@ -107,7 +107,7 @@ export default class VideoRepository {
         status: filterCondition,
       },
       order: {
-        createdDate: "ASC",
+        createdDate: "DESC",
       },
       skip: (current - 1) * pageSize,
       take: pageSize,
