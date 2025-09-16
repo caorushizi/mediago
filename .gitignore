@@ -7,3 +7,4 @@ node_modules
 log
 .turbo
 .claude
+.store
