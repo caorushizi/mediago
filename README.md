@@ -86,7 +86,7 @@ docker run -d --name mediago -p 8899:8899 -v mediago-data:/root/mediago registry
 
 ### 软件截图
 
-![首页](https://static.ziying.site/images/home.png)
+![首页](./images/home.png)
 
 ### 重要更新
 
@@ -110,13 +110,13 @@ docker run -d --name mediago -p 8899:8899 -v mediago-data:/root/mediago registry
 
 ## 软件截图
 
-![首页](https://static.ziying.site/images/home.png)
+![首页](./images/home.png)
 
-![首页-dark](https://static.ziying.site/images/home-dark.png)
+![首页-dark](./images/home-dark.png)
 
-![设置页面](https://static.ziying.site/images/settings.png)
+![设置页面](./images/settings.png)
 
-![资源提取](https://static.ziying.site/images/browser.png)
+![资源提取](./images/browser.png)
 
 ## 技术栈
 
