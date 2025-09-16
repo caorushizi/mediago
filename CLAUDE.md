@@ -17,14 +17,18 @@ This is a monorepo using **Turborepo + pnpm workspaces** with the following stru
 ```
 mediago/
 ├── apps/                    # Applications
-│   ├── electron/           # Electron main process (Node.js backend for desktop app)
-│   ├── frontend/           # Frontend UI (React + Vite, used for both Electron renderer and web)
-│   ├── webapi/             # Standalone web server (Koa.js, for Docker/web deployments)
-│   ├── mobile/             # Mobile-specific components
-│   └── plugin/             # Browser plugin for resource detection
+│   ├── backend-electron/   # Electron main process (Node.js backend for desktop app)
+│   ├── frontend-main/      # Frontend UI (React + Vite, used for both Electron renderer and web)
+│   ├── backend-web/        # Standalone web server (Koa.js, for Docker/web deployments)
+│   └── frontend-mobile/    # Mobile-specific components
 └── packages/               # Shared packages
     ├── shared/             # Shared utilities and types across apps
-    └── config/             # Shared configuration (tsconfig, build configs)
+    ├── shared-common/      # Common utilities for all platforms
+    ├── shared-node/        # Node.js specific utilities
+    ├── shared-browser/     # Browser-specific utilities
+    ├── config/             # Shared configuration (tsconfig, build configs)
+    ├── electron-preload/   # Electron preload scripts
+    └── extension/          # Browser extension for resource detection
 ```
 
 ## Key Technologies
@@ -50,26 +54,24 @@ pnpm dev
 # Web-only development
 pnpm dev:web
 
+# Electron-only development
+pnpm dev:electron
+
 # Build all apps (with Turbo caching and parallelization)
 pnpm build
 
 # Individual app builds
-pnpm build:electron  # Electron main process
-pnpm build:renderer  # Frontend (Electron renderer)
-pnpm build:web       # Frontend (web version) 
-pnpm build:backend   # Standalone web server
-pnpm build:plugin    # Browser plugin
-pnpm build:mobile    # Mobile components
+pnpm build:extra       # Build plugin and mobile components
+pnpm build:web-release # Build web version for Docker
 
 # Release builds
 pnpm release         # Build and package Electron app
 pnpm beta           # Build and create beta package
-pnpm build:web-release # Build web version for Docker
+pnpm build:docker   # Build Docker image
 
 # Type checking (across all packages)
 pnpm types          # All packages type checking
-pnpm types:renderer # Frontend package types
-pnpm types:watch    # Watch mode for electron package
+pnpm types:watch    # Watch mode for type checking
 
 # Code quality (powered by Turbo + Biome)
 pnpm lint           # Lint all packages
@@ -102,11 +104,11 @@ All build tasks are managed by Turborepo with intelligent caching and parallel e
 Run commands in specific packages using Turbo filters:
 ```bash
 # Single package
-turbo build --filter=frontend
-turbo dev --filter=electron
+turbo build --filter=frontend-main
+turbo dev --filter=backend-electron
 
 # Multiple packages
-turbo lint --filter=electron --filter=frontend
+turbo lint --filter=backend-electron --filter=frontend-main
 
 # All packages in apps/
 turbo build --filter="apps/*"
@@ -118,18 +120,31 @@ No specific test commands are configured in the root package.json. Check individ
 
 ## Code Style
 
-- **Biome** for unified linting and formatting
+- **Biome** for unified linting and formatting (configured in biome.json)
 - Spell checking with cspell
-- Commitizen for conventional commits
+- Commitizen for conventional commits with emoji support
 - Husky for pre-commit hooks
 - Configuration managed centrally in `packages/config`
 
 ## Architecture Notes
 
 - **App-centric design**: Main applications in `apps/`, shared code in `packages/`
-- **Unified UI**: `frontend` package provides UI for both Electron and web platforms
-- **Independent services**: `webapi` can run standalone in Docker
+- **Unified UI**: `frontend-main` package provides UI for both Electron and web platforms
+- **Independent services**: `backend-web` can run standalone in Docker
 - **Dependency injection**: Uses Inversify across the codebase
 - **Data persistence**: TypeORM with SQLite
 - **Real-time communication**: Socket.io between frontend and backend
 - **Cross-platform**: Electron for desktop, web for browser access
+
+## Build System Details
+
+- **Frontend (Vite)**: Uses React + SWC for fast builds, outputs to different directories based on target (web/electron)
+- **Backend (Gulp + esbuild)**: Custom build pipeline for Node.js backends with TypeScript compilation
+- **Electron**: Complex build process with main/renderer separation and native dependencies
+- **Hot reload**: Development mode supports hot reload for both web and electron targets
+
+## Dependency Management
+
+- **Workspace dependencies**: Uses `workspace:*` protocol for internal package references
+- **Native dependencies**: Special handling for Electron native modules (better-sqlite3, node-pty)
+- **Build dependencies**: Only build dependencies are installed in production (configured in pnpm settings)
