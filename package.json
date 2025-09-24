@@ -25,7 +25,8 @@
     "lint": "turbo lint",
     "lint:fix": "turbo lint:fix",
     "format": "biome format --write .",
-    "lint-staged": "turbo lint-staged"
+    "lint-staged": "turbo lint-staged",
+    "test": "tsx --test tests/router.integration.test.ts"
   },
   "keywords": [],
   "license": "MIT",
