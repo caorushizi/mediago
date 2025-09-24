@@ -1,6 +1,9 @@
 import { provide } from "@inversifyjs/binding-decorators";
-import { AppLanguage, AppTheme } from "@mediago/shared-common";
-import type { AppStore } from "@mediago/shared-node";
+import {
+  appStoreDefaults,
+  appStoreSharedOptions,
+  type AppStore,
+} from "@mediago/shared-node";
 import Conf from "conf";
 import { injectable } from "inversify";
 import { DOWNLOAD_DIR, WORKSPACE } from "../helper/variables";
@@ -10,33 +13,12 @@ import { DOWNLOAD_DIR, WORKSPACE } from "../helper/variables";
 export default class StoreService extends Conf<AppStore> {
   constructor() {
     super({
+      ...appStoreSharedOptions,
       projectName: "config",
       cwd: WORKSPACE,
-      fileExtension: "json",
-      watch: true,
       defaults: {
+        ...appStoreDefaults,
         local: DOWNLOAD_DIR,
-        promptTone: true,
-        proxy: "",
-        useProxy: false,
-        deleteSegments: true,
-        openInNewWindow: false,
-        blockAds: true,
-        theme: AppTheme.System,
-        useExtension: false,
-        isMobile: false,
-        maxRunner: 2,
-        language: AppLanguage.System,
-        showTerminal: false,
-        privacy: false,
-        machineId: "",
-        downloadProxySwitch: false,
-        autoUpgrade: true,
-        allowBeta: false,
-        closeMainWindow: false,
-        audioMuted: true,
-        enableDocker: false,
-        dockerUrl: "",
       },
     });
   }
