@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "electron": ["./src/__mocks__/electron"],
+      "@mediago/shared-node": ["./src/__mocks__/shared-node"],
+      "electron-store": ["./src/__mocks__/electron-store"],
+      "fs-extra": ["./src/__mocks__/fs-extra"],
+      "electron-updater": ["./src/__mocks__/electron-updater"],
+      "node-machine-id": ["./src/__mocks__/node-machine-id"],
+      "electron-is-dev": ["./src/__mocks__/electron-is-dev"]
+    }
+  },
+  "include": ["src/**/*"]
+}
