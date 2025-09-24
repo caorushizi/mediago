@@ -40,6 +40,42 @@ import MainWindow from "../windows/MainWindow";
 export default class HomeController implements Controller {
   private sharedState: Record<string, unknown> = {};
 
+  private readonly appStoreHandlers: Partial<{
+    [K in keyof AppStore]: (value: AppStore[K]) => void | Promise<void>;
+  }> = {
+    useProxy: (value) => {
+      const proxy = this.store.get("proxy");
+      this.webviewService.setProxy(value, proxy);
+    },
+    proxy: (value) => {
+      const useProxy = this.store.get("useProxy");
+      if (useProxy) {
+        this.webviewService.setProxy(true, value);
+      }
+    },
+    blockAds: (value) => {
+      this.webviewService.setBlocking(value);
+    },
+    theme: (value) => {
+      nativeTheme.themeSource = value;
+    },
+    isMobile: (value) => {
+      this.webviewService.setUserAgent(value);
+    },
+    privacy: (value) => {
+      this.webviewService.setDefaultSession(value);
+    },
+    language: async (value) => {
+      await i18n.changeLanguage(value);
+    },
+    allowBeta: (value) => {
+      this.updater.changeAllowBeta(value);
+    },
+    audioMuted: (value) => {
+      this.webviewService.setAudioMuted(value);
+    },
+  };
+
   constructor(
     @inject(ElectronStore)
     private readonly store: ElectronStore,
@@ -138,51 +174,17 @@ export default class HomeController implements Controller {
   }
 
   @handle("set-app-store")
-  async setAppStore(e: IpcMainEvent, key: keyof AppStore, val: any) {
-    // useProxy
-    if (key === "useProxy") {
-      const proxy = this.store.get("proxy");
-      this.webviewService.setProxy(val, proxy);
-    }
-    // proxy
-    if (key === "proxy") {
-      const useProxy = this.store.get("useProxy");
-      useProxy && this.webviewService.setProxy(true, val);
-    }
-    // block
-    if (key === "blockAds") {
-      this.webviewService.setBlocking(val);
-    }
-    // theme
-    if (key === "theme") {
-      nativeTheme.themeSource = val;
-    }
-    // isMobile
-    if (key === "isMobile") {
-      this.webviewService.setUserAgent(val);
-    }
-    // privacy
-    if (key === "privacy") {
-      this.webviewService.setDefaultSession(val);
-    }
-    // language
-    if (key === "language") {
-      i18n.changeLanguage(val);
-    }
-    // allowBeta
-    if (key === "allowBeta") {
-      this.updater.changeAllowBeta(val);
-    }
-    // audio muted mode
-    if (key === "audioMuted") {
-      this.webviewService.setAudioMuted(val);
+  async setAppStore<K extends keyof AppStore>(_e: IpcMainEvent, key: K, val: AppStore[K]) {
+    const handler = this.appStoreHandlers[key];
+    if (handler) {
+      await handler(val);
     }
 
     this.store.set(key, val);
   }
 
   @handle("open-dir")
-  async openDir(e: IpcMainEvent, dir: string) {
+  async openDir(_e: IpcMainEvent, dir: string) {
     await shell.openPath(dir);
   }
 
