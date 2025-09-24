@@ -17,7 +17,6 @@
     "@mediago/shared-common": "workspace:*"
   },
   "devDependencies": {
-    "@mediago/shared": "workspace:*",
     "@types/jquery": "^3.5.30",
     "@types/node": "^20.12.12",
     "typescript": "^5.4.5",

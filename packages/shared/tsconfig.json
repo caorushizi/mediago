@@ -1,4 +1,0 @@
-{
-  "extends": "../config/tsconfig.node.json",
-  "include": ["src/common", "src/browser"]
-}

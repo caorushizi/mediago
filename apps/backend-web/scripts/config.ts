@@ -29,7 +29,7 @@ export function buildOptions(): esbuild.BuildOptions {
     platform: "node",
     plugins: [
       nodeExternalsPlugin({
-        allowList: ["@mediago/shared"],
+        allowList: ["@mediago/shared-common", "@mediago/shared-node"],
       }),
     ],
   };
