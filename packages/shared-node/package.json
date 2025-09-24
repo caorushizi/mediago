@@ -13,7 +13,6 @@
   "packageManager": "pnpm@10.8.1",
   "dependencies": {
     "@inversifyjs/binding-decorators": "^1.1.3",
-    "@mediago/shared": "workspace:*",
     "@mediago/shared-common": "workspace:*",
     "glob": "^10.4.5",
     "inversify": "^7.9.1",
