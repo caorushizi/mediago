@@ -9,6 +9,7 @@ import { ffmpegPath } from "./variables";
 
 export * from "./variables";
 export { fetchWrapper as fetch };
+export { type IpcResponse, success, error } from "./ipcResponse";
 
 export function getLocalIP() {
   const interfaces = os.networkInterfaces();
@@ -64,28 +65,6 @@ export function formatHeaders(headers: Record<string, string>): string {
 }
 
 export const event = new EventEmitter();
-
-export interface IpcResponse {
-  code: number;
-  message: string;
-  data: Record<string, any> | null;
-}
-
-export function success(data: Record<string, any>): IpcResponse {
-  return {
-    code: 0,
-    message: "success",
-    data,
-  };
-}
-
-export function error(message = "fail"): IpcResponse {
-  return {
-    code: -1,
-    message,
-    data: null,
-  };
-}
 
 // Determine whether it is a function of deeplink
 export function isDeeplink(url: string): boolean {

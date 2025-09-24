@@ -1,3 +1,6 @@
+export { registerControllerHandlers } from "./registerControllerHandlers";
+export type { ControllerHandlerBinder, ControllerHandlerRegistration } from "./registerControllerHandlers";
+
 import { MEDIAGO_EVENT, MEDIAGO_METHOD } from "@mediago/shared-common";
 
 export const handle = (route: string) => {
