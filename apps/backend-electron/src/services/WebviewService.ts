@@ -1,8 +1,7 @@
 import { resolve } from "node:path";
 import { ElectronBlocker } from "@ghostery/adblocker-electron";
 import { provide } from "@inversifyjs/binding-decorators";
-import { i18n } from "@mediago/shared-common";
-import { VideoRepository } from "@mediago/shared-node";
+import { VideoRepository, i18n } from "@mediago/shared-node";
 import { type Event, type HandlerDetails, session, WebContentsView } from "electron";
 import isDev from "electron-is-dev";
 import { readFileSync } from "fs-extra";

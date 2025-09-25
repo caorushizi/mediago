@@ -2,7 +2,8 @@ import "reflect-metadata";
 import assert from "node:assert/strict";
 import { afterEach, beforeEach, describe, it } from "node:test";
 import type { AppLanguage } from "@mediago/shared-common";
-import { AppLanguage as LanguageEnum, AppTheme as ThemeEnum, i18n } from "@mediago/shared-common";
+import { AppLanguage as LanguageEnum, AppTheme as ThemeEnum } from "@mediago/shared-common";
+import { i18n } from "@mediago/shared-node";
 import type {
   AppStore,
   ConversionRepository,

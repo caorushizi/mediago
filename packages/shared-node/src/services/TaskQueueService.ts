@@ -1,5 +1,6 @@
 import { provide } from "@inversifyjs/binding-decorators";
-import { type DownloadParams, i18n, type Task } from "@mediago/shared-common";
+import { type DownloadParams, type Task } from "@mediago/shared-common";
+import { i18n } from "../i18n";
 import EventEmitter from "events";
 import { inject, injectable } from "inversify";
 import { downloadSchemaList } from "../config/download";
