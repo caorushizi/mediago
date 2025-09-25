@@ -17,9 +17,9 @@ import {
   SendIcon,
   ShareIcon,
 } from "@/assets/svg";
-import { IconButton } from "@/components/IconButton";
+import { IconButton } from "@/components/icon-button";
 import { OPEN_URL } from "@/const";
-import useElectron from "@/hooks/useElectron";
+import useElectron from "@/hooks/use-electron";
 import { appStoreSelector, setAppStoreSelector, useAppStore } from "@/store/app";
 import { BrowserStatus, browserStoreSelector, PageMode, setBrowserSelector, useBrowserStore } from "@/store/browser";
 import { themeSelector, useSessionStore } from "@/store/session";

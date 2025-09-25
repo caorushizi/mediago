@@ -6,15 +6,15 @@ import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import selectedBg from "@/assets/images/select-item-bg.png";
 import { DownloadIcon, DownloadListIcon, EditIcon, FailedIcon, PauseIcon, TerminalIcon } from "@/assets/svg";
-import { DownloadTag } from "@/components/DownloadTag";
-import { IconButton } from "@/components/IconButton";
+import { DownloadTag } from "@/components/download-tag";
+import { IconButton } from "@/components/icon-button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CONTINUE_DOWNLOAD, DOWNLOAD_NOW, PLAY_VIDEO, RESTART_DOWNLOAD, STOP_DOWNLOAD } from "@/const";
-import useElectron from "@/hooks/useElectron";
+import useElectron from "@/hooks/use-electron";
 import { appStoreSelector, useAppStore } from "@/store/app";
 import { DownloadStatus } from "@/types";
 import { cn, fromatDateTime, tdApp } from "@/utils";
-import { TerminalDrawer } from "./TerminalDrawer";
+import { TerminalDrawer } from "./terminal-drawer";
 
 interface Props {
   item: VideoStat;

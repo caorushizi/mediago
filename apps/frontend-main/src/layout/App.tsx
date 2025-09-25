@@ -3,11 +3,11 @@ import { type FC, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
 import { CHANGE_PAGE } from "@/const";
-import useElectron from "@/hooks/useElectron";
+import useElectron from "@/hooks/use-electron";
 import { setAppStoreSelector, useAppStore } from "@/store/app";
 import { tdApp } from "@/utils";
-import { AppHeader } from "./AppHeader";
-import { AppSideBar } from "./AppSideBar";
+import { AppHeader } from "./app-header";
+import { AppSideBar } from "./app-side-bar";
 
 const App: FC = () => {
   const { getAppStore: ipcGetAppStore } = useElectron();

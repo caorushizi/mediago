@@ -5,11 +5,11 @@ import { App, Empty } from "antd";
 import { produce } from "immer";
 import { type ReactNode, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { IconButton } from "@/components/IconButton";
-import PageContainer from "@/components/PageContainer";
+import { IconButton } from "@/components/icon-button";
+import PageContainer from "@/components/page-container";
 import { Button } from "@/components/ui/button";
 import { ADD_CONVERT_TASK, DELETE_CONVERT, START_CONVERT } from "@/const";
-import useElectron from "@/hooks/useElectron";
+import useElectron from "@/hooks/use-electron";
 import { getFileName, tdApp } from "@/utils";
 
 const Converter = () => {

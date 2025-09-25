@@ -4,7 +4,7 @@ import { Button as AntdButton, App } from "antd";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import { Button } from "@/components/ui/button";
-import useElectron from "@/hooks/useElectron";
+import useElectron from "@/hooks/use-electron";
 import { appStoreSelector, useAppStore } from "@/store/app";
 import { browserStoreSelector, type SourceData, setBrowserSelector, useBrowserStore } from "@/store/browser";
 
