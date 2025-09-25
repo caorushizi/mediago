@@ -1,4 +1,9 @@
-import { ClearOutlined, DownloadOutlined, FolderOpenOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  ClearOutlined,
+  DownloadOutlined,
+  FolderOpenOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import { useMemoizedFn, useRequest } from "ahooks";
 import {
   App,
@@ -16,6 +21,8 @@ import {
   Select,
   Space,
   Switch,
+  Tabs,
+  type TabsProps,
 } from "antd";
 import type React from "react";
 import { type PropsWithChildren, useEffect, useRef, useState } from "react";
@@ -24,31 +31,17 @@ import { useShallow } from "zustand/react/shallow";
 import PageContainer from "@/components/page-container";
 import { CHECK_UPDATE } from "@/const";
 import useElectron from "@/hooks/use-electron";
-import { appStoreSelector, setAppStoreSelector, useAppStore } from "@/store/app";
+import {
+  appStoreSelector,
+  setAppStoreSelector,
+  useAppStore,
+} from "@/store/app";
 import { updateSelector, useSessionStore } from "@/store/session";
 import { AppLanguage, AppTheme } from "@/types";
 import { isWeb, tdApp } from "@/utils";
+import useAPI from "@/hooks/use-api";
 
 const version = import.meta.env.APP_VERSION;
-
-interface GroupWrapperProps extends PropsWithChildren {
-  title: string;
-  hidden?: boolean;
-}
-
-function GroupWrapper({ children, title, hidden }: GroupWrapperProps) {
-  if (hidden) return null;
-
-  return (
-    <div className="rounded-lg bg-white px-3 py-2 dark:bg-[#1F2024]">
-      <div className="mb-5 flex flex-row items-center gap-2">
-        <div className="h-4 w-1 rounded-full bg-[#127AF3]" />
-        {title}
-      </div>
-      {children}
-    </div>
-  );
-}
 
 const SettingPage: React.FC = () => {
   const {
@@ -64,14 +57,16 @@ const SettingPage: React.FC = () => {
     addIpcListener,
     removeIpcListener,
     installUpdate,
-  } = useElectron();
+  } = useAPI();
   const { t } = useTranslation();
   const formRef = useRef<FormInstance<AppStore>>();
   const settings = useAppStore(useShallow(appStoreSelector));
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
   const { data: envPath } = useRequest(getEnvPath);
   const { message } = App.useApp();
-  const { updateAvailable, updateChecking } = useSessionStore(useShallow(updateSelector));
+  const { updateAvailable, updateChecking } = useSessionStore(
+    useShallow(updateSelector)
+  );
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [updateDownloaded, setUpdateDownloaded] = useState(false);
@@ -189,22 +184,18 @@ const SettingPage: React.FC = () => {
     }
   });
 
-  return (
-    <PageContainer title={t("setting")}>
-      <Form<AppStore>
-        ref={formRef}
-        layout="horizontal"
-        labelAlign={"left"}
-        colon={false}
-        initialValues={settings}
-        onValuesChange={onFormValueChange}
-        className="flex flex-col gap-2"
-        labelCol={{ span: 5 }}
-        wrapperCol={{ span: 10 }}
-      >
-        <GroupWrapper title={t("basicSetting")}>
+  const tabItems: TabsProps["items"] = [
+    {
+      key: "1",
+      label: t("basicSetting"),
+      children: (
+        <>
           <Form.Item name="local" label={renderButtonLabel()}>
-            <Input width="xl" disabled placeholder={t("pleaseSelectDownloadDir")} />
+            <Input
+              width="xl"
+              disabled
+              placeholder={t("pleaseSelectDownloadDir")}
+            />
           </Form.Item>
           <Form.Item hidden={isWeb} name="theme" label={t("downloaderTheme")}>
             <Select
@@ -228,27 +219,54 @@ const SettingPage: React.FC = () => {
               allowClear={false}
             />
           </Form.Item>
-          <Form.Item hidden={isWeb} label={t("downloadPrompt")} name="promptTone">
+          <Form.Item
+            hidden={isWeb}
+            label={t("downloadPrompt")}
+            name="promptTone"
+          >
             <Switch />
           </Form.Item>
-          <Form.Item hidden={isWeb} label={t("showTerminal")} name="showTerminal">
+          <Form.Item
+            hidden={isWeb}
+            label={t("showTerminal")}
+            name="showTerminal"
+          >
             <Switch />
           </Form.Item>
-          <Form.Item hidden={isWeb} label={t("autoUpgrade")} tooltip={t("autoUpgradeTooltip")} name="autoUpgrade">
+          <Form.Item
+            hidden={isWeb}
+            label={t("autoUpgrade")}
+            tooltip={t("autoUpgradeTooltip")}
+            name="autoUpgrade"
+          >
             <Switch />
           </Form.Item>
-          <Form.Item hidden={isWeb} label={t("allowBetaVersion")} name="allowBeta">
+          <Form.Item
+            hidden={isWeb}
+            label={t("allowBetaVersion")}
+            name="allowBeta"
+          >
             <Switch />
           </Form.Item>
 
-          <Form.Item hidden={isWeb} label={t("closeMainWindow")} name="closeMainWindow">
+          <Form.Item
+            hidden={isWeb}
+            label={t("closeMainWindow")}
+            name="closeMainWindow"
+          >
             <Radio.Group>
               <Radio value={true}>{t("close")}</Radio>
               <Radio value={false}>{t("minimizeToTray")}</Radio>
             </Radio.Group>
           </Form.Item>
-        </GroupWrapper>
-        <GroupWrapper hidden={isWeb} title={t("browserSetting")}>
+        </>
+      ),
+    },
+    {
+      key: "2",
+      label: t("browserSetting"),
+      children: !isWeb && (
+        <>
           <Form.Item label={t("audioMuted")} name="audioMuted">
             <Switch />
           </Form.Item>
@@ -280,25 +298,48 @@ const SettingPage: React.FC = () => {
           <Form.Item label={t("enterMobileMode")} name="isMobile">
             <Switch />
           </Form.Item>
-          <Form.Item label={t("useImmersiveSniffing")} tooltip={t("immersiveSniffingDescription")} name="useExtension">
+          <Form.Item
+            label={t("useImmersiveSniffing")}
+            tooltip={t("immersiveSniffingDescription")}
+            name="useExtension"
+          >
             <Switch />
           </Form.Item>
-          <Form.Item label={t("privacy")} tooltip={t("privacyTooltip")} name="privacy">
+          <Form.Item
+            label={t("privacy")}
+            tooltip={t("privacyTooltip")}
+            name="privacy"
+          >
             <Switch />
           </Form.Item>
           <Form.Item label={t("moreAction")}>
             <Space>
-              <Button onClick={handleClearWebviewCache} icon={<ClearOutlined />}>
+              <Button
+                onClick={handleClearWebviewCache}
+                icon={<ClearOutlined />}
+              >
                 {t("clearCache")}
               </Button>
-              <Dropdown.Button menu={{ items, onClick: onMenuClick }} onClick={handleExportFavorite}>
+              <Dropdown.Button
+                menu={{ items, onClick: onMenuClick }}
+                onClick={handleExportFavorite}
+              >
                 <DownloadOutlined />
                 {t("exportFavorite")}
               </Dropdown.Button>
             </Space>
           </Form.Item>
-        </GroupWrapper>
-        <GroupWrapper title={t("downloadSetting")}>
+        </>
+      ),
+    },
+    {
+      key: "3",
+      label: t("downloadSetting"),
+      children: (
+        <>
+          <Form.Item name="proxy" label={t("proxySetting")}>
+            <Input width="xl" placeholder={t("pleaseEnterProxy")} />
+          </Form.Item>
           <Form.Item hidden={!isWeb} name="proxy" label={t("proxySetting")}>
             <Input placeholder={t("pleaseEnterProxy")} />
           </Form.Item>
@@ -321,18 +362,53 @@ const SettingPage: React.FC = () => {
           <Form.Item label={t("deleteSegments")} name="deleteSegments">
             <Switch />
           </Form.Item>
-          <Form.Item label={t("maxRunner")} tooltip={t("maxRunnerDescription")} name="maxRunner">
+          <Form.Item
+            label={t("maxRunner")}
+            tooltip={t("maxRunnerDescription")}
+            name="maxRunner"
+          >
             <InputNumber min={1} max={50} precision={0} />
           </Form.Item>
+        </>
+      ),
+    },
+    {
+      key: "4",
+      label: t("dockerSetting"),
+      children: (
+        <>
+          <Form.Item hidden={isWeb} name="dockerUrl" label={t("dockerUrl")}>
+            <Input placeholder={t("pleaseEnterDockerUrl")} />
+          </Form.Item>
+          <Form.Item label={t("enableDocker")} name="enableDocker">
+            <Switch />
+          </Form.Item>
+        </>
+      ),
+    },
+    {
+      key: "5",
+      label: t("moreSettings"),
+      children: (
+        <>
           <Form.Item hidden={isWeb} label={t("moreAction")}>
             <Space>
-              <Button onClick={() => openDir(envPath.workspace)} icon={<FolderOpenOutlined />}>
+              <Button
+                onClick={() => openDir(envPath.workspace)}
+                icon={<FolderOpenOutlined />}
+              >
                 {t("configDir")}
               </Button>
-              <Button onClick={() => openDir(envPath.binPath)} icon={<FolderOpenOutlined />}>
+              <Button
+                onClick={() => openDir(envPath.binPath)}
+                icon={<FolderOpenOutlined />}
+              >
                 {t("binPath")}
               </Button>
-              <Button onClick={() => openDir(settings.local)} icon={<FolderOpenOutlined />}>
+              <Button
+                onClick={() => openDir(settings.local)}
+                icon={<FolderOpenOutlined />}
+              >
                 {t("localDir")}
               </Button>
             </Space>
@@ -349,16 +425,28 @@ const SettingPage: React.FC = () => {
               )}
             </Space>
           </Form.Item>
-        </GroupWrapper>
-        <GroupWrapper title={t("dockerSetting")}>
-          <Form.Item hidden={isWeb} name="dockerUrl" label={t("dockerUrl")}>
-            <Input placeholder={t("pleaseEnterDockerUrl")} />
-          </Form.Item>
-          <Form.Item label={t("enableDocker")} name="enableDocker">
-            <Switch />
-          </Form.Item>
-        </GroupWrapper>
-      </Form>
+        </>
+      ),
+    },
+  ];
+
+  return (
+    <PageContainer title={t("setting")}>
+      <div className="rounded-lg bg-white px-3 py-2 dark:bg-[#1F2024] h-full">
+        <Form<AppStore>
+          ref={formRef}
+          layout="horizontal"
+          labelAlign={"left"}
+          colon={false}
+          initialValues={settings}
+          onValuesChange={onFormValueChange}
+          className="flex flex-col gap-2"
+          // labelCol={{ span: 5 }}
+          wrapperCol={{ span: 10 }}
+        >
+          <Tabs defaultActiveKey="1" items={tabItems} onChange={() => {}} />
+        </Form>
+      </div>
 
       <Modal
         title={t("updateModal")}
@@ -371,7 +459,11 @@ const SettingPage: React.FC = () => {
                   {t("close")}
                 </Button>,
                 updateDownloaded ? (
-                  <Button key="install" type="primary" onClick={handleInstallUpdate}>
+                  <Button
+                    key="install"
+                    type="primary"
+                    onClick={handleInstallUpdate}
+                  >
                     {t("install")}
                   </Button>
                 ) : (
@@ -388,8 +480,14 @@ const SettingPage: React.FC = () => {
         }
       >
         <div className="flex min-h-28 flex-col justify-center">
-          {updateChecking ? t("checkingForUpdates") : updateAvailable ? t("updateAvailable") : t("updateNotAvailable")}
-          {!updateChecking && updateAvailable && <Progress percent={updateDownloaded ? 100 : downloadProgress} />}
+          {updateChecking
+            ? t("checkingForUpdates")
+            : updateAvailable
+            ? t("updateAvailable")
+            : t("updateNotAvailable")}
+          {!updateChecking && updateAvailable && (
+            <Progress percent={updateDownloaded ? 100 : downloadProgress} />
+          )}
         </div>
       </Modal>
     </PageContainer>
