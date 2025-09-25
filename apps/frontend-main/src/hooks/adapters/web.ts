@@ -1,4 +1,19 @@
-import type { ElectronApi } from "@mediago/shared-common";
+import {
+  type AppStore,
+  type DownloadItem,
+  type DownloadItemPagination,
+  type ElectronApi,
+  ADD_DOWNLOAD_ITEMS,
+  DELETE_DOWNLOAD_ITEM,
+  EDIT_DOWNLOAD_ITEM,
+  GET_APP_STORE,
+  GET_DOWNLOAD_ITEMS,
+  GET_PAGE_TITLE,
+  GET_VIDEO_FOLDERS,
+  SET_APP_STORE,
+  START_DOWNLOAD,
+  STOP_DOWNLOAD,
+} from "@mediago/shared-common";
 import { api, getSocket } from "@/utils";
 
 interface IpcListener {
@@ -46,31 +61,31 @@ export const webAdapter: ElectronApi = {
     return defaultResp;
   },
   getAppStore: async () => {
-    return api.post("get-app-store");
+    return api.post(GET_APP_STORE);
   },
   onSelectDownloadDir: async () => {
     return defaultResp;
   },
   setAppStore: async (key: keyof AppStore, val: AppStore[keyof AppStore]) => {
-    return api.post("set-app-store", { key, val });
+    return api.post(SET_APP_STORE, { key, val });
   },
   openDir: async () => {
     return defaultResp;
   },
   addDownloadItems: async (items: Omit<DownloadItem, "id">[], startDownload?: boolean) => {
-    return api.post("add-download-items", { videos: items, startDownload });
+    return api.post(ADD_DOWNLOAD_ITEMS, { videos: items, startDownload });
   },
   getDownloadItems: async (p: DownloadItemPagination) => {
-    return api.post("get-download-items", p);
+    return api.post(GET_DOWNLOAD_ITEMS, p);
   },
   startDownload: async (vid: number) => {
-    return api.post("start-download", { vid });
+    return api.post(START_DOWNLOAD, { vid });
   },
   openUrl: async () => {
     return defaultResp;
   },
   stopDownload: async (id: number) => {
-    return api.post("stop-download", { id });
+    return api.post(STOP_DOWNLOAD, { id });
   },
   onDownloadListContextMenu: async () => {
     return defaultResp;
@@ -79,7 +94,7 @@ export const webAdapter: ElectronApi = {
     return defaultResp;
   },
   deleteDownloadItem: async (id: number) => {
-    return api.post("delete-download-item", { id });
+    return api.post(DELETE_DOWNLOAD_ITEM, { id });
   },
   convertToAudio: async () => {
     return defaultResp;
@@ -106,7 +121,7 @@ export const webAdapter: ElectronApi = {
     return defaultResp;
   },
   editDownloadItem: async (video: DownloadItem, startDownload?: boolean) => {
-    return api.post("edit-download-item", { video, startDownload });
+    return api.post(EDIT_DOWNLOAD_ITEM, { video, startDownload });
   },
   getLocalIP: async () => {
     return defaultResp;
@@ -172,10 +187,10 @@ export const webAdapter: ElectronApi = {
     return defaultResp;
   },
   getVideoFolders: async () => {
-    return api.post("get-video-folders");
+    return api.post(GET_VIDEO_FOLDERS);
   },
   getPageTitle: async (url: string) => {
-    return api.post("get-page-title", { url });
+    return api.post(GET_PAGE_TITLE, { url });
   },
 };
 

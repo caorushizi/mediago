@@ -1,6 +1,7 @@
 import { useMemoizedFn } from "ahooks";
 import { App, Empty, Space, Spin, Splitter } from "antd";
 import axios from "axios";
+import { ADD_DOWNLOAD_ITEMS, SHOW_DOWNLOAD_DIALOG } from "@mediago/shared-common";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
@@ -46,11 +47,11 @@ export function BrowserView() {
       });
     };
 
-    addIpcListener("show-download-dialog", onShowDownloadDialog);
+    addIpcListener(SHOW_DOWNLOAD_DIALOG, onShowDownloadDialog);
     addIpcListener("webview-link-message", onWebviewLinkMessage);
 
     return () => {
-      removeIpcListener("show-download-dialog", onShowDownloadDialog);
+      removeIpcListener(SHOW_DOWNLOAD_DIALOG, onShowDownloadDialog);
       removeIpcListener("webview-link-message", onWebviewLinkMessage);
     };
   }, [store.status]);
@@ -76,9 +77,9 @@ export function BrowserView() {
       };
 
       if (isDocker) {
-        await axios.post(dockerUrl + "/api/add-download-items", { 
-          videos: [item], 
-          startDownload: now 
+        await axios.post(`${dockerUrl}/api/${ADD_DOWNLOAD_ITEMS}`, {
+          videos: [item],
+          startDownload: now,
         });
       } else {
         await addDownloadItems([item], now);

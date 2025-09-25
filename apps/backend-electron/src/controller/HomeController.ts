@@ -1,13 +1,45 @@
 import path from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
-import { type Controller, DownloadStatus, i18n } from "@mediago/shared-common";
+import {
+  type Controller,
+  DownloadStatus,
+  i18n,
+  ADD_FAVORITE,
+  CHECK_UPDATE,
+  COMBINE_TO_HOME_PAGE,
+  CONVERT_TO_AUDIO,
+  EXPORT_DOWNLOAD_LIST,
+  EXPORT_FAVORITES,
+  GET_APP_STORE,
+  GET_DOWNLOAD_LOG,
+  GET_ENV_PATH,
+  GET_FAVORITES,
+  GET_LOCAL_IP,
+  GET_MACHINE_ID,
+  GET_PAGE_TITLE,
+  GET_SHARED_STATE,
+  GET_VIDEO_FOLDERS,
+  IMPORT_FAVORITES,
+  INSTALL_UPDATE,
+  ON_DOWNLOAD_LIST_CONTEXT_MENU,
+  ON_FAVORITE_ITEM_CONTEXT_MENU,
+  OPEN_DIR,
+  OPEN_URL,
+  REMOVE_FAVORITE,
+  SELECT_DOWNLOAD_DIR,
+  SELECT_FILE,
+  SET_APP_STORE,
+  SET_SHARED_STATE,
+  SHOW_BROWSER_WINDOW,
+  START_UPDATE,
+} from "@mediago/shared-common";
 import {
   type AppStore,
   ConversionRepository,
-  DownloadManagementService,
+  type DownloadManagementService,
   type EnvPath,
   type Favorite,
-  FavoriteManagementService,
+  type FavoriteManagementService,
   handle,
   TYPES,
 } from "@mediago/shared-node";
@@ -97,7 +129,7 @@ export default class HomeController implements Controller {
     private readonly updater: ElectronUpdater,
   ) {}
 
-  @handle("get-env-path")
+  @handle(GET_ENV_PATH)
   async getEnvPath(): Promise<EnvPath> {
     return {
       binPath: __bin__,
@@ -108,27 +140,27 @@ export default class HomeController implements Controller {
     };
   }
 
-  @handle("get-favorites")
+  @handle(GET_FAVORITES)
   getFavorites() {
     return this.favoriteService.getFavorites();
   }
 
-  @handle("add-favorite")
+  @handle(ADD_FAVORITE)
   addFavorite(e: IpcMainEvent, favorite: Favorite) {
     return this.favoriteService.addFavorite(favorite);
   }
 
-  @handle("remove-favorite")
+  @handle(REMOVE_FAVORITE)
   removeFavorite(e: IpcMainEvent, id: number): Promise<void> {
     return this.favoriteService.removeFavorite(id);
   }
 
-  @handle("get-app-store")
+  @handle(GET_APP_STORE)
   getAppStore() {
     return this.store.store;
   }
 
-  @handle("on-favorite-item-context-menu")
+  @handle(ON_FAVORITE_ITEM_CONTEXT_MENU)
   async onFavoriteItemContextMenu(e: IpcMainEvent, id: number) {
     const send = (action: string) => {
       this.mainWindow.send("favorite-item-event", {
@@ -156,7 +188,7 @@ export default class HomeController implements Controller {
     menu.popup();
   }
 
-  @handle("select-download-dir")
+  @handle(SELECT_DOWNLOAD_DIR)
   async selectDownloadDir(): Promise<string> {
     const window = this.mainWindow.window;
     if (!window) return Promise.reject(i18n.t("noMainWindow"));
@@ -173,7 +205,7 @@ export default class HomeController implements Controller {
     return "";
   }
 
-  @handle("set-app-store")
+  @handle(SET_APP_STORE)
   async setAppStore<K extends keyof AppStore>(_e: IpcMainEvent, key: K, val: AppStore[K]) {
     const handler = this.appStoreHandlers[key];
     if (handler) {
@@ -183,17 +215,17 @@ export default class HomeController implements Controller {
     this.store.set(key, val);
   }
 
-  @handle("open-dir")
+  @handle(OPEN_DIR)
   async openDir(_e: IpcMainEvent, dir: string) {
     await shell.openPath(dir);
   }
 
-  @handle("open-url")
+  @handle(OPEN_URL)
   async openUrl(e: IpcMainEvent, url: string) {
     await shell.openExternal(url);
   }
 
-  @handle("on-download-list-context-menu")
+  @handle(ON_DOWNLOAD_LIST_CONTEXT_MENU)
   async downloadListContextMenu(e: IpcMainEvent, id: number) {
     const send = (action: string) => {
       this.mainWindow.send("download-item-event", {
@@ -259,7 +291,7 @@ export default class HomeController implements Controller {
     menu.popup();
   }
 
-  @handle("convert-to-audio")
+  @handle(CONVERT_TO_AUDIO)
   async convertToAudio(e: IpcMainEvent, id: number) {
     const conversion = await this.conversionRepository.findConversion(id);
     const local = this.store.get("local");
@@ -275,12 +307,12 @@ export default class HomeController implements Controller {
     }
   }
 
-  @handle("show-browser-window")
+  @handle(SHOW_BROWSER_WINDOW)
   async showBrowserWindow() {
     this.browserWindow.showWindow();
   }
 
-  @handle("combine-to-home-page")
+  @handle(COMBINE_TO_HOME_PAGE)
   async combineToHomePage() {
     // Close browser window
     this.browserWindow.hideWindow();
@@ -288,27 +320,27 @@ export default class HomeController implements Controller {
     this.store.set("openInNewWindow", false);
   }
 
-  @handle("get-local-ip")
+  @handle(GET_LOCAL_IP)
   async getLocalIp() {
     return getLocalIP();
   }
 
-  @handle("get-shared-state")
+  @handle(GET_SHARED_STATE)
   async getSharedState() {
     return this.sharedState;
   }
 
-  @handle("set-shared-state")
+  @handle(SET_SHARED_STATE)
   async setSharedState(event: IpcMainEvent, state: any) {
     this.sharedState = state;
   }
 
-  @handle("get-download-log")
+  @handle(GET_DOWNLOAD_LOG)
   async getDownloadLog(event: IpcMainEvent, id: number) {
     return await this.downloadService.getDownloadLog(id);
   }
 
-  @handle("select-file")
+  @handle(SELECT_FILE)
   async selectFile() {
     const window = this.mainWindow.window;
     if (!window) return Promise.reject(i18n.t("noMainWindow"));
@@ -323,7 +355,7 @@ export default class HomeController implements Controller {
     return "";
   }
 
-  @handle("get-machine-id")
+  @handle(GET_MACHINE_ID)
   async getMachineId() {
     try {
       const id = this.store.get("machineId");
@@ -340,7 +372,7 @@ export default class HomeController implements Controller {
     }
   }
 
-  @handle("export-favorites")
+  @handle(EXPORT_FAVORITES)
   async exportFavorites() {
     const json = await this.favoriteService.exportFavorites();
     const window = this.mainWindow.window;
@@ -357,7 +389,7 @@ export default class HomeController implements Controller {
     }
   }
 
-  @handle("import-favorites")
+  @handle(IMPORT_FAVORITES)
   async importFavorites() {
     const window = this.mainWindow.window;
     if (!window) return Promise.reject(i18n.t("noMainWindow"));
@@ -374,22 +406,22 @@ export default class HomeController implements Controller {
     }
   }
 
-  @handle("check-update")
+  @handle(CHECK_UPDATE)
   async checkUpdate() {
     this.updater.manualUpdate();
   }
 
-  @handle("start-update")
+  @handle(START_UPDATE)
   async startUpdate() {
     this.updater.startDownload();
   }
 
-  @handle("install-update")
+  @handle(INSTALL_UPDATE)
   async installUpdate() {
     this.updater.install();
   }
 
-  @handle("export-download-list")
+  @handle(EXPORT_DOWNLOAD_LIST)
   async exportDownloadList() {
     const txt = await this.downloadService.exportDownloadList();
     const window = this.mainWindow.window;
@@ -406,12 +438,12 @@ export default class HomeController implements Controller {
     }
   }
 
-  @handle("get-video-folders")
+  @handle(GET_VIDEO_FOLDERS)
   async getVideoFolders() {
     return this.downloadService.getVideoFolders();
   }
 
-  @handle("get-page-title")
+  @handle(GET_PAGE_TITLE)
   async getPageTitle(event: IpcMainEvent, url: string): Promise<{ data: string }> {
     try {
       console.log("Getting title for URL:", url);

@@ -2,6 +2,7 @@ import { QrcodeOutlined } from "@ant-design/icons";
 import { useMemoizedFn, useMount, usePagination } from "ahooks";
 import { Popover, QRCode } from "antd";
 import axios from "axios";
+import { ADD_DOWNLOAD_ITEMS } from "@mediago/shared-common";
 import { type FC, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
@@ -154,9 +155,9 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
 
       if (isDocker) {
         const { dockerUrl } = appStore;
-        await axios.post(dockerUrl + "/api/add-download-items", { 
-          videos: items, 
-          startDownload: now 
+        await axios.post(`${dockerUrl}/api/${ADD_DOWNLOAD_ITEMS}`, {
+          videos: items,
+          startDownload: now,
         });
       } else {
         await addDownloadItems(items, now);
@@ -176,9 +177,9 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       };
       if (isDocker) {
         const { dockerUrl } = appStore;
-        await axios.post(dockerUrl + "/api/add-download-items", { 
-          videos: [item], 
-          startDownload: now 
+        await axios.post(`${dockerUrl}/api/${ADD_DOWNLOAD_ITEMS}`, {
+          videos: [item],
+          startDownload: now,
         });
       } else {
         await addDownloadItems([item], now);

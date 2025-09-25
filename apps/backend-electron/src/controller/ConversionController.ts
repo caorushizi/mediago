@@ -1,7 +1,13 @@
 import { provide } from "@inversifyjs/binding-decorators";
-import type { Controller, ConversionPagination } from "@mediago/shared-common";
-import { ConversionService, handle, TYPES } from "@mediago/shared-node";
+import {
+  type Controller,
+  ConversionPagination,
+  ADD_CONVERSION,
+  DELETE_CONVERSION,
+  GET_CONVERSIONS,
+} from "@mediago/shared-common";
 import type { Conversion } from "@mediago/shared-node";
+import { type ConversionService, handle, TYPES } from "@mediago/shared-node";
 import type { IpcMainEvent } from "electron/main";
 import { inject, injectable } from "inversify";
 
@@ -13,17 +19,17 @@ export default class ConversionController implements Controller {
     private readonly conversionService: ConversionService,
   ) {}
 
-  @handle("get-conversions")
+  @handle(GET_CONVERSIONS)
   async getConversions(e: IpcMainEvent, pagination: ConversionPagination) {
     return await this.conversionService.getConversions(pagination);
   }
 
-  @handle("add-conversion")
+  @handle(ADD_CONVERSION)
   async addConversion(e: IpcMainEvent, conversion: Conversion) {
     return await this.conversionService.addConversion(conversion);
   }
 
-  @handle("delete-conversion")
+  @handle(DELETE_CONVERSION)
   async deleteConversion(e: IpcMainEvent, id: number) {
     return await this.conversionService.deleteConversion(id);
   }
