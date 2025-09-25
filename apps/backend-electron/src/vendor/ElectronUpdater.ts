@@ -1,5 +1,5 @@
 import { provide } from "@inversifyjs/binding-decorators";
-import { i18n } from "@mediago/shared-common";
+import { i18n } from "@mediago/shared-node";
 import isDev from "electron-is-dev";
 import { autoUpdater } from "electron-updater";
 import { inject, injectable } from "inversify";

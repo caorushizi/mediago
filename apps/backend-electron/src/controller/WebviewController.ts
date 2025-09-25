@@ -2,7 +2,6 @@ import { provide } from "@inversifyjs/binding-decorators";
 import {
   CLEAR_WEBVIEW_CACHE,
   type Controller,
-  i18n,
   PLUGIN_READY,
   SET_WEBVIEW_BOUNDS,
   WEBVIEW_CHANGE_USER_AGENT,
@@ -14,7 +13,7 @@ import {
   WEBVIEW_SHOW,
   WEBVIEW_URL_CONTEXTMENU,
 } from "@mediago/shared-common";
-import { handle, TYPES } from "@mediago/shared-node";
+import { handle, i18n, TYPES } from "@mediago/shared-node";
 import { type IpcMainEvent, Menu, type MenuItem, type MenuItemConstructorOptions } from "electron";
 import { inject, injectable } from "inversify";
 import { SniffingHelper } from "../services/SniffingHelperService";

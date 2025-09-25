@@ -20,7 +20,6 @@ import {
   GET_VIDEO_FOLDERS,
   IMPORT_FAVORITES,
   INSTALL_UPDATE,
-  i18n,
   ON_DOWNLOAD_LIST_CONTEXT_MENU,
   ON_FAVORITE_ITEM_CONTEXT_MENU,
   OPEN_DIR,
@@ -33,6 +32,7 @@ import {
   SHOW_BROWSER_WINDOW,
   START_UPDATE,
 } from "@mediago/shared-common";
+import { i18n } from "@mediago/shared-node";
 import {
   type AppStore,
   ConversionRepository,

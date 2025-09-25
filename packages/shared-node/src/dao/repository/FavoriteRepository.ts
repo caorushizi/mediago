@@ -1,6 +1,6 @@
 import { provide } from "@inversifyjs/binding-decorators";
 import { inject, injectable } from "inversify";
-import { i18n } from "@mediago/shared-common";
+import { i18n } from "../../i18n";
 import TypeORM from "../../vendor/TypeORM";
 import { Favorite } from "../entity/Favorite";
 
