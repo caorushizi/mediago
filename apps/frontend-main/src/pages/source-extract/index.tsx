@@ -2,14 +2,14 @@ import { useAsyncEffect, useMemoizedFn } from "ahooks";
 import type React from "react";
 import { useEffect, useRef } from "react";
 import { useShallow } from "zustand/react/shallow";
-import PageContainer from "@/components/PageContainer";
-import useElectron from "@/hooks/useElectron";
+import PageContainer from "@/components/page-container";
+import useElectron from "@/hooks/use-electron";
 import { setAppStoreSelector, useAppStore } from "@/store/app";
 import { BrowserStatus, browserStoreSelector, PageMode, setBrowserSelector, useBrowserStore } from "@/store/browser";
 import { cn } from "@/utils";
-import { BrowserView } from "./components/BrowserView";
-import { FavoriteList } from "./components/FavoriteList";
-import { ToolBar } from "./components/ToolBar";
+import { BrowserView } from "./components/browser-view";
+import { FavoriteList } from "./components/favorite-list";
+import { ToolBar } from "./components/tool-bar";
 
 interface SourceExtractProps {
   page?: boolean;

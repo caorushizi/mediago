@@ -1,8 +1,8 @@
 import { provide } from "@inversifyjs/binding-decorators";
 import {
-  type Controller,
-  ConversionPagination,
   ADD_CONVERSION,
+  type Controller,
+  type ConversionPagination,
   DELETE_CONVERSION,
   GET_CONVERSIONS,
 } from "@mediago/shared-common";

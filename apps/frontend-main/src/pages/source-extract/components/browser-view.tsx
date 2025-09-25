@@ -5,14 +5,14 @@ import { ADD_DOWNLOAD_ITEMS, SHOW_DOWNLOAD_DIALOG } from "@mediago/shared-common
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
-import DownloadForm, { type DownloadFormRef } from "@/components/DownloadForm";
+import DownloadForm, { type DownloadFormRef } from "@/components/download-form";
 import { Button } from "@/components/ui/button";
-import WebView from "@/components/WebView";
-import useElectron from "@/hooks/useElectron";
+import WebView from "@/components/web-view";
+import useElectron from "@/hooks/use-electron";
 import { appStoreSelector, useAppStore } from "@/store/app";
 import { BrowserStatus, browserStoreSelector, PageMode, setBrowserSelector, useBrowserStore } from "@/store/browser";
 import { generateUrl, randomName } from "@/utils";
-import { BrowserViewPanel } from "./BrowserViewPanel";
+import { BrowserViewPanel } from "./browser-view-panel";
 export function BrowserView() {
   const { webviewLoadURL, addIpcListener, removeIpcListener, webviewGoHome, addDownloadItems } =
     useElectron();

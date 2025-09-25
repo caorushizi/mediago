@@ -2,7 +2,7 @@ import { type FC, type ReactNode, useEffect, useRef } from "react";
 import "@xterm/xterm/css/xterm.css";
 import { FitAddon } from "@xterm/addon-fit";
 import { Terminal as XTerminal } from "@xterm/xterm";
-import useElectron from "@/hooks/useElectron";
+import useElectron from "@/hooks/use-electron";
 import { cn } from "@/utils";
 
 interface TerminalProps {
