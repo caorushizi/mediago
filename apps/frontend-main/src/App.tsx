@@ -20,12 +20,12 @@ import {
 import { DownloadFilter } from "./types";
 import { isWeb, tdApp } from "./utils";
 
-const AppLayout = lazy(() => import("./layout/app"));
+const AppLayout = lazy(() => import("./layout/app-layout"));
 const HomePage = lazy(() => import("./pages/home-page"));
 const SourceExtract = lazy(() => import("./pages/source-extract"));
 const SettingPage = lazy(() => import("./pages/setting-page"));
-const ConverterPage = lazy(() => import("./pages/converter"));
-const PlayerPage = lazy(() => import("./pages/player"));
+const ConverterPage = lazy(() => import("./pages/converter-page"));
+const PlayerPage = lazy(() => import("./pages/player-page"));
 
 function getAlgorithm(appTheme: "dark" | "light") {
   return appTheme === "dark" ? theme.darkAlgorithm : theme.defaultAlgorithm;
