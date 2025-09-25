@@ -1,13 +1,12 @@
 import path from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
 import {
-  type Controller,
-  DownloadStatus,
-  i18n,
   ADD_FAVORITE,
   CHECK_UPDATE,
   COMBINE_TO_HOME_PAGE,
   CONVERT_TO_AUDIO,
+  type Controller,
+  DownloadStatus,
   EXPORT_DOWNLOAD_LIST,
   EXPORT_FAVORITES,
   GET_APP_STORE,
@@ -21,6 +20,7 @@ import {
   GET_VIDEO_FOLDERS,
   IMPORT_FAVORITES,
   INSTALL_UPDATE,
+  i18n,
   ON_DOWNLOAD_LIST_CONTEXT_MENU,
   ON_FAVORITE_ITEM_CONTEXT_MENU,
   OPEN_DIR,

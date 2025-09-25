@@ -1,8 +1,8 @@
 import { provide } from "@inversifyjs/binding-decorators";
 import {
+  CLEAR_WEBVIEW_CACHE,
   type Controller,
   i18n,
-  CLEAR_WEBVIEW_CACHE,
   PLUGIN_READY,
   SET_WEBVIEW_BOUNDS,
   WEBVIEW_CHANGE_USER_AGENT,

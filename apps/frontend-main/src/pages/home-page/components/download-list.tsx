@@ -3,14 +3,14 @@ import { App, Empty, Pagination } from "antd";
 import { produce } from "immer";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import DownloadForm, { type DownloadFormRef, type DownloadFormType } from "@/components/DownloadForm";
-import Loading from "@/components/Loading";
+import DownloadForm, { type DownloadFormRef, type DownloadFormType } from "@/components/download-form";
+import Loading from "@/components/loading";
 import { EDIT_DOWNLOAD } from "@/const";
-import useElectron from "@/hooks/useElectron";
+import useElectron from "@/hooks/use-electron";
 import { type DownloadFilter, DownloadStatus } from "@/types";
 import { cn, randomName, tdApp } from "@/utils";
-import { DownloadItem } from "./DownloadItem";
-import { ListHeader } from "./ListHeader";
+import { DownloadItem } from "./download-item";
+import { ListHeader } from "./list-header";
 import type { ListPagination } from "./types";
 
 interface DownloadState {

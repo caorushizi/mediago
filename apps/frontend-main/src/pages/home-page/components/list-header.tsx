@@ -3,7 +3,7 @@ import { App, Button, Dropdown, type MenuProps } from "antd";
 import React, { useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Checkbox } from "@/components/ui/checkbox";
-import useElectron from "@/hooks/useElectron";
+import useElectron from "@/hooks/use-electron";
 import { DownloadFilter } from "@/types";
 import { isWeb } from "@/utils";
 

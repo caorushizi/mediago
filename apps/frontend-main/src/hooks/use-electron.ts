@@ -1,4 +1,4 @@
-import useAPI from "./useAPI";
+import useAPI from "./use-api";
 
 /**
  * @deprecated 请使用 useAPI Hook 替代

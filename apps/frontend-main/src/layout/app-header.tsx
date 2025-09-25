@@ -1,7 +1,7 @@
 import { useMemoizedFn } from "ahooks";
 import { useTranslation } from "react-i18next";
 import { HelpIcon } from "@/assets/svg";
-import useElectron from "@/hooks/useElectron";
+import useElectron from "@/hooks/use-electron";
 import { cn } from "@/utils";
 import LogoImg from "../assets/images/logo.png";
 

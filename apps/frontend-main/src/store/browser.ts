@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import useElectron from "@/hooks/useElectron";
+import useElectron from "@/hooks/use-electron";
 import type { DownloadType } from "@/types";
 import { convertPlainObject } from "@/utils";
 

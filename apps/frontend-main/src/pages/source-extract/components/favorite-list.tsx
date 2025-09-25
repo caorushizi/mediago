@@ -5,10 +5,10 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import { ADD_FAVORITE, OPEN_FAVORITE } from "@/const";
-import useElectron from "@/hooks/useElectron";
+import useElectron from "@/hooks/use-electron";
 import { BrowserStatus, PageMode, setBrowserSelector, useBrowserStore } from "@/store/browser";
 import { getFavIcon, tdApp } from "@/utils";
-import { FavItem } from "./FavItem";
+import { FavItem } from "./fav-item";
 
 export function FavoriteList() {
   const {

@@ -1,13 +1,13 @@
 import { provide } from "@inversifyjs/binding-decorators";
 import {
-  type Controller,
-  DownloadItem,
-  DownloadItemPagination,
-  ListPagination,
   ADD_DOWNLOAD_ITEMS,
+  type Controller,
   DELETE_DOWNLOAD_ITEM,
+  type DownloadItem,
+  type DownloadItemPagination,
   EDIT_DOWNLOAD_ITEM,
   GET_DOWNLOAD_ITEMS,
+  type ListPagination,
   SHOW_DOWNLOAD_DIALOG,
   START_DOWNLOAD,
   STOP_DOWNLOAD,

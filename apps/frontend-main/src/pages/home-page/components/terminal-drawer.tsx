@@ -1,8 +1,8 @@
 import { useMemoizedFn } from "ahooks";
 import type React from "react";
 import { CloseIcon } from "@/assets/svg";
-import Terminal from "@/components/DownloadTerminal";
-import { IconButton } from "@/components/IconButton";
+import Terminal from "@/components/download-terminal";
+import { IconButton } from "@/components/icon-button";
 import { Drawer, DrawerClose, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 
 interface Props {

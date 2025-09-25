@@ -6,22 +6,26 @@ import { useAsyncEffect, useMemoizedFn } from "ahooks";
 import { App as AntdApp } from "antd";
 import zhCN from "antd/locale/zh_CN";
 import { useShallow } from "zustand/react/shallow";
-import useElectron from "@/hooks/useElectron";
-import Loading from "./components/Loading";
+import useElectron from "@/hooks/use-electron";
+import Loading from "./components/loading";
 import { DOWNLOAD_FAIL, DOWNLOAD_SUCCESS, PAGE_LOAD } from "./const";
 import { setAppStoreSelector, useAppStore } from "./store/app";
 import { PageMode, setBrowserSelector, useBrowserStore } from "./store/browser";
 import { downloadStoreSelector, useDownloadStore } from "./store/download";
-import { themeSelector, updateSelector, useSessionStore } from "./store/session";
+import {
+  themeSelector,
+  updateSelector,
+  useSessionStore,
+} from "./store/session";
 import { DownloadFilter } from "./types";
 import { isWeb, tdApp } from "./utils";
 
-const AppLayout = lazy(() => import("./layout/App"));
-const HomePage = lazy(() => import("./pages/HomePage"));
-const SourceExtract = lazy(() => import("./pages/SourceExtract"));
-const SettingPage = lazy(() => import("./pages/SettingPage"));
-const ConverterPage = lazy(() => import("./pages/Converter"));
-const PlayerPage = lazy(() => import("./pages/Player"));
+const AppLayout = lazy(() => import("./layout/app"));
+const HomePage = lazy(() => import("./pages/home-page"));
+const SourceExtract = lazy(() => import("./pages/source-extract"));
+const SettingPage = lazy(() => import("./pages/setting-page"));
+const ConverterPage = lazy(() => import("./pages/converter"));
+const PlayerPage = lazy(() => import("./pages/player"));
 
 function getAlgorithm(appTheme: "dark" | "light") {
   return appTheme === "dark" ? theme.darkAlgorithm : theme.defaultAlgorithm;
@@ -29,7 +33,9 @@ function getAlgorithm(appTheme: "dark" | "light") {
 
 const App: FC = () => {
   const { addIpcListener, removeIpcListener, getMachineId } = useElectron();
-  const { setUpdateAvailable, setUploadChecking } = useSessionStore(useShallow(updateSelector));
+  const { setUpdateAvailable, setUploadChecking } = useSessionStore(
+    useShallow(updateSelector)
+  );
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
   const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
   const { increase } = useDownloadStore(useShallow(downloadStoreSelector));
