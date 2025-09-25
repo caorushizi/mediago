@@ -1,10 +1,60 @@
-import type {
-  ConversionPagination,
-  ConversionResponse,
-  DownloadItem,
-  DownloadItemPagination,
-  ElectronApi,
-  VideoResponse,
+import {
+  type ConversionPagination,
+  type ConversionResponse,
+  type DownloadItem,
+  type DownloadItemPagination,
+  type ElectronApi,
+  type VideoResponse,
+  ADD_CONVERSION,
+  ADD_DOWNLOAD_ITEMS,
+  ADD_FAVORITE,
+  CHECK_UPDATE,
+  CLEAR_WEBVIEW_CACHE,
+  COMBINE_TO_HOME_PAGE,
+  CONVERT_TO_AUDIO,
+  DELETE_CONVERSION,
+  DELETE_DOWNLOAD_ITEM,
+  EDIT_DOWNLOAD_ITEM,
+  EXPORT_DOWNLOAD_LIST,
+  EXPORT_FAVORITES,
+  GET_APP_STORE,
+  GET_CONVERSIONS,
+  GET_DOWNLOAD_ITEMS,
+  GET_DOWNLOAD_LOG,
+  GET_ENV_PATH,
+  GET_FAVORITES,
+  GET_LOCAL_IP,
+  GET_MACHINE_ID,
+  GET_PAGE_TITLE,
+  GET_SHARED_STATE,
+  GET_VIDEO_FOLDERS,
+  IMPORT_FAVORITES,
+  INSTALL_UPDATE,
+  ON_DOWNLOAD_LIST_CONTEXT_MENU,
+  ON_FAVORITE_ITEM_CONTEXT_MENU,
+  OPEN_DIR,
+  OPEN_PLAYER_WINDOW,
+  OPEN_URL,
+  PLUGIN_READY,
+  REMOVE_FAVORITE,
+  SELECT_DOWNLOAD_DIR,
+  SELECT_FILE,
+  SET_APP_STORE,
+  SET_SHARED_STATE,
+  SET_WEBVIEW_BOUNDS,
+  SHOW_BROWSER_WINDOW,
+  SHOW_DOWNLOAD_DIALOG,
+  START_DOWNLOAD,
+  START_UPDATE,
+  STOP_DOWNLOAD,
+  WEBVIEW_CHANGE_USER_AGENT,
+  WEBVIEW_GO_BACK,
+  WEBVIEW_GO_HOME,
+  WEBVIEW_HIDE,
+  WEBVIEW_LOAD_URL,
+  WEBVIEW_RELOAD,
+  WEBVIEW_SHOW,
+  WEBVIEW_URL_CONTEXTMENU,
 } from "@mediago/shared-common";
 import type { AppStore, BrowserStore, Conversion, EnvPath, Favorite, Video } from "@mediago/shared-node";
 import { shell } from "electron/common";
@@ -16,71 +66,71 @@ const apiKey = "electron";
 
 const electronApi: ElectronApi = {
   getEnvPath(): Promise<EnvPath> {
-    return ipcRenderer.invoke("get-env-path");
+    return ipcRenderer.invoke(GET_ENV_PATH);
   },
   getFavorites(): Promise<Favorite[]> {
-    return ipcRenderer.invoke("get-favorites");
+    return ipcRenderer.invoke(GET_FAVORITES);
   },
   addFavorite(favorite: Omit<Favorite, "id" | "createdDate" | "updatedDate">): Promise<Favorite> {
-    return ipcRenderer.invoke("add-favorite", favorite);
+    return ipcRenderer.invoke(ADD_FAVORITE, favorite);
   },
   removeFavorite(id: number): Promise<void> {
-    return ipcRenderer.invoke("remove-favorite", id);
+    return ipcRenderer.invoke(REMOVE_FAVORITE, id);
   },
   setWebviewBounds(rect: Electron.Rectangle): Promise<void> {
-    return ipcRenderer.invoke("set-webview-bounds", rect);
+    return ipcRenderer.invoke(SET_WEBVIEW_BOUNDS, rect);
   },
   webviewGoBack(): Promise<boolean> {
-    return ipcRenderer.invoke("webview-go-back");
+    return ipcRenderer.invoke(WEBVIEW_GO_BACK);
   },
   webviewReload(): Promise<void> {
-    return ipcRenderer.invoke("webview-reload");
+    return ipcRenderer.invoke(WEBVIEW_RELOAD);
   },
   webviewLoadURL(url?: string): Promise<void> {
-    return ipcRenderer.invoke("webview-load-url", url);
+    return ipcRenderer.invoke(WEBVIEW_LOAD_URL, url);
   },
   webviewGoHome(): Promise<void> {
-    return ipcRenderer.invoke("webview-go-home");
+    return ipcRenderer.invoke(WEBVIEW_GO_HOME);
   },
   getAppStore(): Promise<AppStore> {
-    return ipcRenderer.invoke("get-app-store");
+    return ipcRenderer.invoke(GET_APP_STORE);
   },
   onSelectDownloadDir(): Promise<string> {
-    return ipcRenderer.invoke("select-download-dir");
+    return ipcRenderer.invoke(SELECT_DOWNLOAD_DIR);
   },
   setAppStore(key: keyof AppStore, val: AppStore[keyof AppStore]): Promise<void> {
-    return ipcRenderer.invoke("set-app-store", key, val);
+    return ipcRenderer.invoke(SET_APP_STORE, key, val);
   },
   async openDir(dir?: string): Promise<void> {
     if (!dir) return;
-    return ipcRenderer.invoke("open-dir", dir);
+    return ipcRenderer.invoke(OPEN_DIR, dir);
   },
   addDownloadItems(videos: Omit<DownloadItem, "id">[], startDownload?: boolean): Promise<Video[]> {
-    return ipcRenderer.invoke("add-download-items", videos, startDownload);
+    return ipcRenderer.invoke(ADD_DOWNLOAD_ITEMS, videos, startDownload);
   },
   getDownloadItems(p: DownloadItemPagination): Promise<VideoResponse> {
-    return ipcRenderer.invoke("get-download-items", p);
+    return ipcRenderer.invoke(GET_DOWNLOAD_ITEMS, p);
   },
   startDownload(vid: number): Promise<void> {
-    return ipcRenderer.invoke("start-download", vid);
+    return ipcRenderer.invoke(START_DOWNLOAD, vid);
   },
   openUrl(url: string): Promise<void> {
-    return ipcRenderer.invoke("open-url", url);
+    return ipcRenderer.invoke(OPEN_URL, url);
   },
   stopDownload(id: number): Promise<void> {
-    return ipcRenderer.invoke("stop-download", id);
+    return ipcRenderer.invoke(STOP_DOWNLOAD, id);
   },
   onDownloadListContextMenu(id: number): Promise<void> {
-    return ipcRenderer.invoke("on-download-list-context-menu", id);
+    return ipcRenderer.invoke(ON_DOWNLOAD_LIST_CONTEXT_MENU, id);
   },
   onFavoriteItemContextMenu(id: number): Promise<void> {
-    return ipcRenderer.invoke("on-favorite-item-context-menu", id);
+    return ipcRenderer.invoke(ON_FAVORITE_ITEM_CONTEXT_MENU, id);
   },
   deleteDownloadItem(id: number): Promise<void> {
-    return ipcRenderer.invoke("delete-download-item", id);
+    return ipcRenderer.invoke(DELETE_DOWNLOAD_ITEM, id);
   },
   convertToAudio(id: number): Promise<void> {
-    return ipcRenderer.invoke("convert-to-audio", id);
+    return ipcRenderer.invoke(CONVERT_TO_AUDIO, id);
   },
   rendererEvent(channel: string, funcId: string, listener: any): void {
     const key = `${channel}-${funcId}`;
@@ -94,91 +144,91 @@ const electronApi: ElectronApi = {
     delete apiFunctions[key];
   },
   showBrowserWindow(): Promise<void> {
-    return ipcRenderer.invoke("show-browser-window");
+    return ipcRenderer.invoke(SHOW_BROWSER_WINDOW);
   },
   webviewHide(): Promise<void> {
-    return ipcRenderer.invoke("webview-hide");
+    return ipcRenderer.invoke(WEBVIEW_HIDE);
   },
   webviewShow(): Promise<void> {
-    return ipcRenderer.invoke("webview-show");
+    return ipcRenderer.invoke(WEBVIEW_SHOW);
   },
   webviewUrlContextMenu(): Promise<void> {
-    return ipcRenderer.invoke("webview-url-contextmenu");
+    return ipcRenderer.invoke(WEBVIEW_URL_CONTEXTMENU);
   },
   combineToHomePage(store: BrowserStore): Promise<void> {
-    return ipcRenderer.invoke("combine-to-home-page", store);
+    return ipcRenderer.invoke(COMBINE_TO_HOME_PAGE, store);
   },
   editDownloadItem(video: DownloadItem, startDownload?: boolean): Promise<void> {
-    return ipcRenderer.invoke("edit-download-item", video, startDownload);
+    return ipcRenderer.invoke(EDIT_DOWNLOAD_ITEM, video, startDownload);
   },
   getLocalIP(): Promise<string> {
-    return ipcRenderer.invoke("get-local-ip");
+    return ipcRenderer.invoke(GET_LOCAL_IP);
   },
   openBrowser(url: string): Promise<void> {
     return shell.openExternal(url);
   },
   selectFile(): Promise<string> {
-    return ipcRenderer.invoke("select-file");
+    return ipcRenderer.invoke(SELECT_FILE);
   },
   getSharedState(): Promise<any> {
-    return ipcRenderer.invoke("get-shared-state");
+    return ipcRenderer.invoke(GET_SHARED_STATE);
   },
   setSharedState(state: any): Promise<void> {
-    return ipcRenderer.invoke("set-shared-state", state);
+    return ipcRenderer.invoke(SET_SHARED_STATE, state);
   },
   setUserAgent(isMobile: boolean): Promise<void> {
-    return ipcRenderer.invoke("webview-change-user-agent", isMobile);
+    return ipcRenderer.invoke(WEBVIEW_CHANGE_USER_AGENT, isMobile);
   },
   getDownloadLog(id: number): Promise<string> {
-    return ipcRenderer.invoke("get-download-log", id);
+    return ipcRenderer.invoke(GET_DOWNLOAD_LOG, id);
   },
   showDownloadDialog(data: Omit<DownloadItem, "id">[]) {
-    return ipcRenderer.invoke("show-download-dialog", data);
+    return ipcRenderer.invoke(SHOW_DOWNLOAD_DIALOG, data);
   },
   pluginReady() {
-    return ipcRenderer.invoke("plugin-ready");
+    return ipcRenderer.invoke(PLUGIN_READY);
   },
   getConversions(pagination: ConversionPagination): Promise<ConversionResponse> {
-    return ipcRenderer.invoke("get-conversions", pagination);
+    return ipcRenderer.invoke(GET_CONVERSIONS, pagination);
   },
   addConversion(conversion: Omit<Conversion, "id">): Promise<Conversion> {
-    return ipcRenderer.invoke("add-conversion", conversion);
+    return ipcRenderer.invoke(ADD_CONVERSION, conversion);
   },
   deleteConversion(id: number): Promise<void> {
-    return ipcRenderer.invoke("delete-conversion", id);
+    return ipcRenderer.invoke(DELETE_CONVERSION, id);
   },
   getMachineId(): Promise<string> {
-    return ipcRenderer.invoke("get-machine-id");
+    return ipcRenderer.invoke(GET_MACHINE_ID);
   },
   clearWebviewCache(): Promise<void> {
-    return ipcRenderer.invoke("clear-webview-cache");
+    return ipcRenderer.invoke(CLEAR_WEBVIEW_CACHE);
   },
   openPlayerWindow(): Promise<void> {
-    return ipcRenderer.invoke("open-player-window");
+    return ipcRenderer.invoke(OPEN_PLAYER_WINDOW);
   },
   exportFavorites(): Promise<void> {
-    return ipcRenderer.invoke("export-favorites");
+    return ipcRenderer.invoke(EXPORT_FAVORITES);
   },
   importFavorites(): Promise<void> {
-    return ipcRenderer.invoke("import-favorites");
+    return ipcRenderer.invoke(IMPORT_FAVORITES);
   },
   checkUpdate(): Promise<void> {
-    return ipcRenderer.invoke("check-update");
+    return ipcRenderer.invoke(CHECK_UPDATE);
   },
   startUpdate(): Promise<void> {
-    return ipcRenderer.invoke("start-update");
+    return ipcRenderer.invoke(START_UPDATE);
   },
   installUpdate(): Promise<void> {
-    return ipcRenderer.invoke("install-update");
+    return ipcRenderer.invoke(INSTALL_UPDATE);
   },
   exportDownloadList(): Promise<void> {
-    return ipcRenderer.invoke("export-download-list");
+    return ipcRenderer.invoke(EXPORT_DOWNLOAD_LIST);
   },
   getVideoFolders(): Promise<string[]> {
-    return ipcRenderer.invoke("get-video-folders");
+    return ipcRenderer.invoke(GET_VIDEO_FOLDERS);
   },
   getPageTitle(url: string): Promise<any> {
-    return ipcRenderer.invoke("get-page-title", url);
+    return ipcRenderer.invoke(GET_PAGE_TITLE, url);
   },
 };
 

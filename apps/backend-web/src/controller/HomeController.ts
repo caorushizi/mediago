@@ -1,6 +1,17 @@
 import { provide } from "@inversifyjs/binding-decorators";
-import type { Controller } from "@mediago/shared-common";
-import { type Favorite, FavoriteManagementService, handle, TYPES } from "@mediago/shared-node";
+import {
+  type Controller,
+  ADD_FAVORITE,
+  EXPORT_FAVORITES,
+  GET_APP_STORE,
+  GET_FAVORITES,
+  GET_PAGE_TITLE,
+  IMPORT_FAVORITES,
+  REMOVE_FAVORITE,
+  SET_APP_STORE,
+  SOCKET_TEST,
+} from "@mediago/shared-common";
+import { type Favorite, type FavoriteManagementService, handle, TYPES } from "@mediago/shared-node";
 import axios from "axios";
 import { inject, injectable } from "inversify";
 import Logger from "../vendor/Logger";
@@ -21,28 +32,28 @@ export default class HomeController implements Controller {
     private readonly socket: SocketIO,
   ) {}
 
-  @handle("get-app-store")
+  @handle(GET_APP_STORE)
   async getAppStore() {
     const store = await this.store.store;
     return store;
   }
 
-  @handle("set-app-store")
+  @handle(SET_APP_STORE)
   async setAppStore(params: { key: string; val: any }) {
     this.store.set(params.key, params.val);
     this.logger.info("set app store");
     return false;
   }
 
-  @handle("socket-test")
+  @handle(SOCKET_TEST)
   async socketTest({ message }: { message: string }) {
     this.logger.info(message);
 
-    this.socket.io.emit("socket-test", message);
+    this.socket.io.emit(SOCKET_TEST, message);
     return message;
   }
 
-  @handle("get-page-title")
+  @handle(GET_PAGE_TITLE)
   async getPageTitle({ url }: { url: string }) {
     try {
       const response = await axios.get(url, {
@@ -79,27 +90,27 @@ export default class HomeController implements Controller {
     }
   }
 
-  @handle("get-favorites")
+  @handle(GET_FAVORITES)
   async getFavorites() {
     return this.favoriteService.getFavorites();
   }
 
-  @handle("add-favorite")
+  @handle(ADD_FAVORITE)
   async addFavorite(favorite: Favorite) {
     return this.favoriteService.addFavorite(favorite);
   }
 
-  @handle("remove-favorite")
+  @handle(REMOVE_FAVORITE)
   async removeFavorite({ id }: { id: number }) {
     return this.favoriteService.removeFavorite(id);
   }
 
-  @handle("export-favorites")
+  @handle(EXPORT_FAVORITES)
   async exportFavorites() {
     return this.favoriteService.exportFavorites();
   }
 
-  @handle("import-favorites")
+  @handle(IMPORT_FAVORITES)
   async importFavorites(favorites: any[]) {
     await this.favoriteService.importFavorites(favorites);
   }

@@ -1,5 +1,5 @@
 import { provide } from "@inversifyjs/binding-decorators";
-import type { Controller } from "@mediago/shared-common";
+import { type Controller, OPEN_PLAYER_WINDOW } from "@mediago/shared-common";
 import { handle, TYPES } from "@mediago/shared-node";
 import { inject, injectable } from "inversify";
 import PlayerWindow from "../windows/PlayerWindow";
@@ -12,7 +12,7 @@ export default class PlayerController implements Controller {
     private readonly playerWindow: PlayerWindow,
   ) {}
 
-  @handle("open-player-window")
+  @handle(OPEN_PLAYER_WINDOW)
   async openPlayerWindow() {
     this.playerWindow.showWindow();
   }

@@ -1,5 +1,19 @@
 import { provide } from "@inversifyjs/binding-decorators";
-import { type Controller, i18n } from "@mediago/shared-common";
+import {
+  type Controller,
+  i18n,
+  CLEAR_WEBVIEW_CACHE,
+  PLUGIN_READY,
+  SET_WEBVIEW_BOUNDS,
+  WEBVIEW_CHANGE_USER_AGENT,
+  WEBVIEW_GO_BACK,
+  WEBVIEW_GO_HOME,
+  WEBVIEW_HIDE,
+  WEBVIEW_LOAD_URL,
+  WEBVIEW_RELOAD,
+  WEBVIEW_SHOW,
+  WEBVIEW_URL_CONTEXTMENU,
+} from "@mediago/shared-common";
 import { handle, TYPES } from "@mediago/shared-node";
 import { type IpcMainEvent, Menu, type MenuItem, type MenuItemConstructorOptions } from "electron";
 import { inject, injectable } from "inversify";
@@ -19,17 +33,17 @@ export default class WebviewController implements Controller {
     private readonly sniffingHelper: SniffingHelper,
   ) {}
 
-  @handle("set-webview-bounds")
+  @handle(SET_WEBVIEW_BOUNDS)
   async setWebviewBounds(e: IpcMainEvent, bounds: Electron.Rectangle) {
     this.webview.setBounds(bounds);
   }
 
-  @handle("webview-load-url")
+  @handle(WEBVIEW_LOAD_URL)
   async browserViewLoadUrl(e: IpcMainEvent, url: string): Promise<void> {
     await this.webview.loadURL(url);
   }
 
-  @handle("webview-url-contextmenu")
+  @handle(WEBVIEW_URL_CONTEXTMENU)
   async webviewUrlContextMenu() {
     const template: Array<MenuItemConstructorOptions | MenuItem> = [
       {
@@ -46,43 +60,43 @@ export default class WebviewController implements Controller {
     menu.popup();
   }
 
-  @handle("webview-go-back")
+  @handle(WEBVIEW_GO_BACK)
   async webviewGoBack(): Promise<boolean> {
     return this.webview.goBack();
   }
 
-  @handle("webview-reload")
+  @handle(WEBVIEW_RELOAD)
   async webviewReload() {
     await this.webview.reload();
   }
 
-  @handle("webview-show")
+  @handle(WEBVIEW_SHOW)
   async webviewShow() {
     this.webview.show();
   }
 
-  @handle("webview-hide")
+  @handle(WEBVIEW_HIDE)
   async webviewHide() {
     this.webview.hide();
   }
 
-  @handle("webview-go-home")
+  @handle(WEBVIEW_GO_HOME)
   async webviewGoHome() {
     await this.webview.goHome();
   }
 
-  @handle("webview-change-user-agent")
+  @handle(WEBVIEW_CHANGE_USER_AGENT)
   async webviewChangeUserAgent(e: IpcMainEvent, isMobile: boolean) {
     this.webview.setUserAgent(isMobile);
     this.store.set("isMobile", isMobile);
   }
 
-  @handle("plugin-ready")
+  @handle(PLUGIN_READY)
   async pluginReady() {
     this.sniffingHelper.pluginReady();
   }
 
-  @handle("clear-webview-cache")
+  @handle(CLEAR_WEBVIEW_CACHE)
   async clearWebviewCache() {
     return this.webview.clearCache();
   }
