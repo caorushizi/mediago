@@ -30,20 +30,22 @@ const WebView: FC<WebViewProps> = ({ className }) => {
   const { setWebviewBounds, webviewHide, webviewShow } = useElectron();
 
   useEffect(() => {
-    if (webviewRef.current != null) {
-      // Monitor the size of webview elements
-      resizeObserver.current = new ResizeObserver((entries) => {
-        const rect = computeRect(webviewRef.current?.getBoundingClientRect());
-        const entry = entries[0];
-        const viewRect = computeRect(entry.contentRect);
-        viewRect.x += rect.x;
-        viewRect.y += rect.y;
-        setWebviewBounds(viewRect);
-      });
+    if (!webviewRef.current) return;
 
-      resizeObserver.current.observe(webviewRef.current);
-      webviewShow();
-    }
+    // Monitor the size of webview elements
+    resizeObserver.current = new ResizeObserver((entries) => {
+      if (!webviewRef.current) return;
+
+      const rect = computeRect(webviewRef.current.getBoundingClientRect());
+      const entry = entries[0];
+      const viewRect = computeRect(entry.contentRect);
+      viewRect.x += rect.x;
+      viewRect.y += rect.y;
+      setWebviewBounds(viewRect);
+    });
+
+    resizeObserver.current.observe(webviewRef.current);
+    webviewShow();
 
     return () => {
       resizeObserver.current?.disconnect();

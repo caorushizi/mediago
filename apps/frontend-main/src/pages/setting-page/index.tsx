@@ -59,7 +59,7 @@ const SettingPage: React.FC = () => {
     installUpdate,
   } = useAPI();
   const { t } = useTranslation();
-  const formRef = useRef<FormInstance<AppStore>>();
+  const formRef = useRef<FormInstance<AppStore>>(null);
   const settings = useAppStore(useShallow(appStoreSelector));
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
   const { data: envPath } = useRequest(getEnvPath);
@@ -282,7 +282,7 @@ const SettingPage: React.FC = () => {
             rules={[
               {
                 validator(rules, value) {
-                  if (value && formRef.current.getFieldValue("proxy") === "") {
+                  if (value && formRef.current?.getFieldValue("proxy") === "") {
                     return Promise.reject(t("pleaseEnterProxyFirst"));
                   }
                   return Promise.resolve();
@@ -349,7 +349,7 @@ const SettingPage: React.FC = () => {
             rules={[
               {
                 validator(rules, value) {
-                  if (value && formRef.current.getFieldValue("proxy") === "") {
+                  if (value && formRef.current?.getFieldValue("proxy") === "") {
                     return Promise.reject(t("pleaseEnterProxyFirst"));
                   }
                   return Promise.resolve();
@@ -394,13 +394,13 @@ const SettingPage: React.FC = () => {
           <Form.Item hidden={isWeb} label={t("moreAction")}>
             <Space>
               <Button
-                onClick={() => openDir(envPath.workspace)}
+                onClick={() => openDir(envPath?.workspace)}
                 icon={<FolderOpenOutlined />}
               >
                 {t("configDir")}
               </Button>
               <Button
-                onClick={() => openDir(envPath.binPath)}
+                onClick={() => openDir(envPath?.binPath)}
                 icon={<FolderOpenOutlined />}
               >
                 {t("binPath")}

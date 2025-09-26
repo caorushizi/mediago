@@ -1,7 +1,7 @@
-import type { Conversion, Favorite, Video } from "./entities";
-import type { AppStore, BrowserStore, EnvPath, Rectangle } from "./node";
 import type { VideoResponse } from "../index";
+import type { Conversion, Favorite, Video } from "./entities";
 import type { ConversionPagination, ConversionResponse, DownloadItem, DownloadItemPagination } from "./index";
+import type { AppStore, BrowserStore, EnvPath, Rectangle } from "./node";
 
 export interface ElectronApi {
   getEnvPath(): Promise<EnvPath>;

@@ -16,7 +16,7 @@ export default defineConfig({
   build: {
     outDir: isWeb
       ? path.resolve(__dirname, "../backend/dist/app")
-      : path.resolve(__dirname, "../main/app/build/renderer"),
+      : path.resolve(__dirname, "../../app/build/renderer"),
     emptyOutDir: true,
   },
   resolve: {

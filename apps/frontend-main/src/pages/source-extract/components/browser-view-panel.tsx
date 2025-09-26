@@ -1,4 +1,8 @@
-import { DeleteOutlined, DockerOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  DockerOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
 import { useMemoizedFn } from "ahooks";
 import { Button as AntdButton, App } from "antd";
 import { useTranslation } from "react-i18next";
@@ -6,12 +10,19 @@ import { useShallow } from "zustand/react/shallow";
 import { Button } from "@/components/ui/button";
 import useElectron from "@/hooks/use-electron";
 import { appStoreSelector, useAppStore } from "@/store/app";
-import { browserStoreSelector, type SourceData, setBrowserSelector, useBrowserStore } from "@/store/browser";
+import {
+  browserStoreSelector,
+  type SourceData,
+  setBrowserSelector,
+  useBrowserStore,
+} from "@/store/browser";
 
 export function BrowserViewPanel() {
   const store = useBrowserStore(useShallow(browserStoreSelector));
   const { enableDocker } = useAppStore(useShallow(appStoreSelector));
-  const { deleteSource, clearSources } = useBrowserStore(useShallow(setBrowserSelector));
+  const { deleteSource, clearSources } = useBrowserStore(
+    useShallow(setBrowserSelector)
+  );
   const { t } = useTranslation();
   const { showDownloadDialog } = useElectron();
   const { addDownloadItems } = useElectron();
@@ -45,14 +56,20 @@ export function BrowserViewPanel() {
       </div>
       {store.sources.map((item, index) => {
         return (
-          <div className="flex flex-col gap-2 rounded-lg bg-[#FAFCFF] p-2 dark:bg-[#27292F]" key={index}>
+          <div
+            className="flex flex-col gap-2 rounded-lg bg-[#FAFCFF] p-2 dark:bg-[#27292F]"
+            key={item.url}
+          >
             <span
               className="line-clamp-2 cursor-default break-words text-sm text-[#343434] dark:text-[#B4B4B4]"
               title={item.name}
             >
               {item.name}
             </span>
-            <span className="line-clamp-2 cursor-default break-words text-xs dark:text-[#515257]" title={item.url}>
+            <span
+              className="line-clamp-2 cursor-default break-words text-xs dark:text-[#515257]"
+              title={item.url}
+            >
               {item.url}
             </span>
             <div className="flex flex-row items-center justify-between gap-3">

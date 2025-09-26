@@ -17,6 +17,8 @@ const Terminal: FC<TerminalProps> = ({ className, id, log, header }) => {
   const { addIpcListener, removeIpcListener } = useElectron();
 
   useEffect(() => {
+    if (!terminalRef.current) return;
+
     const terminal = new XTerminal({
       fontFamily: "Consolas, 'Courier New', monospace",
       disableStdin: true,
@@ -32,7 +34,11 @@ const Terminal: FC<TerminalProps> = ({ className, id, log, header }) => {
       terminal.write(log);
     }
 
-    const onDownloadMessage = (_: unknown, messageId: number, message: string) => {
+    const onDownloadMessage = (
+      _: unknown,
+      messageId: number,
+      message: string
+    ) => {
       if (id === messageId) {
         terminal.write(message);
       }

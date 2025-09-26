@@ -15,13 +15,18 @@ const env = Env.getInstance();
 env.loadDotEnvRuntime();
 
 async function clean() {
-  return deleteSync([
-    rootResolve("app/build"),
-    rootResolve("app/bin"),
-    // rootResolve("app/mobile"),
-    // rootResolve("app/plugin"),
-    rootResolve("release"),
-  ]);
+  return deleteSync(
+    [
+      rootResolve("app/build"),
+      rootResolve("app/bin"),
+      // rootResolve("app/mobile"),
+      // rootResolve("app/plugin"),
+      rootResolve("release"),
+    ],
+    {
+      force: true,
+    },
+  );
 }
 
 function compileTypescript() {

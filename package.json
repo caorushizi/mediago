@@ -16,7 +16,7 @@
     "build:web-release": "turbo types && turbo build --filter=webapi --filter=frontend",
     "build:docker": "pnpm build:web-release && docker build -f docker/Dockerfile -t caorushizi/mediago:latest .",
     "beta": "turbo build && pnpm -F main run pack",
-    "release": "turbo build && pnpm -F main run release",
+    "release": "turbo build && pnpm -F backend-electron run release",
     "types": "turbo types",
     "prepare": "husky",
     "commit": "git-cz",
