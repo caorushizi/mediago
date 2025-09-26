@@ -32,7 +32,8 @@
         "noForEach": "off"
       },
       "a11y": {
-        "useKeyWithClickEvents": "off"
+        "useKeyWithClickEvents": "off",
+        "noStaticElementInteractions": "off"
       }
     }
   },
@@ -55,7 +56,10 @@
       "quoteStyle": "double",
       "attributePosition": "auto"
     },
-    "globals": ["NodeJS", "Electron"],
+    "globals": [
+      "NodeJS",
+      "Electron"
+    ],
     "parser": {
       "unsafeParameterDecoratorsEnabled": true
     }
@@ -75,7 +79,10 @@
   },
   "overrides": [
     {
-      "includes": ["apps/renderer/**/*.{js,jsx,ts,tsx}", "apps/mobile/**/*.{js,jsx,ts,tsx}"],
+      "includes": [
+        "apps/renderer/**/*.{js,jsx,ts,tsx}",
+        "apps/mobile/**/*.{js,jsx,ts,tsx}"
+      ],
       "linter": {
         "rules": {
           "correctness": {
@@ -86,7 +93,9 @@
       }
     },
     {
-      "includes": ["apps/plugin/**/*.{css,scss}"],
+      "includes": [
+        "apps/plugin/**/*.{css,scss}"
+      ],
       "css": {
         "linter": {
           "enabled": true

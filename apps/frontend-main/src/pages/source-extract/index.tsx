@@ -5,7 +5,13 @@ import { useShallow } from "zustand/react/shallow";
 import PageContainer from "@/components/page-container";
 import useElectron from "@/hooks/use-electron";
 import { setAppStoreSelector, useAppStore } from "@/store/app";
-import { BrowserStatus, browserStoreSelector, PageMode, setBrowserSelector, useBrowserStore } from "@/store/browser";
+import {
+  BrowserStatus,
+  browserStoreSelector,
+  PageMode,
+  setBrowserSelector,
+  useBrowserStore,
+} from "@/store/browser";
 import { cn } from "@/utils";
 import { BrowserView } from "./components/browser-view";
 import { FavoriteList } from "./components/favorite-list";
@@ -16,7 +22,12 @@ interface SourceExtractProps {
 }
 
 const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
-  const { addIpcListener, removeIpcListener, getSharedState, getAppStore: ipcGetAppStore } = useElectron();
+  const {
+    addIpcListener,
+    removeIpcListener,
+    getSharedState,
+    getAppStore: ipcGetAppStore,
+  } = useElectron();
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
   const store = useBrowserStore(useShallow(browserStoreSelector));
   const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
@@ -29,7 +40,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
 
   useAsyncEffect(async () => {
     const state = await getSharedState();
-    setBrowserStore(state);
+    setBrowserStore(state as any);
   }, []);
 
   useEffect(() => {
@@ -55,13 +66,15 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     setPageInfo(info);
   });
 
-  const onFailLoad = useMemoizedFn((e: unknown, data: { code: number; desc: string }) => {
-    setBrowserStore({
-      status: BrowserStatus.Failed,
-      errCode: data.code,
-      errMsg: data.desc,
-    });
-  });
+  const onFailLoad = useMemoizedFn(
+    (e: unknown, data: { code: number; desc: string }) => {
+      setBrowserStore({
+        status: BrowserStatus.Failed,
+        errCode: data.code,
+        errMsg: data.desc,
+      });
+    }
+  );
 
   const onDidNavigate = useMemoizedFn((e: unknown, info: UrlDetail) => {
     setPageInfo(info);

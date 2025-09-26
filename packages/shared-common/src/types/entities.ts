@@ -10,8 +10,9 @@ export interface Conversion {
 
 export interface Favorite {
   id: number;
-  name: string;
+  title: string;
   url: string;
+  icon?: string;
   createdDate: Date;
   updatedDate: Date;
 }

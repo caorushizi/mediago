@@ -1,7 +1,7 @@
 import { UnorderedListOutlined } from "@ant-design/icons";
 import { useAsyncEffect, useMemoizedFn } from "ahooks";
 import { App, Drawer } from "antd";
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Player from "xgplayer";
 import { cn, http } from "@/utils";
@@ -10,10 +10,11 @@ import "xgplayer/dist/index.min.css";
 export default function PlayerPage() {
   const { message } = App.useApp();
   const player = useRef<Player>();
-  const [videoList, setVideoList] = useState([]);
+  const [videoList, setVideoList] = useState<any[]>([]);
   const [currentVideo, setCurrentVideo] = useState("");
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const playerId = useId();
 
   useAsyncEffect(async () => {
     let url = "";
@@ -36,6 +37,8 @@ export default function PlayerPage() {
   }, []);
 
   const handleVideoClick = useMemoizedFn((url: string) => {
+    if (!player.current) return;
+
     setCurrentVideo(url);
     player.current.src = url;
     player.current.play();
@@ -59,16 +62,27 @@ export default function PlayerPage() {
       >
         <UnorderedListOutlined className="text-white" />
       </div>
-      <div id="mse" className="h-full w-full" />
+      <div id={playerId} className="h-full w-full" />
 
-      <Drawer title={t("playList")} placement={"right"} closable={false} onClose={onClose} open={open} key={"right"}>
+      <Drawer
+        title={t("playList")}
+        placement={"right"}
+        closable={false}
+        onClose={onClose}
+        open={open}
+        key={"right"}
+      >
         <ul className="flex flex-col gap-1">
           {videoList.map((video, index) => (
             <li
-              className={cn("m-2 line-clamp-2 cursor-pointer text-sm dark:text-white", {
-                "text-blue-500 dark:text-blue-500": video.url === currentVideo,
-              })}
-              key={index}
+              className={cn(
+                "m-2 line-clamp-2 cursor-pointer text-sm dark:text-white",
+                {
+                  "text-blue-500 dark:text-blue-500":
+                    video.url === currentVideo,
+                }
+              )}
+              key={video.url}
               onClick={() => handleVideoClick(video.url)}
             >
               {video.title}

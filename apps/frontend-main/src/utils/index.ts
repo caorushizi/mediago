@@ -57,7 +57,9 @@ export function moment() {
   return dayjs().format("YYYY-MM-DDTHH:mm:ssZ");
 }
 
-export function fromatDateTime(d: string | number | Date, tmpStr: string = "YYYY/MM/DD HH:mm:ss") {
+export function fromatDateTime(d: string | number | Date | undefined, tmpStr: string = "YYYY/MM/DD HH:mm:ss") {
+  if (!d) return "";
+
   return dayjs(d).format(tmpStr);
 }
 
@@ -77,7 +79,9 @@ export function randomName() {
 
 export const isWeb = import.meta.env.APP_TARGET === "web";
 
-export function isDownloadType(value: string): value is DownloadType {
+export function isDownloadType(value: string | null): value is DownloadType {
+  if (!value) return false;
+
   return Object.values(DownloadType).includes(value as DownloadType);
 }
 

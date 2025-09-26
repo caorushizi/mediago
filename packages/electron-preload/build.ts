@@ -11,7 +11,7 @@ async function buildPreload(): Promise<void> {
 
   try {
     await build({
-      entryPoints: ["src/index.ts"],
+      entryPoints: ["src/preload.ts"],
       bundle: true,
       outfile: "dist/preload.js",
       platform: "node",
