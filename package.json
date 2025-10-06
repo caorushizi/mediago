@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.2",
-    "@commitlint/cli": "^19.3.0",
+    "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^19.2.2",
     "@commitlint/core": "^19.3.0",
     "@commitlint/cz-commitlint": "^19.2.0",
