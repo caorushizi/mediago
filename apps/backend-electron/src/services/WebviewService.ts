@@ -1,7 +1,8 @@
+import { createRequire } from "node:module";
 import { resolve } from "node:path";
 import { ElectronBlocker } from "@ghostery/adblocker-electron";
 import { provide } from "@inversifyjs/binding-decorators";
-import { VideoRepository, i18n } from "@mediago/shared-node";
+import { i18n, VideoRepository } from "@mediago/shared-node";
 import { type Event, type HandlerDetails, session, WebContentsView } from "electron";
 import isDev from "electron-is-dev";
 import { readFileSync } from "fs-extra";
@@ -12,6 +13,10 @@ import ElectronStore from "../vendor/ElectronStore";
 import BrowserWindow from "../windows/BrowserWindow";
 import MainWindow from "../windows/MainWindow";
 import { SniffingHelper, type SourceParams } from "./SniffingHelperService";
+
+const require = createRequire(import.meta.url);
+
+const preload = require.resolve("@mediago/electron-preload");
 
 @injectable()
 @provide()
@@ -51,7 +56,7 @@ export default class WebviewService {
     this.view = new WebContentsView({
       webPreferences: {
         partition: this.defaultSession,
-        preload: resolve(__dirname, "./preload.js"),
+        preload: preload,
       },
     });
 
@@ -92,7 +97,7 @@ export default class WebviewService {
     this.window.webContents.send("webview-did-navigate", pageInfo);
 
     try {
-      if (isDev && process.env.DEBUG_PLUGINS === "true") {
+      if (isDev && import.meta.env.APP_DEBUG_PLUGINS === "true") {
         const content =
           'function addScript(src){const script=document.createElement("script");script.src=src;script.type="module";document.body.appendChild(script)}addScript("http://localhost:8080/src/main.ts");';
         await this.view.webContents.executeJavaScript(content);

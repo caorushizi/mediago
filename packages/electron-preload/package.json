@@ -5,30 +5,28 @@
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsc && tsx build.ts",
-    "types": "tsc",
-    "dev": "tsc --watch",
-    "lint-staged": "lint-staged"
+  "exports": {
+    ".": "./dist/index.js"
   },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx,json}": "biome check --write --files-ignore-unknown=true"
+  "scripts": {
+    "types": "tsc",
+    "dev": "vite build --watch",
+    "build": "vite build",
+    "lint-staged": "lint-staged"
   },
   "files": [
     "dist"
   ],
   "devDependencies": {
     "@types/node": "^20.12.12",
-    "esbuild": "^0.21.4",
     "electron": "30.0.8",
+    "esbuild": "^0.21.4",
     "tsx": "^4.11.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "vite": "npm:rolldown-vite@latest"
   },
   "dependencies": {
     "@mediago/shared-common": "workspace:*",
     "@mediago/shared-node": "workspace:*"
-  },
-  "peerDependencies": {
-    "electron": ">=28.0.0"
   }
 }

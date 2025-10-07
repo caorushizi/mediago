@@ -17,9 +17,9 @@ export const isMac = process.platform === Platform.MacOS;
 export const isWin = process.platform === Platform.Windows;
 export const isLinux = process.platform === Platform.Linux;
 
-if (!isDev) {
-  global.__bin__ = resolve(appPath, "../bin");
-}
+// if (!isDev) {
+//   global.__bin__ = resolve(appPath, "../bin");
+// }
 
 export function resolveStatic(path: string) {
   const relativePath = isDev ? "../.." : "..";

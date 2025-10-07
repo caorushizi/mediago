@@ -1,6 +1,6 @@
 import { useMount } from "ahooks";
 import { List, NavBar } from "antd-mobile";
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import Player from "xgplayer";
 import "xgplayer/dist/index.min.css";
 import { cn, http } from "./utils";
@@ -14,6 +14,7 @@ function App() {
   const [data, setData] = useState<VideoSource[]>([]);
   const player = useRef<Player>();
   const [currentVideo, setCurrentVideo] = useState("");
+  const playerId = useId();
 
   useMount(async () => {
     const { data } = await http.get<VideoSource[]>("/api");
@@ -43,7 +44,7 @@ function App() {
   return (
     <div className="flex flex-col h-full w-full overflow-hidden">
       <NavBar back={null}>视频播放</NavBar>
-      <div id="mse" />
+      <div id={playerId} />
       <List header="播放列表" className="flex-1 overflow-auto">
         {data.map((item) => {
           return (

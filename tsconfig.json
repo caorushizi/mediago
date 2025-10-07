@@ -1,3 +1,7 @@
 {
-  "extends": "./packages/config/tsconfig.base.json"
+  "extends": "./packages/config/tsconfig.node.json",
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "esModuleInterop": true
+  }
 }

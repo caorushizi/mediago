@@ -6,9 +6,5 @@
     "outDir": "app/output/build/main"
   },
   "include": ["src"],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
-    }
-  ]
+  "references": []
 }

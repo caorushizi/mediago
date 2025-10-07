@@ -9,10 +9,7 @@
     "dev:web": "cross-env APP_TARGET=web vite --port 8557",
     "build": "tsc && vite build",
     "build:web": "cross-env APP_TARGET=web vite build",
-    "preview": "vite preview",
-    "report": "vite-bundle-visualizer",
-    "types": "tsc",
-    "lint-staged": "lint-staged"
+    "report": "vite-bundle-visualizer"
   },
   "dependencies": {
     "@ant-design/icons": "^5.3.7",
@@ -62,12 +59,9 @@
     "sass": "^1.77.2",
     "tailwindcss": "^3.4.4",
     "typescript": "~5.4.5",
-    "vite": "^6.1.0",
+    "vite": "npm:rolldown-vite@latest",
     "vite-bundle-visualizer": "^1.2.1",
     "xgplayer": "^3.0.19"
   },
-  "license": "MIT",
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,css,scss}": "biome check --write --files-ignore-unknown=true"
-  }
+  "license": "MIT"
 }
