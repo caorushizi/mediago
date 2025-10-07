@@ -8,7 +8,21 @@
   "type": "module",
   "packageManager": "pnpm@10.15.0",
   "scripts": {
-    "knip": "knip"
+    "knip": "knip",
+    "dev:electron": "turbo run dev:electron",
+    "dev:server": "turbo run dev:server",
+    "dev": "turbo run dev:all",
+    "build:electron": "turbo run build:electron",
+    "build:server": "turbo run build:server",
+    "build": "turbo run build:all",
+    "lint": "turbo run lint",
+    "rebuild:server": "pnpm -F @mediago/server rebuild",
+    "rebuild:electron": "pnpm -F @mediago/electron run rebuild",
+    "rebuild:workspace": "pnpm rebuild:server && pnpm rebuild:electron",
+    "pack:server": "turbo run pack:server",
+    "pack:electron": "turbo run pack:electron",
+    "release:server": "turbo run release:server",
+    "release:electron": "turbo run release:electron"
   },
   "keywords": [],
   "license": "MIT",
@@ -16,7 +30,7 @@
     "@biomejs/biome": "^2.2.2",
     "@types/node": "^24.7.0",
     "knip": "^5.64.2",
-    "turbo": "^2.5.6",
+    "turbo": "^2.5.8",
     "typescript": "^5.9.3"
   }
 }

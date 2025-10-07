@@ -2,62 +2,120 @@
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
   "tasks": {
-    "build": {
-      "dependsOn": [
-        "^build"
-      ],
+    "dev:all": {
+      "cache": false,
+      "persistent": true,
+      "with": [
+        "dev:server",
+        "dev:electron"
+      ]
+    },
+    "dev:server": {
+      "cache": false,
+      "persistent": true
+    },
+    "dev:electron": {
+      "cache": false,
+      "persistent": true,
+      "with": [
+        "@mediago/electron-preload#dev",
+        "@mediago/mobile-player#dev",
+        "@mediago/browser-extension#dev"
+      ]
+    },
+    "@mediago/electron-preload#dev": {
+      "persistent": true,
       "outputs": [
-        "dist/**",
         "build/**"
       ]
     },
-    "dev": {
-      "cache": false,
-      "persistent": true
-    },
-    "dev:web": {
-      "cache": false,
-      "persistent": true
-    },
-    "dev:docker": {
-      "cache": false,
-      "persistent": true
-    },
-    "lint": {
-      "dependsOn": [
-        "^build"
-      ]
-    },
-    "lint:fix": {
-      "dependsOn": [
-        "^build"
-      ]
-    },
-    "type-check": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": []
-    },
-    "types": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": []
-    },
-    "types:watch": {
-      "cache": false,
-      "persistent": true
-    },
-    "preview": {
-      "dependsOn": [
-        "build"
-      ],
-      "cache": false,
-      "persistent": true
-    },
-    "clean": {
+    "@mediago/mobile-player#dev": {
+      "persistent": true,
       "cache": false
+    },
+    "@mediago/browser-extension#dev": {
+      "persistent": true,
+      "cache": false
+    },
+    "build:all": {
+      "cache": true,
+      "with": [
+        "build:server",
+        "build:electron"
+      ]
+    },
+    "build:server": {
+      "cache": true,
+      "outputs": [
+        "build/**"
+      ]
+    },
+    "build:electron": {
+      "cache": true,
+      "outputs": [
+        "build/**"
+      ],
+      "dependsOn": [
+        "@mediago/electron-preload#build",
+        "@mediago/mobile-player#build",
+        "@mediago/browser-extension#build"
+      ]
+    },
+    "@mediago/electron-preload#build": {
+      "outputs": [
+        "build/**"
+      ]
+    },
+    "@mediago/mobile-player#build": {
+      "outputs": [
+        "build/**"
+      ]
+    },
+    "@mediago/browser-extension#build": {
+      "outputs": [
+        "build/**"
+      ]
+    },
+    "pack:server": {
+      "cache": false,
+      "dependsOn": [
+        "clean:server",
+        "build:server"
+      ],
+      "outputs": [
+        ".mediago-server/**"
+      ]
+    },
+    "release:server": {
+      "cache": false,
+      "dependsOn": [
+        "pack:server"
+      ]
+    },
+    "pack:electron": {
+      "cache": false,
+      "dependsOn": [
+        "clean:electron",
+        "build:electron"
+      ],
+      "outputs": [
+        "app/build/**"
+      ]
+    },
+    "release:electron": {
+      "cache": false,
+      "dependsOn": [
+        "clean:electron",
+        "build:electron"
+      ]
+    },
+    "clean:server": {
+      "cache": false,
+      "outputs": []
+    },
+    "clean:electron": {
+      "cache": false,
+      "outputs": []
     }
   }
 }

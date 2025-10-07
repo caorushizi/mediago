@@ -1,0 +1,31 @@
+{
+  "name": "@mediago/mobile-player",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "biome check ."
+  },
+  "dependencies": {
+    "ahooks": "^3.8.0",
+    "antd-mobile": "^5.37.1",
+    "axios": "^1.7.2",
+    "clsx": "^2.1.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwind-merge": "^2.3.0",
+    "xgplayer": "^3.0.19"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^5.0.4",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.39",
+    "tailwindcss": "^3.4.4",
+    "typescript": "^5.2.2",
+    "vite": "npm:rolldown-vite@latest"
+  }
+}
