@@ -30,6 +30,7 @@ import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import PageContainer from "@/components/page-container";
 import { CHECK_UPDATE } from "@/const";
+import useAPI from "@/hooks/use-api";
 import useElectron from "@/hooks/use-electron";
 import {
   appStoreSelector,
@@ -39,7 +40,6 @@ import {
 import { updateSelector, useSessionStore } from "@/store/session";
 import { AppLanguage, AppTheme } from "@/types";
 import { isWeb, tdApp } from "@/utils";
-import useAPI from "@/hooks/use-api";
 
 const version = import.meta.env.APP_VERSION;
 

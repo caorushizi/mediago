@@ -8,63 +8,15 @@
   "type": "module",
   "packageManager": "pnpm@10.15.0",
   "scripts": {
-    "dev": "pnpm build:extra && turbo dev dev:web --filter=frontend-main --filter=backend-electron --filter=backend-web --filter=frontend-main",
-    "dev:electron": "pnpm build:extra && turbo dev --filter=frontend-main --filter=backend-electron",
-    "dev:web": "pnpm build:extra && turbo dev:web --filter=backend-web --filter=frontend-main",
-    "build": "turbo build",
-    "build:extra": "turbo build --filter=plugin --filter=frontend-mobile",
-    "build:web-release": "turbo types && turbo build --filter=webapi --filter=frontend",
-    "build:docker": "pnpm build:web-release && docker build -f docker/Dockerfile -t caorushizi/mediago:latest .",
-    "beta": "turbo build && pnpm -F main run pack",
-    "release": "turbo build && pnpm -F backend-electron run release",
-    "types": "turbo types",
-    "prepare": "husky",
-    "commit": "git-cz",
-    "commitlint": "commitlint --edit",
-    "spellcheck": "cspell \"apps/**/src/**/*.{ts,tsx}\" \"packages/**/src/**/*.{ts,tsx}\"",
-    "lint": "turbo lint",
-    "lint:fix": "turbo lint:fix",
-    "format": "biome format --write .",
-    "lint-staged": "turbo lint-staged",
-    "test": "tsx --test tests/router.integration.test.ts"
+    "knip": "knip"
   },
   "keywords": [],
   "license": "MIT",
-  "config": {
-    "commitizen": {
-      "path": "node_modules/cz-git"
-    }
-  },
   "devDependencies": {
     "@biomejs/biome": "^2.2.2",
-    "@commitlint/cli": "^19.3.0",
-    "@commitlint/config-conventional": "^19.2.2",
-    "@commitlint/core": "^19.3.0",
-    "@commitlint/cz-commitlint": "^19.2.0",
-    "@commitlint/format": "^19.3.0",
-    "commitizen": "^4.3.0",
-    "cross-env": "^7.0.3",
-    "cspell": "^8.8.3",
-    "cz-git": "^1.9.2",
-    "husky": "^9.0.11",
-    "lint-staged": "^16.1.6",
-    "tsx": "^4.11.0",
+    "@types/node": "^24.7.0",
+    "knip": "^5.64.2",
     "turbo": "^2.5.6",
-    "zx": "^8.1.1"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@swc/core",
-      "better-sqlite3",
-      "core-js",
-      "electron",
-      "es5-ext",
-      "esbuild",
-      "node-pty",
-      "sqlite3"
-    ]
-  },
-  "dependencies": {
-    "react-dom": "18.3.1"
+    "typescript": "^5.9.3"
   }
 }

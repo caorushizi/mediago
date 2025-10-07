@@ -1,10 +1,4 @@
 import {
-  type ConversionPagination,
-  type ConversionResponse,
-  type DownloadItem,
-  type DownloadItemPagination,
-  type ElectronApi,
-  type VideoResponse,
   ADD_CONVERSION,
   ADD_DOWNLOAD_ITEMS,
   ADD_FAVORITE,
@@ -12,9 +6,14 @@ import {
   CLEAR_WEBVIEW_CACHE,
   COMBINE_TO_HOME_PAGE,
   CONVERT_TO_AUDIO,
+  type ConversionPagination,
+  type ConversionResponse,
   DELETE_CONVERSION,
   DELETE_DOWNLOAD_ITEM,
+  type DownloadItem,
+  type DownloadItemPagination,
   EDIT_DOWNLOAD_ITEM,
+  type ElectronApi,
   EXPORT_DOWNLOAD_LIST,
   EXPORT_FAVORITES,
   GET_APP_STORE,
@@ -47,6 +46,7 @@ import {
   START_DOWNLOAD,
   START_UPDATE,
   STOP_DOWNLOAD,
+  type VideoResponse,
   WEBVIEW_CHANGE_USER_AGENT,
   WEBVIEW_GO_BACK,
   WEBVIEW_GO_HOME,
@@ -57,8 +57,7 @@ import {
   WEBVIEW_URL_CONTEXTMENU,
 } from "@mediago/shared-common";
 import type { AppStore, BrowserStore, Conversion, EnvPath, Favorite, Video } from "@mediago/shared-node";
-import { shell } from "electron/common";
-import { contextBridge, ipcRenderer } from "electron/renderer";
+import { shell, contextBridge, ipcRenderer } from "electron";
 
 const apiFunctions: Record<string, any> = {};
 

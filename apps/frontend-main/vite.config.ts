@@ -1,7 +1,8 @@
-import { defineConfig } from "vite";
+import path from "node:path";
 import react from "@vitejs/plugin-react-swc";
-import path from "path";
+import { defineConfig } from "vite";
 
+const projectRoot = path.resolve(__dirname, "../..");
 const isWeb = process.env.APP_TARGET === "web";
 
 // https://vitejs.dev/config/
@@ -11,12 +12,10 @@ export default defineConfig({
     strictPort: true,
   },
   plugins: [react()],
-  envDir: "../..",
+  envDir: projectRoot,
   envPrefix: "APP",
   build: {
-    outDir: isWeb
-      ? path.resolve(__dirname, "../backend/dist/app")
-      : path.resolve(__dirname, "../../app/build/renderer"),
+    outDir: isWeb ? "dist/web" : "dist/electron",
     emptyOutDir: true,
   },
   resolve: {

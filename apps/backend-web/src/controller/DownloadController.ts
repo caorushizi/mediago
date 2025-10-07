@@ -1,10 +1,10 @@
 import { provide } from "@inversifyjs/binding-decorators";
 import {
-  type Controller,
-  DownloadItem,
-  DownloadItemPagination,
   ADD_DOWNLOAD_ITEMS,
+  type Controller,
   DELETE_DOWNLOAD_ITEM,
+  type DownloadItem,
+  type DownloadItemPagination,
   EDIT_DOWNLOAD_ITEM,
   GET_DOWNLOAD_ITEMS,
   GET_VIDEO_FOLDERS,

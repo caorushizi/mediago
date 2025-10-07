@@ -1,5 +1,5 @@
 import "vite/client";
-import { ElectronApi } from "../../main/types/preload";
+import type { ElectronApi } from "../../main/types/preload";
 
 declare global {
   interface Window {
@@ -14,5 +14,3 @@ declare module "*.svg" {
   const content: React.FC<React.SVGProps<SVGElement>>;
   export default content;
 }
-
-export {};

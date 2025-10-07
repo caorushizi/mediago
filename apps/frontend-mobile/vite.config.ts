@@ -1,6 +1,6 @@
-import { defineConfig } from "vite";
+import path from "node:path";
 import react from "@vitejs/plugin-react-swc";
-import path from "path";
+import { defineConfig } from "vite";
 
 const projectRoot = path.resolve(__dirname, "../..");
 
@@ -12,10 +12,7 @@ export default defineConfig({
     host: true,
   },
   plugins: [react()],
-  build: {
-    outDir: path.resolve(projectRoot, "app/mobile"),
-    emptyOutDir: true,
-  },
+  build: {},
   envDir: projectRoot,
   envPrefix: "APP",
   resolve: {

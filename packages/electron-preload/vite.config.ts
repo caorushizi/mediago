@@ -8,17 +8,17 @@ export default defineConfig({
   plugins: [],
   build: {
     lib: {
-      entry: path.resolve(__dirname, "./src/main.ts"),
-      name: "plugin",
+      entry: path.resolve(__dirname, "./src/index.ts"),
+      name: "preload",
       fileName: () => "index.js",
       formats: ["cjs"],
     },
-    rollupOptions: {},
+    rollupOptions: {
+      external: ["electron"],
+      output: {
+        inlineDynamicImports: true,
+      },
+    },
   },
   envDir: projectRoot,
-  server: {
-    port: 8080,
-    cors: true,
-    origin: "http://localhost:8080",
-  },
 });

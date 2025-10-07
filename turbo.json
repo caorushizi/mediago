@@ -3,15 +3,12 @@
   "ui": "tui",
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": [
         "dist/**",
-        "build/**", 
-        "lib/**",
-        "main/**",
-        "app/**",
-        ".next/**",
-        "!.next/cache/**"
+        "build/**"
       ]
     },
     "dev": {
@@ -27,17 +24,25 @@
       "persistent": true
     },
     "lint": {
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "lint:fix": {
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "type-check": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": []
     },
     "types": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": []
     },
     "types:watch": {
@@ -45,7 +50,9 @@
       "persistent": true
     },
     "preview": {
-      "dependsOn": ["build"],
+      "dependsOn": [
+        "build"
+      ],
       "cache": false,
       "persistent": true
     },

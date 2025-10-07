@@ -2,7 +2,8 @@
   "name": "mediago",
   "version": "3.0.1",
   "description": "在线视频下载器",
-  "main": "main/index.js",
+  "main": "main/index.cjs",
+  "type": "module",
   "author": "caorushizi",
   "homepage": "https://downloader.caorushizi.cn/",
   "license": "MIT",
@@ -22,6 +23,12 @@
     "tldts-experimental": "^6.1.70"
   },
   "devDependencies": {
-    "electron": "30.0.8"
+    "@types/jest": "^30.0.0",
+    "@types/jquery": "^3.5.33",
+    "@types/node": "^24.7.0",
+    "@types/web-bluetooth": "^0.0.21",
+    "electron": "30.0.8",
+    "tsx": "^4.20.6",
+    "electron-builder": "^24.13.3"
   }
 }

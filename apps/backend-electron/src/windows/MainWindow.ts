@@ -8,11 +8,14 @@ import { inject, injectable } from "inversify";
 import _ from "lodash";
 import Window from "../core/window";
 import { isWin } from "../helper/variables";
-import DownloadStateAggregator, {
-  type DownloadState,
-} from "../services/DownloadStateAggregator";
+import DownloadStateAggregator, { type DownloadState } from "../services/DownloadStateAggregator";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+
+const preload = require.resolve("@mediago/electron-preload");
 
 @injectable()
 @provide()
@@ -41,7 +44,7 @@ export default class MainWindow extends Window {
       show: false,
       frame: true,
       webPreferences: {
-        preload: resolve(__dirname, "./preload.js"),
+        preload: preload,
       },
     });
 
@@ -54,9 +57,7 @@ export default class MainWindow extends Window {
     this.taskQueue.on("download-message", this.onDownloadMessage);
     this.store.onDidAnyChange(this.storeChange);
 
-    this.unsubscribeDownloadState = this.downloadStateAggregator.onStateChange(
-      this.sendDownloadStateUpdate,
-    );
+    this.unsubscribeDownloadState = this.downloadStateAggregator.onStateChange(this.sendDownloadStateUpdate);
   }
 
   private sendDownloadStateUpdate = (state: DownloadState) => {
