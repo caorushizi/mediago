@@ -1,6 +1,14 @@
 packages:
-  - "app"
-  - "docs"
-  - "apps/*"
-  - "packages/*"
-  - "!**/test/**"
+  - app
+  - docs
+  - apps/**
+  - packages/**
+  - '!**/test/**'
+
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - '@swc/core'
+  - better-sqlite3
+  - electron
+  - esbuild
+  - node-pty

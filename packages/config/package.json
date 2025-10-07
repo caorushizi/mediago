@@ -6,8 +6,8 @@
   "type": "module",
   "exports": {
     "./tsconfig": "./tsconfig.json",
-    "./biome": "./biome.json",
-    "./vite": "./src/vite.config.base.ts"
+    "./vite": "./src/vite.config.base.ts",
+    "./base": "tsconfig.json"
   },
   "files": [
     "src",

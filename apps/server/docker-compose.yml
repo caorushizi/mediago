@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  mediago-server:
+    build:
+      context: .
+    ports:
+      - "8899:8899"
+    volumes:
+      - mediago-data:/app/data
+    environment:
+      - NODE_ENV=development
+    networks:
+      - mediago-network
+
+volumes:
+  mediago-data:
+
+networks:
+  mediago-network:
+    driver: bridge

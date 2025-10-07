@@ -9,18 +9,17 @@
     ".": "./dist/index.js"
   },
   "scripts": {
-    "types": "tsc",
     "dev": "vite build --watch",
     "build": "vite build",
-    "lint-staged": "lint-staged"
+    "lint": "biome check ."
   },
   "files": [
     "dist"
   ],
   "devDependencies": {
-    "@types/node": "^20.12.12",
+    "@types/node": "^22.18.8",
     "electron": "30.0.8",
-    "esbuild": "^0.21.4",
+    "esbuild": "^0.25.10",
     "tsx": "^4.11.0",
     "typescript": "^5.4.5",
     "vite": "npm:rolldown-vite@latest"
