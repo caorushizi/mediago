@@ -1,5 +1,5 @@
 {
-  "extends": "../config/tsconfig.extension.json",
+  "extends": "../config/src/tsconfig.app.json",
   "compilerOptions": {
     "jsx": "preserve",
     "noUnusedLocals": true,

@@ -1,10 +1,12 @@
 {
-  "extends": "../../packages/config/tsconfig.react.json",
+  "extends": "../../packages/config/src/tsconfig.app.json",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
   },
   "include": ["src"],
   "references": [
