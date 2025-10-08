@@ -2,7 +2,6 @@
   "name": "@mediago/ui",
   "private": true,
   "version": "0.1.0",
-  "description": "electron-template renderer",
   "type": "module",
   "scripts": {
     "dev:electron": "vite",

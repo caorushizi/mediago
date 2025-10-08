@@ -1,7 +1,6 @@
 {
   "name": "@mediago/shared-common",
   "version": "1.0.0",
-  "description": "Common shared code for MediaGo project",
   "type": "module",
   "main": "./src/index.ts",
   "exports": {
@@ -12,7 +11,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "packageManager": "pnpm@10.8.1",
   "dependencies": {},
   "devDependencies": {
