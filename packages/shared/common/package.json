@@ -14,9 +14,7 @@
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.8.1",
-  "dependencies": {
-    "i18next": "^23.11.5"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/node": "^20.12.12",
     "typescript": "^5.4.5"

@@ -16,7 +16,6 @@
     "glob": "^10.4.5",
     "inversify": "^7.9.1",
     "i18next": "^23.11.5",
-    "strip-ansi": "^7.1.0",
     "typeorm": "0.3.20"
   },
   "devDependencies": {
