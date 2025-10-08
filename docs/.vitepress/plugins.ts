@@ -1,4 +1,4 @@
-import { HeadConfig } from "vitepress";
+import type { HeadConfig } from "vitepress";
 
 export function baiduAnalytics(): HeadConfig[] {
   return [

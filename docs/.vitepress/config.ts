@@ -1,13 +1,11 @@
-import { HeadConfig, defineConfig } from "vitepress";
-import { baiduAnalytics, googleAnalytics } from "./plugins";
 import vueI18n from "@intlify/unplugin-vue-i18n/vite";
 import tailwindcss from "@tailwindcss/vite";
+import { defineConfig, type HeadConfig } from "vitepress";
+import { baiduAnalytics, googleAnalytics } from "./plugins";
 
 const isDev = process.env.NODE_ENV === "development";
 
-const head: HeadConfig[] = [
-  ["link", { rel: "shortcut icon", href: "/favicon.svg" }],
-];
+const head: HeadConfig[] = [["link", { rel: "shortcut icon", href: "/favicon.svg" }]];
 if (!isDev) {
   head.push(...baiduAnalytics(), ...googleAnalytics());
 }
@@ -47,9 +45,7 @@ export default defineConfig({
       },
     ],
 
-    socialLinks: [
-      { icon: "github", link: "https://github.com/caorushizi/m3u8-downloader" },
-    ],
+    socialLinks: [{ icon: "github", link: "https://github.com/caorushizi/m3u8-downloader" }],
   },
 
   locales: {
@@ -139,7 +135,7 @@ export default defineConfig({
     plugins: [
       vueI18n({
         ssr: true,
-      }),
+      }) as any,
       tailwindcss(),
     ],
   },

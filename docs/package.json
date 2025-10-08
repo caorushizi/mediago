@@ -1,5 +1,5 @@
 {
-  "name": "docs",
+  "name": "@mediago/docs",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
@@ -15,7 +15,7 @@
   "devDependencies": {
     "@intlify/unplugin-vue-i18n": "^6.0.3",
     "@types/node": "^22.13.1",
-    "vitepress": "2.0.0-alpha.2"
+    "vitepress": "2.0.0-alpha.12"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.6",
