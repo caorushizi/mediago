@@ -45,7 +45,7 @@ jobs:
           python-version: "3.10"
 
       # step5: install pnpm env
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v3
         with:
           version: "10.15.0"
           run_install: true
