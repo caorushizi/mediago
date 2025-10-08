@@ -1,4 +1,4 @@
-name: Build and Push MediaGo Docker Image
+name: Make MediaGo Docker Image
 
 on:
   push:

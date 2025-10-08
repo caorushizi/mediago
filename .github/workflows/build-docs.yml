@@ -21,7 +21,7 @@ concurrency:
 env:
   BUCKET: downloader-docs
   ENDPOINT: oss-cn-beijing.aliyuncs.com
-  ACCESS_KEY: LTAI5tQk2JxRfsYkNFaxXeep
+  ACCESS_KEY: LTAI5tDrRjFUAvufpCJioz3b
   ACCESS_KEY_SECRET: ${{ secrets.ACCESS_KEY_SECRET }}
 
 jobs:
