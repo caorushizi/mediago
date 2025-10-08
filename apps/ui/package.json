@@ -7,7 +7,7 @@
   "scripts": {
     "dev:electron": "vite",
     "dev:server": "cross-env APP_TARGET=server vite --port 8557",
-    "build:electron": "tsc && vite build",
+    "build:electron": "vite build",
     "build:server": "cross-env APP_TARGET=server vite build",
     "report": "vite-bundle-visualizer",
     "lint": "biome check ."
