@@ -107,6 +107,9 @@
       "dependsOn": [
         "clean:electron",
         "build:electron"
+      ],
+      "outputs": [
+        "app/build/**"
       ]
     },
     "clean:server": {
