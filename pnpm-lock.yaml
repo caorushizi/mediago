@@ -28,7 +28,7 @@ importers:
     dependencies:
       '@ghostery/adblocker-electron':
         specifier: 2.3.1
-        version: 2.3.1(electron@30.0.8)
+        version: 2.3.1(electron@35.7.5)
       '@inversifyjs/binding-decorators':
         specifier: ^1.1.3
         version: 1.1.3(inversify@7.9.1(reflect-metadata@0.2.2))(reflect-metadata@0.2.2)
@@ -145,8 +145,8 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0
       electron:
-        specifier: 30.0.8
-        version: 30.0.8
+        specifier: 35.7.5
+        version: 35.7.5
       electron-builder:
         specifier: 24.13.3
         version: 24.13.3(electron-builder-squirrel-windows@24.13.3)
@@ -185,10 +185,10 @@ importers:
         version: 2.3.1
       '@ghostery/adblocker-electron':
         specifier: 2.3.1
-        version: 2.3.1(electron@30.0.8)
+        version: 2.3.1(electron@35.7.5)
       '@ghostery/adblocker-electron-preload':
         specifier: 2.3.1
-        version: 2.3.1(electron@30.0.8)
+        version: 2.3.1(electron@35.7.5)
       '@ghostery/adblocker-extended-selectors':
         specifier: 2.3.1
         version: 2.3.1
@@ -224,8 +224,8 @@ importers:
         specifier: ^24.7.0
         version: 24.7.0
       electron:
-        specifier: 30.0.8
-        version: 30.0.8
+        specifier: 35.7.5
+        version: 35.7.5
 
   apps/server:
     dependencies:
@@ -553,8 +553,8 @@ importers:
         specifier: ^22.18.8
         version: 22.18.8
       electron:
-        specifier: 30.0.8
-        version: 30.0.8
+        specifier: 35.7.5
+        version: 35.7.5
       esbuild:
         specifier: ^0.25.10
         version: 0.25.10
@@ -3586,8 +3586,8 @@ packages:
   electron-updater@6.6.2:
     resolution: {integrity: sha512-Cr4GDOkbAUqRHP5/oeOmH/L2Bn6+FQPxVLZtPbcmKZC63a1F3uu5EefYOssgZXG3u/zBlubbJ5PJdITdMVggbw==}
 
-  electron@30.0.8:
-    resolution: {integrity: sha512-ivzXJJ/9gdb4oOw+5SDuaZpSInz8C+Z021dKZfFLMltKbDa4sSqt5cRBiUg7J36Z2kdus+Jai0bdHWutYE9wAA==}
+  electron@35.7.5:
+    resolution: {integrity: sha512-dnL+JvLraKZl7iusXTVTGYs10TKfzUi30uEDTqsmTm0guN9V2tbOjTzyIZbh9n3ygUjgEYyo+igAwMRXIi3IPw==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
 
@@ -7049,7 +7049,7 @@ snapshots:
       '@babel/parser': 7.28.4
       '@babel/template': 7.27.2
       '@babel/types': 7.28.4
-      debug: 4.4.1
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -7123,7 +7123,7 @@ snapshots:
 
   '@electron/get@2.0.3':
     dependencies:
-      debug: 4.4.1
+      debug: 4.4.3
       env-paths: 2.2.1
       fs-extra: 8.1.0
       got: 11.8.6
@@ -7368,16 +7368,16 @@ snapshots:
     dependencies:
       '@ghostery/adblocker-extended-selectors': 2.3.1
 
-  '@ghostery/adblocker-electron-preload@2.3.1(electron@30.0.8)':
+  '@ghostery/adblocker-electron-preload@2.3.1(electron@35.7.5)':
     dependencies:
       '@ghostery/adblocker-content': 2.3.1
-      electron: 30.0.8
+      electron: 35.7.5
 
-  '@ghostery/adblocker-electron@2.3.1(electron@30.0.8)':
+  '@ghostery/adblocker-electron@2.3.1(electron@35.7.5)':
     dependencies:
       '@ghostery/adblocker': 2.3.1
-      '@ghostery/adblocker-electron-preload': 2.3.1(electron@30.0.8)
-      electron: 30.0.8
+      '@ghostery/adblocker-electron-preload': 2.3.1(electron@35.7.5)
+      electron: 35.7.5
       tldts-experimental: 6.1.86
 
   '@ghostery/adblocker-extended-selectors@2.3.1': {}
@@ -8407,7 +8407,7 @@ snapshots:
   '@types/body-parser@1.19.6':
     dependencies:
       '@types/connect': 3.4.38
-      '@types/node': 22.18.8
+      '@types/node': 20.19.11
 
   '@types/cacheable-request@6.0.3':
     dependencies:
@@ -8443,7 +8443,7 @@ snapshots:
 
   '@types/express-serve-static-core@5.1.0':
     dependencies:
-      '@types/node': 22.18.8
+      '@types/node': 20.19.11
       '@types/qs': 6.14.0
       '@types/range-parser': 1.2.7
       '@types/send': 0.17.5
@@ -8498,7 +8498,7 @@ snapshots:
 
   '@types/jsonfile@6.1.4':
     dependencies:
-      '@types/node': 22.18.8
+      '@types/node': 20.19.11
 
   '@types/keygrip@1.0.6': {}
 
@@ -8621,7 +8621,7 @@ snapshots:
   '@types/serve-static@1.15.8':
     dependencies:
       '@types/http-errors': 2.0.5
-      '@types/node': 22.18.8
+      '@types/node': 20.19.11
       '@types/send': 0.17.5
 
   '@types/sizzle@2.3.10': {}
@@ -8654,7 +8654,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/tsconfig-utils': 8.42.0(typescript@5.9.3)
       '@typescript-eslint/types': 8.42.0
-      debug: 4.4.1
+      debug: 4.4.3
       typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
@@ -8874,7 +8874,7 @@ snapshots:
 
   agent-base@6.0.2:
     dependencies:
-      debug: 4.4.1
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -9882,10 +9882,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron@30.0.8:
+  electron@35.7.5:
     dependencies:
       '@electron/get': 2.0.3
-      '@types/node': 20.19.11
+      '@types/node': 22.18.8
       extract-zip: 2.0.1
     transitivePeerDependencies:
       - supports-color
@@ -10186,7 +10186,7 @@ snapshots:
 
   extract-zip@2.0.1:
     dependencies:
-      debug: 4.4.1
+      debug: 4.4.3
       get-stream: 5.2.0
       yauzl: 2.10.0
     optionalDependencies:
@@ -10435,7 +10435,7 @@ snapshots:
       es6-error: 4.1.1
       matcher: 3.0.0
       roarr: 2.15.4
-      semver: 7.7.2
+      semver: 7.7.3
       serialize-error: 7.0.1
     optional: true
 
@@ -12712,7 +12712,7 @@ snapshots:
 
   sumchecker@3.0.1:
     dependencies:
-      debug: 4.4.1
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
