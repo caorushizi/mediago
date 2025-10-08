@@ -132,9 +132,6 @@ importers:
       '@types/node':
         specifier: ^20.12.12
         version: 20.19.11
-      '@types/semver':
-        specifier: ^7.5.8
-        version: 7.7.0
       '@types/serve-handler':
         specifier: ^6.1.4
         version: 6.1.4
@@ -159,9 +156,6 @@ importers:
       rimraf:
         specifier: ^6.0.1
         version: 6.0.1
-      semver:
-        specifier: ^7.6.2
-        version: 7.7.2
       tsx:
         specifier: ^4.20.6
         version: 4.20.6
@@ -2523,9 +2517,6 @@ packages:
 
   '@types/responselike@1.0.3':
     resolution: {integrity: sha512-H/+L+UkTV33uf49PH5pCAUBVPNj2nDBXTN+qS1dOwyyg24l3CcicicCA7ca+HMvJBZcFgl5r8e+RR6elsb4Lyw==}
-
-  '@types/semver@7.7.0':
-    resolution: {integrity: sha512-k107IF4+Xr7UHjwDc7Cfd6PRQfbdkiRabXGRjo07b4WyPahFBZCZ1sE+BNxYIJPPg73UkfOsVOLwqVc/6ETrIA==}
 
   '@types/send@0.17.5':
     resolution: {integrity: sha512-z6F2D3cOStZvuk2SaP6YrwkNO65iTZcwA2ZkSABegdkAh/lf+Aa/YQndZVfmEXT5vgAp6zv06VQ3ejSVjAny4w==}
@@ -8580,8 +8571,6 @@ snapshots:
   '@types/responselike@1.0.3':
     dependencies:
       '@types/node': 22.18.8
-
-  '@types/semver@7.7.0': {}
 
   '@types/send@0.17.5':
     dependencies:
