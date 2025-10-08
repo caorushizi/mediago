@@ -22,7 +22,9 @@
     "pack:server": "turbo run pack:server",
     "pack:electron": "turbo run pack:electron",
     "release:server": "turbo run release:server",
-    "release:electron": "turbo run release:electron"
+    "release:electron": "turbo run release:electron",
+    "docs:dev": "pnpm -F @mediago/docs run docs:dev",
+    "docs:build": "pnpm -F @mediago/docs run docs:build"
   },
   "keywords": [],
   "license": "MIT",

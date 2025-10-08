@@ -11,7 +11,8 @@
       "packages/**/src/**/*.{js,jsx,ts,tsx,json,css,scss}",
       "apps/**/*.{js,jsx,ts,tsx,json}",
       "packages/**/*.{js,jsx,ts,tsx,json}",
-      "scripts/*.{js,ts}"
+      "scripts/*.{js,ts}",
+      "docs/.vitepress/**/*.{js,ts,json,css,scss}"
     ]
   },
   "linter": {
@@ -81,8 +82,8 @@
   "overrides": [
     {
       "includes": [
-        "apps/renderer/**/*.{js,jsx,ts,tsx}",
-        "apps/mobile/**/*.{js,jsx,ts,tsx}"
+        "apps/ui/**/*.{js,jsx,ts,tsx}",
+        "packages/mobile-player/**/*.{js,jsx,ts,tsx}"
       ],
       "linter": {
         "rules": {
