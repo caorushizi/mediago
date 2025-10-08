@@ -1,7 +1,7 @@
 # build.yml
 
 # Workflow's name
-name: Build Downloader App.
+name: Build MediaGo App
 
 # Workflow's trigger
 on:
@@ -37,6 +37,7 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 22
+          cache: "pnpm"
 
       # step4: install python env
       - name: Install Python
