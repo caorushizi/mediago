@@ -49,7 +49,6 @@ jobs:
         with:
           version: "10.15.0"
           run_install: true
-          standalone: true
 
       - name: Build  & release app
         run: pnpm release:electron
