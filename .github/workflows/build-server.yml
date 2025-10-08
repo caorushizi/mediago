@@ -1,4 +1,4 @@
-name: Build and Push Multi-arch Docker Image
+name: Build and Push MediaGo Docker Image
 
 on:
   push:
@@ -17,6 +17,7 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: "22"
+          cache: "pnpm"
 
       - uses: pnpm/action-setup@v4
         with:
