@@ -1,7 +1,6 @@
 {
   "name": "@mediago/config",
   "version": "1.0.0",
-  "description": "Shared configuration for MediaGo project",
   "private": true,
   "type": "module",
   "exports": {
