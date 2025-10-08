@@ -45,7 +45,7 @@
     "@mediago/electron-preload": "workspace:*",
     "@mediago/shared-common": "workspace:*",
     "@mediago/shared-node": "workspace:*",
-    "axios": "^1.7.2",
+    "axios": "^1.12.2",
     "better-sqlite3": "^10.1.0",
     "cors": "^2.8.5",
     "dayjs": "^1.11.11",
