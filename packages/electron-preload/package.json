@@ -1,7 +1,6 @@
 {
   "name": "@mediago/electron-preload",
   "version": "0.1.0",
-  "description": "Electron preload script for MediaGo",
   "type": "module",
   "main": "build/index.js",
   "types": "build/index.d.ts",
