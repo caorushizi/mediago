@@ -32,16 +32,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: "10.15.0"
+          run_install: false
+          standalone: true
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "20.19.5"
+          cache: "pnpm"
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: "10.15.0"
-          run_install: true
-          standalone: true
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Build with Vitepress
         run: pnpm docs:build
