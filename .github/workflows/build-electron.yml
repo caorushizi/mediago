@@ -30,33 +30,32 @@ jobs:
     steps:
       # step1: check out repository
       - name: Check out git repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # step2: install node env
       - name: Install Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 22
 
       # step4: install python env
       - name: Install Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.10"
 
       # step5: install pnpm env
-      - uses: pnpm/action-setup@v3
+      - uses: pnpm/action-setup@v4
         with:
           version: latest
           run_install: true
           standalone: true
 
       - name: Build  & release app
-        run: pnpm run release
+        run: pnpm release:electron
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           APP_TD_APPID: ${{ secrets.APP_TD_APPID }}
-          APP_CLARITY_APPID: ${{ secrets.APP_CLARITY_APPID}}
 
       - uses: actions/upload-artifact@v4
         with:

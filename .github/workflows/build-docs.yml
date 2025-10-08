@@ -2,6 +2,9 @@ name: Deploy Downloader Docs.
 
 on:
   push:
+    paths:
+      - "docs/**"
+      - ".github/workflows/build-docs.yml"
     branches: ["master"]
 
   workflow_dispatch:
@@ -23,30 +26,30 @@ env:
 
 jobs:
   build:
-    name: Build
+    name: Build Docs
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 20
 
-      - uses: pnpm/action-setup@v3
+      - uses: pnpm/action-setup@v4
         with:
           version: latest
           run_install: true
 
       - name: Build with Vitepress
-        run: pnpm run docs:build
+        run: pnpm docs:build
 
-      - name: Install Alibaba Cloud OSSUTIL
+      - name: Install Alibaba Cloud ossutil
         run: wget http://gosspublic.alicdn.com/ossutil/1.6.10/ossutil64 && chmod +x ossutil64
 
-      - name: Configure Alibaba Cloud OSSUTIL
+      - name: Configure Alibaba Cloud ossutil
         run: ./ossutil64 config -i ${ACCESS_KEY} -k ${ACCESS_KEY_SECRET} -e ${ENDPOINT} -c .ossutilconfig
 
       - name: Upload the web folder to the chosen OSS bucket
-        run: ./ossutil64 --config-file .ossutilconfig cp ${{ github.workspace }}/.vitepress/dist oss://${BUCKET} -r -f
+        run: ./ossutil64 --config-file .ossutilconfig cp ${{ github.workspace }}/docs/.vitepress/dist oss://${BUCKET} -r -f

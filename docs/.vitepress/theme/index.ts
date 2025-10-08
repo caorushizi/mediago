@@ -1,9 +1,9 @@
 import Theme from "vitepress/theme";
 import "./style/var.css";
 import "./style/global.css";
+import type { EnhanceAppContext } from "vitepress";
 import { createI18n } from "vue-i18n";
 import Layout from "./Layout.vue";
-import { EnhanceAppContext } from "vitepress";
 
 const i18n = createI18n({
   legacy: false,
@@ -40,7 +40,7 @@ const i18n = createI18n({
 });
 
 export default {
-  ...Theme,
+  extends: Theme,
   Layout,
   enhanceApp({ app }: EnhanceAppContext) {
     app.use(i18n);
