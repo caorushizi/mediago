@@ -4,14 +4,12 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./tsconfig": "./tsconfig.json",
-    "./vite": "./src/vite.config.base.ts",
-    "./base": "tsconfig.json"
+    "./base": "./src/tsconfig.base.json",
+    "./app": "./src/tsconfig.app.json",
+    "./node": "./src/tsconfig.node.json"
   },
   "files": [
-    "src",
-    "tsconfig.json",
-    "biome.json"
+    "src"
   ],
   "keywords": [],
   "author": "",
