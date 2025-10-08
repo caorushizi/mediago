@@ -4,7 +4,6 @@ import { fileURLToPath } from "node:url";
 import dotenvFlow from "dotenv-flow";
 import type { Configuration } from "electron-builder";
 import * as builder from "electron-builder";
-import semver from "semver";
 
 const args = process.argv.slice(2);
 const isDir = args.includes("--dir");
@@ -23,7 +22,7 @@ const pkg = JSON.parse(await fs.readFile("./app/package.json", "utf-8"));
 function getReleaseConfig(): Configuration {
   return {
     productName: process.env.APP_NAME,
-    buildVersion: process.env.APP_VERSION,
+    buildVersion: pkg.version,
     appId: process.env.APP_ID,
     copyright: process.env.APP_COPYRIGHT,
     artifactName: "${productName}-setup-${platform}-${arch}-${buildVersion}.${ext}",
@@ -144,10 +143,6 @@ for (const task of electronTask) {
     recursive: true,
     force: true,
   });
-}
-
-if (semver.neq(process.env.APP_VERSION || "", pkg.version)) {
-  throw new Error("请先同步构建版本和发布版本");
 }
 
 const config = getReleaseConfig();
