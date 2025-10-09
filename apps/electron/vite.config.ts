@@ -6,6 +6,7 @@ import { viteStaticCopy } from "vite-plugin-static-copy";
 import { globSync } from "glob";
 import fs from "node:fs";
 
+const isDev = process.env.NODE_ENV === "development";
 const projectRoot = path.resolve(__dirname, "../..");
 
 export class ElectronApp {
@@ -54,11 +55,14 @@ function chmodBin() {
   }
 }
 
+const devBinPath = path.resolve(projectRoot, "bin", process.platform, process.arch);
+const prodBinPath = path.resolve(projectRoot, "bin");
+
 // https://vitejs.dev/config/
 export default defineConfig({
   envPrefix: "APP",
   define: {
-    __bin__: `"${path.resolve(projectRoot, "bin").replace(/\\/g, "\\\\")}"`,
+    __bin__: isDev ? `"${devBinPath.replace(/\\/g, "\\\\")}"` : `"${prodBinPath.replace(/\\/g, "\\\\")}"`,
   },
   build: {
     target: "node16",
