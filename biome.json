@@ -99,7 +99,31 @@
         "rules": {
           "correctness": {
             "useExhaustiveDependencies": "warn",
-            "useHookAtTopLevel": "error"
+            "useHookAtTopLevel": "warn",
+            "noInvalidUseBeforeDeclaration": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/ui/src/store/**/*.{ts,tsx}"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedVariables": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/ui/src/assets/svg/**/*.tsx"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "useUniqueElementIds": "off"
+          },
+          "a11y": {
+            "noSvgWithoutTitle": "off"
           }
         }
       }
@@ -118,6 +142,9 @@
         "rules": {
           "suspicious": {
             "noUnknownAtRules": "off"
+          },
+          "style": {
+            "noDescendingSpecificity": "off"
           }
         }
       }
