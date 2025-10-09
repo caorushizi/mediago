@@ -1,8 +1,8 @@
+import path from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
 import dayjs from "dayjs";
 import logger, { type Logger } from "electron-log";
 import { injectable } from "inversify";
-import path from "path";
 import { appName, workspace } from "../helper/index";
 
 @injectable()

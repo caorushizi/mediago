@@ -36,7 +36,7 @@ export const getFavIcon = async (url: string) => {
     const fetchUrl = urlObject.origin ? `${urlObject.origin}/favicon.ico` : "";
     await requestImage(fetchUrl);
     iconUrl = fetchUrl;
-  } catch (e) {
+  } catch (_e) {
     // empty
   }
   return iconUrl;
@@ -74,7 +74,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function randomName() {
-  return dayjs().format("YYYYMMDD") + "-" + nanoid();
+  return `${dayjs().format("YYYYMMDD")}-${nanoid()}`;
 }
 
 export const isWeb = import.meta.env.APP_TARGET === "server";

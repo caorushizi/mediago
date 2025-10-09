@@ -1,6 +1,6 @@
 import { useMemoizedFn } from "ahooks";
 import { App, Button, Dropdown, type MenuProps } from "antd";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Checkbox } from "@/components/ui/checkbox";
 import useElectron from "@/hooks/use-electron";
@@ -44,7 +44,7 @@ export function ListHeader({
     if (key === "exportDownloadList") {
       try {
         await exportDownloadList();
-      } catch (err) {
+      } catch (_err) {
         message.error(t("exportDownloadListFailed"));
       }
     }

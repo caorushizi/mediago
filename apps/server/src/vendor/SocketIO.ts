@@ -132,7 +132,7 @@ export default class SocketIO implements Vendor {
       };
     }
 
-    const oldState = { ...this.downloadState[id] };
+    const _oldState = { ...this.downloadState[id] };
     this.downloadState[id] = {
       ...this.downloadState[id],
       ...updates,

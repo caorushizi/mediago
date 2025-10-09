@@ -137,7 +137,7 @@ export default class ElectronApp {
     await this.videoRepository.changeVideoStatus(videoIds, DownloadStatus.Failed);
   }
 
-  secondInstance = (event: Event, commandLine: string[]) => {
+  secondInstance = (_event: Event, commandLine: string[]) => {
     const url = commandLine.pop() || "";
     this.mainWindow.showWindow(url);
   };

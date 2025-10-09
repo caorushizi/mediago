@@ -30,11 +30,11 @@ export class VideoService {
 
   // Use glob to search video files
   getVideoFiles = async () => {
-    const files = await glob(this.videoDir + "/*.*");
+    const files = await glob(`${this.videoDir}/*.*`);
     const videos = files
       .filter((file) => {
         const mimeType = mime.lookup(file);
-        return mimeType && mimeType.startsWith("video");
+        return mimeType?.startsWith("video");
       })
       .map((file) => {
         const fileName = path.basename(file);
@@ -51,11 +51,11 @@ export class VideoService {
 
     app.use(cors());
 
-    app.get("/", (req, res) => {
+    app.get("/", (_req, res) => {
       res.sendFile(path.join(mobileDir, "index.html"));
     });
 
-    app.get("/api", async (req, res) => {
+    app.get("/api", async (_req, res) => {
       const videos = await this.getVideoFiles();
       res.json(videos);
     });

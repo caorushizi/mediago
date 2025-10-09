@@ -1,8 +1,7 @@
 import { createRequire } from "node:module";
-import { resolve } from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
 import { type DownloadProgress, DownloadStatus } from "@mediago/shared-common";
-import { i18n, TaskQueueService, TYPES, VideoRepository } from "@mediago/shared-node";
+import { i18n, TaskQueueService, VideoRepository } from "@mediago/shared-node";
 import { app, Menu, Notification } from "electron";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
@@ -244,7 +243,7 @@ export default class MainWindow extends Window {
       }
 
       if (url) {
-        this.window!.loadURL(url);
+        this.window?.loadURL(url);
       }
     }
   }
@@ -265,7 +264,7 @@ export default class MainWindow extends Window {
     this.send("url-params", url); // Send the URL to the renderer process
 
     if (url) {
-      this.window!.loadURL(url);
+      this.window?.loadURL(url);
     }
   }
 }

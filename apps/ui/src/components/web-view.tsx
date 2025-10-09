@@ -51,7 +51,7 @@ const WebView: FC<WebViewProps> = ({ className }) => {
       resizeObserver.current?.disconnect();
       webviewHide();
     };
-  }, []);
+  }, [setWebviewBounds, webviewHide, webviewShow]);
 
   return <div ref={webviewRef} className={cn(className)} />;
 };

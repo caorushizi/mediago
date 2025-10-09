@@ -144,7 +144,7 @@ const DownloadItemComponent = ({
         })}
         title={item.name}
       >
-        {item.folder ? item.folder + "/" : item.folder}
+        {item.folder ? `${item.folder}/` : item.folder}
         {item.name}
       </div>
     );

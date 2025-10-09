@@ -20,17 +20,17 @@ export default class ConversionController implements Controller {
   ) {}
 
   @handle(GET_CONVERSIONS)
-  async getConversions(e: IpcMainEvent, pagination: ConversionPagination) {
+  async getConversions(_e: IpcMainEvent, pagination: ConversionPagination) {
     return await this.conversionService.getConversions(pagination);
   }
 
   @handle(ADD_CONVERSION)
-  async addConversion(e: IpcMainEvent, conversion: Conversion) {
+  async addConversion(_e: IpcMainEvent, conversion: Conversion) {
     return await this.conversionService.addConversion(conversion);
   }
 
   @handle(DELETE_CONVERSION)
-  async deleteConversion(e: IpcMainEvent, id: number) {
+  async deleteConversion(_e: IpcMainEvent, id: number) {
     return await this.conversionService.deleteConversion(id);
   }
 }

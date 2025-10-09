@@ -25,7 +25,7 @@ export function BrowserView() {
   const browserId = useId();
 
   useEffect(() => {
-    const onShowDownloadDialog = async (e: unknown, data: DownloadItem[], image: string) => {
+    const onShowDownloadDialog = async (_e: unknown, data: DownloadItem[], image: string) => {
       if (image) {
         setPlaceHolder(image);
       }
@@ -40,10 +40,10 @@ export function BrowserView() {
       });
     };
 
-    const onWebviewLinkMessage = async (e: unknown, data: any) => {
+    const onWebviewLinkMessage = async (_e: unknown, data: any) => {
       addSource({
         ...data,
-        name: data.name + `_${randomName()}`,
+        name: `${data.name}_${randomName()}`,
       });
     };
 
@@ -54,7 +54,7 @@ export function BrowserView() {
       removeIpcListener(SHOW_DOWNLOAD_DIALOG, onShowDownloadDialog);
       removeIpcListener("webview-link-message", onWebviewLinkMessage);
     };
-  }, [store.status]);
+  }, [addIpcListener, addSource, removeIpcListener]);
 
   const onClickGoHome = useMemoizedFn(async () => {
     await webviewGoHome();

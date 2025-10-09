@@ -35,13 +35,13 @@ export default class DownloadController implements Controller {
   ) {}
 
   @handle(SHOW_DOWNLOAD_DIALOG)
-  async showDownloadDialog(e: IpcMainEvent, data: DownloadItem) {
+  async showDownloadDialog(_e: IpcMainEvent, data: DownloadItem) {
     const image = await this.webviewService.captureView();
     this.webviewService.sendToWindow(SHOW_DOWNLOAD_DIALOG, data, image?.toDataURL());
   }
 
   @handle(ADD_DOWNLOAD_ITEMS)
-  async addDownloadItems(e: IpcMainEvent, videos: Omit<DownloadItem, "id">[], startDownload?: boolean) {
+  async addDownloadItems(_e: IpcMainEvent, videos: Omit<DownloadItem, "id">[], startDownload?: boolean) {
     const items = await this.downloadService.addDownloadItems(videos);
     // This sends a message to the page notifying it of the update
     this.mainWindow.send("download-item-notifier", items);
@@ -59,7 +59,7 @@ export default class DownloadController implements Controller {
   }
 
   @handle(EDIT_DOWNLOAD_ITEM)
-  async editDownloadItem(e: IpcMainEvent, video: DownloadItem, startDownload?: boolean) {
+  async editDownloadItem(_e: IpcMainEvent, video: DownloadItem, startDownload?: boolean) {
     const item = await this.downloadService.editDownloadItem(video);
 
     // Start downloading immediately if requested
@@ -73,25 +73,25 @@ export default class DownloadController implements Controller {
   }
 
   @handle(GET_DOWNLOAD_ITEMS)
-  async getDownloadItems(e: IpcMainEvent, pagination: DownloadItemPagination): Promise<ListPagination> {
+  async getDownloadItems(_e: IpcMainEvent, pagination: DownloadItemPagination): Promise<ListPagination> {
     const local = this.store.get("local");
     return await this.downloadService.getDownloadItems(pagination, local, videoPattern);
   }
 
   @handle(START_DOWNLOAD)
-  async startDownload(e: IpcMainEvent, vid: number) {
+  async startDownload(_e: IpcMainEvent, vid: number) {
     const local = this.store.get("local");
     const deleteSegments = this.store.get("deleteSegments");
     await this.downloadService.startDownload(vid, local, deleteSegments);
   }
 
   @handle(STOP_DOWNLOAD)
-  async stopDownload(e: IpcMainEvent, id: number) {
+  async stopDownload(_e: IpcMainEvent, id: number) {
     this.downloadService.stopDownload(id);
   }
 
   @handle(DELETE_DOWNLOAD_ITEM)
-  async deleteDownloadItem(e: IpcMainEvent, id: number) {
+  async deleteDownloadItem(_e: IpcMainEvent, id: number) {
     return await this.downloadService.deleteDownloadItem(id);
   }
 }

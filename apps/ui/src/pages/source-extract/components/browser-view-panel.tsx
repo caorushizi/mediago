@@ -43,7 +43,7 @@ export function BrowserViewPanel() {
           清空
         </AntdButton>
       </div>
-      {store.sources.map((item, index) => {
+      {store.sources.map((item, _index) => {
         return (
           <div className="flex flex-col gap-2 rounded-lg bg-[#FAFCFF] p-2 dark:bg-[#27292F]" key={item.url}>
             <span

@@ -20,7 +20,7 @@ class TDEvent {
   onEvent(eventId: string, mapKv: Record<string, string> = {}) {
     try {
       window.TDAPP?.onEvent(eventId, "", mapKv);
-    } catch (e) {
+    } catch (_e) {
       // empty
     }
   }

@@ -66,7 +66,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     return () => {
       removeIpcListener("refresh-list", refresh);
     };
-  }, []);
+  }, [addIpcListener, refresh, removeIpcListener]);
 
   useEffect(() => {
     const search = new URLSearchParams(location.search);
@@ -101,11 +101,11 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
         newFormRef.current?.openModal(item);
       }
     }
-  }, [location.search]);
+  }, [location.search, addDownloadItems]);
 
   // mac ipc event get url params in macos schceme
   useEffect(() => {
-    const handleUrlEvent = (event: unknown, url: string) => {
+    const handleUrlEvent = (_event: unknown, url: string) => {
       const searchParams = new URLSearchParams(url.split("?")[1]);
       if (searchParams.get("n") === "true") {
         const name = searchParams.get("name") || randomName();
@@ -125,7 +125,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     return () => {
       removeIpcListener("url-params", handleUrlEvent);
     };
-  }, []);
+  }, [addIpcListener, removeIpcListener]);
 
   useMount(async () => {
     const ip = await getLocalIP();

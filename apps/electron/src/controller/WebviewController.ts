@@ -33,12 +33,12 @@ export default class WebviewController implements Controller {
   ) {}
 
   @handle(SET_WEBVIEW_BOUNDS)
-  async setWebviewBounds(e: IpcMainEvent, bounds: Electron.Rectangle) {
+  async setWebviewBounds(_e: IpcMainEvent, bounds: Electron.Rectangle) {
     this.webview.setBounds(bounds);
   }
 
   @handle(WEBVIEW_LOAD_URL)
-  async browserViewLoadUrl(e: IpcMainEvent, url: string): Promise<void> {
+  async browserViewLoadUrl(_e: IpcMainEvent, url: string): Promise<void> {
     await this.webview.loadURL(url);
   }
 
@@ -85,7 +85,7 @@ export default class WebviewController implements Controller {
   }
 
   @handle(WEBVIEW_CHANGE_USER_AGENT)
-  async webviewChangeUserAgent(e: IpcMainEvent, isMobile: boolean) {
+  async webviewChangeUserAgent(_e: IpcMainEvent, isMobile: boolean) {
     this.webview.setUserAgent(isMobile);
     this.store.set("isMobile", isMobile);
   }

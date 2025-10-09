@@ -44,18 +44,18 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
       removeIpcListener("webview-did-navigate", onDidNavigate);
       removeIpcListener("webview-did-navigate-in-page", onDidNavigateInPage);
     };
-  }, [store.status]);
+  }, [addIpcListener, onDidNavigate, onDidNavigateInPage, onDomReady, onFailLoad, removeIpcListener]);
 
   const setPageInfo = useMemoizedFn(({ url, title }: UrlDetail) => {
     document.title = title;
     setBrowserStore({ url, title });
   });
 
-  const onDomReady = useMemoizedFn((e: unknown, info: UrlDetail) => {
+  const onDomReady = useMemoizedFn((_e: unknown, info: UrlDetail) => {
     setPageInfo(info);
   });
 
-  const onFailLoad = useMemoizedFn((e: unknown, data: { code: number; desc: string }) => {
+  const onFailLoad = useMemoizedFn((_e: unknown, data: { code: number; desc: string }) => {
     setBrowserStore({
       status: BrowserStatus.Failed,
       errCode: data.code,
@@ -63,12 +63,12 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     });
   });
 
-  const onDidNavigate = useMemoizedFn((e: unknown, info: UrlDetail) => {
+  const onDidNavigate = useMemoizedFn((_e: unknown, info: UrlDetail) => {
     setPageInfo(info);
     setBrowserStore({ status: BrowserStatus.Loaded });
   });
 
-  const onDidNavigateInPage = useMemoizedFn((e: unknown, info: UrlDetail) => {
+  const onDidNavigateInPage = useMemoizedFn((_e: unknown, info: UrlDetail) => {
     setPageInfo(info);
   });
 

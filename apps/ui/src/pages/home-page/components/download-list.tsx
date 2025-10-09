@@ -222,12 +222,12 @@ export function DownloadList({ data, filter, refresh, loading, pagination }: Pro
         refreshTimeoutRef.current = null;
       }
     };
-  }, [refresh]);
+  }, [refresh, addIpcListener, deleteDownloadItem, onStartDownload, removeIpcListener]);
 
   const handleItemSelectChange = useMemoizedFn((id: number) => {
     setSelected(
       produce((draft) => {
-        const index = draft.findIndex((i) => i === id);
+        const index = draft.indexOf(id);
         if (index !== -1) {
           draft.splice(index, 1);
         } else {
@@ -265,7 +265,7 @@ export function DownloadList({ data, filter, refresh, loading, pagination }: Pro
     setTimeout(() => {
       setHasInitialLoaded(false);
     }, 50);
-  }, [filter]);
+  }, []);
 
   const onStartDownload = useMemoizedFn(async (id: number) => {
     await startDownload(id);

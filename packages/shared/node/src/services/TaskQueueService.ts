@@ -1,6 +1,6 @@
+import EventEmitter from "node:events";
 import { provide } from "@inversifyjs/binding-decorators";
 import type { DownloadParams, Task } from "@mediago/shared-common";
-import EventEmitter from "events";
 import { inject, injectable } from "inversify";
 import { downloadSchemaList } from "../config/download";
 import { i18n } from "../i18n";

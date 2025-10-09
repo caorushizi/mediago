@@ -1,5 +1,4 @@
 import { createRequire } from "node:module";
-import { resolve } from "node:path";
 import { ElectronBlocker } from "@ghostery/adblocker-electron";
 import { provide } from "@inversifyjs/binding-decorators";
 import { i18n, VideoRepository } from "@mediago/shared-node";
@@ -105,14 +104,14 @@ export default class WebviewService {
         const content = readFileSync(pluginPath, "utf-8");
         await this.view.webContents.executeJavaScript(content);
       }
-    } catch (err) {
+    } catch (_err) {
       // empty
     }
 
     this.sniffingHelper.checkPageInfo();
   };
 
-  onDidFailLoad = (e: Event, code: number, desc: string) => {
+  onDidFailLoad = (_e: Event, code: number, desc: string) => {
     // this.window.webContents.send("webview-fail-load", { code, desc });
     this.logger.error(`[Webview] fail load: ${code} ${desc}`);
   };
@@ -312,7 +311,7 @@ export default class WebviewService {
 
   setAudioMuted(audioMuted?: boolean) {
     if (!this.view) return;
-    this.view.webContents.setAudioMuted(audioMuted ? true : false);
+    this.view.webContents.setAudioMuted(!!audioMuted);
     this.logger.info(`Play audio: ${!audioMuted}`);
   }
 

@@ -84,7 +84,7 @@ export function FavoriteList() {
     };
 
     const onFavoriteEvent = async (
-      e: unknown,
+      _e: unknown,
       {
         action,
         payload,
@@ -109,7 +109,7 @@ export function FavoriteList() {
     return () => {
       removeIpcListener("favorite-item-event", onFavoriteEvent);
     };
-  }, []);
+  }, [addIpcListener, favoriteList.find, refresh, removeFavorite, removeIpcListener, setBrowserStore, webviewLoadURL]);
 
   return (
     <div className="h-full w-full py-4">

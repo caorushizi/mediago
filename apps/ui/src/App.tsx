@@ -44,7 +44,7 @@ const App: FC = () => {
   });
 
   // 监听store变化
-  const onAppStoreChange = useMemoizedFn((event: any, store: AppStore) => {
+  const onAppStoreChange = useMemoizedFn((_event: any, store: AppStore) => {
     setAppStore(store);
   });
 
@@ -93,7 +93,15 @@ const App: FC = () => {
       removeIpcListener("download-success", onDownloadSuccess);
       removeIpcListener("download-failed", onDownloadFailed);
     };
-  }, []);
+  }, [
+    addIpcListener,
+    onAppStoreChange,
+    onChangePrivacy,
+    onReceiveDownloadItem,
+    removeIpcListener,
+    setUpdateAvailable,
+    setUploadChecking,
+  ]);
 
   useAsyncEffect(async () => {
     const deviceId = await getMachineId();
@@ -113,7 +121,7 @@ const App: FC = () => {
     return () => {
       isDarkTheme.removeEventListener("change", themeChange);
     };
-  }, []);
+  }, [setTheme, themeChange]);
 
   return (
     <ConfigProvider

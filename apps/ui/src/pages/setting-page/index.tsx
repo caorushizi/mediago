@@ -20,13 +20,12 @@ import {
   type TabsProps,
 } from "antd";
 import type React from "react";
-import { type PropsWithChildren, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import PageContainer from "@/components/page-container";
 import { CHECK_UPDATE } from "@/const";
 import useAPI from "@/hooks/use-api";
-import useElectron from "@/hooks/use-electron";
 import { appStoreSelector, setAppStoreSelector, useAppStore } from "@/store/app";
 import { updateSelector, useSessionStore } from "@/store/session";
 import { AppLanguage, AppTheme } from "@/types";
@@ -115,7 +114,7 @@ const SettingPage: React.FC = () => {
       try {
         await importFavorites();
         message.success(t("importFavoriteSuccess"));
-      } catch (e: any) {
+      } catch (_e: any) {
         message.error(t("importFavoriteFailed"));
       }
     }
@@ -125,7 +124,7 @@ const SettingPage: React.FC = () => {
     try {
       await exportFavorites();
       message.success(t("exportFavoriteSuccess"));
-    } catch (e: any) {
+    } catch (_e: any) {
       message.error(t("exportFavoriteFailed"));
     }
   });
@@ -149,7 +148,7 @@ const SettingPage: React.FC = () => {
   });
 
   useEffect(() => {
-    const onDownloadProgress = (event: any, progress: any) => {
+    const onDownloadProgress = (_event: any, progress: any) => {
       setDownloadProgress(progress.percent);
     };
     const onDownloaded = () => {
@@ -162,13 +161,13 @@ const SettingPage: React.FC = () => {
       removeIpcListener("updateDownloadProgress", onDownloadProgress);
       removeIpcListener("updateDownloaded", onDownloaded);
     };
-  }, []);
+  }, [addIpcListener, removeIpcListener]);
 
   const handleClearWebviewCache = useMemoizedFn(async () => {
     try {
       await clearWebviewCache();
       message.success(t("clearCacheSuccess"));
-    } catch (err: any) {
+    } catch (_err: any) {
       message.error(t("clearCacheFailed"));
     }
   });
@@ -245,7 +244,7 @@ const SettingPage: React.FC = () => {
             label={t("proxySwitch")}
             rules={[
               {
-                validator(rules, value) {
+                validator(_rules, value) {
                   if (value && formRef.current?.getFieldValue("proxy") === "") {
                     return Promise.reject(t("pleaseEnterProxyFirst"));
                   }
@@ -298,7 +297,7 @@ const SettingPage: React.FC = () => {
             label={t("downloadProxySwitch")}
             rules={[
               {
-                validator(rules, value) {
+                validator(_rules, value) {
                   if (value && formRef.current?.getFieldValue("proxy") === "") {
                     return Promise.reject(t("pleaseEnterProxyFirst"));
                   }

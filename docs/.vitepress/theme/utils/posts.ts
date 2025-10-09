@@ -1,5 +1,3 @@
-import { createContentLoader } from "vitepress";
-
 export interface Post {
   title: string;
   author: string;

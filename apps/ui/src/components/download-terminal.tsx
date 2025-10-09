@@ -52,7 +52,7 @@ const Terminal: FC<TerminalProps> = ({ className, id, log, header }) => {
       window.removeEventListener("resize", resize);
       terminal.dispose();
     };
-  }, [id]);
+  }, [id, addIpcListener, log, removeIpcListener]);
 
   return (
     <div className={cn("flex flex-col", className)}>

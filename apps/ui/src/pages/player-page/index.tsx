@@ -23,7 +23,7 @@ export default function PlayerPage() {
       setVideoList(res.data);
       setCurrentVideo(res.data[0].url);
       url = res.data[0].url;
-    } catch (e) {
+    } catch (_e) {
       message.error(t("failToFetchVideoList"));
     } finally {
       player.current = new Player({
@@ -66,7 +66,7 @@ export default function PlayerPage() {
 
       <Drawer title={t("playList")} placement={"right"} closable={false} onClose={onClose} open={open} key={"right"}>
         <ul className="flex flex-col gap-1">
-          {videoList.map((video, index) => (
+          {videoList.map((video, _index) => (
             <li
               className={cn("m-2 line-clamp-2 cursor-pointer text-sm dark:text-white", {
                 "text-blue-500 dark:text-blue-500": video.url === currentVideo,

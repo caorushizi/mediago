@@ -28,9 +28,9 @@ export interface DownloadFormProps {
   isEdit?: boolean;
   usePrevData?: boolean;
   destroyOnClose?: boolean;
-  onAddToList: (values: DownloadFormType) => Promise<boolean | void>;
-  onDownloadNow: (values: DownloadFormType) => Promise<boolean | void>;
-  onAddToDocker?: (values: DownloadFormType) => Promise<boolean | void>;
+  onAddToList: (values: DownloadFormType) => Promise<boolean | undefined>;
+  onDownloadNow: (values: DownloadFormType) => Promise<boolean | undefined>;
+  onAddToDocker?: (values: DownloadFormType) => Promise<boolean | undefined>;
   onFormVisibleChange?: (open: boolean) => void;
   id: string;
 }
@@ -91,7 +91,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(function DownloadF
         return form.getFieldsValue();
       },
     };
-  }, []);
+  }, [form.getFieldsValue, form.setFieldsValue]);
 
   const handleValuesChange = useMemoizedFn((values: any) => {
     const { type, batch } = values;
@@ -114,7 +114,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(function DownloadF
   const handleSubmit = useMemoizedFn(async () => {
     try {
       await form.validateFields();
-    } catch (err) {
+    } catch (_err) {
       return;
     }
     try {
@@ -133,7 +133,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(function DownloadF
   const handleAddToDocker = useMemoizedFn(async () => {
     try {
       await form.validateFields();
-    } catch (err) {
+    } catch (_err) {
       return;
     }
 
@@ -149,7 +149,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(function DownloadF
   const handleDownloadNow = useMemoizedFn(async () => {
     try {
       await form.validateFields();
-    } catch (err) {
+    } catch (_err) {
       return;
     }
     try {

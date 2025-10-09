@@ -1,7 +1,6 @@
 import { spawn } from "node:child_process";
 import EventEmitter from "node:events";
 import os from "node:os";
-import { MEDIAGO_EVENT, MEDIAGO_METHOD } from "@mediago/shared-common";
 import { ffmpegPath } from "./variables";
 
 export async function sleep(second = 1): Promise<void> {

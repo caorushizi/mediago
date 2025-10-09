@@ -13,7 +13,8 @@
       "packages/**/*.{js,jsx,ts,tsx,json}",
       "scripts/*.{js,ts}",
       "docs/.vitepress/**/*.{js,ts,json,css,scss}"
-    ]
+    ],
+    "ignoreUnknown": true
   },
   "linter": {
     "enabled": true,
@@ -24,14 +25,20 @@
       },
       "style": {
         "noNegationElse": "off",
-        "useConst": "error"
+        "useConst": "error",
+        "useNodejsImportProtocol": "error",
+        "useTemplate": "warn"
       },
       "correctness": {
         "useExhaustiveDependencies": "warn",
-        "useHookAtTopLevel": "error"
+        "useHookAtTopLevel": "error",
+        "noUnusedFunctionParameters": "warn",
+        "noUnusedVariables": "error",
+        "noUnusedImports": "error"
       },
       "complexity": {
-        "noForEach": "off"
+        "noForEach": "off",
+        "useOptionalChain": "warn"
       },
       "a11y": {
         "useKeyWithClickEvents": "off",
@@ -41,7 +48,7 @@
   },
   "formatter": {
     "enabled": true,
-    "formatWithErrors": true,
+    "formatWithErrors": false,
     "indentStyle": "space",
     "indentWidth": 2,
     "lineWidth": 120,
@@ -56,7 +63,8 @@
       "bracketSpacing": true,
       "bracketSameLine": false,
       "quoteStyle": "double",
-      "attributePosition": "auto"
+      "attributePosition": "auto",
+      "trailingCommas": "all"
     },
     "globals": ["NodeJS", "Electron"],
     "parser": {
@@ -65,12 +73,20 @@
   },
   "json": {
     "formatter": {
-      "enabled": true
+      "enabled": true,
+      "indentWidth": 2,
+      "trailingCommas": "none"
+    },
+    "parser": {
+      "allowComments": true,
+      "allowTrailingCommas": false
     }
   },
   "css": {
     "formatter": {
-      "enabled": true
+      "enabled": true,
+      "indentWidth": 2,
+      "lineWidth": 120
     },
     "linter": {
       "enabled": true
@@ -89,13 +105,30 @@
       }
     },
     {
-      "includes": ["apps/plugin/**/*.{css,scss}"],
+      "includes": ["**/*.css", "**/*.scss"],
       "css": {
         "linter": {
           "enabled": true
         },
         "formatter": {
           "enabled": true
+        }
+      },
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noUnknownAtRules": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/electron/scripts/**/*.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noTemplateCurlyInString": "off"
+          }
         }
       }
     }

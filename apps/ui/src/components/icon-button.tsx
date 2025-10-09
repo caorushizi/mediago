@@ -18,7 +18,7 @@ export function IconButton({ children, disabled, title, onClick, icon }: Props) 
     if (disabled) {
       return;
     }
-    onClick && onClick();
+    onClick?.();
   });
 
   return (

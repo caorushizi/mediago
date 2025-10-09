@@ -1,8 +1,8 @@
+import { spawn } from "node:child_process";
+import EventEmitter from "node:events";
 import fs from "node:fs/promises";
 import https from "node:https";
 import os from "node:os";
-import { spawn } from "child_process";
-import EventEmitter from "events";
 import { LRUCache } from "lru-cache";
 import fetch from "node-fetch";
 import { ffmpegPath } from "./variables";
@@ -71,7 +71,7 @@ export function isDeeplink(url: string): boolean {
   try {
     const parsedUrl = new URL(url);
     return parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:";
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 }

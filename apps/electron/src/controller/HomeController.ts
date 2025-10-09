@@ -55,11 +55,10 @@ import {
   shell,
 } from "electron";
 import fs from "fs-extra";
-import { glob } from "glob";
 import { inject, injectable } from "inversify";
 import { nanoid } from "nanoid";
 import { machineId } from "node-machine-id";
-import { convertToAudio, db, getLocalIP, videoPattern, workspace } from "../helper/index";
+import { convertToAudio, db, getLocalIP, workspace } from "../helper/index";
 import WebviewService from "../services/WebviewService";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";
@@ -146,12 +145,12 @@ export default class HomeController implements Controller {
   }
 
   @handle(ADD_FAVORITE)
-  addFavorite(e: IpcMainEvent, favorite: Favorite) {
+  addFavorite(_e: IpcMainEvent, favorite: Favorite) {
     return this.favoriteService.addFavorite(favorite);
   }
 
   @handle(REMOVE_FAVORITE)
-  removeFavorite(e: IpcMainEvent, id: number): Promise<void> {
+  removeFavorite(_e: IpcMainEvent, id: number): Promise<void> {
     return this.favoriteService.removeFavorite(id);
   }
 
@@ -161,7 +160,7 @@ export default class HomeController implements Controller {
   }
 
   @handle(ON_FAVORITE_ITEM_CONTEXT_MENU)
-  async onFavoriteItemContextMenu(e: IpcMainEvent, id: number) {
+  async onFavoriteItemContextMenu(_e: IpcMainEvent, id: number) {
     const send = (action: string) => {
       this.mainWindow.send("favorite-item-event", {
         action,
@@ -221,12 +220,12 @@ export default class HomeController implements Controller {
   }
 
   @handle(OPEN_URL)
-  async openUrl(e: IpcMainEvent, url: string) {
+  async openUrl(_e: IpcMainEvent, url: string) {
     await shell.openExternal(url);
   }
 
   @handle(ON_DOWNLOAD_LIST_CONTEXT_MENU)
-  async downloadListContextMenu(e: IpcMainEvent, id: number) {
+  async downloadListContextMenu(_e: IpcMainEvent, id: number) {
     const send = (action: string) => {
       this.mainWindow.send("download-item-event", {
         action,
@@ -292,7 +291,7 @@ export default class HomeController implements Controller {
   }
 
   @handle(CONVERT_TO_AUDIO)
-  async convertToAudio(e: IpcMainEvent, id: number) {
+  async convertToAudio(_e: IpcMainEvent, id: number) {
     const conversion = await this.conversionRepository.findConversion(id);
     const local = this.store.get("local");
     const input = conversion.path;
@@ -331,12 +330,12 @@ export default class HomeController implements Controller {
   }
 
   @handle(SET_SHARED_STATE)
-  async setSharedState(event: IpcMainEvent, state: any) {
+  async setSharedState(_event: IpcMainEvent, state: any) {
     this.sharedState = state;
   }
 
   @handle(GET_DOWNLOAD_LOG)
-  async getDownloadLog(event: IpcMainEvent, id: number) {
+  async getDownloadLog(_event: IpcMainEvent, id: number) {
     return await this.downloadService.getDownloadLog(id);
   }
 
@@ -363,7 +362,7 @@ export default class HomeController implements Controller {
       const newId = await machineId();
       this.store.set("machineId", newId);
       return newId;
-    } catch (e) {
+    } catch (_e) {
       const id = this.store.get("machineId");
       if (id) return id;
       const newId = nanoid();
@@ -444,7 +443,7 @@ export default class HomeController implements Controller {
   }
 
   @handle(GET_PAGE_TITLE)
-  async getPageTitle(event: IpcMainEvent, url: string): Promise<{ data: string }> {
+  async getPageTitle(_event: IpcMainEvent, url: string): Promise<{ data: string }> {
     try {
       console.log("Getting title for URL:", url);
 
@@ -468,7 +467,7 @@ export default class HomeController implements Controller {
 
       for (const pattern of patterns) {
         const match = html.match(pattern);
-        if (match && match[1]) {
+        if (match?.[1]) {
           title = match[1].trim();
           console.log("Found title:", title);
           break;
