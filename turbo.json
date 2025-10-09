@@ -2,6 +2,10 @@
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
   "tasks": {
+    "lint": {
+      "cache": true,
+      "outputs": []
+    },
     "dev:all": {
       "cache": false,
       "persistent": true,
