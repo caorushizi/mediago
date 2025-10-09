@@ -40,7 +40,7 @@ const filterList: SourceFilter[] = [
     },
   },
   {
-    matches: [/\.(mp4|flv|mov|avi|mkv|wmv|webm|mp3|m4a|aac|wav|ogg|m4b|m4p|m4r|m4b|m4p|m4r)/],
+    matches: [/\.(mp4|flv|mov|avi|mkv|wmv|m4a|ogg|m4b|m4p|m4r|m4b|m4p|m4r)(?![a-zA-Z])/],
     type: DownloadType.direct,
   },
 ];
