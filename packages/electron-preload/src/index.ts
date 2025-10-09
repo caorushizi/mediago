@@ -57,7 +57,7 @@ import {
   WEBVIEW_URL_CONTEXTMENU,
 } from "@mediago/shared-common";
 import type { AppStore, BrowserStore, Conversion, EnvPath, Favorite, Video } from "@mediago/shared-node";
-import { shell, contextBridge, ipcRenderer } from "electron";
+import { contextBridge, ipcRenderer, shell } from "electron";
 
 const apiFunctions: Record<string, any> = {};
 

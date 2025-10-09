@@ -1,7 +1,7 @@
 import { provide } from "@inversifyjs/binding-decorators";
 import {
-  type Controller,
   ADD_FAVORITE,
+  type Controller,
   EXPORT_FAVORITES,
   GET_APP_STORE,
   GET_FAVORITES,

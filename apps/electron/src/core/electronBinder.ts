@@ -1,4 +1,4 @@
-import { type ControllerHandlerBinder } from "@mediago/shared-node";
+import type { ControllerHandlerBinder } from "@mediago/shared-node";
 import { error, success } from "../helper/ipcResponse";
 import type ElectronLogger from "../vendor/ElectronLogger";
 
@@ -15,10 +15,7 @@ function isPromiseLike(value: unknown): value is PromiseLike<unknown> {
   return typeof (value as PromiseLike<unknown>)?.then === "function";
 }
 
-export function createElectronControllerBinder(
-  ipc: IpcMainHandlers,
-  logger: LoggerLike,
-): ControllerHandlerBinder {
+export function createElectronControllerBinder(ipc: IpcMainHandlers, logger: LoggerLike): ControllerHandlerBinder {
   return ({ controller, handler, event, method }: Registration) => {
     if (method !== "on" && method !== "handle") return;
 

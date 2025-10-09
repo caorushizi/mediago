@@ -64,24 +64,13 @@ export default function PlayerPage() {
       </div>
       <div id={playerId} className="h-full w-full" />
 
-      <Drawer
-        title={t("playList")}
-        placement={"right"}
-        closable={false}
-        onClose={onClose}
-        open={open}
-        key={"right"}
-      >
+      <Drawer title={t("playList")} placement={"right"} closable={false} onClose={onClose} open={open} key={"right"}>
         <ul className="flex flex-col gap-1">
           {videoList.map((video, index) => (
             <li
-              className={cn(
-                "m-2 line-clamp-2 cursor-pointer text-sm dark:text-white",
-                {
-                  "text-blue-500 dark:text-blue-500":
-                    video.url === currentVideo,
-                }
-              )}
+              className={cn("m-2 line-clamp-2 cursor-pointer text-sm dark:text-white", {
+                "text-blue-500 dark:text-blue-500": video.url === currentVideo,
+              })}
               key={video.url}
               onClick={() => handleVideoClick(video.url)}
             >

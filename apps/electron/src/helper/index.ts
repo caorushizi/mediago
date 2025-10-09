@@ -9,7 +9,7 @@ import { ffmpegPath } from "./variables";
 
 export * from "./variables";
 export { fetchWrapper as fetch };
-export { type IpcResponse, success, error } from "./ipcResponse";
+export { error, type IpcResponse, success } from "./ipcResponse";
 
 export function getLocalIP() {
   const interfaces = os.networkInterfaces();

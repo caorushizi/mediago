@@ -1,14 +1,14 @@
 export { BASE_I18N_OPTIONS, DEFAULT_FALLBACK_LNG } from "./config";
 export {
-  SUPPORTED_LANGUAGES,
-  DEFAULT_BACKEND_NAMESPACE,
-  DEFAULT_FRONTEND_APP,
   type BackendLanguage,
-  type FrontendApp,
-  type FrontendLanguage,
-  i18nResources,
   backendEn,
   backendZh,
+  DEFAULT_BACKEND_NAMESPACE,
+  DEFAULT_FRONTEND_APP,
+  type FrontendApp,
+  type FrontendLanguage,
   frontendEn,
   frontendZh,
+  i18nResources,
+  SUPPORTED_LANGUAGES,
 } from "./resources";

@@ -1,8 +1,8 @@
 import path from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
 import type { DownloadContext, DownloadParams } from "@mediago/shared-common";
-import { injectable } from "inversify";
 import { type DownloadType, getFileExtension } from "@mediago/shared-common";
+import { injectable } from "inversify";
 import type { DownloadSchema } from "../types/index";
 
 @injectable()

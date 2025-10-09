@@ -1,10 +1,10 @@
 import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
+import fs from "node:fs";
 import path from "node:path";
 import electron from "electron";
+import { globSync } from "glob";
 import { defineConfig } from "vite";
 import { viteStaticCopy } from "vite-plugin-static-copy";
-import { globSync } from "glob";
-import fs from "node:fs";
 
 const projectRoot = path.resolve(__dirname, "../..");
 

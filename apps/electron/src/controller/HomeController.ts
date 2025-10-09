@@ -32,7 +32,6 @@ import {
   SHOW_BROWSER_WINDOW,
   START_UPDATE,
 } from "@mediago/shared-common";
-import { i18n } from "@mediago/shared-node";
 import {
   type AppStore,
   ConversionRepository,
@@ -41,6 +40,7 @@ import {
   type Favorite,
   type FavoriteManagementService,
   handle,
+  i18n,
   TYPES,
 } from "@mediago/shared-node";
 import axios from "axios";

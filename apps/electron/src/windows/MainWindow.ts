@@ -1,7 +1,8 @@
+import { createRequire } from "node:module";
 import { resolve } from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
 import { type DownloadProgress, DownloadStatus } from "@mediago/shared-common";
-import { TaskQueueService, TYPES, VideoRepository, i18n } from "@mediago/shared-node";
+import { i18n, TaskQueueService, TYPES, VideoRepository } from "@mediago/shared-node";
 import { app, Menu, Notification } from "electron";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
@@ -11,7 +12,6 @@ import { isWin } from "../helper/variables";
 import DownloadStateAggregator, { type DownloadState } from "../services/DownloadStateAggregator";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";
-import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
 

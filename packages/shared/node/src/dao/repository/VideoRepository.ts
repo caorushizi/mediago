@@ -1,13 +1,8 @@
 import { provide } from "@inversifyjs/binding-decorators";
+import { DownloadFilter, type DownloadItem, type DownloadItemPagination, DownloadStatus } from "@mediago/shared-common";
 import { inject, injectable } from "inversify";
 import { In, Not } from "typeorm";
 import { i18n } from "../../i18n";
-import {
-  DownloadFilter,
-  type DownloadItem,
-  type DownloadItemPagination,
-  DownloadStatus,
-} from "@mediago/shared-common";
 import TypeORM from "../../vendor/TypeORM";
 import { Video } from "../entity/Video";
 

@@ -1,5 +1,5 @@
 // Type definitions for node-specific types
-import type { DownloadType, AppTheme, AppLanguage } from "./index";
+import type { AppLanguage, AppTheme, DownloadType } from "./index";
 
 export interface EnvPath {
   binPath: string;

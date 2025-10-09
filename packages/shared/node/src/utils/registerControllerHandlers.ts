@@ -1,4 +1,4 @@
-import { MEDIAGO_EVENT, MEDIAGO_METHOD, type Controller } from "@mediago/shared-common";
+import { type Controller, MEDIAGO_EVENT, MEDIAGO_METHOD } from "@mediago/shared-common";
 
 export interface ControllerHandlerRegistration {
   controller: Controller;
@@ -10,10 +10,7 @@ export interface ControllerHandlerRegistration {
 
 export type ControllerHandlerBinder = (registration: ControllerHandlerRegistration) => void;
 
-export function registerControllerHandlers(
-  controllers: Controller[],
-  binder: ControllerHandlerBinder,
-): void {
+export function registerControllerHandlers(controllers: Controller[], binder: ControllerHandlerBinder): void {
   for (const controller of controllers) {
     if (!controller) continue;
     const prototype = Object.getPrototypeOf(controller);

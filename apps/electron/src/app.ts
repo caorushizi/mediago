@@ -1,14 +1,13 @@
 import path from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
 import { DownloadStatus } from "@mediago/shared-common";
-import { i18n } from "@mediago/shared-node";
-import { DownloaderService, TaskQueueService, TypeORM, VideoRepository } from "@mediago/shared-node";
+import { DownloaderService, i18n, TaskQueueService, TypeORM, VideoRepository } from "@mediago/shared-node";
 import { app, BrowserWindow, type Event, Menu, nativeImage, nativeTheme, Tray } from "electron";
 import { inject, injectable } from "inversify";
 import TrayIcon from "../assets/tray-icon.png";
 import TrayIconLight from "../assets/tray-icon-light.png";
-import ElectronRouter from "./core/router";
 import ProtocolService from "./core/protocol";
+import ElectronRouter from "./core/router";
 import { ptyRunner } from "./helper/ptyRunner";
 import { binMap, db, isMac } from "./helper/variables";
 import { VideoService } from "./services/VideoService";

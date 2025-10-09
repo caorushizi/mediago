@@ -72,7 +72,7 @@ export default {
   },
   plugins: [
     tailwindAnimation,
-    function ({ addUtilities }) {
+    ({ addUtilities }) => {
       const newUtilities = {
         ".app-region-drag": {
           "-webkit-app-region": "drag",

@@ -1,11 +1,7 @@
+import { ADD_DOWNLOAD_ITEMS, DownloadType, SHOW_DOWNLOAD_DIALOG } from "@mediago/shared-common";
 import { useMemoizedFn } from "ahooks";
 import { App, Empty, Space, Spin, Splitter } from "antd";
 import axios from "axios";
-import {
-  ADD_DOWNLOAD_ITEMS,
-  DownloadType,
-  SHOW_DOWNLOAD_DIALOG,
-} from "@mediago/shared-common";
 import { useEffect, useId, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
@@ -14,28 +10,14 @@ import { Button } from "@/components/ui/button";
 import WebView from "@/components/web-view";
 import useElectron from "@/hooks/use-electron";
 import { appStoreSelector, useAppStore } from "@/store/app";
-import {
-  BrowserStatus,
-  browserStoreSelector,
-  PageMode,
-  setBrowserSelector,
-  useBrowserStore,
-} from "@/store/browser";
+import { BrowserStatus, browserStoreSelector, PageMode, setBrowserSelector, useBrowserStore } from "@/store/browser";
 import { generateUrl, randomName } from "@/utils";
 import { BrowserViewPanel } from "./browser-view-panel";
 export function BrowserView() {
-  const {
-    webviewLoadURL,
-    addIpcListener,
-    removeIpcListener,
-    webviewGoHome,
-    addDownloadItems,
-  } = useElectron();
+  const { webviewLoadURL, addIpcListener, removeIpcListener, webviewGoHome, addDownloadItems } = useElectron();
   const downloadForm = useRef<DownloadFormRef>(null);
   const store = useBrowserStore(useShallow(browserStoreSelector));
-  const { addSource, setBrowserStore } = useBrowserStore(
-    useShallow(setBrowserSelector)
-  );
+  const { addSource, setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
   const { dockerUrl } = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
   const [placeHolder, setPlaceHolder] = useState<string>("");
@@ -43,11 +25,7 @@ export function BrowserView() {
   const browserId = useId();
 
   useEffect(() => {
-    const onShowDownloadDialog = async (
-      e: unknown,
-      data: DownloadItem[],
-      image: string
-    ) => {
+    const onShowDownloadDialog = async (e: unknown, data: DownloadItem[], image: string) => {
       if (image) {
         setPlaceHolder(image);
       }
@@ -87,40 +65,38 @@ export function BrowserView() {
     });
   });
 
-  const confirmDownload = useMemoizedFn(
-    async (now?: boolean, isDocker?: boolean) => {
-      try {
-        const {
-          name = "",
-          url = "",
-          headers = "",
-          type = DownloadType.direct,
-          folder = "",
-        } = downloadForm.current?.getFieldsValue() || {};
-        const item = {
-          name: name || randomName(),
-          url,
-          headers,
-          type,
-          folder,
-        };
+  const confirmDownload = useMemoizedFn(async (now?: boolean, isDocker?: boolean) => {
+    try {
+      const {
+        name = "",
+        url = "",
+        headers = "",
+        type = DownloadType.direct,
+        folder = "",
+      } = downloadForm.current?.getFieldsValue() || {};
+      const item = {
+        name: name || randomName(),
+        url,
+        headers,
+        type,
+        folder,
+      };
 
-        if (isDocker) {
-          await axios.post(`${dockerUrl}/api/${ADD_DOWNLOAD_ITEMS}`, {
-            videos: [item],
-            startDownload: now,
-          });
-        } else {
-          await addDownloadItems([item], now);
-        }
-
-        return true;
-      } catch (e) {
-        message.error((e as any).message);
-        return false;
+      if (isDocker) {
+        await axios.post(`${dockerUrl}/api/${ADD_DOWNLOAD_ITEMS}`, {
+          videos: [item],
+          startDownload: now,
+        });
+      } else {
+        await addDownloadItems([item], now);
       }
+
+      return true;
+    } catch (e) {
+      message.error((e as any).message);
+      return false;
     }
-  );
+  });
 
   const loadUrl = useMemoizedFn((url: string) => {
     setBrowserStore({
@@ -161,11 +137,7 @@ export function BrowserView() {
     if (store.status === BrowserStatus.Failed) {
       return (
         <div className="flex h-full w-full flex-row items-center justify-center">
-          <Empty
-            description={`${store.errMsg || t("loadFailed")} (${
-              store.errCode
-            })`}
-          >
+          <Empty description={`${store.errMsg || t("loadFailed")} (${store.errCode})`}>
             <Space>
               <Button onClick={onClickGoHome}>{t("backToHome")}</Button>
               <Button onClick={goto}>{t("refresh")}</Button>

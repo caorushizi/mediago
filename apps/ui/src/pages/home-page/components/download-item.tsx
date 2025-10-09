@@ -5,24 +5,11 @@ import { memo, type ReactNode, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import selectedBg from "@/assets/images/select-item-bg.png";
-import {
-  DownloadIcon,
-  DownloadListIcon,
-  EditIcon,
-  FailedIcon,
-  PauseIcon,
-  TerminalIcon,
-} from "@/assets/svg";
+import { DownloadIcon, DownloadListIcon, EditIcon, FailedIcon, PauseIcon, TerminalIcon } from "@/assets/svg";
 import { DownloadTag } from "@/components/download-tag";
 import { IconButton } from "@/components/icon-button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  CONTINUE_DOWNLOAD,
-  DOWNLOAD_NOW,
-  PLAY_VIDEO,
-  RESTART_DOWNLOAD,
-  STOP_DOWNLOAD,
-} from "@/const";
+import { CONTINUE_DOWNLOAD, DOWNLOAD_NOW, PLAY_VIDEO, RESTART_DOWNLOAD, STOP_DOWNLOAD } from "@/const";
 import useElectron from "@/hooks/use-electron";
 import { appStoreSelector, useAppStore } from "@/store/app";
 import { DownloadStatus } from "@/types";
@@ -66,13 +53,7 @@ const DownloadItemComponent = ({
     return (
       <TerminalDrawer
         key={"terminal"}
-        trigger={
-          <IconButton
-            key="terminal"
-            title={t("terminal")}
-            icon={<TerminalIcon />}
-          />
-        }
+        trigger={<IconButton key="terminal" title={t("terminal")} icon={<TerminalIcon />} />}
         title={item.name}
         id={item.id}
         log={item.log || ""}
@@ -82,14 +63,7 @@ const DownloadItemComponent = ({
 
   // Edit form
   const renderEditIconBtn = useMemoizedFn((item: DownloadItem) => {
-    return (
-      <IconButton
-        key={"edit"}
-        title={t("edit")}
-        icon={<EditIcon />}
-        onClick={() => onShowEditForm?.(item)}
-      />
-    );
+    return <IconButton key={"edit"} title={t("edit")} icon={<EditIcon />} onClick={() => onShowEditForm?.(item)} />;
   });
 
   const handlePlay = useMemoizedFn(() => {
@@ -122,35 +96,20 @@ const DownloadItemComponent = ({
       return [
         renderTerminalBtn(item),
         renderEditIconBtn(item),
-        <IconButton
-          key="download"
-          icon={<DownloadListIcon />}
-          title={t("download")}
-          onClick={handleDownloadNow}
-        />,
+        <IconButton key="download" icon={<DownloadListIcon />} title={t("download")} onClick={handleDownloadNow} />,
       ];
     }
     if (currStatus === DownloadStatus.Downloading) {
       return [
         renderTerminalBtn(item),
-        <IconButton
-          key="stop"
-          title={t("pause")}
-          icon={<PauseCircleOutlined />}
-          onClick={handleStop}
-        />,
+        <IconButton key="stop" title={t("pause")} icon={<PauseCircleOutlined />} onClick={handleStop} />,
       ];
     }
     if (currStatus === DownloadStatus.Failed) {
       return [
         renderTerminalBtn(item),
         renderEditIconBtn(item),
-        <IconButton
-          key="redownload"
-          title={t("redownload")}
-          icon={<DownloadListIcon />}
-          onClick={handleRestart}
-        />,
+        <IconButton key="redownload" title={t("redownload")} icon={<DownloadListIcon />} onClick={handleRestart} />,
       ];
     }
     if (currStatus === DownloadStatus.Watting) {
@@ -160,12 +119,7 @@ const DownloadItemComponent = ({
       return [
         renderTerminalBtn(item),
         renderEditIconBtn(item),
-        <IconButton
-          key="restart"
-          icon={<DownloadListIcon />}
-          title={t("continueDownload")}
-          onClick={handleContinue}
-        />,
+        <IconButton key="restart" icon={<DownloadListIcon />} title={t("continueDownload")} onClick={handleContinue} />,
       ];
     }
 
@@ -207,32 +161,15 @@ const DownloadItemComponent = ({
         />
       );
     } else if (currStatus === DownloadStatus.Success) {
-      tag = [
-        <DownloadTag
-          key={"success"}
-          text={t("downloadSuccess")}
-          color="#09ce87"
-        />,
-      ];
+      tag = [<DownloadTag key={"success"} text={t("downloadSuccess")} color="#09ce87" />];
       if (!item.exists) {
-        tag.push(
-          <DownloadTag
-            key={"notExists"}
-            text={t("fileNotExist")}
-            color="#9abbe2"
-          />
-        );
+        tag.push(<DownloadTag key={"notExists"} text={t("fileNotExist")} color="#9abbe2" />);
       }
     } else if (currStatus === DownloadStatus.Failed) {
       tag = (
         <TerminalDrawer
           trigger={
-            <DownloadTag
-              icon={<FailedIcon />}
-              text={t("downloadFailed")}
-              color="#ff7373"
-              className="cursor-pointer"
-            />
+            <DownloadTag icon={<FailedIcon />} text={t("downloadFailed")} color="#ff7373" className="cursor-pointer" />
           }
           title={item.name}
           id={item.id}
@@ -240,19 +177,11 @@ const DownloadItemComponent = ({
         />
       );
     } else if (currStatus === DownloadStatus.Stopped) {
-      tag = (
-        <DownloadTag
-          icon={<PauseIcon />}
-          text={t("downloadPause")}
-          color="#9abbe2"
-        />
-      );
+      tag = <DownloadTag icon={<PauseIcon />} text={t("downloadPause")} color="#9abbe2" />;
     }
     return (
       <div className="flex flex-shrink-0 flex-grow flex-row gap-2">
-        {item.isLive && (
-          <DownloadTag text={t("liveResource")} color="#9abbe2" />
-        )}
+        {item.isLive && <DownloadTag text={t("liveResource")} color="#9abbe2" />}
         {tag}
       </div>
     );
@@ -272,10 +201,7 @@ const DownloadItemComponent = ({
       );
     }
     return (
-      <div
-        className="relative flex flex-col gap-1 text-xs text-[#B3B3B3] dark:text-[#515257]"
-        title={item.url}
-      >
+      <div className="relative flex flex-col gap-1 text-xs text-[#B3B3B3] dark:text-[#515257]" title={item.url}>
         <div className="truncate">{item.url}</div>
         <div className="truncate">
           {t("createdAt")} {fromatDateTime(item.createdDate)}
@@ -299,28 +225,16 @@ const DownloadItemComponent = ({
 
   return (
     <div
-      className={cn(
-        "relative flex flex-row gap-3 rounded-lg bg-[#FAFCFF] px-3 pb-3.5 pt-2 dark:bg-[#27292F]",
-        {
-          "bg-gradient-to-r from-[#D0E8FF] to-[#F2F7FF] dark:from-[#27292F] dark:to-[#00244E]":
-            selected,
-          "opacity-70": currStatus === DownloadStatus.Success && !item.exists,
-        }
-      )}
+      className={cn("relative flex flex-row gap-3 rounded-lg bg-[#FAFCFF] px-3 pb-3.5 pt-2 dark:bg-[#27292F]", {
+        "bg-gradient-to-r from-[#D0E8FF] to-[#F2F7FF] dark:from-[#27292F] dark:to-[#00244E]": selected,
+        "opacity-70": currStatus === DownloadStatus.Success && !item.exists,
+      })}
       onContextMenu={() => onContextMenu(item.id)}
     >
-      <Checkbox
-        className="mt-2"
-        checked={selected}
-        onCheckedChange={() => onSelectChange(item.id)}
-      />
+      <Checkbox className="mt-2" checked={selected} onCheckedChange={() => onSelectChange(item.id)} />
       <div className={cn("flex flex-1 flex-col gap-1 overflow-hidden")}>
         {selected && (
-          <img
-            alt=""
-            src={selectedBg}
-            className="absolute bottom-0 right-[126px] top-0 block h-full select-none"
-          />
+          <img alt="" src={selectedBg} className="absolute bottom-0 right-[126px] top-0 block h-full select-none" />
         )}
         <div className="relative flex flex-row items-center gap-2">
           {renderTitle(item)}
@@ -336,26 +250,22 @@ const DownloadItemComponent = ({
 };
 
 // 使用 memo 优化组件性能，只在 props 真正变化时重新渲染
-export const DownloadItem = memo(
-  DownloadItemComponent,
-  (prevProps, nextProps) => {
-    // 自定义比较函数，只有关键属性变化时才重新渲染
-    const itemChanged =
-      prevProps.item.id !== nextProps.item.id ||
-      prevProps.item.name !== nextProps.item.name ||
-      prevProps.item.status !== nextProps.item.status ||
-      prevProps.item.exists !== nextProps.item.exists;
+export const DownloadItem = memo(DownloadItemComponent, (prevProps, nextProps) => {
+  // 自定义比较函数，只有关键属性变化时才重新渲染
+  const itemChanged =
+    prevProps.item.id !== nextProps.item.id ||
+    prevProps.item.name !== nextProps.item.name ||
+    prevProps.item.status !== nextProps.item.status ||
+    prevProps.item.exists !== nextProps.item.exists;
 
-    const propsChanged =
-      prevProps.selected !== nextProps.selected ||
-      prevProps.downloadStatus !== nextProps.downloadStatus;
+  const propsChanged =
+    prevProps.selected !== nextProps.selected || prevProps.downloadStatus !== nextProps.downloadStatus;
 
-    const progressChanged =
-      prevProps.progress?.percent !== nextProps.progress?.percent ||
-      prevProps.progress?.speed !== nextProps.progress?.speed ||
-      prevProps.progress?.isLive !== nextProps.progress?.isLive;
+  const progressChanged =
+    prevProps.progress?.percent !== nextProps.progress?.percent ||
+    prevProps.progress?.speed !== nextProps.progress?.speed ||
+    prevProps.progress?.isLive !== nextProps.progress?.isLive;
 
-    // 如果没有任何关键属性变化，则不需要重新渲染
-    return !itemChanged && !propsChanged && !progressChanged;
-  }
-);
+  // 如果没有任何关键属性变化，则不需要重新渲染
+  return !itemChanged && !propsChanged && !progressChanged;
+});

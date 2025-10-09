@@ -58,10 +58,7 @@
       "quoteStyle": "double",
       "attributePosition": "auto"
     },
-    "globals": [
-      "NodeJS",
-      "Electron"
-    ],
+    "globals": ["NodeJS", "Electron"],
     "parser": {
       "unsafeParameterDecoratorsEnabled": true
     }
@@ -81,10 +78,7 @@
   },
   "overrides": [
     {
-      "includes": [
-        "apps/ui/**/*.{js,jsx,ts,tsx}",
-        "packages/mobile-player/**/*.{js,jsx,ts,tsx}"
-      ],
+      "includes": ["apps/ui/**/*.{js,jsx,ts,tsx}", "packages/mobile-player/**/*.{js,jsx,ts,tsx}"],
       "linter": {
         "rules": {
           "correctness": {
@@ -95,9 +89,7 @@
       }
     },
     {
-      "includes": [
-        "apps/plugin/**/*.{css,scss}"
-      ],
+      "includes": ["apps/plugin/**/*.{css,scss}"],
       "css": {
         "linter": {
           "enabled": true
