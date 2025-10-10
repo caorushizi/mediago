@@ -3,19 +3,15 @@ import { App, Empty, Pagination } from "antd";
 import { produce } from "immer";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import DownloadForm, {
-  type DownloadFormRef,
-  type DownloadFormType,
-} from "@/components/download-form";
+import DownloadForm, { type DownloadFormRef } from "@/components/download-form";
 import Loading from "@/components/loading";
 import { EDIT_DOWNLOAD } from "@/const";
-import useElectron from "@/hooks/use-electron";
+import useAPI from "@/hooks/use-api";
 import { type DownloadFilter, DownloadStatus } from "@/types";
-import { cn, randomName, tdApp } from "@/utils";
+import { cn, tdApp } from "@/utils";
 import { DownloadItem } from "./download-item";
 import { ListHeader } from "./list-header";
 import type { ListPagination } from "./types";
-import { DownloadType } from "@mediago/shared-common";
 
 interface DownloadState {
   [key: number]: {
@@ -37,13 +33,7 @@ interface Props {
   pagination: ListPagination;
 }
 
-export function DownloadList({
-  data,
-  filter,
-  refresh,
-  loading,
-  pagination,
-}: Props) {
+export function DownloadList({ data, filter, refresh, loading, pagination }: Props) {
   const [selected, setSelected] = useState<number[]>([]);
   const {
     startDownload,
@@ -52,8 +42,7 @@ export function DownloadList({
     stopDownload,
     onDownloadListContextMenu,
     deleteDownloadItem,
-    editDownloadItem,
-  } = useElectron();
+  } = useAPI();
   const { message } = App.useApp();
   const { t } = useTranslation();
   const [rawDownloadState, setRawDownloadState] = useState<DownloadState>({});
@@ -100,8 +89,7 @@ export function DownloadList({
         // 没有当前状态但有历史状态
         // 如果历史状态是正在下载中的状态，可能已经完成，不再显示
         // 但是 Ready 和 Watting 状态应该保留，因为它们表示等待中
-        const isCompletedDownloading =
-          lastSent.status === DownloadStatus.Downloading;
+        const isCompletedDownloading = lastSent.status === DownloadStatus.Downloading;
 
         // 保留所有非正在下载中的状态（包括等待中、已完成、失败等）
         if (!isCompletedDownloading) {
@@ -145,9 +133,7 @@ export function DownloadList({
         const newStateEntries = Object.entries(state);
 
         // 如果有新的下载任务或任务数量变化，需要刷新列表
-        const hasNewTasks = newStateEntries.some(
-          ([id]) => !prevState[Number(id)]
-        );
+        const hasNewTasks = newStateEntries.some(([id]) => !prevState[Number(id)]);
         if (hasNewTasks) {
           shouldRefresh = true;
         } else {
@@ -203,10 +189,7 @@ export function DownloadList({
       });
     };
 
-    const onDownloadMenuEvent = async (
-      _e: unknown,
-      params: { action: string; payload: number }
-    ) => {
+    const onDownloadMenuEvent = async (_e: unknown, params: { action: string; payload: number }) => {
       const { action, payload } = params;
 
       if (action === "select") {
@@ -242,13 +225,13 @@ export function DownloadList({
   const handleItemSelectChange = useMemoizedFn((id: number) => {
     setSelected(
       produce((draft) => {
-        const index = draft.findIndex((i) => i === id);
+        const index = draft.indexOf(id);
         if (index !== -1) {
           draft.splice(index, 1);
         } else {
           draft.push(id);
         }
-      })
+      }),
     );
   });
 
@@ -260,7 +243,7 @@ export function DownloadList({
         } else {
           draft.push(...data.map((item) => item.id));
         }
-      })
+      }),
     );
   });
 
@@ -318,31 +301,9 @@ export function DownloadList({
     setTimeout(refresh, 100);
   });
 
-  const confirmAddItem = useMemoizedFn(
-    async (values: DownloadFormType, now?: boolean) => {
-      const {
-        id = 0,
-        name = "",
-        url = "",
-        headers,
-        type = DownloadType.direct,
-        folder,
-      } = values;
-      const item = {
-        id,
-        name: name || randomName(),
-        url,
-        headers,
-        type,
-        folder,
-      };
-
-      await editDownloadItem(item, now);
-
-      refresh();
-      return true;
-    }
-  );
+  const handleFormConfirm = useMemoizedFn(async () => {
+    refresh();
+  });
 
   const handleContext = useMemoizedFn((item: number) => {
     onDownloadListContextMenu(item);
@@ -406,11 +367,7 @@ export function DownloadList({
         filter={filter}
       />
       {loading && !hasInitialLoaded && data.length === 0 && <Loading />}
-      <div
-        className={cn(
-          "flex w-full flex-1 flex-shrink-0 flex-col gap-3 overflow-auto"
-        )}
-      >
+      <div className={cn("flex w-full flex-1 flex-shrink-0 flex-col gap-3 overflow-auto")}>
         {data.map((item) => {
           const state = downloadState[item.id];
           return (
@@ -438,18 +395,8 @@ export function DownloadList({
           );
         })}
       </div>
-      <Pagination
-        className="flex justify-end"
-        {...pagination}
-        showSizeChanger={false}
-      />
-      <DownloadForm
-        id={downloadListId}
-        ref={editFormRef}
-        isEdit
-        onAddToList={(values) => confirmAddItem(values)}
-        onDownloadNow={(values) => confirmAddItem(values, true)}
-      />
+      <Pagination className="flex justify-end" {...pagination} showSizeChanger={false} />
+      <DownloadForm id={downloadListId} ref={editFormRef} isEdit onConfirm={handleFormConfirm} />
     </div>
   );
 }

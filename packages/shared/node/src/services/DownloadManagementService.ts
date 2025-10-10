@@ -1,12 +1,12 @@
-import { provide } from "@inversifyjs/binding-decorators";
-import { inject, injectable } from "inversify";
 import path from "node:path";
-import { glob } from "glob";
+import { provide } from "@inversifyjs/binding-decorators";
 import type { DownloadItem, DownloadItemPagination, ListPagination, Task } from "@mediago/shared-common";
 import { DownloadStatus } from "@mediago/shared-common";
+import { glob } from "glob";
+import { inject, injectable } from "inversify";
 import VideoRepository from "../dao/repository/VideoRepository";
-import TaskQueueService from "./TaskQueueService";
 import { TYPES } from "../types";
+import TaskQueueService from "./TaskQueueService";
 
 @injectable()
 @provide(TYPES.DownloadManagementService)
