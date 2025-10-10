@@ -2,12 +2,7 @@ import { provide } from "@inversifyjs/binding-decorators";
 import { inject, injectable } from "inversify";
 import { In, Not } from "typeorm";
 import { i18n } from "../../i18n";
-import {
-  DownloadFilter,
-  type DownloadItem,
-  type DownloadItemPagination,
-  DownloadStatus,
-} from "@mediago/shared-common";
+import { DownloadFilter, type DownloadItem, type DownloadItemPagination, DownloadStatus } from "@mediago/shared-common";
 import TypeORM from "../../vendor/TypeORM";
 import { Video } from "../entity/Video";
 
@@ -39,21 +34,6 @@ export default class VideoRepository {
   }
 
   async addVideos(videos: Omit<DownloadItem, "id">[]) {
-    // Check for videos with the same name
-    // const names = videos.map((item) => item.name);
-    // const existItems = await this.db.appDataSource
-    //   .getRepository(Video)
-    //   .findBy({ name: In(names) });
-    // if (existItems.length) {
-    //   const existNames = existItems.map((item) => item.name);
-    //   throw new Error(
-    //     i18n.t("videoExistsPleaseChangeName") +
-    //       "[" +
-    //       existNames.join(", ") +
-    //       "]",
-    //   );
-    // }
-
     const items = videos.map((video) => {
       const item = new Video();
       item.name = video.name;

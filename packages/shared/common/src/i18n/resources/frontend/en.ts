@@ -96,7 +96,7 @@ export const frontendEn = {
   pleaseEnterVideoLink: "Please enter video link",
   videoName: "Video Name",
   pleaseEnterVideoName: "Please enter video name",
-  pleaseEnterCorrectFomeInfo: "Please enter the correct information",
+  pleaseEnterCorrectFormInfo: "Please enter the correct information",
   additionalHeaders: "Additional Headers",
   pleaseEnterOnlineVideoUrl: "Please enter online network video URL",
   pleaseEnterCorrectVideoLink: "Please enter correct video link",
@@ -161,4 +161,5 @@ export const frontendEn = {
   enableDocker: "Enable Docker",
   addToDocker: "Add to Docker",
   addToDockerSuccess: "Add to Docker Success",
+  save: "Save",
 };

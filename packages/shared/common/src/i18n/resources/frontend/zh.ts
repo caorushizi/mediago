@@ -90,7 +90,7 @@ export const frontendZh = {
   pleaseEnterVideoLink: "请输入站点视频链接",
   videoName: "视频名称",
   pleaseEnterVideoName: "请输入视频名称",
-  pleaseEnterCorrectFomeInfo: "请输入正确的表单信息",
+  pleaseEnterCorrectFormInfo: "请输入正确的表单信息",
   additionalHeaders: "附加标头",
   pleaseEnterOnlineVideoUrl: "请输入在线网络视频URL",
   pleaseEnterCorrectVideoLink: "请输入正确的视频链接",
@@ -160,4 +160,5 @@ export const frontendZh = {
   enableDocker: "启用 Docker",
   addToDocker: "添加到 Docker",
   addToDockerSuccess: "添加到 Docker 成功",
+  save: "保存",
 };

@@ -1,21 +1,16 @@
-import { resolve } from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
 import { type DownloadProgress, DownloadStatus } from "@mediago/shared-common";
-import { TaskQueueService, TYPES, VideoRepository, i18n } from "@mediago/shared-node";
+import { i18n, TaskQueueService, VideoRepository } from "@mediago/shared-node";
 import { app, Menu, Notification } from "electron";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import _ from "lodash";
 import Window from "../core/window";
+import { preloadUrl } from "../helper";
 import { isWin } from "../helper/variables";
 import DownloadStateAggregator, { type DownloadState } from "../services/DownloadStateAggregator";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";
-import { createRequire } from "node:module";
-
-const require = createRequire(import.meta.url);
-
-const preload = require.resolve("@mediago/electron-preload");
 
 @injectable()
 @provide()
@@ -44,7 +39,7 @@ export default class MainWindow extends Window {
       show: false,
       frame: true,
       webPreferences: {
-        preload: preload,
+        preload: preloadUrl,
       },
     });
 

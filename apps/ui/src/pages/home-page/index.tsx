@@ -1,33 +1,22 @@
 import { QrcodeOutlined } from "@ant-design/icons";
 import { useMemoizedFn, useMount, usePagination } from "ahooks";
 import { Popover, QRCode } from "antd";
-import axios from "axios";
-import { ADD_DOWNLOAD_ITEMS } from "@mediago/shared-common";
 import { type FC, useEffect, useId, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
 import { ExtractIcon, FolderIcon } from "@/assets/svg";
-import DownloadForm, {
-  type DownloadFormRef,
-  type DownloadFormType,
-} from "@/components/download-form";
+import DownloadForm, { type DownloadFormRef, type DownloadFormItem } from "@/components/download-form";
 import { HomeDownloadButton } from "@/components/home-download-button";
 import PageContainer from "@/components/page-container";
 import { Button } from "@/components/ui/button";
 import { CLICK_DOWNLOAD } from "@/const";
-import useElectron from "@/hooks/use-electron";
 import { appStoreSelector, useAppStore } from "@/store/app";
 import { downloadFormSelector, useConfigStore } from "@/store/config";
 import { DownloadFilter } from "@/types";
-import {
-  isDownloadType,
-  isWeb,
-  randomName,
-  tdApp,
-  urlDownloadType,
-} from "@/utils";
+import { isDownloadType, isWeb, randomName, tdApp, urlDownloadType } from "@/utils";
 import { DownloadList } from "./components";
+import useAPI from "@/hooks/use-api";
 
 interface Props {
   filter?: DownloadFilter;
@@ -40,18 +29,15 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     showBrowserWindow,
     addDownloadItems,
     getLocalIP,
-    getPageTitle,
     addIpcListener,
     removeIpcListener,
-  } = useElectron();
+  } = useAPI();
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
   const [localIP, setLocalIP] = useState<string>("");
   const newFormRef = useRef<DownloadFormRef>(null);
   const homeId = useId();
-  const { lastIsBatch, lastDownloadTypes } = useConfigStore(
-    useShallow(downloadFormSelector)
-  );
+  const { lastIsBatch, lastDownloadTypes } = useConfigStore(useShallow(downloadFormSelector));
   const location = useLocation();
   const {
     data = { total: 0, list: [] },
@@ -69,7 +55,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     {
       defaultPageSize: 50,
       refreshDeps: [filter],
-    }
+    },
   );
 
   useEffect(() => {
@@ -102,7 +88,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
         };
         addDownloadItems([item], true);
       } else {
-        const item: DownloadFormType = {
+        const item: DownloadFormItem = {
           batch: false,
           type,
           url,
@@ -121,7 +107,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       if (searchParams.get("n") === "true") {
         const name = searchParams.get("name") || randomName();
         const urlParam = searchParams.get("url") || "";
-        const item: DownloadFormType = {
+        const item: DownloadFormItem = {
           batch: false,
           type: urlDownloadType(urlParam),
           url: urlParam,
@@ -143,95 +129,30 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     setLocalIP(ip);
   });
 
-  const confirmAddItems = useMemoizedFn(
-    async (values: DownloadFormType, now?: boolean, isDocker?: boolean) => {
-      const {
-        batch,
-        batchList = "",
-        name = "",
-        headers,
-        type,
-        url,
-        folder,
-      } = values;
-
-      if (batch) {
-        const items: Omit<DownloadItem, "id">[] = await Promise.all(
-          batchList.split("\n").map(async (line: string) => {
-            const [url, customName, folder] = line.trim().split(" ");
-            let pageTitle = "";
-            if (!name) {
-              const data = await getPageTitle(url.trim());
-              pageTitle = data || "";
-            }
-            return {
-              url: url.trim(),
-              name: customName?.trim() || pageTitle || randomName(),
-              headers,
-              type,
-              folder,
-            };
-          })
-        );
-
-        if (isDocker) {
-          const { dockerUrl } = appStore;
-          await axios.post(`${dockerUrl}/api/${ADD_DOWNLOAD_ITEMS}`, {
-            videos: items,
-            startDownload: now,
-          });
-        } else {
-          await addDownloadItems(items, now);
-        }
-      } else {
-        let pageTitle = "";
-        if (!name && url) {
-          const data = await getPageTitle(url);
-          pageTitle = data || "";
-        }
-        const item: Omit<DownloadItem, "id"> = {
-          name: name || pageTitle || randomName(),
-          url: url || "",
-          headers,
-          type,
-          folder,
-        };
-        if (isDocker) {
-          const { dockerUrl } = appStore;
-          await axios.post(`${dockerUrl}/api/${ADD_DOWNLOAD_ITEMS}`, {
-            videos: [item],
-            startDownload: now,
-          });
-        } else {
-          await addDownloadItems([item], now);
-        }
-      }
-
-      if (!isDocker) {
-        refresh();
-      }
-      return true;
-    }
-  );
-
   const handleOpenForm = useMemoizedFn(() => {
     tdApp.onEvent(CLICK_DOWNLOAD);
-    const item: DownloadFormType = {
+    const item: DownloadFormItem = {
       batch: lastIsBatch,
       type: lastDownloadTypes,
     };
     newFormRef.current?.openModal(item);
   });
 
+  const handleConfirm = useMemoizedFn(async (values: DownloadFormItem) => {
+    refresh();
+  });
+
   return (
     <PageContainer
-      title={
-        filter === DownloadFilter.list
-          ? t("downloadList")
-          : t("downloadComplete")
-      }
+      title={filter === DownloadFilter.list ? t("downloadList") : t("downloadComplete")}
       rightExtra={
         <div className="flex flex-row gap-2">
+          {!isWeb && (
+            <Button onClick={() => openDir(appStore.local)}>
+              <FolderIcon />
+              {t("openFolder")}
+            </Button>
+          )}
           {filter === DownloadFilter.list && appStore.openInNewWindow && (
             <Button onClick={() => showBrowserWindow()}>
               <ExtractIcon fill="#fff" />
@@ -246,6 +167,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
                   <div className="text-xs">{t("scanToWatch")}</div>
                 </div>
               }
+              placement="bottomRight"
             >
               <Button>
                 <QrcodeOutlined />
@@ -253,35 +175,14 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
               </Button>
             </Popover>
           )}
-          {!isWeb && (
-            <Button onClick={() => openDir(appStore.local)}>
-              <FolderIcon />
-              {t("openFolder")}
-            </Button>
-          )}
-          {filter === DownloadFilter.list && (
-            <HomeDownloadButton onClick={handleOpenForm} />
-          )}
+          {filter === DownloadFilter.list && <HomeDownloadButton onClick={handleOpenForm} />}
         </div>
       }
       className="rounded-lg bg-white p-3 dark:bg-[#1F2024]"
     >
-      <DownloadList
-        loading={loading}
-        data={data.list}
-        filter={filter}
-        refresh={refresh}
-        pagination={pagination}
-      />
+      <DownloadList loading={loading} data={data.list} filter={filter} refresh={refresh} pagination={pagination} />
 
-      <DownloadForm
-        id={homeId}
-        ref={newFormRef}
-        destroyOnClose
-        onAddToList={(values) => confirmAddItems(values)}
-        onDownloadNow={(values) => confirmAddItems(values, true)}
-        onAddToDocker={(values) => confirmAddItems(values, false, true)}
-      />
+      <DownloadForm id={homeId} ref={newFormRef} destroyOnClose onConfirm={handleConfirm} />
     </PageContainer>
   );
 };
