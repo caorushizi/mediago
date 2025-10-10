@@ -6,6 +6,7 @@ import EventEmitter from "events";
 import { LRUCache } from "lru-cache";
 import fetch from "node-fetch";
 import { ffmpegPath } from "./variables";
+import { createRequire } from "node:module";
 
 export * from "./variables";
 export { fetchWrapper as fetch };
@@ -143,3 +144,6 @@ export const convertToAudio = async (input: string, output: string): Promise<voi
     });
   });
 };
+
+const require = createRequire(import.meta.url);
+export const preloadUrl = require.resolve("@mediago/electron-preload");

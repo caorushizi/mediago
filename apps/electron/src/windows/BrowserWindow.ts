@@ -1,9 +1,9 @@
-import { resolve } from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import _ from "lodash";
 import Window from "../core/window";
+import { preloadUrl } from "../helper";
 import ElectronStore from "../vendor/ElectronStore";
 
 @injectable()
@@ -23,7 +23,7 @@ export default class BrowserWindow extends Window {
       show: false,
       frame: true,
       webPreferences: {
-        preload: resolve(__dirname, "./preload.js"),
+        preload: preloadUrl,
       },
     });
 
