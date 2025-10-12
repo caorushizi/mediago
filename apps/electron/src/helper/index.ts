@@ -1,37 +1,15 @@
+import { spawn } from "node:child_process";
+import EventEmitter from "node:events";
 import fs from "node:fs/promises";
 import https from "node:https";
-import os from "node:os";
-import { spawn } from "child_process";
-import EventEmitter from "events";
+import { createRequire } from "node:module";
 import { LRUCache } from "lru-cache";
 import fetch from "node-fetch";
 import { ffmpegPath } from "./variables";
-import { createRequire } from "node:module";
 
 export * from "./variables";
 export { fetchWrapper as fetch };
-export { type IpcResponse, success, error } from "./ipcResponse";
-
-export function getLocalIP() {
-  const interfaces = os.networkInterfaces();
-  let localIP = "";
-
-  // Traverse the network interface
-  for (const key in interfaces) {
-    const iface = interfaces[key];
-    if (!iface) continue;
-
-    // IPv4 addresses that are not loopback addresses are filtered out
-    const filteredIface = iface.filter((details) => details.family === "IPv4" && !details.internal);
-
-    if (filteredIface.length > 0) {
-      localIP = filteredIface[0].address;
-      break;
-    }
-  }
-
-  return localIP;
-}
+export { error, type IpcResponse, success } from "./ipcResponse";
 
 function fetchWrapper(url: string) {
   const options = {

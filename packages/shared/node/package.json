@@ -13,12 +13,16 @@
     "@inversifyjs/binding-decorators": "^1.1.3",
     "@mediago/shared-common": "workspace:*",
     "glob": "^10.4.5",
-    "inversify": "^7.9.1",
     "i18next": "^23.11.5",
-    "typeorm": "0.3.20"
+    "inversify": "^7.9.1",
+    "portfinder": "^1.0.38",
+    "tree-kill": "^1.2.2",
+    "typeorm": "0.3.20",
+    "wait-on": "^9.0.1"
   },
   "devDependencies": {
     "@types/node": "^20.12.12",
+    "@types/wait-on": "^5.3.4",
     "typescript": "^5.4.5"
   }
 }

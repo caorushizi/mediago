@@ -1,17 +1,24 @@
 import path from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
 import { DownloadStatus } from "@mediago/shared-common";
-import { i18n } from "@mediago/shared-node";
-import { DownloaderService, TaskQueueService, TypeORM, VideoRepository } from "@mediago/shared-node";
+import {
+  DownloaderService,
+  findFreePort,
+  getLocalIP,
+  i18n,
+  ServiceRunner,
+  TaskQueueService,
+  TypeORM,
+  VideoRepository,
+} from "@mediago/shared-node";
 import { app, BrowserWindow, type Event, Menu, nativeImage, nativeTheme, Tray } from "electron";
 import { inject, injectable } from "inversify";
 import TrayIcon from "../assets/tray-icon.png";
 import TrayIconLight from "../assets/tray-icon-light.png";
-import ElectronRouter from "./core/router";
 import ProtocolService from "./core/protocol";
+import ElectronRouter from "./core/router";
 import { ptyRunner } from "./helper/ptyRunner";
 import { binMap, db, isMac } from "./helper/variables";
-import WebviewService from "./services/WebviewService";
 import ElectronDevtools from "./vendor/ElectronDevtools";
 import ElectronStore from "./vendor/ElectronStore";
 import ElectronUpdater from "./vendor/ElectronUpdater";
@@ -32,8 +39,6 @@ export default class ElectronApp {
     private readonly router: ElectronRouter,
     @inject(TypeORM)
     private readonly db: TypeORM,
-    @inject(WebviewService)
-    private readonly webview: WebviewService,
     @inject(VideoRepository)
     private readonly videoRepository: VideoRepository,
     @inject(ElectronDevtools)
@@ -93,6 +98,7 @@ export default class ElectronApp {
     });
 
     this.initTray();
+    this.startVideoService();
   }
 
   initAppTheme(): void {
@@ -145,5 +151,23 @@ export default class ElectronApp {
 
   send(url: string): void {
     this.mainWindow.send("url-params", url);
+  }
+
+  async startVideoService() {
+    const port = await findFreePort({ startPort: 8888 });
+    const host = await getLocalIP();
+
+    console.log("Video service running on:", host, port);
+
+    const local = this.store.get("local");
+    const runner = new ServiceRunner({
+      binName: "mediago-player",
+      devDir: "F:\\Workspace\\Projects\\MediaGo\\mediago-player\\dist",
+      extraArgs: ["-video-root", local, "-port", port.toString()],
+      host,
+      port,
+    });
+
+    runner.start();
   }
 }

@@ -1,9 +1,5 @@
 import { provide } from "@inversifyjs/binding-decorators";
-import {
-  appStoreDefaults,
-  appStoreSharedOptions,
-  type AppStore,
-} from "@mediago/shared-node";
+import { type AppStore, appStoreDefaults, appStoreSharedOptions } from "@mediago/shared-node";
 import Store from "electron-store";
 import { injectable } from "inversify";
 import { download, workspace } from "../helper/index";
