@@ -32,7 +32,7 @@ import {
   SHOW_BROWSER_WINDOW,
   START_UPDATE,
 } from "@mediago/shared-common";
-import { i18n } from "@mediago/shared-node";
+import { getLocalIP, i18n } from "@mediago/shared-node";
 import {
   type AppStore,
   ConversionRepository,
@@ -58,7 +58,7 @@ import fs from "fs-extra";
 import { inject, injectable } from "inversify";
 import { nanoid } from "nanoid";
 import { machineId } from "node-machine-id";
-import { convertToAudio, db, getLocalIP, workspace } from "../helper/index";
+import { convertToAudio, db, workspace } from "../helper/index";
 import WebviewService from "../services/WebviewService";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";
