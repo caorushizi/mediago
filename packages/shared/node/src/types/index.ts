@@ -5,6 +5,7 @@ export const TYPES = {
   ConversionService: Symbol.for("ConversionService"),
   DownloadManagementService: Symbol.for("DownloadManagementService"),
   FavoriteManagementService: Symbol.for("FavoriteManagementService"),
+  VideoService: Symbol.for("VideoService"),
 };
 
 export interface EnvPath {
