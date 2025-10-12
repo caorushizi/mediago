@@ -32,7 +32,6 @@ import {
   ON_DOWNLOAD_LIST_CONTEXT_MENU,
   ON_FAVORITE_ITEM_CONTEXT_MENU,
   OPEN_DIR,
-  OPEN_PLAYER_WINDOW,
   OPEN_URL,
   PLUGIN_READY,
   REMOVE_FAVORITE,
@@ -201,9 +200,6 @@ const electronApi: ElectronApi = {
   },
   clearWebviewCache(): Promise<void> {
     return ipcRenderer.invoke(CLEAR_WEBVIEW_CACHE);
-  },
-  openPlayerWindow(): Promise<void> {
-    return ipcRenderer.invoke(OPEN_PLAYER_WINDOW);
   },
   exportFavorites(): Promise<void> {
     return ipcRenderer.invoke(EXPORT_FAVORITES);

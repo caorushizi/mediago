@@ -23,7 +23,6 @@ import {
   RESTART_DOWNLOAD,
   STOP_DOWNLOAD,
 } from "@/const";
-import useElectron from "@/hooks/use-electron";
 import { appStoreSelector, useAppStore } from "@/store/app";
 import { DownloadStatus } from "@/types";
 import { cn, fromatDateTime, tdApp } from "@/utils";
@@ -54,7 +53,6 @@ const DownloadItemComponent = ({
 }: Props) => {
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
-  const { openPlayerWindow } = useElectron();
 
   const currStatus = useMemo(() => {
     return downloadStatus || item.status;
@@ -93,7 +91,7 @@ const DownloadItemComponent = ({
   });
 
   const handlePlay = useMemoizedFn(() => {
-    openPlayerWindow();
+    // FIXME: 添加播放器功能
     tdApp.onEvent(PLAY_VIDEO);
   });
 

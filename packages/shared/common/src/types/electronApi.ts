@@ -52,7 +52,6 @@ export interface ElectronApi {
   deleteConversion(id: number): Promise<void>;
   getMachineId(): Promise<string>;
   clearWebviewCache(): Promise<void>;
-  openPlayerWindow(): Promise<void>;
   exportFavorites(): Promise<void>;
   importFavorites(): Promise<void>;
   checkUpdate(): Promise<void>;

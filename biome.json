@@ -82,8 +82,7 @@
   "overrides": [
     {
       "includes": [
-        "apps/ui/**/*.{js,jsx,ts,tsx}",
-        "packages/mobile-player/**/*.{js,jsx,ts,tsx}"
+        "apps/ui/**/*.{js,jsx,ts,tsx}"
       ],
       "linter": {
         "rules": {

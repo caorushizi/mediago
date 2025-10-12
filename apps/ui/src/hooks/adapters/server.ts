@@ -165,9 +165,6 @@ export const webAdapter: ElectronApi = {
   clearWebviewCache: async () => {
     return defaultResp;
   },
-  openPlayerWindow: async () => {
-    return defaultResp;
-  },
   exportFavorites: async () => {
     return defaultResp;
   },
