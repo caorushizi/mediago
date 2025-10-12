@@ -55,11 +55,10 @@ import {
   shell,
 } from "electron";
 import fs from "fs-extra";
-import { glob } from "glob";
 import { inject, injectable } from "inversify";
 import { nanoid } from "nanoid";
 import { machineId } from "node-machine-id";
-import { convertToAudio, db, getLocalIP, videoPattern, workspace } from "../helper/index";
+import { convertToAudio, db, getLocalIP, workspace } from "../helper/index";
 import WebviewService from "../services/WebviewService";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";

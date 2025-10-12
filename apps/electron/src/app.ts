@@ -11,7 +11,6 @@ import ElectronRouter from "./core/router";
 import ProtocolService from "./core/protocol";
 import { ptyRunner } from "./helper/ptyRunner";
 import { binMap, db, isMac } from "./helper/variables";
-import { VideoService } from "./services/VideoService";
 import WebviewService from "./services/WebviewService";
 import ElectronDevtools from "./vendor/ElectronDevtools";
 import ElectronStore from "./vendor/ElectronStore";
@@ -41,8 +40,6 @@ export default class ElectronApp {
     private readonly devTools: ElectronDevtools,
     @inject(ElectronStore)
     private readonly store: ElectronStore,
-    @inject(VideoService)
-    private readonly videoService: VideoService,
     @inject(TaskQueueService)
     private readonly taskQueue: TaskQueueService,
     @inject(DownloaderService)
@@ -51,7 +48,6 @@ export default class ElectronApp {
 
   private async serviceInit(): Promise<void> {
     this.mainWindow.init();
-    this.videoService.init();
   }
 
   private async vendorInit() {
