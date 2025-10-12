@@ -40,7 +40,6 @@ export const GET_PAGE_TITLE = "get-page-title";
 // Windows and navigation
 export const SHOW_BROWSER_WINDOW = "show-browser-window";
 export const COMBINE_TO_HOME_PAGE = "combine-to-home-page";
-export const OPEN_PLAYER_WINDOW = "open-player-window";
 export const OPEN_DIR = "open-dir";
 export const OPEN_URL = "open-url";
 

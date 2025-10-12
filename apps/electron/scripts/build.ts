@@ -129,10 +129,6 @@ const electronTask = [
     dest: "app/build/preload",
   },
   {
-    src: "packages/mobile-player/build",
-    dest: "app/build/mobile",
-  },
-  {
     src: "packages/browser-extension/build",
     dest: "app/build/plugin",
   },

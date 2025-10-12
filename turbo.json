@@ -19,7 +19,6 @@
       "persistent": true,
       "with": [
         "@mediago/electron-preload#dev",
-        "@mediago/mobile-player#dev",
         "@mediago/browser-extension#dev"
       ]
     },
@@ -28,10 +27,6 @@
       "outputs": [
         "build/**"
       ]
-    },
-    "@mediago/mobile-player#dev": {
-      "persistent": true,
-      "cache": false
     },
     "@mediago/browser-extension#dev": {
       "persistent": true,
@@ -57,16 +52,10 @@
       ],
       "dependsOn": [
         "@mediago/electron-preload#build",
-        "@mediago/mobile-player#build",
         "@mediago/browser-extension#build"
       ]
     },
     "@mediago/electron-preload#build": {
-      "outputs": [
-        "build/**"
-      ]
-    },
-    "@mediago/mobile-player#build": {
       "outputs": [
         "build/**"
       ]
