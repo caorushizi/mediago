@@ -12,7 +12,7 @@
     "lint": "biome check ."
   },
   "dependencies": {
-    "@ant-design/icons": "^5.3.7",
+    "@ant-design/icons": "^6.1.0",
     "@mediago/shared-browser": "workspace:*",
     "@mediago/shared-common": "workspace:*",
     "@mediago/shared-node": "workspace:*",
