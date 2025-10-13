@@ -9,7 +9,7 @@
   "license": "MIT",
   "dependencies": {
     "@ghostery/adblocker": "2.3.1",
-    "@ghostery/adblocker-content": "2.3.1",
+    "@ghostery/adblocker-content": "2.12.4",
     "@ghostery/adblocker-electron": "2.3.1",
     "@ghostery/adblocker-electron-preload": "2.3.1",
     "@ghostery/adblocker-extended-selectors": "2.3.1",
