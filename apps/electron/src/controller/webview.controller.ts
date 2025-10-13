@@ -16,8 +16,8 @@ import {
 import { handle, i18n, TYPES } from "@mediago/shared-node";
 import { type IpcMainEvent, Menu, type MenuItem, type MenuItemConstructorOptions } from "electron";
 import { inject, injectable } from "inversify";
-import { SniffingHelper } from "../services/SniffingHelperService";
-import WebviewService from "../services/WebviewService";
+import { SniffingHelper } from "../services/sniffing-helper.service";
+import WebviewService from "../services/webview.service";
 import ElectronStore from "../vendor/ElectronStore";
 
 @injectable()

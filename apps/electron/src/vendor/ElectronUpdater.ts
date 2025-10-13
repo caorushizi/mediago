@@ -3,7 +3,7 @@ import { i18n } from "@mediago/shared-node";
 import isDev from "electron-is-dev";
 import { autoUpdater } from "electron-updater";
 import { inject, injectable } from "inversify";
-import MainWindow from "../windows/MainWindow";
+import MainWindow from "../windows/main.window";
 import ElectronLogger from "./ElectronLogger";
 import ElectronStore from "./ElectronStore";
 

@@ -14,7 +14,7 @@ COPY .mediago-server .
 
 RUN npm init -y
 RUN npm install pm2 -g
-RUN npm i node-pty better-sqlite3
+RUN npm i better-sqlite3
 
 EXPOSE 8899
 

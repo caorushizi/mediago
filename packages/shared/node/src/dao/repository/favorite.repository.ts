@@ -2,7 +2,7 @@ import { provide } from "@inversifyjs/binding-decorators";
 import { inject, injectable } from "inversify";
 import { i18n } from "../../i18n";
 import TypeORM from "../../vendor/TypeORM";
-import { Favorite } from "../entity/Favorite";
+import { Favorite } from "../entity/favorite.entity";
 
 @injectable()
 @provide()

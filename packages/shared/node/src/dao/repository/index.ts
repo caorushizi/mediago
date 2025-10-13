@@ -1,3 +1,3 @@
-export { default as ConversionRepository } from "./ConversionRepository";
-export { default as FavoriteRepository } from "./FavoriteRepository";
-export { default as VideoRepository } from "./VideoRepository";
+export { default as ConversionRepository } from "./conversion.repository";
+export { default as FavoriteRepository } from "./favorite.repository";
+export { default as VideoRepository } from "./video.repository";

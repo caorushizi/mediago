@@ -1,2 +1,2 @@
-import "../controller/DownloadController";
-import "../controller/HomeController";
+import "./downloader.controller";
+import "./home.controller";
