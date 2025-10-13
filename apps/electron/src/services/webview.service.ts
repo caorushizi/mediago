@@ -10,9 +10,9 @@ import { inject, injectable } from "inversify";
 import { fetch, isDeeplink, mobileUA, PERSIST_WEBVIEW, PRIVACY_WEBVIEW, pcUA, pluginPath } from "../helper/index";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";
-import BrowserWindow from "../windows/BrowserWindow";
-import MainWindow from "../windows/MainWindow";
-import { SniffingHelper, type SourceParams } from "./SniffingHelperService";
+import BrowserWindow from "../windows/browser.window";
+import MainWindow from "../windows/main.window";
+import { SniffingHelper, type SourceParams } from "./sniffing-helper.service";
 
 const require = createRequire(import.meta.url);
 

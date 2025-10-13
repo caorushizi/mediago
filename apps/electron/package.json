@@ -54,9 +54,7 @@
     "nanoid": "^5.0.7",
     "node-fetch": "^3.3.2",
     "node-machine-id": "^1.1.12",
-    "node-pty": "1.0.0",
     "reflect-metadata": "^0.2.2",
-    "strip-ansi": "^7.1.0",
     "typeorm": "0.3.26"
   }
 }

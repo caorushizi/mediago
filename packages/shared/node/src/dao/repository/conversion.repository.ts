@@ -3,7 +3,7 @@ import { inject, injectable } from "inversify";
 import { i18n } from "../../i18n";
 import type { ConversionPagination } from "@mediago/shared-common";
 import TypeORM from "../../vendor/TypeORM";
-import { Conversion } from "../entity/Conversion";
+import { Conversion } from "../entity/conversion.entity";
 
 @injectable()
 @provide()

@@ -1,4 +1,4 @@
-import "../controller/ConversionController";
-import "../controller/DownloadController";
-import "../controller/HomeController";
-import "../controller/WebviewController";
+import "./conversion.controller";
+import "./download.controller";
+import "./home.controller";
+import "./webview.controller";

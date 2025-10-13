@@ -1,7 +1,7 @@
 import { provide } from "@inversifyjs/binding-decorators";
 import { inject, injectable } from "inversify";
-import type { Favorite } from "../dao/entity/Favorite";
-import FavoriteRepository from "../dao/repository/FavoriteRepository";
+import type { Favorite } from "../dao/entity/favorite.entity";
+import FavoriteRepository from "../dao/repository/favorite.repository";
 import { TYPES } from "../types";
 
 @injectable()

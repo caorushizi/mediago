@@ -57,7 +57,7 @@ export default defineConfig({
       formats: ["cjs"],
     },
     rollupOptions: {
-      external: ["better-sqlite3", "node-pty"],
+      external: ["better-sqlite3"],
       output: {
         inlineDynamicImports: true,
       },
