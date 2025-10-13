@@ -2,15 +2,14 @@ import http from "node:http";
 import { provide } from "@inversifyjs/binding-decorators";
 import cors from "@koa/cors";
 import { DownloadStatus } from "@mediago/shared-common";
-import { DownloaderService, TaskQueueService, TypeORM, VideoRepository } from "@mediago/shared-node";
+import { DownloaderServer, TypeORM, VideoRepository } from "@mediago/shared-node";
 import { inject, injectable } from "inversify";
 import Koa from "koa";
 import bodyParser from "koa-bodyparser";
 import send from "koa-send";
 import serve from "koa-static";
 import RouterHandlerService from "./core/router";
-import { ptyRunner } from "./helper/ptyRunner";
-import { binMap, DB_PATH, STATIC_DIR } from "./helper/variables";
+import { DB_PATH, STATIC_DIR } from "./helper/variables";
 import Logger from "./vendor/Logger";
 import SocketIO from "./vendor/SocketIO";
 import StoreService from "./vendor/Store";
@@ -30,12 +29,10 @@ export default class ElectronApp extends Koa {
     private readonly socket: SocketIO,
     @inject(VideoRepository)
     private readonly videoRepository: VideoRepository,
-    @inject(DownloaderService)
-    private readonly downloaderService: DownloaderService,
-    @inject(TaskQueueService)
-    private readonly taskQueueService: TaskQueueService,
     @inject(StoreService)
     private readonly store: StoreService,
+    @inject(DownloaderServer)
+    private readonly downloaderServer: DownloaderServer,
   ) {
     super();
   }
@@ -71,19 +68,14 @@ export default class ElectronApp extends Koa {
 
     this.socket.initSocketIO(server);
 
-    this.taskQueueService.init({
-      maxRunner: this.store.get("maxRunner"),
-      proxy: this.store.get("proxy"),
-    });
-
+    // Initialize download service
+    this.downloaderServer.start();
     this.store.onDidChange("maxRunner", (maxRunner) => {
-      this.taskQueueService.changeMaxRunner(maxRunner || 1);
+      this.downloaderServer.changeConfig({ maxRunner: maxRunner || 1 });
     });
     this.store.onDidChange("proxy", (proxy) => {
-      this.taskQueueService.changeProxy(proxy || "");
+      this.downloaderServer.changeConfig({ proxy: proxy || "" });
     });
-
-    this.downloaderService.init(binMap, ptyRunner);
 
     server.listen(8899, () => {
       this.logger.info("Server running on port 8899");

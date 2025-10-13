@@ -19,7 +19,6 @@
     "@remusao/smaz-compress": "^1.10.0",
     "@remusao/smaz-decompress": "^1.10.0",
     "@remusao/trie": "^1.5.0",
-    "node-pty": "^1.0.0",
     "tldts-experimental": "^6.1.70"
   },
   "devDependencies": {

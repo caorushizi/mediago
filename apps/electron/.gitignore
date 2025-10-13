@@ -6,3 +6,4 @@ bin/Logs
 release
 ./types
 .DS_Store
+logs

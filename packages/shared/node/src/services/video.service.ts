@@ -4,9 +4,9 @@ import type { DownloadItem, DownloadItemPagination, ListPagination, Task } from 
 import { DownloadStatus } from "@mediago/shared-common";
 import { glob } from "glob";
 import { inject, injectable } from "inversify";
-import VideoRepository from "../dao/repository/VideoRepository";
+import VideoRepository from "../dao/repository/video.repository";
 import { TYPES } from "../types";
-import TaskQueueService from "./TaskQueueService";
+import { DownloaderServer } from "../worker";
 
 @injectable()
 @provide(TYPES.DownloadManagementService)
@@ -14,8 +14,8 @@ export class DownloadManagementService {
   constructor(
     @inject(VideoRepository)
     private readonly videoRepository: VideoRepository,
-    @inject(TaskQueueService)
-    private readonly taskQueue: TaskQueueService,
+    @inject(DownloaderServer)
+    private readonly downloaderServer: DownloaderServer,
   ) {}
 
   async addDownloadItem(video: Omit<DownloadItem, "id">) {
@@ -61,25 +61,21 @@ export class DownloadManagementService {
     const video = await this.videoRepository.findVideo(videoId);
     const { name, url, headers, type, folder } = video;
 
-    const task: Task = {
-      id: videoId,
-      params: {
-        url,
-        type,
-        local: localPath,
-        name,
-        headers,
-        deleteSegments,
-        folder,
-      },
-    };
-
     await this.videoRepository.changeVideoStatus(videoId, DownloadStatus.Watting);
-    this.taskQueue.addTask(task);
+    this.downloaderServer.startTask({
+      deleteSegments,
+      folder,
+      headers: [],
+      id: videoId.toString(),
+      localDir: localPath,
+      name,
+      type,
+      url,
+    });
   }
 
   async stopDownload(id: number) {
-    this.taskQueue.stopTask(id);
+    this.downloaderServer.stopTask(id.toString());
   }
 
   async deleteDownloadItem(id: number) {

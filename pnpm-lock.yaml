@@ -86,15 +86,9 @@ importers:
       node-machine-id:
         specifier: ^1.1.12
         version: 1.1.12
-      node-pty:
-        specifier: 1.0.0
-        version: 1.0.0
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
-      strip-ansi:
-        specifier: ^7.1.0
-        version: 7.1.0
       typeorm:
         specifier: 0.3.26
         version: 0.3.26(babel-plugin-macros@3.1.0)(better-sqlite3@10.1.0)(reflect-metadata@0.2.2)(ts-node@10.9.2(@swc/core@1.13.5)(@types/node@20.19.11)(typescript@5.9.3))
@@ -186,9 +180,6 @@ importers:
       '@remusao/trie':
         specifier: ^1.5.0
         version: 1.5.0
-      node-pty:
-        specifier: ^1.0.0
-        version: 1.0.0
       tldts-experimental:
         specifier: ^6.1.70
         version: 6.1.86
@@ -247,18 +238,12 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
-      node-pty:
-        specifier: 1.1.0-beta34
-        version: 1.1.0-beta34
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
       socket.io:
         specifier: ^4.8.0
         version: 4.8.1
-      strip-ansi:
-        specifier: ^7.1.0
-        version: 7.1.0
       typeorm:
         specifier: 0.3.27
         version: 0.3.27(babel-plugin-macros@3.1.0)(better-sqlite3@12.4.1)(reflect-metadata@0.2.2)(ts-node@10.9.2(@swc/core@1.13.5)(@types/node@22.18.8)(typescript@5.9.3))
@@ -583,6 +568,12 @@ importers:
       '@mediago/shared-common':
         specifier: workspace:*
         version: link:../common
+      axios:
+        specifier: ^1.12.2
+        version: 1.12.2
+      eventsource:
+        specifier: ^4.0.0
+        version: 4.0.0
       glob:
         specifier: ^10.4.5
         version: 10.4.5
@@ -3593,6 +3584,14 @@ packages:
   eventemitter3@4.0.7:
     resolution: {integrity: sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==}
 
+  eventsource-parser@3.0.6:
+    resolution: {integrity: sha512-Vo1ab+QXPzZ4tCa8SwIHJFaSzy4R6SHf7BY79rFBDf0idraZWAkYrDjDj8uWaSm3S2TK+hJ7/t1CEmZ7jXw+pg==}
+    engines: {node: '>=18.0.0'}
+
+  eventsource@4.0.0:
+    resolution: {integrity: sha512-fvIkb9qZzdMxgZrEQDyll+9oJsyaVvY92I2Re+qK0qEJ+w5s0X3dtz+M0VAPOjP1gtU3iqWyjQ0G3nvd5CLZ2g==}
+    engines: {node: '>=20.0.0'}
+
   expand-template@2.0.3:
     resolution: {integrity: sha512-XYfuKMvj4O35f/pOXLObndIRvyQ+/+6AhODh+OKWj9S9498pHHn/IMszH+gt0fBCRWMNfk1ZSp5x3AifmnI2vg==}
     engines: {node: '>=6'}
@@ -4697,9 +4696,6 @@ packages:
   mz@2.7.0:
     resolution: {integrity: sha512-z81GNO7nnYMEhrGh9LeymoE4+Yr0Wn5McHIZMK5cfQCl+NDX08sCZgUc9/6MHni9IWuFLm1Z3HTCXu2z9fN62Q==}
 
-  nan@2.23.0:
-    resolution: {integrity: sha512-1UxuyYGdoQHcGg87Lkqm3FzefucTa0NAiOcuRsDmysep3c1LVCRK2krrUDafMWtjSG04htvAmvg96+SDknOmgQ==}
-
   nanoid@3.3.11:
     resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
@@ -4751,12 +4747,6 @@ packages:
 
   node-machine-id@1.1.12:
     resolution: {integrity: sha512-QNABxbrPa3qEIfrE6GOJ7BYIuignnJw7iQ2YPbc3Nla1HzRJjXzZOiikfF8m7eAMfichLt3M4VgLOetqgDmgGQ==}
-
-  node-pty@1.0.0:
-    resolution: {integrity: sha512-wtBMWWS7dFZm/VgqElrTvtfMq4GzJ6+edFI0Y0zyzygUSZMgZdraDUMUhCIvkjhJjme15qWmbyJbtAx4ot4uZA==}
-
-  node-pty@1.1.0-beta34:
-    resolution: {integrity: sha512-RraDtX9RS1G1I5iO7e4YIOIA4arzd4ZVCD4mZr7+szaNupoTg9fxDCRr0EanqS0Qlzgm3PIdHNbPmblJguJuyg==}
 
   node-releases@2.0.19:
     resolution: {integrity: sha512-xxOWJsBKtzAq7DY0J+DTzuz58K8e7sJbdgwkbMWQe8UYB6ekmsQ45q0M/tJDsGaZmbC+l7n57UV8Hl5tHxO9uw==}
@@ -9758,6 +9748,12 @@ snapshots:
 
   eventemitter3@4.0.7: {}
 
+  eventsource-parser@3.0.6: {}
+
+  eventsource@4.0.0:
+    dependencies:
+      eventsource-parser: 3.0.6
+
   expand-template@2.0.3: {}
 
   expect@30.2.0:
@@ -10900,8 +10896,6 @@ snapshots:
       object-assign: 4.1.1
       thenify-all: 1.6.0
 
-  nan@2.23.0: {}
-
   nanoid@3.3.11: {}
 
   nanoid@5.1.5: {}
@@ -10923,7 +10917,8 @@ snapshots:
   node-addon-api@1.7.2:
     optional: true
 
-  node-addon-api@7.1.1: {}
+  node-addon-api@7.1.1:
+    optional: true
 
   node-api-version@0.2.1:
     dependencies:
@@ -10938,14 +10933,6 @@ snapshots:
       formdata-polyfill: 4.0.10
 
   node-machine-id@1.1.12: {}
-
-  node-pty@1.0.0:
-    dependencies:
-      nan: 2.23.0
-
-  node-pty@1.1.0-beta34:
-    dependencies:
-      node-addon-api: 7.1.1
 
   node-releases@2.0.19: {}
 

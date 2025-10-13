@@ -32,7 +32,6 @@ import {
   SHOW_BROWSER_WINDOW,
   START_UPDATE,
 } from "@mediago/shared-common";
-import { getLocalIP, i18n } from "@mediago/shared-node";
 import {
   type AppStore,
   ConversionRepository,
@@ -40,7 +39,9 @@ import {
   type EnvPath,
   type Favorite,
   type FavoriteManagementService,
+  getLocalIP,
   handle,
+  i18n,
   TYPES,
 } from "@mediago/shared-node";
 import axios from "axios";
@@ -59,12 +60,12 @@ import { inject, injectable } from "inversify";
 import { nanoid } from "nanoid";
 import { machineId } from "node-machine-id";
 import { convertToAudio, db, workspace } from "../helper/index";
-import WebviewService from "../services/WebviewService";
+import WebviewService from "../services/webview.service";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";
 import ElectronUpdater from "../vendor/ElectronUpdater";
-import BrowserWindow from "../windows/BrowserWindow";
-import MainWindow from "../windows/MainWindow";
+import BrowserWindow from "../windows/browser.window";
+import MainWindow from "../windows/main.window";
 
 @injectable()
 @provide(TYPES.Controller)

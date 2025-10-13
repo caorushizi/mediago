@@ -4,7 +4,7 @@ import { In, Not } from "typeorm";
 import { i18n } from "../../i18n";
 import { DownloadFilter, type DownloadItem, type DownloadItemPagination, DownloadStatus } from "@mediago/shared-common";
 import TypeORM from "../../vendor/TypeORM";
-import { Video } from "../entity/Video";
+import { Video } from "../entity/video.entity";
 
 @injectable()
 @provide()

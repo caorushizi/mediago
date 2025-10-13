@@ -1,5 +1,3 @@
-export { ConversionService } from "./ConversionService";
-export { DownloadManagementService } from "./DownloadManagementService";
-export { default as DownloaderService } from "./DownloaderService";
-export { FavoriteManagementService } from "./FavoriteManagementService";
-export { default as TaskQueueService } from "./TaskQueueService";
+export { ConversionService } from "./conversion.service";
+export { FavoriteManagementService } from "./favorite.service";
+export { DownloadManagementService } from "./video.service";

@@ -16,9 +16,9 @@ import { type DownloadManagementService, handle, TYPES } from "@mediago/shared-n
 import type { IpcMainEvent } from "electron/main";
 import { inject, injectable } from "inversify";
 import { videoPattern } from "../helper/index";
-import WebviewService from "../services/WebviewService";
+import WebviewService from "../services/webview.service";
 import ElectronStore from "../vendor/ElectronStore";
-import MainWindow from "../windows/MainWindow";
+import MainWindow from "../windows/main.window";
 
 @injectable()
 @provide(TYPES.Controller)

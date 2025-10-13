@@ -1,3 +1,3 @@
-export * from "./Conversion";
-export * from "./Favorite";
-export * from "./Video";
+export * from "./conversion.entity";
+export * from "./favorite.entity";
+export * from "./video.entity";

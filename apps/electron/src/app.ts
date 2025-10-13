@@ -1,28 +1,18 @@
 import path from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
 import { DownloadStatus } from "@mediago/shared-common";
-import {
-  DownloaderService,
-  findFreePort,
-  getLocalIP,
-  i18n,
-  ServiceRunner,
-  TaskQueueService,
-  TypeORM,
-  VideoRepository,
-} from "@mediago/shared-node";
+import { DownloaderServer, i18n, TypeORM, VideoRepository, VideoServer } from "@mediago/shared-node";
 import { app, BrowserWindow, type Event, Menu, nativeImage, nativeTheme, Tray } from "electron";
 import { inject, injectable } from "inversify";
 import TrayIcon from "../assets/tray-icon.png";
 import TrayIconLight from "../assets/tray-icon-light.png";
 import ProtocolService from "./core/protocol";
 import ElectronRouter from "./core/router";
-import { ptyRunner } from "./helper/ptyRunner";
-import { binMap, db, isMac } from "./helper/variables";
+import { db, isMac } from "./helper/variables";
 import ElectronDevtools from "./vendor/ElectronDevtools";
 import ElectronStore from "./vendor/ElectronStore";
 import ElectronUpdater from "./vendor/ElectronUpdater";
-import MainWindow from "./windows/MainWindow";
+import MainWindow from "./windows/main.window";
 import "./controller";
 
 @injectable()
@@ -45,10 +35,10 @@ export default class ElectronApp {
     private readonly devTools: ElectronDevtools,
     @inject(ElectronStore)
     private readonly store: ElectronStore,
-    @inject(TaskQueueService)
-    private readonly taskQueue: TaskQueueService,
-    @inject(DownloaderService)
-    private readonly downloader: DownloaderService,
+    @inject(VideoServer)
+    private readonly videoServer: VideoServer,
+    @inject(DownloaderServer)
+    private readonly downloaderServer: DownloaderServer,
   ) {}
 
   private async serviceInit(): Promise<void> {
@@ -80,25 +70,19 @@ export default class ElectronApp {
     this.initLanguage();
     this.resetDownloadStatus();
 
-    // 初始化下载器
-    this.downloader.init(binMap, ptyRunner);
-
-    // 初始化任务队列
-    this.taskQueue.init({
-      maxRunner: this.store.get("maxRunner"),
-      proxy: this.store.get("proxy"),
-    });
-
-    this.store.onDidChange("maxRunner", (maxRunner) => {
-      this.taskQueue.changeMaxRunner(maxRunner || 2);
-    });
-
-    this.store.onDidChange("proxy", (proxy) => {
-      this.taskQueue.changeProxy(proxy || "");
-    });
-
     this.initTray();
-    this.startVideoService();
+
+    const local = this.store.get("local");
+    this.videoServer.start({ local });
+
+    // Start the download service
+    this.downloaderServer.start();
+    this.store.onDidChange("maxRunner", (maxRunner) => {
+      this.downloaderServer.changeConfig({ maxRunner: maxRunner || 1 });
+    });
+    this.store.onDidChange("proxy", (proxy) => {
+      this.downloaderServer.changeConfig({ proxy: proxy || "" });
+    });
   }
 
   initAppTheme(): void {
@@ -151,23 +135,5 @@ export default class ElectronApp {
 
   send(url: string): void {
     this.mainWindow.send("url-params", url);
-  }
-
-  async startVideoService() {
-    const port = await findFreePort({ startPort: 8888 });
-    const host = await getLocalIP();
-
-    console.log("Video service running on:", host, port);
-
-    const local = this.store.get("local");
-    const runner = new ServiceRunner({
-      binName: "mediago-player",
-      devDir: "F:\\Workspace\\Projects\\MediaGo\\mediago-player\\dist",
-      extraArgs: ["-video-root", local, "-port", port.toString()],
-      host,
-      port,
-    });
-
-    runner.start();
   }
 }

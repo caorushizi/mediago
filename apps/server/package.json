@@ -46,10 +46,8 @@
     "koa-send": "^5.0.1",
     "koa-static": "^5.0.0",
     "lodash": "^4.17.21",
-    "node-pty": "1.1.0-beta34",
     "reflect-metadata": "^0.2.2",
     "socket.io": "^4.8.0",
-    "strip-ansi": "^7.1.0",
     "typeorm": "0.3.27",
     "winston": "^3.14.2"
   },

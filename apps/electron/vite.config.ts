@@ -74,14 +74,7 @@ export default defineConfig({
       formats: ["cjs"],
     },
     rollupOptions: {
-      external: [
-        "electron",
-        "@ghostery/adblocker-electron",
-        "node-pty",
-        "typeorm",
-        "@google-cloud/spanner",
-        "better-sqlite3",
-      ],
+      external: ["electron", "@ghostery/adblocker-electron", "typeorm", "@google-cloud/spanner", "better-sqlite3"],
       output: {
         inlineDynamicImports: true,
       },
