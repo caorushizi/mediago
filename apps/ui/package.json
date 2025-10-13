@@ -38,7 +38,7 @@
     "react-router-dom": "^6.23.1",
     "socket.io-client": "^4.8.1",
     "sort-by": "^1.2.0",
-    "tailwind-merge": "^2.3.0",
+    "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.1",
     "zustand": "5.0.0-rc.2"
