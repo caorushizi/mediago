@@ -16,7 +16,7 @@
     "build"
   ],
   "devDependencies": {
-    "@types/node": "^22.18.8",
+    "@types/node": "^24.7.2",
     "electron": "30.0.8",
     "esbuild": "^0.25.10",
     "tsx": "^4.11.0",

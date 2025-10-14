@@ -14,16 +14,16 @@
     "@mediago/shared-common": "workspace:*",
     "axios": "^1.12.2",
     "eventsource": "^4.0.0",
-    "glob": "^10.4.5",
-    "i18next": "^23.11.5",
+    "glob": "^11.0.3",
+    "i18next": "^25.6.0",
     "inversify": "^7.9.1",
     "portfinder": "^1.0.38",
     "tree-kill": "^1.2.2",
-    "typeorm": "0.3.20",
+    "typeorm": "0.3.27",
     "wait-on": "^9.0.1"
   },
   "devDependencies": {
-    "@types/node": "^20.12.12",
+    "@types/node": "^24.7.2",
     "@types/wait-on": "^5.3.4",
     "typescript": "^5.4.5"
   }

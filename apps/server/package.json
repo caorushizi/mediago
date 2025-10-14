@@ -22,7 +22,7 @@
     "@types/koa__cors": "^5.0.0",
     "@types/koa__router": "^12.0.4",
     "@types/lodash": "^4.17.4",
-    "@types/node": "^22.18.8",
+    "@types/node": "^24.7.2",
     "cross-env": "^10.1.0",
     "dotenv-flow": "^4.1.0",
     "rimraf": "^6.0.1",
