@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import tailwindcss from "@tailwindcss/vite";
 
 const projectRoot = path.resolve(__dirname, "../..");
 const appRoot = path.resolve(projectRoot, "apps/electron/app");
@@ -19,7 +20,7 @@ export default defineConfig({
   define: {
     "import.meta.env.APP_VERSION": JSON.stringify(pkg.version),
   },
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   envDir: projectRoot,
   envPrefix: "APP",
   build: {
