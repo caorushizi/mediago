@@ -12,10 +12,9 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "packageManager": "pnpm@10.8.1",
   "dependencies": {},
   "devDependencies": {
-    "@types/node": "^20.12.12",
+    "@types/node": "^24.7.2",
     "typescript": "^5.4.5"
   }
 }
