@@ -26,13 +26,13 @@ export function AppHeader({ className }: Props) {
       )}
     >
       <div className="h-full rounded-br-full bg-[#EBF3FB] pr-2 dark:bg-[#3B3C41]">
-        <div className="relative flex h-full min-w-[299px] flex-row items-center rounded-br-full bg-[#fff] pl-3 pr-2 dark:bg-[#2C2E33]">
+        <div className="relative flex h-full min-w-[299px] flex-row items-center rounded-br-full bg-white pl-3 pr-2 dark:bg-[#2C2E33]">
           <img className="m-3 h-8 w-8" src={LogoImg} alt="" />
           <span className="text-lg dark:text-white">Media Go</span>
           <span className="ml-[30px] block text-sm text-[#666] dark:text-white">
             v{import.meta.env.APP_VERSION}
           </span>
-          <div className="absolute bottom-0 h-[1px] w-[136px] bg-[#EFF7FF] dark:bg-[#606167]" />
+          <div className="absolute bottom-0 h-px w-[136px] bg-[#EFF7FF] dark:bg-[#606167]" />
           <div className="absolute bottom-0 h-[2px] w-[45px] bg-[#127AF3]" />
         </div>
       </div>

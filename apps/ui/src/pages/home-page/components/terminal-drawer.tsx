@@ -25,7 +25,7 @@ export function TerminalDrawer({ trigger, title, id, log, asChild }: Props) {
       <DrawerContent className="px-3" onContextMenu={handleContextMenu}>
         <Terminal
           header={
-            <div className="flex flex-shrink-0 flex-row items-center justify-between">
+            <div className="flex shrink-0 flex-row items-center justify-between">
               {title}
               <DrawerClose>
                 <IconButton icon={<CloseIcon />} />

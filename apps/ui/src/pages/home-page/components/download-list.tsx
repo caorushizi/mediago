@@ -367,7 +367,7 @@ export function DownloadList({ data, filter, refresh, loading, pagination }: Pro
         filter={filter}
       />
       {loading && !hasInitialLoaded && data.length === 0 && <Loading />}
-      <div className={cn("flex w-full flex-1 flex-shrink-0 flex-col gap-3 overflow-auto")}>
+      <div className={cn("flex w-full flex-1 shrink-0 flex-col gap-3 overflow-auto")}>
         {data.map((item) => {
           const state = downloadState[item.id];
           return (
