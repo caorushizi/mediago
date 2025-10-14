@@ -247,7 +247,7 @@ const DownloadItemComponent = ({
       );
     }
     return (
-      <div className="flex flex-shrink-0 flex-grow flex-row gap-2">
+      <div className="flex shrink-0 grow flex-row gap-2">
         {item.isLive && (
           <DownloadTag text={t("liveResource")} color="#9abbe2" />
         )}
@@ -264,8 +264,8 @@ const DownloadItemComponent = ({
       return (
         <div className="flex flex-row items-center gap-2 text-xs text-[rgba(0,0,0,0.88)] dark:text-[rgba(255,255,255,0.85)]">
           <Progress percent={val} strokeLinecap="butt" showInfo={false} />
-          <div className="min-w-5 flex-shrink-0">{val}%</div>
-          <div className="min-w-20 flex-shrink-0">{speed}</div>
+          <div className="min-w-5 shrink-0">{val}%</div>
+          <div className="min-w-20 shrink-0">{speed}</div>
         </div>
       );
     }
@@ -300,7 +300,7 @@ const DownloadItemComponent = ({
       className={cn(
         "relative flex flex-row gap-3 rounded-lg bg-[#FAFCFF] px-3 pb-3.5 pt-2 dark:bg-[#27292F]",
         {
-          "bg-gradient-to-r from-[#D0E8FF] to-[#F2F7FF] dark:from-[#27292F] dark:to-[#00244E]":
+          "bg-linear-to-r from-[#D0E8FF] to-[#F2F7FF] dark:from-[#27292F] dark:to-[#00244E]":
             selected,
           "opacity-70": currStatus === DownloadStatus.Success && !item.exists,
         }
