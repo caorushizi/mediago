@@ -24,7 +24,7 @@ export function IconButton({ children, disabled, title, onClick, icon }: Props) 
   return (
     <div
       className={cn(
-        "flex h-4 w-4 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded-sm hover:opacity-70",
+        "flex h-4 w-4 shrink-0 cursor-pointer flex-row items-center justify-center rounded-sm hover:opacity-70",
         {
           "cursor-not-allowed": disabled,
           "opacity-50": disabled,

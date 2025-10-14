@@ -64,22 +64,26 @@ function AppMenuItem({
 
   return (
     <Link
+      discover="render"
       to={link}
-      className={cn(
+
+      onClick={onClick}
+    >
+      <div className={cn(
         "flex h-10 flex-row items-center gap-1 rounded-lg bg-[#FAFCFF] px-3 text-sm text-[#636D7E] hover:bg-[#E1F0FF] hover:text-[#636D7E] dark:bg-[#2C2E33] dark:text-[rgba(255,255,255,0.85)] dark:hover:bg-[#3B3C41] dark:hover:text-[rgba(255,255,255,0.85)]",
         {
-          "bg-gradient-to-r from-[#127AF3] to-[#06D5FB] text-white hover:text-white dark:text-white":
+          "bg-linear-to-r from-[#127AF3] to-[#06D5FB] text-white hover:text-white dark:text-white":
             isActive,
         },
         className
-      )}
-      onClick={onClick}
-    >
-      {icon &&
-        cloneElement(icon as React.ReactElement, {
-          fill: isActive ? "#fff" : "#AAB5CB",
-        })}
-      {children}
+      )}>
+        {icon &&
+          cloneElement(icon as React.ReactElement, {
+            fill: isActive ? "#fff" : "#AAB5CB",
+          })}
+        {children}
+      </div>
+
     </Link>
   );
 }
@@ -221,7 +225,7 @@ export function AppSideBar({ className }: Props) {
   return (
     <div
       className={cn(
-        "relative select-none bg-[#fff] p-3 dark:bg-[#1F2024]",
+        "relative select-none bg-white p-3 dark:bg-[#1F2024]",
         className
       )}
     >
