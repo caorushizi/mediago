@@ -20,12 +20,10 @@
     "inversify": "^7.9.1",
     "portfinder": "^1.0.38",
     "tree-kill": "^1.2.2",
-    "typeorm": "0.3.27",
-    "wait-on": "^9.0.1"
+    "typeorm": "0.3.27"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",
-    "@types/wait-on": "^5.3.4",
     "typescript": "^5.4.5"
   }
 }

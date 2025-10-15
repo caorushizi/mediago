@@ -10,7 +10,7 @@ export function useDockerApi() {
     items,
     immediate = false,
   }: {
-    items: Omit<DownloadItem, "id">[];
+    items: Omit<DownloadTask, "id">[];
     immediate?: boolean;
   }) => {
     return axios.post(`${dockerUrl}/api/${ADD_DOWNLOAD_ITEMS}`, {

@@ -1,12 +1,12 @@
 import { provide } from "@inversifyjs/binding-decorators";
 import {
   DOWNLOAD_EVENT_NAME,
-  DownloadItem,
+  DownloadTask,
   type DownloadProgress,
   DownloadStatus,
   DownloadSuccessEvent,
 } from "@mediago/shared-common";
-import { DownloaderServer, i18n, VideoRepository } from "@mediago/shared-node";
+import { DownloaderServer, i18n, DownloadTaskService } from "@mediago/shared-node";
 import { app, Menu, Notification } from "electron";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
@@ -26,8 +26,8 @@ export default class MainWindow extends Window {
   constructor(
     @inject(ElectronLogger)
     private readonly logger: ElectronLogger,
-    @inject(VideoRepository)
-    private readonly videoRepository: VideoRepository,
+    @inject(DownloadTaskService)
+    private readonly downloadTaskService: DownloadTaskService,
     @inject(ElectronStore)
     private readonly store: ElectronStore,
     @inject(DownloaderServer)
@@ -63,7 +63,7 @@ export default class MainWindow extends Window {
 
   onDownloadReadyStart = async ({ id, isLive }: DownloadProgress) => {
     if (isLive) {
-      await this.videoRepository.changeVideoIsLive(id);
+      await this.downloadTaskService.updateIsLive(id, true);
     }
   };
 
@@ -128,8 +128,8 @@ export default class MainWindow extends Window {
 
   onDownloadSuccess = async (id: number) => {
     this.logger.info(`taskId: ${id} success`);
-    await this.videoRepository.changeVideoStatus(id, DownloadStatus.Success);
-    const video = await this.videoRepository.findVideo(id);
+    await this.downloadTaskService.updateStatus(id, DownloadStatus.Success);
+    const video = await this.downloadTaskService.findByIdOrFail(id);
 
     const promptTone = this.store.get("promptTone");
     if (promptTone) {
@@ -143,19 +143,19 @@ export default class MainWindow extends Window {
 
     const data: DownloadSuccessEvent = {
       type: "success",
-      // FIXME: Type 'Video' is not assignable to type 'DownloadItem'.
-      data: video as unknown as DownloadItem,
+      // FIXME: Type 'Video' is not assignable to type 'DownloadTask'.
+      data: video as unknown as DownloadTask,
     };
     this.send(DOWNLOAD_EVENT_NAME, data);
   };
 
   onDownloadFailed = async (id: number, err: unknown) => {
     this.logger.info(`taskId: ${id} failed`, err);
-    await this.videoRepository.changeVideoStatus(id, DownloadStatus.Failed);
+    await this.downloadTaskService.updateStatus(id, DownloadStatus.Failed);
 
     const promptTone = this.store.get("promptTone");
     if (promptTone) {
-      const video = await this.videoRepository.findVideo(id);
+      const video = await this.downloadTaskService.findByIdOrFail(id);
       new Notification({
         title: i18n.t("downloadFailed"),
         body: i18n.t("videoDownloadFailed", { name: video.name }),
@@ -165,16 +165,16 @@ export default class MainWindow extends Window {
 
   onDownloadStart = async (id: number) => {
     this.logger.info(`taskId: ${id} start`);
-    await this.videoRepository.changeVideoStatus(id, DownloadStatus.Downloading);
+    await this.downloadTaskService.updateStatus(id, DownloadStatus.Downloading);
   };
 
   onDownloadStop = async (id: number) => {
     this.logger.info(`taskId: ${id} stopped`);
-    await this.videoRepository.changeVideoStatus(id, DownloadStatus.Stopped);
+    await this.downloadTaskService.updateStatus(id, DownloadStatus.Stopped);
   };
 
   onDownloadMessage = async (id: number, message: string) => {
-    await this.videoRepository.appendDownloadLog(id, message);
+    await this.downloadTaskService.appendLog(id, message);
     const showTerminal = this.store.get("showTerminal");
   };
 

@@ -16,19 +16,19 @@ import { cn, fromatDateTime, tdApp } from "@/utils";
 import { TerminalDrawer } from "./terminal-drawer";
 
 interface Props {
-  item: VideoStat;
+  task: DownloadTaskWithFile;
   onSelectChange: (id: number) => void;
   selected: boolean;
   onStartDownload: (id: number) => void;
-  onStopDownload: (item: number) => void;
-  onContextMenu: (item: number) => void;
+  onStopDownload: (taskId: number) => void;
+  onContextMenu: (taskId: number) => void;
   progress?: DownloadProgress;
-  onShowEditForm?: (value: DownloadItem) => void;
+  onShowEditForm?: (value: DownloadTask) => void;
   downloadStatus?: DownloadStatus;
 }
 
-export const DownloadItem = ({
-  item,
+export const DownloadTaskItem = ({
+  task,
   onSelectChange,
   selected,
   onStartDownload,
@@ -42,7 +42,7 @@ export const DownloadItem = ({
   const { t } = useTranslation();
 
   // Derive current status; no need for memoization here
-  const currStatus = downloadStatus ?? item.status;
+  const currStatus = downloadStatus ?? task.status;
 
   // Handlers
   const handlePlay = useMemoizedFn(() => {
@@ -51,12 +51,12 @@ export const DownloadItem = ({
   });
 
   const startWithEvent = useMemoizedFn((eventName: string) => {
-    onStartDownload(item.id);
+    onStartDownload(task.id);
     tdApp.onEvent(eventName);
   });
 
   const handleStop = useMemoizedFn(() => {
-    onStopDownload(item.id);
+    onStopDownload(task.id);
     tdApp.onEvent(STOP_DOWNLOAD);
   });
 
@@ -69,14 +69,14 @@ export const DownloadItem = ({
         <TerminalDrawer
           key="terminal"
           trigger={<IconButton key="terminal" title={t("terminal")} icon={<TerminalIcon />} />}
-          title={item.name}
-          id={item.id}
-          log={item.log || ""}
+          title={task.name}
+          id={task.id}
+          log={task.log || ""}
         />
       ) : null;
 
     const editBtn = (
-      <IconButton key="edit" title={t("edit")} icon={<EditIcon />} onClick={() => onShowEditForm?.(item)} />
+      <IconButton key="edit" title={t("edit")} icon={<EditIcon />} onClick={() => onShowEditForm?.(task)} />
     );
 
     switch (currStatus) {
@@ -132,7 +132,7 @@ export const DownloadItem = ({
             key="play"
             icon={<PlayCircleOutlined />}
             title={t("playVideo")}
-            disabled={!item.exists}
+            disabled={!task.exists}
             onClick={handlePlay}
           />,
         );
@@ -145,32 +145,32 @@ export const DownloadItem = ({
     currStatus,
     handlePlay,
     handleStop,
-    item.exists,
-    item.id,
-    item.log,
-    item.name,
+    task.exists,
+    task.id,
+    task.log,
+    task.name,
     onShowEditForm,
     startWithEvent,
     t,
   ]);
 
-  const renderTitle = useMemoizedFn((item: VideoStat): ReactNode => {
+  const renderTitle = useMemoizedFn((task: DownloadTaskWithFile): ReactNode => {
     return (
       <div
         className={cn("truncate text-sm dark:text-[#B4B4B4]", {
           "text-[#127af3]": selected,
         })}
-        title={item.name}
+        title={task.name}
       >
-        {item.folder ? `${item.folder}/` : item.folder}
-        {item.name}
+        {task.folder ? `${task.folder}/` : task.folder}
+        {task.name}
       </div>
     );
   });
 
   const tags = useMemo<ReactNode[]>(() => {
     const list: ReactNode[] = [];
-    if (item.isLive) list.push(<DownloadTag key="live" text={t("liveResource")} color="#9abbe2" />);
+    if (task.isLive) list.push(<DownloadTag key="live" text={t("liveResource")} color="#9abbe2" />);
 
     switch (currStatus) {
       case DownloadStatus.Downloading:
@@ -185,7 +185,7 @@ export const DownloadItem = ({
         break;
       case DownloadStatus.Success:
         list.push(<DownloadTag key="success" text={t("downloadSuccess")} color="#09ce87" />);
-        if (!item.exists) {
+        if (!task.exists) {
           list.push(<DownloadTag key="notExists" text={t("fileNotExist")} color="#9abbe2" />);
         }
         break;
@@ -201,9 +201,9 @@ export const DownloadItem = ({
                 className="cursor-pointer"
               />
             }
-            title={item.name}
-            id={item.id}
-            log={item.log || ""}
+            title={task.name}
+            id={task.id}
+            log={task.log || ""}
           />,
         );
         break;
@@ -212,9 +212,9 @@ export const DownloadItem = ({
         break;
     }
     return list;
-  }, [currStatus, item.exists, item.id, item.isLive, item.log, item.name, t]);
+  }, [currStatus, task.exists, task.id, task.isLive, task.log, task.name, t]);
 
-  const renderDescription = useMemoizedFn((item: DownloadItem): ReactNode => {
+  const renderDescription = useMemoizedFn((task: DownloadTask): ReactNode => {
     if (progress) {
       const { percent, speed } = progress;
       const val = Math.round(Number(percent));
@@ -228,22 +228,22 @@ export const DownloadItem = ({
       );
     }
     return (
-      <div className="relative flex flex-col gap-1 text-xs text-[#B3B3B3] dark:text-[#515257]" title={item.url}>
-        <div className="truncate">{item.url}</div>
+      <div className="relative flex flex-col gap-1 text-xs text-[#B3B3B3] dark:text-[#515257]" title={task.url}>
+        <div className="truncate">{task.url}</div>
         <div className="truncate">
-          {t("createdAt")} {fromatDateTime(item.createdDate)}
+          {t("createdAt")} {fromatDateTime(task.createdDate)}
         </div>
         {currStatus === DownloadStatus.Failed && (
           <TerminalDrawer
             asChild
             trigger={
               <div className="cursor-pointer truncate text-[#ff7373] dark:text-[rgba(255,115,115,0.6)]">
-                {t("failReason")}: ... {item.log?.slice(-100)}
+                {t("failReason")}: ... {task.log?.slice(-100)}
               </div>
             }
-            title={item.name}
-            id={item.id}
-            log={item.log || ""}
+            title={task.name}
+            id={task.id}
+            log={task.log || ""}
           />
         )}
       </div>
@@ -254,24 +254,27 @@ export const DownloadItem = ({
     <div
       className={cn("relative flex flex-row gap-3 rounded-lg bg-[#FAFCFF] px-3 pb-3.5 pt-2 dark:bg-[#27292F]", {
         "bg-linear-to-r from-[#D0E8FF] to-[#F2F7FF] dark:from-[#27292F] dark:to-[#00244E]": selected,
-        "opacity-70": currStatus === DownloadStatus.Success && !item.exists,
+        "opacity-70": currStatus === DownloadStatus.Success && !task.exists,
       })}
-      onContextMenu={() => onContextMenu(item.id)}
+      onContextMenu={() => onContextMenu(task.id)}
     >
-      <Checkbox className="mt-2" checked={selected} onCheckedChange={() => onSelectChange(item.id)} />
+      <Checkbox className="mt-2" checked={selected} onCheckedChange={() => onSelectChange(task.id)} />
       <div className={cn("flex flex-1 flex-col gap-1 overflow-hidden")}>
         {selected && (
           <img alt="" src={selectedBg} className="absolute bottom-0 right-[126px] top-0 block h-full select-none" />
         )}
         <div className="relative flex flex-row items-center gap-2">
-          {renderTitle(item)}
+          {renderTitle(task)}
           <div className="flex shrink-0 grow flex-row gap-2">{tags}</div>
           <div className="flex flex-row items-center gap-3 rounded-md bg-[#eff4fa] px-1.5 py-1.5 dark:bg-[#3B3F48]">
             {actionButtons}
           </div>
         </div>
-        {renderDescription(item)}
+        {renderDescription(task)}
       </div>
     </div>
   );
 };
+
+// Legacy export for backward compatibility
+export const DownloadTask = DownloadTaskItem;

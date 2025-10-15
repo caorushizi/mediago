@@ -10,8 +10,8 @@ import {
   type ConversionResponse,
   DELETE_CONVERSION,
   DELETE_DOWNLOAD_ITEM,
-  type DownloadItem,
-  type DownloadItemPagination,
+  type DownloadTask,
+  type DownloadTaskPagination,
   EDIT_DOWNLOAD_ITEM,
   type ElectronApi,
   EXPORT_DOWNLOAD_LIST,
@@ -45,7 +45,7 @@ import {
   START_DOWNLOAD,
   START_UPDATE,
   STOP_DOWNLOAD,
-  type VideoResponse,
+  type DownloadTaskResponse,
   WEBVIEW_CHANGE_USER_AGENT,
   WEBVIEW_GO_BACK,
   WEBVIEW_GO_HOME,
@@ -103,10 +103,10 @@ const electronApi: ElectronApi = {
     if (!dir) return;
     return ipcRenderer.invoke(OPEN_DIR, dir);
   },
-  addDownloadItems(videos: Omit<DownloadItem, "id">[], startDownload?: boolean): Promise<Video[]> {
+  addDownloadItems(videos: Omit<DownloadTask, "id">[], startDownload?: boolean): Promise<Video[]> {
     return ipcRenderer.invoke(ADD_DOWNLOAD_ITEMS, videos, startDownload);
   },
-  getDownloadItems(p: DownloadItemPagination): Promise<VideoResponse> {
+  getDownloadItems(p: DownloadTaskPagination): Promise<DownloadTaskResponse> {
     return ipcRenderer.invoke(GET_DOWNLOAD_ITEMS, p);
   },
   startDownload(vid: number): Promise<void> {
@@ -156,7 +156,7 @@ const electronApi: ElectronApi = {
   combineToHomePage(store: BrowserStore): Promise<void> {
     return ipcRenderer.invoke(COMBINE_TO_HOME_PAGE, store);
   },
-  editDownloadItem(video: DownloadItem, startDownload?: boolean): Promise<void> {
+  editDownloadItem(video: DownloadTask, startDownload?: boolean): Promise<void> {
     return ipcRenderer.invoke(EDIT_DOWNLOAD_ITEM, video, startDownload);
   },
   getLocalIP(): Promise<string> {
@@ -180,7 +180,7 @@ const electronApi: ElectronApi = {
   getDownloadLog(id: number): Promise<string> {
     return ipcRenderer.invoke(GET_DOWNLOAD_LOG, id);
   },
-  showDownloadDialog(data: Omit<DownloadItem, "id">[]) {
+  showDownloadDialog(data: Omit<DownloadTask, "id">[]) {
     return ipcRenderer.invoke(SHOW_DOWNLOAD_DIALOG, data);
   },
   pluginReady() {

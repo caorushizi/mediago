@@ -14,14 +14,23 @@ export class ConversionService {
   ) {}
 
   async getConversions(pagination: ConversionPagination) {
-    return await this.conversionRepository.getConversions(pagination);
+    const result =
+      await this.conversionRepository.findWithPagination(pagination);
+    return {
+      total: result.total,
+      list: result.items,
+    };
   }
 
-  async addConversion(conversion: Conversion) {
-    return await this.conversionRepository.addConversion(conversion);
+  async addConversion(conversion: Omit<Conversion, "id" | "createdDate">) {
+    return await this.conversionRepository.create(conversion);
   }
 
   async deleteConversion(id: number) {
-    return await this.conversionRepository.deleteConversion(id);
+    return await this.conversionRepository.delete(id);
+  }
+
+  async findByIdOrFail(id: number) {
+    return await this.conversionRepository.findByIdOrFail(id);
   }
 }

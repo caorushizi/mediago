@@ -1,4 +1,4 @@
-import type { DownloadItem } from "@mediago/shared-common";
+import type { DownloadTask } from "@mediago/shared-common";
 import { nanoid } from "nanoid";
 
 const eventMap = new Map();
@@ -30,7 +30,7 @@ export interface Item {
   type: any;
 }
 
-export function showDownloadDialog(item: Omit<DownloadItem, "id">[]) {
+export function showDownloadDialog(item: Omit<DownloadTask, "id">[]) {
   window.electron.showDownloadDialog(item);
 }
 

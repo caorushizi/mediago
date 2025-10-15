@@ -22,7 +22,7 @@ export function BrowserView() {
   const browserId = useId();
 
   useEffect(() => {
-    const onShowDownloadDialog = async (e: unknown, data: DownloadItem[], image: string) => {
+    const onShowDownloadDialog = async (e: unknown, data: DownloadTask[], image: string) => {
       if (image) {
         setPlaceHolder(image);
       }

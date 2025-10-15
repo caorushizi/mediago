@@ -9,7 +9,7 @@ import { EDIT_DOWNLOAD } from "@/const";
 import useAPI from "@/hooks/use-api";
 import { type DownloadFilter, DownloadStatus } from "@/types";
 import { cn, tdApp } from "@/utils";
-import { DownloadItem } from "./download-item";
+import { DownloadTaskItem } from "./download-item";
 import { ListHeader } from "./list-header";
 
 interface DownloadState {
@@ -25,13 +25,13 @@ interface DownloadState {
 }
 
 interface Props {
-  data: VideoStat[];
+  data: DownloadTaskWithFile[];
   filter: DownloadFilter;
   refresh: () => void;
   loading: boolean;
 }
 
-export function DownloadList({ data, filter, refresh, loading }: Props) {
+export function DownloadTaskList({ data, filter, refresh, loading }: Props) {
   const [selected, setSelected] = useState<number[]>([]);
   const {
     startDownload,
@@ -166,7 +166,7 @@ export function DownloadList({ data, filter, refresh, loading }: Props) {
         if (draft.length) {
           draft.splice(0, draft.length);
         } else {
-          draft.push(...data.map((item) => item.id));
+          draft.push(...data.map((task) => task.id));
         }
       }),
     );
@@ -256,9 +256,9 @@ export function DownloadList({ data, filter, refresh, loading }: Props) {
     setSelected([]);
   });
 
-  const handleShowDownloadForm = useMemoizedFn((item: DownloadItem) => {
+  const handleShowDownloadForm = useMemoizedFn((task: DownloadTask) => {
     tdApp.onEvent(EDIT_DOWNLOAD);
-    const { id, name, url, headers, type, folder } = item;
+    const { id, name, url, headers, type, folder } = task;
     const values = {
       batch: false,
       id,
@@ -293,13 +293,13 @@ export function DownloadList({ data, filter, refresh, loading }: Props) {
       />
       {loading && !hasInitialLoaded && data.length === 0 && <Loading />}
       <div className={cn("flex w-full flex-1 shrink-0 flex-col gap-3 overflow-auto")}>
-        {data.map((item) => {
-          const state = downloadState[item.id];
+        {data.map((task) => {
+          const state = downloadState[task.id];
           return (
-            <DownloadItem
-              key={item.id}
-              item={item}
-              selected={selected.includes(item.id)}
+            <DownloadTaskItem
+              key={task.id}
+              task={task}
+              selected={selected.includes(task.id)}
               onSelectChange={handleItemSelectChange}
               onStartDownload={onStartDownload}
               onStopDownload={onStopDownload}
@@ -309,7 +309,7 @@ export function DownloadList({ data, filter, refresh, loading }: Props) {
               progress={
                 state
                   ? {
-                    id: item.id,
+                    id: task.id,
                     percent: (state.progress ?? 0).toString(),
                     speed: state.speed || "0 MB/s",
                     isLive: state.isLive || false,
@@ -324,3 +324,6 @@ export function DownloadList({ data, filter, refresh, loading }: Props) {
     </div>
   );
 }
+
+// Legacy export for backward compatibility
+export const DownloadList = DownloadTaskList;

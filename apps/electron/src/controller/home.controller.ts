@@ -34,8 +34,8 @@ import {
 } from "@mediago/shared-common";
 import {
   type AppStore,
-  ConversionRepository,
-  type DownloadManagementService,
+  type ConversionService,
+  DownloadTaskService,
   type EnvPath,
   type Favorite,
   type FavoriteManagementService,
@@ -115,14 +115,14 @@ export default class HomeController implements Controller {
     private readonly favoriteService: FavoriteManagementService,
     @inject(MainWindow)
     private readonly mainWindow: MainWindow,
-    @inject(TYPES.DownloadManagementService)
-    private readonly downloadService: DownloadManagementService,
+    @inject(DownloadTaskService)
+    private readonly downloadTaskService: DownloadTaskService,
     @inject(BrowserWindow)
     private readonly browserWindow: BrowserWindow,
     @inject(WebviewService)
     private readonly webviewService: WebviewService,
-    @inject(ConversionRepository)
-    private readonly conversionRepository: ConversionRepository,
+    @inject(TYPES.ConversionService)
+    private readonly conversionService: ConversionService,
     @inject(ElectronLogger)
     private readonly logger: ElectronLogger,
     @inject(ElectronUpdater)
@@ -233,13 +233,13 @@ export default class HomeController implements Controller {
         payload: id,
       });
     };
-    const item = await this.downloadService.getDownloadItems({ current: 1, pageSize: 1 }, this.store.get("local"), "");
-    const video = item.list.find((v: any) => v.id === id);
+    const item = await this.downloadTaskService.getDownloadTasks({ current: 1, pageSize: 1 }, this.store.get("local"), "");
+    const task = item.list.find((t: any) => t.id === id);
     const template: Array<MenuItemConstructorOptions | MenuItem> = [
       {
         label: i18n.t("copyLinkAddress"),
         click: () => {
-          clipboard.writeText(video?.url || "");
+          clipboard.writeText(task?.url || "");
         },
       },
       {
@@ -269,18 +269,18 @@ export default class HomeController implements Controller {
       },
     ];
 
-    if (video?.status === DownloadStatus.Success && video?.exists && video?.file) {
+    if (task?.status === DownloadStatus.Success && task?.exists && task?.file) {
       template.unshift(
         {
           label: i18n.t("openFolder"),
           click: () => {
-            shell.showItemInFolder(video.file!);
+            shell.showItemInFolder(task.file!);
           },
         },
         {
           label: i18n.t("openFile"),
           click: () => {
-            shell.openPath(video.file!);
+            shell.openPath(task.file!);
           },
         },
         { type: "separator" },
@@ -293,7 +293,7 @@ export default class HomeController implements Controller {
 
   @handle(CONVERT_TO_AUDIO)
   async convertToAudio(e: IpcMainEvent, id: number) {
-    const conversion = await this.conversionRepository.findConversion(id);
+    const conversion = await this.conversionService.findByIdOrFail(id);
     const local = this.store.get("local");
     const input = conversion.path;
     const outName = `${path.basename(input, path.extname(input))}.mp3`;
@@ -337,7 +337,7 @@ export default class HomeController implements Controller {
 
   @handle(GET_DOWNLOAD_LOG)
   async getDownloadLog(event: IpcMainEvent, id: number) {
-    return await this.downloadService.getDownloadLog(id);
+    return await this.downloadTaskService.getDownloadLog(id);
   }
 
   @handle(SELECT_FILE)
@@ -423,7 +423,7 @@ export default class HomeController implements Controller {
 
   @handle(EXPORT_DOWNLOAD_LIST)
   async exportDownloadList() {
-    const txt = await this.downloadService.exportDownloadList();
+    const txt = await this.downloadTaskService.exportDownloadList();
     const window = this.mainWindow.window;
     if (!window) return Promise.reject(i18n.t("noMainWindow"));
 
@@ -440,7 +440,7 @@ export default class HomeController implements Controller {
 
   @handle(GET_VIDEO_FOLDERS)
   async getVideoFolders() {
-    return this.downloadService.getVideoFolders();
+    return this.downloadTaskService.getTaskFolders();
   }
 
   @handle(GET_PAGE_TITLE)

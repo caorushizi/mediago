@@ -2,12 +2,25 @@ import { createRequire } from "node:module";
 import { resolve } from "node:path";
 import { ElectronBlocker } from "@ghostery/adblocker-electron";
 import { provide } from "@inversifyjs/binding-decorators";
-import { i18n, VideoRepository } from "@mediago/shared-node";
-import { type Event, type HandlerDetails, session, WebContentsView } from "electron";
+import { i18n, DownloadTaskService } from "@mediago/shared-node";
+import {
+  type Event,
+  type HandlerDetails,
+  session,
+  WebContentsView,
+} from "electron";
 import isDev from "electron-is-dev";
 import { readFileSync } from "fs-extra";
 import { inject, injectable } from "inversify";
-import { fetch, isDeeplink, mobileUA, PERSIST_WEBVIEW, PRIVACY_WEBVIEW, pcUA, pluginPath } from "../helper/index";
+import {
+  fetch,
+  isDeeplink,
+  mobileUA,
+  PERSIST_WEBVIEW,
+  PRIVACY_WEBVIEW,
+  pcUA,
+  pluginPath,
+} from "../helper/index";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";
 import BrowserWindow from "../windows/browser.window";
@@ -35,8 +48,8 @@ export default class WebviewService {
     private readonly browserWindow: BrowserWindow,
     @inject(ElectronStore)
     private readonly store: ElectronStore,
-    @inject(VideoRepository)
-    private readonly videoRepository: VideoRepository,
+    @inject(DownloadTaskService)
+    private readonly downloadTaskService: DownloadTaskService,
     @inject(SniffingHelper)
     private readonly sniffingHelper: SniffingHelper,
   ) {
@@ -138,11 +151,11 @@ export default class WebviewService {
       // this.view.webContents.send("webview-link-message", item);
       this.window.webContents.send("webview-link-message", item);
     } else {
-      const video = await this.videoRepository.findVideoByName(item.name);
+      const video = await this.downloadTaskService.findByName(item.name);
       if (video) {
         item.name = `${item.name}-${Date.now()}`;
       }
-      const res = await this.videoRepository.addVideo(item);
+      const res = await this.downloadTaskService.addDownloadItem(item);
       const mainWebContents = this.mainWindow.window?.webContents;
       if (!mainWebContents) return;
       // This sends a message to the page notifying it of the update

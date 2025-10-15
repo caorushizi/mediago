@@ -3,7 +3,6 @@ import type { AppLanguage, AppTheme, DownloadType } from "@mediago/shared-common
 export const TYPES = {
   Controller: Symbol.for("Controller"),
   ConversionService: Symbol.for("ConversionService"),
-  DownloadManagementService: Symbol.for("DownloadManagementService"),
   FavoriteManagementService: Symbol.for("FavoriteManagementService"),
   VideoService: Symbol.for("VideoService"),
 };
