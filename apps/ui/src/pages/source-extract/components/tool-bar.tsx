@@ -19,11 +19,11 @@ import {
 } from "@/assets/svg";
 import { IconButton } from "@/components/icon-button";
 import { OPEN_URL } from "@/const";
-import useElectron from "@/hooks/use-electron";
 import { appStoreSelector, setAppStoreSelector, useAppStore } from "@/store/app";
 import { BrowserStatus, browserStoreSelector, PageMode, setBrowserSelector, useBrowserStore } from "@/store/browser";
 import { themeSelector, useSessionStore } from "@/store/session";
 import { cn, generateUrl, getFavIcon, tdApp } from "@/utils";
+import useAPI from "@/hooks/use-api";
 
 interface Props {
   page: boolean;
@@ -40,7 +40,7 @@ export function ToolBar({ page }: Props) {
     combineToHomePage,
     setUserAgent,
     webviewUrlContextMenu,
-  } = useElectron();
+  } = useAPI();
   const { theme } = useSessionStore(useShallow(themeSelector));
   const store = useBrowserStore(useShallow(browserStoreSelector));
   const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));

@@ -1,6 +1,6 @@
 import { type FC, useEffect, useRef } from "react";
-import useElectron from "@/hooks/use-electron";
 import { cn } from "@/utils";
+import useAPI from "@/hooks/use-api";
 
 interface DivRect {
   left: number;
@@ -27,7 +27,7 @@ const WebView: FC<WebViewProps> = ({ className }) => {
   const webviewRef = useRef<HTMLDivElement>(null);
   const resizeObserver = useRef<ResizeObserver>();
 
-  const { setWebviewBounds, webviewHide, webviewShow } = useElectron();
+  const { setWebviewBounds, webviewHide, webviewShow } = useAPI();
 
   useEffect(() => {
     if (!webviewRef.current) return;

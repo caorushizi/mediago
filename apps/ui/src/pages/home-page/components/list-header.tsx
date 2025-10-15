@@ -1,9 +1,9 @@
 import { useMemoizedFn } from "ahooks";
 import { App, Button, Dropdown, type MenuProps } from "antd";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Checkbox } from "@/components/ui/checkbox";
-import useElectron from "@/hooks/use-electron";
+import useAPI from "@/hooks/use-api";
 import { DownloadFilter } from "@/types";
 import { isWeb } from "@/utils";
 
@@ -29,7 +29,7 @@ export function ListHeader({
   const { message } = App.useApp();
   const { t } = useTranslation();
   const disabled = useMemo(() => selected.length === 0, [selected.length]);
-  const { exportDownloadList } = useElectron();
+  const { exportDownloadList } = useAPI();
   const items: MenuProps["items"] = useMemo(() => {
     return [
       {

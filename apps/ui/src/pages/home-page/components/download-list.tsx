@@ -1,5 +1,5 @@
 import { useDebounce, useMemoizedFn } from "ahooks";
-import { App, Empty, Pagination } from "antd";
+import { App, Empty } from "antd";
 import { produce } from "immer";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -11,7 +11,6 @@ import { type DownloadFilter, DownloadStatus } from "@/types";
 import { cn, tdApp } from "@/utils";
 import { DownloadItem } from "./download-item";
 import { ListHeader } from "./list-header";
-import type { ListPagination } from "./types";
 
 interface DownloadState {
   [key: number]: {
@@ -30,10 +29,9 @@ interface Props {
   filter: DownloadFilter;
   refresh: () => void;
   loading: boolean;
-  pagination: ListPagination;
 }
 
-export function DownloadList({ data, filter, refresh, loading, pagination }: Props) {
+export function DownloadList({ data, filter, refresh, loading }: Props) {
   const [selected, setSelected] = useState<number[]>([]);
   const {
     startDownload,
@@ -117,76 +115,6 @@ export function DownloadList({ data, filter, refresh, loading, pagination }: Pro
   useEffect(() => {
     const onDownloadStateUpdate = (_e: unknown, state: DownloadState) => {
       console.log("onDownloadStateUpdate", state);
-
-      // 使用防抖的原始状态更新，避免频繁更新
-      setRawDownloadState((prevState) => {
-        // 合并新状态和旧状态，确保所有下载任务都保留
-        const mergedState = { ...prevState };
-
-        // 更新或添加新状态
-        for (const [id, newItem] of Object.entries(state)) {
-          mergedState[Number(id)] = newItem;
-        }
-
-        // 检查是否需要刷新列表（只在关键状态变化时才刷新）
-        let shouldRefresh = false;
-        const newStateEntries = Object.entries(state);
-
-        // 如果有新的下载任务或任务数量变化，需要刷新列表
-        const hasNewTasks = newStateEntries.some(([id]) => !prevState[Number(id)]);
-        if (hasNewTasks) {
-          shouldRefresh = true;
-        } else {
-          // 检查关键状态变化时才刷新列表
-          for (const [id, newItem] of newStateEntries) {
-            const oldItem = prevState[Number(id)];
-            const statusChanged = oldItem?.status !== newItem.status;
-
-            if (statusChanged) {
-              // 关键状态变化都需要刷新列表
-              const isImportantStateChange =
-                // 变为终态（成功、失败、停止）
-                newItem.status === DownloadStatus.Success ||
-                newItem.status === DownloadStatus.Failed ||
-                newItem.status === DownloadStatus.Stopped ||
-                // 从终态变为其他状态（重新开始下载）
-                (oldItem &&
-                  (oldItem.status === DownloadStatus.Success ||
-                    oldItem.status === DownloadStatus.Failed ||
-                    oldItem.status === DownloadStatus.Stopped)) ||
-                // 开始下载状态变化
-                newItem.status === DownloadStatus.Downloading ||
-                oldItem?.status === DownloadStatus.Downloading ||
-                // 暂停状态变化
-                newItem.status === DownloadStatus.Stopped ||
-                oldItem?.status === DownloadStatus.Stopped ||
-                // 等待状态变化 - 重要：确保等待中状态能正确显示
-                newItem.status === DownloadStatus.Ready ||
-                newItem.status === DownloadStatus.Watting ||
-                oldItem?.status === DownloadStatus.Ready ||
-                oldItem?.status === DownloadStatus.Watting;
-
-              if (isImportantStateChange) {
-                shouldRefresh = true;
-                break;
-              }
-            }
-          }
-        }
-
-        // 延迟刷新以避免在渲染过程中调用，并防止重复刷新
-        if (shouldRefresh) {
-          if (refreshTimeoutRef.current) {
-            clearTimeout(refreshTimeoutRef.current);
-          }
-          refreshTimeoutRef.current = setTimeout(() => {
-            refresh();
-            refreshTimeoutRef.current = null;
-          }, 200); // 减少延迟时间，让状态变化更快反映到UI
-        }
-
-        return mergedState;
-      });
     };
 
     const onDownloadMenuEvent = async (_e: unknown, params: { action: string; payload: number }) => {
@@ -204,9 +132,6 @@ export function DownloadList({ data, filter, refresh, loading, pagination }: Pro
       }
     };
 
-    addIpcListener("test", (_e: unknown, data: string) => {
-      console.log("test", data);
-    });
     addIpcListener("download-state-update", onDownloadStateUpdate);
     addIpcListener("download-item-event", onDownloadMenuEvent);
 
@@ -356,7 +281,7 @@ export function DownloadList({ data, filter, refresh, loading, pagination }: Pro
   }
 
   return (
-    <div className="flex h-full flex-col gap-3 rounded-lg">
+    <div className="flex flex-col flex-1 overflow-auto">
       <ListHeader
         selected={selected}
         checked={listChecked}
@@ -384,18 +309,17 @@ export function DownloadList({ data, filter, refresh, loading, pagination }: Pro
               progress={
                 state
                   ? {
-                      id: item.id,
-                      percent: (state.progress ?? 0).toString(),
-                      speed: state.speed || "0 MB/s",
-                      isLive: state.isLive || false,
-                    }
+                    id: item.id,
+                    percent: (state.progress ?? 0).toString(),
+                    speed: state.speed || "0 MB/s",
+                    isLive: state.isLive || false,
+                  }
                   : undefined
               }
             />
           );
         })}
       </div>
-      <Pagination className="flex justify-end" {...pagination} showSizeChanger={false} />
       <DownloadForm id={downloadListId} ref={editFormRef} isEdit onConfirm={handleFormConfirm} />
     </div>
   );

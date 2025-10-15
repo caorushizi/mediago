@@ -5,10 +5,10 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import { ADD_FAVORITE, OPEN_FAVORITE } from "@/const";
-import useElectron from "@/hooks/use-electron";
 import { BrowserStatus, PageMode, setBrowserSelector, useBrowserStore } from "@/store/browser";
 import { getFavIcon, tdApp } from "@/utils";
 import { FavItem } from "./fav-item";
+import useAPI from "@/hooks/use-api";
 
 export function FavoriteList() {
   const {
@@ -19,7 +19,7 @@ export function FavoriteList() {
     onFavoriteItemContextMenu,
     addIpcListener,
     removeIpcListener,
-  } = useElectron();
+  } = useAPI();
   const { data: favoriteList = [], refresh } = useRequest(getFavorites);
   const { t } = useTranslation();
   const { message } = App.useApp();
