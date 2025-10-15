@@ -37,7 +37,6 @@ const getAvailableApiMethods = (): string[] => {
  */
 export const electronAdapter: ElectronApi = new Proxy({} as ElectronApi, {
   get(_target, prop: string) {
-    console.log("get prop", prop);
     if (!window.electron || !(prop in window.electron)) {
       console.warn(`[ElectronAdapter] Method '${prop}' not available in Electron context`);
       return async () => ({

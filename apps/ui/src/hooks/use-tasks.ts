@@ -22,8 +22,6 @@ export function useTasks(filter: DownloadFilter = DownloadFilter.list) {
     },
   );
 
-  console.log("useTasks data", data);
-
   return {
     data,
     isLoading,
