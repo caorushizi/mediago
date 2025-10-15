@@ -95,21 +95,15 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     };
   }, []);
 
-  console.log("render home page", filter, data);
-
   useEffect(() => {
     const handleSuccess = (_: unknown, { data: successData }: DownloadSuccessEvent) => {
-      console.log("download success event", data, data);
       const after = produce(data, (draft) => {
         if (!draft) return;
 
-        console.log("before splice", draft);
         const index = draft?.list.findIndex((item) => item.id === successData.id);
-        console.log("index", index);
         if (index != null && index > -1) {
           draft?.list.splice(index, 1);
           draft.total = draft.total - 1;
-          console.log("after splice", JSON.stringify(draft));
         }
       });
       mutate(after);
