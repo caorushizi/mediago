@@ -1,6 +1,6 @@
-import type { VideoResponse } from "../index";
+import type { DownloadTaskResponse } from "../index";
 import type { Conversion, Favorite, Video } from "./entities";
-import type { ConversionPagination, ConversionResponse, DownloadItem, DownloadItemPagination } from "./index";
+import type { ConversionPagination, ConversionResponse, DownloadTask, DownloadTaskPagination } from "./index";
 import type { AppStore, BrowserStore, EnvPath, Rectangle } from "./node";
 
 export interface ElectronApi {
@@ -17,8 +17,8 @@ export interface ElectronApi {
   onSelectDownloadDir(): Promise<string>;
   setAppStore(key: keyof AppStore, val: AppStore[keyof AppStore]): Promise<void>;
   openDir(dir?: string): Promise<void>;
-  addDownloadItems(videos: Omit<DownloadItem, "id">[], startDownload?: boolean): Promise<Video[]>;
-  getDownloadItems(p: DownloadItemPagination): Promise<VideoResponse>;
+  addDownloadItems(tasks: Omit<DownloadTask, "id">[], startDownload?: boolean): Promise<Video[]>;
+  getDownloadItems(p: DownloadTaskPagination): Promise<DownloadTaskResponse>;
   startDownload(vid: number): Promise<void>;
   openUrl(url: string): Promise<void>;
   stopDownload(id: number): Promise<void>;
@@ -37,7 +37,7 @@ export interface ElectronApi {
   webviewShow(): Promise<void>;
   webviewUrlContextMenu(): Promise<void>;
   combineToHomePage(store: BrowserStore): Promise<void>;
-  editDownloadItem(video: DownloadItem, startDownload?: boolean): Promise<void>;
+  editDownloadItem(task: DownloadTask, startDownload?: boolean): Promise<void>;
   getLocalIP(): Promise<string>;
   openBrowser(url: string): Promise<void>;
   selectFile(): Promise<string>;
@@ -45,7 +45,7 @@ export interface ElectronApi {
   setSharedState(state: unknown): Promise<void>; // Use 'unknown'
   setUserAgent(isMobile: boolean): Promise<void>;
   getDownloadLog(id: number): Promise<string>;
-  showDownloadDialog(data: Omit<DownloadItem, "id">[]): Promise<unknown>; // Result depends on main process handler
+  showDownloadDialog(data: Omit<DownloadTask, "id">[]): Promise<unknown>; // Result depends on main process handler
   pluginReady(): Promise<void>;
   getConversions(pagination: ConversionPagination): Promise<ConversionResponse>;
   addConversion(conversion: Omit<Conversion, "id">): Promise<Conversion>;

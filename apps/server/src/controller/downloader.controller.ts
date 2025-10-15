@@ -3,15 +3,15 @@ import {
   ADD_DOWNLOAD_ITEMS,
   type Controller,
   DELETE_DOWNLOAD_ITEM,
-  type DownloadItem,
-  type DownloadItemPagination,
+  type DownloadTask,
+  type DownloadTaskPagination,
   EDIT_DOWNLOAD_ITEM,
   GET_DOWNLOAD_ITEMS,
   GET_VIDEO_FOLDERS,
   START_DOWNLOAD,
   STOP_DOWNLOAD,
 } from "@mediago/shared-common";
-import { type DownloadManagementService, handle, TYPES } from "@mediago/shared-node";
+import { DownloadTaskService, handle, TYPES } from "@mediago/shared-node";
 import { inject, injectable } from "inversify";
 import Logger from "../vendor/Logger";
 import SocketIO from "../vendor/SocketIO";
@@ -21,8 +21,8 @@ import StoreService from "../vendor/Store";
 @provide(TYPES.Controller)
 export default class DownloadController implements Controller {
   constructor(
-    @inject(TYPES.DownloadManagementService)
-    private readonly downloadService: DownloadManagementService,
+    @inject(DownloadTaskService)
+    private readonly downloadService: DownloadTaskService,
     @inject(Logger)
     private readonly logger: Logger,
     @inject(SocketIO)
@@ -32,7 +32,7 @@ export default class DownloadController implements Controller {
   ) {}
 
   @handle(ADD_DOWNLOAD_ITEMS)
-  async addDownloadItems({ videos, startDownload }: { videos: Omit<DownloadItem, "id">[]; startDownload?: boolean }) {
+  async addDownloadItems({ videos, startDownload }: { videos: Omit<DownloadTask, "id">[]; startDownload?: boolean }) {
     const items = await this.downloadService.addDownloadItems(videos);
 
     this.socket.refreshList();
@@ -50,7 +50,7 @@ export default class DownloadController implements Controller {
   }
 
   @handle(GET_DOWNLOAD_ITEMS)
-  async getDownloadItems(pagination: DownloadItemPagination) {
+  async getDownloadItems(pagination: DownloadTaskPagination) {
     const local = await this.store.get("local");
     return await this.downloadService.getDownloadItems(pagination, local, "mp4,mkv,avi,mov,wmv,flv,webm,m4v");
   }
@@ -68,7 +68,7 @@ export default class DownloadController implements Controller {
   }
 
   @handle(EDIT_DOWNLOAD_ITEM)
-  async editDownloadItem({ video, startDownload }: { video: DownloadItem; startDownload?: boolean }) {
+  async editDownloadItem({ video, startDownload }: { video: DownloadTask; startDownload?: boolean }) {
     this.logger.info("editDownloadItem", video);
     const item = await this.downloadService.editDownloadItem(video);
 

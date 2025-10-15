@@ -50,7 +50,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       const headers = decodeURIComponent(search.get("headers") || "");
 
       if (silent) {
-        const item: Omit<DownloadItem, "id"> = {
+        const item: Omit<DownloadTask, "id"> = {
           type,
           url,
           name,

@@ -39,7 +39,7 @@ export interface DownloadFormRef {
   openModal: (value: DownloadFormItem) => void;
 }
 
-export interface DownloadItemForm extends DownloadItem {
+export interface DownloadTaskForm extends DownloadTask {
   batch?: boolean;
   batchList?: string;
 }
@@ -118,8 +118,8 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(function DownloadF
     }
 
     try {
-      const items = await getFormItems();
-      await addDownloadItems(items);
+      const tasks = await getFormItems();
+      await addDownloadItems(tasks);
       setModalOpen(false);
       tdApp.onEvent(ADD_TO_LIST, { id });
     } catch (e: any) {
@@ -136,8 +136,8 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(function DownloadF
     }
 
     try {
-      const items = await getFormItems();
-      await addVideosToDocker({ items });
+      const tasks = await getFormItems();
+      await addVideosToDocker({ items: tasks });
 
       message.success(t("addToDockerSuccess"));
     } catch (e: any) {
@@ -152,8 +152,8 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(function DownloadF
       return;
     }
     try {
-      const items = await getFormItems();
-      await addDownloadItems(items, true);
+      const tasks = await getFormItems();
+      await addDownloadItems(tasks, true);
       setModalOpen(false);
       tdApp.onEvent(DOWNLOAD_NOW, { id });
     } catch (e: any) {
@@ -175,7 +175,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(function DownloadF
     if (batch) {
       const { batchList = "", headers, type } = form.getFieldsValue();
 
-      const items: Omit<DownloadItem, "id">[] = await Promise.all(
+      const tasks: Omit<DownloadTask, "id">[] = await Promise.all(
         batchList.split("\n").map(async (line: string) => {
           const [url, customName, folder] = line.trim().split(" ");
           return {
@@ -188,11 +188,11 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(function DownloadF
         }),
       );
 
-      return items;
+      return tasks;
     } else {
       const { name = "", url = "", headers, type, folder } = form.getFieldsValue();
 
-      const item: Omit<DownloadItem, "id"> = {
+      const task: Omit<DownloadTask, "id"> = {
         name: name || randomName(),
         url: url || "",
         headers,
@@ -200,7 +200,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(function DownloadF
         folder,
       };
 
-      return [item];
+      return [task];
     }
   });
 

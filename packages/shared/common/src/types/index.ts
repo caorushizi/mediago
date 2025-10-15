@@ -4,7 +4,7 @@ export type { ElectronApi } from "./electronApi";
 
 export type Controller = Record<string | symbol, any>;
 
-export interface DownloadItem {
+export interface DownloadTask {
   id: number;
   type: DownloadType;
   name: string;
@@ -21,7 +21,7 @@ export enum DownloadFilter {
   done = "done",
 }
 
-export interface DownloadItemPagination {
+export interface DownloadTaskPagination {
   current?: number;
   pageSize?: number;
   filter?: DownloadFilter;
@@ -32,9 +32,9 @@ export interface ConversionPagination {
   pageSize?: number;
 }
 
-export interface VideoResponse {
+export interface DownloadTaskResponse {
   total: number;
-  list: DownloadItem[];
+  list: DownloadTask[];
 }
 
 export interface ConversionResponse {
@@ -83,14 +83,14 @@ export interface DownloadParams {
   folder?: string;
 }
 
-export interface VideoStat extends Video {
+export interface DownloadTaskWithFile extends Video {
   exists?: boolean;
   file?: string;
 }
 
 export interface ListPagination {
   total: number;
-  list: VideoStat[];
+  list: DownloadTaskWithFile[];
 }
 
 export enum AppTheme {
@@ -138,7 +138,7 @@ export interface DownloadEvent<T> {
   data: T;
 }
 
-export interface DownloadSuccessEvent extends DownloadEvent<DownloadItem> {
+export interface DownloadSuccessEvent extends DownloadEvent<DownloadTask> {
   type: "success";
 }
 

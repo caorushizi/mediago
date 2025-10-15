@@ -2,7 +2,7 @@ import http from "node:http";
 import { provide } from "@inversifyjs/binding-decorators";
 import cors from "@koa/cors";
 import { DownloadStatus } from "@mediago/shared-common";
-import { DownloaderServer, TypeORM, VideoRepository } from "@mediago/shared-node";
+import { DownloaderServer, TypeORM, DownloadTaskService } from "@mediago/shared-node";
 import { inject, injectable } from "inversify";
 import Koa from "koa";
 import bodyParser from "koa-bodyparser";
@@ -27,8 +27,8 @@ export default class ElectronApp extends Koa {
     private readonly logger: Logger,
     @inject(SocketIO)
     private readonly socket: SocketIO,
-    @inject(VideoRepository)
-    private readonly videoRepository: VideoRepository,
+    @inject(DownloadTaskService)
+    private readonly downloadTaskService: DownloadTaskService,
     @inject(StoreService)
     private readonly store: StoreService,
     @inject(DownloaderServer)
@@ -85,8 +85,8 @@ export default class ElectronApp extends Koa {
   // If there are still videos being downloaded after the restart, change the status to download failed
   async resetDownloadStatus(): Promise<void> {
     // If data in the downloading state still fails after the restart, all downloads fail
-    const videos = await this.videoRepository.findWattingAndDownloadingVideos();
+    const videos = await this.downloadTaskService.findWaitingAndDownloadingVideos();
     const videoIds = videos.map((video) => video.id);
-    await this.videoRepository.changeVideoStatus(videoIds, DownloadStatus.Failed);
+    await this.downloadTaskService.updateStatus(videoIds, DownloadStatus.Failed);
   }
 }

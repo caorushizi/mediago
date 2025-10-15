@@ -1,48 +1,67 @@
 import { provide } from "@inversifyjs/binding-decorators";
 import { inject, injectable } from "inversify";
-import { i18n } from "../../i18n";
+import { Repository } from "typeorm";
 import TypeORM from "../../vendor/TypeORM";
 import { Favorite } from "../entity/favorite.entity";
 
 @injectable()
 @provide()
 export default class FavoriteRepository {
+  private get repository(): Repository<Favorite> {
+    return this.db.manager.getRepository(Favorite);
+  }
+
   constructor(
     @inject(TypeORM)
     private readonly db: TypeORM,
   ) {}
 
-  async findFavorites(): Promise<Favorite[]> {
-    return await this.db.manager.find(Favorite, {
-      order: {
-        createdDate: "desc",
-      },
+  // Create operations
+  async create(data: Omit<Favorite, "id" | "createdDate">): Promise<Favorite> {
+    const item = this.repository.create({
+      title: data.title,
+      url: data.url,
+      icon: data.icon,
     });
+    return await this.repository.save(item);
   }
 
-  async addFavorite(favorite: Favorite): Promise<Favorite> {
-    const exist = await this.db.manager.findOne(Favorite, {
-      where: {
+  async createMany(
+    favorites: Omit<Favorite, "id" | "createdDate">[],
+  ): Promise<Favorite[]> {
+    const items = favorites.map((favorite) =>
+      this.repository.create({
+        title: favorite.title,
         url: favorite.url,
+        icon: favorite.icon,
+      }),
+    );
+    return await this.repository.save(items);
+  }
+
+  // Read operations
+  async findById(id: number): Promise<Favorite | null> {
+    return await this.repository.findOneBy({ id });
+  }
+
+  async findByUrl(url: string): Promise<Favorite | null> {
+    return await this.repository.findOneBy({ url });
+  }
+
+  async findAll(order: "ASC" | "DESC" = "DESC"): Promise<Favorite[]> {
+    return await this.repository.find({
+      order: {
+        createdDate: order,
       },
     });
-
-    if (exist) {
-      throw new Error(i18n.t("urlExist"));
-    }
-
-    const item = new Favorite();
-    item.title = favorite.title;
-    item.url = favorite.url;
-    item.icon = favorite.icon;
-    return await this.db.manager.save(item);
   }
 
-  async removeFavorite(id: number): Promise<void> {
-    await this.db.manager.getRepository(Favorite).delete(id);
+  // Delete operations
+  async delete(id: number): Promise<void> {
+    await this.repository.delete(id);
   }
 
-  async importFavorites(favorites: Favorite[]): Promise<void> {
-    await this.db.manager.save(Favorite, favorites);
+  async deleteMany(ids: number[]): Promise<void> {
+    await this.repository.delete(ids);
   }
 }

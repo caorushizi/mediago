@@ -6,7 +6,7 @@ declare interface EnvPath {
   local: string;
 }
 
-declare interface DownloadItem {
+declare interface DownloadTask {
   id: number;
   type: DownloadType;
   name: string;
@@ -19,12 +19,12 @@ declare interface DownloadItem {
   createdDate?: string;
 }
 
-declare interface VideoResponse {
+declare interface DownloadTaskResponse {
   total: number;
-  list: DownloadItem[];
+  list: DownloadTask[];
 }
 
-declare interface DownloadItemPagination {
+declare interface DownloadTaskPagination {
   current?: number;
   pageSize?: number;
   filter?: string;
@@ -112,12 +112,12 @@ interface ObjectConstructor {
   keys<T>(o: T): (keyof T)[];
 }
 
-interface VideoStat extends DownloadItem {
+interface DownloadTaskWithFile extends DownloadTask {
   exists?: boolean;
   file?: string;
 }
 
 interface ListPagination {
   total: number;
-  list: VideoStat[];
+  list: DownloadTaskWithFile[];
 }

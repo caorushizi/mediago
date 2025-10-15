@@ -1,7 +1,7 @@
 import path from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
 import { DownloadStatus } from "@mediago/shared-common";
-import { DownloaderServer, i18n, TypeORM, VideoRepository, VideoServer } from "@mediago/shared-node";
+import { DownloaderServer, i18n, TypeORM, DownloadTaskService, VideoServer } from "@mediago/shared-node";
 import { app, BrowserWindow, type Event, Menu, nativeImage, nativeTheme, Tray } from "electron";
 import { inject, injectable } from "inversify";
 import TrayIcon from "../assets/tray-icon.png";
@@ -29,8 +29,8 @@ export default class ElectronApp {
     private readonly router: ElectronRouter,
     @inject(TypeORM)
     private readonly db: TypeORM,
-    @inject(VideoRepository)
-    private readonly videoRepository: VideoRepository,
+    @inject(DownloadTaskService)
+    private readonly downloadTaskService: DownloadTaskService,
     @inject(ElectronDevtools)
     private readonly devTools: ElectronDevtools,
     @inject(ElectronStore)
@@ -119,9 +119,9 @@ export default class ElectronApp {
   // If there are still videos being downloaded after the restart, change the status to download failed
   async resetDownloadStatus(): Promise<void> {
     // If data in the downloading state still fails after the restart, all downloads fail
-    const videos = await this.videoRepository.findWattingAndDownloadingVideos();
+    const videos = await this.downloadTaskService.findWaitingAndDownloadingVideos();
     const videoIds = videos.map((video) => video.id);
-    await this.videoRepository.changeVideoStatus(videoIds, DownloadStatus.Failed);
+    await this.downloadTaskService.updateStatus(videoIds, DownloadStatus.Failed);
   }
 
   secondInstance = (event: Event, commandLine: string[]) => {

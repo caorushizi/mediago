@@ -1,7 +1,7 @@
 import {
   type AppStore,
-  type DownloadItem,
-  type DownloadItemPagination,
+  type DownloadTask,
+  type DownloadTaskPagination,
   type ElectronApi,
   ADD_DOWNLOAD_ITEMS,
   DELETE_DOWNLOAD_ITEM,
@@ -72,10 +72,10 @@ export const webAdapter: ElectronApi = {
   openDir: async () => {
     return defaultResp;
   },
-  addDownloadItems: async (items: Omit<DownloadItem, "id">[], startDownload?: boolean) => {
+  addDownloadItems: async (items: Omit<DownloadTask, "id">[], startDownload?: boolean) => {
     return api.post(ADD_DOWNLOAD_ITEMS, { videos: items, startDownload });
   },
-  getDownloadItems: async (p: DownloadItemPagination) => {
+  getDownloadItems: async (p: DownloadTaskPagination) => {
     return api.post(GET_DOWNLOAD_ITEMS, p);
   },
   startDownload: async (vid: number) => {
@@ -120,7 +120,7 @@ export const webAdapter: ElectronApi = {
   combineToHomePage: async () => {
     return defaultResp;
   },
-  editDownloadItem: async (video: DownloadItem, startDownload?: boolean) => {
+  editDownloadItem: async (video: DownloadTask, startDownload?: boolean) => {
     return api.post(EDIT_DOWNLOAD_ITEM, { video, startDownload });
   },
   getLocalIP: async () => {

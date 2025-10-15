@@ -1,7 +1,7 @@
 import type http from "node:http";
 import { provide } from "@inversifyjs/binding-decorators";
 import type { DownloadProgress } from "@mediago/shared-common";
-import { VideoRepository } from "@mediago/shared-node";
+import { DownloadTaskService } from "@mediago/shared-node";
 import { inject, injectable } from "inversify";
 import _ from "lodash";
 import { Server } from "socket.io";
@@ -15,8 +15,8 @@ export default class SocketIO implements Vendor {
   io: Server;
 
   constructor(
-    @inject(VideoRepository)
-    private readonly videoRepository: VideoRepository,
+    @inject(DownloadTaskService)
+    private readonly downloadTaskService: DownloadTaskService,
     @inject(Logger)
     private readonly logger: Logger,
     @inject(StoreService)
@@ -44,7 +44,7 @@ export default class SocketIO implements Vendor {
 
   onDownloadReadyStart = async ({ id, isLive }: DownloadProgress) => {
     if (isLive) {
-      await this.videoRepository.changeVideoIsLive(id);
+      await this.downloadTaskService.updateIsLive(id, true);
     }
   };
 
@@ -69,7 +69,7 @@ export default class SocketIO implements Vendor {
   };
 
   receiveMessage = async (id: number, message: string) => {
-    await this.videoRepository.appendDownloadLog(id, message);
+    await this.downloadTaskService.appendLog(id, message);
   };
 
   refreshList = async () => {

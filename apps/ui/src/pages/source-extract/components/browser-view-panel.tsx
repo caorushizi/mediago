@@ -33,7 +33,7 @@ export function BrowserViewPanel() {
 
   const handleDownloadNow = useMemoizedFn(async (item: SourceData) => {
     try {
-      const downloadItem: Omit<DownloadItem, "id"> = {
+      const downloadItem: Omit<DownloadTask, "id"> = {
         url: item.url,
         name: item.name,
         headers: item.headers,
