@@ -446,8 +446,6 @@ export default class HomeController implements Controller {
   @handle(GET_PAGE_TITLE)
   async getPageTitle(event: IpcMainEvent, url: string): Promise<{ data: string }> {
     try {
-      console.log("Getting title for URL:", url);
-
       const response = await axios.get(url, {
         timeout: 10000,
         maxRedirects: 5,
@@ -470,7 +468,6 @@ export default class HomeController implements Controller {
         const match = html.match(pattern);
         if (match && match[1]) {
           title = match[1].trim();
-          console.log("Found title:", title);
           break;
         }
       }

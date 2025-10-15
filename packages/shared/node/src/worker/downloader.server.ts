@@ -1,6 +1,7 @@
+import path from "node:path";
 import { EventEmitter } from "node:stream";
 import { provide } from "@inversifyjs/binding-decorators";
-import { safeParseJSON, type DownloadType } from "@mediago/shared-common";
+import { type DownloadType, safeParseJSON } from "@mediago/shared-common";
 import axios from "axios";
 import { EventSource } from "eventsource";
 import { injectable } from "inversify";
@@ -33,9 +34,11 @@ export class DownloaderServer extends EventEmitter {
     this.port = await findFreePort({ startPort: 9991 });
     this.host = await getLocalIP();
 
+    const binaryUrl = require.resolve("@mediago/core");
+
     const runner = new ServiceRunner({
-      binName: "mediago-downloader",
-      devDir: "F:\\Workspace\\Projects\\MediaGo\\mediago-core\\bin",
+      binName: "bin/mediago-core",
+      devDir: path.dirname(binaryUrl),
       extraArgs: ["-port", this.port.toString()],
       extraEnv: {
         MEDIAGO_M3U8_BIN: "F:\\Workspace\\Projects\\MediaGo\\mediago\\bin\\win32\\x64\\N_m3u8DL-RE.exe",
@@ -54,19 +57,16 @@ export class DownloaderServer extends EventEmitter {
 
     eventSource.addEventListener("download-start", (e: any) => {
       const data = safeParseJSON(e.data, { id: 0 });
-      console.log(`任务 ${data.id} 开始下载`);
       this.emit("download-start", data.id);
     });
 
     eventSource.addEventListener("download-success", (e: any) => {
       const data = safeParseJSON(e.data, { id: 0 });
-      console.log(`任务 ${data.id} 下载成功`);
       this.emit("download-success", data.id);
     });
 
     eventSource.addEventListener("download-failed", (e: any) => {
       const data = safeParseJSON(e.data, { id: 0 });
-      console.log(`任务 ${data.id} 下载失败: ${data}`);
       this.emit("download-failed", data.id);
     });
 
@@ -75,6 +75,10 @@ export class DownloaderServer extends EventEmitter {
     const startPolling = () => {
       const interval = setInterval(async () => {
         const { data } = await axios.get(`http://localhost:${this.port}/api/tasks/`);
+
+        if (data.tasks.length === 0) {
+          return;
+        }
 
         console.log(`进度: ${JSON.stringify(data)}`);
       }, 1000); // 每秒查询一次

@@ -11,6 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "@inversifyjs/binding-decorators": "^1.1.3",
+    "@mediago/player": "0.0.6",
     "@mediago/shared-common": "workspace:*",
     "axios": "^1.12.2",
     "eventsource": "^4.0.0",

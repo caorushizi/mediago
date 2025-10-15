@@ -6,6 +6,8 @@ packages:
   - '!**/test/**'
 
 onlyBuiltDependencies:
+  - '@mediago/core'
+  - '@mediago/player'
   - '@parcel/watcher'
   - '@swc/core'
   - '@tailwindcss/oxide'

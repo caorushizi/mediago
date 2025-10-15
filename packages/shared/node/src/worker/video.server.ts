@@ -1,3 +1,4 @@
+import path from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
 import { injectable } from "inversify";
 import { findFreePort, getLocalIP, ServiceRunner } from "../utils";
@@ -13,9 +14,11 @@ export class VideoServer {
     this.port = await findFreePort({ startPort: 8888 });
     this.host = await getLocalIP();
 
+    const binaryUrl = require.resolve("@mediago/player");
+
     this.runner = new ServiceRunner({
-      binName: "mediago-player",
-      devDir: "F:\\Workspace\\Projects\\MediaGo\\mediago-player\\dist",
+      binName: "bin/mediago-player",
+      devDir: path.dirname(binaryUrl),
       extraArgs: ["-video-root", local, "-port", this.port.toString()],
       host: this.host,
       port: this.port,

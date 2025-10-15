@@ -78,7 +78,6 @@ export default class HomeController implements Controller {
         const match = html.match(pattern);
         if (match && match[1]) {
           title = match[1].trim();
-          console.log("Found title:", title);
           break;
         }
       }
