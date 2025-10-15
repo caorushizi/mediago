@@ -19,7 +19,6 @@ import {
   SettingsIcon,
   ShareIcon,
 } from "@/assets/svg";
-import useElectron from "@/hooks/use-electron";
 import {
   appStoreSelector,
   setAppStoreSelector,
@@ -28,6 +27,7 @@ import {
 import { downloadStoreSelector, useDownloadStore } from "@/store/download";
 import { updateSelector, useSessionStore } from "@/store/session";
 import { cn, isWeb } from "@/utils";
+import useAPI from "@/hooks/use-api";
 
 function processLocation(pathname: string) {
   let name = pathname;
@@ -93,7 +93,7 @@ interface Props {
 }
 
 export function AppSideBar({ className }: Props) {
-  const { setAppStore: ipcSetAppStore, showBrowserWindow } = useElectron();
+  const { setAppStore: ipcSetAppStore, showBrowserWindow } = useAPI();
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();

@@ -1,6 +1,12 @@
 import { provide } from "@inversifyjs/binding-decorators";
-import { type DownloadProgress, DownloadStatus } from "@mediago/shared-common";
-import { i18n, VideoRepository } from "@mediago/shared-node";
+import {
+  DOWNLOAD_EVENT_NAME,
+  DownloadItem,
+  type DownloadProgress,
+  DownloadStatus,
+  DownloadSuccessEvent,
+} from "@mediago/shared-common";
+import { DownloaderServer, i18n, VideoRepository } from "@mediago/shared-node";
 import { app, Menu, Notification } from "electron";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
@@ -24,6 +30,8 @@ export default class MainWindow extends Window {
     private readonly videoRepository: VideoRepository,
     @inject(ElectronStore)
     private readonly store: ElectronStore,
+    @inject(DownloaderServer)
+    private readonly downloaderServer: DownloaderServer,
   ) {
     super({
       width: 1100,
@@ -38,9 +46,9 @@ export default class MainWindow extends Window {
     });
 
     // this.taskQueue.on("download-ready-start", this.onDownloadReadyStart);
-    // this.taskQueue.on("download-success", this.onDownloadSuccess);
-    // this.taskQueue.on("download-failed", this.onDownloadFailed);
-    // this.taskQueue.on("download-start", this.onDownloadStart);
+    this.downloaderServer.on("download-success", this.onDownloadSuccess);
+    this.downloaderServer.on("download-failed", this.onDownloadFailed);
+    this.downloaderServer.on("download-start", this.onDownloadStart);
     // this.taskQueue.on("download-stop", this.onDownloadStop);
     // this.taskQueue.on("download-message", this.onDownloadMessage);
     this.store.onDidAnyChange(this.storeChange);
@@ -121,11 +129,10 @@ export default class MainWindow extends Window {
   onDownloadSuccess = async (id: number) => {
     this.logger.info(`taskId: ${id} success`);
     await this.videoRepository.changeVideoStatus(id, DownloadStatus.Success);
+    const video = await this.videoRepository.findVideo(id);
 
     const promptTone = this.store.get("promptTone");
     if (promptTone) {
-      const video = await this.videoRepository.findVideo(id);
-
       new Notification({
         title: i18n.t("downloadSuccess"),
         body: i18n.t("videoDownloadSuccess", {
@@ -133,6 +140,13 @@ export default class MainWindow extends Window {
         }),
       }).show();
     }
+
+    const data: DownloadSuccessEvent = {
+      type: "success",
+      // FIXME: Type 'Video' is not assignable to type 'DownloadItem'.
+      data: video as unknown as DownloadItem,
+    };
+    this.send(DOWNLOAD_EVENT_NAME, data);
   };
 
   onDownloadFailed = async (id: number, err: unknown) => {
@@ -163,19 +177,6 @@ export default class MainWindow extends Window {
     await this.videoRepository.appendDownloadLog(id, message);
     const showTerminal = this.store.get("showTerminal");
   };
-
-  send(channel: string, ...args: unknown[]) {
-    if (!this.window) return;
-
-    this.window.webContents.send(channel, ...args);
-    // if (!this.window) {
-    //   this.init(); // If the window is closed, reinitialize the window
-    // }
-
-    // if (this.window) {
-    //   this.window.webContents.send(channel, ...args); // Send message to renderer process
-    // }
-  }
 
   showWindow(url?: string) {
     if (isWin) {

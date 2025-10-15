@@ -132,3 +132,21 @@ export enum Platform {
   MacOS = "darwin",
   Linux = "linux",
 }
+
+export interface DownloadEvent<T> {
+  type: string;
+  data: T;
+}
+
+export interface DownloadSuccessEvent extends DownloadEvent<DownloadItem> {
+  type: "success";
+}
+
+export interface DownloadFailedData {
+  id: number;
+  error: string;
+}
+
+export interface DownloadFailedEvent extends DownloadEvent<DownloadFailedData> {
+  type: "failed";
+}

@@ -73,6 +73,6 @@ export default class SocketIO implements Vendor {
   };
 
   refreshList = async () => {
-    this.io.emit("refresh-list");
+    // 页面刷新
   };
 }

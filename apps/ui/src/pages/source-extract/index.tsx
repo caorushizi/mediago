@@ -3,7 +3,6 @@ import type React from "react";
 import { useEffect, useRef } from "react";
 import { useShallow } from "zustand/react/shallow";
 import PageContainer from "@/components/page-container";
-import useElectron from "@/hooks/use-electron";
 import { setAppStoreSelector, useAppStore } from "@/store/app";
 import {
   BrowserStatus,
@@ -16,6 +15,7 @@ import { cn } from "@/utils";
 import { BrowserView } from "./components/browser-view";
 import { FavoriteList } from "./components/favorite-list";
 import { ToolBar } from "./components/tool-bar";
+import useAPI from "@/hooks/use-api";
 
 interface SourceExtractProps {
   page?: boolean;
@@ -27,7 +27,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     removeIpcListener,
     getSharedState,
     getAppStore: ipcGetAppStore,
-  } = useElectron();
+  } = useAPI();
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
   const store = useBrowserStore(useShallow(browserStoreSelector));
   const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));

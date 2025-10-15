@@ -8,7 +8,6 @@ import { Button as AntdButton, App } from "antd";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import { Button } from "@/components/ui/button";
-import useElectron from "@/hooks/use-electron";
 import { appStoreSelector, useAppStore } from "@/store/app";
 import {
   browserStoreSelector,
@@ -16,6 +15,7 @@ import {
   setBrowserSelector,
   useBrowserStore,
 } from "@/store/browser";
+import useAPI from "@/hooks/use-api";
 
 export function BrowserViewPanel() {
   const store = useBrowserStore(useShallow(browserStoreSelector));
@@ -24,8 +24,7 @@ export function BrowserViewPanel() {
     useShallow(setBrowserSelector)
   );
   const { t } = useTranslation();
-  const { showDownloadDialog } = useElectron();
-  const { addDownloadItems } = useElectron();
+  const { showDownloadDialog, addDownloadItems } = useAPI();
   const { message } = App.useApp();
 
   const handleClear = useMemoizedFn(() => {

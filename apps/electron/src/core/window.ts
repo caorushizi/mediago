@@ -37,4 +37,10 @@ export default class Window {
     // Destruction window
     this.window = null;
   };
+
+  send(channel: string, ...args: unknown[]) {
+    if (!this.window) return;
+
+    this.window.webContents.send(channel, ...args);
+  }
 }

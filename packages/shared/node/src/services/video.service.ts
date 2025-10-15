@@ -36,6 +36,7 @@ export class DownloadManagementService {
     videoPattern: string,
   ): Promise<ListPagination> {
     const videos = await this.videoRepository.findVideos(pagination);
+    console.log("videos", videos);
 
     const result: ListPagination = {
       total: videos.total,

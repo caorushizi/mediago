@@ -2,8 +2,8 @@ import { type FC, type ReactNode, useEffect, useRef } from "react";
 import "@xterm/xterm/css/xterm.css";
 import { FitAddon } from "@xterm/addon-fit";
 import { Terminal as XTerminal } from "@xterm/xterm";
-import useElectron from "@/hooks/use-electron";
 import { cn } from "@/utils";
+import useAPI from "@/hooks/use-api";
 
 interface TerminalProps {
   className?: string;
@@ -14,7 +14,7 @@ interface TerminalProps {
 
 const Terminal: FC<TerminalProps> = ({ className, id, log, header }) => {
   const terminalRef = useRef<HTMLDivElement | null>(null);
-  const { addIpcListener, removeIpcListener } = useElectron();
+  const { addIpcListener, removeIpcListener } = useAPI();
 
   useEffect(() => {
     if (!terminalRef.current) return;

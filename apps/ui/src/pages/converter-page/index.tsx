@@ -9,12 +9,12 @@ import { IconButton } from "@/components/icon-button";
 import PageContainer from "@/components/page-container";
 import { Button } from "@/components/ui/button";
 import { ADD_CONVERT_TASK, DELETE_CONVERT, START_CONVERT } from "@/const";
-import useElectron from "@/hooks/use-electron";
 import { getFileName, tdApp } from "@/utils";
+import useAPI from "@/hooks/use-api";
 
 const Converter = () => {
   const { t } = useTranslation();
-  const { selectFile, getConversions, addConversion, convertToAudio, deleteConversion } = useElectron();
+  const { selectFile, getConversions, addConversion, convertToAudio, deleteConversion } = useAPI();
   const { message } = App.useApp();
   const [converting, setConverting] = useState<Record<number, boolean>>({});
 
