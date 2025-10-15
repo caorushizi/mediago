@@ -31,7 +31,6 @@ import { useShallow } from "zustand/react/shallow";
 import PageContainer from "@/components/page-container";
 import { CHECK_UPDATE } from "@/const";
 import useAPI from "@/hooks/use-api";
-import useElectron from "@/hooks/use-electron";
 import {
   appStoreSelector,
   setAppStoreSelector,
@@ -444,7 +443,7 @@ const SettingPage: React.FC = () => {
           // labelCol={{ span: 5 }}
           wrapperCol={{ span: 10 }}
         >
-          <Tabs defaultActiveKey="1" items={tabItems} onChange={() => {}} />
+          <Tabs defaultActiveKey="1" items={tabItems} onChange={() => { }} />
         </Form>
       </div>
 
@@ -455,36 +454,36 @@ const SettingPage: React.FC = () => {
         footer={
           updateAvailable
             ? [
-                <Button key="hidden" onClick={handleHiddenUpdateModal}>
-                  {t("close")}
-                </Button>,
-                updateDownloaded ? (
-                  <Button
-                    key="install"
-                    type="primary"
-                    onClick={handleInstallUpdate}
-                  >
-                    {t("install")}
-                  </Button>
-                ) : (
-                  <Button key="update" type="primary" onClick={handleUpdate}>
-                    {t("update")}
-                  </Button>
-                ),
-              ]
+              <Button key="hidden" onClick={handleHiddenUpdateModal}>
+                {t("close")}
+              </Button>,
+              updateDownloaded ? (
+                <Button
+                  key="install"
+                  type="primary"
+                  onClick={handleInstallUpdate}
+                >
+                  {t("install")}
+                </Button>
+              ) : (
+                <Button key="update" type="primary" onClick={handleUpdate}>
+                  {t("update")}
+                </Button>
+              ),
+            ]
             : [
-                <Button key="hidden" onClick={handleHiddenUpdateModal}>
-                  {t("close")}
-                </Button>,
-              ]
+              <Button key="hidden" onClick={handleHiddenUpdateModal}>
+                {t("close")}
+              </Button>,
+            ]
         }
       >
         <div className="flex min-h-28 flex-col justify-center">
           {updateChecking
             ? t("checkingForUpdates")
             : updateAvailable
-            ? t("updateAvailable")
-            : t("updateNotAvailable")}
+              ? t("updateAvailable")
+              : t("updateNotAvailable")}
           {!updateChecking && updateAvailable && (
             <Progress percent={updateDownloaded ? 100 : downloadProgress} />
           )}

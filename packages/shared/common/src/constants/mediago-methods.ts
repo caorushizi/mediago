@@ -16,6 +16,7 @@ export const ON_DOWNLOAD_LIST_CONTEXT_MENU = "on-download-list-context-menu";
 export const GET_DOWNLOAD_LOG = "get-download-log";
 export const EXPORT_DOWNLOAD_LIST = "export-download-list";
 export const GET_VIDEO_FOLDERS = "get-video-folders";
+export const DOWNLOAD_EVENT_NAME = "download-event";
 
 // Favorites
 export const GET_FAVORITES = "get-favorites";

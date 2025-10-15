@@ -1,11 +1,11 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import useElectron from "@/hooks/use-electron";
 import type { DownloadType } from "@/types";
 import { convertPlainObject } from "@/utils";
+import useAPI from "@/hooks/use-api";
 
-// eslint-disable-next-line react-hooks/rules-of-hooks
-const { setSharedState } = useElectron();
+// biome-ignore lint/correctness/useHookAtTopLevel: <explanation>
+const { setSharedState } = useAPI();
 
 export enum PageMode {
   Default = "default",

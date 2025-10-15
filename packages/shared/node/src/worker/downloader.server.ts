@@ -41,6 +41,7 @@ export class DownloaderServer extends EventEmitter {
         MEDIAGO_M3U8_BIN: "F:\\Workspace\\Projects\\MediaGo\\mediago\\bin\\win32\\x64\\N_m3u8DL-RE.exe",
         MEDIAGO_BILIBILI_BIN: "F:\\Workspace\\Projects\\MediaGo\\mediago\\bin\\win32\\x64\\BBDown.exe",
         MEDIAGO_DIRECT_BIN: "F:\\Workspace\\Projects\\MediaGo\\mediago\\bin\\win32\\x64\\gopeed.exe",
+        MEDIAGO_SCHEMA_PATH: "F:\\Workspace\\Projects\\MediaGo\\mediago-core\\configs\\download_schemas.json",
       },
       host: this.host,
       port: this.port,
@@ -54,48 +55,32 @@ export class DownloaderServer extends EventEmitter {
     eventSource.addEventListener("download-start", (e: any) => {
       const data = safeParseJSON(e.data, { id: 0 });
       console.log(`任务 ${data.id} 开始下载`);
-      startPolling(data.id); // 停止轮询
+      this.emit("download-start", data.id);
     });
 
     eventSource.addEventListener("download-success", (e: any) => {
       const data = safeParseJSON(e.data, { id: 0 });
       console.log(`任务 ${data.id} 下载成功`);
-      stopPolling(data.id); // 停止轮询
+      this.emit("download-success", data.id);
     });
 
     eventSource.addEventListener("download-failed", (e: any) => {
       const data = safeParseJSON(e.data, { id: 0 });
       console.log(`任务 ${data.id} 下载失败: ${data}`);
-      stopPolling(data.id); // 停止轮询
+      this.emit("download-failed", data.id);
     });
 
-    const pollingIntervals = new Map();
-
     // 2. 轮询获取进度
-    const startPolling = (taskId: any) => {
+    // FIXME: 需要优化性能
+    const startPolling = () => {
       const interval = setInterval(async () => {
-        const response = await fetch(`http://localhost:${this.port}/api/tasks/${taskId}`);
-        const task: any = await response.json();
+        const { data } = await axios.get(`http://localhost:${this.port}/api/tasks/`);
 
-        console.log(`进度: ${JSON.stringify(task)}`);
-
-        // 如果任务完成，停止轮询
-        if (["success", "failed", "stopped"].includes(task.status)) {
-          clearInterval(interval);
-        }
+        console.log(`进度: ${JSON.stringify(data)}`);
       }, 1000); // 每秒查询一次
-
-      // 保存 interval ID 以便后续清理
-      pollingIntervals.set(taskId, interval);
     };
 
-    const stopPolling = (taskId: any) => {
-      const interval = pollingIntervals.get(taskId);
-      if (interval) {
-        clearInterval(interval);
-        pollingIntervals.delete(taskId);
-      }
-    };
+    startPolling();
   }
 
   async startTask(opts: DownloadTaskOptions) {

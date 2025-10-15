@@ -6,7 +6,6 @@ import { useAsyncEffect, useMemoizedFn } from "ahooks";
 import { App as AntdApp } from "antd";
 import zhCN from "antd/locale/zh_CN";
 import { useShallow } from "zustand/react/shallow";
-import useElectron from "@/hooks/use-electron";
 import Loading from "./components/loading";
 import { DOWNLOAD_FAIL, DOWNLOAD_SUCCESS, PAGE_LOAD } from "./const";
 import { setAppStoreSelector, useAppStore } from "./store/app";
@@ -19,6 +18,7 @@ import {
 } from "./store/session";
 import { DownloadFilter } from "./types";
 import { isWeb, tdApp } from "./utils";
+import useAPI from "./hooks/use-api";
 
 const AppLayout = lazy(() => import("./layout/app-layout"));
 const HomePage = lazy(() => import("./pages/home-page"));
@@ -31,7 +31,7 @@ function getAlgorithm(appTheme: "dark" | "light") {
 }
 
 const App: FC = () => {
-  const { addIpcListener, removeIpcListener, getMachineId } = useElectron();
+  const { addIpcListener, removeIpcListener, getMachineId } = useAPI();
   const { setUpdateAvailable, setUploadChecking } = useSessionStore(
     useShallow(updateSelector)
   );

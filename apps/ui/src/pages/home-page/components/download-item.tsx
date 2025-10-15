@@ -1,28 +1,15 @@
 import { PauseCircleOutlined, PlayCircleOutlined } from "@ant-design/icons";
 import { useMemoizedFn } from "ahooks";
 import { Progress } from "antd";
-import { memo, type ReactNode, useMemo } from "react";
+import { type ReactNode, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import selectedBg from "@/assets/images/select-item-bg.png";
-import {
-  DownloadIcon,
-  DownloadListIcon,
-  EditIcon,
-  FailedIcon,
-  PauseIcon,
-  TerminalIcon,
-} from "@/assets/svg";
+import { DownloadIcon, DownloadListIcon, EditIcon, FailedIcon, PauseIcon, TerminalIcon } from "@/assets/svg";
 import { DownloadTag } from "@/components/download-tag";
 import { IconButton } from "@/components/icon-button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  CONTINUE_DOWNLOAD,
-  DOWNLOAD_NOW,
-  PLAY_VIDEO,
-  RESTART_DOWNLOAD,
-  STOP_DOWNLOAD,
-} from "@/const";
+import { CONTINUE_DOWNLOAD, DOWNLOAD_NOW, PLAY_VIDEO, RESTART_DOWNLOAD, STOP_DOWNLOAD } from "@/const";
 import { appStoreSelector, useAppStore } from "@/store/app";
 import { DownloadStatus } from "@/types";
 import { cn, fromatDateTime, tdApp } from "@/utils";
@@ -40,7 +27,7 @@ interface Props {
   downloadStatus?: DownloadStatus;
 }
 
-const DownloadItemComponent = ({
+export const DownloadItem = ({
   item,
   onSelectChange,
   selected,
@@ -54,60 +41,18 @@ const DownloadItemComponent = ({
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
 
-  const currStatus = useMemo(() => {
-    return downloadStatus || item.status;
-  }, [item, downloadStatus]);
+  // Derive current status; no need for memoization here
+  const currStatus = downloadStatus ?? item.status;
 
-  const renderTerminalBtn = useMemoizedFn((item: DownloadItem) => {
-    if (!appStore.showTerminal) return null;
-
-    return (
-      <TerminalDrawer
-        key={"terminal"}
-        trigger={
-          <IconButton
-            key="terminal"
-            title={t("terminal")}
-            icon={<TerminalIcon />}
-          />
-        }
-        title={item.name}
-        id={item.id}
-        log={item.log || ""}
-      />
-    );
-  });
-
-  // Edit form
-  const renderEditIconBtn = useMemoizedFn((item: DownloadItem) => {
-    return (
-      <IconButton
-        key={"edit"}
-        title={t("edit")}
-        icon={<EditIcon />}
-        onClick={() => onShowEditForm?.(item)}
-      />
-    );
-  });
-
+  // Handlers
   const handlePlay = useMemoizedFn(() => {
-    // FIXME: 添加播放器功能
+    // FIXME: 播放器接入
     tdApp.onEvent(PLAY_VIDEO);
   });
 
-  const handleDownloadNow = useMemoizedFn(() => {
+  const startWithEvent = useMemoizedFn((eventName: string) => {
     onStartDownload(item.id);
-    tdApp.onEvent(DOWNLOAD_NOW);
-  });
-
-  const handleRestart = useMemoizedFn(() => {
-    onStartDownload(item.id);
-    tdApp.onEvent(RESTART_DOWNLOAD);
-  });
-
-  const handleContinue = useMemoizedFn(() => {
-    onStartDownload(item.id);
-    tdApp.onEvent(CONTINUE_DOWNLOAD);
+    tdApp.onEvent(eventName);
   });
 
   const handleStop = useMemoizedFn(() => {
@@ -115,72 +60,101 @@ const DownloadItemComponent = ({
     tdApp.onEvent(STOP_DOWNLOAD);
   });
 
-  const renderActionButtons = useMemoizedFn((item: VideoStat): ReactNode => {
-    if (currStatus === DownloadStatus.Ready) {
-      return [
-        renderTerminalBtn(item),
-        renderEditIconBtn(item),
-        <IconButton
-          key="download"
-          icon={<DownloadListIcon />}
-          title={t("download")}
-          onClick={handleDownloadNow}
-        />,
-      ];
-    }
-    if (currStatus === DownloadStatus.Downloading) {
-      return [
-        renderTerminalBtn(item),
-        <IconButton
-          key="stop"
-          title={t("pause")}
-          icon={<PauseCircleOutlined />}
-          onClick={handleStop}
-        />,
-      ];
-    }
-    if (currStatus === DownloadStatus.Failed) {
-      return [
-        renderTerminalBtn(item),
-        renderEditIconBtn(item),
-        <IconButton
-          key="redownload"
-          title={t("redownload")}
-          icon={<DownloadListIcon />}
-          onClick={handleRestart}
-        />,
-      ];
-    }
-    if (currStatus === DownloadStatus.Watting) {
-      return [t("watting")];
-    }
-    if (currStatus === DownloadStatus.Stopped) {
-      return [
-        renderTerminalBtn(item),
-        renderEditIconBtn(item),
-        <IconButton
-          key="restart"
-          icon={<DownloadListIcon />}
-          title={t("continueDownload")}
-          onClick={handleContinue}
-        />,
-      ];
+  // Action buttons by status (consolidated for clarity)
+  const actionButtons = useMemo<ReactNode[]>(() => {
+    const buttons: ReactNode[] = [];
+
+    const terminalBtn =
+      appStore.showTerminal ? (
+        <TerminalDrawer
+          key="terminal"
+          trigger={<IconButton key="terminal" title={t("terminal")} icon={<TerminalIcon />} />}
+          title={item.name}
+          id={item.id}
+          log={item.log || ""}
+        />
+      ) : null;
+
+    const editBtn = (
+      <IconButton key="edit" title={t("edit")} icon={<EditIcon />} onClick={() => onShowEditForm?.(item)} />
+    );
+
+    switch (currStatus) {
+      case DownloadStatus.Ready:
+        terminalBtn && buttons.push(terminalBtn);
+        buttons.push(editBtn);
+        buttons.push(
+          <IconButton
+            key="download"
+            icon={<DownloadListIcon />}
+            title={t("download")}
+            onClick={() => startWithEvent(DOWNLOAD_NOW)}
+          />,
+        );
+        break;
+      case DownloadStatus.Downloading:
+        terminalBtn && buttons.push(terminalBtn);
+        buttons.push(
+          <IconButton key="stop" title={t("pause")} icon={<PauseCircleOutlined />} onClick={handleStop} />,
+        );
+        break;
+      case DownloadStatus.Failed:
+        terminalBtn && buttons.push(terminalBtn);
+        buttons.push(editBtn);
+        buttons.push(
+          <IconButton
+            key="redownload"
+            title={t("redownload")}
+            icon={<DownloadListIcon />}
+            onClick={() => startWithEvent(RESTART_DOWNLOAD)}
+          />,
+        );
+        break;
+      case DownloadStatus.Watting:
+        buttons.push(<span key="watting">{t("watting")}</span>);
+        break;
+      case DownloadStatus.Stopped:
+        terminalBtn && buttons.push(terminalBtn);
+        buttons.push(editBtn);
+        buttons.push(
+          <IconButton
+            key="restart"
+            icon={<DownloadListIcon />}
+            title={t("continueDownload")}
+            onClick={() => startWithEvent(CONTINUE_DOWNLOAD)}
+          />,
+        );
+        break;
+      default:
+        // Success
+        buttons.push(
+          <IconButton
+            key="play"
+            icon={<PlayCircleOutlined />}
+            title={t("playVideo")}
+            disabled={!item.exists}
+            onClick={handlePlay}
+          />,
+        );
+        break;
     }
 
-    // Download successfully
-    return [
-      <IconButton
-        key={"play"}
-        icon={<PlayCircleOutlined />}
-        title={t("playVideo")}
-        disabled={!item.exists}
-        onClick={handlePlay}
-      />,
-    ];
-  });
+    return buttons;
+  }, [
+    appStore.showTerminal,
+    currStatus,
+    handlePlay,
+    handleStop,
+    item.exists,
+    item.id,
+    item.log,
+    item.name,
+    onShowEditForm,
+    startWithEvent,
+    t,
+  ]);
 
   const renderTitle = useMemoizedFn((item: VideoStat): ReactNode => {
-    // console.log("====item", item);
     return (
       <div
         className={cn("truncate text-sm dark:text-[#B4B4B4]", {
@@ -188,73 +162,57 @@ const DownloadItemComponent = ({
         })}
         title={item.name}
       >
-        {item.folder ? item.folder + "/" : item.folder}
+        {item.folder ? `${item.folder}/` : item.folder}
         {item.name}
       </div>
     );
   });
 
-  const handleRenderTag = useMemoizedFn(() => {
-    let tag = null;
-    if (currStatus === DownloadStatus.Downloading) {
-      tag = (
-        <DownloadTag
-          icon={<DownloadIcon fill="#fff" width={14} height={14} />}
-          text={t("downloading")}
-          color="#127af3"
-        />
-      );
-    } else if (currStatus === DownloadStatus.Success) {
-      tag = [
-        <DownloadTag
-          key={"success"}
-          text={t("downloadSuccess")}
-          color="#09ce87"
-        />,
-      ];
-      if (!item.exists) {
-        tag.push(
+  const tags = useMemo<ReactNode[]>(() => {
+    const list: ReactNode[] = [];
+    if (item.isLive) list.push(<DownloadTag key="live" text={t("liveResource")} color="#9abbe2" />);
+
+    switch (currStatus) {
+      case DownloadStatus.Downloading:
+        list.push(
           <DownloadTag
-            key={"notExists"}
-            text={t("fileNotExist")}
-            color="#9abbe2"
-          />
+            key="downloading"
+            icon={<DownloadIcon fill="#fff" width={14} height={14} />}
+            text={t("downloading")}
+            color="#127af3"
+          />,
         );
-      }
-    } else if (currStatus === DownloadStatus.Failed) {
-      tag = (
-        <TerminalDrawer
-          trigger={
-            <DownloadTag
-              icon={<FailedIcon />}
-              text={t("downloadFailed")}
-              color="#ff7373"
-              className="cursor-pointer"
-            />
-          }
-          title={item.name}
-          id={item.id}
-          log={item.log || ""}
-        />
-      );
-    } else if (currStatus === DownloadStatus.Stopped) {
-      tag = (
-        <DownloadTag
-          icon={<PauseIcon />}
-          text={t("downloadPause")}
-          color="#9abbe2"
-        />
-      );
+        break;
+      case DownloadStatus.Success:
+        list.push(<DownloadTag key="success" text={t("downloadSuccess")} color="#09ce87" />);
+        if (!item.exists) {
+          list.push(<DownloadTag key="notExists" text={t("fileNotExist")} color="#9abbe2" />);
+        }
+        break;
+      case DownloadStatus.Failed:
+        list.push(
+          <TerminalDrawer
+            key="failed"
+            trigger={
+              <DownloadTag
+                icon={<FailedIcon />}
+                text={t("downloadFailed")}
+                color="#ff7373"
+                className="cursor-pointer"
+              />
+            }
+            title={item.name}
+            id={item.id}
+            log={item.log || ""}
+          />,
+        );
+        break;
+      case DownloadStatus.Stopped:
+        list.push(<DownloadTag key="pause" icon={<PauseIcon />} text={t("downloadPause")} color="#9abbe2" />);
+        break;
     }
-    return (
-      <div className="flex shrink-0 grow flex-row gap-2">
-        {item.isLive && (
-          <DownloadTag text={t("liveResource")} color="#9abbe2" />
-        )}
-        {tag}
-      </div>
-    );
-  });
+    return list;
+  }, [currStatus, item.exists, item.id, item.isLive, item.log, item.name, t]);
 
   const renderDescription = useMemoizedFn((item: DownloadItem): ReactNode => {
     if (progress) {
@@ -270,10 +228,7 @@ const DownloadItemComponent = ({
       );
     }
     return (
-      <div
-        className="relative flex flex-col gap-1 text-xs text-[#B3B3B3] dark:text-[#515257]"
-        title={item.url}
-      >
+      <div className="relative flex flex-col gap-1 text-xs text-[#B3B3B3] dark:text-[#515257]" title={item.url}>
         <div className="truncate">{item.url}</div>
         <div className="truncate">
           {t("createdAt")} {fromatDateTime(item.createdDate)}
@@ -297,34 +252,22 @@ const DownloadItemComponent = ({
 
   return (
     <div
-      className={cn(
-        "relative flex flex-row gap-3 rounded-lg bg-[#FAFCFF] px-3 pb-3.5 pt-2 dark:bg-[#27292F]",
-        {
-          "bg-linear-to-r from-[#D0E8FF] to-[#F2F7FF] dark:from-[#27292F] dark:to-[#00244E]":
-            selected,
-          "opacity-70": currStatus === DownloadStatus.Success && !item.exists,
-        }
-      )}
+      className={cn("relative flex flex-row gap-3 rounded-lg bg-[#FAFCFF] px-3 pb-3.5 pt-2 dark:bg-[#27292F]", {
+        "bg-linear-to-r from-[#D0E8FF] to-[#F2F7FF] dark:from-[#27292F] dark:to-[#00244E]": selected,
+        "opacity-70": currStatus === DownloadStatus.Success && !item.exists,
+      })}
       onContextMenu={() => onContextMenu(item.id)}
     >
-      <Checkbox
-        className="mt-2"
-        checked={selected}
-        onCheckedChange={() => onSelectChange(item.id)}
-      />
+      <Checkbox className="mt-2" checked={selected} onCheckedChange={() => onSelectChange(item.id)} />
       <div className={cn("flex flex-1 flex-col gap-1 overflow-hidden")}>
         {selected && (
-          <img
-            alt=""
-            src={selectedBg}
-            className="absolute bottom-0 right-[126px] top-0 block h-full select-none"
-          />
+          <img alt="" src={selectedBg} className="absolute bottom-0 right-[126px] top-0 block h-full select-none" />
         )}
         <div className="relative flex flex-row items-center gap-2">
           {renderTitle(item)}
-          {handleRenderTag()}
+          <div className="flex shrink-0 grow flex-row gap-2">{tags}</div>
           <div className="flex flex-row items-center gap-3 rounded-md bg-[#eff4fa] px-1.5 py-1.5 dark:bg-[#3B3F48]">
-            {renderActionButtons(item)}
+            {actionButtons}
           </div>
         </div>
         {renderDescription(item)}
@@ -332,28 +275,3 @@ const DownloadItemComponent = ({
     </div>
   );
 };
-
-// 使用 memo 优化组件性能，只在 props 真正变化时重新渲染
-export const DownloadItem = memo(
-  DownloadItemComponent,
-  (prevProps, nextProps) => {
-    // 自定义比较函数，只有关键属性变化时才重新渲染
-    const itemChanged =
-      prevProps.item.id !== nextProps.item.id ||
-      prevProps.item.name !== nextProps.item.name ||
-      prevProps.item.status !== nextProps.item.status ||
-      prevProps.item.exists !== nextProps.item.exists;
-
-    const propsChanged =
-      prevProps.selected !== nextProps.selected ||
-      prevProps.downloadStatus !== nextProps.downloadStatus;
-
-    const progressChanged =
-      prevProps.progress?.percent !== nextProps.progress?.percent ||
-      prevProps.progress?.speed !== nextProps.progress?.speed ||
-      prevProps.progress?.isLive !== nextProps.progress?.isLive;
-
-    // 如果没有任何关键属性变化，则不需要重新渲染
-    return !itemChanged && !propsChanged && !progressChanged;
-  }
-);
