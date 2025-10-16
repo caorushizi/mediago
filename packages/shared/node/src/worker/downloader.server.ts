@@ -35,16 +35,18 @@ export class DownloaderServer extends EventEmitter {
     this.host = await getLocalIP();
 
     const binaryUrl = require.resolve("@mediago/core");
+    const binDir = path.dirname(binaryUrl);
+    console.log("Downloader server binary dir:", path.resolve(binDir, "files/configs/download_schemas.json"));
 
     const runner = new ServiceRunner({
-      binName: "bin/mediago-core",
-      devDir: path.dirname(binaryUrl),
+      binName: "files/mediago-core",
+      devDir: binDir,
       extraArgs: ["-port", this.port.toString()],
       extraEnv: {
-        MEDIAGO_M3U8_BIN: "F:\\Workspace\\Projects\\MediaGo\\mediago\\bin\\win32\\x64\\N_m3u8DL-RE.exe",
-        MEDIAGO_BILIBILI_BIN: "F:\\Workspace\\Projects\\MediaGo\\mediago\\bin\\win32\\x64\\BBDown.exe",
-        MEDIAGO_DIRECT_BIN: "F:\\Workspace\\Projects\\MediaGo\\mediago\\bin\\win32\\x64\\gopeed.exe",
-        MEDIAGO_SCHEMA_PATH: "F:\\Workspace\\Projects\\MediaGo\\mediago-core\\configs\\download_schemas.json",
+        MEDIAGO_M3U8_BIN: path.resolve(binDir, "files/bin/N_m3u8DL-RE"),
+        MEDIAGO_BILIBILI_BIN: path.resolve(binDir, "files/bin/BBDown"),
+        MEDIAGO_DIRECT_BIN: path.resolve(binDir, "files/bin/gopeed"),
+        MEDIAGO_SCHEMA_PATH: path.resolve(binDir, "files/configs/download_schemas.json"),
       },
       host: this.host,
       port: this.port,
