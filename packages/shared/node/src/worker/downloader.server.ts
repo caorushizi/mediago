@@ -1,7 +1,7 @@
 import path from "node:path";
 import { EventEmitter } from "node:stream";
 import { provide } from "@inversifyjs/binding-decorators";
-import { type DownloadType, safeParseJSON } from "@mediago/shared-common";
+import { type DownloadProgress, type DownloadType, safeParseJSON } from "@mediago/shared-common";
 import axios from "axios";
 import { EventSource } from "eventsource";
 import { injectable } from "inversify";
@@ -73,15 +73,27 @@ export class DownloaderServer extends EventEmitter {
     // 2. 轮询获取进度
     // FIXME: 需要优化性能
     const startPolling = () => {
-      const interval = setInterval(async () => {
+      setInterval(async () => {
         const { data } = await axios.get(`http://localhost:${this.port}/api/tasks/`);
 
-        if (data.tasks.length === 0) {
+        const taskList = (data.tasks || []).filter((task: any) => {
+          return task.percent > 0 && task.percent < 100;
+        });
+        if (taskList.length === 0) {
           return;
         }
 
-        console.log(`进度: ${JSON.stringify(data)}`);
-      }, 1000); // 每秒查询一次
+        const tasks: DownloadProgress[] = taskList.map((task: any) => {
+          return {
+            id: task.id,
+            type: task.type as DownloadType,
+            percent: task.percent,
+            speed: task.speed,
+            isLive: task.isLive || false,
+          };
+        });
+        this.emit("download-progress", tasks);
+      }, 1000);
     };
 
     startPolling();
