@@ -11,6 +11,7 @@ import { type DownloadFilter, DownloadStatus } from "@/types";
 import { cn, tdApp } from "@/utils";
 import { DownloadTaskItem } from "./download-item";
 import { ListHeader } from "./list-header";
+import { DownloadTaskDetails, useTasks } from "@/hooks/use-tasks";
 
 interface DownloadState {
   [key: number]: {
@@ -25,13 +26,12 @@ interface DownloadState {
 }
 
 interface Props {
-  data: DownloadTaskWithFile[];
+  data: DownloadTaskDetails[];
   filter: DownloadFilter;
-  refresh: () => void;
   loading: boolean;
 }
 
-export function DownloadTaskList({ data, filter, refresh, loading }: Props) {
+export function DownloadTaskList({ data, filter, loading }: Props) {
   const [selected, setSelected] = useState<number[]>([]);
   const {
     startDownload,
@@ -43,67 +43,11 @@ export function DownloadTaskList({ data, filter, refresh, loading }: Props) {
   } = useAPI();
   const { message } = App.useApp();
   const { t } = useTranslation();
-  const [rawDownloadState, setRawDownloadState] = useState<DownloadState>({});
-  const [downloadState, setDownloadState] = useState<DownloadState>({});
   const editFormRef = useRef<DownloadFormRef>(null);
-  const lastState = useRef<DownloadState>({});
   const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [hasInitialLoaded, setHasInitialLoaded] = useState(false); // 追踪是否已完成首次加载
   const downloadListId = useId();
-
-  // 使用防抖来优化下载状态更新，减少渲染频率
-  const debouncedRawState = useDebounce(rawDownloadState, { wait: 100 }); // 减少到 100ms，提高响应性
-
-  // 使用 useMemo 来优化状态合并计算
-  const optimizedDownloadState = useMemo(() => {
-    const result: DownloadState = {};
-
-    // 合并当前状态和之前的状态，确保所有活动的下载任务都保留
-    const allIds = new Set([
-      ...Object.keys(debouncedRawState).map(Number),
-      ...Object.keys(lastState.current).map(Number),
-    ]);
-
-    for (const numId of allIds) {
-      const currentState = debouncedRawState[numId];
-      const lastSent = lastState.current[numId];
-
-      if (currentState) {
-        // 有当前状态，检查是否需要更新UI
-        if (
-          !lastSent ||
-          lastSent.status !== currentState.status ||
-          lastSent.isLive !== currentState.isLive ||
-          Math.abs((lastSent.progress || 0) - currentState.progress) >= 1 || // 降回到 1% 的进度阈值，保证平滑显示
-          lastSent.speed !== currentState.speed ||
-          (lastSent.messages?.length || 0) !== currentState.messages.length
-        ) {
-          result[numId] = currentState;
-        } else {
-          // 保持之前的状态以避免不必要的更新
-          result[numId] = lastSent;
-        }
-      } else if (lastSent) {
-        // 没有当前状态但有历史状态
-        // 如果历史状态是正在下载中的状态，可能已经完成，不再显示
-        // 但是 Ready 和 Watting 状态应该保留，因为它们表示等待中
-        const isCompletedDownloading = lastSent.status === DownloadStatus.Downloading;
-
-        // 保留所有非正在下载中的状态（包括等待中、已完成、失败等）
-        if (!isCompletedDownloading) {
-          result[numId] = lastSent;
-        }
-      }
-    }
-
-    return result;
-  }, [debouncedRawState]);
-
-  // 当优化后的状态变化时更新最终状态
-  useEffect(() => {
-    setDownloadState(optimizedDownloadState);
-    lastState.current = optimizedDownloadState;
-  }, [optimizedDownloadState]);
+  const { mutate } = useTasks();
 
   // 追踪首次加载完成
   useEffect(() => {
@@ -125,10 +69,10 @@ export function DownloadTaskList({ data, filter, refresh, loading }: Props) {
       } else if (action === "download") {
         onStartDownload(payload);
       } else if (action === "refresh") {
-        refresh();
+        mutate();
       } else if (action === "delete") {
         await deleteDownloadTask(payload);
-        refresh();
+        mutate();
       }
     };
 
@@ -145,7 +89,7 @@ export function DownloadTaskList({ data, filter, refresh, loading }: Props) {
         refreshTimeoutRef.current = null;
       }
     };
-  }, [refresh]);
+  }, [mutate]);
 
   const handleItemSelectChange = useMemoizedFn((id: number) => {
     setSelected(
@@ -193,41 +137,18 @@ export function DownloadTaskList({ data, filter, refresh, loading }: Props) {
   const onStartDownload = useMemoizedFn(async (id: number) => {
     await startDownload(id);
 
-    // 立即更新本地状态，确保按钮状态快速响应
-    setRawDownloadState((prevState) => ({
-      ...prevState,
-      [id]: {
-        ...prevState[id],
-        status: DownloadStatus.Downloading,
-        progress: prevState[id]?.progress ?? 0, // 确保 progress 字段存在
-        messages: prevState[id]?.messages ?? [],
-      },
-    }));
-
     message.success(t("addTaskSuccess"));
-    setTimeout(refresh, 100);
+    mutate();
   });
 
   const onStopDownload = useMemoizedFn(async (id: number) => {
     await stopDownload(id);
 
-    // 立即更新本地状态，确保按钮状态快速响应
-    setRawDownloadState((prevState) => ({
-      ...prevState,
-      [id]: {
-        ...prevState[id],
-        status: DownloadStatus.Stopped,
-        progress: prevState[id]?.progress ?? 0, // 确保 progress 字段存在
-        messages: prevState[id]?.messages ?? [],
-      },
-    }));
-
-    // 延迟刷新确保数据一致性
-    setTimeout(refresh, 100);
+    mutate();
   });
 
   const handleFormConfirm = useMemoizedFn(async () => {
-    refresh();
+    mutate();
   });
 
   const handleContext = useMemoizedFn((item: number) => {
@@ -239,7 +160,7 @@ export function DownloadTaskList({ data, filter, refresh, loading }: Props) {
       await deleteDownloadTask(Number(id));
     }
     setSelected([]);
-    refresh();
+    mutate();
   });
 
   const onDownloadItems = useMemoizedFn(async (ids: number[]) => {
@@ -248,7 +169,7 @@ export function DownloadTaskList({ data, filter, refresh, loading }: Props) {
     }
 
     message.success(t("addTaskSuccess"));
-    refresh();
+    mutate();
     setSelected([]);
   });
 
@@ -294,7 +215,6 @@ export function DownloadTaskList({ data, filter, refresh, loading }: Props) {
       {loading && !hasInitialLoaded && data.length === 0 && <Loading />}
       <div className={cn("flex w-full flex-1 shrink-0 flex-col gap-3 overflow-auto")}>
         {data.map((task) => {
-          const state = downloadState[task.id];
           return (
             <DownloadTaskItem
               key={task.id}
@@ -305,17 +225,6 @@ export function DownloadTaskList({ data, filter, refresh, loading }: Props) {
               onStopDownload={onStopDownload}
               onContextMenu={handleContext}
               onShowEditForm={handleShowDownloadForm}
-              downloadStatus={state?.status}
-              progress={
-                state
-                  ? {
-                    id: task.id,
-                    percent: (state.progress ?? 0).toString(),
-                    speed: state.speed || "0 MB/s",
-                    isLive: state.isLive || false,
-                  }
-                  : undefined
-              }
             />
           );
         })}

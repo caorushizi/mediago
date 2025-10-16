@@ -10,13 +10,14 @@ import { DownloadTag } from "@/components/download-tag";
 import { IconButton } from "@/components/icon-button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CONTINUE_DOWNLOAD, DOWNLOAD_NOW, PLAY_VIDEO, RESTART_DOWNLOAD, STOP_DOWNLOAD } from "@/const";
+import type { DownloadTaskDetails } from "@/hooks/use-tasks";
 import { appStoreSelector, useAppStore } from "@/store/app";
 import { DownloadStatus } from "@/types";
 import { cn, fromatDateTime, tdApp } from "@/utils";
 import { TerminalDrawer } from "./terminal-drawer";
 
 interface Props {
-  task: DownloadTaskWithFile;
+  task: DownloadTaskDetails;
   onSelectChange: (id: number) => void;
   selected: boolean;
   onStartDownload: (id: number) => void;
@@ -35,14 +36,9 @@ export const DownloadTaskItem = ({
   onStopDownload,
   onContextMenu,
   onShowEditForm,
-  downloadStatus,
-  progress,
 }: Props) => {
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
-
-  // Derive current status; no need for memoization here
-  const currStatus = downloadStatus ?? task.status;
 
   // Handlers
   const handlePlay = useMemoizedFn(() => {
@@ -64,22 +60,21 @@ export const DownloadTaskItem = ({
   const actionButtons = useMemo<ReactNode[]>(() => {
     const buttons: ReactNode[] = [];
 
-    const terminalBtn =
-      appStore.showTerminal ? (
-        <TerminalDrawer
-          key="terminal"
-          trigger={<IconButton key="terminal" title={t("terminal")} icon={<TerminalIcon />} />}
-          title={task.name}
-          id={task.id}
-          log={task.log || ""}
-        />
-      ) : null;
+    const terminalBtn = appStore.showTerminal ? (
+      <TerminalDrawer
+        key="terminal"
+        trigger={<IconButton key="terminal" title={t("terminal")} icon={<TerminalIcon />} />}
+        title={task.name}
+        id={task.id}
+        log={task.log || ""}
+      />
+    ) : null;
 
     const editBtn = (
       <IconButton key="edit" title={t("edit")} icon={<EditIcon />} onClick={() => onShowEditForm?.(task)} />
     );
 
-    switch (currStatus) {
+    switch (task.status) {
       case DownloadStatus.Ready:
         terminalBtn && buttons.push(terminalBtn);
         buttons.push(editBtn);
@@ -94,9 +89,7 @@ export const DownloadTaskItem = ({
         break;
       case DownloadStatus.Downloading:
         terminalBtn && buttons.push(terminalBtn);
-        buttons.push(
-          <IconButton key="stop" title={t("pause")} icon={<PauseCircleOutlined />} onClick={handleStop} />,
-        );
+        buttons.push(<IconButton key="stop" title={t("pause")} icon={<PauseCircleOutlined />} onClick={handleStop} />);
         break;
       case DownloadStatus.Failed:
         terminalBtn && buttons.push(terminalBtn);
@@ -140,19 +133,7 @@ export const DownloadTaskItem = ({
     }
 
     return buttons;
-  }, [
-    appStore.showTerminal,
-    currStatus,
-    handlePlay,
-    handleStop,
-    task.exists,
-    task.id,
-    task.log,
-    task.name,
-    onShowEditForm,
-    startWithEvent,
-    t,
-  ]);
+  }, [appStore.showTerminal, handlePlay, handleStop, task, onShowEditForm, startWithEvent, t]);
 
   const renderTitle = useMemoizedFn((task: DownloadTaskWithFile): ReactNode => {
     return (
@@ -172,7 +153,7 @@ export const DownloadTaskItem = ({
     const list: ReactNode[] = [];
     if (task.isLive) list.push(<DownloadTag key="live" text={t("liveResource")} color="#9abbe2" />);
 
-    switch (currStatus) {
+    switch (task.status) {
       case DownloadStatus.Downloading:
         list.push(
           <DownloadTag
@@ -212,18 +193,17 @@ export const DownloadTaskItem = ({
         break;
     }
     return list;
-  }, [currStatus, task.exists, task.id, task.isLive, task.log, task.name, t]);
+  }, [task, t]);
 
-  const renderDescription = useMemoizedFn((task: DownloadTask): ReactNode => {
-    if (progress) {
-      const { percent, speed } = progress;
-      const val = Math.round(Number(percent));
+  const renderDescription = useMemoizedFn((task: DownloadTaskDetails): ReactNode => {
+    if (task.percent && task.status === DownloadStatus.Downloading) {
+      const val = Math.round(Number(task.percent));
 
       return (
         <div className="flex flex-row items-center gap-2 text-xs text-[rgba(0,0,0,0.88)] dark:text-[rgba(255,255,255,0.85)]">
           <Progress percent={val} strokeLinecap="butt" showInfo={false} />
           <div className="min-w-5 shrink-0">{val}%</div>
-          <div className="min-w-20 shrink-0">{speed}</div>
+          <div className="min-w-20 shrink-0">{task.speed}</div>
         </div>
       );
     }
@@ -233,7 +213,7 @@ export const DownloadTaskItem = ({
         <div className="truncate">
           {t("createdAt")} {fromatDateTime(task.createdDate)}
         </div>
-        {currStatus === DownloadStatus.Failed && (
+        {task.status === DownloadStatus.Failed && (
           <TerminalDrawer
             asChild
             trigger={
@@ -254,7 +234,7 @@ export const DownloadTaskItem = ({
     <div
       className={cn("relative flex flex-row gap-3 rounded-lg bg-[#FAFCFF] px-3 pb-3.5 pt-2 dark:bg-[#27292F]", {
         "bg-linear-to-r from-[#D0E8FF] to-[#F2F7FF] dark:from-[#27292F] dark:to-[#00244E]": selected,
-        "opacity-70": currStatus === DownloadStatus.Success && !task.exists,
+        "opacity-70": task.status === DownloadStatus.Success && !task.exists,
       })}
       onContextMenu={() => onContextMenu(task.id)}
     >

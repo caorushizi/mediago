@@ -133,7 +133,7 @@ export enum Platform {
   Linux = "linux",
 }
 
-export interface DownloadEvent<T> {
+export interface DownloadEvent<T = any> {
   type: string;
   data: T;
 }
@@ -149,4 +149,8 @@ export interface DownloadFailedData {
 
 export interface DownloadFailedEvent extends DownloadEvent<DownloadFailedData> {
   type: "failed";
+}
+
+export interface DownloadProgressEvent extends DownloadEvent<DownloadProgress[]> {
+  type: "progress";
 }

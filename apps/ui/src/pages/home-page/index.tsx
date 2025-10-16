@@ -1,9 +1,9 @@
 import { QrcodeOutlined } from "@ant-design/icons";
-import { DOWNLOAD_EVENT_NAME, type DownloadSuccessEvent } from "@mediago/shared-common";
+import { DOWNLOAD_EVENT_NAME, DownloadEvent, type DownloadSuccessEvent } from "@mediago/shared-common";
 import { useMemoizedFn, useMount } from "ahooks";
 import { Pagination, Popover, QRCode } from "antd";
 import { produce } from "immer";
-import { type FC, useEffect, useId, useRef, useState } from "react";
+import { type FC, useEffect, useId, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
@@ -14,6 +14,7 @@ import PageContainer from "@/components/page-container";
 import { Button } from "@/components/ui/button";
 import { CLICK_DOWNLOAD } from "@/const";
 import useAPI from "@/hooks/use-api";
+import { useDownloadEvent } from "@/hooks/use-download-event";
 import { useTasks } from "@/hooks/use-tasks";
 import { appStoreSelector, useAppStore } from "@/store/app";
 import { downloadFormSelector, useConfigStore } from "@/store/config";
@@ -26,14 +27,7 @@ interface Props {
 }
 
 const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
-  const {
-    openDir,
-    showBrowserWindow,
-    createDownloadTasks,
-    getLocalIP,
-    addIpcListener,
-    removeIpcListener,
-  } = useAPI();
+  const { openDir, showBrowserWindow, createDownloadTasks, getLocalIP, addIpcListener, removeIpcListener } = useAPI();
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
   const [localIP, setLocalIP] = useState<string>("");
@@ -41,7 +35,8 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   const homeId = useId();
   const { lastIsBatch, lastDownloadTypes } = useConfigStore(useShallow(downloadFormSelector));
   const location = useLocation();
-  const { data, isLoading, pagination, mutate } = useTasks(filter);
+  const { data, isLoading, pagination, total, mutate } = useTasks(filter);
+  useDownloadEvent();
 
   useEffect(() => {
     const search = new URLSearchParams(location.search);
@@ -102,26 +97,6 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     };
   }, []);
 
-  useEffect(() => {
-    const handleSuccess = (_: unknown, { data: successData }: DownloadSuccessEvent) => {
-      const after = produce(data, (draft) => {
-        if (!draft) return;
-
-        const index = draft?.list.findIndex((item) => item.id === successData.id);
-        if (index != null && index > -1) {
-          draft?.list.splice(index, 1);
-          draft.total = draft.total - 1;
-        }
-      });
-      mutate(after);
-    };
-
-    addIpcListener(DOWNLOAD_EVENT_NAME, handleSuccess);
-    return () => {
-      removeIpcListener(DOWNLOAD_EVENT_NAME, handleSuccess);
-    };
-  }, [data, addIpcListener, removeIpcListener]);
-
   useMount(async () => {
     const ip = await getLocalIP();
     setLocalIP(ip);
@@ -137,7 +112,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   });
 
   const handleConfirm = useMemoizedFn(async (values: DownloadFormItem) => {
-    // refresh();
+    mutate();
   });
 
   return (
@@ -178,13 +153,13 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       }
       className="bg-white p-3 dark:bg-[#1F2024] flex flex-col flex-1 h-full rounded-lg gap-3"
     >
-      <DownloadList loading={isLoading} data={data?.list || []} filter={filter} refresh={() => {}} />
+      <DownloadList loading={isLoading} data={data} filter={filter} />
 
       <Pagination
         className="flex justify-end"
         current={pagination.page}
         pageSize={pagination.pageSize}
-        total={data?.total}
+        total={total}
         showSizeChanger={false}
       />
 
