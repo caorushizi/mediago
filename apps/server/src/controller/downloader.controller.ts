@@ -32,8 +32,8 @@ export default class DownloadController implements Controller {
   ) {}
 
   @handle(ADD_DOWNLOAD_ITEMS)
-  async addDownloadItems({ videos, startDownload }: { videos: Omit<DownloadTask, "id">[]; startDownload?: boolean }) {
-    const items = await this.downloadService.addDownloadItems(videos);
+  async createDownloadTasks({ videos, startDownload }: { videos: Omit<DownloadTask, "id">[]; startDownload?: boolean }) {
+    const items = await this.downloadService.createMany(videos);
 
     this.socket.refreshList();
 
@@ -42,7 +42,7 @@ export default class DownloadController implements Controller {
       const local = await this.store.get("local");
       const deleteSegments = await this.store.get("deleteSegments");
       items.forEach((item: any) => {
-        this.downloadService.startDownload(item.id, local, deleteSegments);
+        this.downloadService.start(item.id, local, deleteSegments);
       });
     }
 
@@ -50,45 +50,45 @@ export default class DownloadController implements Controller {
   }
 
   @handle(GET_DOWNLOAD_ITEMS)
-  async getDownloadItems(pagination: DownloadTaskPagination) {
+  async getDownloadTasks(pagination: DownloadTaskPagination) {
     const local = await this.store.get("local");
-    return await this.downloadService.getDownloadItems(pagination, local, "mp4,mkv,avi,mov,wmv,flv,webm,m4v");
+    return await this.downloadService.list(pagination, local, "mp4,mkv,avi,mov,wmv,flv,webm,m4v");
   }
 
   @handle(START_DOWNLOAD)
-  async startDownload({ vid }: { vid: number }) {
+  async startDownloadTask({ vid }: { vid: number }) {
     const local = await this.store.get("local");
     const deleteSegments = await this.store.get("deleteSegments");
-    await this.downloadService.startDownload(vid, local, deleteSegments);
+    await this.downloadService.start(vid, local, deleteSegments);
   }
 
   @handle(DELETE_DOWNLOAD_ITEM)
-  async deleteDownloadItem({ id }: { id: number }) {
-    await this.downloadService.deleteDownloadItem(id);
+  async deleteDownloadTask({ id }: { id: number }) {
+    await this.downloadService.remove(id);
   }
 
   @handle(EDIT_DOWNLOAD_ITEM)
-  async editDownloadItem({ video, startDownload }: { video: DownloadTask; startDownload?: boolean }) {
-    this.logger.info("editDownloadItem", video);
-    const item = await this.downloadService.editDownloadItem(video);
+  async updateDownloadTask({ video, startDownload }: { video: DownloadTask; startDownload?: boolean }) {
+    this.logger.info("editDownloadTask", video);
+    const item = await this.downloadService.update(video);
 
     // Start downloading immediately if requested
     if (startDownload) {
       const local = await this.store.get("local");
       const deleteSegments = await this.store.get("deleteSegments");
-      await this.downloadService.startDownload(item.id, local, deleteSegments);
+      await this.downloadService.start(item.id, local, deleteSegments);
     }
 
     return item;
   }
 
   @handle(STOP_DOWNLOAD)
-  async stopDownload({ id }: { id: number }) {
-    this.downloadService.stopDownload(id);
+  async stopDownloadTask({ id }: { id: number }) {
+    this.downloadService.stop(id);
   }
 
   @handle(GET_VIDEO_FOLDERS)
   async getVideoFolders() {
-    return this.downloadService.getVideoFolders();
+    return this.downloadService.listFolders();
   }
 }

@@ -26,7 +26,14 @@ interface Props {
 }
 
 const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
-  const { openDir, showBrowserWindow, addDownloadItems, getLocalIP, addIpcListener, removeIpcListener } = useAPI();
+  const {
+    openDir,
+    showBrowserWindow,
+    createDownloadTasks,
+    getLocalIP,
+    addIpcListener,
+    removeIpcListener,
+  } = useAPI();
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
   const [localIP, setLocalIP] = useState<string>("");
@@ -57,7 +64,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
           headers,
           folder: "",
         };
-        addDownloadItems([item], true);
+        createDownloadTasks([item], true);
       } else {
         const item: DownloadFormItem = {
           batch: false,

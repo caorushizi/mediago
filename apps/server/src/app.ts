@@ -85,8 +85,8 @@ export default class ElectronApp extends Koa {
   // If there are still videos being downloaded after the restart, change the status to download failed
   async resetDownloadStatus(): Promise<void> {
     // If data in the downloading state still fails after the restart, all downloads fail
-    const videos = await this.downloadTaskService.findWaitingAndDownloadingVideos();
+    const videos = await this.downloadTaskService.findActiveTasks();
     const videoIds = videos.map((video) => video.id);
-    await this.downloadTaskService.updateStatus(videoIds, DownloadStatus.Failed);
+    await this.downloadTaskService.setStatus(videoIds, DownloadStatus.Failed);
   }
 }
