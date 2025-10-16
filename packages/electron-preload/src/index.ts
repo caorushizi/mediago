@@ -103,10 +103,10 @@ const electronApi: ElectronApi = {
     if (!dir) return;
     return ipcRenderer.invoke(OPEN_DIR, dir);
   },
-  addDownloadItems(videos: Omit<DownloadTask, "id">[], startDownload?: boolean): Promise<Video[]> {
+  createDownloadTasks(videos: Omit<DownloadTask, "id">[], startDownload?: boolean): Promise<Video[]> {
     return ipcRenderer.invoke(ADD_DOWNLOAD_ITEMS, videos, startDownload);
   },
-  getDownloadItems(p: DownloadTaskPagination): Promise<DownloadTaskResponse> {
+  getDownloadTasks(p: DownloadTaskPagination): Promise<DownloadTaskResponse> {
     return ipcRenderer.invoke(GET_DOWNLOAD_ITEMS, p);
   },
   startDownload(vid: number): Promise<void> {
@@ -124,7 +124,7 @@ const electronApi: ElectronApi = {
   onFavoriteItemContextMenu(id: number): Promise<void> {
     return ipcRenderer.invoke(ON_FAVORITE_ITEM_CONTEXT_MENU, id);
   },
-  deleteDownloadItem(id: number): Promise<void> {
+  deleteDownloadTask(id: number): Promise<void> {
     return ipcRenderer.invoke(DELETE_DOWNLOAD_ITEM, id);
   },
   convertToAudio(id: number): Promise<void> {
@@ -156,7 +156,7 @@ const electronApi: ElectronApi = {
   combineToHomePage(store: BrowserStore): Promise<void> {
     return ipcRenderer.invoke(COMBINE_TO_HOME_PAGE, store);
   },
-  editDownloadItem(video: DownloadTask, startDownload?: boolean): Promise<void> {
+  updateDownloadTask(video: DownloadTask, startDownload?: boolean): Promise<void> {
     return ipcRenderer.invoke(EDIT_DOWNLOAD_ITEM, video, startDownload);
   },
   getLocalIP(): Promise<string> {

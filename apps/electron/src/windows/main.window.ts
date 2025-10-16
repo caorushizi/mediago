@@ -63,7 +63,7 @@ export default class MainWindow extends Window {
 
   onDownloadReadyStart = async ({ id, isLive }: DownloadProgress) => {
     if (isLive) {
-      await this.downloadTaskService.updateIsLive(id, true);
+      await this.downloadTaskService.setIsLive(id, true);
     }
   };
 
@@ -128,7 +128,7 @@ export default class MainWindow extends Window {
 
   onDownloadSuccess = async (id: number) => {
     this.logger.info(`taskId: ${id} success`);
-    await this.downloadTaskService.updateStatus(id, DownloadStatus.Success);
+    await this.downloadTaskService.setStatus(id, DownloadStatus.Success);
     const video = await this.downloadTaskService.findByIdOrFail(id);
 
     const promptTone = this.store.get("promptTone");
@@ -151,7 +151,7 @@ export default class MainWindow extends Window {
 
   onDownloadFailed = async (id: number, err: unknown) => {
     this.logger.info(`taskId: ${id} failed`, err);
-    await this.downloadTaskService.updateStatus(id, DownloadStatus.Failed);
+    await this.downloadTaskService.setStatus(id, DownloadStatus.Failed);
 
     const promptTone = this.store.get("promptTone");
     if (promptTone) {
@@ -165,12 +165,12 @@ export default class MainWindow extends Window {
 
   onDownloadStart = async (id: number) => {
     this.logger.info(`taskId: ${id} start`);
-    await this.downloadTaskService.updateStatus(id, DownloadStatus.Downloading);
+    await this.downloadTaskService.setStatus(id, DownloadStatus.Downloading);
   };
 
   onDownloadStop = async (id: number) => {
     this.logger.info(`taskId: ${id} stopped`);
-    await this.downloadTaskService.updateStatus(id, DownloadStatus.Stopped);
+    await this.downloadTaskService.setStatus(id, DownloadStatus.Stopped);
   };
 
   onDownloadMessage = async (id: number, message: string) => {

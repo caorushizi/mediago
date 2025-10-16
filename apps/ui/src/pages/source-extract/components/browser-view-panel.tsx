@@ -24,7 +24,7 @@ export function BrowserViewPanel() {
     useShallow(setBrowserSelector)
   );
   const { t } = useTranslation();
-  const { showDownloadDialog, addDownloadItems } = useAPI();
+  const { showDownloadDialog, createDownloadTasks } = useAPI();
   const { message } = App.useApp();
 
   const handleClear = useMemoizedFn(() => {
@@ -33,14 +33,14 @@ export function BrowserViewPanel() {
 
   const handleDownloadNow = useMemoizedFn(async (item: SourceData) => {
     try {
-      const downloadItem: Omit<DownloadTask, "id"> = {
+      const downloadTask: Omit<DownloadTask, "id"> = {
         url: item.url,
         name: item.name,
         headers: item.headers,
         type: item.type,
         folder: "",
       };
-      await addDownloadItems([downloadItem], true);
+      await createDownloadTasks([downloadTask], true);
     } catch (e) {
       message.error((e as any).message);
     }

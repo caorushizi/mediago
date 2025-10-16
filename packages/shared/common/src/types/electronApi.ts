@@ -17,14 +17,14 @@ export interface ElectronApi {
   onSelectDownloadDir(): Promise<string>;
   setAppStore(key: keyof AppStore, val: AppStore[keyof AppStore]): Promise<void>;
   openDir(dir?: string): Promise<void>;
-  addDownloadItems(tasks: Omit<DownloadTask, "id">[], startDownload?: boolean): Promise<Video[]>;
-  getDownloadItems(p: DownloadTaskPagination): Promise<DownloadTaskResponse>;
+  createDownloadTasks(tasks: Omit<DownloadTask, "id">[], startDownload?: boolean): Promise<Video[]>;
+  getDownloadTasks(p: DownloadTaskPagination): Promise<DownloadTaskResponse>;
   startDownload(vid: number): Promise<void>;
   openUrl(url: string): Promise<void>;
   stopDownload(id: number): Promise<void>;
   onDownloadListContextMenu(id: number): Promise<void>;
   onFavoriteItemContextMenu(id: number): Promise<void>;
-  deleteDownloadItem(id: number): Promise<void>;
+  deleteDownloadTask(id: number): Promise<void>;
   convertToAudio(id: number): Promise<void>;
   rendererEvent(
     channel: string,
@@ -37,7 +37,7 @@ export interface ElectronApi {
   webviewShow(): Promise<void>;
   webviewUrlContextMenu(): Promise<void>;
   combineToHomePage(store: BrowserStore): Promise<void>;
-  editDownloadItem(task: DownloadTask, startDownload?: boolean): Promise<void>;
+  updateDownloadTask(task: DownloadTask, startDownload?: boolean): Promise<void>;
   getLocalIP(): Promise<string>;
   openBrowser(url: string): Promise<void>;
   selectFile(): Promise<string>;

@@ -233,7 +233,7 @@ export default class HomeController implements Controller {
         payload: id,
       });
     };
-    const item = await this.downloadTaskService.getDownloadTasks({ current: 1, pageSize: 1 }, this.store.get("local"), "");
+    const item = await this.downloadTaskService.list({ current: 1, pageSize: 1 }, this.store.get("local"), "");
     const task = item.list.find((t: any) => t.id === id);
     const template: Array<MenuItemConstructorOptions | MenuItem> = [
       {
@@ -337,7 +337,7 @@ export default class HomeController implements Controller {
 
   @handle(GET_DOWNLOAD_LOG)
   async getDownloadLog(event: IpcMainEvent, id: number) {
-    return await this.downloadTaskService.getDownloadLog(id);
+    return await this.downloadTaskService.getLog(id);
   }
 
   @handle(SELECT_FILE)
@@ -423,7 +423,7 @@ export default class HomeController implements Controller {
 
   @handle(EXPORT_DOWNLOAD_LIST)
   async exportDownloadList() {
-    const txt = await this.downloadTaskService.exportDownloadList();
+    const txt = await this.downloadTaskService.exportList();
     const window = this.mainWindow.window;
     if (!window) return Promise.reject(i18n.t("noMainWindow"));
 
@@ -440,7 +440,7 @@ export default class HomeController implements Controller {
 
   @handle(GET_VIDEO_FOLDERS)
   async getVideoFolders() {
-    return this.downloadTaskService.getTaskFolders();
+    return this.downloadTaskService.listFolders();
   }
 
   @handle(GET_PAGE_TITLE)

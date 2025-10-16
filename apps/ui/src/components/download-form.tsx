@@ -61,7 +61,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(function DownloadF
   const { setLastDownloadTypes, setLastIsBatch } = useConfigStore(useShallow(downloadFormSelector));
   const [folders, setFolders] = useState<Options[]>([]);
   const [videoFolders, setVideoFolders] = useState<string[]>([]);
-  const { addDownloadItems, getVideoFolders } = useAPI();
+  const { createDownloadTasks, getVideoFolders } = useAPI();
   const { addVideosToDocker } = useDockerApi();
 
   useAsyncEffect(async () => {
@@ -119,7 +119,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(function DownloadF
 
     try {
       const tasks = await getFormItems();
-      await addDownloadItems(tasks);
+      await createDownloadTasks(tasks);
       setModalOpen(false);
       tdApp.onEvent(ADD_TO_LIST, { id });
     } catch (e: any) {
@@ -153,7 +153,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(function DownloadF
     }
     try {
       const tasks = await getFormItems();
-      await addDownloadItems(tasks, true);
+      await createDownloadTasks(tasks, true);
       setModalOpen(false);
       tdApp.onEvent(DOWNLOAD_NOW, { id });
     } catch (e: any) {
