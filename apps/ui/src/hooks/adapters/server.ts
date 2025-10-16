@@ -72,10 +72,10 @@ export const webAdapter: ElectronApi = {
   openDir: async () => {
     return defaultResp;
   },
-  addDownloadItems: async (items: Omit<DownloadTask, "id">[], startDownload?: boolean) => {
+  createDownloadTasks: async (items: Omit<DownloadTask, "id">[], startDownload?: boolean) => {
     return api.post(ADD_DOWNLOAD_ITEMS, { videos: items, startDownload });
   },
-  getDownloadItems: async (p: DownloadTaskPagination) => {
+  getDownloadTasks: async (p: DownloadTaskPagination) => {
     return api.post(GET_DOWNLOAD_ITEMS, p);
   },
   startDownload: async (vid: number) => {
@@ -93,7 +93,7 @@ export const webAdapter: ElectronApi = {
   onFavoriteItemContextMenu: async () => {
     return defaultResp;
   },
-  deleteDownloadItem: async (id: number) => {
+  deleteDownloadTask: async (id: number) => {
     return api.post(DELETE_DOWNLOAD_ITEM, { id });
   },
   convertToAudio: async () => {
@@ -120,7 +120,7 @@ export const webAdapter: ElectronApi = {
   combineToHomePage: async () => {
     return defaultResp;
   },
-  editDownloadItem: async (video: DownloadTask, startDownload?: boolean) => {
+  updateDownloadTask: async (video: DownloadTask, startDownload?: boolean) => {
     return api.post(EDIT_DOWNLOAD_ITEM, { video, startDownload });
   },
   getLocalIP: async () => {

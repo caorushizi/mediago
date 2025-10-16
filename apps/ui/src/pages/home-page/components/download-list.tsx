@@ -39,7 +39,7 @@ export function DownloadTaskList({ data, filter, refresh, loading }: Props) {
     removeIpcListener,
     stopDownload,
     onDownloadListContextMenu,
-    deleteDownloadItem,
+    deleteDownloadTask,
   } = useAPI();
   const { message } = App.useApp();
   const { t } = useTranslation();
@@ -127,7 +127,7 @@ export function DownloadTaskList({ data, filter, refresh, loading }: Props) {
       } else if (action === "refresh") {
         refresh();
       } else if (action === "delete") {
-        await deleteDownloadItem(payload);
+        await deleteDownloadTask(payload);
         refresh();
       }
     };
@@ -236,7 +236,7 @@ export function DownloadTaskList({ data, filter, refresh, loading }: Props) {
 
   const onDeleteItems = useMemoizedFn(async (ids: number[]) => {
     for (const id of ids) {
-      await deleteDownloadItem(Number(id));
+      await deleteDownloadTask(Number(id));
     }
     setSelected([]);
     refresh();

@@ -155,7 +155,7 @@ export default class WebviewService {
       if (video) {
         item.name = `${item.name}-${Date.now()}`;
       }
-      const res = await this.downloadTaskService.addDownloadItem(item);
+      const res = await this.downloadTaskService.create(item);
       const mainWebContents = this.mainWindow.window?.webContents;
       if (!mainWebContents) return;
       // This sends a message to the page notifying it of the update

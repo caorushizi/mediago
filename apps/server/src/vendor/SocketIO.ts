@@ -44,7 +44,7 @@ export default class SocketIO implements Vendor {
 
   onDownloadReadyStart = async ({ id, isLive }: DownloadProgress) => {
     if (isLive) {
-      await this.downloadTaskService.updateIsLive(id, true);
+      await this.downloadTaskService.setIsLive(id, true);
     }
   };
 

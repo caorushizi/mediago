@@ -4,7 +4,7 @@ import useSWR from "swr";
 import useAPI from "./use-api";
 
 export function useTasks(filter: DownloadFilter = DownloadFilter.list) {
-  const { getDownloadItems } = useAPI();
+  const { getDownloadTasks } = useAPI();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
 
@@ -18,7 +18,7 @@ export function useTasks(filter: DownloadFilter = DownloadFilter.list) {
       },
     },
     ({ args }) => {
-      return getDownloadItems(args);
+      return getDownloadTasks(args);
     },
   );
 

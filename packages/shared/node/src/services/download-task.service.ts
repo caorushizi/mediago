@@ -34,19 +34,19 @@ export class DownloadTaskService {
     private readonly downloaderServer: DownloaderServer,
   ) {}
 
-  async addDownloadTask(task: Omit<DownloadTask, "id">) {
+  async create(task: Omit<DownloadTask, "id">) {
     return await this.downloadTaskRepository.create(task);
   }
 
-  async addDownloadTasks(tasks: Omit<DownloadTask, "id">[]) {
+  async createMany(tasks: Omit<DownloadTask, "id">[]) {
     return await this.downloadTaskRepository.createMany(tasks);
   }
 
-  async editDownloadTask(task: DownloadTask) {
+  async update(task: DownloadTask) {
     return await this.downloadTaskRepository.update(task.id, task);
   }
 
-  async getDownloadTasks(
+  async list(
     pagination: DownloadTaskPagination,
     localPath: string,
     videoPattern: string,
@@ -72,7 +72,7 @@ export class DownloadTaskService {
     };
   }
 
-  async startDownload(taskId: number, localPath: string, deleteSegments: boolean) {
+  async start(taskId: number, localPath: string, deleteSegments: boolean) {
     const task = await this.downloadTaskRepository.findByIdOrFail(taskId);
     const { name, url, type, folder } = task;
 
@@ -89,34 +89,34 @@ export class DownloadTaskService {
     });
   }
 
-  async stopDownload(id: number) {
+  async stop(id: number) {
     this.downloaderServer.stopTask(id.toString());
   }
 
-  async deleteDownloadTask(id: number) {
+  async remove(id: number) {
     return await this.downloadTaskRepository.delete(id);
   }
 
-  async getDownloadLog(id: number) {
+  async getLog(id: number) {
     const task = await this.downloadTaskRepository.findByIdOrFail(id);
     return task.log || "";
   }
 
-  async getTaskFolders() {
+  async listFolders() {
     return this.downloadTaskRepository.findDistinctFolders();
   }
 
-  async exportDownloadList() {
+  async exportList() {
     const tasks = await this.downloadTaskRepository.findAll("DESC");
     return tasks.map((task) => `${task.url} ${task.name}`).join("\n");
   }
 
   // Status update methods
-  async updateStatus(ids: number | number[], status: DownloadStatus): Promise<void> {
+  async setStatus(ids: number | number[], status: DownloadStatus): Promise<void> {
     await this.downloadTaskRepository.updateStatus(ids, status);
   }
 
-  async updateIsLive(id: number, isLive: boolean = true): Promise<void> {
+  async setIsLive(id: number, isLive: boolean = true): Promise<void> {
     await this.downloadTaskRepository.updateIsLive(id, isLive);
   }
 
@@ -141,41 +141,60 @@ export class DownloadTaskService {
     return await this.downloadTaskRepository.findByUrl(url);
   }
 
-  async findWaitingAndDownloadingTasks() {
+  async findActiveTasks() {
     return await this.downloadTaskRepository.findByStatus([DownloadStatus.Watting, DownloadStatus.Downloading]);
   }
 
-  // Alias method (deprecated, use findWaitingAndDownloadingTasks instead)
+  // Legacy aliases (deprecated)
+  async findWaitingAndDownloadingTasks() {
+    return await this.findActiveTasks();
+  }
+
   async findWaitingAndDownloadingVideos() {
-    return await this.findWaitingAndDownloadingTasks();
+    return await this.findActiveTasks();
   }
 
-  // Alias methods (deprecated)
-  async addDownloadItem(task: Omit<DownloadTask, "id">) {
-    return await this.addDownloadTask(task);
+  async addDownloadTask(task: Omit<DownloadTask, "id">) {
+    return await this.create(task);
   }
 
-  async addDownloadItems(tasks: Omit<DownloadTask, "id">[]) {
-    return await this.addDownloadTasks(tasks);
+  async addDownloadTasks(tasks: Omit<DownloadTask, "id">[]) {
+    return await this.createMany(tasks);
   }
 
-  async getDownloadItems(
+  async editDownloadTask(task: DownloadTask) {
+    return await this.update(task);
+  }
+
+  async getDownloadTasks(
     pagination: DownloadTaskPagination,
     localPath: string,
     videoPattern: string,
   ): Promise<ListPagination> {
-    return await this.getDownloadTasks(pagination, localPath, videoPattern);
+    return await this.list(pagination, localPath, videoPattern);
   }
 
-  async deleteDownloadItem(id: number) {
-    return await this.deleteDownloadTask(id);
+  async startDownload(taskId: number, localPath: string, deleteSegments: boolean) {
+    return await this.start(taskId, localPath, deleteSegments);
   }
 
-  async editDownloadItem(task: DownloadTask) {
-    return await this.editDownloadTask(task);
+  async stopDownload(id: number) {
+    return await this.stop(id);
   }
 
-  async getVideoFolders() {
-    return await this.getTaskFolders();
+  async deleteDownloadTask(id: number) {
+    return await this.remove(id);
+  }
+
+  async getDownloadLog(id: number) {
+    return await this.getLog(id);
+  }
+
+  async getTaskFolders() {
+    return await this.listFolders();
+  }
+
+  async exportDownloadList() {
+    return await this.exportList();
   }
 }
