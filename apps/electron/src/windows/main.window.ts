@@ -1,12 +1,13 @@
 import { provide } from "@inversifyjs/binding-decorators";
 import {
   DOWNLOAD_EVENT_NAME,
-  DownloadTask,
   type DownloadProgress,
+  DownloadProgressEvent,
   DownloadStatus,
-  DownloadSuccessEvent,
+  type DownloadSuccessEvent,
+  type DownloadTask,
 } from "@mediago/shared-common";
-import { DownloaderServer, i18n, DownloadTaskService } from "@mediago/shared-node";
+import { DownloaderServer, DownloadTaskService, i18n } from "@mediago/shared-node";
 import { app, Menu, Notification } from "electron";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
@@ -49,6 +50,7 @@ export default class MainWindow extends Window {
     this.downloaderServer.on("download-success", this.onDownloadSuccess);
     this.downloaderServer.on("download-failed", this.onDownloadFailed);
     this.downloaderServer.on("download-start", this.onDownloadStart);
+    this.downloaderServer.on("download-progress", this.onDownloadProgress);
     // this.taskQueue.on("download-stop", this.onDownloadStop);
     // this.taskQueue.on("download-message", this.onDownloadMessage);
     this.store.onDidAnyChange(this.storeChange);
@@ -59,6 +61,14 @@ export default class MainWindow extends Window {
     if (closeMainWindow) {
       app.quit();
     }
+  };
+
+  onDownloadProgress = async (tasks: DownloadProgress[]) => {
+    const data: DownloadProgressEvent = {
+      type: "progress",
+      data: tasks,
+    };
+    this.send(DOWNLOAD_EVENT_NAME, data);
   };
 
   onDownloadReadyStart = async ({ id, isLive }: DownloadProgress) => {
