@@ -17,7 +17,7 @@
   "devDependencies": {
     "@types/jquery": "^3.5.30",
     "@types/node": "^24.7.2",
-    "typescript": "^5.4.5",
+    "typescript": "^5.9.3",
     "vite": "npm:rolldown-vite@latest"
   }
 }

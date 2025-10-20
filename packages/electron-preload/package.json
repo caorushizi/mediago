@@ -20,7 +20,7 @@
     "electron": "30.0.8",
     "esbuild": "^0.25.10",
     "tsx": "^4.11.0",
-    "typescript": "^5.4.5",
+    "typescript": "^5.9.3",
     "vite": "npm:rolldown-vite@latest"
   },
   "dependencies": {

@@ -27,7 +27,7 @@
     "dotenv-flow": "^4.1.0",
     "rimraf": "^6.0.1",
     "tsx": "^4.20.6",
-    "typescript": "^5.4.5",
+    "typescript": "^5.9.3",
     "vite": "npm:rolldown-vite@latest",
     "vite-plugin-static-copy": "^3.1.3"
   },
