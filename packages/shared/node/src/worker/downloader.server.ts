@@ -1,11 +1,11 @@
 import path from "node:path";
 import { EventEmitter } from "node:stream";
 import { provide } from "@inversifyjs/binding-decorators";
+import { ServiceRunner } from "@mediago/service-runner";
 import { type DownloadProgress, type DownloadType, safeParseJSON } from "@mediago/shared-common";
 import axios from "axios";
 import { EventSource } from "eventsource";
 import { injectable } from "inversify";
-import { findFreePort, getLocalIP, ServiceRunner } from "../utils";
 
 export interface DownloadTaskOptions {
   deleteSegments: boolean;
@@ -27,35 +27,34 @@ export interface ChangeConfigOptions {
 @injectable()
 @provide()
 export class DownloaderServer extends EventEmitter {
-  private port = 0;
-  private host = "";
+  private serverUrl = "";
 
   async start() {
-    this.port = await findFreePort({ startPort: 9991 });
-    this.host = await getLocalIP();
-
     const binaryUrl = require.resolve("@mediago/core");
     const binDir = path.dirname(binaryUrl);
-    console.log("Downloader server binary dir:", path.resolve(binDir, "files/configs/download_schemas.json"));
 
     const runner = new ServiceRunner({
-      binName: "files/mediago-core",
-      devDir: binDir,
-      extraArgs: ["-port", this.port.toString()],
+      executableName: "mediago-core",
+      executableDir: path.resolve(binDir, "files"),
+      preferredPort: 9900,
+      internal: true,
+      extraArgs: [],
       extraEnv: {
         MEDIAGO_M3U8_BIN: path.resolve(binDir, "files/bin/N_m3u8DL-RE"),
         MEDIAGO_BILIBILI_BIN: path.resolve(binDir, "files/bin/BBDown"),
         MEDIAGO_DIRECT_BIN: path.resolve(binDir, "files/bin/gopeed"),
         MEDIAGO_SCHEMA_PATH: path.resolve(binDir, "files/configs/download_schemas.json"),
       },
-      host: this.host,
-      port: this.port,
     });
 
-    runner.start();
+    await runner.start();
+
+    this.serverUrl = runner.getURL();
+
+    console.log("Downloader server started on port:", runner.getURL());
 
     // 1. 订阅 SSE 接收状态变更
-    const eventSource = new EventSource(`http://localhost:${this.port}/api/events`);
+    const eventSource = new EventSource(`${this.serverUrl}/api/events`);
 
     eventSource.addEventListener("download-start", (e: any) => {
       const data = safeParseJSON(e.data, { id: 0 });
@@ -76,7 +75,7 @@ export class DownloaderServer extends EventEmitter {
     // FIXME: 需要优化性能
     const startPolling = () => {
       setInterval(async () => {
-        const { data } = await axios.get(`http://localhost:${this.port}/api/tasks/`);
+        const { data } = await axios.get(`${this.serverUrl}/api/tasks/`);
 
         const taskList = (data.tasks || []).filter((task: any) => {
           return task.percent > 0 && task.percent < 100;
@@ -102,17 +101,17 @@ export class DownloaderServer extends EventEmitter {
   }
 
   async startTask(opts: DownloadTaskOptions) {
-    const url = `http://${this.host}:${this.port}/api/tasks`;
+    const url = `${this.serverUrl}/api/tasks`;
     await axios.post(url, opts);
   }
 
   async stopTask(id: string) {
-    const url = `http://${this.host}:${this.port}/api/tasks/${id}/stop`;
+    const url = `${this.serverUrl}/api/tasks/${id}/stop`;
     await axios.post(url);
   }
 
   async changeConfig(opts: ChangeConfigOptions) {
-    const url = `http://${this.host}:${this.port}/api/config`;
+    const url = `${this.serverUrl}/api/config`;
     await axios.post(url, opts);
   }
 }
