@@ -1,6 +1,5 @@
 import os from "node:os";
 import { MEDIAGO_EVENT, MEDIAGO_METHOD } from "@mediago/shared-common";
-import portfinder, { type PortFinderOptions } from "portfinder";
 
 export type { ControllerHandlerBinder, ControllerHandlerRegistration } from "./registerControllerHandlers";
 export { registerControllerHandlers } from "./registerControllerHandlers";
@@ -11,7 +10,6 @@ export const handle = (route: string) => {
   };
 };
 
-export { ServiceRunner } from "./service-runner";
 
 export function getLocalIP() {
   const nets = os.networkInterfaces();
@@ -26,6 +24,3 @@ export function getLocalIP() {
   return "127.0.0.1";
 }
 
-export const findFreePort = async (opts: PortFinderOptions): Promise<number> => {
-  return portfinder.getPortPromise(opts);
-};
