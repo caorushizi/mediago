@@ -51,8 +51,6 @@ export class DownloaderServer extends EventEmitter {
 
     this.serverUrl = runner.getURL();
 
-    console.log("Downloader server started on port:", runner.getURL());
-
     // 1. 订阅 SSE 接收状态变更
     const eventSource = new EventSource(`${this.serverUrl}/api/events`);
 

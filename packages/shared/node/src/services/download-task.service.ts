@@ -6,6 +6,7 @@ import { glob } from "glob";
 import { inject, injectable } from "inversify";
 import DownloadTaskRepository from "../dao/repository/download-task.repository";
 import { DownloaderServer } from "../worker";
+import { videoPattern } from "../utils";
 
 /**
  * Download Task Service (Business Logic Layer)
@@ -46,19 +47,17 @@ export class DownloadTaskService {
     return await this.downloadTaskRepository.update(task.id, task);
   }
 
-  async list(
-    pagination: DownloadTaskPagination,
-    localPath: string,
-    videoPattern: string,
-  ): Promise<ListPagination> {
+  async list(pagination: DownloadTaskPagination, localPath: string): Promise<ListPagination> {
     const result = await this.downloadTaskRepository.findWithPagination(pagination);
 
     const list = await Promise.all(
       result.items.map(async (task) => {
         const taskWithFile = { ...task, exists: false, file: undefined as string | undefined };
         if (task.status === DownloadStatus.Success) {
-          const pattern = path.join(localPath, `${task.name}.{${videoPattern}}`);
-          const files = await glob(pattern);
+          const pattern = `${task.name}.{${videoPattern}}`;
+          const files = await glob(pattern, {
+            cwd: localPath,
+          });
           taskWithFile.exists = files.length > 0;
           taskWithFile.file = files[0];
         }
@@ -166,12 +165,8 @@ export class DownloadTaskService {
     return await this.update(task);
   }
 
-  async getDownloadTasks(
-    pagination: DownloadTaskPagination,
-    localPath: string,
-    videoPattern: string,
-  ): Promise<ListPagination> {
-    return await this.list(pagination, localPath, videoPattern);
+  async getDownloadTasks(pagination: DownloadTaskPagination, localPath: string): Promise<ListPagination> {
+    return await this.list(pagination, localPath);
   }
 
   async startDownload(taskId: number, localPath: string, deleteSegments: boolean) {

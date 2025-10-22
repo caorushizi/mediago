@@ -157,7 +157,7 @@ export const frontendEn = {
   pleaseInputVideoFolder: "Please input video folder",
   confirmChange: "Confirm Change",
   createdAt: "Created at",
-  direct: "Direct",
+  direct: "MP4 Download",
   enableDocker: "Enable Docker",
   addToDocker: "Add to Docker",
   addToDockerSuccess: "Add to Docker Success",

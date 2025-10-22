@@ -6,12 +6,8 @@ import { injectable } from "inversify";
 @injectable()
 @provide()
 export class VideoServer {
-
-
   async start({ local }: { local: string }) {
     const binaryUrl = require.resolve("@mediago/player");
-
-    console.log('path.resolve(path.dirname(binaryUrl), "bin")', path.resolve(path.dirname(binaryUrl), "bin"))
 
     const runner = new ServiceRunner({
       executableDir: path.resolve(path.dirname(binaryUrl), "bin"),
@@ -22,7 +18,5 @@ export class VideoServer {
     });
 
     await runner.start();
-
-    console.log("Video server started successfully.", runner.getURL());
   }
 }

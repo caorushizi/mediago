@@ -1,4 +1,5 @@
-import { useDebounce, useMemoizedFn } from "ahooks";
+import type { DownloadTask } from "@mediago/shared-common";
+import { useMemoizedFn } from "ahooks";
 import { App, Empty } from "antd";
 import { produce } from "immer";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
@@ -7,11 +8,11 @@ import DownloadForm, { type DownloadFormRef } from "@/components/download-form";
 import Loading from "@/components/loading";
 import { EDIT_DOWNLOAD } from "@/const";
 import useAPI from "@/hooks/use-api";
-import { type DownloadFilter, DownloadStatus } from "@/types";
+import { useTasks } from "@/hooks/use-tasks";
+import type { DownloadFilter, DownloadStatus } from "@/types";
 import { cn, tdApp } from "@/utils";
 import { DownloadTaskItem } from "./download-item";
 import { ListHeader } from "./list-header";
-import { DownloadTaskDetails, useTasks } from "@/hooks/use-tasks";
 
 interface DownloadState {
   [key: number]: {
@@ -26,12 +27,10 @@ interface DownloadState {
 }
 
 interface Props {
-  data: DownloadTaskDetails[];
   filter: DownloadFilter;
-  loading: boolean;
 }
 
-export function DownloadTaskList({ data, filter, loading }: Props) {
+export function DownloadTaskList({ filter }: Props) {
   const [selected, setSelected] = useState<number[]>([]);
   const {
     startDownload,
@@ -47,19 +46,17 @@ export function DownloadTaskList({ data, filter, loading }: Props) {
   const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [hasInitialLoaded, setHasInitialLoaded] = useState(false); // 追踪是否已完成首次加载
   const downloadListId = useId();
-  const { mutate } = useTasks();
+  const { mutate, isLoading, data } = useTasks(filter);
 
   // 追踪首次加载完成
   useEffect(() => {
-    if (!loading && !hasInitialLoaded && data.length >= 0) {
+    if (!isLoading && !hasInitialLoaded && data.length >= 0) {
       setHasInitialLoaded(true);
     }
-  }, [loading, hasInitialLoaded, data.length]);
+  }, [isLoading, hasInitialLoaded, data.length]);
 
   useEffect(() => {
-    const onDownloadStateUpdate = (_e: unknown, state: DownloadState) => {
-      console.log("onDownloadStateUpdate", state);
-    };
+    const onDownloadStateUpdate = (_e: unknown, state: DownloadState) => {};
 
     const onDownloadMenuEvent = async (_e: unknown, params: { action: string; payload: number }) => {
       const { action, payload } = params;
@@ -193,7 +190,7 @@ export function DownloadTaskList({ data, filter, loading }: Props) {
   });
 
   // 只有在非首次加载或首次加载完成后，且确实没有数据时才显示空状态
-  if (data.length === 0 && (hasInitialLoaded || !loading)) {
+  if (data.length === 0 && (hasInitialLoaded || !isLoading)) {
     return (
       <div className="flex h-full flex-1 flex-row items-center justify-center rounded-lg bg-white dark:bg-[#1F2024]">
         <Empty />
@@ -212,7 +209,7 @@ export function DownloadTaskList({ data, filter, loading }: Props) {
         onCancelItems={onCancelItems}
         filter={filter}
       />
-      {loading && !hasInitialLoaded && data.length === 0 && <Loading />}
+      {isLoading && !hasInitialLoaded && data.length === 0 && <Loading />}
       <div className={cn("flex w-full flex-1 shrink-0 flex-col gap-3 overflow-auto")}>
         {data.map((task) => {
           return (

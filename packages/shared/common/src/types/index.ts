@@ -13,7 +13,8 @@ export interface DownloadTask {
   status?: DownloadStatus;
   folder?: string;
   isLive?: boolean;
-  createdDate?: string;
+  log?: string;
+  createdDate?: Date;
 }
 
 export enum DownloadFilter {
@@ -34,7 +35,7 @@ export interface ConversionPagination {
 
 export interface DownloadTaskResponse {
   total: number;
-  list: DownloadTask[];
+  list: DownloadTaskWithFile[];
 }
 
 export interface ConversionResponse {
@@ -83,7 +84,7 @@ export interface DownloadParams {
   folder?: string;
 }
 
-export interface DownloadTaskWithFile extends Video {
+export interface DownloadTaskWithFile extends DownloadTask {
   exists?: boolean;
   file?: string;
 }
