@@ -1,4 +1,5 @@
 import { PauseCircleOutlined, PlayCircleOutlined } from "@ant-design/icons";
+import type { DownloadTask, DownloadTaskWithFile } from "@mediago/shared-common";
 import { useMemoizedFn } from "ahooks";
 import { Progress } from "antd";
 import { type ReactNode, useMemo } from "react";
@@ -15,6 +16,7 @@ import { appStoreSelector, useAppStore } from "@/store/app";
 import { DownloadStatus } from "@/types";
 import { cn, fromatDateTime, tdApp } from "@/utils";
 import { TerminalDrawer } from "./terminal-drawer";
+import useAPI from "@/hooks/use-api";
 
 interface Props {
   task: DownloadTaskDetails;
@@ -39,11 +41,13 @@ export const DownloadTaskItem = ({
 }: Props) => {
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
+  const { openUrl } = useAPI();
 
   // Handlers
   const handlePlay = useMemoizedFn(() => {
     // FIXME: 播放器接入
     tdApp.onEvent(PLAY_VIDEO);
+    openUrl("http://localhost:9800/");
   });
 
   const startWithEvent = useMemoizedFn((eventName: string) => {
@@ -255,6 +259,3 @@ export const DownloadTaskItem = ({
     </div>
   );
 };
-
-// Legacy export for backward compatibility
-export const DownloadTask = DownloadTaskItem;

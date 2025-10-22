@@ -156,7 +156,7 @@ export const frontendZh = {
   pleaseInputVideoFolder: "请输入视频文件夹",
   confirmChange: "确认更改",
   createdAt: "创建于",
-  direct: "直接下载",
+  direct: "MP4下载",
   enableDocker: "启用 Docker",
   addToDocker: "添加到 Docker",
   addToDockerSuccess: "添加到 Docker 成功",

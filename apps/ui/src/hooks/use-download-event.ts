@@ -32,7 +32,6 @@ export function useDownloadEvent() {
         mutate(newState);
       }
       if (isProgressEvent(eventData)) {
-        console.log("Progress Event", eventData.data);
         const eventDataMap = new Map(eventData.data.map((item) => [String(item.id), item]));
 
         const newState = produce({ list: data, total }, (draft) => {
