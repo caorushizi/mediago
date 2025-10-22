@@ -1,5 +1,5 @@
 import { QrcodeOutlined } from "@ant-design/icons";
-import { DOWNLOAD_EVENT_NAME, DownloadEvent, type DownloadSuccessEvent } from "@mediago/shared-common";
+import { DOWNLOAD_EVENT_NAME, DownloadEvent, DownloadTask, type DownloadSuccessEvent } from "@mediago/shared-common";
 import { useMemoizedFn, useMount } from "ahooks";
 import { Pagination, Popover, QRCode } from "antd";
 import { produce } from "immer";
@@ -35,7 +35,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   const homeId = useId();
   const { lastIsBatch, lastDownloadTypes } = useConfigStore(useShallow(downloadFormSelector));
   const location = useLocation();
-  const { data, isLoading, pagination, total, mutate } = useTasks(filter);
+  const { pagination, total, mutate } = useTasks(filter);
   useDownloadEvent();
 
   useEffect(() => {
@@ -153,7 +153,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       }
       className="bg-white p-3 dark:bg-[#1F2024] flex flex-col flex-1 h-full rounded-lg gap-3"
     >
-      <DownloadList loading={isLoading} data={data} filter={filter} />
+      <DownloadList filter={filter} />
 
       <Pagination
         className="flex justify-end"

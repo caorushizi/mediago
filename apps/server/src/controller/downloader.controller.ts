@@ -32,7 +32,13 @@ export default class DownloadController implements Controller {
   ) {}
 
   @handle(ADD_DOWNLOAD_ITEMS)
-  async createDownloadTasks({ videos, startDownload }: { videos: Omit<DownloadTask, "id">[]; startDownload?: boolean }) {
+  async createDownloadTasks({
+    videos,
+    startDownload,
+  }: {
+    videos: Omit<DownloadTask, "id">[];
+    startDownload?: boolean;
+  }) {
     const items = await this.downloadService.createMany(videos);
 
     this.socket.refreshList();
@@ -52,7 +58,7 @@ export default class DownloadController implements Controller {
   @handle(GET_DOWNLOAD_ITEMS)
   async getDownloadTasks(pagination: DownloadTaskPagination) {
     const local = await this.store.get("local");
-    return await this.downloadService.list(pagination, local, "mp4,mkv,avi,mov,wmv,flv,webm,m4v");
+    return await this.downloadService.list(pagination, local);
   }
 
   @handle(START_DOWNLOAD)

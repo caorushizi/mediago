@@ -6,19 +6,6 @@ declare interface EnvPath {
   local: string;
 }
 
-declare interface DownloadTask {
-  id: number;
-  type: DownloadType;
-  name: string;
-  url: string;
-  headers?: string;
-  status?: DownloadStatus;
-  isLive?: boolean;
-  log?: string;
-  folder?: string;
-  createdDate?: string;
-}
-
 declare interface DownloadTaskResponse {
   total: number;
   list: DownloadTask[];
@@ -110,11 +97,6 @@ declare interface DownloadProgress {
 
 interface ObjectConstructor {
   keys<T>(o: T): (keyof T)[];
-}
-
-interface DownloadTaskWithFile extends DownloadTask {
-  exists?: boolean;
-  file?: string;
 }
 
 interface ListPagination {

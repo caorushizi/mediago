@@ -15,7 +15,6 @@ import {
 import { DownloadTaskService, handle, TYPES } from "@mediago/shared-node";
 import type { IpcMainEvent } from "electron/main";
 import { inject, injectable } from "inversify";
-import { videoPattern } from "../helper/index";
 import WebviewService from "../services/webview.service";
 import ElectronStore from "../vendor/ElectronStore";
 import MainWindow from "../windows/main.window";
@@ -75,7 +74,7 @@ export default class DownloadController implements Controller {
   @handle(GET_DOWNLOAD_ITEMS)
   async getDownloadTasks(e: IpcMainEvent, pagination: DownloadTaskPagination): Promise<ListPagination> {
     const local = this.store.get("local");
-    return await this.downloadTaskService.list(pagination, local, videoPattern);
+    return await this.downloadTaskService.list(pagination, local);
   }
 
   @handle(START_DOWNLOAD)

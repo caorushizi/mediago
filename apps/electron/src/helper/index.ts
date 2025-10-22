@@ -78,28 +78,6 @@ export function fileExists(path: string): Promise<boolean> {
     .catch(() => false);
 }
 
-export const videoType = [
-  "mp4",
-  "flv",
-  "avi",
-  "rmvb",
-  "wmv",
-  "mov",
-  "mkv",
-  "webm",
-  "mpeg",
-  "mpg",
-  "m4v",
-  "3gp",
-  "3g2",
-  "f4v",
-  "f4p",
-  "f4a",
-  "f4b",
-];
-
-export const videoPattern = videoType.join(",");
-
 export const convertToAudio = async (input: string, output: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     const ffmpeg = spawn(ffmpegPath, ["-y", "-v", "error", "-i", input, "-acodec", "mp3", "-format", "mp3", output]);

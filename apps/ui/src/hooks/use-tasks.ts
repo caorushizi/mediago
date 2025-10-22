@@ -1,9 +1,9 @@
-import { DownloadFilter } from "@mediago/shared-common";
+import { DownloadFilter, type DownloadTask } from "@mediago/shared-common";
 import { useMemo, useState } from "react";
 import useSWR from "swr";
-import useAPI from "./use-api";
-import { downloadStoreSelector, useDownloadStore } from "@/store/download";
 import { useShallow } from "zustand/react/shallow";
+import { downloadStoreSelector, useDownloadStore } from "@/store/download";
+import useAPI from "./use-api";
 
 /**
  * Extended Download Task with real-time details
@@ -14,7 +14,9 @@ export interface DownloadTaskDetails extends DownloadTask {
   // Current download speed
   speed: string;
   // Whether the downloaded file still exists
-  exists: boolean;
+  exists?: boolean;
+  // Local file path
+  file?: string;
 }
 
 export function useTasks(filter: DownloadFilter = DownloadFilter.list) {
@@ -38,17 +40,14 @@ export function useTasks(filter: DownloadFilter = DownloadFilter.list) {
   );
 
   const detail: DownloadTaskDetails[] = useMemo(() => {
-    console.log("useTasks detail", eventsMap, data);
     return (data?.list || []).map((item) => {
       const evnetItem = eventsMap.get(String(item.id));
-      console.log("Mapping item", item.id, evnetItem, eventsMap);
 
       if (!evnetItem) {
         return {
           ...item,
           percent: "0",
           speed: "0 B/s",
-          exists: false,
         };
       }
 
@@ -56,7 +55,6 @@ export function useTasks(filter: DownloadFilter = DownloadFilter.list) {
         ...item,
         percent: evnetItem.percent || "0",
         speed: evnetItem.speed || "0 B/s",
-        exists: false,
       };
     });
   }, [data, eventsMap]);
