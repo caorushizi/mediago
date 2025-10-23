@@ -1,14 +1,13 @@
-import { createInstance, type InitOptions, type Resource } from "i18next";
-import LanguageDetector from "i18next-browser-languagedetector";
-import { initReactI18next } from "react-i18next";
-
 import {
   BASE_I18N_OPTIONS,
   DEFAULT_FRONTEND_APP,
-  SUPPORTED_LANGUAGES,
   type FrontendApp,
   i18nResources,
+  SUPPORTED_LANGUAGES,
 } from "@mediago/shared-common";
+import { createInstance, i18n, type InitOptions, type Resource } from "i18next";
+import LanguageDetector from "i18next-browser-languagedetector";
+import { initReactI18next } from "react-i18next";
 
 export interface BrowserResourceOptions {
   includeBackend?: boolean;
@@ -23,9 +22,7 @@ const buildTranslationBundle = (
   app: FrontendApp,
   { includeBackend = true }: BrowserResourceOptions,
 ) => {
-  const translation: Record<string, string> = includeBackend
-    ? { ...i18nResources.backend[language] }
-    : {};
+  const translation: Record<string, string> = includeBackend ? { ...i18nResources.backend[language] } : {};
 
   Object.assign(translation, i18nResources.frontend[app][language]);
 
@@ -45,10 +42,10 @@ export const buildBrowserResources = (
   }, {} as Resource);
 };
 
-export const createBrowserI18n = (
+export function createBrowserI18n(
   app: FrontendApp = DEFAULT_FRONTEND_APP,
   { debug = false, includeBackend = true }: CreateBrowserI18nOptions = {},
-) => {
+): i18n {
   const instance = createInstance();
 
   instance.use(LanguageDetector).use(initReactI18next);
@@ -62,4 +59,4 @@ export const createBrowserI18n = (
   } satisfies InitOptions);
 
   return instance;
-};
+}

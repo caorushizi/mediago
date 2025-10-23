@@ -4,10 +4,8 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev:electron": "vite",
-    "dev:server": "cross-env APP_TARGET=server vite --port 8557",
-    "build:electron": "vite build",
-    "build:server": "cross-env APP_TARGET=server vite build",
+    "dev": "vite",
+    "build": "vite build",
     "report": "vite-bundle-visualizer",
     "lint": "biome check ."
   },

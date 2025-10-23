@@ -2,13 +2,14 @@
   "name": "@mediago/electron-preload",
   "version": "0.1.0",
   "type": "module",
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./build/index.js"
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
   },
   "scripts": {
-    "dev": "vite build --watch",
+    "dev": "tsdown --watch ./src",
     "build": "vite build",
     "lint": "biome check ."
   },
@@ -19,6 +20,7 @@
     "@types/node": "^24.7.2",
     "electron": "30.0.8",
     "esbuild": "^0.25.10",
+    "tsdown": "^0.15.9",
     "tsx": "^4.11.0",
     "typescript": "^5.4.5",
     "vite": "npm:rolldown-vite@latest"
@@ -26,5 +28,6 @@
   "dependencies": {
     "@mediago/shared-common": "workspace:*",
     "@mediago/shared-node": "workspace:*"
-  }
+  },
+  "module": "./dist/index.js"
 }
