@@ -1,5 +1,5 @@
 import path from "node:path";
-import { EventEmitter } from "node:stream";
+import { EventEmitter } from "node:events";
 import { provide } from "@inversifyjs/binding-decorators";
 import { ServiceRunner } from "@mediago/service-runner";
 import { type DownloadProgress, type DownloadType, safeParseJSON } from "@mediago/shared-common";

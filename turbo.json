@@ -10,9 +10,19 @@
         "dev:electron"
       ]
     },
-    "dev:server": {
+    "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "dependsOn": [
+        "^build"
+      ]
+    },
+    "build": {
+      "cache": true,
+      "persistent": false,
+      "outputs": [
+        "build/*"
+      ]
     },
     "dev:electron": {
       "cache": false,
@@ -23,7 +33,6 @@
       ]
     },
     "@mediago/electron-preload#dev": {
-      "persistent": true,
       "outputs": [
         "build/**"
       ]

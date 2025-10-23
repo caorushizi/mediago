@@ -2,8 +2,16 @@
   "name": "@mediago/shared-node",
   "version": "1.0.0",
   "type": "module",
-  "main": "./src/index.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
   "scripts": {
+    "dev": "tsdown --watch ./src",
+    "build": "tsdown",
     "types": "tsc --noEmit"
   },
   "keywords": [],
@@ -24,6 +32,10 @@
   },
   "devDependencies": {
     "@types/node": "^24.7.2",
+    "tsdown": "^0.15.9",
     "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   }
 }
