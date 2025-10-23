@@ -8,6 +8,6 @@ export default defineConfig({
   platform: "node",
   outDir: "build",
   format: "cjs",
-  noExternal: () => true,
+  noExternal: ["@mediago/shared-node", "@mediago/shared-common"],
   external: ["electron"],
 });

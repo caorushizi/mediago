@@ -5,5 +5,6 @@ export default defineConfig({
   dts: {
     tsgo: true,
   },
+  outDir: "build",
   platform: "browser",
 });

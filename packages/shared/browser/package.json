@@ -2,9 +2,9 @@
   "name": "@mediago/shared-browser",
   "version": "1.0.0",
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./build/index.js",
   "exports": {
-    ".": "./dist/index.js",
+    ".": "./build/index.js",
     "./package.json": "./package.json"
   },
   "scripts": {
@@ -26,6 +26,6 @@
     "@typescript/native-preview": "7.0.0-dev.20251023.1",
     "tsdown": "^0.15.9"
   },
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts"
+  "module": "./build/index.js",
+  "types": "./build/index.d.ts"
 }

@@ -5,7 +5,7 @@
   "main": "main/index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development tsdown --watch ./src",
-    "build": "cross-env NODE_ENV=production tsdown build",
+    "build": "cross-env NODE_ENV=production tsdown",
     "pack:electron": "cross-env NODE_ENV=production tsx scripts/build.ts --dir",
     "release:electron": "cross-env NODE_ENV=production tsx scripts/build.ts",
     "clean:electron": "rimraf app/build && rimraf release",
