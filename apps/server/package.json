@@ -6,10 +6,9 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development tsdown --watch src",
     "build": "tsdown",
-    "pack:server": "tsx scripts/build.ts",
-    "release:server": "pnpm docker:build",
-    "clean:server": "rimraf .mediago-server",
-    "docker:build": "docker build -t mediago-server .",
+    "pack": "tsx scripts/build.ts",
+    "release": "docker build -t mediago-server .",
+    "clean": "rimraf .mediago-server",
     "lint": "biome check ."
   },
   "author": "",
