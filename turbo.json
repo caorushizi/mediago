@@ -5,17 +5,10 @@
     "APP_TARGET"
   ],
   "tasks": {
-    "dev:all": {
-      "cache": false,
-      "persistent": true,
-      "with": [
-        "dev:server",
-        "dev:electron"
-      ]
-    },
     "dev": {
       "cache": false,
       "persistent": true,
+      "interruptible": true,
       "dependsOn": [
         "^build"
       ]
@@ -25,37 +18,6 @@
       "persistent": false,
       "outputs": [
         "build/*"
-      ]
-    },
-    "dev:electron": {
-      "cache": false,
-      "persistent": true,
-      "with": [
-        "@mediago/electron-preload#dev",
-        "@mediago/browser-extension#dev"
-      ]
-    },
-    "build:all": {
-      "cache": true,
-      "with": [
-        "build:server",
-        "build:electron"
-      ]
-    },
-    "build:server": {
-      "cache": true,
-      "outputs": [
-        "build/**"
-      ]
-    },
-    "build:electron": {
-      "cache": true,
-      "outputs": [
-        "build/**"
-      ],
-      "dependsOn": [
-        "@mediago/electron-preload#build",
-        "@mediago/browser-extension#build"
       ]
     },
     "pack:server": {

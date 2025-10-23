@@ -6,4 +6,6 @@ export default defineConfig({
     tsgo: true,
   },
   platform: "browser",
+  outDir: "build",
+  noExternal: () => true,
 });

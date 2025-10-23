@@ -9,8 +9,8 @@
   "packageManager": "pnpm@10.15.0",
   "scripts": {
     "knip": "knip",
-    "dev:electron": "cross-env APP_TARGET=app turbo run dev --filter=@mediago/electron --filter=@mediago/ui",
-    "dev:server": "cross-env APP_TARGET=server turbo run dev --filter=@mediago/server --filter=@mediago/ui",
+    "dev:electron": "cross-env APP_TARGET=app turbo watch dev --filter=@mediago/electron --filter=@mediago/ui",
+    "dev:server": "cross-env APP_TARGET=server turbo watch dev --filter=@mediago/server --filter=@mediago/ui",
     "dev": "turbo run dev:all",
     "build:electron": "turbo run build:electron",
     "build:server": "turbo run build:server",
@@ -31,9 +31,9 @@
   "devDependencies": {
     "@biomejs/biome": "^2.2.2",
     "@types/node": "^24.7.0",
+    "@typescript/native-preview": "7.0.0-dev.20251023.1",
     "cross-env": "^10.1.0",
     "knip": "^5.64.2",
-    "turbo": "^2.5.8",
-    "typescript": "^5.9.3"
+    "turbo": "^2.5.8"
   }
 }

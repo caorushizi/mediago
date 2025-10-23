@@ -19,6 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "@inversifyjs/binding-decorators": "^1.1.3",
+    "@mediago/core": "0.0.6",
     "@mediago/player": "0.0.7",
     "@mediago/service-runner": "^0.0.1",
     "@mediago/shared-common": "workspace:*",
@@ -32,8 +33,8 @@
   },
   "devDependencies": {
     "@types/node": "^24.7.2",
-    "tsdown": "^0.15.9",
-    "typescript": "^5.4.5"
+    "@typescript/native-preview": "7.0.0-dev.20251023.1",
+    "tsdown": "^0.15.9"
   },
   "engines": {
     "node": ">=20.0.0"
