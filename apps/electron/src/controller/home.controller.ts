@@ -233,8 +233,9 @@ export default class HomeController implements Controller {
         payload: id,
       });
     };
-    const item = await this.downloadTaskService.list({ current: 1, pageSize: 1 }, this.store.get("local"), "");
+    const item = await this.downloadTaskService.list({ current: 1, pageSize: 1, filter: "" }, this.store.get("local"));
     const task = item.list.find((t: any) => t.id === id);
+    console.log("task", task);
     const template: Array<MenuItemConstructorOptions | MenuItem> = [
       {
         label: i18n.t("copyLinkAddress"),
@@ -250,6 +251,7 @@ export default class HomeController implements Controller {
       },
       {
         label: i18n.t("download"),
+        visible: task?.status !== DownloadStatus.Success,
         click: () => {
           send("download");
         },
