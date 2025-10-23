@@ -1,6 +1,9 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
+  "globalEnv": [
+    "APP_TARGET"
+  ],
   "tasks": {
     "dev:all": {
       "cache": false,
@@ -32,15 +35,6 @@
         "@mediago/browser-extension#dev"
       ]
     },
-    "@mediago/electron-preload#dev": {
-      "outputs": [
-        "build/**"
-      ]
-    },
-    "@mediago/browser-extension#dev": {
-      "persistent": true,
-      "cache": false
-    },
     "build:all": {
       "cache": true,
       "with": [
@@ -62,16 +56,6 @@
       "dependsOn": [
         "@mediago/electron-preload#build",
         "@mediago/browser-extension#build"
-      ]
-    },
-    "@mediago/electron-preload#build": {
-      "outputs": [
-        "build/**"
-      ]
-    },
-    "@mediago/browser-extension#build": {
-      "outputs": [
-        "build/**"
       ]
     },
     "pack:server": {

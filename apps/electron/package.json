@@ -4,8 +4,8 @@
   "type": "module",
   "main": "main/index.js",
   "scripts": {
-    "dev:electron": "cross-env NODE_ENV=development vite build --watch --mode development",
-    "build:electron": "cross-env NODE_ENV=production vite build",
+    "dev": "cross-env NODE_ENV=development tsdown --watch ./src",
+    "build": "cross-env NODE_ENV=production vite build",
     "pack:electron": "cross-env NODE_ENV=production tsx scripts/build.ts --dir",
     "release:electron": "cross-env NODE_ENV=production tsx scripts/build.ts",
     "clean:electron": "rimraf app/build && rimraf release",
@@ -17,7 +17,6 @@
   "devDependencies": {
     "@electron/rebuild": "^3.6.0",
     "@types/electron-devtools-installer": "^4.0.0",
-    "@types/fs-extra": "^11.0.4",
     "@types/lodash": "^4.17.4",
     "@types/mime-types": "^3.0.1",
     "@types/node": "^24.7.2",
@@ -49,7 +48,6 @@
     "electron-is-dev": "^3.0.1",
     "electron-log": "^5.1.5",
     "electron-store": "^11.0.2",
-    "fs-extra": "^11.2.0",
     "inversify": "^7.9.1",
     "lodash": "^4.17.21",
     "lru-cache": "^11.0.1",

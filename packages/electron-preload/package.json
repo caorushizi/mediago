@@ -10,7 +10,7 @@
   },
   "scripts": {
     "dev": "tsdown --watch ./src",
-    "build": "vite build",
+    "build": "tsdown",
     "lint": "biome check ."
   },
   "files": [
