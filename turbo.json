@@ -7,15 +7,16 @@
   "tasks": {
     "dev": {
       "cache": false,
-      "dependsOn": [
-        "^build"
-      ]
+      "persistent": true
     },
     "build": {
       "cache": true,
       "persistent": false,
       "outputs": [
-        "build/*"
+        "build"
+      ],
+      "dependsOn": [
+        "^build"
       ]
     },
     "pack:server": {

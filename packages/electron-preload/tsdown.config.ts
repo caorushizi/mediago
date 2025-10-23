@@ -5,7 +5,7 @@ export default defineConfig({
   dts: {
     tsgo: true,
   },
-  platform: "node",
+  platform: "browser",
   outDir: "build",
   format: "cjs",
   noExternal: ["@mediago/shared-node", "@mediago/shared-common"],
