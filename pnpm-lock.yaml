@@ -547,9 +547,6 @@ importers:
       tsdown:
         specifier: ^0.15.9
         version: 0.15.9(@typescript/native-preview@7.0.0-dev.20251023.1)(oxc-resolver@11.9.0)(typescript@5.9.3)
-      typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
 
   packages/shared/node:
     dependencies:
