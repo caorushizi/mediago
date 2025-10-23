@@ -2,12 +2,7 @@ import { provide } from "@inversifyjs/binding-decorators";
 import { inject, injectable } from "inversify";
 import { In, Not, Repository } from "typeorm";
 import { i18n } from "../../i18n";
-import {
-  DownloadFilter,
-  type DownloadTask,
-  type DownloadTaskPagination,
-  DownloadStatus,
-} from "@mediago/shared-common";
+import { DownloadFilter, type DownloadTask, type DownloadTaskPagination, DownloadStatus } from "@mediago/shared-common";
 import TypeORM from "../../vendor/TypeORM";
 import { Video } from "../entity/video.entity";
 
@@ -108,15 +103,26 @@ export default class DownloadTaskRepository {
   }
 
   async findWithPagination(pagination: DownloadTaskPagination) {
-    const {
-      current = 1,
-      pageSize = 50,
-      filter = DownloadFilter.list,
-    } = pagination;
-    const filterCondition =
-      filter === DownloadFilter.done
-        ? DownloadStatus.Success
-        : Not(DownloadStatus.Success);
+    const { current = 1, pageSize = 50, filter } = pagination;
+
+    if (!filter) {
+      const [items, total] = await this.repository.findAndCount({
+        order: {
+          createdDate: "DESC",
+        },
+        skip: (current - 1) * pageSize,
+        take: pageSize,
+      });
+
+      return {
+        items,
+        total,
+        current,
+        pageSize,
+      };
+    }
+
+    const filterCondition = filter === DownloadFilter.done ? DownloadStatus.Success : Not(DownloadStatus.Success);
 
     const [items, total] = await this.repository.findAndCount({
       where: {
@@ -159,10 +165,7 @@ export default class DownloadTaskRepository {
     return await this.repository.save(task);
   }
 
-  async updateStatus(
-    ids: number | number[],
-    status: DownloadStatus,
-  ): Promise<void> {
+  async updateStatus(ids: number | number[], status: DownloadStatus): Promise<void> {
     const idArray = Array.isArray(ids) ? ids : [ids];
     await this.repository.update({ id: In(idArray) }, { status });
   }
