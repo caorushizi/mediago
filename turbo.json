@@ -18,50 +18,6 @@
       "dependsOn": [
         "^build"
       ]
-    },
-    "pack:server": {
-      "cache": false,
-      "dependsOn": [
-        "clean:server",
-        "build:server"
-      ],
-      "outputs": [
-        ".mediago-server/**"
-      ]
-    },
-    "release:server": {
-      "cache": false,
-      "dependsOn": [
-        "pack:server"
-      ]
-    },
-    "pack:electron": {
-      "cache": false,
-      "dependsOn": [
-        "clean:electron",
-        "build:electron"
-      ],
-      "outputs": [
-        "app/build/**"
-      ]
-    },
-    "release:electron": {
-      "cache": false,
-      "dependsOn": [
-        "clean:electron",
-        "build:electron"
-      ],
-      "outputs": [
-        "app/build/**"
-      ]
-    },
-    "clean:server": {
-      "cache": false,
-      "outputs": []
-    },
-    "clean:electron": {
-      "cache": false,
-      "outputs": []
     }
   }
 }
