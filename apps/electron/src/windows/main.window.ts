@@ -18,6 +18,8 @@ import { isWin } from "../helper/variables";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";
 
+console.log("preloadUrl", preloadUrl);
+
 @injectable()
 @provide()
 export default class MainWindow extends Window {

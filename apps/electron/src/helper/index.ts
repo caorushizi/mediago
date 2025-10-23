@@ -103,3 +103,4 @@ export const convertToAudio = async (input: string, output: string): Promise<voi
 
 const require = createRequire(import.meta.url);
 export const preloadUrl = require.resolve("@mediago/electron-preload");
+export const pluginUrl = require.resolve("@mediago/browser-extension");

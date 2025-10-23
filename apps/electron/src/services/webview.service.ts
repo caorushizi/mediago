@@ -1,13 +1,21 @@
+import { readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
-import { resolve } from "node:path";
 import { ElectronBlocker } from "@ghostery/adblocker-electron";
 import { provide } from "@inversifyjs/binding-decorators";
-import { i18n, DownloadTaskService } from "@mediago/shared-node";
+import { DownloadTaskService, i18n } from "@mediago/shared-node";
 import { type Event, type HandlerDetails, session, WebContentsView } from "electron";
 import isDev from "electron-is-dev";
-import { readFile } from "node:fs/promises";
 import { inject, injectable } from "inversify";
-import { fetch, isDeeplink, mobileUA, PERSIST_WEBVIEW, PRIVACY_WEBVIEW, pcUA, pluginPath } from "../helper/index";
+import {
+  fetch,
+  isDeeplink,
+  mobileUA,
+  PERSIST_WEBVIEW,
+  PRIVACY_WEBVIEW,
+  pcUA,
+  pluginPath,
+  pluginUrl,
+} from "../helper/index";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";
 import BrowserWindow from "../windows/browser.window";
@@ -97,14 +105,14 @@ export default class WebviewService {
     this.window.webContents.send("webview-did-navigate", pageInfo);
 
     try {
-      if (isDev && import.meta.env.APP_DEBUG_PLUGINS === "true") {
-        const content =
-          'function addScript(src){const script=document.createElement("script");script.src=src;script.type="module";document.body.appendChild(script)}addScript("http://localhost:8080/src/main.ts");';
-        await this.view.webContents.executeJavaScript(content);
-      } else {
-        const content = readFileSync(pluginPath, "utf-8");
-        await this.view.webContents.executeJavaScript(content);
-      }
+      // if (isDev && import.meta.env.APP_DEBUG_PLUGINS === "true") {
+      //   const content =
+      //     'function addScript(src){const script=document.createElement("script");script.src=src;script.type="module";document.body.appendChild(script)}addScript("http://localhost:8080/src/main.ts");';
+      //   await this.view.webContents.executeJavaScript(content);
+      // } else {
+      const content = await readFile(pluginUrl, "utf-8");
+      await this.view.webContents.executeJavaScript(content);
+      // }
     } catch (err) {
       // empty
     }

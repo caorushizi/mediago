@@ -6,6 +6,12 @@ import { defineConfig } from "tsdown";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const isDev = process.env.NODE_ENV === "development";
+const projectRoot = path.resolve(__dirname, "../..");
+const devBinPath = path.resolve(projectRoot, "bin", process.platform, process.arch);
+const prodBinPath = path.resolve(projectRoot, "bin");
+
+console.log("Electron binary path:", electron);
 
 export class ElectronApp {
   process: ChildProcessWithoutNullStreams | null = null;
@@ -46,6 +52,10 @@ const app = new ElectronApp();
 export default defineConfig({
   outDir: "build",
   shims: true,
+  external: ["electron"],
+  define: {
+    __bin__: isDev ? `"${devBinPath.replace(/\\/g, "\\\\")}"` : `"${prodBinPath.replace(/\\/g, "\\\\")}"`,
+  },
   loader: {
     ".jpg": "asset",
     ".png": "asset",

@@ -12,6 +12,7 @@ import {
   DELETE_DOWNLOAD_ITEM,
   type DownloadTask,
   type DownloadTaskPagination,
+  type DownloadTaskResponse,
   EDIT_DOWNLOAD_ITEM,
   type ElectronApi,
   EXPORT_DOWNLOAD_LIST,
@@ -45,7 +46,6 @@ import {
   START_DOWNLOAD,
   START_UPDATE,
   STOP_DOWNLOAD,
-  type DownloadTaskResponse,
   WEBVIEW_CHANGE_USER_AGENT,
   WEBVIEW_GO_BACK,
   WEBVIEW_GO_HOME,
@@ -56,7 +56,7 @@ import {
   WEBVIEW_URL_CONTEXTMENU,
 } from "@mediago/shared-common";
 import type { AppStore, BrowserStore, Conversion, EnvPath, Favorite, Video } from "@mediago/shared-node";
-import { shell, contextBridge, ipcRenderer } from "electron";
+import { contextBridge, ipcRenderer, shell } from "electron";
 
 const apiFunctions: Record<string, any> = {};
 
