@@ -3,7 +3,7 @@ import { URL } from "node:url";
 import { provide } from "@inversifyjs/binding-decorators";
 import { app, protocol } from "electron";
 import isDev from "electron-is-dev";
-import { pathExists, readFile } from "fs-extra";
+import { statfs, readFile } from "node:fs/promises";
 import { injectable } from "inversify";
 import mime from "mime-types";
 import { defaultScheme } from "../helper/index";

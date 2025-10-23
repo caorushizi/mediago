@@ -4,7 +4,7 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "tsdown --watch src",
+    "dev": "cross-env NODE_ENV=development tsdown --watch src",
     "build": "tsdown",
     "pack:server": "tsx scripts/build.ts",
     "release:server": "pnpm docker:build",

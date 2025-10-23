@@ -55,10 +55,10 @@ import {
   nativeTheme,
   shell,
 } from "electron";
-import fs from "fs-extra";
+import fs from "node:fs/promises";
 import { inject, injectable } from "inversify";
 import { nanoid } from "nanoid";
-import { machineId } from "node-machine-id";
+import MachineId from "node-machine-id";
 import { convertToAudio, db, workspace } from "../helper/index";
 import WebviewService from "../services/webview.service";
 import ElectronLogger from "../vendor/ElectronLogger";
@@ -66,6 +66,8 @@ import ElectronStore from "../vendor/ElectronStore";
 import ElectronUpdater from "../vendor/ElectronUpdater";
 import BrowserWindow from "../windows/browser.window";
 import MainWindow from "../windows/main.window";
+
+const { machineId } = MachineId;
 
 @injectable()
 @provide(TYPES.Controller)

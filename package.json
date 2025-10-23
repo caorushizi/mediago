@@ -9,7 +9,7 @@
   "packageManager": "pnpm@10.15.0",
   "scripts": {
     "knip": "knip",
-    "dev:electron": "turbo run dev:electron",
+    "dev:electron": "cross-env APP_TARGET=app turbo run dev --filter=@mediago/electron --filter=@mediago/ui",
     "dev:server": "cross-env APP_TARGET=server turbo run dev --filter=@mediago/server --filter=@mediago/ui",
     "dev": "turbo run dev:all",
     "build:electron": "turbo run build:electron",
