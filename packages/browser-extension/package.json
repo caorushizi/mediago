@@ -1,23 +1,29 @@
 {
   "name": "@mediago/browser-extension",
-  "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
+    "dev": "tsdown --watch ./src",
+    "build": "tsdown",
     "lint": "biome check ."
   },
   "dependencies": {
+    "@mediago/shared-common": "workspace:*",
     "jquery": "^3.7.1",
     "lit": "^3.1.3",
-    "nanoid": "^5.0.7",
-    "@mediago/shared-common": "workspace:*"
+    "nanoid": "^5.0.7"
   },
   "devDependencies": {
     "@types/jquery": "^3.5.30",
     "@types/node": "^24.7.2",
-    "typescript": "^5.4.5",
-    "vite": "npm:rolldown-vite@latest"
+    "@typescript/native-preview": "7.0.0-dev.20251023.1",
+    "tsdown": "^0.15.9"
+  },
+  "main": "./build/index.js",
+  "module": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "exports": {
+    ".": "./build/index.js",
+    "./package.json": "./package.json"
   }
 }

@@ -23,8 +23,8 @@
   },
   "devDependencies": {
     "@types/node": "^24.7.2",
-    "tsdown": "^0.15.9",
-    "typescript": "^5.9.3"
+    "@typescript/native-preview": "7.0.0-dev.20251023.1",
+    "tsdown": "^0.15.9"
   },
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts"
