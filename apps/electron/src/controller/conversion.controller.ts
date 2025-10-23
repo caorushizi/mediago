@@ -6,8 +6,7 @@ import {
   DELETE_CONVERSION,
   GET_CONVERSIONS,
 } from "@mediago/shared-common";
-import type { Conversion } from "@mediago/shared-node";
-import { type ConversionService, handle, TYPES } from "@mediago/shared-node";
+import { type ConversionService, handle, TYPES, type Conversion } from "@mediago/shared-node";
 import type { IpcMainEvent } from "electron/main";
 import { inject, injectable } from "inversify";
 

@@ -3,24 +3,11 @@ import { resolve } from "node:path";
 import { ElectronBlocker } from "@ghostery/adblocker-electron";
 import { provide } from "@inversifyjs/binding-decorators";
 import { i18n, DownloadTaskService } from "@mediago/shared-node";
-import {
-  type Event,
-  type HandlerDetails,
-  session,
-  WebContentsView,
-} from "electron";
+import { type Event, type HandlerDetails, session, WebContentsView } from "electron";
 import isDev from "electron-is-dev";
-import { readFileSync } from "fs-extra";
+import { readFile } from "node:fs/promises";
 import { inject, injectable } from "inversify";
-import {
-  fetch,
-  isDeeplink,
-  mobileUA,
-  PERSIST_WEBVIEW,
-  PRIVACY_WEBVIEW,
-  pcUA,
-  pluginPath,
-} from "../helper/index";
+import { fetch, isDeeplink, mobileUA, PERSIST_WEBVIEW, PRIVACY_WEBVIEW, pcUA, pluginPath } from "../helper/index";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";
 import BrowserWindow from "../windows/browser.window";
