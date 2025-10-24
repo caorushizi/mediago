@@ -38,7 +38,7 @@
     "@mediago/core": "0.0.8",
     "@mediago/deps": "0.0.3",
     "@mediago/electron-preload": "workspace:*",
-    "@mediago/player": "0.0.7",
+    "@mediago/player": "0.0.9",
     "@mediago/shared-common": "workspace:*",
     "@mediago/shared-node": "workspace:*",
     "axios": "^1.12.2",
