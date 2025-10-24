@@ -17,7 +17,7 @@
     "build"
   ],
   "devDependencies": {
-    "@types/node": "^24.7.2",
+    "@types/node": "^24.9.1",
     "@typescript/native-preview": "7.0.0-dev.20251023.1",
     "electron": "30.0.8",
     "esbuild": "^0.25.10",
