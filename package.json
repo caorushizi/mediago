@@ -32,7 +32,7 @@
     "@types/node": "^24.7.0",
     "@typescript/native-preview": "7.0.0-dev.20251023.1",
     "cross-env": "^10.1.0",
-    "knip": "^5.64.2",
+    "knip": "^5.66.2",
     "turbo": "^2.5.8"
   }
 }
