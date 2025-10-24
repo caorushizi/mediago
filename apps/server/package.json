@@ -39,7 +39,7 @@
     "better-sqlite3": "^12.4.1",
     "conf": "^15.0.2",
     "inversify": "^7.9.1",
-    "koa": "^3.0.1",
+    "koa": "^3.0.3",
     "koa-bodyparser": "^4.4.1",
     "koa-send": "^5.0.1",
     "koa-static": "^5.0.0",
