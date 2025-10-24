@@ -39,8 +39,11 @@ importers:
         specifier: workspace:*
         version: link:../../packages/browser-extension
       '@mediago/core':
-        specifier: 0.0.6
-        version: 0.0.6
+        specifier: 0.0.8
+        version: 0.0.8
+      '@mediago/deps':
+        specifier: 0.0.3
+        version: 0.0.3
       '@mediago/electron-preload':
         specifier: workspace:*
         version: link:../../packages/electron-preload
@@ -554,8 +557,11 @@ importers:
         specifier: ^1.1.3
         version: 1.1.3(inversify@7.9.1(reflect-metadata@0.2.2))(reflect-metadata@0.2.2)
       '@mediago/core':
-        specifier: 0.0.6
-        version: 0.0.6
+        specifier: 0.0.8
+        version: 0.0.8
+      '@mediago/deps':
+        specifier: 0.0.3
+        version: 0.0.3
       '@mediago/player':
         specifier: 0.0.7
         version: 0.0.7
@@ -1287,45 +1293,78 @@ packages:
     resolution: {integrity: sha512-9QOtNffcOF/c1seMCDnjckb3R9WHcG34tky+FHpNKKCW0wc/scYLwMtO+ptyGUfMW0/b/n4qRiALlaFHc9Oj7Q==}
     engines: {node: '>= 10.0.0'}
 
-  '@mediago/core-darwin-arm64@0.0.6':
-    resolution: {integrity: sha512-Dq4eUDQCHoIHGHpiv43RXKbWSsjNHv8zPCF8boqrfnyqDO91+BEo2jMdu6qMNO41IPHObNY2jd0jN5YL/nAD8w==}
+  '@mediago/core-darwin-arm64@0.0.8':
+    resolution: {integrity: sha512-+H59Wh675MCKD97vpj3kx5TTs0QMLMw8arsaOFhBSqRpIn/r5idAck9/3sWA6IZ01fk1UIox2Lz1+ZDA/a/Cuw==}
     cpu: [arm64]
     os: [darwin]
     hasBin: true
 
-  '@mediago/core-darwin-x64@0.0.6':
-    resolution: {integrity: sha512-ZwZSpKuhcyyhWOUNjHNuarYMKARmqt4fKchFzs3bek8LDLFebeqn0hut4WSPzv/En3B4dYmDQrrJYktdMmnuCA==}
+  '@mediago/core-darwin-x64@0.0.8':
+    resolution: {integrity: sha512-ktZhhsyVDWq1T4Mf0R04QDNcW8BKZAbpQ89vZOpP8Co2Dmjs0ReauKYgwswIuezuTYAE48Uutg/99hJMCByH4A==}
     cpu: [x64]
     os: [darwin]
     hasBin: true
 
-  '@mediago/core-linux-arm64@0.0.6':
-    resolution: {integrity: sha512-jiv1Agp2+Kx0G4DwNqFmcZXILHQNEVx2URMWWYGDBbhR+vXkSse5tqnK7i1PVRfVz6vk9RaslJ8U0F0X94lDMw==}
+  '@mediago/core-linux-arm64@0.0.8':
+    resolution: {integrity: sha512-SaoCqEwx/A+UsTah6iOZFvcOy7rX+cbIiUHjdboTqelmHkNL5YY6hc/F03P1n7JYM4ibcLGljqFPVf3idIuILQ==}
     cpu: [arm64]
     os: [linux]
     hasBin: true
 
-  '@mediago/core-linux-x64@0.0.6':
-    resolution: {integrity: sha512-TtHOBj/UIoQTmyCJg43RDQohLSWhlHUdP/CyHfjZk35QrrgENbbHOD9Ca1t0ssDQ0JGEc+lSIZnUPBdV+uT+Yw==}
+  '@mediago/core-linux-x64@0.0.8':
+    resolution: {integrity: sha512-9W5kuP55zhNoEZazFpzuQQB15Fug98UsJ5SJGZOYmfX6SSw6Gxz2g4zoowpypMzHLBxpgQkYmK6OCuyb61/iGA==}
     cpu: [x64]
     os: [linux]
     hasBin: true
 
-  '@mediago/core-win32-arm64@0.0.6':
-    resolution: {integrity: sha512-lesUb3DPa5ciZlgeX3WbpuyLt7jOwbmbZRgj30oY8nePDm0IAPz9uJxJ4qDThtrlYpaXwz+LzlGdm44cn5Qigw==}
+  '@mediago/core-win32-arm64@0.0.8':
+    resolution: {integrity: sha512-QrghKnKtZGSWqYu/x/DpBSLYsZ6rHGsJFJVGELY9f92R3s6X7w5lxDQChPiLdqutkkaivAlApuXqI+HSpHgBBQ==}
     cpu: [arm64]
     os: [win32]
     hasBin: true
 
-  '@mediago/core-win32-x64@0.0.6':
-    resolution: {integrity: sha512-+YUPtwM3/0nhteoq5iupgSuF6CvwyCiLt8Uhp46pUjPbETRmU0/ABioQyl16aGATyvpstZMAbXQ87j1ukIHfow==}
+  '@mediago/core-win32-x64@0.0.8':
+    resolution: {integrity: sha512-xqsdMRlzPTcfSpd4Ry1n7l1dLN8cFI2YATij2lUgKs137Ho3Ln9SU1cSdcGq/W48S0xa0nZL+pzIpvNJ7RwQkg==}
     cpu: [x64]
     os: [win32]
     hasBin: true
 
-  '@mediago/core@0.0.6':
-    resolution: {integrity: sha512-3rEkeYvHKAd7vibNHePs2g/SchyjhBft+pZm978wwSOSAHyNmdCSewoSUTZGiRl9zNuostuJIzcVdtZOV9Nk5A==}
+  '@mediago/core@0.0.8':
+    resolution: {integrity: sha512-PZryk7/uXK+v2DfHnMX7ogrOmY0bk+BZNRW8P9KEP4xI4qh+g/etW80clPsmf+uiHoqgIRsffKz4b+VmcQyvcg==}
     hasBin: true
+
+  '@mediago/deps-darwin-arm64@0.0.3':
+    resolution: {integrity: sha512-Ul88mPOzZz1g3IMJgecPFZBbedSIjrqJlwghxFiUzDJGURzmBBGWsz5X04ZRrgM9Cl6mHd4puyO7X9cByjvV4Q==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@mediago/deps-darwin-x64@0.0.3':
+    resolution: {integrity: sha512-BSIOUVm7kd/VwePY1sFGvkaZ5m9YdymqF7gulc5+kCCGJ7K4hfn401C/A9Y5EX+zx+kNV4Rv5OpOYhAH3ZVACg==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@mediago/deps-linux-arm64@0.0.3':
+    resolution: {integrity: sha512-0aiuHVrN5KpIWCESIuztxKK7gS5s2pZRUVY4WUL2e+UdgW/m1qBpsh5Z3P7T5yaAL95jURrsOqYCb19qGA6gJQ==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@mediago/deps-linux-x64@0.0.3':
+    resolution: {integrity: sha512-CybJc0STlQq/FExC6aBrUdkBkQajHxaTzpWTLMn+PBFOWMMuEvY+a2Sh5XYryTZCO6/0S5gfDLUYy5i4my5jRA==}
+    cpu: [x64]
+    os: [linux]
+
+  '@mediago/deps-win32-arm64@0.0.3':
+    resolution: {integrity: sha512-8am5AiiL4z9piLiITdl8Sf2hulOx0SCZbGhNjNCFCE2BLCe8Gyfqf86OvSFEoW1rWa26BXQK50a5/PTB4bBJmQ==}
+    cpu: [arm64]
+    os: [win32]
+
+  '@mediago/deps-win32-x64@0.0.3':
+    resolution: {integrity: sha512-kJa0OGuuY5BK8dHV5iQciQd2ec656mMpPUGUZMOIzCduPKAzOeio/qGsCBV4arhCGusjz1iX2UnkUs8WyjFuqw==}
+    cpu: [x64]
+    os: [win32]
+
+  '@mediago/deps@0.0.3':
+    resolution: {integrity: sha512-wPd6uR8RGEcsMoOHKmY9qzCLriQ6lVdiw3O8QBTQ7YIJGXtxH4nxRZvWSiwLrYJJIwJr61Fe289m5v+yDErOuw==}
 
   '@mediago/player-darwin-arm64@0.0.7':
     resolution: {integrity: sha512-0oELliB818UlTSQ4/xRxiNGpgDVeqHSwuv28ri5wP21yPWPvdVuxCY6rizqWkVG7CdsLx0XhWVgZjX1wVpyZOw==}
@@ -7302,32 +7341,59 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@mediago/core-darwin-arm64@0.0.6':
+  '@mediago/core-darwin-arm64@0.0.8':
     optional: true
 
-  '@mediago/core-darwin-x64@0.0.6':
+  '@mediago/core-darwin-x64@0.0.8':
     optional: true
 
-  '@mediago/core-linux-arm64@0.0.6':
+  '@mediago/core-linux-arm64@0.0.8':
     optional: true
 
-  '@mediago/core-linux-x64@0.0.6':
+  '@mediago/core-linux-x64@0.0.8':
     optional: true
 
-  '@mediago/core-win32-arm64@0.0.6':
+  '@mediago/core-win32-arm64@0.0.8':
     optional: true
 
-  '@mediago/core-win32-x64@0.0.6':
+  '@mediago/core-win32-x64@0.0.8':
     optional: true
 
-  '@mediago/core@0.0.6':
+  '@mediago/core@0.0.8':
     optionalDependencies:
-      '@mediago/core-darwin-arm64': 0.0.6
-      '@mediago/core-darwin-x64': 0.0.6
-      '@mediago/core-linux-arm64': 0.0.6
-      '@mediago/core-linux-x64': 0.0.6
-      '@mediago/core-win32-arm64': 0.0.6
-      '@mediago/core-win32-x64': 0.0.6
+      '@mediago/core-darwin-arm64': 0.0.8
+      '@mediago/core-darwin-x64': 0.0.8
+      '@mediago/core-linux-arm64': 0.0.8
+      '@mediago/core-linux-x64': 0.0.8
+      '@mediago/core-win32-arm64': 0.0.8
+      '@mediago/core-win32-x64': 0.0.8
+
+  '@mediago/deps-darwin-arm64@0.0.3':
+    optional: true
+
+  '@mediago/deps-darwin-x64@0.0.3':
+    optional: true
+
+  '@mediago/deps-linux-arm64@0.0.3':
+    optional: true
+
+  '@mediago/deps-linux-x64@0.0.3':
+    optional: true
+
+  '@mediago/deps-win32-arm64@0.0.3':
+    optional: true
+
+  '@mediago/deps-win32-x64@0.0.3':
+    optional: true
+
+  '@mediago/deps@0.0.3':
+    optionalDependencies:
+      '@mediago/deps-darwin-arm64': 0.0.3
+      '@mediago/deps-darwin-x64': 0.0.3
+      '@mediago/deps-linux-arm64': 0.0.3
+      '@mediago/deps-linux-x64': 0.0.3
+      '@mediago/deps-win32-arm64': 0.0.3
+      '@mediago/deps-win32-x64': 0.0.3
 
   '@mediago/player-darwin-arm64@0.0.7':
     optional: true
