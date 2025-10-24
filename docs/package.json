@@ -13,7 +13,7 @@
   "license": "MIT",
   "devDependencies": {
     "@intlify/unplugin-vue-i18n": "^6.0.3",
-    "@types/node": "^24.7.2",
+    "@types/node": "^24.9.1",
     "vitepress": "2.0.0-alpha.12"
   },
   "dependencies": {
