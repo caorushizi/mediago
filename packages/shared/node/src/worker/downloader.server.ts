@@ -30,20 +30,22 @@ export class DownloaderServer extends EventEmitter {
   private serverUrl = "";
 
   async start() {
-    const binaryUrl = require.resolve("@mediago/core");
-    const binDir = path.dirname(binaryUrl);
+    const coreBin = require.resolve("@mediago/core");
+    const coreBinDir = path.dirname(coreBin);
+    const dpesBin = require.resolve("@mediago/deps");
+    const dpesBinDir = path.dirname(dpesBin);
 
     const runner = new ServiceRunner({
       executableName: "mediago-core",
-      executableDir: path.resolve(binDir, "files"),
+      executableDir: path.resolve(coreBinDir, "files"),
       preferredPort: 9900,
       internal: true,
       extraArgs: [],
       extraEnv: {
-        MEDIAGO_M3U8_BIN: path.resolve(binDir, "files/bin/N_m3u8DL-RE"),
-        MEDIAGO_BILIBILI_BIN: path.resolve(binDir, "files/bin/BBDown"),
-        MEDIAGO_DIRECT_BIN: path.resolve(binDir, "files/bin/gopeed"),
-        MEDIAGO_SCHEMA_PATH: path.resolve(binDir, "files/configs/download_schemas.json"),
+        MEDIAGO_M3U8_BIN: path.resolve(dpesBinDir, "bin/N_m3u8DL-RE"),
+        MEDIAGO_BILIBILI_BIN: path.resolve(dpesBinDir, "bin/BBDown"),
+        MEDIAGO_DIRECT_BIN: path.resolve(dpesBinDir, "bin/gopeed"),
+        MEDIAGO_SCHEMA_PATH: path.resolve(coreBinDir, "files/config.json"),
       },
     });
 
