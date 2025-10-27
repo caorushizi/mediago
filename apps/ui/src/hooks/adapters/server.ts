@@ -15,11 +15,7 @@ import {
   STOP_DOWNLOAD,
 } from "@mediago/shared-common";
 import { api, getSocket } from "@/utils";
-
-interface IpcListener {
-  addIpcListener: (eventName: string, func: any) => void;
-  removeIpcListener: (eventName: string, func: any) => void;
-}
+import { IpcListener } from "./utils";
 
 const defaultResp = {
   code: 0,
@@ -72,7 +68,10 @@ export const webAdapter: ElectronApi = {
   openDir: async () => {
     return defaultResp;
   },
-  createDownloadTasks: async (items: Omit<DownloadTask, "id">[], startDownload?: boolean) => {
+  createDownloadTasks: async (
+    items: Omit<DownloadTask, "id">[],
+    startDownload?: boolean,
+  ) => {
     return api.post(ADD_DOWNLOAD_ITEMS, { videos: items, startDownload });
   },
   getDownloadTasks: async (p: DownloadTaskPagination) => {
@@ -81,7 +80,12 @@ export const webAdapter: ElectronApi = {
   startDownload: async (vid: number) => {
     return api.post(START_DOWNLOAD, { vid });
   },
-  openUrl: async () => {
+  openUrl: async (url: string) => {
+    const a = document.createElement("a");
+    a.href = url;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    a.click();
     return defaultResp;
   },
   stopDownload: async (id: number) => {
@@ -198,11 +202,11 @@ export const webAdapter: ElectronApi = {
 export const webIpcAdapter: IpcListener = {
   addIpcListener: (event: string, func: any) => {
     const socket = getSocket();
-    socket.on(event, func);
+    socket.on(event, (payload) => func(null, payload));
   },
   removeIpcListener: (event: string, func: any) => {
     const socket = getSocket();
-    socket.off(event, func);
+    socket.off(event, (payload) => func(null, payload));
   },
 };
 

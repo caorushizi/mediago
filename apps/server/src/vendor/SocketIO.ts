@@ -1,7 +1,14 @@
 import type http from "node:http";
 import { provide } from "@inversifyjs/binding-decorators";
-import type { DownloadProgress } from "@mediago/shared-common";
-import { DownloadTaskService } from "@mediago/shared-node";
+import {
+  DOWNLOAD_EVENT_NAME,
+  DownloadStatus,
+  DownloadSuccessEvent,
+  DownloadTask,
+  type DownloadProgress,
+  type DownloadProgressEvent,
+} from "@mediago/shared-common";
+import { DownloaderServer, DownloadTaskService } from "@mediago/shared-node";
 import { inject, injectable } from "inversify";
 import _ from "lodash";
 import { Server } from "socket.io";
@@ -21,6 +28,8 @@ export default class SocketIO implements Vendor {
     private readonly logger: Logger,
     @inject(StoreService)
     private readonly store: StoreService,
+    @inject(DownloaderServer)
+    private readonly downloaderServer: DownloaderServer,
   ) {}
 
   async init() {}
@@ -34,11 +43,11 @@ export default class SocketIO implements Vendor {
     });
 
     // this.taskQueueService.on("download-ready-start", this.onDownloadReadyStart);
-    // this.taskQueueService.on("download-progress", this.onDownloadProgress);
-    // this.taskQueueService.on("download-success", this.onDownloadSuccess);
-    // this.taskQueueService.on("download-failed", this.onDownloadFailed);
-    // this.taskQueueService.on("download-start", this.onDownloadStart);
-    // this.taskQueueService.on("download-stop", this.onDownloadStop);
+    this.downloaderServer.on("download-progress", this.onDownloadProgress);
+    this.downloaderServer.on("download-success", this.onDownloadSuccess);
+    this.downloaderServer.on("download-failed", this.onDownloadFailed);
+    this.downloaderServer.on("download-start", this.onDownloadStart);
+    this.downloaderServer.on("download-stop", this.onDownloadStop);
     // this.taskQueueService.on("download-message", this.receiveMessage);
   }
 
@@ -48,24 +57,41 @@ export default class SocketIO implements Vendor {
     }
   };
 
-  onDownloadProgress = (progress: DownloadProgress) => {
-    this.logger.info(`download task: ${progress.id}`, JSON.stringify(progress));
+  onDownloadProgress = (tasks: DownloadProgress[]) => {
+    const data: DownloadProgressEvent = {
+      type: "progress",
+      data: tasks,
+    };
+    this.io.emit(DOWNLOAD_EVENT_NAME, data);
   };
 
   onDownloadSuccess = async (id: number) => {
     this.logger.info(`download task: ${id} success`);
+    const video = await this.downloadTaskService.findByIdOrFail(id);
+
+    const data: DownloadSuccessEvent = {
+      type: "success",
+      // FIXME: Type 'Video' is not assignable to type 'DownloadTask'.
+      data: video as unknown as DownloadTask,
+    };
+    this.io.emit(DOWNLOAD_EVENT_NAME, data);
   };
 
   onDownloadFailed = async (id: number, err: unknown) => {
     this.logger.error(`download task: ${id} failed: ${err}`);
+
+    await this.downloadTaskService.setStatus(id, DownloadStatus.Failed);
   };
 
   onDownloadStart = async (id: number) => {
     this.logger.info(`download task: ${id} start`);
+
+    await this.downloadTaskService.setStatus(id, DownloadStatus.Downloading);
   };
 
   onDownloadStop = async (id: number) => {
     this.logger.info(`download task: ${id} stop`);
+    await this.downloadTaskService.setStatus(id, DownloadStatus.Stopped);
   };
 
   receiveMessage = async (id: number, message: string) => {
