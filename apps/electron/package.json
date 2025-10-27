@@ -35,7 +35,7 @@
     "@ghostery/adblocker-electron": "2.12.4",
     "@inversifyjs/binding-decorators": "^1.1.3",
     "@mediago/browser-extension": "workspace:*",
-    "@mediago/core": "0.0.8",
+    "@mediago/core": "0.0.10",
     "@mediago/deps": "0.0.3",
     "@mediago/electron-preload": "workspace:*",
     "@mediago/player": "0.0.9",
