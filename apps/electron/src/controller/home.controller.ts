@@ -77,38 +77,38 @@ export default class HomeController implements Controller {
   private readonly appStoreHandlers: Partial<{
     [K in keyof AppStore]: (value: AppStore[K]) => void | Promise<void>;
   }> = {
-    useProxy: (value) => {
-      const proxy = this.store.get("proxy");
-      this.webviewService.setProxy(value, proxy);
-    },
-    proxy: (value) => {
-      const useProxy = this.store.get("useProxy");
-      if (useProxy) {
-        this.webviewService.setProxy(true, value);
-      }
-    },
-    blockAds: (value) => {
-      this.webviewService.setBlocking(value);
-    },
-    theme: (value) => {
-      nativeTheme.themeSource = value;
-    },
-    isMobile: (value) => {
-      this.webviewService.setUserAgent(value);
-    },
-    privacy: (value) => {
-      this.webviewService.setDefaultSession(value);
-    },
-    language: async (value) => {
-      await i18n.changeLanguage(value);
-    },
-    allowBeta: (value) => {
-      this.updater.changeAllowBeta(value);
-    },
-    audioMuted: (value) => {
-      this.webviewService.setAudioMuted(value);
-    },
-  };
+      useProxy: (value) => {
+        const proxy = this.store.get("proxy");
+        this.webviewService.setProxy(value, proxy);
+      },
+      proxy: (value) => {
+        const useProxy = this.store.get("useProxy");
+        if (useProxy) {
+          this.webviewService.setProxy(true, value);
+        }
+      },
+      blockAds: (value) => {
+        this.webviewService.setBlocking(value);
+      },
+      theme: (value) => {
+        nativeTheme.themeSource = value;
+      },
+      isMobile: (value) => {
+        this.webviewService.setUserAgent(value);
+      },
+      privacy: (value) => {
+        this.webviewService.setDefaultSession(value);
+      },
+      language: async (value) => {
+        await i18n.changeLanguage(value);
+      },
+      allowBeta: (value) => {
+        this.updater.changeAllowBeta(value);
+      },
+      audioMuted: (value) => {
+        this.webviewService.setAudioMuted(value);
+      },
+    };
 
   constructor(
     @inject(ElectronStore)
@@ -129,7 +129,7 @@ export default class HomeController implements Controller {
     private readonly logger: ElectronLogger,
     @inject(ElectronUpdater)
     private readonly updater: ElectronUpdater,
-  ) {}
+  ) { }
 
   @handle(GET_ENV_PATH)
   async getEnvPath(): Promise<EnvPath> {
@@ -235,9 +235,8 @@ export default class HomeController implements Controller {
         payload: id,
       });
     };
-    const item = await this.downloadTaskService.list({ current: 1, pageSize: 1, filter: "" }, this.store.get("local"));
+    const item = await this.downloadTaskService.list({ current: 1, pageSize: 1 }, this.store.get("local"));
     const task = item.list.find((t: any) => t.id === id);
-    console.log("task", task);
     const template: Array<MenuItemConstructorOptions | MenuItem> = [
       {
         label: i18n.t("copyLinkAddress"),
