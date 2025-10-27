@@ -1,4 +1,5 @@
 {
   "cSpell.words": ["intlify", "unplugin", "vitepress", "waline"],
-  "typescript.experimental.useTsgo": true
+  "typescript.experimental.useTsgo": true,
+  "oxc.enable": true
 }

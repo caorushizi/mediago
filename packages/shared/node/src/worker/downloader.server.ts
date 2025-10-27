@@ -23,31 +23,26 @@ export interface ChangeConfigOptions {
   proxy?: string;
 }
 
+export interface DownloadServiceOptions {
+  logDir: string;
+  localDir: string;
+  deleteSegments: boolean;
+  proxy: string;
+  useProxy: boolean;
+  maxRunner: number;
+}
+
 @injectable()
 @provide()
 export class DownloaderServer extends EventEmitter {
   private serverUrl = "";
   private client: MediaGoClient | null = null;
 
-  async start() {
+  async start(opts: DownloadServiceOptions) {
     const coreBin = require.resolve("@mediago/core");
     const coreBinDir = path.dirname(coreBin);
     const dpesBin = require.resolve("@mediago/deps");
     const dpesBinDir = path.dirname(dpesBin);
-
-    const devConfig = {
-      log_level: "debug",
-      log_dir: "./logs",
-      schema_path: path.resolve(coreBinDir, "files/config.json"),
-      m3u8_bin: path.resolve(dpesBinDir, "bin/N_m3u8DL-RE"),
-      bilibili_bin: path.resolve(dpesBinDir, "bin/BBDown"),
-      direct_bin: path.resolve(dpesBinDir, "bin/gopeed"),
-      max_runner: 3,
-      local_dir: "/Users/caorushizi/temp/videos",
-      delete_segments: true,
-      proxy: "",
-      use_proxy: false,
-    };
 
     const runner = new ServiceRunner({
       executableName: "mediago-core",
@@ -55,17 +50,17 @@ export class DownloaderServer extends EventEmitter {
       preferredPort: 9900,
       internal: true,
       extraArgs: [
-        `-log-level=${devConfig.log_level}`,
-        `-log-dir=${devConfig.log_dir}`,
-        `-schema-path=${devConfig.schema_path}`,
-        `-m3u8-bin=${devConfig.m3u8_bin}`,
-        `-bilibili-bin=${devConfig.bilibili_bin}`,
-        `-direct-bin=${devConfig.direct_bin}`,
-        `-max-runner=${devConfig.max_runner}`,
-        `-local-dir=${devConfig.local_dir}`,
-        `-delete-segments=${devConfig.delete_segments}`,
-        `-proxy=${devConfig.proxy}`,
-        `-use-proxy=${devConfig.use_proxy}`,
+        `-log-level=info`,
+        `-log-dir=${opts.logDir}`,
+        `-schema-path=${path.resolve(coreBinDir, "files/config.json")}`,
+        `-m3u8-bin=${path.resolve(dpesBinDir, "bin/N_m3u8DL-RE")}`,
+        `-bilibili-bin=${path.resolve(dpesBinDir, "bin/BBDown")}`,
+        `-direct-bin=${path.resolve(dpesBinDir, "bin/gopeed")}`,
+        `-max-runner=${opts.maxRunner}`,
+        `-local-dir=${opts.localDir}`,
+        `-delete-segments=${opts.deleteSegments}`,
+        `-proxy=${opts.proxy}`,
+        `-use-proxy=${opts.useProxy}`,
       ],
     });
 

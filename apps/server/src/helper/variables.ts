@@ -13,6 +13,7 @@ export const STATIC_DIR = resolve(__dirname, "../app");
 export const BIN_DIR = resolve(__dirname, "./bin");
 export const WORKSPACE = `${DOWNLOAD_DIR}/.store`;
 export const DB_PATH = `${WORKSPACE}/mediago.db`;
+export const LOG_DIR = `${WORKSPACE}/logs`;
 
 export enum Platform {
   Windows = "win32",
