@@ -1,5 +1,9 @@
 import { provide } from "@inversifyjs/binding-decorators";
-import type { DownloadTask, DownloadTaskPagination, ListPagination } from "@mediago/shared-common";
+import type {
+  DownloadTask,
+  DownloadTaskPagination,
+  ListPagination,
+} from "@mediago/shared-common";
 import { DownloadStatus } from "@mediago/shared-common";
 import { glob } from "glob";
 import { inject, injectable } from "inversify";
@@ -39,16 +43,25 @@ export class DownloadTaskService {
   }
 
   private onTaskSuccess = async (taskId: number) => {
-    await this.downloadTaskRepository.updateStatus(taskId, DownloadStatus.Success);
-  }
+    await this.downloadTaskRepository.updateStatus(
+      taskId,
+      DownloadStatus.Success,
+    );
+  };
 
   private onTaskFailed = async (taskId: number) => {
-    await this.downloadTaskRepository.updateStatus(taskId, DownloadStatus.Failed);
-  }
+    await this.downloadTaskRepository.updateStatus(
+      taskId,
+      DownloadStatus.Failed,
+    );
+  };
 
   private onTaskStart = async (taskId: number) => {
-    await this.downloadTaskRepository.updateStatus(taskId, DownloadStatus.Downloading);
-  }
+    await this.downloadTaskRepository.updateStatus(
+      taskId,
+      DownloadStatus.Downloading,
+    );
+  };
 
   async create(task: Omit<DownloadTask, "id">) {
     return await this.downloadTaskRepository.create(task);
@@ -62,12 +75,20 @@ export class DownloadTaskService {
     return await this.downloadTaskRepository.update(task.id, task);
   }
 
-  async list(pagination: DownloadTaskPagination, localPath: string): Promise<ListPagination> {
-    const result = await this.downloadTaskRepository.findWithPagination(pagination);
+  async list(
+    pagination: DownloadTaskPagination,
+    localPath: string,
+  ): Promise<ListPagination> {
+    const result =
+      await this.downloadTaskRepository.findWithPagination(pagination);
 
     const list = await Promise.all(
       result.items.map(async (task) => {
-        const taskWithFile = { ...task, exists: false, file: undefined as string | undefined };
+        const taskWithFile = {
+          ...task,
+          exists: false,
+          file: undefined as string | undefined,
+        };
         if (task.status === DownloadStatus.Success) {
           const pattern = `${task.name}.{${videoPattern}}`;
           const files = await glob(pattern, {
@@ -90,7 +111,10 @@ export class DownloadTaskService {
     const task = await this.downloadTaskRepository.findByIdOrFail(taskId);
     const { name, url, type, folder } = task;
 
-    await this.downloadTaskRepository.updateStatus(taskId, DownloadStatus.Watting);
+    await this.downloadTaskRepository.updateStatus(
+      taskId,
+      DownloadStatus.Watting,
+    );
     const taskResult = await this.downloaderServer.startTask({
       deleteSegments,
       folder,
@@ -103,15 +127,21 @@ export class DownloadTaskService {
     });
 
     if (taskResult) {
-      const status = taskResult.status === "downloading" ? DownloadStatus.Downloading : DownloadStatus.Watting;
+      const status =
+        taskResult.status === "downloading"
+          ? DownloadStatus.Downloading
+          : DownloadStatus.Watting;
       await this.downloadTaskRepository.updateStatus(taskId, status);
     } else {
-      await this.downloadTaskRepository.updateStatus(taskId, DownloadStatus.Failed);
+      await this.downloadTaskRepository.updateStatus(
+        taskId,
+        DownloadStatus.Failed,
+      );
     }
   }
 
   async stop(id: number) {
-    this.downloaderServer.stopTask(id.toString());
+    return this.downloaderServer.stopTask(id.toString());
   }
 
   async remove(id: number) {
@@ -133,7 +163,10 @@ export class DownloadTaskService {
   }
 
   // Status update methods
-  async setStatus(ids: number | number[], status: DownloadStatus): Promise<void> {
+  async setStatus(
+    ids: number | number[],
+    status: DownloadStatus,
+  ): Promise<void> {
     await this.downloadTaskRepository.updateStatus(ids, status);
   }
 
@@ -163,7 +196,10 @@ export class DownloadTaskService {
   }
 
   async findActiveTasks() {
-    return await this.downloadTaskRepository.findByStatus([DownloadStatus.Watting, DownloadStatus.Downloading]);
+    return await this.downloadTaskRepository.findByStatus([
+      DownloadStatus.Watting,
+      DownloadStatus.Downloading,
+    ]);
   }
 
   // Legacy aliases (deprecated)
@@ -187,11 +223,18 @@ export class DownloadTaskService {
     return await this.update(task);
   }
 
-  async getDownloadTasks(pagination: DownloadTaskPagination, localPath: string): Promise<ListPagination> {
+  async getDownloadTasks(
+    pagination: DownloadTaskPagination,
+    localPath: string,
+  ): Promise<ListPagination> {
     return await this.list(pagination, localPath);
   }
 
-  async startDownload(taskId: number, localPath: string, deleteSegments: boolean) {
+  async startDownload(
+    taskId: number,
+    localPath: string,
+    deleteSegments: boolean,
+  ) {
     return await this.start(taskId, localPath, deleteSegments);
   }
 

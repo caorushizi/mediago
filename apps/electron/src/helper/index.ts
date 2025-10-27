@@ -5,7 +5,10 @@ import https from "node:https";
 import { createRequire } from "node:module";
 import { LRUCache } from "lru-cache";
 import fetch from "node-fetch";
-import { ffmpegPath } from "./variables";
+import { loadModule } from "@mediago/shared-node";
+
+// FIXME: 修正 ffmpegPath 路径获取方式
+export const ffmpegPath = loadModule("@mediago/deps");
 
 export * from "./variables";
 export { fetchWrapper as fetch };
@@ -50,7 +53,7 @@ export function isDeeplink(url: string): boolean {
   try {
     const parsedUrl = new URL(url);
     return parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:";
-  } catch (error) {
+  } catch {
     return false;
   }
 }
@@ -78,9 +81,23 @@ export function fileExists(path: string): Promise<boolean> {
     .catch(() => false);
 }
 
-export const convertToAudio = async (input: string, output: string): Promise<void> => {
+export const convertToAudio = async (
+  input: string,
+  output: string,
+): Promise<void> => {
   return new Promise((resolve, reject) => {
-    const ffmpeg = spawn(ffmpegPath, ["-y", "-v", "error", "-i", input, "-acodec", "mp3", "-format", "mp3", output]);
+    const ffmpeg = spawn(ffmpegPath, [
+      "-y",
+      "-v",
+      "error",
+      "-i",
+      input,
+      "-acodec",
+      "mp3",
+      "-format",
+      "mp3",
+      output,
+    ]);
     let errData = "";
 
     ffmpeg.stderr.on("data", (data) => {

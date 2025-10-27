@@ -1,7 +1,10 @@
 import os from "node:os";
 import { MEDIAGO_EVENT, MEDIAGO_METHOD } from "@mediago/shared-common";
 
-export type { ControllerHandlerBinder, ControllerHandlerRegistration } from "./registerControllerHandlers";
+export type {
+  ControllerHandlerBinder,
+  ControllerHandlerRegistration,
+} from "./registerControllerHandlers";
 export { registerControllerHandlers } from "./registerControllerHandlers";
 export const handle = (route: string) => {
   return (target: any, propertyName: string): void => {
@@ -44,3 +47,15 @@ export const videoType = [
 ];
 
 export const videoPattern = videoType.join(",");
+
+export function loadModule(moduleName: string) {
+  try {
+    let bin = require.resolve(moduleName);
+    if (process.env.NODE_ENV === "production") {
+      bin = bin.replace("app.asar", "app.asar.unpacked");
+    }
+    return bin;
+  } catch {
+    return "";
+  }
+}

@@ -1,16 +1,32 @@
 import { PauseCircleOutlined, PlayCircleOutlined } from "@ant-design/icons";
-import type { DownloadTask, DownloadTaskWithFile } from "@mediago/shared-common";
+import type {
+  DownloadTask,
+  DownloadTaskWithFile,
+} from "@mediago/shared-common";
 import { useMemoizedFn } from "ahooks";
 import { Progress } from "antd";
 import { type ReactNode, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import selectedBg from "@/assets/images/select-item-bg.png";
-import { DownloadIcon, DownloadListIcon, EditIcon, FailedIcon, PauseIcon, TerminalIcon } from "@/assets/svg";
+import {
+  DownloadIcon,
+  DownloadListIcon,
+  EditIcon,
+  FailedIcon,
+  PauseIcon,
+  TerminalIcon,
+} from "@/assets/svg";
 import { DownloadTag } from "@/components/download-tag";
 import { IconButton } from "@/components/icon-button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CONTINUE_DOWNLOAD, DOWNLOAD_NOW, PLAY_VIDEO, RESTART_DOWNLOAD, STOP_DOWNLOAD } from "@/const";
+import {
+  CONTINUE_DOWNLOAD,
+  DOWNLOAD_NOW,
+  PLAY_VIDEO,
+  RESTART_DOWNLOAD,
+  STOP_DOWNLOAD,
+} from "@/const";
 import type { DownloadTaskDetails } from "@/hooks/use-tasks";
 import { appStoreSelector, useAppStore } from "@/store/app";
 import { DownloadStatus } from "@/types";
@@ -67,7 +83,13 @@ export const DownloadTaskItem = ({
     const terminalBtn = appStore.showTerminal ? (
       <TerminalDrawer
         key="terminal"
-        trigger={<IconButton key="terminal" title={t("terminal")} icon={<TerminalIcon />} />}
+        trigger={
+          <IconButton
+            key="terminal"
+            title={t("terminal")}
+            icon={<TerminalIcon />}
+          />
+        }
         title={task.name}
         id={task.id}
         log={task.log || ""}
@@ -75,7 +97,12 @@ export const DownloadTaskItem = ({
     ) : null;
 
     const editBtn = (
-      <IconButton key="edit" title={t("edit")} icon={<EditIcon />} onClick={() => onShowEditForm?.(task)} />
+      <IconButton
+        key="edit"
+        title={t("edit")}
+        icon={<EditIcon />}
+        onClick={() => onShowEditForm?.(task)}
+      />
     );
 
     switch (task.status) {
@@ -93,7 +120,14 @@ export const DownloadTaskItem = ({
         break;
       case DownloadStatus.Downloading:
         terminalBtn && buttons.push(terminalBtn);
-        buttons.push(<IconButton key="stop" title={t("pause")} icon={<PauseCircleOutlined />} onClick={handleStop} />);
+        buttons.push(
+          <IconButton
+            key="stop"
+            title={t("pause")}
+            icon={<PauseCircleOutlined />}
+            onClick={handleStop}
+          />,
+        );
         break;
       case DownloadStatus.Failed:
         terminalBtn && buttons.push(terminalBtn);
@@ -137,7 +171,15 @@ export const DownloadTaskItem = ({
     }
 
     return buttons;
-  }, [appStore.showTerminal, handlePlay, handleStop, task, onShowEditForm, startWithEvent, t]);
+  }, [
+    appStore.showTerminal,
+    handlePlay,
+    handleStop,
+    task,
+    onShowEditForm,
+    startWithEvent,
+    t,
+  ]);
 
   const renderTitle = useMemoizedFn((task: DownloadTaskWithFile): ReactNode => {
     return (
@@ -155,7 +197,10 @@ export const DownloadTaskItem = ({
 
   const tags = useMemo<ReactNode[]>(() => {
     const list: ReactNode[] = [];
-    if (task.isLive) list.push(<DownloadTag key="live" text={t("liveResource")} color="#9abbe2" />);
+    if (task.isLive)
+      list.push(
+        <DownloadTag key="live" text={t("liveResource")} color="#9abbe2" />,
+      );
 
     switch (task.status) {
       case DownloadStatus.Downloading:
@@ -169,9 +214,21 @@ export const DownloadTaskItem = ({
         );
         break;
       case DownloadStatus.Success:
-        list.push(<DownloadTag key="success" text={t("downloadSuccess")} color="#09ce87" />);
+        list.push(
+          <DownloadTag
+            key="success"
+            text={t("downloadSuccess")}
+            color="#09ce87"
+          />,
+        );
         if (!task.exists) {
-          list.push(<DownloadTag key="notExists" text={t("fileNotExist")} color="#9abbe2" />);
+          list.push(
+            <DownloadTag
+              key="notExists"
+              text={t("fileNotExist")}
+              color="#9abbe2"
+            />,
+          );
         }
         break;
       case DownloadStatus.Failed:
@@ -193,59 +250,83 @@ export const DownloadTaskItem = ({
         );
         break;
       case DownloadStatus.Stopped:
-        list.push(<DownloadTag key="pause" icon={<PauseIcon />} text={t("downloadPause")} color="#9abbe2" />);
+        list.push(
+          <DownloadTag
+            key="pause"
+            icon={<PauseIcon />}
+            text={t("downloadPause")}
+            color="#9abbe2"
+          />,
+        );
         break;
     }
     return list;
   }, [task, t]);
 
-  const renderDescription = useMemoizedFn((task: DownloadTaskDetails): ReactNode => {
-    if (task.percent && task.status === DownloadStatus.Downloading) {
-      const val = Math.round(Number(task.percent));
+  const renderDescription = useMemoizedFn(
+    (task: DownloadTaskDetails): ReactNode => {
+      if (task.percent && task.status === DownloadStatus.Downloading) {
+        const val = Math.round(Number(task.percent));
 
+        return (
+          <div className="flex flex-row items-center gap-2 text-xs text-[rgba(0,0,0,0.88)] dark:text-[rgba(255,255,255,0.85)]">
+            <Progress percent={val} strokeLinecap="butt" showInfo={false} />
+            <div className="min-w-5 shrink-0">{val}%</div>
+            <div className="min-w-20 shrink-0">{task.speed}</div>
+          </div>
+        );
+      }
       return (
-        <div className="flex flex-row items-center gap-2 text-xs text-[rgba(0,0,0,0.88)] dark:text-[rgba(255,255,255,0.85)]">
-          <Progress percent={val} strokeLinecap="butt" showInfo={false} />
-          <div className="min-w-5 shrink-0">{val}%</div>
-          <div className="min-w-20 shrink-0">{task.speed}</div>
+        <div
+          className="relative flex flex-col gap-1 text-xs text-[#B3B3B3] dark:text-[#515257]"
+          title={task.url}
+        >
+          <div className="truncate">{task.url}</div>
+          <div className="truncate">
+            {t("createdAt")} {fromatDateTime(task.createdDate)}
+          </div>
+          {task.status === DownloadStatus.Failed && (
+            <TerminalDrawer
+              asChild
+              trigger={
+                <div className="cursor-pointer truncate text-[#ff7373] dark:text-[rgba(255,115,115,0.6)]">
+                  {t("failReason")}: ... {task.log?.slice(-100)}
+                </div>
+              }
+              title={task.name}
+              id={task.id}
+              log={task.log || ""}
+            />
+          )}
         </div>
       );
-    }
-    return (
-      <div className="relative flex flex-col gap-1 text-xs text-[#B3B3B3] dark:text-[#515257]" title={task.url}>
-        <div className="truncate">{task.url}</div>
-        <div className="truncate">
-          {t("createdAt")} {fromatDateTime(task.createdDate)}
-        </div>
-        {task.status === DownloadStatus.Failed && (
-          <TerminalDrawer
-            asChild
-            trigger={
-              <div className="cursor-pointer truncate text-[#ff7373] dark:text-[rgba(255,115,115,0.6)]">
-                {t("failReason")}: ... {task.log?.slice(-100)}
-              </div>
-            }
-            title={task.name}
-            id={task.id}
-            log={task.log || ""}
-          />
-        )}
-      </div>
-    );
-  });
+    },
+  );
 
   return (
     <div
-      className={cn("relative flex flex-row gap-3 rounded-lg bg-[#FAFCFF] px-3 pb-3.5 pt-2 dark:bg-[#27292F]", {
-        "bg-linear-to-r from-[#D0E8FF] to-[#F2F7FF] dark:from-[#27292F] dark:to-[#00244E]": selected,
-        "opacity-70": task.status === DownloadStatus.Success && !task.exists,
-      })}
+      className={cn(
+        "relative flex flex-row gap-3 rounded-lg bg-[#FAFCFF] px-3 pb-3.5 pt-2 dark:bg-[#27292F]",
+        {
+          "bg-linear-to-r from-[#D0E8FF] to-[#F2F7FF] dark:from-[#27292F] dark:to-[#00244E]":
+            selected,
+          "opacity-70": task.status === DownloadStatus.Success && !task.exists,
+        },
+      )}
       onContextMenu={() => onContextMenu(task.id)}
     >
-      <Checkbox className="mt-2" checked={selected} onCheckedChange={() => onSelectChange(task.id)} />
+      <Checkbox
+        className="mt-2"
+        checked={selected}
+        onCheckedChange={() => onSelectChange(task.id)}
+      />
       <div className={cn("flex flex-1 flex-col gap-1 overflow-hidden")}>
         {selected && (
-          <img alt="" src={selectedBg} className="absolute bottom-0 right-[126px] top-0 block h-full select-none" />
+          <img
+            alt=""
+            src={selectedBg}
+            className="absolute bottom-0 right-[126px] top-0 block h-full select-none"
+          />
         )}
         <div className="relative flex flex-row items-center gap-2">
           {renderTitle(task)}

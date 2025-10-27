@@ -3,7 +3,12 @@ import { createRequire } from "node:module";
 import { ElectronBlocker } from "@ghostery/adblocker-electron";
 import { provide } from "@inversifyjs/binding-decorators";
 import { DownloadTaskService, i18n } from "@mediago/shared-node";
-import { type Event, type HandlerDetails, session, WebContentsView } from "electron";
+import {
+  type Event,
+  type HandlerDetails,
+  session,
+  WebContentsView,
+} from "electron";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import {
@@ -13,7 +18,6 @@ import {
   PERSIST_WEBVIEW,
   PRIVACY_WEBVIEW,
   pcUA,
-  pluginPath,
   pluginUrl,
 } from "../helper/index";
 import ElectronLogger from "../vendor/ElectronLogger";
@@ -113,7 +117,7 @@ export default class WebviewService {
       const content = await readFile(pluginUrl, "utf-8");
       await this.view.webContents.executeJavaScript(content);
       // }
-    } catch (err) {
+    } catch {
       // empty
     }
 

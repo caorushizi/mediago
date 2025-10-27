@@ -1,10 +1,19 @@
 import { EventEmitter } from "node:events";
 import path from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
-import { type CreateTaskResponse, MediaGoClient } from "@mediago/core-sdk";
+import {
+  type CreateTaskResponse,
+  MediaGoClient,
+  TaskStatus,
+} from "@mediago/core-sdk";
 import { ServiceRunner } from "@mediago/service-runner";
-import type { DownloadType } from "@mediago/shared-common";
+import {
+  DownloadProgress,
+  DownloadStatus,
+  type DownloadType,
+} from "@mediago/shared-common";
 import { injectable } from "inversify";
+import { loadModule } from "../utils";
 
 export interface DownloadTaskOptions {
   deleteSegments: boolean;
@@ -39,9 +48,9 @@ export class DownloaderServer extends EventEmitter {
   private client: MediaGoClient | null = null;
 
   async start(opts: DownloadServiceOptions) {
-    const coreBin = require.resolve("@mediago/core");
+    const coreBin = loadModule("@mediago/core");
     const coreBinDir = path.dirname(coreBin);
-    const dpesBin = require.resolve("@mediago/deps");
+    const dpesBin = loadModule("@mediago/deps");
     const dpesBinDir = path.dirname(dpesBin);
 
     const runner = new ServiceRunner({
@@ -85,6 +94,10 @@ export class DownloaderServer extends EventEmitter {
       this.emit("download-failed", payload.id);
     });
 
+    events.on("download-stop", (payload) => {
+      this.emit("download-stop", payload.id);
+    });
+
     // 2. 轮询获取进度
     // FIXME: 需要优化性能
     const startPolling = () => {
@@ -95,19 +108,29 @@ export class DownloaderServer extends EventEmitter {
 
         const { data } = await this.client.listTasks();
 
-        const tasks = data.tasks
+        const tasks: DownloadProgress[] = data.tasks
+          .filter((task) => {
+            if (!task.percent) {
+              return false;
+            }
+
+            return (
+              task.percent > 0 &&
+              task.percent < 100 &&
+              task.status === TaskStatus.Downloading
+            );
+          })
           .map((task) => {
             return {
-              id: task.id,
+              id: Number(task.id),
               type: task.type,
-              percent: task.percent || 0,
-              speed: task.speed,
+              percent: String(task.percent || 0),
+              speed: task.speed || "",
               isLive: task.isLive || false,
+              status: task.status as unknown as DownloadStatus,
             };
-          })
-          .filter((task) => {
-            return task.percent > 0 && task.percent < 100;
           });
+
         if (tasks.length === 0) {
           return;
         }
@@ -119,7 +142,9 @@ export class DownloaderServer extends EventEmitter {
     startPolling();
   }
 
-  async startTask(opts: DownloadTaskOptions): Promise<CreateTaskResponse | undefined> {
+  async startTask(
+    opts: DownloadTaskOptions,
+  ): Promise<CreateTaskResponse | undefined> {
     const taskResult = await this.client?.createTask({
       id: opts.id,
       type: opts.type as any,

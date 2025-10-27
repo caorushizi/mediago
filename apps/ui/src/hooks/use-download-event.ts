@@ -11,8 +11,11 @@ import { downloadStoreSelector, useDownloadStore } from "@/store/download";
 import useAPI from "./use-api";
 import { useTasks } from "./use-tasks";
 
-const isSuccessEvent = (obj: DownloadEvent): obj is DownloadSuccessEvent => obj.type === "success";
-const isProgressEvent = (obj: DownloadEvent): obj is DownloadEvent<DownloadProgress[]> => obj.type === "progress";
+const isSuccessEvent = (obj: DownloadEvent): obj is DownloadSuccessEvent =>
+  obj.type === "success";
+const isProgressEvent = (
+  obj: DownloadEvent,
+): obj is DownloadEvent<DownloadProgress[]> => obj.type === "progress";
 
 export function useDownloadEvent() {
   const { setEvents } = useDownloadStore(useShallow(downloadStoreSelector));
@@ -23,7 +26,9 @@ export function useDownloadEvent() {
     const handleSuccess = (_: unknown, eventData: DownloadEvent) => {
       if (isSuccessEvent(eventData)) {
         const newState = produce({ list: data, total }, (draft) => {
-          const index = draft.list.findIndex((item) => item.id === eventData.data.id);
+          const index = draft.list.findIndex(
+            (item) => item.id === eventData.data.id,
+          );
           if (index > -1) {
             draft.list.splice(index, 1);
             draft.total = draft.total - 1;
@@ -32,7 +37,9 @@ export function useDownloadEvent() {
         mutate(newState);
       }
       if (isProgressEvent(eventData)) {
-        const eventDataMap = new Map(eventData.data.map((item) => [String(item.id), item]));
+        const eventDataMap = new Map(
+          eventData.data.map((item) => [String(item.id), item]),
+        );
 
         const newState = produce({ list: data, total }, (draft) => {
           draft.list.forEach((item) => {
@@ -47,7 +54,13 @@ export function useDownloadEvent() {
           revalidate: false,
         });
 
-        setEvents(eventData.data.map((item) => ({ percent: item.percent, speed: item.speed, id: item.id })));
+        setEvents(
+          eventData.data.map((item) => ({
+            percent: item.percent,
+            speed: item.speed,
+            id: item.id,
+          })),
+        );
       }
     };
 

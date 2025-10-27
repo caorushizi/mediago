@@ -7,7 +7,11 @@ import {
   type DownloadSuccessEvent,
   type DownloadTask,
 } from "@mediago/shared-common";
-import { DownloaderServer, DownloadTaskService, i18n } from "@mediago/shared-node";
+import {
+  DownloaderServer,
+  DownloadTaskService,
+  i18n,
+} from "@mediago/shared-node";
 import { app, Menu, Notification } from "electron";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
@@ -51,7 +55,7 @@ export default class MainWindow extends Window {
     this.downloaderServer.on("download-failed", this.onDownloadFailed);
     this.downloaderServer.on("download-start", this.onDownloadStart);
     this.downloaderServer.on("download-progress", this.onDownloadProgress);
-    // this.taskQueue.on("download-stop", this.onDownloadStop);
+    this.downloaderServer.on("download-stop", this.onDownloadStop);
     // this.taskQueue.on("download-message", this.onDownloadMessage);
     this.store.onDidAnyChange(this.storeChange);
   }

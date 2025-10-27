@@ -27,6 +27,7 @@
     "electron-builder": "24.13.3",
     "electron-updater": "^6.1.8",
     "glob": "^11.0.3",
+    "prebuild-install": "^7.1.3",
     "rimraf": "^6.0.1",
     "tsdown": "^0.15.9",
     "tsx": "^4.20.6"
