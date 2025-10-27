@@ -23,7 +23,8 @@ export function useDownloadEvent() {
   const { data, mutate, total } = useTasks();
 
   useEffect(() => {
-    const handleSuccess = (_: unknown, eventData: DownloadEvent) => {
+    const handleEvent = (_: unknown, eventData: DownloadEvent) => {
+      console.log("Received download event:", _, eventData);
       if (isSuccessEvent(eventData)) {
         const newState = produce({ list: data, total }, (draft) => {
           const index = draft.list.findIndex(
@@ -64,9 +65,9 @@ export function useDownloadEvent() {
       }
     };
 
-    addIpcListener(DOWNLOAD_EVENT_NAME, handleSuccess);
+    addIpcListener(DOWNLOAD_EVENT_NAME, handleEvent);
     return () => {
-      removeIpcListener(DOWNLOAD_EVENT_NAME, handleSuccess);
+      removeIpcListener(DOWNLOAD_EVENT_NAME, handleEvent);
     };
   }, [data, total, addIpcListener, removeIpcListener, mutate, setEvents]);
 }

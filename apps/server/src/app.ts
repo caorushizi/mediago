@@ -2,7 +2,12 @@ import http from "node:http";
 import { provide } from "@inversifyjs/binding-decorators";
 import cors from "@koa/cors";
 import { DownloadStatus } from "@mediago/shared-common";
-import { DownloaderServer, TypeORM, DownloadTaskService } from "@mediago/shared-node";
+import {
+  DownloaderServer,
+  TypeORM,
+  DownloadTaskService,
+  VideoServer,
+} from "@mediago/shared-node";
 import { inject, injectable } from "inversify";
 import Koa from "koa";
 import bodyParser from "koa-bodyparser";
@@ -33,6 +38,8 @@ export default class ElectronApp extends Koa {
     private readonly store: StoreService,
     @inject(DownloaderServer)
     private readonly downloaderServer: DownloaderServer,
+    @inject(VideoServer)
+    private readonly videoServer: VideoServer,
   ) {
     super();
   }
@@ -47,7 +54,10 @@ export default class ElectronApp extends Koa {
     // vendor
     await this.vendorInit();
 
-    this.use(cors()).use(bodyParser()).use(this.router.routes()).use(this.router.allowedMethods());
+    this.use(cors())
+      .use(bodyParser())
+      .use(this.router.routes())
+      .use(this.router.allowedMethods());
     this.use(serve(STATIC_DIR));
 
     // Middleware that handles static files and front-end routing
@@ -67,6 +77,9 @@ export default class ElectronApp extends Koa {
     const server = http.createServer(this.callback());
 
     this.socket.initSocketIO(server);
+
+    const local = this.store.get("local");
+    this.videoServer.start({ local });
 
     // Initialize download service
     this.downloaderServer.start({

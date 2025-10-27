@@ -61,7 +61,7 @@ interface Options {
 
 export default forwardRef<DownloadFormRef, DownloadFormProps>(
   function DownloadForm(
-    { isEdit, destroyOnClose, onFormVisibleChange, id },
+    { isEdit, destroyOnClose, onFormVisibleChange, id, onConfirm },
     ref,
   ) {
     const { enableDocker } = useAppStore(useShallow(appStoreSelector));
@@ -134,6 +134,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
         const tasks = await getFormItems();
         await createDownloadTasks(tasks);
         setModalOpen(false);
+        onConfirm?.(form.getFieldsValue());
         tdApp.onEvent(ADD_TO_LIST, { id });
       } catch (e: any) {
         console.error(e);
@@ -168,6 +169,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
         const tasks = await getFormItems();
         await createDownloadTasks(tasks, true);
         setModalOpen(false);
+        onConfirm?.(form.getFieldsValue());
         tdApp.onEvent(DOWNLOAD_NOW, { id });
       } catch (e: any) {
         console.error(e);

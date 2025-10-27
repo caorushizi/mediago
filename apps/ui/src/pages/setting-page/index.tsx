@@ -25,7 +25,7 @@ import {
   type TabsProps,
 } from "antd";
 import type React from "react";
-import { type PropsWithChildren, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import PageContainer from "@/components/page-container";
@@ -64,7 +64,7 @@ const SettingPage: React.FC = () => {
   const { data: envPath } = useRequest(getEnvPath);
   const { message } = App.useApp();
   const { updateAvailable, updateChecking } = useSessionStore(
-    useShallow(updateSelector)
+    useShallow(updateSelector),
   );
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
@@ -125,7 +125,7 @@ const SettingPage: React.FC = () => {
       try {
         await importFavorites();
         message.success(t("importFavoriteSuccess"));
-      } catch (e: any) {
+      } catch {
         message.error(t("importFavoriteFailed"));
       }
     }
@@ -135,7 +135,7 @@ const SettingPage: React.FC = () => {
     try {
       await exportFavorites();
       message.success(t("exportFavoriteSuccess"));
-    } catch (e: any) {
+    } catch {
       message.error(t("exportFavoriteFailed"));
     }
   });
@@ -178,7 +178,7 @@ const SettingPage: React.FC = () => {
     try {
       await clearWebviewCache();
       message.success(t("clearCacheSuccess"));
-    } catch (err: any) {
+    } catch {
       message.error(t("clearCacheFailed"));
     }
   });
@@ -263,6 +263,7 @@ const SettingPage: React.FC = () => {
     },
     {
       key: "2",
+      disabled: isWeb,
       label: t("browserSetting"),
       children: !isWeb && (
         <>
@@ -374,6 +375,7 @@ const SettingPage: React.FC = () => {
     {
       key: "4",
       label: t("dockerSetting"),
+      disabled: isWeb,
       children: (
         <>
           <Form.Item hidden={isWeb} name="dockerUrl" label={t("dockerUrl")}>
@@ -427,7 +429,7 @@ const SettingPage: React.FC = () => {
         </>
       ),
     },
-  ];
+  ].filter((item) => !item.disabled);
 
   return (
     <PageContainer title={t("setting")}>
@@ -443,7 +445,7 @@ const SettingPage: React.FC = () => {
           // labelCol={{ span: 5 }}
           wrapperCol={{ span: 10 }}
         >
-          <Tabs defaultActiveKey="1" items={tabItems} onChange={() => { }} />
+          <Tabs defaultActiveKey="1" items={tabItems} onChange={() => {}} />
         </Form>
       </div>
 
@@ -454,28 +456,28 @@ const SettingPage: React.FC = () => {
         footer={
           updateAvailable
             ? [
-              <Button key="hidden" onClick={handleHiddenUpdateModal}>
-                {t("close")}
-              </Button>,
-              updateDownloaded ? (
-                <Button
-                  key="install"
-                  type="primary"
-                  onClick={handleInstallUpdate}
-                >
-                  {t("install")}
-                </Button>
-              ) : (
-                <Button key="update" type="primary" onClick={handleUpdate}>
-                  {t("update")}
-                </Button>
-              ),
-            ]
+                <Button key="hidden" onClick={handleHiddenUpdateModal}>
+                  {t("close")}
+                </Button>,
+                updateDownloaded ? (
+                  <Button
+                    key="install"
+                    type="primary"
+                    onClick={handleInstallUpdate}
+                  >
+                    {t("install")}
+                  </Button>
+                ) : (
+                  <Button key="update" type="primary" onClick={handleUpdate}>
+                    {t("update")}
+                  </Button>
+                ),
+              ]
             : [
-              <Button key="hidden" onClick={handleHiddenUpdateModal}>
-                {t("close")}
-              </Button>,
-            ]
+                <Button key="hidden" onClick={handleHiddenUpdateModal}>
+                  {t("close")}
+                </Button>,
+              ]
         }
       >
         <div className="flex min-h-28 flex-col justify-center">
