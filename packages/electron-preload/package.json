@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "tsdown --watch ./src",
     "build": "tsdown",
-    "lint": "biome check ."
+    "lint": "oxlint ."
   },
   "files": [
     "build"
