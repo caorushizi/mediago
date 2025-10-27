@@ -8,7 +8,7 @@ import TrayIcon from "../assets/tray-icon.png";
 import TrayIconLight from "../assets/tray-icon-light.png";
 import ProtocolService from "./core/protocol";
 import ElectronRouter from "./core/router";
-import { db, isMac } from "./helper/variables";
+import { db, isMac, logDir } from "./helper/variables";
 import ElectronDevtools from "./vendor/ElectronDevtools";
 import ElectronStore from "./vendor/ElectronStore";
 import ElectronUpdater from "./vendor/ElectronUpdater";
@@ -39,7 +39,7 @@ export default class ElectronApp {
     private readonly videoServer: VideoServer,
     @inject(DownloaderServer)
     private readonly downloaderServer: DownloaderServer,
-  ) {}
+  ) { }
 
   private async serviceInit(): Promise<void> {
     this.mainWindow.init();
@@ -76,7 +76,14 @@ export default class ElectronApp {
     this.videoServer.start({ local });
 
     // Start the download service
-    this.downloaderServer.start();
+    this.downloaderServer.start({
+      logDir: logDir,
+      localDir: this.store.get("local"),
+      deleteSegments: this.store.get("deleteSegments"),
+      proxy: this.store.get("proxy"),
+      useProxy: this.store.get("useProxy"),
+      maxRunner: this.store.get("maxRunner"),
+    });
     this.store.onDidChange("maxRunner", (maxRunner) => {
       this.downloaderServer.changeConfig({ maxRunner: maxRunner || 1 });
     });

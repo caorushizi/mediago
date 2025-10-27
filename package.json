@@ -28,11 +28,13 @@
   "keywords": [],
   "license": "MIT",
   "devDependencies": {
+    "@prettier/plugin-oxc": "^0.0.4",
     "@types/node": "^24.7.0",
     "@typescript/native-preview": "7.0.0-dev.20251023.1",
     "cross-env": "^10.1.0",
     "knip": "^5.64.2",
     "oxlint-tsgolint": "^0.3.0",
+    "prettier": "^3.6.2",
     "turbo": "^2.5.8"
   }
 }
