@@ -1,4 +1,4 @@
-import type { Conversion, Video } from "./entities";
+import type { Conversion } from "./entities";
 
 export type { ElectronApi } from "./electronApi";
 
@@ -63,6 +63,7 @@ export interface DownloadProgress {
   percent: string;
   speed: string;
   isLive: boolean;
+  status: DownloadStatus;
 }
 
 export enum DownloadType {
@@ -152,6 +153,7 @@ export interface DownloadFailedEvent extends DownloadEvent<DownloadFailedData> {
   type: "failed";
 }
 
-export interface DownloadProgressEvent extends DownloadEvent<DownloadProgress[]> {
+export interface DownloadProgressEvent
+  extends DownloadEvent<DownloadProgress[]> {
   type: "progress";
 }

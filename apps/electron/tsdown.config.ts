@@ -6,16 +6,15 @@ import { defineConfig } from "tsdown";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const isDev = process.env.NODE_ENV === "development";
-const projectRoot = path.resolve(__dirname, "../..");
-const devBinPath = path.resolve(projectRoot, "bin", process.platform, process.arch);
-const prodBinPath = path.resolve(projectRoot, "bin");
 
 export class ElectronApp {
   process: ChildProcessWithoutNullStreams | null = null;
 
   start() {
-    const args = ["--inspect=5858", path.resolve(__dirname, "./build/index.js")];
+    const args = [
+      "--inspect=5858",
+      path.resolve(__dirname, "./build/index.js"),
+    ];
 
     this.process = spawn(String(electron), args);
 
@@ -50,9 +49,19 @@ const app = new ElectronApp();
 export default defineConfig({
   outDir: "build",
   shims: true,
-  external: ["electron"],
+  external: [
+    "electron",
+    "typeorm",
+    "better-sqlite3",
+    "@mediago/player",
+    "@mediago/core",
+    "@mediago/deps",
+  ],
+  noExternal: () => true,
   define: {
-    __bin__: isDev ? `"${devBinPath.replace(/\\/g, "\\\\")}"` : `"${prodBinPath.replace(/\\/g, "\\\\")}"`,
+    "process.env.NODE_ENV": JSON.stringify(
+      process.env.NODE_ENV || "production",
+    ),
   },
   loader: {
     ".jpg": "asset",

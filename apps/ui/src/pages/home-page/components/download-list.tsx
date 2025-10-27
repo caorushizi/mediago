@@ -9,22 +9,10 @@ import Loading from "@/components/loading";
 import { EDIT_DOWNLOAD } from "@/const";
 import useAPI from "@/hooks/use-api";
 import { useTasks } from "@/hooks/use-tasks";
-import type { DownloadFilter, DownloadStatus } from "@/types";
+import type { DownloadFilter } from "@/types";
 import { cn, tdApp } from "@/utils";
 import { DownloadTaskItem } from "./download-item";
 import { ListHeader } from "./list-header";
-
-interface DownloadState {
-  [key: number]: {
-    id: number;
-    status: DownloadStatus;
-    progress: number;
-    isLive?: boolean;
-    messages: string[];
-    name?: string;
-    speed?: string;
-  };
-}
 
 interface Props {
   filter: DownloadFilter;
@@ -56,9 +44,10 @@ export function DownloadTaskList({ filter }: Props) {
   }, [isLoading, hasInitialLoaded, data.length]);
 
   useEffect(() => {
-    const onDownloadStateUpdate = (_e: unknown, state: DownloadState) => {};
-
-    const onDownloadMenuEvent = async (_e: unknown, params: { action: string; payload: number }) => {
+    const onDownloadMenuEvent = async (
+      _e: unknown,
+      params: { action: string; payload: number },
+    ) => {
       const { action, payload } = params;
 
       if (action === "select") {
@@ -73,11 +62,9 @@ export function DownloadTaskList({ filter }: Props) {
       }
     };
 
-    addIpcListener("download-state-update", onDownloadStateUpdate);
     addIpcListener("download-item-event", onDownloadMenuEvent);
 
     return () => {
-      removeIpcListener("download-state-update", onDownloadStateUpdate);
       removeIpcListener("download-item-event", onDownloadMenuEvent);
 
       // 清理未完成的刷新定时器
@@ -141,7 +128,9 @@ export function DownloadTaskList({ filter }: Props) {
   const onStopDownload = useMemoizedFn(async (id: number) => {
     await stopDownload(id);
 
-    mutate();
+    setTimeout(() => {
+      mutate();
+    }, 500);
   });
 
   const handleFormConfirm = useMemoizedFn(async () => {
@@ -210,7 +199,11 @@ export function DownloadTaskList({ filter }: Props) {
         filter={filter}
       />
       {isLoading && !hasInitialLoaded && data.length === 0 && <Loading />}
-      <div className={cn("flex w-full flex-1 shrink-0 flex-col gap-3 overflow-auto")}>
+      <div
+        className={cn(
+          "flex w-full flex-1 shrink-0 flex-col gap-3 overflow-auto",
+        )}
+      >
         {data.map((task) => {
           return (
             <DownloadTaskItem
@@ -226,7 +219,12 @@ export function DownloadTaskList({ filter }: Props) {
           );
         })}
       </div>
-      <DownloadForm id={downloadListId} ref={editFormRef} isEdit onConfirm={handleFormConfirm} />
+      <DownloadForm
+        id={downloadListId}
+        ref={editFormRef}
+        isEdit
+        onConfirm={handleFormConfirm}
+      />
     </div>
   );
 }
