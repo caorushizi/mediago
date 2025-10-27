@@ -42,7 +42,7 @@
     "@mediago/shared-common": "workspace:*",
     "@mediago/shared-node": "workspace:*",
     "axios": "^1.12.2",
-    "better-sqlite3": "^12.4.1",
+    "better-sqlite3": "12.4.1",
     "dayjs": "^1.11.11",
     "electron-devtools-installer": "^4.0.0",
     "electron-is-dev": "^3.0.1",
