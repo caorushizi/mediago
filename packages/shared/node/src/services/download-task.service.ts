@@ -1,4 +1,3 @@
-import path from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
 import type { DownloadTask, DownloadTaskPagination, ListPagination } from "@mediago/shared-common";
 import { DownloadStatus } from "@mediago/shared-common";

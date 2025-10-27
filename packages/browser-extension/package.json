@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "tsdown --watch ./src",
     "build": "tsdown",
-    "lint": "biome check ."
+    "lint": "boxlint ."
   },
   "dependencies": {
     "@mediago/shared-common": "workspace:*",

@@ -185,7 +185,7 @@ export default class MainWindow extends Window {
 
   onDownloadMessage = async (id: number, message: string) => {
     await this.downloadTaskService.appendLog(id, message);
-    const showTerminal = this.store.get("showTerminal");
+    // const showTerminal = this.store.get("showTerminal");
   };
 
   showWindow(url?: string) {

@@ -10,7 +10,7 @@
     "release": "cross-env NODE_ENV=production tsx scripts/build.ts",
     "clean": "rimraf app/build && rimraf release",
     "rebuild": "electron-rebuild -f -w",
-    "lint": "biome check ."
+    "lint": "oxlint ."
   },
   "author": "",
   "license": "MIT",
