@@ -8,7 +8,12 @@ interface DownloadTagProps {
   className?: string;
 }
 
-export function DownloadTag({ icon, text, color, className }: DownloadTagProps) {
+export function DownloadTag({
+  icon,
+  text,
+  color,
+  className,
+}: DownloadTagProps) {
   return (
     <div
       className={cn(

@@ -9,7 +9,7 @@ import bodyParser from "koa-bodyparser";
 import send from "koa-send";
 import serve from "koa-static";
 import RouterHandlerService from "./core/router";
-import { DB_PATH, STATIC_DIR } from "./helper/variables";
+import { DB_PATH, LOG_DIR, STATIC_DIR } from "./helper/variables";
 import Logger from "./vendor/Logger";
 import SocketIO from "./vendor/SocketIO";
 import StoreService from "./vendor/Store";
@@ -69,7 +69,14 @@ export default class ElectronApp extends Koa {
     this.socket.initSocketIO(server);
 
     // Initialize download service
-    this.downloaderServer.start();
+    this.downloaderServer.start({
+      logDir: LOG_DIR,
+      localDir: this.store.get("local"),
+      deleteSegments: this.store.get("deleteSegments"),
+      proxy: this.store.get("proxy"),
+      useProxy: this.store.get("useProxy"),
+      maxRunner: this.store.get("maxRunner"),
+    });
     this.store.onDidChange("maxRunner", (maxRunner) => {
       this.downloaderServer.changeConfig({ maxRunner: maxRunner || 1 });
     });

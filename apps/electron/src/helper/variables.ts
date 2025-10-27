@@ -35,6 +35,7 @@ export const PERSIST_MEDIAGO = "persist:mediago";
 export const PERSIST_WEBVIEW = "persist:webview";
 export const PRIVACY_WEBVIEW = "webview";
 export const db = resolve(workspace, "app.db");
+export const logDir = resolve(workspace, "logs");
 
 // bin path
 export const ffmpegPath = resolveBin("ffmpeg");
