@@ -559,6 +559,9 @@ importers:
       '@mediago/core':
         specifier: 0.0.10
         version: 0.0.10
+      '@mediago/core-sdk':
+        specifier: 0.0.3
+        version: 0.0.3
       '@mediago/deps':
         specifier: 0.0.3
         version: 0.0.3
@@ -574,9 +577,6 @@ importers:
       axios:
         specifier: ^1.12.2
         version: 1.12.2
-      eventsource:
-        specifier: ^4.0.0
-        version: 4.0.0
       glob:
         specifier: ^11.0.3
         version: 11.0.3
@@ -1316,6 +1316,9 @@ packages:
     cpu: [x64]
     os: [linux]
     hasBin: true
+
+  '@mediago/core-sdk@0.0.3':
+    resolution: {integrity: sha512-xsQWUDKTRKH3I2u2BT+Gd4ujcwpHjvcMW/nE7jPrKQTVDpjwzLyYHU3rKEI5mUaoJs00Aup70yRhPIzclQe2GQ==}
 
   '@mediago/core-win32-arm64@0.0.10':
     resolution: {integrity: sha512-7lbaK3wV7+HhJoZ/fl7/ue59JeQlyhIxFiO/t/oFiqEOy2ooVKsEv/KXyMDqEUhmpeMlGN3zdOy85fl/sgYkNQ==}
@@ -7352,6 +7355,14 @@ snapshots:
 
   '@mediago/core-linux-x64@0.0.10':
     optional: true
+
+  '@mediago/core-sdk@0.0.3':
+    dependencies:
+      axios: 1.12.2
+      eventsource: 4.0.0
+      mitt: 3.0.1
+    transitivePeerDependencies:
+      - debug
 
   '@mediago/core-win32-arm64@0.0.10':
     optional: true

@@ -2,7 +2,7 @@ import { provide } from "@inversifyjs/binding-decorators";
 import {
   DOWNLOAD_EVENT_NAME,
   type DownloadProgress,
-  DownloadProgressEvent,
+  type DownloadProgressEvent,
   DownloadStatus,
   type DownloadSuccessEvent,
   type DownloadTask,
@@ -17,8 +17,6 @@ import { preloadUrl } from "../helper";
 import { isWin } from "../helper/variables";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";
-
-console.log("preloadUrl", preloadUrl);
 
 @injectable()
 @provide()
