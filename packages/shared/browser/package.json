@@ -22,7 +22,7 @@
     "react-i18next": "^16.0.1"
   },
   "devDependencies": {
-    "@types/node": "^24.7.2",
+    "@types/node": "^24.9.1",
     "@typescript/native-preview": "7.0.0-dev.20251023.1",
     "tsdown": "^0.15.9"
   },
