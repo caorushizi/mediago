@@ -21,6 +21,7 @@ const pkg = JSON.parse(await fs.readFile("./app/package.json", "utf-8"));
 
 function getReleaseConfig(): Configuration {
   return {
+    asar: true,
     productName: process.env.APP_NAME,
     buildVersion: pkg.version,
     appId: process.env.APP_ID,
@@ -32,8 +33,16 @@ function getReleaseConfig(): Configuration {
     },
     files: [
       {
-        from: "./build",
-        to: "./",
+        from: "./build/main",
+        to: "./main",
+      },
+      {
+        from: "./build/renderer",
+        to: "./renderer",
+      },
+      {
+        from: "./build/preload",
+        to: "./preload",
       },
       "./package.json",
     ],
@@ -41,14 +50,6 @@ function getReleaseConfig(): Configuration {
       {
         from: "./app/build/plugin",
         to: "plugin",
-      },
-      {
-        from: "./app/build/mobile",
-        to: "mobile",
-      },
-      {
-        from: "../../bin/${platform}/${arch}",
-        to: "bin",
       },
     ],
     win: {
