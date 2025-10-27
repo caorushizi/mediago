@@ -1,8 +1,9 @@
 import { spawn } from "node:child_process";
 import EventEmitter from "node:events";
 import os from "node:os";
-import { ffmpegPath } from "./variables";
-import { MEDIAGO_METHOD, MEDIAGO_EVENT } from "@mediago/shared-common";
+
+// FIXME: 修正 ffmpegPath 路径获取方式
+export const ffmpegPath = "ffmpeg";
 
 export async function sleep(second = 1): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, second * 1000));
@@ -40,9 +41,23 @@ export function error(message = "fail"): IpcResponse {
   };
 }
 
-export const convertToAudio = async (input: string, output: string): Promise<void> => {
+export const convertToAudio = async (
+  input: string,
+  output: string,
+): Promise<void> => {
   return new Promise((resolve, reject) => {
-    const ffmpeg = spawn(ffmpegPath, ["-y", "-v", "error", "-i", input, "-acodec", "mp3", "-format", "mp3", output]);
+    const ffmpeg = spawn(ffmpegPath, [
+      "-y",
+      "-v",
+      "error",
+      "-i",
+      input,
+      "-acodec",
+      "mp3",
+      "-format",
+      "mp3",
+      output,
+    ]);
     let errData = "";
 
     ffmpeg.stderr.on("data", (data) => {
@@ -73,7 +88,9 @@ export function getLocalIP() {
     if (!iface) continue;
 
     // IPv4 addresses that are not loopback addresses are filtered out
-    const filteredIface = iface.filter((details) => details.family === "IPv4" && !details.internal);
+    const filteredIface = iface.filter(
+      (details) => details.family === "IPv4" && !details.internal,
+    );
 
     if (filteredIface.length > 0) {
       localIP = filteredIface[0].address;

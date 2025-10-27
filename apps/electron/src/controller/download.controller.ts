@@ -36,11 +36,19 @@ export default class DownloadController implements Controller {
   @handle(SHOW_DOWNLOAD_DIALOG)
   async showDownloadDialog(e: IpcMainEvent, data: DownloadTask) {
     const image = await this.webviewService.captureView();
-    this.webviewService.sendToWindow(SHOW_DOWNLOAD_DIALOG, data, image?.toDataURL());
+    this.webviewService.sendToWindow(
+      SHOW_DOWNLOAD_DIALOG,
+      data,
+      image?.toDataURL(),
+    );
   }
 
   @handle(ADD_DOWNLOAD_ITEMS)
-  async createDownloadTasks(e: IpcMainEvent, tasks: Omit<DownloadTask, "id">[], startDownload?: boolean) {
+  async createDownloadTasks(
+    e: IpcMainEvent,
+    tasks: Omit<DownloadTask, "id">[],
+    startDownload?: boolean,
+  ) {
     const items = await this.downloadTaskService.createMany(tasks);
     // This sends a message to the page notifying it of the update
     this.mainWindow.send("download-item-notifier", items);
@@ -58,7 +66,11 @@ export default class DownloadController implements Controller {
   }
 
   @handle(EDIT_DOWNLOAD_ITEM)
-  async updateDownloadTask(e: IpcMainEvent, task: DownloadTask, startDownload?: boolean) {
+  async updateDownloadTask(
+    e: IpcMainEvent,
+    task: DownloadTask,
+    startDownload?: boolean,
+  ) {
     const item = await this.downloadTaskService.update(task);
 
     // Start downloading immediately if requested
@@ -72,7 +84,10 @@ export default class DownloadController implements Controller {
   }
 
   @handle(GET_DOWNLOAD_ITEMS)
-  async getDownloadTasks(e: IpcMainEvent, pagination: DownloadTaskPagination): Promise<ListPagination> {
+  async getDownloadTasks(
+    e: IpcMainEvent,
+    pagination: DownloadTaskPagination,
+  ): Promise<ListPagination> {
     const local = this.store.get("local");
     return await this.downloadTaskService.list(pagination, local);
   }
@@ -86,7 +101,7 @@ export default class DownloadController implements Controller {
 
   @handle(STOP_DOWNLOAD)
   async stopDownloadTask(e: IpcMainEvent, id: number) {
-    this.downloadTaskService.stop(id);
+    return this.downloadTaskService.stop(id);
   }
 
   @handle(DELETE_DOWNLOAD_ITEM)

@@ -1,14 +1,16 @@
 import { QrcodeOutlined } from "@ant-design/icons";
-import { DOWNLOAD_EVENT_NAME, DownloadEvent, DownloadTask, type DownloadSuccessEvent } from "@mediago/shared-common";
+import { DownloadTask } from "@mediago/shared-common";
 import { useMemoizedFn, useMount } from "ahooks";
 import { Pagination, Popover, QRCode } from "antd";
-import { produce } from "immer";
-import { type FC, useEffect, useId, useMemo, useRef, useState } from "react";
+import { type FC, useEffect, useId, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
 import { ExtractIcon, FolderIcon } from "@/assets/svg";
-import DownloadForm, { type DownloadFormItem, type DownloadFormRef } from "@/components/download-form";
+import DownloadForm, {
+  type DownloadFormItem,
+  type DownloadFormRef,
+} from "@/components/download-form";
 import { HomeDownloadButton } from "@/components/home-download-button";
 import PageContainer from "@/components/page-container";
 import { Button } from "@/components/ui/button";
@@ -19,7 +21,13 @@ import { useTasks } from "@/hooks/use-tasks";
 import { appStoreSelector, useAppStore } from "@/store/app";
 import { downloadFormSelector, useConfigStore } from "@/store/config";
 import { DownloadFilter } from "@/types";
-import { isDownloadType, isWeb, randomName, tdApp, urlDownloadType } from "@/utils";
+import {
+  isDownloadType,
+  isWeb,
+  randomName,
+  tdApp,
+  urlDownloadType,
+} from "@/utils";
 import { DownloadList } from "./components/download-list";
 
 interface Props {
@@ -27,13 +35,22 @@ interface Props {
 }
 
 const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
-  const { openDir, showBrowserWindow, createDownloadTasks, getLocalIP, addIpcListener, removeIpcListener } = useAPI();
+  const {
+    openDir,
+    showBrowserWindow,
+    createDownloadTasks,
+    getLocalIP,
+    addIpcListener,
+    removeIpcListener,
+  } = useAPI();
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
   const [localIP, setLocalIP] = useState<string>("");
   const newFormRef = useRef<DownloadFormRef>(null);
   const homeId = useId();
-  const { lastIsBatch, lastDownloadTypes } = useConfigStore(useShallow(downloadFormSelector));
+  const { lastIsBatch, lastDownloadTypes } = useConfigStore(
+    useShallow(downloadFormSelector),
+  );
   const location = useLocation();
   const { pagination, total, mutate } = useTasks(filter);
   useDownloadEvent();
@@ -111,13 +128,17 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     newFormRef.current?.openModal(item);
   });
 
-  const handleConfirm = useMemoizedFn(async (values: DownloadFormItem) => {
+  const handleConfirm = useMemoizedFn(async () => {
     mutate();
   });
 
   return (
     <PageContainer
-      title={filter === DownloadFilter.list ? t("downloadList") : t("downloadComplete")}
+      title={
+        filter === DownloadFilter.list
+          ? t("downloadList")
+          : t("downloadComplete")
+      }
       rightExtra={
         <div className="flex flex-row gap-2">
           {!isWeb && (
@@ -148,7 +169,9 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
               </Button>
             </Popover>
           )}
-          {filter === DownloadFilter.list && <HomeDownloadButton onClick={handleOpenForm} />}
+          {filter === DownloadFilter.list && (
+            <HomeDownloadButton onClick={handleOpenForm} />
+          )}
         </div>
       }
       className="bg-white p-3 dark:bg-[#1F2024] flex flex-col flex-1 h-full rounded-lg gap-3"
@@ -163,7 +186,12 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
         showSizeChanger={false}
       />
 
-      <DownloadForm id={homeId} ref={newFormRef} destroyOnClose onConfirm={handleConfirm} />
+      <DownloadForm
+        id={homeId}
+        ref={newFormRef}
+        destroyOnClose
+        onConfirm={handleConfirm}
+      />
     </PageContainer>
   );
 };
