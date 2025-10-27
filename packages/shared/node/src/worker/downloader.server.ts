@@ -1,10 +1,9 @@
-import path from "node:path";
 import { EventEmitter } from "node:events";
+import path from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
+import { type CreateTaskResponse, MediaGoClient } from "@mediago/core-sdk";
 import { ServiceRunner } from "@mediago/service-runner";
-import { type DownloadProgress, type DownloadType, safeParseJSON } from "@mediago/shared-common";
-import axios from "axios";
-import { EventSource } from "eventsource";
+import type { DownloadType } from "@mediago/shared-common";
 import { injectable } from "inversify";
 
 export interface DownloadTaskOptions {
@@ -28,6 +27,7 @@ export interface ChangeConfigOptions {
 @provide()
 export class DownloaderServer extends EventEmitter {
   private serverUrl = "";
+  private client: MediaGoClient | null = null;
 
   async start() {
     const coreBin = require.resolve("@mediago/core");
@@ -73,46 +73,50 @@ export class DownloaderServer extends EventEmitter {
 
     this.serverUrl = runner.getURL();
 
-    // 1. 订阅 SSE 接收状态变更
-    const eventSource = new EventSource(`${this.serverUrl}/api/events`);
+    this.client = new MediaGoClient({
+      baseURL: this.serverUrl,
+    });
+    const events = this.client.streamEvents();
 
-    eventSource.addEventListener("download-start", (e: any) => {
-      const data = safeParseJSON(e.data, { id: 0 });
-      this.emit("download-start", data.id);
+    events.on("download-start", (payload) => {
+      this.emit("download-start", payload.id);
     });
 
-    eventSource.addEventListener("download-success", (e: any) => {
-      const data = safeParseJSON(e.data, { id: 0 });
-      this.emit("download-success", data.id);
+    events.on("download-success", (payload) => {
+      this.emit("download-success", payload.id);
     });
 
-    eventSource.addEventListener("download-failed", (e: any) => {
-      const data = safeParseJSON(e.data, { id: 0 });
-      this.emit("download-failed", data.id);
+    events.on("download-failed", (payload) => {
+      this.emit("download-failed", payload.id);
     });
 
     // 2. 轮询获取进度
     // FIXME: 需要优化性能
     const startPolling = () => {
       setInterval(async () => {
-        const { data } = await axios.get(`${this.serverUrl}/api/tasks/`);
-
-        const taskList = (data.tasks || []).filter((task: any) => {
-          return task.percent > 0 && task.percent < 100;
-        });
-        if (taskList.length === 0) {
+        if (!this.client) {
           return;
         }
 
-        const tasks: DownloadProgress[] = taskList.map((task: any) => {
-          return {
-            id: task.id,
-            type: task.type as DownloadType,
-            percent: task.percent,
-            speed: task.speed,
-            isLive: task.isLive || false,
-          };
-        });
+        const { data } = await this.client.listTasks();
+
+        const tasks = data.tasks
+          .map((task) => {
+            return {
+              id: task.id,
+              type: task.type,
+              percent: task.percent || 0,
+              speed: task.speed,
+              isLive: task.isLive || false,
+            };
+          })
+          .filter((task) => {
+            return task.percent > 0 && task.percent < 100;
+          });
+        if (tasks.length === 0) {
+          return;
+        }
+
         this.emit("download-progress", tasks);
       }, 1000);
     };
@@ -120,18 +124,23 @@ export class DownloaderServer extends EventEmitter {
     startPolling();
   }
 
-  async startTask(opts: DownloadTaskOptions) {
-    const url = `${this.serverUrl}/api/tasks`;
-    await axios.post(url, opts);
+  async startTask(opts: DownloadTaskOptions): Promise<CreateTaskResponse | undefined> {
+    const taskResult = await this.client?.createTask({
+      id: opts.id,
+      type: opts.type as any,
+      url: opts.url,
+      name: opts.name,
+      folder: opts.folder,
+      headers: opts.headers,
+    });
+    return taskResult?.data;
   }
 
   async stopTask(id: string) {
-    const url = `${this.serverUrl}/api/tasks/${id}/stop`;
-    await axios.post(url);
+    return this.client?.stopTask(id);
   }
 
   async changeConfig(opts: ChangeConfigOptions) {
-    const url = `${this.serverUrl}/api/config`;
-    await axios.post(url, opts);
+    return this.client?.updateConfig(opts);
   }
 }

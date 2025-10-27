@@ -33,7 +33,23 @@ export class DownloadTaskService {
     private readonly downloadTaskRepository: DownloadTaskRepository,
     @inject(DownloaderServer)
     private readonly downloaderServer: DownloaderServer,
-  ) {}
+  ) {
+    this.downloaderServer.on("download-success", this.onTaskSuccess);
+    this.downloaderServer.on("download-failed", this.onTaskFailed);
+    this.downloaderServer.on("download-start", this.onTaskStart);
+  }
+
+  private onTaskSuccess = async (taskId: number) => {
+    await this.downloadTaskRepository.updateStatus(taskId, DownloadStatus.Success);
+  }
+
+  private onTaskFailed = async (taskId: number) => {
+    await this.downloadTaskRepository.updateStatus(taskId, DownloadStatus.Failed);
+  }
+
+  private onTaskStart = async (taskId: number) => {
+    await this.downloadTaskRepository.updateStatus(taskId, DownloadStatus.Downloading);
+  }
 
   async create(task: Omit<DownloadTask, "id">) {
     return await this.downloadTaskRepository.create(task);
@@ -76,7 +92,7 @@ export class DownloadTaskService {
     const { name, url, type, folder } = task;
 
     await this.downloadTaskRepository.updateStatus(taskId, DownloadStatus.Watting);
-    this.downloaderServer.startTask({
+    const taskResult = await this.downloaderServer.startTask({
       deleteSegments,
       folder,
       headers: [],
@@ -86,6 +102,13 @@ export class DownloadTaskService {
       type,
       url,
     });
+
+    if (taskResult) {
+      const status = taskResult.status === "downloading" ? DownloadStatus.Downloading : DownloadStatus.Watting;
+      await this.downloadTaskRepository.updateStatus(taskId, status);
+    } else {
+      await this.downloadTaskRepository.updateStatus(taskId, DownloadStatus.Failed);
+    }
   }
 
   async stop(id: number) {

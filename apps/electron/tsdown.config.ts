@@ -11,8 +11,6 @@ const projectRoot = path.resolve(__dirname, "../..");
 const devBinPath = path.resolve(projectRoot, "bin", process.platform, process.arch);
 const prodBinPath = path.resolve(projectRoot, "bin");
 
-console.log("Electron binary path:", electron);
-
 export class ElectronApp {
   process: ChildProcessWithoutNullStreams | null = null;
 
