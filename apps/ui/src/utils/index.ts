@@ -36,7 +36,7 @@ export const getFavIcon = async (url: string) => {
     const fetchUrl = urlObject.origin ? `${urlObject.origin}/favicon.ico` : "";
     await requestImage(fetchUrl);
     iconUrl = fetchUrl;
-  } catch (e) {
+  } catch {
     // empty
   }
   return iconUrl;

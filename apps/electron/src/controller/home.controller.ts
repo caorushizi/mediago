@@ -302,7 +302,7 @@ export default class HomeController implements Controller {
     const outName = `${path.basename(input, path.extname(input))}.mp3`;
     const output = path.join(local, outName);
 
-    const exist = await fs.exists(input);
+    const exist = await fs.stat(input);
     if (exist) {
       return await convertToAudio(input, output);
     } else {
@@ -366,7 +366,7 @@ export default class HomeController implements Controller {
       const newId = await machineId();
       this.store.set("machineId", newId);
       return newId;
-    } catch (e) {
+    } catch {
       const id = this.store.get("machineId");
       if (id) return id;
       const newId = nanoid();
@@ -404,8 +404,8 @@ export default class HomeController implements Controller {
 
     if (!result.canceled) {
       const filePath = result.filePaths[0];
-      const json = await fs.readJSON(filePath);
-      await this.favoriteService.importFavorites(json);
+      const json = await fs.readFile(filePath, "utf-8");
+      await this.favoriteService.importFavorites(json as any);
     }
   }
 

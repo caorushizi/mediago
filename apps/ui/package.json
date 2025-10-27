@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "report": "vite-bundle-visualizer",
-    "lint": "biome check ."
+    "lint": "oxlint ."
   },
   "dependencies": {
     "@ant-design/icons": "^6.1.0",
