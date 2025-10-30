@@ -3,9 +3,17 @@ import path, { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import electron from "electron";
 import { defineConfig } from "tsdown";
+import dotenvFlow from "dotenv-flow";
+import copy from "rollup-plugin-copy";
+
+const isDev = process.env.NODE_ENV === "development";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const projectRoot = path.resolve(__dirname, "../..");
+const env = dotenvFlow.config({
+  path: projectRoot,
+});
 
 export class ElectronApp {
   process: ChildProcessWithoutNullStreams | null = null;
@@ -67,11 +75,18 @@ export default defineConfig({
     ".jpg": "asset",
     ".png": "asset",
   },
+  env: { ...env.parsed },
   hooks: {
     "build:done": () => {
-      if (process.env.NODE_ENV === "development") {
+      if (isDev) {
         app.restart();
       }
     },
   },
+  plugins: [
+    isDev &&
+      copy({
+        targets: [{ src: "./dev-app-update.yml", dest: "build" }],
+      }),
+  ],
 });
