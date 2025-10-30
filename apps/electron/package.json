@@ -29,6 +29,7 @@
     "glob": "^11.0.3",
     "prebuild-install": "^7.1.3",
     "rimraf": "^6.0.1",
+    "rollup-plugin-copy": "^3.5.0",
     "tsdown": "^0.15.9",
     "tsx": "^4.20.6"
   },

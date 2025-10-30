@@ -9,7 +9,9 @@ import ElectronStore from "../vendor/ElectronStore";
 @injectable()
 @provide()
 export default class BrowserWindow extends Window {
-  url = isDev ? "http://localhost:8555/browser" : "mediago://index.html/browser";
+  url = isDev
+    ? "http://localhost:8555/browser"
+    : "mediago://index.html/browser";
 
   constructor(
     @inject(ElectronStore)
