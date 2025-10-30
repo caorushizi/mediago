@@ -20,7 +20,7 @@
     "rebuild:electron": "pnpm -F @mediago/electron run rebuild",
     "pack:server": "pnpm build:server && pnpm -F @mediago/server run pack",
     "pack:electron": "pnpm build:electron && pnpm -F @mediago/electron run pack",
-    "release:server": "pnpm build:server && pnpm -F @mediago/server run release",
+    "release:server": "pnpm pack:server && pnpm -F @mediago/server run release",
     "release:electron": "pnpm build:electron && pnpm -F @mediago/electron run release",
     "docs:dev": "pnpm -F @mediago/docs run docs:dev",
     "docs:build": "pnpm -F @mediago/docs run docs:build"

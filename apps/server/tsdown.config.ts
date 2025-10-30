@@ -15,7 +15,7 @@ export class NodeApp {
   process: ChildProcessWithoutNullStreams | null = null;
 
   start() {
-    const args = [path.resolve(__dirname, "./build/index.js")];
+    const args = [path.resolve(__dirname, "./build/index.cjs")];
 
     this.process = spawn("node", args);
 
@@ -49,7 +49,15 @@ const app = new NodeApp();
 
 export default defineConfig({
   outDir: "build",
+  format: "cjs",
   env: { ...env.parsed },
+  noExternal: () => true,
+  external: [
+    "@mediago/player",
+    "@mediago/core",
+    "@mediago/deps",
+    "better-sqlite3",
+  ],
   hooks: {
     "build:done": () => {
       if (process.env.NODE_ENV === "development") {
