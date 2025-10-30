@@ -6,9 +6,14 @@ import { createRequire } from "node:module";
 import { LRUCache } from "lru-cache";
 import fetch from "node-fetch";
 import { loadModule } from "@mediago/shared-node";
+import path from "node:path";
 
-// FIXME: 修正 ffmpegPath 路径获取方式
-export const ffmpegPath = loadModule("@mediago/deps");
+const ffmpegModule = loadModule("@mediago/deps");
+export const ffmpegPath = path.resolve(
+  path.dirname(ffmpegModule),
+  "bin",
+  "ffmpeg",
+);
 
 export * from "./variables";
 export { fetchWrapper as fetch };

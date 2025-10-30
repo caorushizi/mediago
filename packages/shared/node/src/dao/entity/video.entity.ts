@@ -1,4 +1,10 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from "typeorm";
 import { DownloadStatus, DownloadType } from "@mediago/shared-common";
 
 /**
@@ -69,11 +75,11 @@ export class Video {
   })
   status!: DownloadStatus;
 
-  @Column({
-    type: "text",
-    default: "",
-  })
-  log!: string;
+  // @Column({
+  //   type: "text",
+  //   default: "",
+  // })
+  // log!: string;
 
   @CreateDateColumn()
   createdDate!: Date;
