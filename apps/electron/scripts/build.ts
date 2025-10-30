@@ -26,7 +26,8 @@ function getReleaseConfig(): Configuration {
     buildVersion: pkg.version,
     appId: process.env.APP_ID,
     copyright: process.env.APP_COPYRIGHT,
-    artifactName: "${productName}-setup-${platform}-${arch}-${buildVersion}.${ext}",
+    artifactName:
+      "${productName}-setup-${platform}-${arch}-${buildVersion}.${ext}",
     npmRebuild: true,
     directories: {
       output: "./release",
@@ -63,7 +64,8 @@ function getReleaseConfig(): Configuration {
       ],
     },
     portable: {
-      artifactName: "${productName}-portable-${platform}-${arch}-${buildVersion}.${ext}",
+      artifactName:
+        "${productName}-portable-${platform}-${arch}-${buildVersion}.${ext}",
     },
     dmg: {
       contents: [
@@ -136,10 +138,14 @@ const electronTask = [
 ];
 
 for (const task of electronTask) {
-  await fs.cp(path.resolve(projectRoot, task.src), path.resolve(appRoot, task.dest), {
-    recursive: true,
-    force: true,
-  });
+  await fs.cp(
+    path.resolve(projectRoot, task.src),
+    path.resolve(appRoot, task.dest),
+    {
+      recursive: true,
+      force: true,
+    },
+  );
 }
 
 const config = getReleaseConfig();

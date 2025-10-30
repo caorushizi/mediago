@@ -3,7 +3,7 @@ import { URL } from "node:url";
 import { provide } from "@inversifyjs/binding-decorators";
 import { app, protocol } from "electron";
 import isDev from "electron-is-dev";
-import { stat, readFile } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import { injectable } from "inversify";
 import mime from "mime-types";
 import { defaultScheme } from "../helper/index";
@@ -17,9 +17,9 @@ export default class ProtocolService {
     protocol.handle(defaultScheme, async (req) => {
       const pathName = new URL(req.url).pathname;
       let filePath = join(__dirname, "../renderer", pathName);
-      const stats = await stat(filePath);
-      if (!stats.isFile()) {
-        // If the file is not found, return index.html directly, react history mode
+      try {
+        await access(filePath);
+      } catch {
         filePath = join(__dirname, "../renderer/index.html");
       }
       const mimeType = mime.lookup(filePath);
@@ -31,7 +31,9 @@ export default class ProtocolService {
 
     if (process.defaultApp) {
       if (process.argv.length >= 2) {
-        app.setAsDefaultProtocolClient(defaultScheme, process.execPath, [path.resolve(process.argv[1])]);
+        app.setAsDefaultProtocolClient(defaultScheme, process.execPath, [
+          path.resolve(process.argv[1]),
+        ]);
       }
     } else {
       app.setAsDefaultProtocolClient(defaultScheme);

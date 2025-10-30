@@ -9,11 +9,14 @@
   "license": "MIT",
   "dependencies": {
     "@ghostery/adblocker-electron": "2.12.4",
+    "@mediago/browser-extension": "workspace:*",
     "@mediago/core": "0.0.11",
     "@mediago/deps": "0.0.3",
-    "@mediago/player": "0.0.9",
     "@mediago/electron-preload": "workspace:*",
-    "@mediago/browser-extension": "workspace:*"
+    "@mediago/player": "0.0.9",
+    "better-sqlite3": "12.4.1",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "0.3.27"
   },
   "devDependencies": {
     "electron": "30.0.8"

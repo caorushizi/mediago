@@ -1,3 +1,4 @@
+import dotenvFlow from "dotenv-flow";
 import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
 import path, { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -5,6 +6,10 @@ import { defineConfig } from "tsdown";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const projectRoot = path.resolve(__dirname, "../..");
+const env = dotenvFlow.config({
+  path: projectRoot,
+});
 
 export class NodeApp {
   process: ChildProcessWithoutNullStreams | null = null;
@@ -44,6 +49,7 @@ const app = new NodeApp();
 
 export default defineConfig({
   outDir: "build",
+  env: { ...env.parsed },
   hooks: {
     "build:done": () => {
       if (process.env.NODE_ENV === "development") {
