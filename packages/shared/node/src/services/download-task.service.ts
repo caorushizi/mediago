@@ -149,8 +149,7 @@ export class DownloadTaskService {
   }
 
   async getLog(id: number) {
-    const task = await this.downloadTaskRepository.findByIdOrFail(id);
-    return task.log || "";
+    return await this.downloaderServer.getTaskLogs(id.toString());
   }
 
   async listFolders() {

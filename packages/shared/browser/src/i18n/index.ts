@@ -1,7 +1,5 @@
 import {
   BASE_I18N_OPTIONS,
-  DEFAULT_FRONTEND_APP,
-  type FrontendApp,
   i18nResources,
   SUPPORTED_LANGUAGES,
 } from "@mediago/shared-common";
@@ -19,38 +17,32 @@ export interface CreateBrowserI18nOptions extends BrowserResourceOptions {
 
 const buildTranslationBundle = (
   language: (typeof SUPPORTED_LANGUAGES)[number],
-  app: FrontendApp,
-  { includeBackend = true }: BrowserResourceOptions,
 ) => {
-  const translation: Record<string, string> = includeBackend ? { ...i18nResources.backend[language] } : {};
+  const translation: Record<string, string> = { ...i18nResources[language] };
 
-  Object.assign(translation, i18nResources.frontend[app][language]);
+  Object.assign(translation, i18nResources[language]);
 
   return translation;
 };
 
-export const buildBrowserResources = (
-  app: FrontendApp = DEFAULT_FRONTEND_APP,
-  options: BrowserResourceOptions = {},
-): Resource => {
+export const buildBrowserResources = (): Resource => {
   return SUPPORTED_LANGUAGES.reduce<Resource>((acc, language) => {
     acc[language] = {
-      translation: buildTranslationBundle(language, app, options),
+      translation: buildTranslationBundle(language),
     };
 
     return acc;
   }, {} as Resource);
 };
 
-export function createBrowserI18n(
-  app: FrontendApp = DEFAULT_FRONTEND_APP,
-  { debug = false, includeBackend = true }: CreateBrowserI18nOptions = {},
-): i18n {
+export function createBrowserI18n({
+  debug = false,
+}: CreateBrowserI18nOptions = {}): i18n {
   const instance = createInstance();
 
   instance.use(LanguageDetector).use(initReactI18next);
 
-  const resources = buildBrowserResources(app, { includeBackend });
+  const resources = buildBrowserResources();
 
   void instance.init({
     ...BASE_I18N_OPTIONS,

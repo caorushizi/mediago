@@ -52,7 +52,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     useShallow(downloadFormSelector),
   );
   const location = useLocation();
-  const { pagination, total, mutate } = useTasks(filter);
+  const { pagination, total, mutate, setPage } = useTasks(filter);
   useDownloadEvent();
 
   useEffect(() => {
@@ -182,6 +182,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
         className="flex justify-end"
         current={pagination.page}
         pageSize={pagination.pageSize}
+        onChange={setPage}
         total={total}
         showSizeChanger={false}
       />

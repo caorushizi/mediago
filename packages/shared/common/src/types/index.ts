@@ -13,7 +13,7 @@ export interface DownloadTask {
   status?: DownloadStatus;
   folder?: string;
   isLive?: boolean;
-  log?: string;
+  // log?: string;
   createdDate?: Date;
 }
 

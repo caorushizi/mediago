@@ -163,4 +163,9 @@ export class DownloaderServer extends EventEmitter {
   async changeConfig(opts: ChangeConfigOptions) {
     return this.client?.updateConfig(opts);
   }
+
+  async getTaskLogs(id: string) {
+    const logResult = await this.client?.getTaskLogs(id);
+    return logResult?.data.log || "";
+  }
 }
