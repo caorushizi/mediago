@@ -1,4 +1,8 @@
-import { PauseCircleOutlined, PlayCircleOutlined } from "@ant-design/icons";
+import {
+  FileTextOutlined,
+  PauseCircleOutlined,
+  PlayCircleOutlined,
+} from "@ant-design/icons";
 import type {
   DownloadTask,
   DownloadTaskWithFile,
@@ -15,7 +19,6 @@ import {
   EditIcon,
   FailedIcon,
   PauseIcon,
-  TerminalIcon,
 } from "@/assets/svg";
 import { DownloadTag } from "@/components/download-tag";
 import { IconButton } from "@/components/icon-button";
@@ -31,7 +34,7 @@ import type { DownloadTaskDetails } from "@/hooks/use-tasks";
 import { appStoreSelector, useAppStore } from "@/store/app";
 import { DownloadStatus } from "@/types";
 import { cn, fromatDateTime, tdApp } from "@/utils";
-import { TerminalDrawer } from "./terminal-drawer";
+import { TerminalDialog } from "./terminal-dialog";
 import useAPI from "@/hooks/use-api";
 
 interface Props {
@@ -81,18 +84,17 @@ export const DownloadTaskItem = ({
     const buttons: ReactNode[] = [];
 
     const terminalBtn = appStore.showTerminal ? (
-      <TerminalDrawer
+      <TerminalDialog
         key="terminal"
         trigger={
           <IconButton
             key="terminal"
             title={t("terminal")}
-            icon={<TerminalIcon />}
+            icon={<FileTextOutlined />}
           />
         }
         title={task.name}
         id={task.id}
-        log={task.log || ""}
       />
     ) : null;
 
@@ -233,7 +235,7 @@ export const DownloadTaskItem = ({
         break;
       case DownloadStatus.Failed:
         list.push(
-          <TerminalDrawer
+          <TerminalDialog
             key="failed"
             trigger={
               <DownloadTag
@@ -245,7 +247,6 @@ export const DownloadTaskItem = ({
             }
             title={task.name}
             id={task.id}
-            log={task.log || ""}
           />,
         );
         break;
@@ -286,16 +287,15 @@ export const DownloadTaskItem = ({
             {t("createdAt")} {fromatDateTime(task.createdDate)}
           </div>
           {task.status === DownloadStatus.Failed && (
-            <TerminalDrawer
+            <TerminalDialog
               asChild
               trigger={
                 <div className="cursor-pointer truncate text-[#ff7373] dark:text-[rgba(255,115,115,0.6)]">
-                  {t("failReason")}: ... {task.log?.slice(-100)}
+                  {t("failReason")}: ...
                 </div>
               }
               title={task.name}
               id={task.id}
-              log={task.log || ""}
             />
           )}
         </div>

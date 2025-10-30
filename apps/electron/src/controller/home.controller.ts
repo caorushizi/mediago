@@ -59,7 +59,7 @@ import fs from "node:fs/promises";
 import { inject, injectable } from "inversify";
 import { nanoid } from "nanoid";
 import MachineId from "node-machine-id";
-import { convertToAudio, db, workspace } from "../helper/index";
+import { convertToAudio, db, exePath, workspace } from "../helper/index";
 import WebviewService from "../services/webview.service";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";
@@ -77,38 +77,38 @@ export default class HomeController implements Controller {
   private readonly appStoreHandlers: Partial<{
     [K in keyof AppStore]: (value: AppStore[K]) => void | Promise<void>;
   }> = {
-      useProxy: (value) => {
-        const proxy = this.store.get("proxy");
-        this.webviewService.setProxy(value, proxy);
-      },
-      proxy: (value) => {
-        const useProxy = this.store.get("useProxy");
-        if (useProxy) {
-          this.webviewService.setProxy(true, value);
-        }
-      },
-      blockAds: (value) => {
-        this.webviewService.setBlocking(value);
-      },
-      theme: (value) => {
-        nativeTheme.themeSource = value;
-      },
-      isMobile: (value) => {
-        this.webviewService.setUserAgent(value);
-      },
-      privacy: (value) => {
-        this.webviewService.setDefaultSession(value);
-      },
-      language: async (value) => {
-        await i18n.changeLanguage(value);
-      },
-      allowBeta: (value) => {
-        this.updater.changeAllowBeta(value);
-      },
-      audioMuted: (value) => {
-        this.webviewService.setAudioMuted(value);
-      },
-    };
+    useProxy: (value) => {
+      const proxy = this.store.get("proxy");
+      this.webviewService.setProxy(value, proxy);
+    },
+    proxy: (value) => {
+      const useProxy = this.store.get("useProxy");
+      if (useProxy) {
+        this.webviewService.setProxy(true, value);
+      }
+    },
+    blockAds: (value) => {
+      this.webviewService.setBlocking(value);
+    },
+    theme: (value) => {
+      nativeTheme.themeSource = value;
+    },
+    isMobile: (value) => {
+      this.webviewService.setUserAgent(value);
+    },
+    privacy: (value) => {
+      this.webviewService.setDefaultSession(value);
+    },
+    language: async (value) => {
+      await i18n.changeLanguage(value);
+    },
+    allowBeta: (value) => {
+      this.updater.changeAllowBeta(value);
+    },
+    audioMuted: (value) => {
+      this.webviewService.setAudioMuted(value);
+    },
+  };
 
   constructor(
     @inject(ElectronStore)
@@ -129,12 +129,12 @@ export default class HomeController implements Controller {
     private readonly logger: ElectronLogger,
     @inject(ElectronUpdater)
     private readonly updater: ElectronUpdater,
-  ) { }
+  ) {}
 
   @handle(GET_ENV_PATH)
   async getEnvPath(): Promise<EnvPath> {
     return {
-      binPath: __bin__,
+      binPath: exePath,
       dbPath: db,
       workspace: workspace,
       platform: process.platform,
@@ -208,7 +208,11 @@ export default class HomeController implements Controller {
   }
 
   @handle(SET_APP_STORE)
-  async setAppStore<K extends keyof AppStore>(_e: IpcMainEvent, key: K, val: AppStore[K]) {
+  async setAppStore<K extends keyof AppStore>(
+    _e: IpcMainEvent,
+    key: K,
+    val: AppStore[K],
+  ) {
     const handler = this.appStoreHandlers[key];
     if (handler) {
       await handler(val);
@@ -235,7 +239,10 @@ export default class HomeController implements Controller {
         payload: id,
       });
     };
-    const item = await this.downloadTaskService.list({ current: 1, pageSize: 1 }, this.store.get("local"));
+    const item = await this.downloadTaskService.list(
+      { current: 1, pageSize: 1 },
+      this.store.get("local"),
+    );
     const task = item.list.find((t: any) => t.id === id);
     const template: Array<MenuItemConstructorOptions | MenuItem> = [
       {
@@ -340,7 +347,11 @@ export default class HomeController implements Controller {
 
   @handle(GET_DOWNLOAD_LOG)
   async getDownloadLog(event: IpcMainEvent, id: number) {
-    return await this.downloadTaskService.getLog(id);
+    try {
+      return await this.downloadTaskService.getLog(id);
+    } catch {
+      return "";
+    }
   }
 
   @handle(SELECT_FILE)
@@ -447,7 +458,10 @@ export default class HomeController implements Controller {
   }
 
   @handle(GET_PAGE_TITLE)
-  async getPageTitle(event: IpcMainEvent, url: string): Promise<{ data: string }> {
+  async getPageTitle(
+    event: IpcMainEvent,
+    url: string,
+  ): Promise<{ data: string }> {
     try {
       const response = await axios.get(url, {
         timeout: 10000,

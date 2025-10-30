@@ -37,7 +37,7 @@ const Terminal: FC<TerminalProps> = ({ className, id, log, header }) => {
     const onDownloadMessage = (
       _: unknown,
       messageId: number,
-      message: string
+      message: string,
     ) => {
       if (id === messageId) {
         terminal.write(message);

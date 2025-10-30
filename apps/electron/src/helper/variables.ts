@@ -3,6 +3,7 @@ import { app } from "electron";
 
 export const appData = app.getPath("appData");
 export const download = app.getPath("downloads");
+export const exePath = app.getPath("userData");
 
 export enum Platform {
   Windows = "win32",
