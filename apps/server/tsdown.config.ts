@@ -20,11 +20,11 @@ export class NodeApp {
     this.process = spawn("node", args);
 
     this.process.stdout.on("data", (data) => {
-      console.log(String(data));
+      process.stdout.write(String(data));
     });
 
     this.process.stderr.on("data", (data) => {
-      console.log(String(data));
+      process.stderr.write(String(data));
     });
   }
 

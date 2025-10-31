@@ -16,9 +16,9 @@ import {
   updateSelector,
   useSessionStore,
 } from "./store/session";
-import { DownloadFilter } from "./types";
 import { isWeb, tdApp } from "./utils";
 import useAPI from "./hooks/use-api";
+import { AppStore, DownloadFilter } from "@mediago/shared-common";
 
 const AppLayout = lazy(() => import("./layout/app-layout"));
 const HomePage = lazy(() => import("./pages/home-page"));
@@ -33,7 +33,7 @@ function getAlgorithm(appTheme: "dark" | "light") {
 const App: FC = () => {
   const { addIpcListener, removeIpcListener, getMachineId } = useAPI();
   const { setUpdateAvailable, setUploadChecking } = useSessionStore(
-    useShallow(updateSelector)
+    useShallow(updateSelector),
   );
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
   const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));

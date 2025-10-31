@@ -1,12 +1,9 @@
 import { provide } from "@inversifyjs/binding-decorators";
-import {
-  appStoreDefaults,
-  appStoreSharedOptions,
-  type AppStore,
-} from "@mediago/shared-node";
+import { appStoreDefaults, appStoreSharedOptions } from "@mediago/shared-node";
 import Conf from "conf";
 import { injectable } from "inversify";
 import { DOWNLOAD_DIR, WORKSPACE } from "../helper/variables";
+import { AppStore } from "@mediago/shared-common";
 
 @injectable()
 @provide()

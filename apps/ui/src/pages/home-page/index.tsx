@@ -1,5 +1,9 @@
 import { QrcodeOutlined } from "@ant-design/icons";
-import { DownloadTask, GET_ENV_PATH } from "@mediago/shared-common";
+import {
+  DownloadFilter,
+  DownloadTask,
+  GET_ENV_PATH,
+} from "@mediago/shared-common";
 import { useMemoizedFn } from "ahooks";
 import { Pagination, Popover, QRCode } from "antd";
 import { type FC, useEffect, useId, useRef } from "react";
@@ -19,7 +23,6 @@ import useAPI from "@/hooks/use-api";
 import { useTasks } from "@/hooks/use-tasks";
 import { appStoreSelector, useAppStore } from "@/store/app";
 import { downloadFormSelector, useConfigStore } from "@/store/config";
-import { DownloadFilter } from "@/types";
 import { isDownloadType, isWeb, tdApp, urlDownloadType } from "@/utils";
 import { DownloadList } from "./components/download-list";
 import useSWR from "swr";

@@ -28,11 +28,11 @@ export class ElectronApp {
     this.process = spawn(String(electron), args);
 
     this.process.stdout.on("data", (data) => {
-      console.log(String(data));
+      process.stdout.write(String(data));
     });
 
     this.process.stderr.on("data", (data) => {
-      console.log(String(data));
+      process.stderr.write(String(data));
     });
   }
 
