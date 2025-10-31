@@ -75,6 +75,7 @@ export default defineConfig({
   loader: {
     ".jpg": "asset",
     ".png": "asset",
+    ".ico": "asset",
   },
   env: { ...env.parsed },
   hooks: {

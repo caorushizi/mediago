@@ -13,7 +13,7 @@
     "types": "tsc --noEmit"
   },
   "keywords": [],
-  "author": "",
+  "author": "caorushizi",
   "license": "MIT",
   "dependencies": {
     "@mediago/shared-common": "workspace:*",

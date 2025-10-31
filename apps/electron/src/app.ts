@@ -18,8 +18,8 @@ import {
   Tray,
 } from "electron";
 import { inject, injectable } from "inversify";
-import TrayIcon from "../assets/tray-icon.png";
-import TrayIconLight from "../assets/tray-icon-light.png";
+import TrayIcon from "../assets/icon.ico";
+import TrayIconLight from "../assets/icon-light.ico";
 import ProtocolService from "./core/protocol";
 import ElectronRouter from "./core/router";
 import { db, isMac, logDir } from "./helper/variables";

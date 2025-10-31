@@ -25,5 +25,6 @@
   "exports": {
     ".": "./build/index.js",
     "./package.json": "./package.json"
-  }
+  },
+  "license": "MIT"
 }

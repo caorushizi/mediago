@@ -12,7 +12,7 @@
     "src"
   ],
   "keywords": [],
-  "author": "",
+  "author": "caorushizi",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^24.7.2",
