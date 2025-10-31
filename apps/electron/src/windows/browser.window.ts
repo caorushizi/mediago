@@ -26,6 +26,7 @@ export default class BrowserWindow extends Window {
       frame: true,
       webPreferences: {
         preload: preloadUrl,
+        spellcheck: false,
       },
     });
 

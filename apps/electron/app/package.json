@@ -8,7 +8,8 @@
   "homepage": "https://downloader.caorushizi.cn/",
   "license": "MIT",
   "dependencies": {
-    "@ghostery/adblocker-electron": "2.12.4",
+    "@ghostery/adblocker-electron": "2.12.5",
+    "@ghostery/adblocker-electron-preload": "^2.12.5",
     "@mediago/browser-extension": "workspace:*",
     "@mediago/core": "0.0.11",
     "@mediago/deps": "0.0.3",
@@ -19,6 +20,6 @@
     "typeorm": "0.3.27"
   },
   "devDependencies": {
-    "electron": "30.0.8"
+    "electron": "35.7.5"
   }
 }

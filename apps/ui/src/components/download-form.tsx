@@ -1,4 +1,8 @@
-import { DockerOutlined } from "@ant-design/icons";
+import {
+  CloudDownloadOutlined,
+  DockerOutlined,
+  UnorderedListOutlined,
+} from "@ant-design/icons";
 import { useAsyncEffect, useMemoizedFn } from "ahooks";
 import {
   App,
@@ -137,7 +141,6 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
         onConfirm?.(form.getFieldsValue());
         tdApp.onEvent(ADD_TO_LIST, { id });
       } catch (e: any) {
-        console.error(e);
         message.error(e?.message || t("pleaseEnterCorrectFormInfo"));
       }
     });
@@ -172,7 +175,6 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
         onConfirm?.(form.getFieldsValue());
         tdApp.onEvent(DOWNLOAD_NOW, { id });
       } catch (e: any) {
-        console.error(e);
         message.error(e?.message || t("pleaseEnterCorrectFormInfo"));
       }
     });
@@ -239,6 +241,9 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
         afterOpenChange={afterOpenChange}
         destroyOnHidden={destroyOnClose}
         footer={[
+          <Button key="cancel" onClick={() => setModalOpen(false)}>
+            {t("cancel")}
+          </Button>,
           enableDocker && (
             <Button
               key="docker"
@@ -248,14 +253,20 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
               {t("addToDocker")}
             </Button>
           ),
-          <Button key="link" type="primary" onClick={handleDownloadNow}>
+          <Button
+            key="submit"
+            onClick={handleSave}
+            icon={<UnorderedListOutlined />}
+          >
+            {t("addToList")}
+          </Button>,
+          <Button
+            key="link"
+            type="primary"
+            onClick={handleDownloadNow}
+            icon={<CloudDownloadOutlined />}
+          >
             {t("downloadNow")}
-          </Button>,
-          <Button key="cancel" onClick={() => setModalOpen(false)}>
-            {t("cancel")}
-          </Button>,
-          <Button key="submit" onClick={handleSave}>
-            {t("save")}
           </Button>,
         ]}
       >

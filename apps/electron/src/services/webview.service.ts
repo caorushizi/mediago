@@ -12,19 +12,19 @@ import {
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import {
-  fetch,
   isDeeplink,
   mobileUA,
   PERSIST_WEBVIEW,
   PRIVACY_WEBVIEW,
   pcUA,
   pluginUrl,
-} from "../helper/index";
+} from "../helper";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";
 import BrowserWindow from "../windows/browser.window";
 import MainWindow from "../windows/main.window";
 import { SniffingHelper, type SourceParams } from "./sniffing-helper.service";
+import fetch from "cross-fetch";
 
 const require = createRequire(import.meta.url);
 
@@ -109,14 +109,8 @@ export default class WebviewService {
     this.window.webContents.send("webview-did-navigate", pageInfo);
 
     try {
-      // if (isDev && import.meta.env.APP_DEBUG_PLUGINS === "true") {
-      //   const content =
-      //     'function addScript(src){const script=document.createElement("script");script.src=src;script.type="module";document.body.appendChild(script)}addScript("http://localhost:8080/src/main.ts");';
-      //   await this.view.webContents.executeJavaScript(content);
-      // } else {
       const content = await readFile(pluginUrl, "utf-8");
       await this.view.webContents.executeJavaScript(content);
-      // }
     } catch {
       // empty
     }
@@ -147,18 +141,13 @@ export default class WebviewService {
     // Here you need to determine whether to use a browser plug-in
     const useExtension = this.store.get("useExtension");
     if (useExtension) {
-      // this.view.webContents.send("webview-link-message", item);
       this.window.webContents.send("webview-link-message", item);
     } else {
-      const video = await this.downloadTaskService.findByName(item.name);
-      if (video) {
-        item.name = `${item.name}-${Date.now()}`;
-      }
-      const res = await this.downloadTaskService.create(item);
+      const video = await this.downloadTaskService.addDownloadTask(item);
       const mainWebContents = this.mainWindow.window?.webContents;
       if (!mainWebContents) return;
       // This sends a message to the page notifying it of the update
-      mainWebContents.send("download-item-notifier", res);
+      mainWebContents.send("download-item-notifier", video);
     }
   };
 
@@ -292,7 +281,9 @@ export default class WebviewService {
   }
 
   async initBlocker() {
-    this.blocker = await ElectronBlocker.fromPrebuiltAdsAndTracking(fetch);
+    this.blocker = await ElectronBlocker.fromLists(fetch, [
+      "https://easylist.to/easylist/easylist.txt",
+    ]);
 
     const enableBlocking = this.store.get("blockAds");
     this.setBlocking(enableBlocking);

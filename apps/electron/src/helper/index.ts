@@ -1,10 +1,8 @@
 import { spawn } from "node:child_process";
 import EventEmitter from "node:events";
 import fs from "node:fs/promises";
-import https from "node:https";
 import { createRequire } from "node:module";
 import { LRUCache } from "lru-cache";
-import fetch from "node-fetch";
 import { loadModule } from "@mediago/shared-node";
 import path from "node:path";
 
@@ -16,17 +14,7 @@ export const ffmpegPath = path.resolve(
 );
 
 export * from "./variables";
-export { fetchWrapper as fetch };
 export { error, type IpcResponse, success } from "./ipcResponse";
-
-function fetchWrapper(url: string) {
-  const options = {
-    agent: new https.Agent({
-      rejectUnauthorized: false,
-    }),
-  };
-  return fetch(url, options);
-}
 
 export function noop() {}
 
