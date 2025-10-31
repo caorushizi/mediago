@@ -46,6 +46,7 @@ import {
   i18n,
   randomName,
   TYPES,
+  VideoServer,
 } from "@mediago/shared-node";
 import {
   clipboard,
@@ -110,6 +111,9 @@ export default class HomeController implements Controller {
     audioMuted: (value) => {
       this.webviewService.setAudioMuted(value);
     },
+    enableMobilePlayer: (value) => {
+      this.videoServer.enableMobilePlayer(value);
+    },
   };
 
   constructor(
@@ -131,6 +135,8 @@ export default class HomeController implements Controller {
     private readonly logger: ElectronLogger,
     @inject(ElectronUpdater)
     private readonly updater: ElectronUpdater,
+    @inject(VideoServer)
+    private readonly videoServer: VideoServer,
   ) {}
 
   @handle(GET_ENV_PATH)
@@ -141,6 +147,7 @@ export default class HomeController implements Controller {
       workspace: workspace,
       platform: process.platform,
       local: this.store.get("local"),
+      playerUrl: this.videoServer.getURL(),
     };
   }
 

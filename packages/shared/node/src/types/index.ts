@@ -17,6 +17,7 @@ export interface EnvPath {
   workspace: string;
   platform: string;
   local: string;
+  playerUrl?: string;
 }
 
 export interface BrowserWindowInitialVal {
@@ -98,6 +99,8 @@ export interface AppStore {
   enableDocker: boolean;
   // Docker URL
   dockerUrl: string;
+  // Mobile player
+  enableMobilePlayer: boolean;
 }
 
 export interface BrowserStore {

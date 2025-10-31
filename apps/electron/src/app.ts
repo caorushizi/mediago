@@ -86,17 +86,24 @@ export default class ElectronApp {
 
     this.initTray();
 
-    const local = this.store.get("local");
-    this.videoServer.start({ local });
+    const {
+      local,
+      enableMobilePlayer,
+      proxy,
+      useProxy,
+      maxRunner,
+      deleteSegments,
+    } = this.store.store;
+    this.videoServer.start({ local, enableMobilePlayer });
 
     // Start the download service
     this.downloaderServer.start({
       logDir: logDir,
-      localDir: this.store.get("local"),
-      deleteSegments: this.store.get("deleteSegments"),
-      proxy: this.store.get("proxy"),
-      useProxy: this.store.get("useProxy"),
-      maxRunner: this.store.get("maxRunner"),
+      localDir: local,
+      deleteSegments,
+      proxy,
+      useProxy,
+      maxRunner,
     });
     this.store.onDidChange("maxRunner", (maxRunner) => {
       this.downloaderServer.changeConfig({ maxRunner: maxRunner || 1 });
