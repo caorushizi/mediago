@@ -15,7 +15,7 @@
     "types": "tsc --noEmit"
   },
   "keywords": [],
-  "author": "",
+  "author": "caorushizi",
   "license": "MIT",
   "dependencies": {
     "@inversifyjs/binding-decorators": "^1.1.3",

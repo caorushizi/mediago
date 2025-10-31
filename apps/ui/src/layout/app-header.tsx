@@ -22,7 +22,7 @@ export function AppHeader({ className }: Props) {
     <div
       className={cn(
         "flex h-16 w-full select-none flex-row justify-between bg-[#F9FBFC] dark:bg-[#1F2024]",
-        className
+        className,
       )}
     >
       <div className="h-full rounded-br-full bg-[#EBF3FB] pr-2 dark:bg-[#3B3C41]">
@@ -40,7 +40,7 @@ export function AppHeader({ className }: Props) {
       <div className="flex flex-row items-center gap-3 pr-3">
         <button
           type="button"
-          className="flex flex-row items-center gap-2"
+          className="flex flex-row items-center gap-2 cursor-pointer"
           onClick={openHelpUrl}
         >
           <HelpIcon height={18} width={18} />

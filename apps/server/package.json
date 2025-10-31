@@ -11,7 +11,7 @@
     "clean": "rimraf .mediago-server",
     "lint": "oxlint ."
   },
-  "author": "",
+  "author": "caorushizi",
   "license": "MIT",
   "devDependencies": {
     "@types/koa": "^3.0.0",
