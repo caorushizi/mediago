@@ -35,6 +35,9 @@
     "@koa/router": "^14.0.0",
     "@mediago/shared-common": "workspace:*",
     "@mediago/shared-node": "workspace:*",
+    "@mediago/core": "0.0.11",
+    "@mediago/deps": "0.0.3",
+    "@mediago/player": "0.0.9",
     "axios": "^1.12.2",
     "better-sqlite3": "12.4.1",
     "conf": "^15.0.2",
@@ -47,7 +50,8 @@
     "reflect-metadata": "^0.2.2",
     "socket.io": "^4.8.0",
     "typeorm": "0.3.27",
-    "winston": "^3.14.2"
+    "winston": "^3.14.2",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "keywords": []
 }

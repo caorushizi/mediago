@@ -1,7 +1,10 @@
+import fs from "node:fs";
 import { provide } from "@inversifyjs/binding-decorators";
 import { injectable } from "inversify";
 import winston from "winston";
+import DailyRotateFile from "winston-daily-rotate-file";
 import type { Vendor } from "../core/vendor";
+import { LOG_DIR } from "../helper";
 
 @injectable()
 @provide()
@@ -9,27 +12,32 @@ export default class Logger implements Vendor {
   logger: winston.Logger;
 
   constructor() {
+    fs.mkdirSync(LOG_DIR, { recursive: true });
+
+    const transports = [
+      new DailyRotateFile({
+        filename: "mediago-%DATE%-error.log",
+        level: "error",
+        dirname: LOG_DIR,
+        datePattern: "YYYY-MM-DD",
+        zippedArchive: true,
+        maxFiles: "30d",
+      }),
+      new DailyRotateFile({
+        filename: "mediago-%DATE%-combined.log",
+        dirname: LOG_DIR,
+        datePattern: "YYYY-MM-DD",
+        zippedArchive: true,
+        maxFiles: "30d",
+      }),
+    ];
+
     this.logger = winston.createLogger({
       level: "info",
       format: winston.format.json(),
-      defaultMeta: { service: "user-service" },
-      transports: [
-        //
-        // - Write all logs with importance level of `error` or less to `error.log`
-        // - Write all logs with importance level of `info` or less to `combined.log`
-        //
-        new winston.transports.File({
-          filename: "./log/error.log",
-          level: "error",
-        }),
-        new winston.transports.File({ filename: "./log/combined.log" }),
-      ],
+      transports,
     });
 
-    //
-    // If we're not in production then log to the `console` with the format:
-    // `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
-    //
     if (process.env.NODE_ENV !== "production") {
       this.logger.add(
         new winston.transports.Console({
