@@ -11,8 +11,14 @@ import {
   SET_APP_STORE,
   SOCKET_TEST,
 } from "@mediago/shared-common";
-import { type Favorite, type FavoriteManagementService, handle, TYPES } from "@mediago/shared-node";
-import axios from "axios";
+import {
+  type Favorite,
+  type FavoriteManagementService,
+  getPageTitle,
+  handle,
+  randomName,
+  TYPES,
+} from "@mediago/shared-node";
 import { inject, injectable } from "inversify";
 import Logger from "../vendor/Logger";
 import SocketIO from "../vendor/SocketIO";
@@ -55,38 +61,9 @@ export default class HomeController implements Controller {
 
   @handle(GET_PAGE_TITLE)
   async getPageTitle({ url }: { url: string }) {
-    try {
-      const response = await axios.get(url, {
-        timeout: 10000,
-        maxRedirects: 5,
-        headers: {
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-        },
-      });
-
-      const html = response.data;
-      let title = "无标题";
-
-      const patterns = [
-        /<meta\s+property="og:title"\s+content="([^"]*)"/i,
-        /<meta\s+name="title"\s+content="([^"]*)"/i,
-        /<title[^>]*>([^<]+)<\/title>/i,
-      ];
-
-      for (const pattern of patterns) {
-        const match = html.match(pattern);
-        if (match && match[1]) {
-          title = match[1].trim();
-          break;
-        }
-      }
-
-      return { data: title };
-    } catch (error) {
-      console.error("Error fetching page title:", error);
-      return { data: "无标题" };
-    }
+    const fallbackTitle = randomName();
+    const title = await getPageTitle(url, fallbackTitle);
+    return { data: title };
   }
 
   @handle(GET_FAVORITES)

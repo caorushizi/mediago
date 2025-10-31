@@ -14,7 +14,12 @@ import {
   WEBVIEW_URL_CONTEXTMENU,
 } from "@mediago/shared-common";
 import { handle, i18n, TYPES } from "@mediago/shared-node";
-import { type IpcMainEvent, Menu, type MenuItem, type MenuItemConstructorOptions } from "electron";
+import {
+  type IpcMainEvent,
+  Menu,
+  type MenuItem,
+  type MenuItemConstructorOptions,
+} from "electron";
 import { inject, injectable } from "inversify";
 import { SniffingHelper } from "../services/sniffing-helper.service";
 import WebviewService from "../services/webview.service";
@@ -43,7 +48,7 @@ export default class WebviewController implements Controller {
   }
 
   @handle(WEBVIEW_URL_CONTEXTMENU)
-  async webviewUrlContextMenu() {
+  async appContextMenu() {
     const template: Array<MenuItemConstructorOptions | MenuItem> = [
       {
         label: i18n.t("copy"),

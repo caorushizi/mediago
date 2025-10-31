@@ -118,7 +118,7 @@ export const webAdapter: ElectronApi = {
   webviewShow: async () => {
     return defaultResp;
   },
-  webviewUrlContextMenu: async () => {
+  appContextMenu: async () => {
     return defaultResp;
   },
   combineToHomePage: async () => {

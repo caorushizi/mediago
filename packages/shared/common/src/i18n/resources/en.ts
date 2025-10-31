@@ -207,4 +207,6 @@ export const en = {
   videoDownloadFailed: "{{name}} download failed",
   showMainWindow: "Show main window",
   exitApp: "Exit app",
+  untitled: "Untitled",
+  noData: "No Data",
 };

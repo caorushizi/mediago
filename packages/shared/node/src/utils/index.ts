@@ -1,5 +1,10 @@
 import os from "node:os";
 import { MEDIAGO_EVENT, MEDIAGO_METHOD } from "@mediago/shared-common";
+import axios from "axios";
+import { customAlphabet } from "nanoid";
+import dayjs from "dayjs";
+
+const nanoid = customAlphabet("0123456789abcdefghijklmnopqrstuvwxyz", 10);
 
 export type {
   ControllerHandlerBinder,
@@ -61,4 +66,43 @@ export function loadModule(moduleName: string) {
   } catch {
     return "";
   }
+}
+
+export async function getPageTitle(
+  url: string,
+  fallbackTitle = randomName(),
+): Promise<string> {
+  const response = await axios.get<string>(url, {
+    timeout: 10000,
+    maxRedirects: 5,
+    headers: {},
+  });
+
+  const html = response.data ?? "";
+  return extractTitle(html, fallbackTitle);
+}
+
+export function extractTitle(html: string, fallbackTitle: string): string {
+  if (!html) {
+    return fallbackTitle;
+  }
+
+  const patterns = [
+    /<meta\s+property=["']og:title["']\s+content=["']([^"']*)["']/i,
+    /<meta\s+name=["']title["']\s+content=["']([^"']*)["']/i,
+    /<title[^>]*>([^<]+)<\/title>/i,
+  ];
+
+  for (const pattern of patterns) {
+    const match = html.match(pattern);
+    if (match && match[1]) {
+      return match[1].trim();
+    }
+  }
+
+  return fallbackTitle;
+}
+
+export function randomName() {
+  return dayjs().format("YYYYMMDD") + "-" + nanoid();
 }

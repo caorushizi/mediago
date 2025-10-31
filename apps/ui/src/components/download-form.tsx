@@ -19,7 +19,7 @@ import { useDockerApi } from "@/hooks/use-docker-api";
 import { appStoreSelector, useAppStore } from "@/store/app";
 import { downloadFormSelector, useConfigStore } from "@/store/config";
 import { DownloadType } from "@/types";
-import { randomName, tdApp } from "@/utils";
+import { tdApp } from "@/utils";
 import { DownloadTask } from "@mediago/shared-common";
 
 const { TextArea } = Input;
@@ -74,7 +74,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
     );
     const [folders, setFolders] = useState<Options[]>([]);
     const [videoFolders, setVideoFolders] = useState<string[]>([]);
-    const { createDownloadTasks, getVideoFolders } = useAPI();
+    const { createDownloadTasks, getVideoFolders, appContextMenu } = useAPI();
     const { addVideosToDocker } = useDockerApi();
 
     useAsyncEffect(async () => {
@@ -199,7 +199,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
             const [url, customName, folder] = line.trim().split(" ");
             return {
               url: url.trim(),
-              name: customName?.trim() || randomName(),
+              name: customName?.trim(),
               headers,
               type,
               folder,
@@ -218,8 +218,8 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
         } = form.getFieldsValue();
 
         const task: Omit<DownloadTask, "id"> = {
-          name: name || randomName(),
-          url: url || "",
+          name,
+          url,
           headers,
           type,
           folder,
@@ -320,7 +320,10 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
                     },
                   ]}
                 >
-                  <Input placeholder={t("pleaseEnterVideoName")} />
+                  <Input
+                    placeholder={t("pleaseEnterVideoName")}
+                    onContextMenu={appContextMenu}
+                  />
                 </Form.Item>
               );
             }}
@@ -362,7 +365,11 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
                     },
                   ]}
                 >
-                  <TextArea rows={5} placeholder={t("videoLikeDescription")} />
+                  <TextArea
+                    rows={5}
+                    placeholder={t("videoLikeDescription")}
+                    onContextMenu={appContextMenu}
+                  />
                 </Form.Item>
               );
             }}
@@ -390,6 +397,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
                 >
                   <Input
                     placeholder={t("pleaseEnterOnlineVideoUrlOrDragM3U8Here")}
+                    onContextMenu={appContextMenu}
                     onDrop={(e) => {
                       const file: any = e.dataTransfer.files[0];
                       form.setFieldValue("url", `file://${file.path}`);
@@ -430,6 +438,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
                   <TextArea
                     rows={4}
                     placeholder={t("additionalHeadersDescription")}
+                    onContextMenu={appContextMenu}
                   />
                 </Form.Item>
               );

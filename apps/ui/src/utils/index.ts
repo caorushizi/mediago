@@ -1,6 +1,5 @@
 import { type ClassValue, clsx } from "clsx";
 import dayjs from "dayjs";
-import { customAlphabet } from "nanoid";
 import { twMerge } from "tailwind-merge";
 import { DownloadType } from "@/types";
 import { isUrl } from "./url";
@@ -8,8 +7,6 @@ import { isUrl } from "./url";
 export { api, http } from "./http";
 export { getSocket } from "./socket";
 export { tdApp } from "./tdapp";
-
-const nanoid = customAlphabet("0123456789abcdefghijklmnopqrstuvwxyz", 10);
 
 export const requestImage = (url: string, timeout = 1000): Promise<void> => {
   return new Promise((resolve, reject) => {
@@ -57,7 +54,10 @@ export function moment() {
   return dayjs().format("YYYY-MM-DDTHH:mm:ssZ");
 }
 
-export function fromatDateTime(d: string | number | Date | undefined, tmpStr: string = "YYYY/MM/DD HH:mm:ss") {
+export function fromatDateTime(
+  d: string | number | Date | undefined,
+  tmpStr: string = "YYYY/MM/DD HH:mm:ss",
+) {
   if (!d) return "";
 
   return dayjs(d).format(tmpStr);
@@ -71,10 +71,6 @@ export function getFileName(url: string) {
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
-}
-
-export function randomName() {
-  return dayjs().format("YYYYMMDD") + "-" + nanoid();
 }
 
 export const isWeb = import.meta.env.APP_TARGET === "server";

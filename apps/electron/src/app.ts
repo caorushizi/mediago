@@ -1,8 +1,22 @@
 import path from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
 import { DownloadStatus } from "@mediago/shared-common";
-import { DownloaderServer, i18n, TypeORM, DownloadTaskService, VideoServer } from "@mediago/shared-node";
-import { app, BrowserWindow, type Event, Menu, nativeImage, nativeTheme, Tray } from "electron";
+import {
+  DownloaderServer,
+  i18n,
+  TypeORM,
+  DownloadTaskService,
+  VideoServer,
+} from "@mediago/shared-node";
+import {
+  app,
+  BrowserWindow,
+  type Event,
+  Menu,
+  nativeImage,
+  nativeTheme,
+  Tray,
+} from "electron";
 import { inject, injectable } from "inversify";
 import TrayIcon from "../assets/tray-icon.png";
 import TrayIconLight from "../assets/tray-icon-light.png";
@@ -39,7 +53,7 @@ export default class ElectronApp {
     private readonly videoServer: VideoServer,
     @inject(DownloaderServer)
     private readonly downloaderServer: DownloaderServer,
-  ) { }
+  ) {}
 
   private async serviceInit(): Promise<void> {
     this.mainWindow.init();

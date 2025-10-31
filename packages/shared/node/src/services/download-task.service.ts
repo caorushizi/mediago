@@ -4,30 +4,15 @@ import type {
   DownloadTaskPagination,
   ListPagination,
 } from "@mediago/shared-common";
-import { DownloadStatus } from "@mediago/shared-common";
+import { DownloadStatus, DownloadType } from "@mediago/shared-common";
 import { glob } from "glob";
 import { inject, injectable } from "inversify";
 import DownloadTaskRepository from "../dao/repository/download-task.repository";
 import { DownloaderServer } from "../worker";
-import { videoPattern } from "../utils";
+import { getPageTitle, randomName, videoPattern } from "../utils";
+import { Video } from "../dao";
+import { t } from "i18next";
 
-/**
- * Download Task Service (Business Logic Layer)
- *
- * 下载任务管理服务，负责下载任务的业务逻辑处理。
- * Download task management service, responsible for business logic of download tasks.
- *
- * 功能说明：
- * - 下载任务的增删改查
- * - 下载任务的状态管理
- * - 下载任务的启动和停止
- * - 本地文件存在性检查
- * - 下载日志管理
- *
- * @see DownloadTaskRepository - 数据访问层
- * @see DownloadTask - 下载任务类型定义
- * @see DownloadTaskWithFile - 包含文件信息的下载任务类型
- */
 @injectable()
 @provide()
 export class DownloadTaskService {
@@ -43,39 +28,74 @@ export class DownloadTaskService {
   }
 
   private onTaskSuccess = async (taskId: number) => {
-    await this.downloadTaskRepository.updateStatus(
+    return this.downloadTaskRepository.updateStatus(
       taskId,
       DownloadStatus.Success,
     );
   };
 
   private onTaskFailed = async (taskId: number) => {
-    await this.downloadTaskRepository.updateStatus(
+    return this.downloadTaskRepository.updateStatus(
       taskId,
       DownloadStatus.Failed,
     );
   };
 
   private onTaskStart = async (taskId: number) => {
-    await this.downloadTaskRepository.updateStatus(
+    return this.downloadTaskRepository.updateStatus(
       taskId,
       DownloadStatus.Downloading,
     );
   };
 
-  async create(task: Omit<DownloadTask, "id">) {
-    return await this.downloadTaskRepository.create(task);
+  async addDownloadTask(task: Omit<DownloadTask, "id">) {
+    // 先判断数据库中是否有同名的任务
+    let title = task.name || "";
+
+    if (!title.trim() && task.type === DownloadType.bilibili) {
+      title = await getPageTitle(task.url);
+    } else if (!title.trim()) {
+      title = `${t("untitled")}-${randomName()}`;
+    }
+    const existingTask = await this.downloadTaskRepository.findByName(title);
+    if (existingTask) {
+      title = `${title}-${randomName()}`;
+    }
+    const taskWithTitle = {
+      ...task,
+      name: title,
+    };
+    return this.downloadTaskRepository.create(taskWithTitle);
   }
 
-  async createMany(tasks: Omit<DownloadTask, "id">[]) {
-    return await this.downloadTaskRepository.createMany(tasks);
+  async addDownloadTasks(tasks: Omit<DownloadTask, "id">[]) {
+    const tasksWithTitles = await Promise.all(
+      tasks.map(async (task) => {
+        let title = task.name || "";
+        if (!title.trim() && task.type === DownloadType.bilibili) {
+          title = await getPageTitle(task.url);
+        } else if (!title.trim()) {
+          title = `${t("untitled")}-${randomName()}`;
+        }
+        const existingTask =
+          await this.downloadTaskRepository.findByName(title);
+        if (existingTask) {
+          title = `${title}-${randomName()}`;
+        }
+        return {
+          ...task,
+          name: title,
+        };
+      }),
+    );
+    return this.downloadTaskRepository.createMany(tasksWithTitles);
   }
 
-  async update(task: DownloadTask) {
-    return await this.downloadTaskRepository.update(task.id, task);
+  async editDownloadTask(task: DownloadTask) {
+    return this.downloadTaskRepository.update(task.id, task);
   }
 
-  async list(
+  async getDownloadTasks(
     pagination: DownloadTaskPagination,
     localPath: string,
   ): Promise<ListPagination> {
@@ -107,7 +127,11 @@ export class DownloadTaskService {
     };
   }
 
-  async start(taskId: number, localPath: string, deleteSegments: boolean) {
+  async startDownload(
+    taskId: number,
+    localPath: string,
+    deleteSegments: boolean,
+  ) {
     const task = await this.downloadTaskRepository.findByIdOrFail(taskId);
     const { name, url, type, folder } = task;
 
@@ -140,23 +164,25 @@ export class DownloadTaskService {
     }
   }
 
-  async stop(id: number) {
+  async stopDownload(id: number) {
     return this.downloaderServer.stopTask(id.toString());
   }
 
-  async remove(id: number) {
-    return await this.downloadTaskRepository.delete(id);
+  async deleteDownloadTask(id: number) {
+    return this.downloadTaskRepository.delete(id);
   }
 
-  async getLog(id: number) {
-    return await this.downloaderServer.getTaskLogs(id.toString());
+  async getDownloadLog(id: number) {
+    const logs = await this.downloaderServer.getTaskLogs(id.toString());
+    console.log("Retrieved logs:", logs);
+    return logs;
   }
 
-  async listFolders() {
+  async getTaskFolders() {
     return this.downloadTaskRepository.findDistinctFolders();
   }
 
-  async exportList() {
+  async exportDownloadList() {
     const tasks = await this.downloadTaskRepository.findAll("DESC");
     return tasks.map((task) => `${task.url} ${task.name}`).join("\n");
   }
@@ -166,94 +192,38 @@ export class DownloadTaskService {
     ids: number | number[],
     status: DownloadStatus,
   ): Promise<void> {
-    await this.downloadTaskRepository.updateStatus(ids, status);
+    return this.downloadTaskRepository.updateStatus(ids, status);
   }
 
-  async setIsLive(id: number, isLive: boolean = true): Promise<void> {
-    await this.downloadTaskRepository.updateIsLive(id, isLive);
+  async setIsLive(id: number, isLive: boolean = true): Promise<Video> {
+    return this.downloadTaskRepository.updateIsLive(id, isLive);
   }
 
-  async appendLog(id: number, message: string): Promise<void> {
-    await this.downloadTaskRepository.appendLog(id, message);
+  async appendLog(id: number, message: string): Promise<Video> {
+    return this.downloadTaskRepository.appendLog(id, message);
   }
 
   // Query methods
   async findById(id: number) {
-    return await this.downloadTaskRepository.findById(id);
+    return this.downloadTaskRepository.findById(id);
   }
 
   async findByIdOrFail(id: number) {
-    return await this.downloadTaskRepository.findByIdOrFail(id);
+    return this.downloadTaskRepository.findByIdOrFail(id);
   }
 
   async findByName(name: string) {
-    return await this.downloadTaskRepository.findByName(name);
+    return this.downloadTaskRepository.findByName(name);
   }
 
   async findByUrl(url: string) {
-    return await this.downloadTaskRepository.findByUrl(url);
+    return this.downloadTaskRepository.findByUrl(url);
   }
 
   async findActiveTasks() {
-    return await this.downloadTaskRepository.findByStatus([
+    return this.downloadTaskRepository.findByStatus([
       DownloadStatus.Watting,
       DownloadStatus.Downloading,
     ]);
-  }
-
-  // Legacy aliases (deprecated)
-  async findWaitingAndDownloadingTasks() {
-    return await this.findActiveTasks();
-  }
-
-  async findWaitingAndDownloadingVideos() {
-    return await this.findActiveTasks();
-  }
-
-  async addDownloadTask(task: Omit<DownloadTask, "id">) {
-    return await this.create(task);
-  }
-
-  async addDownloadTasks(tasks: Omit<DownloadTask, "id">[]) {
-    return await this.createMany(tasks);
-  }
-
-  async editDownloadTask(task: DownloadTask) {
-    return await this.update(task);
-  }
-
-  async getDownloadTasks(
-    pagination: DownloadTaskPagination,
-    localPath: string,
-  ): Promise<ListPagination> {
-    return await this.list(pagination, localPath);
-  }
-
-  async startDownload(
-    taskId: number,
-    localPath: string,
-    deleteSegments: boolean,
-  ) {
-    return await this.start(taskId, localPath, deleteSegments);
-  }
-
-  async stopDownload(id: number) {
-    return await this.stop(id);
-  }
-
-  async deleteDownloadTask(id: number) {
-    return await this.remove(id);
-  }
-
-  async getDownloadLog(id: number) {
-    return await this.getLog(id);
-  }
-
-  async getTaskFolders() {
-    return await this.listFolders();
-  }
-
-  async exportDownloadList() {
-    return await this.exportList();
   }
 }

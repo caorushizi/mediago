@@ -1,4 +1,4 @@
-import { SHOW_DOWNLOAD_DIALOG } from "@mediago/shared-common";
+import { DownloadTask, SHOW_DOWNLOAD_DIALOG } from "@mediago/shared-common";
 import { useMemoizedFn } from "ahooks";
 import { Empty, Space, Spin, Splitter } from "antd";
 import { useEffect, useId, useRef, useState } from "react";
@@ -8,21 +8,34 @@ import DownloadForm, { type DownloadFormRef } from "@/components/download-form";
 import { Button } from "@/components/ui/button";
 import WebView from "@/components/web-view";
 import useAPI from "@/hooks/use-api";
-import { BrowserStatus, browserStoreSelector, PageMode, setBrowserSelector, useBrowserStore } from "@/store/browser";
-import { generateUrl, randomName } from "@/utils";
+import {
+  BrowserStatus,
+  browserStoreSelector,
+  PageMode,
+  setBrowserSelector,
+  useBrowserStore,
+} from "@/store/browser";
+import { generateUrl } from "@/utils";
 import { BrowserViewPanel } from "./browser-view-panel";
 
 export function BrowserView() {
-  const { webviewLoadURL, addIpcListener, removeIpcListener, webviewGoHome } = useAPI();
+  const { webviewLoadURL, addIpcListener, removeIpcListener, webviewGoHome } =
+    useAPI();
   const downloadForm = useRef<DownloadFormRef>(null);
   const store = useBrowserStore(useShallow(browserStoreSelector));
-  const { addSource, setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
+  const { addSource, setBrowserStore } = useBrowserStore(
+    useShallow(setBrowserSelector),
+  );
   const { t } = useTranslation();
   const [placeHolder, setPlaceHolder] = useState<string>("");
   const browserId = useId();
 
   useEffect(() => {
-    const onShowDownloadDialog = async (e: unknown, data: DownloadTask[], image: string) => {
+    const onShowDownloadDialog = async (
+      e: unknown,
+      data: DownloadTask[],
+      image: string,
+    ) => {
       if (image) {
         setPlaceHolder(image);
       }
@@ -38,10 +51,7 @@ export function BrowserView() {
     };
 
     const onWebviewLinkMessage = async (e: unknown, data: any) => {
-      addSource({
-        ...data,
-        name: `${data.name}_${randomName()}`,
-      });
+      addSource(data);
     };
 
     addIpcListener(SHOW_DOWNLOAD_DIALOG, onShowDownloadDialog);
@@ -101,7 +111,9 @@ export function BrowserView() {
     if (store.status === BrowserStatus.Failed) {
       return (
         <div className="flex h-full w-full flex-row items-center justify-center">
-          <Empty description={`${store.errMsg || t("loadFailed")} (${store.errCode})`}>
+          <Empty
+            description={`${store.errMsg || t("loadFailed")} (${store.errCode})`}
+          >
             <Space>
               <Button onClick={onClickGoHome}>{t("backToHome")}</Button>
               <Button onClick={goto}>{t("refresh")}</Button>
