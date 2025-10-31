@@ -4,6 +4,7 @@ import {
   PlayCircleOutlined,
 } from "@ant-design/icons";
 import {
+  DownloadProgress,
   DownloadStatus,
   GET_ENV_PATH,
   type DownloadTask,
