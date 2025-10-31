@@ -246,7 +246,11 @@ const SettingPage: React.FC = () => {
               <Radio value={false}>{t("minimizeToTray")}</Radio>
             </Radio.Group>
           </Form.Item>
-          <Form.Item label={t("enableMobilePlayer")} name="enableMobilePlayer">
+          <Form.Item
+            label={t("enableMobilePlayer")}
+            name="enableMobilePlayer"
+            hidden={isWeb}
+          >
             <Switch />
           </Form.Item>
         </>

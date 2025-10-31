@@ -8,6 +8,7 @@ import {
   EDIT_DOWNLOAD_ITEM,
   GET_APP_STORE,
   GET_DOWNLOAD_ITEMS,
+  GET_ENV_PATH,
   GET_PAGE_TITLE,
   GET_VIDEO_FOLDERS,
   SET_APP_STORE,
@@ -30,7 +31,7 @@ const defaultResp = {
  */
 export const webAdapter: ElectronApi = {
   getEnvPath: async () => {
-    return defaultResp;
+    return api.post(GET_ENV_PATH);
   },
   getFavorites: async () => {
     return defaultResp;

@@ -20,7 +20,7 @@ watch(
   () => {
     commentsRef.value?.destroy();
     initWaline();
-  }
+  },
 );
 
 function initWaline() {
@@ -30,6 +30,7 @@ function initWaline() {
     dark: isDark.value,
     lang: "zh-CN",
     pageview: true,
+    reaction: true,
   });
 }
 

@@ -2,8 +2,10 @@ import { provide } from "@inversifyjs/binding-decorators";
 import {
   type Controller,
   ADD_FAVORITE,
+  EnvPath,
   EXPORT_FAVORITES,
   GET_APP_STORE,
+  GET_ENV_PATH,
   GET_FAVORITES,
   GET_PAGE_TITLE,
   IMPORT_FAVORITES,
@@ -18,11 +20,13 @@ import {
   handle,
   randomName,
   TYPES,
+  VideoServer,
 } from "@mediago/shared-node";
 import { inject, injectable } from "inversify";
 import Logger from "../vendor/Logger";
 import SocketIO from "../vendor/SocketIO";
 import StoreService from "../vendor/Store";
+import { BIN_DIR, DB_PATH, WORKSPACE } from "../helper";
 
 @injectable()
 @provide(TYPES.Controller)
@@ -36,7 +40,21 @@ export default class HomeController implements Controller {
     private readonly store: StoreService,
     @inject(SocketIO)
     private readonly socket: SocketIO,
+    @inject(VideoServer)
+    private readonly videoServer: VideoServer,
   ) {}
+
+  @handle(GET_ENV_PATH)
+  async getEnvPath(): Promise<EnvPath> {
+    return {
+      binPath: BIN_DIR,
+      dbPath: DB_PATH,
+      workspace: WORKSPACE,
+      platform: process.platform,
+      local: this.store.get("local"),
+      playerUrl: this.videoServer.getURL(),
+    };
+  }
 
   @handle(GET_APP_STORE)
   async getAppStore() {
