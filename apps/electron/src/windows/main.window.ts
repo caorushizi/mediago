@@ -47,6 +47,7 @@ export default class MainWindow extends Window {
       frame: true,
       webPreferences: {
         preload: preloadUrl,
+        spellcheck: false,
       },
     });
 

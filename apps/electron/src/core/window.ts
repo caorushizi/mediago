@@ -28,7 +28,10 @@ export default class Window {
     if (!this.window) return;
 
     this.window.show();
-    isDev && this.window.webContents.openDevTools();
+
+    if (isDev) {
+      this.window.webContents.openDevTools();
+    }
   };
 
   windowClose = () => {

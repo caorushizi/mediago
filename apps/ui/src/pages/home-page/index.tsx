@@ -112,7 +112,6 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   });
 
   const handleChangePage = useMemoizedFn((page: number, _: number) => {
-    console.log("handleChangePage", page, _);
     setPage(page);
   });
 

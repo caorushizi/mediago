@@ -20,26 +20,21 @@ const getAvailableApiMethods = (): string[] => {
 export const electronAdapter: ElectronApi = new Proxy({} as ElectronApi, {
   get(_target, prop: string) {
     if (!window.electron || !(prop in window.electron)) {
-      console.warn(
-        `[ElectronAdapter] Method '${prop}' not available in Electron context`,
-      );
       return async () => ({
         code: -1,
         msg: `Method '${prop}' not implemented`,
-        data: null,
+        data: null as unknown,
       });
     }
 
     const electronFun = window.electron[prop as keyof typeof window.electron];
     if (typeof electronFun !== "function") {
-      console.warn(`[ElectronAdapter] Property '${prop}' is not a function`);
       return async () => ({
         code: -1,
         msg: `Property '${prop}' is not callable`,
-        data: null,
+        data: null as unknown,
       });
     }
-    console.info(`[ElectronAdapter] Method '${prop}' is called`);
 
     return electronFun.bind(window.electron);
   },
@@ -71,9 +66,6 @@ export const electronIpcAdapter: IpcListener = {
   addIpcListener: (eventName: string, func: any) => {
     const id = getIpcId(func);
     if (!window.electron || !window.electron.rendererEvent) {
-      console.warn(
-        "[ElectronIpcAdapter] window.electron.rendererEvent not available",
-      );
       return;
     }
     window.electron.rendererEvent(eventName, id, func);
@@ -81,9 +73,6 @@ export const electronIpcAdapter: IpcListener = {
   removeIpcListener: (eventName: string, func: any) => {
     const id = getIpcId(func);
     if (!window.electron || !window.electron.removeEventListener) {
-      console.warn(
-        "[ElectronIpcAdapter] window.electron.removeEventListener not available",
-      );
       return;
     }
     window.electron.removeEventListener(eventName, id);

@@ -31,6 +31,7 @@ import {
   SET_SHARED_STATE,
   SHOW_BROWSER_WINDOW,
   START_UPDATE,
+  safeParseJSON,
 } from "@mediago/shared-common";
 import {
   type AppStore,
@@ -417,7 +418,8 @@ export default class HomeController implements Controller {
     if (!result.canceled) {
       const filePath = result.filePaths[0];
       const json = await fs.readFile(filePath, "utf-8");
-      await this.favoriteService.importFavorites(json as any);
+      const data = safeParseJSON(json, {}) as unknown as any;
+      await this.favoriteService.importFavorites(data);
     }
   }
 

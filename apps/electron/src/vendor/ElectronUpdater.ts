@@ -27,7 +27,6 @@ export default class UpdateService {
     if (isDev) {
       autoUpdater.forceDevUpdateConfig = true;
     }
-
     if (autoUpgrade) {
       autoUpdater.autoDownload = true;
       this.autoUpdate();
@@ -35,7 +34,6 @@ export default class UpdateService {
       autoUpdater.autoDownload = false;
       this.checkForUpdates();
     }
-
     autoUpdater.on("checking-for-update", () => {
       this.mainWindow.send("checkingForUpdate");
     });
