@@ -5,8 +5,13 @@ import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import logo from "../assets/logo.png";
-import { addIpcListener, pluginReady, removeIpcListener, showDownloadDialog } from "../helper";
-import type { DownloadType } from "../types";
+import {
+  addIpcListener,
+  pluginReady,
+  removeIpcListener,
+  showDownloadDialog,
+} from "../helper";
+import { DownloadType } from "@mediago/shared-common";
 
 interface SourceData {
   id: number;
@@ -127,20 +132,33 @@ export class FloatButton extends LitElement {
     this.dragging = false;
   };
 
-  getPosition = (newLeft: number, newTop: number): { left: number; top: number } => {
+  getPosition = (
+    newLeft: number,
+    newTop: number,
+  ): { left: number; top: number } => {
     if (!this.button) return { left: 0, top: 0 };
 
     // Gets the width of the scroll bar
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    const scrollbarWidth =
+      window.innerWidth - document.documentElement.clientWidth;
 
     // Gets the width and height of the window
-    const windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-    const windowHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+    const windowWidth =
+      window.innerWidth ||
+      document.documentElement.clientWidth ||
+      document.body.clientWidth;
+    const windowHeight =
+      window.innerHeight ||
+      document.documentElement.clientHeight ||
+      document.body.clientHeight;
 
     // Make sure the buttons don't get dragged off the screen
     if (newLeft < 0) {
       newLeft = 0;
-    } else if (newLeft + this.button.offsetWidth > windowWidth - scrollbarWidth) {
+    } else if (
+      newLeft + this.button.offsetWidth >
+      windowWidth - scrollbarWidth
+    ) {
       newLeft = windowWidth - this.button.offsetWidth - scrollbarWidth;
     }
 

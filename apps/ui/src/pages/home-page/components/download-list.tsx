@@ -1,4 +1,4 @@
-import type { DownloadTask } from "@mediago/shared-common";
+import type { DownloadFilter, DownloadTask } from "@mediago/shared-common";
 import { useMemoizedFn } from "ahooks";
 import { App, Empty } from "antd";
 import { produce } from "immer";
@@ -9,7 +9,6 @@ import Loading from "@/components/loading";
 import { EDIT_DOWNLOAD } from "@/const";
 import useAPI from "@/hooks/use-api";
 import { useTasks } from "@/hooks/use-tasks";
-import type { DownloadFilter } from "@/types";
 import { cn, tdApp } from "@/utils";
 import { DownloadTaskItem } from "./download-item";
 import { ListHeader } from "./list-header";

@@ -3,9 +3,11 @@ import {
   PauseCircleOutlined,
   PlayCircleOutlined,
 } from "@ant-design/icons";
-import type {
-  DownloadTask,
-  DownloadTaskWithFile,
+import {
+  DownloadStatus,
+  GET_ENV_PATH,
+  type DownloadTask,
+  type DownloadTaskWithFile,
 } from "@mediago/shared-common";
 import { useMemoizedFn } from "ahooks";
 import { Progress } from "antd";
@@ -32,10 +34,10 @@ import {
 } from "@/const";
 import type { DownloadTaskDetails } from "@/hooks/use-tasks";
 import { appStoreSelector, useAppStore } from "@/store/app";
-import { DownloadStatus } from "@/types";
 import { cn, fromatDateTime, tdApp } from "@/utils";
 import { TerminalDialog } from "./terminal-dialog";
 import useAPI from "@/hooks/use-api";
+import useSWR from "swr";
 
 interface Props {
   task: DownloadTaskDetails;
@@ -60,13 +62,14 @@ export const DownloadTaskItem = ({
 }: Props) => {
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
-  const { openUrl } = useAPI();
+  const { openUrl, getEnvPath } = useAPI();
+  const { data: envPath } = useSWR(GET_ENV_PATH, getEnvPath);
 
   // Handlers
   const handlePlay = useMemoizedFn(() => {
     // FIXME: 播放器接入
     tdApp.onEvent(PLAY_VIDEO);
-    openUrl("http://localhost:9800/");
+    openUrl(envPath.playerUrl);
   });
 
   const startWithEvent = useMemoizedFn((eventName: string) => {
