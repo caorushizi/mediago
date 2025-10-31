@@ -14,13 +14,7 @@ const api = Object.keys(apiAdapter).reduce<any>((res, funName) => {
       return null;
     }
 
-    console.info(`[useAPI] ${String(funName)} called with`, args);
     const { code, data, message } = await adapterFun(...args);
-    console.info(`[useAPI] ${String(funName)} return`, {
-      code,
-      data,
-      message,
-    });
     if (code !== 0) {
       return Promise.reject(new Error(message));
     }

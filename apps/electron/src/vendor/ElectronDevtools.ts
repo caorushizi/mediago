@@ -1,5 +1,8 @@
 import { provide } from "@inversifyjs/binding-decorators";
-import install, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from "electron-devtools-installer";
+import install, {
+  REACT_DEVELOPER_TOOLS,
+  REDUX_DEVTOOLS,
+} from "electron-devtools-installer";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import ElectronLogger from "./ElectronLogger";

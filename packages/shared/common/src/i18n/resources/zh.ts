@@ -202,4 +202,5 @@ export const zh = {
   exitApp: "退出应用",
   untitled: "未命名",
   noData: "暂无数据",
+  addToList: "添加到列表",
 };

@@ -9,12 +9,10 @@ import {
   App,
   Badge,
   Button,
-  Dropdown,
   Form,
   type FormInstance,
   Input,
   InputNumber,
-  type MenuProps,
   Modal,
   Progress,
   Radio,
@@ -107,27 +105,12 @@ const SettingPage: React.FC = () => {
     }
   });
 
-  const items = [
-    {
-      key: "1",
-      label: (
-        <Space>
-          <UploadOutlined />
-          {t("importFavorite")}
-        </Space>
-      ),
-    },
-  ];
-
-  const onMenuClick: MenuProps["onClick"] = useMemoizedFn(async (e) => {
-    const { key } = e;
-    if (key === "1") {
-      try {
-        await importFavorites();
-        message.success(t("importFavoriteSuccess"));
-      } catch {
-        message.error(t("importFavoriteFailed"));
-      }
+  const onMenuClick = useMemoizedFn(async (_) => {
+    try {
+      await importFavorites();
+      message.success(t("importFavoriteSuccess"));
+    } catch {
+      message.error(t("importFavoriteFailed"));
     }
   });
 
@@ -320,13 +303,15 @@ const SettingPage: React.FC = () => {
               >
                 {t("clearCache")}
               </Button>
-              <Dropdown.Button
-                menu={{ items, onClick: onMenuClick }}
-                onClick={handleExportFavorite}
-              >
+              <Button onClick={handleExportFavorite}>
                 <DownloadOutlined />
                 {t("exportFavorite")}
-              </Dropdown.Button>
+              </Button>
+
+              <Button onClick={onMenuClick}>
+                <UploadOutlined />
+                {t("importFavorite")}
+              </Button>
             </Space>
           </Form.Item>
         </>

@@ -209,4 +209,5 @@ export const en = {
   exitApp: "Exit app",
   untitled: "Untitled",
   noData: "No Data",
+  addToList: "Add to List",
 };

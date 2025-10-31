@@ -189,9 +189,8 @@ export default class DownloadTaskRepository {
     return await this.repository.save(task);
   }
 
-  async appendLog(id: number, message: string): Promise<Video> {
+  async appendLog(id: number, _: string): Promise<Video> {
     const task = await this.findByIdOrFail(id);
-    console.log("Appending log message:", message);
     // task.log = task.log ? `${task.log}\n${message}` : message;
     return await this.repository.save(task);
   }

@@ -173,9 +173,7 @@ export class DownloadTaskService {
   }
 
   async getDownloadLog(id: number) {
-    const logs = await this.downloaderServer.getTaskLogs(id.toString());
-    console.log("Retrieved logs:", logs);
-    return logs;
+    return this.downloaderServer.getTaskLogs(id.toString());
   }
 
   async getTaskFolders() {

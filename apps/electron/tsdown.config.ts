@@ -21,6 +21,7 @@ export class ElectronApp {
   start() {
     const args = [
       "--inspect=5858",
+      "--trace-deprecation",
       path.resolve(__dirname, "./build/index.js"),
     ];
 
