@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import i18n from "../i18n";
-import { AppLanguage, AppTheme } from "../types";
+import { AppLanguage, AppStore, AppTheme } from "@mediago/shared-common";
 
 const initialState: AppStore = {
   local: "",
@@ -22,6 +22,11 @@ const initialState: AppStore = {
   autoUpgrade: true,
   audioMuted: true,
   enableMobilePlayer: false,
+  blockAds: false,
+  allowBeta: false,
+  enableDocker: false,
+  dockerUrl: "",
+  closeMainWindow: false,
 };
 
 type Actions = {

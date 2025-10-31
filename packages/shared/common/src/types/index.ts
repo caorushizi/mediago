@@ -70,6 +70,7 @@ export enum DownloadType {
   bilibili = "bilibili",
   direct = "direct",
 }
+
 export interface DownloadParams {
   id: number;
   type: DownloadType;
@@ -155,4 +156,82 @@ export interface DownloadFailedEvent extends DownloadEvent<DownloadFailedData> {
 export interface DownloadProgressEvent
   extends DownloadEvent<DownloadProgress[]> {
   type: "progress";
+}
+
+export interface EnvPath {
+  binPath: string;
+  dbPath: string;
+  workspace: string;
+  platform: string;
+  local: string;
+  playerUrl: string;
+}
+
+export interface Rectangle {
+  height: number;
+  width: number;
+  x: number;
+  y: number;
+}
+
+export interface AppStore {
+  // Local storage address
+  local: string;
+  // Download completion tone
+  promptTone: boolean;
+  // Proxy address
+  proxy: string;
+  // Whether to enable agent
+  useProxy: boolean;
+  // Delete the original file after downloading
+  deleteSegments: boolean;
+  // A new window opens the browser
+  openInNewWindow: boolean;
+  mainBounds?: Rectangle;
+  browserBounds?: Rectangle;
+  blockAds: boolean;
+  // theme
+  theme: AppTheme;
+  // Using browser plugins
+  useExtension: boolean;
+  // Whether to use mobile UA
+  isMobile: boolean;
+  // Maximum number of simultaneous downloads
+  maxRunner: number;
+  // Language
+  language: AppLanguage;
+  // Show terminal or not
+  showTerminal: boolean;
+  // Privacy mode
+  privacy: boolean;
+  // Machine id
+  machineId: string;
+  // Download proxy Settings
+  downloadProxySwitch: boolean;
+  // Automatic update
+  autoUpgrade: boolean;
+  // beta versions are allowed
+  allowBeta: boolean;
+  // Close the main window
+  closeMainWindow: boolean;
+  // Whether to play sounds in the browser. The default value is mute
+  audioMuted: boolean;
+  // Whether to enable Docker
+  enableDocker: boolean;
+  // Docker URL
+  dockerUrl: string;
+  // Mobile player
+  enableMobilePlayer: boolean;
+}
+
+export interface WebSource {
+  url: string;
+  type: DownloadType;
+  name: string;
+  headers?: string;
+}
+
+export interface BrowserStore {
+  url: string;
+  sourceList: WebSource[];
 }

@@ -1,12 +1,15 @@
 import type { DownloadTaskResponse } from "../index";
 import type { Conversion, Favorite, Video } from "./entities";
 import type {
+  AppStore,
+  BrowserStore,
   ConversionPagination,
   ConversionResponse,
   DownloadTask,
   DownloadTaskPagination,
+  EnvPath,
+  Rectangle,
 } from "./index";
-import type { AppStore, BrowserStore, EnvPath, Rectangle } from "./node";
 
 export interface ElectronApi {
   getEnvPath(): Promise<EnvPath>;

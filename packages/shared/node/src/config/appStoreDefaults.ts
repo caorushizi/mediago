@@ -1,5 +1,4 @@
-import { AppLanguage, AppTheme } from "@mediago/shared-common";
-import type { AppStore } from "../types/index";
+import { AppLanguage, AppStore, AppTheme } from "@mediago/shared-common";
 
 export interface AppStoreSharedOptions {
   fileExtension: string;

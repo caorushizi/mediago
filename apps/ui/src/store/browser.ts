@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import type { DownloadType } from "@/types";
 import { convertPlainObject } from "@/utils";
 import useAPI from "@/hooks/use-api";
+import { DownloadType } from "@mediago/shared-common";
 
 // biome-ignore lint/correctness/useHookAtTopLevel: <explanation>
 const { setSharedState } = useAPI();

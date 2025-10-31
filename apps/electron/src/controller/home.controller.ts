@@ -2,6 +2,7 @@ import path from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
 import {
   ADD_FAVORITE,
+  AppStore,
   CHECK_UPDATE,
   COMBINE_TO_HOME_PAGE,
   CONVERT_TO_AUDIO,
@@ -9,6 +10,7 @@ import {
   DownloadStatus,
   EXPORT_DOWNLOAD_LIST,
   EXPORT_FAVORITES,
+  EnvPath,
   GET_APP_STORE,
   GET_DOWNLOAD_LOG,
   GET_ENV_PATH,
@@ -34,10 +36,8 @@ import {
   safeParseJSON,
 } from "@mediago/shared-common";
 import {
-  type AppStore,
   type ConversionService,
   DownloadTaskService,
-  type EnvPath,
   type Favorite,
   type FavoriteManagementService,
   getLocalIP,

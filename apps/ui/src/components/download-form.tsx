@@ -22,9 +22,8 @@ import useAPI from "@/hooks/use-api";
 import { useDockerApi } from "@/hooks/use-docker-api";
 import { appStoreSelector, useAppStore } from "@/store/app";
 import { downloadFormSelector, useConfigStore } from "@/store/config";
-import { DownloadType } from "@/types";
 import { tdApp } from "@/utils";
-import { DownloadTask } from "@mediago/shared-common";
+import { DownloadTask, DownloadType } from "@mediago/shared-common";
 
 const { TextArea } = Input;
 

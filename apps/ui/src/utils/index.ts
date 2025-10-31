@@ -1,8 +1,8 @@
 import { type ClassValue, clsx } from "clsx";
 import dayjs from "dayjs";
 import { twMerge } from "tailwind-merge";
-import { DownloadType } from "@/types";
 import { isUrl } from "./url";
+import { DownloadType } from "@mediago/shared-common";
 
 export { api, http } from "./http";
 export { getSocket } from "./socket";

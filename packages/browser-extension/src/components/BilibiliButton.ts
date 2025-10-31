@@ -2,7 +2,7 @@ import $ from "jquery";
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { BILIBILI_DOWNLOAD_BUTTON, showDownloadDialog } from "../helper";
-import { DownloadType } from "../types";
+import { DownloadType } from "@mediago/shared-common";
 
 let videoIndex = 0;
 @customElement("bilibili-button")

@@ -4,7 +4,7 @@ import {
   FolderOpenOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
-import { useMemoizedFn, useRequest } from "ahooks";
+import { useMemoizedFn } from "ahooks";
 import {
   App,
   Badge,
@@ -35,8 +35,14 @@ import {
   useAppStore,
 } from "@/store/app";
 import { updateSelector, useSessionStore } from "@/store/session";
-import { AppLanguage, AppTheme } from "@/types";
 import { isWeb, tdApp } from "@/utils";
+import useSWR from "swr";
+import {
+  AppLanguage,
+  AppStore,
+  AppTheme,
+  GET_ENV_PATH,
+} from "@mediago/shared-common";
 
 const version = import.meta.env.APP_VERSION;
 
@@ -59,7 +65,7 @@ const SettingPage: React.FC = () => {
   const formRef = useRef<FormInstance<AppStore>>(null);
   const settings = useAppStore(useShallow(appStoreSelector));
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
-  const { data: envPath } = useRequest(getEnvPath);
+  const { data: envPath } = useSWR(GET_ENV_PATH, getEnvPath);
   const { message } = App.useApp();
   const { updateAvailable, updateChecking } = useSessionStore(
     useShallow(updateSelector),
