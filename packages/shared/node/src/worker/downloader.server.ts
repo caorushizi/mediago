@@ -168,4 +168,8 @@ export class DownloaderServer extends EventEmitter {
     const logResult = await this.client?.getTaskLogs(id);
     return logResult?.data.log || "";
   }
+
+  async getURL() {
+    return this.serverUrl;
+  }
 }

@@ -21,6 +21,7 @@ const initialState: AppStore = {
   downloadProxySwitch: false,
   autoUpgrade: true,
   audioMuted: true,
+  enableMobilePlayer: false,
 };
 
 type Actions = {

@@ -7,17 +7,40 @@ import { loadModule } from "../utils";
 @injectable()
 @provide()
 export class VideoServer {
-  async start({ local }: { local: string }) {
+  private runner?: ServiceRunner;
+  private url?: string;
+
+  async start({
+    local,
+    enableMobilePlayer,
+  }: {
+    local: string;
+    enableMobilePlayer?: boolean;
+  }) {
     const binaryUrl = loadModule("@mediago/player");
 
-    const runner = new ServiceRunner({
+    this.runner = new ServiceRunner({
       executableDir: path.resolve(path.dirname(binaryUrl), "bin"),
       executableName: "mediago-player",
       preferredPort: 9800,
-      internal: true,
+      internal: !enableMobilePlayer,
       extraArgs: ["-video-root", local],
     });
 
-    await runner.start();
+    await this.runner.start();
+
+    this.url = this.runner.getURL();
+  }
+
+  enableMobilePlayer(enable: boolean) {
+    if (this.runner) {
+      this.runner.restart({
+        internal: enable,
+      });
+    }
+  }
+
+  getURL() {
+    return this.url;
   }
 }

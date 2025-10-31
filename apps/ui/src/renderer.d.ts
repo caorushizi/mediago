@@ -4,6 +4,7 @@ declare interface EnvPath {
   workspace: string;
   platform: string;
   local: string;
+  playerUrl: string;
 }
 
 declare interface DownloadTaskResponse {
@@ -76,6 +77,8 @@ declare interface AppStore {
   enableDocker?: boolean;
   // Docker URL
   dockerUrl?: string;
+  // Mobile player
+  enableMobilePlayer?: boolean;
 }
 
 declare interface BrowserStore {
