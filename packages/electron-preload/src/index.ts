@@ -54,8 +54,15 @@ import {
   WEBVIEW_RELOAD,
   WEBVIEW_SHOW,
   WEBVIEW_URL_CONTEXTMENU,
+  Video,
 } from "@mediago/shared-common";
-import type { AppStore, BrowserStore, Conversion, EnvPath, Favorite, Video } from "@mediago/shared-node";
+import type {
+  AppStore,
+  BrowserStore,
+  Conversion,
+  EnvPath,
+  Favorite,
+} from "@mediago/shared-node";
 import { contextBridge, ipcRenderer, shell } from "electron";
 
 const apiFunctions: Record<string, any> = {};
@@ -69,7 +76,9 @@ const electronApi: ElectronApi = {
   getFavorites(): Promise<Favorite[]> {
     return ipcRenderer.invoke(GET_FAVORITES);
   },
-  addFavorite(favorite: Omit<Favorite, "id" | "createdDate" | "updatedDate">): Promise<Favorite> {
+  addFavorite(
+    favorite: Omit<Favorite, "id" | "createdDate" | "updatedDate">,
+  ): Promise<Favorite> {
     return ipcRenderer.invoke(ADD_FAVORITE, favorite);
   },
   removeFavorite(id: number): Promise<void> {
@@ -96,14 +105,20 @@ const electronApi: ElectronApi = {
   onSelectDownloadDir(): Promise<string> {
     return ipcRenderer.invoke(SELECT_DOWNLOAD_DIR);
   },
-  setAppStore(key: keyof AppStore, val: AppStore[keyof AppStore]): Promise<void> {
+  setAppStore(
+    key: keyof AppStore,
+    val: AppStore[keyof AppStore],
+  ): Promise<void> {
     return ipcRenderer.invoke(SET_APP_STORE, key, val);
   },
   async openDir(dir?: string): Promise<void> {
     if (!dir) return;
     return ipcRenderer.invoke(OPEN_DIR, dir);
   },
-  createDownloadTasks(videos: Omit<DownloadTask, "id">[], startDownload?: boolean): Promise<Video[]> {
+  createDownloadTasks(
+    videos: Omit<DownloadTask, "id">[],
+    startDownload?: boolean,
+  ): Promise<Video[]> {
     return ipcRenderer.invoke(ADD_DOWNLOAD_ITEMS, videos, startDownload);
   },
   getDownloadTasks(p: DownloadTaskPagination): Promise<DownloadTaskResponse> {
@@ -150,13 +165,16 @@ const electronApi: ElectronApi = {
   webviewShow(): Promise<void> {
     return ipcRenderer.invoke(WEBVIEW_SHOW);
   },
-  webviewUrlContextMenu(): Promise<void> {
+  appContextMenu(): Promise<void> {
     return ipcRenderer.invoke(WEBVIEW_URL_CONTEXTMENU);
   },
   combineToHomePage(store: BrowserStore): Promise<void> {
     return ipcRenderer.invoke(COMBINE_TO_HOME_PAGE, store);
   },
-  updateDownloadTask(video: DownloadTask, startDownload?: boolean): Promise<void> {
+  updateDownloadTask(
+    video: DownloadTask,
+    startDownload?: boolean,
+  ): Promise<void> {
     return ipcRenderer.invoke(EDIT_DOWNLOAD_ITEM, video, startDownload);
   },
   getLocalIP(): Promise<string> {
@@ -186,7 +204,9 @@ const electronApi: ElectronApi = {
   pluginReady() {
     return ipcRenderer.invoke(PLUGIN_READY);
   },
-  getConversions(pagination: ConversionPagination): Promise<ConversionResponse> {
+  getConversions(
+    pagination: ConversionPagination,
+  ): Promise<ConversionResponse> {
     return ipcRenderer.invoke(GET_CONVERSIONS, pagination);
   },
   addConversion(conversion: Omit<Conversion, "id">): Promise<Conversion> {

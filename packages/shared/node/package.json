@@ -30,7 +30,9 @@
     "i18next": "^25.6.0",
     "inversify": "^7.9.1",
     "tree-kill": "^1.2.2",
-    "typeorm": "0.3.27"
+    "typeorm": "0.3.27",
+    "dayjs": "^1.11.18",
+    "nanoid": "^5.1.6"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",

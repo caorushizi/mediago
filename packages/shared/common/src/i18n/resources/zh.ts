@@ -200,4 +200,6 @@ export const zh = {
   videoDownloadFailed: "{{name}} 下载失败",
   showMainWindow: "显示主窗口",
   exitApp: "退出应用",
+  untitled: "未命名",
+  noData: "暂无数据",
 };

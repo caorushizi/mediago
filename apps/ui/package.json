@@ -31,7 +31,6 @@
     "localforage": "^1.10.0",
     "lucide-react": "^0.548.0",
     "match-sorter": "^8.1.0",
-    "nanoid": "^5.0.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-i18next": "^16.0.1",

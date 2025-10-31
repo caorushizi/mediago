@@ -374,9 +374,6 @@ importers:
       match-sorter:
         specifier: ^8.1.0
         version: 8.1.0
-      nanoid:
-        specifier: ^5.0.7
-        version: 5.1.6
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -619,6 +616,9 @@ importers:
       axios:
         specifier: ^1.12.2
         version: 1.12.2
+      dayjs:
+        specifier: ^1.11.18
+        version: 1.11.18
       glob:
         specifier: ^11.0.3
         version: 11.0.3
@@ -628,6 +628,9 @@ importers:
       inversify:
         specifier: ^7.9.1
         version: 7.10.3(reflect-metadata@0.2.2)
+      nanoid:
+        specifier: ^5.1.6
+        version: 5.1.6
       tree-kill:
         specifier: ^1.2.2
         version: 1.2.2
