@@ -49,7 +49,7 @@ const app = new NodeApp();
 
 export default defineConfig({
   outDir: "build",
-  format: "cjs",
+  format: "commonjs",
   env: { ...env.parsed },
   noExternal: () => true,
   external: [
