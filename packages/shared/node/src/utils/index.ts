@@ -51,7 +51,10 @@ export const videoPattern = videoType.join(",");
 export function loadModule(moduleName: string) {
   try {
     let bin = require.resolve(moduleName);
-    if (process.env.NODE_ENV === "production") {
+    if (
+      process.env.NODE_ENV === "production" &&
+      process.env.APP_TARGET === "electron"
+    ) {
       bin = bin.replace("app.asar", "app.asar.unpacked");
     }
     return bin;
