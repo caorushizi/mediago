@@ -210,4 +210,5 @@ export const en = {
   untitled: "Untitled",
   noData: "No Data",
   addToList: "Add to List",
+  enableMobilePlayer: "Enable Mobile Player",
 };

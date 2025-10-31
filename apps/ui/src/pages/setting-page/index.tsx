@@ -230,7 +230,6 @@ const SettingPage: React.FC = () => {
           >
             <Switch />
           </Form.Item>
-
           <Form.Item
             hidden={isWeb}
             label={t("closeMainWindow")}
@@ -240,6 +239,9 @@ const SettingPage: React.FC = () => {
               <Radio value={true}>{t("close")}</Radio>
               <Radio value={false}>{t("minimizeToTray")}</Radio>
             </Radio.Group>
+          </Form.Item>
+          <Form.Item label={t("enableMobilePlayer")} name="enableMobilePlayer">
+            <Switch />
           </Form.Item>
         </>
       ),

@@ -203,4 +203,5 @@ export const zh = {
   untitled: "未命名",
   noData: "暂无数据",
   addToList: "添加到列表",
+  enableMobilePlayer: "启用手机播放器",
 };

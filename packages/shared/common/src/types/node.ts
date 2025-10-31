@@ -7,6 +7,7 @@ export interface EnvPath {
   workspace: string;
   platform: string;
   local: string;
+  playerUrl?: string;
 }
 
 export interface BrowserWindowInitialVal {
@@ -53,6 +54,7 @@ export interface AppStore {
   audioMuted: boolean;
   enableDocker: boolean;
   dockerUrl: string;
+  enableMobilePlayer: boolean;
 }
 
 export interface BrowserStore {

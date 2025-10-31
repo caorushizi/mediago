@@ -34,4 +34,5 @@ export const appStoreDefaults: AppStore = {
   audioMuted: true,
   enableDocker: false,
   dockerUrl: "",
+  enableMobilePlayer: false,
 };

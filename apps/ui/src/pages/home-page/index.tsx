@@ -1,8 +1,8 @@
 import { QrcodeOutlined } from "@ant-design/icons";
-import { DownloadTask } from "@mediago/shared-common";
-import { useMemoizedFn, useMount } from "ahooks";
+import { DownloadTask, GET_ENV_PATH } from "@mediago/shared-common";
+import { useMemoizedFn } from "ahooks";
 import { Pagination, Popover, QRCode } from "antd";
-import { type FC, useEffect, useId, useRef, useState } from "react";
+import { type FC, useEffect, useId, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
@@ -22,6 +22,7 @@ import { downloadFormSelector, useConfigStore } from "@/store/config";
 import { DownloadFilter } from "@/types";
 import { isDownloadType, isWeb, tdApp, urlDownloadType } from "@/utils";
 import { DownloadList } from "./components/download-list";
+import useSWR from "swr";
 
 interface Props {
   filter?: DownloadFilter;
@@ -32,13 +33,12 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     openDir,
     showBrowserWindow,
     createDownloadTasks,
-    getLocalIP,
     addIpcListener,
     removeIpcListener,
+    getEnvPath,
   } = useAPI();
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
-  const [localIP, setLocalIP] = useState<string>("");
   const newFormRef = useRef<DownloadFormRef>(null);
   const homeId = useId();
   const { lastIsBatch, lastDownloadTypes } = useConfigStore(
@@ -46,6 +46,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   );
   const location = useLocation();
   const { pagination, total, mutate, setPage } = useTasks(filter);
+  const { data: envPath } = useSWR(GET_ENV_PATH, getEnvPath);
 
   useEffect(() => {
     const search = new URLSearchParams(location.search);
@@ -106,11 +107,6 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     };
   }, []);
 
-  useMount(async () => {
-    const ip = await getLocalIP();
-    setLocalIP(ip);
-  });
-
   const handleChangePage = useMemoizedFn((page: number, _: number) => {
     setPage(page);
   });
@@ -149,22 +145,24 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
               {t("materialExtraction")}
             </Button>
           )}
-          {filter === DownloadFilter.done && !isWeb && (
-            <Popover
-              content={
-                <div>
-                  <QRCode value={localIP ? `http://${localIP}:3222/` : ""} />
-                  <div className="text-xs">{t("scanToWatch")}</div>
-                </div>
-              }
-              placement="bottomRight"
-            >
-              <Button>
-                <QrcodeOutlined />
-                {t("playOnMobile")}
-              </Button>
-            </Popover>
-          )}
+          {filter === DownloadFilter.done &&
+            !isWeb &&
+            appStore.enableMobilePlayer && (
+              <Popover
+                content={
+                  <div>
+                    <QRCode value={envPath.playerUrl} />
+                    <div className="text-xs">{t("scanToWatch")}</div>
+                  </div>
+                }
+                placement="bottomRight"
+              >
+                <Button>
+                  <QrcodeOutlined />
+                  {t("playOnMobile")}
+                </Button>
+              </Popover>
+            )}
           {filter === DownloadFilter.list && (
             <HomeDownloadButton onClick={handleOpenForm} />
           )}
