@@ -1,6 +1,6 @@
 import { DeleteOutlined, SyncOutlined } from "@ant-design/icons";
 import type { Conversion } from "@mediago/shared-node";
-import { useMemoizedFn, usePagination } from "ahooks";
+import { useMemoizedFn } from "ahooks";
 import { App, Empty } from "antd";
 import { produce } from "immer";
 import { type ReactNode, useState } from "react";
@@ -11,24 +11,31 @@ import { Button } from "@/components/ui/button";
 import { ADD_CONVERT_TASK, DELETE_CONVERT, START_CONVERT } from "@/const";
 import { getFileName, tdApp } from "@/utils";
 import useAPI from "@/hooks/use-api";
+import useSWR from "swr";
+import { GET_CONVERSIONS } from "@mediago/shared-common";
+import Loading from "@/components/loading";
 
 const Converter = () => {
   const { t } = useTranslation();
-  const { selectFile, getConversions, addConversion, convertToAudio, deleteConversion } = useAPI();
+  const {
+    selectFile,
+    getConversions,
+    addConversion,
+    convertToAudio,
+    deleteConversion,
+  } = useAPI();
   const { message } = App.useApp();
   const [converting, setConverting] = useState<Record<number, boolean>>({});
 
-  const { data, refresh } = usePagination(
-    ({ current, pageSize }) => {
-      return getConversions({
-        current,
-        pageSize,
-      });
-    },
+  const { data, mutate, isLoading } = useSWR(
     {
-      defaultPageSize: 50,
-      refreshDeps: [],
+      key: GET_CONVERSIONS,
+      args: {
+        current: 1,
+        pageSize: 500,
+      },
     },
+    ({ args }) => getConversions(args),
   );
 
   const onClickConvertToAudio = useMemoizedFn(async (item: Conversion) => {
@@ -53,16 +60,24 @@ const Converter = () => {
   const onDeleteConversion = useMemoizedFn(async (id: number) => {
     tdApp.onEvent(DELETE_CONVERT);
     await deleteConversion(id);
-    refresh();
+    mutate();
   });
 
   const renderActionButtons = useMemoizedFn((item: Conversion): ReactNode => {
     // Download successfully
     return [
-      <div key="convert" title={t("convertToAudio")} onClick={() => onClickConvertToAudio(item)}>
+      <div
+        key="convert"
+        title={t("convertToAudio")}
+        onClick={() => onClickConvertToAudio(item)}
+      >
         <IconButton icon={<SyncOutlined spin={converting[item.id]} />} />
       </div>,
-      <div key="delete" title={t("delete")} onClick={() => onDeleteConversion(item.id)}>
+      <div
+        key="delete"
+        title={t("delete")}
+        onClick={() => onDeleteConversion(item.id)}
+      >
         <IconButton icon={<DeleteOutlined />} />
       </div>,
     ];
@@ -74,7 +89,7 @@ const Converter = () => {
       name: getFileName(file),
       path: file,
     });
-    refresh();
+    mutate();
     tdApp.onEvent(ADD_CONVERT_TASK);
   });
 
@@ -82,24 +97,35 @@ const Converter = () => {
     <PageContainer
       title={t("converter")}
       rightExtra={<Button onClick={handleSelectFile}>{t("addFile")}</Button>}
-      className="rounded-lg bg-white dark:bg-[#1F2024]"
+      className="rounded-lg bg-white dark:bg-[#1F2024] flex"
     >
-      <div className="flex flex-col gap-3 rounded-lg bg-white p-3 dark:bg-[#1F2024]">
-        {data && data.list.length ? (
+      <div className="flex flex-col gap-3 rounded-lg bg-white p-3 dark:bg-[#1F2024] flex-1 overflow-auto">
+        {isLoading && <Loading />}
+        {!isLoading && data.list.length === 0 && (
+          <div className="flex h-full flex-1 flex-row items-center justify-center rounded-lg bg-white dark:bg-[#1F2024]">
+            <Empty description={t("noData")} />
+          </div>
+        )}
+        {!isLoading &&
+          data.list.length > 0 &&
           data.list.map((item) => {
             return (
-              <div key={item.id} className="flex flex-1 flex-col gap-3 rounded-lg bg-[#FAFCFF] p-3 dark:bg-[#27292F]">
+              <div
+                key={item.id}
+                className="flex flex-col gap-3 rounded-lg bg-[#FAFCFF] p-3 dark:bg-[#27292F]"
+              >
                 <div className="flex flex-row items-center justify-between">
-                  <div className="text-sm text-[#343434] dark:text-[#B4B4B4]">{item.name}</div>
-                  <div className="flex flex-row gap-3">{renderActionButtons(item)}</div>
+                  <div className="text-sm text-[#343434] dark:text-[#B4B4B4]">
+                    {item.name}
+                  </div>
+                  <div className="flex flex-row gap-3">
+                    {renderActionButtons(item)}
+                  </div>
                 </div>
                 <div className="text-xs text-[#AAB5CB]">{item.path}</div>
               </div>
             );
-          })
-        ) : (
-          <Empty />
-        )}
+          })}
       </div>
     </PageContainer>
   );

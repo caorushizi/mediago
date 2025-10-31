@@ -2,7 +2,12 @@ import { provide } from "@inversifyjs/binding-decorators";
 import { inject, injectable } from "inversify";
 import { In, Not, Repository } from "typeorm";
 import { i18n } from "../../i18n";
-import { DownloadFilter, type DownloadTask, type DownloadTaskPagination, DownloadStatus } from "@mediago/shared-common";
+import {
+  DownloadFilter,
+  type DownloadTask,
+  type DownloadTaskPagination,
+  DownloadStatus,
+} from "@mediago/shared-common";
 import TypeORM from "../../vendor/TypeORM";
 import { Video } from "../entity/video.entity";
 
@@ -53,15 +58,15 @@ export default class DownloadTaskRepository {
   }
 
   async createMany(tasks: Omit<DownloadTask, "id">[]): Promise<Video[]> {
-    const items = tasks.map((task) =>
-      this.repository.create({
+    const items = tasks.map((task) => {
+      return this.repository.create({
         name: task.name,
         url: task.url,
         type: task.type,
         headers: task.headers,
         folder: task.folder,
-      }),
-    );
+      });
+    });
     return await this.repository.save(items);
   }
 
@@ -122,7 +127,10 @@ export default class DownloadTaskRepository {
       };
     }
 
-    const filterCondition = filter === DownloadFilter.done ? DownloadStatus.Success : Not(DownloadStatus.Success);
+    const filterCondition =
+      filter === DownloadFilter.done
+        ? DownloadStatus.Success
+        : Not(DownloadStatus.Success);
 
     const [items, total] = await this.repository.findAndCount({
       where: {
@@ -150,7 +158,9 @@ export default class DownloadTaskRepository {
         folder: Not(""),
       },
     });
-    return Array.from(new Set(tasks.map((t) => t.folder).filter(Boolean))) as string[];
+    return Array.from(
+      new Set(tasks.map((t) => t.folder).filter(Boolean)),
+    ) as string[];
   }
 
   // Update operations
@@ -165,7 +175,10 @@ export default class DownloadTaskRepository {
     return await this.repository.save(task);
   }
 
-  async updateStatus(ids: number | number[], status: DownloadStatus): Promise<void> {
+  async updateStatus(
+    ids: number | number[],
+    status: DownloadStatus,
+  ): Promise<void> {
     const idArray = Array.isArray(ids) ? ids : [ids];
     await this.repository.update({ id: In(idArray) }, { status });
   }
@@ -178,7 +191,8 @@ export default class DownloadTaskRepository {
 
   async appendLog(id: number, message: string): Promise<Video> {
     const task = await this.findByIdOrFail(id);
-    task.log = task.log ? `${task.log}\n${message}` : message;
+    console.log("Appending log message:", message);
+    // task.log = task.log ? `${task.log}\n${message}` : message;
     return await this.repository.save(task);
   }
 

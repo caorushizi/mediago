@@ -40,11 +40,12 @@ import {
   type Favorite,
   type FavoriteManagementService,
   getLocalIP,
+  getPageTitle,
   handle,
   i18n,
+  randomName,
   TYPES,
 } from "@mediago/shared-node";
-import axios from "axios";
 import {
   clipboard,
   dialog,
@@ -239,7 +240,7 @@ export default class HomeController implements Controller {
         payload: id,
       });
     };
-    const item = await this.downloadTaskService.list(
+    const item = await this.downloadTaskService.getDownloadTasks(
       { current: 1, pageSize: 1 },
       this.store.get("local"),
     );
@@ -348,7 +349,7 @@ export default class HomeController implements Controller {
   @handle(GET_DOWNLOAD_LOG)
   async getDownloadLog(event: IpcMainEvent, id: number) {
     try {
-      return await this.downloadTaskService.getLog(id);
+      return await this.downloadTaskService.getDownloadLog(id);
     } catch {
       return "";
     }
@@ -437,7 +438,7 @@ export default class HomeController implements Controller {
 
   @handle(EXPORT_DOWNLOAD_LIST)
   async exportDownloadList() {
-    const txt = await this.downloadTaskService.exportList();
+    const txt = await this.downloadTaskService.exportDownloadList();
     const window = this.mainWindow.window;
     if (!window) return Promise.reject(i18n.t("noMainWindow"));
 
@@ -454,7 +455,7 @@ export default class HomeController implements Controller {
 
   @handle(GET_VIDEO_FOLDERS)
   async getVideoFolders() {
-    return this.downloadTaskService.listFolders();
+    return this.downloadTaskService.getTaskFolders();
   }
 
   @handle(GET_PAGE_TITLE)
@@ -462,37 +463,8 @@ export default class HomeController implements Controller {
     event: IpcMainEvent,
     url: string,
   ): Promise<{ data: string }> {
-    try {
-      const response = await axios.get(url, {
-        timeout: 10000,
-        maxRedirects: 5,
-        headers: {
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-        },
-      });
-
-      const html = response.data;
-      let title = "无标题";
-
-      const patterns = [
-        /<meta\s+property="og:title"\s+content="([^"]*)"/i,
-        /<meta\s+name="title"\s+content="([^"]*)"/i,
-        /<title[^>]*>([^<]+)<\/title>/i,
-      ];
-
-      for (const pattern of patterns) {
-        const match = html.match(pattern);
-        if (match && match[1]) {
-          title = match[1].trim();
-          break;
-        }
-      }
-
-      return { data: title };
-    } catch (error) {
-      console.error("Error fetching page title:", error);
-      return { data: "无标题" };
-    }
+    const fallbackTitle = randomName();
+    const title = await getPageTitle(url, fallbackTitle);
+    return { data: title };
   }
 }

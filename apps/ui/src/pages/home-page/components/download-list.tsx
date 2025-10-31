@@ -32,16 +32,8 @@ export function DownloadTaskList({ filter }: Props) {
   const { t } = useTranslation();
   const editFormRef = useRef<DownloadFormRef>(null);
   const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const [hasInitialLoaded, setHasInitialLoaded] = useState(false); // 追踪是否已完成首次加载
   const downloadListId = useId();
   const { mutate, isLoading, data } = useTasks(filter);
-
-  // 追踪首次加载完成
-  useEffect(() => {
-    if (!isLoading && !hasInitialLoaded && data.length >= 0) {
-      setHasInitialLoaded(true);
-    }
-  }, [isLoading, hasInitialLoaded, data.length]);
 
   useEffect(() => {
     const onDownloadMenuEvent = async (
@@ -110,14 +102,6 @@ export function DownloadTaskList({ filter }: Props) {
     return "indeterminate";
   }, [selected, data.length]);
 
-  useEffect(() => {
-    setSelected([]);
-    // 筛选条件变化时也重置首次加载状态，但稍作延迟以避免闪烁
-    setTimeout(() => {
-      setHasInitialLoaded(false);
-    }, 50);
-  }, [filter]);
-
   const onStartDownload = useMemoizedFn(async (id: number) => {
     await startDownload(id);
 
@@ -178,15 +162,6 @@ export function DownloadTaskList({ filter }: Props) {
     editFormRef.current?.openModal(values);
   });
 
-  // 只有在非首次加载或首次加载完成后，且确实没有数据时才显示空状态
-  if (data.length === 0 && (hasInitialLoaded || !isLoading)) {
-    return (
-      <div className="flex h-full flex-1 flex-row items-center justify-center rounded-lg bg-white dark:bg-[#1F2024]">
-        <Empty />
-      </div>
-    );
-  }
-
   return (
     <div className="flex flex-col flex-1 overflow-auto">
       <ListHeader
@@ -198,26 +173,32 @@ export function DownloadTaskList({ filter }: Props) {
         onCancelItems={onCancelItems}
         filter={filter}
       />
-      {isLoading && !hasInitialLoaded && data.length === 0 && <Loading />}
       <div
         className={cn(
           "flex w-full flex-1 shrink-0 flex-col gap-3 overflow-auto",
         )}
       >
-        {data.map((task) => {
-          return (
-            <DownloadTaskItem
-              key={task.id}
-              task={task}
-              selected={selected.includes(task.id)}
-              onSelectChange={handleItemSelectChange}
-              onStartDownload={onStartDownload}
-              onStopDownload={onStopDownload}
-              onContextMenu={handleContext}
-              onShowEditForm={handleShowDownloadForm}
-            />
-          );
-        })}
+        {isLoading && <Loading />}
+        {data.length === 0 && !isLoading && (
+          <div className="flex h-full flex-1 flex-row items-center justify-center rounded-lg bg-white dark:bg-[#1F2024]">
+            <Empty description={t("noData")} />
+          </div>
+        )}
+        {data.length > 0 &&
+          data.map((task) => {
+            return (
+              <DownloadTaskItem
+                key={task.id}
+                task={task}
+                selected={selected.includes(task.id)}
+                onSelectChange={handleItemSelectChange}
+                onStartDownload={onStartDownload}
+                onStopDownload={onStopDownload}
+                onContextMenu={handleContext}
+                onShowEditForm={handleShowDownloadForm}
+              />
+            );
+          })}
       </div>
       <DownloadForm
         id={downloadListId}

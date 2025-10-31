@@ -4,17 +4,21 @@ import { FitAddon } from "@xterm/addon-fit";
 import { Terminal as XTerminal } from "@xterm/xterm";
 import { cn } from "@/utils";
 import useAPI from "@/hooks/use-api";
+import useSWR from "swr";
+import { GET_DOWNLOAD_LOG } from "@mediago/shared-common";
 
 interface TerminalProps {
   className?: string;
   id: number;
-  log: string;
   header?: ReactNode;
 }
 
-const Terminal: FC<TerminalProps> = ({ className, id, log, header }) => {
+const Terminal: FC<TerminalProps> = ({ className, id, header }) => {
   const terminalRef = useRef<HTMLDivElement | null>(null);
-  const { addIpcListener, removeIpcListener } = useAPI();
+  const { addIpcListener, removeIpcListener, getDownloadLog } = useAPI();
+  const { data } = useSWR({ key: GET_DOWNLOAD_LOG, args: id }, ({ args }) =>
+    getDownloadLog(args),
+  );
 
   useEffect(() => {
     if (!terminalRef.current) return;
@@ -30,8 +34,8 @@ const Terminal: FC<TerminalProps> = ({ className, id, log, header }) => {
     terminal.open(terminalRef.current);
     fitAddon.fit();
 
-    if (log) {
-      terminal.write(log);
+    if (data) {
+      terminal.write(data);
     }
 
     const onDownloadMessage = (
@@ -56,7 +60,7 @@ const Terminal: FC<TerminalProps> = ({ className, id, log, header }) => {
       window.removeEventListener("resize", resize);
       terminal.dispose();
     };
-  }, [id]);
+  }, [id, data]);
 
   return (
     <div className={cn("flex flex-col", className)}>

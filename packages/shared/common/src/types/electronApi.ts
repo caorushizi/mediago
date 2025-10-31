@@ -1,12 +1,19 @@
 import type { DownloadTaskResponse } from "../index";
 import type { Conversion, Favorite, Video } from "./entities";
-import type { ConversionPagination, ConversionResponse, DownloadTask, DownloadTaskPagination } from "./index";
+import type {
+  ConversionPagination,
+  ConversionResponse,
+  DownloadTask,
+  DownloadTaskPagination,
+} from "./index";
 import type { AppStore, BrowserStore, EnvPath, Rectangle } from "./node";
 
 export interface ElectronApi {
   getEnvPath(): Promise<EnvPath>;
   getFavorites(): Promise<Favorite[]>;
-  addFavorite(favorite: Omit<Favorite, "id" | "createdDate" | "updatedDate">): Promise<Favorite>;
+  addFavorite(
+    favorite: Omit<Favorite, "id" | "createdDate" | "updatedDate">,
+  ): Promise<Favorite>;
   removeFavorite(id: number): Promise<void>;
   setWebviewBounds(rect: Rectangle): Promise<void>;
   webviewGoBack(): Promise<boolean>;
@@ -15,9 +22,15 @@ export interface ElectronApi {
   webviewGoHome(): Promise<void>;
   getAppStore(): Promise<AppStore>;
   onSelectDownloadDir(): Promise<string>;
-  setAppStore(key: keyof AppStore, val: AppStore[keyof AppStore]): Promise<void>;
+  setAppStore(
+    key: keyof AppStore,
+    val: AppStore[keyof AppStore],
+  ): Promise<void>;
   openDir(dir?: string): Promise<void>;
-  createDownloadTasks(tasks: Omit<DownloadTask, "id">[], startDownload?: boolean): Promise<Video[]>;
+  createDownloadTasks(
+    tasks: Omit<DownloadTask, "id">[],
+    startDownload?: boolean,
+  ): Promise<Video[]>;
   getDownloadTasks(p: DownloadTaskPagination): Promise<DownloadTaskResponse>;
   startDownload(vid: number): Promise<void>;
   openUrl(url: string): Promise<void>;
@@ -35,9 +48,12 @@ export interface ElectronApi {
   showBrowserWindow(): Promise<void>;
   webviewHide(): Promise<void>;
   webviewShow(): Promise<void>;
-  webviewUrlContextMenu(): Promise<void>;
+  appContextMenu(): Promise<void>;
   combineToHomePage(store: BrowserStore): Promise<void>;
-  updateDownloadTask(task: DownloadTask, startDownload?: boolean): Promise<void>;
+  updateDownloadTask(
+    task: DownloadTask,
+    startDownload?: boolean,
+  ): Promise<void>;
   getLocalIP(): Promise<string>;
   openBrowser(url: string): Promise<void>;
   selectFile(): Promise<string>;
