@@ -20,6 +20,6 @@
     "typeorm": "0.3.27"
   },
   "devDependencies": {
-    "electron": "35.7.5"
+    "electron": "39.0.0"
   }
 }
