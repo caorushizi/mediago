@@ -2,10 +2,10 @@ import fs from "node:fs/promises";
 import path, { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import dotenvFlow from "dotenv-flow";
-import { Platform, type Configuration, build, Arch } from "electron-builder";
+import { type Configuration, build } from "electron-builder";
 
-// const args = process.argv.slice(2);
-// const isDir = args.includes("--dir");
+const args = process.argv.slice(2);
+const isDir = args.includes("--dir");
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -158,6 +158,6 @@ if (process.env.GH_TOKEN) {
 }
 await build({
   config,
-  // dir: isDir,
-  targets: Platform.WINDOWS.createTarget(["nsis", "portable"], Arch.x64),
+  dir: isDir,
+  // targets: Platform.WINDOWS.createTarget(["nsis", "portable"], Arch.x64),
 });
