@@ -164,7 +164,7 @@ export class DownloadTaskService {
     }
   }
 
-  async stopDownload(id: number) {
+  async stopDownload(id: number): Promise<any> {
     return this.downloaderServer.stopTask(id.toString());
   }
 
