@@ -132,10 +132,10 @@ export default class Logger implements Vendor {
       }
     }
 
-    const normalized: [string, ...unknown[]] = [
-      message,
-      ...meta,
-    ] as [string, ...unknown[]];
+    const normalized: [string, ...unknown[]] = [message, ...meta] as [
+      string,
+      ...unknown[],
+    ];
     return normalized;
   }
 
