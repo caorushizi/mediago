@@ -11,10 +11,10 @@
     "@ghostery/adblocker-electron": "2.12.5",
     "@ghostery/adblocker-electron-preload": "^2.12.5",
     "@mediago/browser-extension": "workspace:*",
-    "@mediago/core": "0.0.11",
-    "@mediago/deps": "0.0.3",
+    "@mediago/core": "0.0.13",
+    "@mediago/deps": "0.0.4",
     "@mediago/electron-preload": "workspace:*",
-    "@mediago/player": "0.0.9",
+    "@mediago/player": "0.0.10",
     "better-sqlite3": "12.4.1",
     "reflect-metadata": "^0.2.2",
     "typeorm": "0.3.27"
