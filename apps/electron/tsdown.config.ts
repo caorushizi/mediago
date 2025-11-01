@@ -71,6 +71,9 @@ export default defineConfig({
     "process.env.NODE_ENV": JSON.stringify(
       process.env.NODE_ENV || "production",
     ),
+    "process.env.APP_TARGET": JSON.stringify(
+      process.env.APP_TARGET || "electron",
+    ),
   },
   loader: {
     ".jpg": "asset",
