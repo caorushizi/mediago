@@ -1,2 +1,5 @@
-plugins:
-  - "@prettier/plugin-oxc"
+{
+  "plugins": [
+    "@prettier/plugin-oxc"
+  ]
+}
