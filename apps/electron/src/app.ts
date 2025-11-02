@@ -1,4 +1,4 @@
-import path from "node:path";
+import { resolve } from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
 import { DownloadStatus } from "@mediago/shared-common";
 import {
@@ -19,7 +19,7 @@ import {
 } from "electron";
 import { inject, injectable } from "inversify";
 import TrayIcon from "../assets/icon.ico";
-import TrayIconLight from "../assets/icon-light.ico";
+import TrayPng from "../assets/icon.png";
 import ProtocolService from "./core/protocol";
 import ElectronRouter from "./core/router";
 import { db, isMac, logDir } from "./helper/variables";
@@ -124,9 +124,14 @@ export default class ElectronApp {
   }
 
   initTray() {
-    const iconPath = path.resolve(__dirname, isMac ? TrayIconLight : TrayIcon);
-    const icon = nativeImage.createFromPath(iconPath);
-    const tray = new Tray(icon);
+    let trayIcon = nativeImage.createFromPath(resolve(__dirname, TrayIcon));
+    if (isMac) {
+      trayIcon = nativeImage
+        .createFromPath(resolve(__dirname, TrayPng))
+        .resize({ width: 18, height: 18 });
+    }
+
+    const tray = new Tray(trayIcon);
     tray.setToolTip("Media Go");
     tray.addListener("click", () => {
       this.mainWindow.init();
