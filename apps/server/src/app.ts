@@ -58,21 +58,16 @@ export default class ElectronApp extends Koa {
       .use(bodyParser())
       .use(this.router.routes())
       .use(this.router.allowedMethods());
-    this.use(serve(STATIC_DIR));
 
-    // Middleware that handles static files and front-end routing
-    this.use(async (ctx, next) => {
-      if (!ctx.path.startsWith("/api")) {
-        try {
-          await send(ctx, ctx.path, { root: STATIC_DIR });
-        } catch (err: any) {
-          if (err.status === 404) {
-            await send(ctx, "index.html", { root: STATIC_DIR });
-          }
-        }
-      }
-      await next();
-    });
+    console.log("process.env.NODE_ENV", process.env.NODE_ENV);
+    if (process.env.NODE_ENV === "production") {
+      this.use(serve(STATIC_DIR));
+
+      // Middleware that handles static files and front-end routing
+      this.use(async (ctx) => {
+        await send(ctx, ctx.path, { root: STATIC_DIR });
+      });
+    }
 
     const server = http.createServer(this.callback());
 
