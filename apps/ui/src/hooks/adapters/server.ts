@@ -2,7 +2,7 @@ import {
   type AppStore,
   type DownloadTask,
   type DownloadTaskPagination,
-  type ElectronApi,
+  type MediaGoApi,
   ADD_DOWNLOAD_ITEMS,
   DELETE_DOWNLOAD_ITEM,
   EDIT_DOWNLOAD_ITEM,
@@ -11,7 +11,11 @@ import {
   GET_ENV_PATH,
   GET_PAGE_TITLE,
   GET_VIDEO_FOLDERS,
+  IS_SETUP,
   SET_APP_STORE,
+  SETUP_AUTH,
+  SetupAuthRequest,
+  SIGNIN,
   START_DOWNLOAD,
   STOP_DOWNLOAD,
 } from "@mediago/shared-common";
@@ -29,34 +33,18 @@ const defaultResp = {
  * 为不支持的 Electron 特定功能提供默认实现
  * 对于支持的功能调用后端 HTTP API
  */
-export const webAdapter: ElectronApi = {
+export const webAdapter: MediaGoApi = {
   getEnvPath: async () => {
     return api.post(GET_ENV_PATH);
   },
-  getFavorites: async () => {
-    return defaultResp;
-  },
-  addFavorite: async () => {
-    return defaultResp;
-  },
-  removeFavorite: async () => {
-    return defaultResp;
-  },
-  setWebviewBounds: async () => {
-    return defaultResp;
-  },
-  webviewGoBack: async () => {
-    return defaultResp;
-  },
-  webviewReload: async () => {
-    return defaultResp;
-  },
-  webviewLoadURL: async () => {
-    return defaultResp;
-  },
-  webviewGoHome: async () => {
-    return defaultResp;
-  },
+  getFavorites: async () => defaultResp,
+  addFavorite: async () => defaultResp,
+  removeFavorite: async () => defaultResp,
+  setWebviewBounds: async () => defaultResp,
+  webviewGoBack: async () => defaultResp,
+  webviewReload: async () => defaultResp,
+  webviewLoadURL: async () => defaultResp,
+  webviewGoHome: async () => defaultResp,
   getAppStore: async () => {
     return api.post(GET_APP_STORE);
   },
@@ -66,9 +54,7 @@ export const webAdapter: ElectronApi = {
   setAppStore: async (key: keyof AppStore, val: AppStore[keyof AppStore]) => {
     return api.post(SET_APP_STORE, { key, val });
   },
-  openDir: async () => {
-    return defaultResp;
-  },
+  openDir: async () => defaultResp,
   createDownloadTasks: async (
     items: Omit<DownloadTask, "id">[],
     startDownload?: boolean,
@@ -92,108 +78,47 @@ export const webAdapter: ElectronApi = {
   stopDownload: async (id: number) => {
     return api.post(STOP_DOWNLOAD, { id });
   },
-  onDownloadListContextMenu: async () => {
-    return defaultResp;
-  },
-  onFavoriteItemContextMenu: async () => {
-    return defaultResp;
-  },
+  onDownloadListContextMenu: async () => defaultResp,
+  onFavoriteItemContextMenu: async () => defaultResp,
   deleteDownloadTask: async (id: number) => {
     return api.post(DELETE_DOWNLOAD_ITEM, { id });
   },
-  convertToAudio: async () => {
-    return defaultResp;
-  },
-  rendererEvent: async () => {
-    return defaultResp;
-  },
-  removeEventListener: async () => {
-    return defaultResp;
-  },
-  showBrowserWindow: async () => {
-    return defaultResp;
-  },
-  webviewHide: async () => {
-    return defaultResp;
-  },
-  webviewShow: async () => {
-    return defaultResp;
-  },
-  appContextMenu: async () => {
-    return defaultResp;
-  },
-  combineToHomePage: async () => {
-    return defaultResp;
-  },
+  convertToAudio: async () => defaultResp,
+  rendererEvent: async () => defaultResp,
+  removeEventListener: async () => defaultResp,
+  showBrowserWindow: async () => defaultResp,
+  webviewHide: async () => defaultResp,
+  webviewShow: async () => defaultResp,
+  appContextMenu: async () => defaultResp,
+  combineToHomePage: async () => defaultResp,
   updateDownloadTask: async (video: DownloadTask, startDownload?: boolean) => {
     return api.post(EDIT_DOWNLOAD_ITEM, { video, startDownload });
   },
-  getLocalIP: async () => {
-    return defaultResp;
-  },
-  openBrowser: async () => {
-    return defaultResp;
-  },
-  selectFile: async () => {
-    return defaultResp;
-  },
-  getSharedState: async () => {
-    return defaultResp;
-  },
-  setSharedState: async () => {
-    return defaultResp;
-  },
-  setUserAgent: async () => {
-    return defaultResp;
-  },
-  getDownloadLog: async () => {
-    return defaultResp;
-  },
-  showDownloadDialog: async () => {
-    return defaultResp;
-  },
-  pluginReady: async () => {
-    return defaultResp;
-  },
-  getConversions: async () => {
-    return defaultResp;
-  },
-  addConversion: async () => {
-    return defaultResp;
-  },
-  deleteConversion: async () => {
-    return defaultResp;
-  },
-  getMachineId: async () => {
-    return defaultResp;
-  },
-  clearWebviewCache: async () => {
-    return defaultResp;
-  },
-  exportFavorites: async () => {
-    return defaultResp;
-  },
-  importFavorites: async () => {
-    return defaultResp;
-  },
-  checkUpdate: async () => {
-    return defaultResp;
-  },
-  startUpdate: async () => {
-    return defaultResp;
-  },
-  installUpdate: async () => {
-    return defaultResp;
-  },
-  exportDownloadList: async () => {
-    return defaultResp;
-  },
-  getVideoFolders: async () => {
-    return api.post(GET_VIDEO_FOLDERS);
-  },
-  getPageTitle: async (url: string) => {
-    return api.post(GET_PAGE_TITLE, { url });
-  },
+  getLocalIP: async () => defaultResp,
+  openBrowser: async () => defaultResp,
+  selectFile: async () => defaultResp,
+  getSharedState: async () => defaultResp,
+  setSharedState: async () => defaultResp,
+  setUserAgent: async () => defaultResp,
+  getDownloadLog: async () => defaultResp,
+  showDownloadDialog: async () => defaultResp,
+  pluginReady: async () => defaultResp,
+  getConversions: async () => defaultResp,
+  addConversion: async () => defaultResp,
+  deleteConversion: async () => defaultResp,
+  getMachineId: async () => defaultResp,
+  clearWebviewCache: async () => defaultResp,
+  exportFavorites: async () => defaultResp,
+  importFavorites: async () => defaultResp,
+  checkUpdate: async () => defaultResp,
+  startUpdate: async () => defaultResp,
+  installUpdate: async () => defaultResp,
+  exportDownloadList: async () => defaultResp,
+  getVideoFolders: async () => api.post(GET_VIDEO_FOLDERS),
+  getPageTitle: async (url: string) => api.post(GET_PAGE_TITLE, { url }),
+  setupAuth: async (req: SetupAuthRequest) => api.post(SETUP_AUTH, req),
+  signin: async (req: SetupAuthRequest) => api.post(SIGNIN, req),
+  isSetup: async () => api.post(IS_SETUP),
 };
 
 /**

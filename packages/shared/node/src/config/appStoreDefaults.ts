@@ -34,4 +34,5 @@ export const appStoreDefaults: AppStore = {
   enableDocker: false,
   dockerUrl: "",
   enableMobilePlayer: false,
+  apiKey: "",
 };

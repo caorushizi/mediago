@@ -27,6 +27,7 @@ const initialState: AppStore = {
   enableDocker: false,
   dockerUrl: "",
   closeMainWindow: false,
+  apiKey: "",
 };
 
 type Actions = {

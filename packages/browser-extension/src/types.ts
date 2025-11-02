@@ -1,4 +1,4 @@
-import type { ElectronApi } from "@mediago/shared-common";
+import type { MediaGoApi } from "@mediago/shared-common";
 import type { BilibiliButton } from "./components";
 
 declare global {
@@ -6,7 +6,7 @@ declare global {
     "bilibili-button": BilibiliButton;
   }
   interface Window {
-    electron: ElectronApi;
+    electron: MediaGoApi;
     TDAPP?: {
       onEvent: (
         eventId: string,
