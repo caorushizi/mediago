@@ -213,6 +213,9 @@ export const zh = {
   initializeMediaGoServer: "初始化 MediaGo 服务器",
   settingUpAdminPassword: "设置管理员密码",
   reppeatPassword: "重复密码",
+  pleaseEnterPassword: "请输入密码",
   passwordNotMatch: "两次输入的密码不匹配",
+  signinFailed: "登录失败",
+  unauthorized: "未授权",
   setup: "设置",
 };

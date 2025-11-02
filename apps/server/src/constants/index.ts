@@ -7,12 +7,12 @@ const __dirname = dirname(__filename);
 
 export const API_PREFIX = "/api";
 export const HOME_DIR = os.homedir();
-export const DOWNLOAD_DIR = `${HOME_DIR}/mediago`;
+export const DOWNLOAD_DIR = resolve(HOME_DIR, "mediago");
 export const STATIC_DIR = resolve(__dirname, "../frontend");
 export const BIN_DIR = resolve(__dirname, "./bin");
-export const WORKSPACE = `${DOWNLOAD_DIR}/.store`;
-export const DB_PATH = `${WORKSPACE}/mediago.db`;
-export const LOG_DIR = `${WORKSPACE}/logs`;
+export const WORKSPACE = resolve(DOWNLOAD_DIR, ".store");
+export const DB_PATH = resolve(WORKSPACE, "mediago.db");
+export const LOG_DIR = resolve(WORKSPACE, "logs");
 
 export enum Platform {
   Windows = "win32",

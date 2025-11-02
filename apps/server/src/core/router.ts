@@ -26,27 +26,22 @@ export default class RouterHandlerService extends Router {
       ({ controller, handler, event, method }) => {
         if (method !== "handle") return;
 
-        this.post(`/${event}`, async (context, next) => {
+        this.post(`/${event}`, async (ctx, next) => {
           try {
-            let result = handler.call(
-              controller,
-              context.request.body,
-              context,
-              next,
-            );
+            let result = handler.call(controller, ctx.request.body, ctx, next);
             if (
               result &&
               typeof (result as PromiseLike<unknown>).then === "function"
             ) {
               result = await result;
             }
-            context.body = success(result as Record<string, any>);
+            ctx.body = success(result as Record<string, any>);
           } catch (e: unknown) {
             this.logger.error(e);
             if (e instanceof Error) {
-              context.body = error(e.message);
+              ctx.body = error(e.message);
             } else {
-              context.body = error(String(e));
+              ctx.body = error(String(e));
             }
           }
         });

@@ -1,4 +1,4 @@
-import type { ElectronApi } from "@mediago/shared-common";
+import type { MediaGoApi } from "@mediago/shared-common";
 import { isWeb } from "@/utils";
 import { electronAdapter, electronIpcAdapter } from "./electron";
 import { webAdapter, webIpcAdapter } from "./server";
@@ -8,7 +8,7 @@ import { webAdapter, webIpcAdapter } from "./server";
  * - Web 环境：使用 webAdapter，通过 HTTP API 与后端通信
  * - Electron 环境：使用 electronAdapter，直接调用 window.electron API
  */
-export const apiAdapter: ElectronApi = isWeb ? webAdapter : electronAdapter;
+export const apiAdapter: MediaGoApi = isWeb ? webAdapter : electronAdapter;
 
 /**
  * 根据环境自动选择合适的 IPC 适配器

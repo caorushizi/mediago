@@ -1,15 +1,15 @@
-import type { ElectronApi } from "@mediago/shared-common";
+import type { MediaGoApi } from "@mediago/shared-common";
 import { apiAdapter, type IpcListener, ipcAdapter } from "./adapters";
 
 const eventFun = ["rendererEvent", "removeEventListener"];
 
 const api = Object.keys(apiAdapter).reduce<any>((res, funName) => {
   const fun = async (...args: any[]) => {
-    if (!apiAdapter[funName as keyof ElectronApi]) {
+    if (!apiAdapter[funName as keyof MediaGoApi]) {
       return null;
     }
 
-    const adapterFun: any = apiAdapter[funName as keyof ElectronApi];
+    const adapterFun: any = apiAdapter[funName as keyof MediaGoApi];
     if (eventFun.includes(String(funName))) {
       return null;
     }
@@ -24,7 +24,7 @@ const api = Object.keys(apiAdapter).reduce<any>((res, funName) => {
   return res;
 }, {});
 
-export default function useAPI(): ElectronApi & IpcListener {
+export default function useAPI(): MediaGoApi & IpcListener {
   return {
     ...api,
     ...ipcAdapter,

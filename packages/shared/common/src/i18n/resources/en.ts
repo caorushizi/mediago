@@ -220,6 +220,9 @@ export const en = {
   initializeMediaGoServer: "Initialized MediaGo Server",
   settingUpAdminPassword: "Setting up admin password",
   reppatPassword: "Repeat Password",
+  pleaseEnterPassword: "Please enter password",
   passwordNotMatch: "The two passwords do not match",
+  signinFailed: "Sign in failed",
+  unauthorized: "Unauthorized",
   setup: "Setup",
 };

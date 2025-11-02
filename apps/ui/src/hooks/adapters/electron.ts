@@ -1,4 +1,4 @@
-import type { ElectronApi } from "@mediago/shared-common";
+import type { MediaGoApi } from "@mediago/shared-common";
 import { getIpcId, IpcListener } from "./utils";
 
 /**
@@ -17,7 +17,7 @@ const getAvailableApiMethods = (): string[] => {
  * Electron 环境适配器
  * 直接使用 window.electron API
  */
-export const electronAdapter: ElectronApi = new Proxy({} as ElectronApi, {
+export const electronAdapter: MediaGoApi = new Proxy({} as MediaGoApi, {
   get(_target, prop: string) {
     if (!window.electron || !(prop in window.electron)) {
       return async () => ({
