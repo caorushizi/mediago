@@ -24,7 +24,7 @@ export default class AuthMiddleware {
     // check if apiKey is set up
     const apiKey = this.store.get("apiKey");
     if (!apiKey) {
-      ctx.body = error(i18n.t("unauthorized"));
+      ctx.body = error(i18n.t("unauthorized"), 401);
       return;
     }
 
@@ -32,12 +32,12 @@ export default class AuthMiddleware {
     const auth = ctx.request.body.auth;
 
     if (!auth) {
-      ctx.body = error(i18n.t("unauthorized"));
+      ctx.body = error(i18n.t("unauthorized"), 401);
       return;
     }
 
     if (auth !== apiKey) {
-      ctx.body = error(i18n.t("unauthorized"));
+      ctx.body = error(i18n.t("unauthorized"), 401);
       return;
     }
 

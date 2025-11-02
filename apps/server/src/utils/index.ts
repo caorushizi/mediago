@@ -39,9 +39,9 @@ export function success(data: Record<string, any>): IpcResponse {
   };
 }
 
-export function error(message = "fail"): IpcResponse {
+export function error(message = "fail", code = -1): IpcResponse {
   return {
-    code: -1,
+    code,
     message,
     data: null,
   };
