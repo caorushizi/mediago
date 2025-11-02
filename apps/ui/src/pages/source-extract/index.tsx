@@ -11,7 +11,7 @@ import {
   setBrowserSelector,
   useBrowserStore,
 } from "@/store/browser";
-import { cn } from "@/utils";
+import { cn, convertPlainObject } from "@/utils";
 import { BrowserView } from "./components/browser-view";
 import { FavoriteList } from "./components/favorite-list";
 import { ToolBar } from "./components/tool-bar";
@@ -27,11 +27,25 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     removeIpcListener,
     getSharedState,
     getAppStore: ipcGetAppStore,
+    setSharedState,
   } = useAPI();
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
   const store = useBrowserStore(useShallow(browserStoreSelector));
   const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
   const originTitle = useRef(document.title);
+
+  useEffect(() => {
+    const unsubscribe = useBrowserStore.subscribe(
+      (state) => state,
+      (state) => {
+        setSharedState(convertPlainObject(state));
+      },
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   useAsyncEffect(async () => {
     const store = await ipcGetAppStore();
@@ -73,7 +87,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
         errCode: data.code,
         errMsg: data.desc,
       });
-    }
+    },
   );
 
   const onDidNavigate = useMemoizedFn((e: unknown, info: UrlDetail) => {

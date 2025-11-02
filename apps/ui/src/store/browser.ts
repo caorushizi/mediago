@@ -1,11 +1,7 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import { convertPlainObject } from "@/utils";
-import useAPI from "@/hooks/use-api";
 import { DownloadType } from "@mediago/shared-common";
-
-// biome-ignore lint/correctness/useHookAtTopLevel: <explanation>
-const { setSharedState } = useAPI();
+import { subscribeWithSelector } from "zustand/middleware";
 
 export enum PageMode {
   Default = "default",
@@ -47,34 +43,35 @@ type Actions = {
 };
 
 export const useBrowserStore = create<BrowserStore & Actions>()(
-  immer((set) => ({
-    ...initialState,
-    setBrowserStore: (values) =>
-      set((state) => {
-        Object.keys(values).forEach((key) => {
-          if (values[key] != null) {
-            state[key] = values[key] as never;
-          }
-        });
-        setSharedState(convertPlainObject(state));
-      }),
-    addSource: (source) =>
-      set((state) => {
-        state.sources.push(source);
-      }),
-    deleteSource: (url) =>
-      set((state) => {
-        state.sources = state.sources.filter((item: any) => item.url !== url);
-      }),
-    setSources: (sources) =>
-      set((state) => {
-        state.sources = sources;
-      }),
-    clearSources: () =>
-      set((state) => {
-        state.sources = [];
-      }),
-  })),
+  immer(
+    subscribeWithSelector((set) => ({
+      ...initialState,
+      setBrowserStore: (values) =>
+        set((state) => {
+          Object.keys(values).forEach((key) => {
+            if (values[key] != null) {
+              state[key] = values[key] as never;
+            }
+          });
+        }),
+      addSource: (source) =>
+        set((state) => {
+          state.sources.push(source);
+        }),
+      deleteSource: (url) =>
+        set((state) => {
+          state.sources = state.sources.filter((item: any) => item.url !== url);
+        }),
+      setSources: (sources) =>
+        set((state) => {
+          state.sources = sources;
+        }),
+      clearSources: () =>
+        set((state) => {
+          state.sources = [];
+        }),
+    })),
+  ),
 );
 
 export const browserStoreSelector = (state: BrowserStore & Actions) => {

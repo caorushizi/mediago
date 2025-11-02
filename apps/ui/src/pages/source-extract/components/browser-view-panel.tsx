@@ -16,12 +16,13 @@ import {
   useBrowserStore,
 } from "@/store/browser";
 import useAPI from "@/hooks/use-api";
+import { DownloadTask } from "@mediago/shared-common";
 
 export function BrowserViewPanel() {
   const store = useBrowserStore(useShallow(browserStoreSelector));
   const { enableDocker } = useAppStore(useShallow(appStoreSelector));
   const { deleteSource, clearSources } = useBrowserStore(
-    useShallow(setBrowserSelector)
+    useShallow(setBrowserSelector),
   );
   const { t } = useTranslation();
   const { showDownloadDialog, createDownloadTasks } = useAPI();
@@ -53,7 +54,7 @@ export function BrowserViewPanel() {
           清空
         </AntdButton>
       </div>
-      {store.sources.map((item, index) => {
+      {store.sources.map((item) => {
         return (
           <div
             className="flex flex-col gap-2 rounded-lg bg-[#FAFCFF] p-2 dark:bg-[#27292F]"

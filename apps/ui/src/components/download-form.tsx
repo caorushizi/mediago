@@ -24,6 +24,7 @@ import { appStoreSelector, useAppStore } from "@/store/app";
 import { downloadFormSelector, useConfigStore } from "@/store/config";
 import { tdApp } from "@/utils";
 import { DownloadTask, DownloadType } from "@mediago/shared-common";
+import { BatchUrlTextarea } from "./batchurl-textarea";
 
 const { TextArea } = Input;
 
@@ -375,7 +376,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
                     },
                   ]}
                 >
-                  <TextArea
+                  <BatchUrlTextarea
                     rows={5}
                     placeholder={t("videoLikeDescription")}
                     onContextMenu={appContextMenu}

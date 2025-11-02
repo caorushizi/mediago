@@ -128,7 +128,7 @@ export default function SigninPage() {
                           <DialogHeader>
                             <DialogTitle>{t("forgotPassword")}</DialogTitle>
                           </DialogHeader>
-                          <div className="text-gray-600 text-sm">
+                          <div className="text-gray-600 text-sm whitespace-pre-line dark:text-gray-300 leading-6">
                             {t("forgetPasswordDescription")}
                           </div>
                         </DialogContent>
