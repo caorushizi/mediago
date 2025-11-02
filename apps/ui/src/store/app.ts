@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import i18n from "../i18n";
 import { AppLanguage, AppStore, AppTheme } from "@mediago/shared-common";
+import { persist } from "zustand/middleware";
 
 const initialState: AppStore = {
   local: "",
@@ -35,20 +36,27 @@ type Actions = {
 };
 
 export const useAppStore = create<AppStore & Actions>()(
-  immer((set) => ({
-    ...initialState,
-    setAppStore: (values) =>
-      set((state) => {
-        const { language } = values;
-        if (language) {
-          i18n.changeLanguage(language);
-        }
+  immer(
+    persist(
+      (set) => ({
+        ...initialState,
+        setAppStore: (values) =>
+          set((state) => {
+            const { language } = values;
+            if (language) {
+              i18n.changeLanguage(language);
+            }
 
-        Object.entries(values).forEach(([key, val]) => {
-          (state as any)[key] = val;
-        });
+            Object.entries(values).forEach(([key, val]) => {
+              (state as any)[key] = val;
+            });
+          }),
       }),
-  })),
+      {
+        name: "appstore-storage",
+      },
+    ),
+  ),
 );
 
 export const appStoreSelector = (state: AppStore & Actions) => {
