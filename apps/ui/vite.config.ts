@@ -11,11 +11,6 @@ const isWeb = process.env.APP_TARGET === "server";
 const packageJsonPath = path.resolve(appRoot, "package.json");
 const pkg = JSON.parse(await fs.readFile(packageJsonPath, "utf-8"));
 
-console.log({
-  "import.meta.env.APP_VERSION": JSON.stringify(pkg.version),
-  "import.meta.env.APP_TARGET": JSON.stringify(process.env.APP_TARGET),
-});
-
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
