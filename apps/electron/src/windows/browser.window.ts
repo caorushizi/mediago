@@ -3,7 +3,7 @@ import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import _ from "lodash";
 import Window from "../core/window";
-import { preloadUrl } from "../helper";
+import { preloadUrl } from "../utils";
 import ElectronStore from "../vendor/ElectronStore";
 
 @injectable()

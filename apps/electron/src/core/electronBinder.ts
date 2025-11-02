@@ -1,5 +1,5 @@
 import { type ControllerHandlerBinder } from "@mediago/shared-node";
-import { error, success } from "../helper/ipcResponse";
+import { error, success } from "../utils";
 import type ElectronLogger from "../vendor/ElectronLogger";
 
 export type IpcMainHandlers = {

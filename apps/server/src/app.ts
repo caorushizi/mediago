@@ -14,7 +14,7 @@ import bodyParser from "koa-bodyparser";
 import send from "koa-send";
 import serve from "koa-static";
 import RouterHandlerService from "./core/router";
-import { DB_PATH, LOG_DIR, STATIC_DIR } from "./helper/variables";
+import { DB_PATH, LOG_DIR, STATIC_DIR } from "./constants";
 import Logger from "./vendor/Logger";
 import SocketIO from "./vendor/SocketIO";
 import StoreService from "./vendor/Store";
@@ -59,7 +59,6 @@ export default class ElectronApp extends Koa {
       .use(this.router.routes())
       .use(this.router.allowedMethods());
 
-    console.log("process.env.NODE_ENV", process.env.NODE_ENV);
     if (process.env.NODE_ENV === "production") {
       this.use(serve(STATIC_DIR));
 

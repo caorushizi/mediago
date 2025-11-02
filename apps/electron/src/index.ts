@@ -3,7 +3,7 @@ import { buildProviderModule } from "@inversifyjs/binding-decorators";
 import { app, protocol } from "electron";
 import { Container } from "inversify";
 import ElectronApp from "./app";
-import { defaultScheme, noop } from "./helper/index";
+import { defaultScheme, noop } from "./utils";
 
 const container = new Container({
   defaultScope: "Singleton",

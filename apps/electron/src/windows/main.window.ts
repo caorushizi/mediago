@@ -17,8 +17,8 @@ import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import _ from "lodash";
 import Window from "../core/window";
-import { preloadUrl } from "../helper";
-import { isWin } from "../helper/variables";
+import { preloadUrl } from "../utils";
+import { isWin } from "../constants";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";
 

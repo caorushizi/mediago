@@ -1,4 +1,4 @@
-import type { DownloadTaskResponse } from "../index";
+import type { DownloadTaskResponse } from "..";
 import type { Conversion, Favorite, Video } from "./entities";
 import type {
   AppStore,

@@ -62,7 +62,7 @@ import fs from "node:fs/promises";
 import { inject, injectable } from "inversify";
 import { nanoid } from "nanoid";
 import MachineId from "node-machine-id";
-import { convertToAudio, db, exePath, workspace } from "../helper/index";
+import { convertToAudio, db, exePath, workspace } from "../utils";
 import WebviewService from "../services/webview.service";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";

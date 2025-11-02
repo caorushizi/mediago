@@ -2,7 +2,7 @@ import { provide } from "@inversifyjs/binding-decorators";
 import { appStoreDefaults, appStoreSharedOptions } from "@mediago/shared-node";
 import Conf from "conf";
 import { injectable } from "inversify";
-import { DOWNLOAD_DIR, WORKSPACE } from "../helper/variables";
+import { DOWNLOAD_DIR, WORKSPACE } from "../constants";
 import { AppStore } from "@mediago/shared-common";
 
 @injectable()

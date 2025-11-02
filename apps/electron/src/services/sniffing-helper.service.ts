@@ -3,7 +3,12 @@ import { provide } from "@inversifyjs/binding-decorators";
 import { DownloadType } from "@mediago/shared-common";
 import { type OnSendHeadersListenerDetails, session } from "electron";
 import { inject, injectable } from "inversify";
-import { formatHeaders, PERSIST_WEBVIEW, PRIVACY_WEBVIEW, urlCache } from "../helper/index";
+import {
+  formatHeaders,
+  PERSIST_WEBVIEW,
+  PRIVACY_WEBVIEW,
+  urlCache,
+} from "../utils";
 import ElectronLogger from "../vendor/ElectronLogger";
 
 export interface SourceParams {
@@ -40,7 +45,9 @@ const filterList: SourceFilter[] = [
     },
   },
   {
-    matches: [/\.(mp4|flv|mov|avi|mkv|wmv|m4a|ogg|m4b|m4p|m4r|m4b|m4p|m4r)(?![a-zA-Z])/],
+    matches: [
+      /\.(mp4|flv|mov|avi|mkv|wmv|m4a|ogg|m4b|m4p|m4r|m4b|m4p|m4r)(?![a-zA-Z])/,
+    ],
     type: DownloadType.direct,
   },
 ];

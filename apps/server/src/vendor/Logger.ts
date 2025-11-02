@@ -4,7 +4,7 @@ import { injectable } from "inversify";
 import winston from "winston";
 import DailyRotateFile from "winston-daily-rotate-file";
 import type { Vendor } from "../core/vendor";
-import { LOG_DIR } from "../helper";
+import { LOG_DIR } from "../utils";
 
 @injectable()
 @provide()
