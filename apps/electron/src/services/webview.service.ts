@@ -18,7 +18,7 @@ import {
   PRIVACY_WEBVIEW,
   pcUA,
   pluginUrl,
-} from "../helper";
+} from "../utils";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";
 import BrowserWindow from "../windows/browser.window";
