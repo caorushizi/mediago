@@ -204,4 +204,15 @@ export const zh = {
   noData: "暂无数据",
   addToList: "添加到列表",
   enableMobilePlayer: "启用手机播放器",
+  adminPassword: "管理员密码",
+  forgotPassword: "忘记密码？",
+  forgetPasswordDescription:
+    "如果您忘记了管理员密码，您可以通过以下步骤重置密码：\n1. 关闭 MediaGo 应用程序。\n2. 导航到配置文件目录，删除 `session.json` 文件。\n3. 重新启动 MediaGo，系统将提示您设置新的管理员密码。",
+  signin: "登录",
+  signinMediaGoServer: "登录 MediaGo 服务器",
+  initializeMediaGoServer: "初始化 MediaGo 服务器",
+  settingUpAdminPassword: "设置管理员密码",
+  reppeatPassword: "重复密码",
+  passwordNotMatch: "两次输入的密码不匹配",
+  setup: "设置",
 };

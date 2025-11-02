@@ -1,4 +1,3 @@
-import path from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
 import Router from "@koa/router";
 import { type Controller } from "@mediago/shared-common";
@@ -21,27 +20,37 @@ export default class RouterHandlerService extends Router {
   }
 
   init(): void {
-    registerControllerHandlers(this.controllers, ({ controller, handler, event, method }) => {
-      if (method !== "handle") return;
+    this.prefix(API_PREFIX);
+    registerControllerHandlers(
+      this.controllers,
+      ({ controller, handler, event, method }) => {
+        if (method !== "handle") return;
 
-      const finalPath = path.join(API_PREFIX, event).replace(/\\/g, "/").replace(/\/$/, "");
-
-      this.post(finalPath, async (context, next) => {
-        try {
-          let result = handler.call(controller, context.request.body, context, next);
-          if (result && typeof (result as PromiseLike<unknown>).then === "function") {
-            result = await result;
+        this.post(`/${event}`, async (context, next) => {
+          try {
+            let result = handler.call(
+              controller,
+              context.request.body,
+              context,
+              next,
+            );
+            if (
+              result &&
+              typeof (result as PromiseLike<unknown>).then === "function"
+            ) {
+              result = await result;
+            }
+            context.body = success(result as Record<string, any>);
+          } catch (e: unknown) {
+            this.logger.error(e);
+            if (e instanceof Error) {
+              context.body = error(e.message);
+            } else {
+              context.body = error(String(e));
+            }
           }
-          context.body = success(result as Record<string, any>);
-        } catch (e: unknown) {
-          this.logger.error(e);
-          if (e instanceof Error) {
-            context.body = error(e.message);
-          } else {
-            context.body = error(String(e));
-          }
-        }
-      });
-    });
+        });
+      },
+    );
   }
 }
