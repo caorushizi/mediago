@@ -46,6 +46,13 @@ function getReleaseConfig(): Configuration {
       },
       "./package.json",
     ],
+    // Unpack all platform-specific binaries from ASAR
+    // This allows the app to run on different platforms/architectures
+    asarUnpack: [
+      "**/node_modules/@mediago/core-*/**/*",
+      "**/node_modules/@mediago/player-*/**/*",
+      "**/node_modules/@mediago/deps-*/**/*",
+    ],
     extraResources: [
       {
         from: "./app/build/plugin",

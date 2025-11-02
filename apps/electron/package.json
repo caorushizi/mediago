@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development tsdown --watch ./src",
     "build": "cross-env NODE_ENV=production tsdown",
-    "pack": "cross-env NODE_ENV=production tsx scripts/build.ts --dir",
-    "release": "cross-env NODE_ENV=production tsx scripts/build.ts",
+    "install:binaries": "tsx scripts/install-all-binaries.ts",
+    "pack": "pnpm run install:binaries && cross-env NODE_ENV=production tsx scripts/build.ts --dir",
+    "release": "pnpm run install:binaries && cross-env NODE_ENV=production tsx scripts/build.ts",
     "clean": "rimraf app/build && rimraf release",
     "rebuild": "electron-rebuild -f -w",
     "lint": "oxlint ."

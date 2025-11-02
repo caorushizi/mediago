@@ -55,7 +55,32 @@ export const videoPattern = videoType.join(",");
 
 export function loadModule(moduleName: string) {
   try {
-    let bin = require.resolve(moduleName);
+    // For platform-specific packages, try to resolve the platform-specific version first
+    // This supports cross-platform builds where all platform binaries are included
+    const platformSpecificModules = [
+      "@mediago/core",
+      "@mediago/player",
+      "@mediago/deps",
+    ];
+
+    let resolvedModule = moduleName;
+
+    if (platformSpecificModules.includes(moduleName)) {
+      const platform = process.platform;
+      const arch = process.arch;
+      const platformModuleName = `${moduleName}-${platform}-${arch}`;
+
+      try {
+        // Try to resolve the platform-specific module first
+        require.resolve(platformModuleName);
+        resolvedModule = platformModuleName;
+      } catch {
+        // Fall back to the base module name if platform-specific not found
+        // This maintains backward compatibility
+      }
+    }
+
+    let bin = require.resolve(resolvedModule);
     if (
       process.env.NODE_ENV === "production" &&
       process.env.APP_TARGET === "electron"
