@@ -1,6 +1,6 @@
 import { ConfigProvider, theme } from "antd";
 import { type FC, lazy, Suspense, useEffect } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import "dayjs/locale/zh-cn";
 import { useAsyncEffect, useMemoizedFn } from "ahooks";
 import { App as AntdApp } from "antd";
@@ -19,6 +19,7 @@ import {
 import { isWeb, tdApp } from "./utils";
 import useAPI from "./hooks/use-api";
 import { AppStore, DownloadFilter } from "@mediago/shared-common";
+import { useAuth } from "./hooks/use-auth";
 
 const AppLayout = lazy(() => import("./layout/app-layout"));
 const HomePage = lazy(() => import("./pages/home-page"));
@@ -32,6 +33,7 @@ function getAlgorithm(appTheme: "dark" | "light") {
 }
 
 const App: FC = () => {
+  useAuth();
   const { addIpcListener, removeIpcListener, getMachineId } = useAPI();
   const { setUpdateAvailable, setUploadChecking } = useSessionStore(
     useShallow(updateSelector),
@@ -128,77 +130,75 @@ const App: FC = () => {
       theme={{ algorithm: getAlgorithm(theme) }}
     >
       <AntdApp className="size-full overflow-hidden">
-        <BrowserRouter>
-          <Routes>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <Suspense fallback={<Loading />}>
+                <AppLayout />
+              </Suspense>
+            }
+          >
             <Route
-              path="/"
+              index
               element={
                 <Suspense fallback={<Loading />}>
-                  <AppLayout />
+                  <HomePage />
                 </Suspense>
               }
-            >
-              <Route
-                index
-                element={
-                  <Suspense fallback={<Loading />}>
-                    <HomePage />
-                  </Suspense>
-                }
-              />
-              <Route
-                path="done"
-                element={
-                  <Suspense fallback={<Loading />}>
-                    <HomePage filter={DownloadFilter.done} />
-                  </Suspense>
-                }
-              />
-              <Route
-                path="source"
-                element={
-                  <Suspense fallback={<Loading />}>
-                    <SourceExtract />
-                  </Suspense>
-                }
-              />
-              <Route
-                path="settings"
-                element={
-                  <Suspense fallback={<Loading />}>
-                    <SettingPage />
-                  </Suspense>
-                }
-              />
-              <Route
-                path="converter"
-                element={
-                  <Suspense fallback={<Loading />}>
-                    <ConverterPage />
-                  </Suspense>
-                }
-              />
+            />
+            <Route
+              path="done"
+              element={
+                <Suspense fallback={<Loading />}>
+                  <HomePage filter={DownloadFilter.done} />
+                </Suspense>
+              }
+            />
+            <Route
+              path="source"
+              element={
+                <Suspense fallback={<Loading />}>
+                  <SourceExtract />
+                </Suspense>
+              }
+            />
+            <Route
+              path="settings"
+              element={
+                <Suspense fallback={<Loading />}>
+                  <SettingPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="converter"
+              element={
+                <Suspense fallback={<Loading />}>
+                  <ConverterPage />
+                </Suspense>
+              }
+            />
 
-              <Route path="*" element={<div>404</div>} />
-            </Route>
-            <Route
-              path="signin"
-              element={
-                <Suspense>
-                  <SigninPage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="/browser"
-              element={
-                <Suspense fallback={<Loading />}>
-                  <SourceExtract page={true} />
-                </Suspense>
-              }
-            />
-          </Routes>
-        </BrowserRouter>
+            <Route path="*" element={<div>404</div>} />
+          </Route>
+          <Route
+            path="signin"
+            element={
+              <Suspense>
+                <SigninPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/browser"
+            element={
+              <Suspense fallback={<Loading />}>
+                <SourceExtract page={true} />
+              </Suspense>
+            }
+          />
+        </Routes>
       </AntdApp>
     </ConfigProvider>
   );

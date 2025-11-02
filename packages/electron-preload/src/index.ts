@@ -14,7 +14,7 @@ import {
   type DownloadTaskPagination,
   type DownloadTaskResponse,
   EDIT_DOWNLOAD_ITEM,
-  type ElectronApi,
+  type MediaGoApi,
   EXPORT_DOWNLOAD_LIST,
   EXPORT_FAVORITES,
   GET_APP_STORE,
@@ -66,7 +66,7 @@ const apiFunctions: Record<string, any> = {};
 
 const apiKey = "electron";
 
-const electronApi: ElectronApi = {
+const electronApi: MediaGoApi = {
   getEnvPath(): Promise<EnvPath> {
     return ipcRenderer.invoke(GET_ENV_PATH);
   },
@@ -242,10 +242,19 @@ const electronApi: ElectronApi = {
   getPageTitle(url: string): Promise<any> {
     return ipcRenderer.invoke(GET_PAGE_TITLE, url);
   },
+  setupAuth() {
+    return null;
+  },
+  signin() {
+    return null;
+  },
+  async isSetup() {
+    return { setuped: false };
+  },
 };
 
 contextBridge.exposeInMainWorld(apiKey, electronApi);
 
 // Export for external use
 export { electronApi };
-export type { ElectronApi };
+export type { MediaGoApi };

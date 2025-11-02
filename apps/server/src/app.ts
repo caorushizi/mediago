@@ -19,6 +19,7 @@ import Logger from "./vendor/Logger";
 import SocketIO from "./vendor/SocketIO";
 import StoreService from "./vendor/Store";
 import "./controller";
+import AuthMiddleware from "./middleware/auth";
 
 @injectable()
 @provide()
@@ -40,24 +41,21 @@ export default class ElectronApp extends Koa {
     private readonly downloaderServer: DownloaderServer,
     @inject(VideoServer)
     private readonly videoServer: VideoServer,
+    @inject(AuthMiddleware)
+    private readonly authMiddleware: AuthMiddleware,
   ) {
     super();
   }
 
-  private async vendorInit() {
-    await this.db.init({ dbPath: DB_PATH });
-  }
-
   async init(): Promise<void> {
     this.router.init();
+    await this.db.init({ dbPath: DB_PATH });
 
-    // vendor
-    await this.vendorInit();
-
-    this.use(cors())
-      .use(bodyParser())
-      .use(this.router.routes())
-      .use(this.router.allowedMethods());
+    this.use(cors());
+    this.use(bodyParser());
+    this.use(this.authMiddleware.handle.bind(this.authMiddleware));
+    this.use(this.router.routes());
+    this.use(this.router.allowedMethods());
 
     if (process.env.NODE_ENV === "production") {
       this.use(serve(STATIC_DIR));

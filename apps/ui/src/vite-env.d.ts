@@ -2,7 +2,7 @@ import "vite/client";
 
 declare global {
   interface Window {
-    electron: ElectronApi;
+    electron: MediaGoApi;
     TDAPP?: {
       onEvent: (
         eventId: string,

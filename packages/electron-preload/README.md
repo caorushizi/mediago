@@ -25,7 +25,10 @@ const win = new BrowserWindow({
   webPreferences: {
     nodeIntegration: false,
     contextIsolation: true,
-    preload: join(__dirname, "../node_modules/@mediago/electron-preload/dist/preload.js"),
+    preload: join(
+      __dirname,
+      "../node_modules/@mediago/electron-preload/dist/preload.js",
+    ),
   },
 });
 ```
@@ -53,4 +56,4 @@ The preload script exposes all Electron APIs through `window.electron` object, p
 - Settings management
 - And much more...
 
-See the `ElectronApi` type definition for complete API reference.
+See the `MediaGoApi` type definition for complete API reference.
