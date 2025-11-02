@@ -7,5 +7,5 @@ export default defineConfig({
   },
   platform: "browser",
   outDir: "build",
-  noExternal: () => true,
+  noExternal: [/.*/],
 });

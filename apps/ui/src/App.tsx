@@ -25,6 +25,7 @@ const HomePage = lazy(() => import("./pages/home-page"));
 const SourceExtract = lazy(() => import("./pages/source-extract"));
 const SettingPage = lazy(() => import("./pages/setting-page"));
 const ConverterPage = lazy(() => import("./pages/converter-page"));
+const SigninPage = lazy(() => import("./pages/signin-page"));
 
 function getAlgorithm(appTheme: "dark" | "light") {
   return appTheme === "dark" ? theme.darkAlgorithm : theme.defaultAlgorithm;
@@ -177,8 +178,17 @@ const App: FC = () => {
                   </Suspense>
                 }
               />
+
               <Route path="*" element={<div>404</div>} />
             </Route>
+            <Route
+              path="signin"
+              element={
+                <Suspense>
+                  <SigninPage />
+                </Suspense>
+              }
+            />
             <Route
               path="/browser"
               element={
