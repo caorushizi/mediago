@@ -26,7 +26,7 @@ import { inject, injectable } from "inversify";
 import Logger from "../vendor/Logger";
 import SocketIO from "../vendor/SocketIO";
 import StoreService from "../vendor/Store";
-import { BIN_DIR, DB_PATH, WORKSPACE } from "../helper";
+import { BIN_DIR, DB_PATH, WORKSPACE } from "../utils";
 
 @injectable()
 @provide(TYPES.Controller)

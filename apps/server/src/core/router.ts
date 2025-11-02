@@ -3,8 +3,8 @@ import Router from "@koa/router";
 import { type Controller } from "@mediago/shared-common";
 import { TYPES, registerControllerHandlers } from "@mediago/shared-node";
 import { inject, injectable, multiInject } from "inversify";
-import { error, success } from "../helper/index";
-import { API_PREFIX } from "../helper/variables";
+import { error, success } from "../utils";
+import { API_PREFIX } from "../constants";
 import Logger from "../vendor/Logger";
 
 @injectable()

@@ -22,7 +22,7 @@ import TrayIcon from "../assets/icon.ico";
 import TrayPng from "../assets/icon.png";
 import ProtocolService from "./core/protocol";
 import ElectronRouter from "./core/router";
-import { db, isMac, logDir } from "./helper/variables";
+import { db, isMac, logDir } from "./constants";
 import ElectronDevtools from "./vendor/ElectronDevtools";
 import ElectronStore from "./vendor/ElectronStore";
 import ElectronUpdater from "./vendor/ElectronUpdater";

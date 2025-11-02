@@ -13,7 +13,7 @@ export const ffmpegPath = path.resolve(
   "ffmpeg",
 );
 
-export * from "./variables";
+export * from "../constants";
 export { error, type IpcResponse, success } from "./ipcResponse";
 
 export function noop() {}

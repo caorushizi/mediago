@@ -6,7 +6,7 @@ import isDev from "electron-is-dev";
 import { access, readFile } from "node:fs/promises";
 import { injectable } from "inversify";
 import mime from "mime-types";
-import { defaultScheme } from "../helper/index";
+import { defaultScheme } from "../utils";
 
 @injectable()
 @provide()

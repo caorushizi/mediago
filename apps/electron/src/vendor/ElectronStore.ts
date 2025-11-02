@@ -2,7 +2,7 @@ import { provide } from "@inversifyjs/binding-decorators";
 import { appStoreDefaults, appStoreSharedOptions } from "@mediago/shared-node";
 import Store from "electron-store";
 import { injectable } from "inversify";
-import { download, workspace } from "../helper/index";
+import { download, workspace } from "../utils";
 import { AppStore } from "@mediago/shared-common";
 
 @injectable()
