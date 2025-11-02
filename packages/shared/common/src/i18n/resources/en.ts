@@ -213,8 +213,10 @@ export const en = {
   enableMobilePlayer: "Enable Mobile Player",
   adminPassword: "Admin Password",
   forgotPassword: "Forgot Password?",
-  forgetPasswordDescription:
-    "If you have forgotten the admin password, you can reset it by following these steps:\n1. Close the MediaGo application.\n2. Navigate to the profile directory and delete the `session.json` file.\n3. Restart MediaGo, and you will be prompted to set a new admin password.",
+  forgetPasswordDescription: `If you have forgotten the admin password, you can reset it by following these steps:
+1. Locate the storage directory of MediaGo.
+2. Go to the ".store" folder and open the "config.json" file.
+3. Delete the value in the apiKey field.`,
   signin: "Sign In",
   signinMediaGoServer: "Sign in MediaGo Server",
   initializeMediaGoServer: "Initialized MediaGo Server",
