@@ -13,12 +13,14 @@ import useAPI from "@/hooks/use-api";
 import { useMemoizedFn } from "ahooks";
 import md5 from "crypto-js/md5";
 import { useNavigate } from "react-router-dom";
+import { setAppStoreSelector, useAppStore } from "@/store/app";
+import { useShallow } from "zustand/react/shallow";
 
 export default function SigninPage() {
   const { isSetup, setupAuth, signin } = useAPI();
+  const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
   const { data: { setuped = false } = {} } = useSWR(IS_SETUP, isSetup);
   const { t } = useTranslation();
-  console.log("setuped:", setuped);
   const navigate = useNavigate();
 
   const handleSubmit = useMemoizedFn(
@@ -28,11 +30,11 @@ export default function SigninPage() {
       try {
         const formData = new FormData(e.currentTarget);
         const password = formData.get("password") as string;
-        const hashedPassword = md5(password + APIKEY_SALT_KEY).toString();
+        const apiKey = md5(password + APIKEY_SALT_KEY).toString();
 
         if (setuped) {
           // Signin logic
-          await signin({ apiKey: hashedPassword });
+          await signin({ apiKey });
         } else {
           // Setup logic
           const repeatPassword = formData.get("repeat-password") as string;
@@ -43,8 +45,10 @@ export default function SigninPage() {
           }
 
           // Call setup API
-          await setupAuth({ apiKey: hashedPassword });
+          await setupAuth({ apiKey });
         }
+
+        setAppStore({ apiKey });
 
         navigate("/");
       } catch {
