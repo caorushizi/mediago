@@ -11,7 +11,6 @@ import { handle, i18n, TYPES } from "@mediago/shared-node";
 import { inject, injectable } from "inversify";
 import Logger from "../vendor/Logger";
 import StoreService from "../vendor/Store";
-import type { Context } from "koa";
 
 @injectable()
 @provide(TYPES.Controller)
@@ -24,22 +23,16 @@ export default class AuthController implements Controller {
   ) {}
 
   @handle(SETUP_AUTH)
-  async setupAuth({ apiKey }: SetupAuthRequest, ctx: Context) {
+  async setupAuth({ apiKey }: SetupAuthRequest) {
     this.store.set("apiKey", apiKey);
 
-    ctx.cookies.set("auth", apiKey, {
-      httpOnly: true,
-      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-    });
+    return true;
   }
 
   @handle(SIGNIN)
-  async signin({ apiKey }: SetupAuthRequest, ctx: Context) {
+  async signin({ apiKey }: SetupAuthRequest) {
     if (apiKey === this.store.get("apiKey")) {
-      ctx.cookies.set("auth", apiKey, {
-        httpOnly: true,
-        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-      });
+      return true;
     } else {
       throw new Error(i18n.t("signinFailed"));
     }

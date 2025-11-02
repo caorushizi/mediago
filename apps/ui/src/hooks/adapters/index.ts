@@ -1,7 +1,7 @@
 import type { MediaGoApi } from "@mediago/shared-common";
 import { isWeb } from "@/utils";
 import { electronAdapter, electronIpcAdapter } from "./electron";
-import { webAdapter, webIpcAdapter } from "./server";
+import { webAdapter, webIpcAdapter } from "./web";
 
 /**
  * 根据环境自动选择合适的适配器
@@ -19,4 +19,4 @@ export const ipcAdapter = isWeb ? webIpcAdapter : electronIpcAdapter;
 
 export type { IpcListener } from "./electron";
 export { electronAdapter, electronIpcAdapter } from "./electron";
-export { webAdapter, webIpcAdapter } from "./server";
+export { webAdapter, webIpcAdapter } from "./web";

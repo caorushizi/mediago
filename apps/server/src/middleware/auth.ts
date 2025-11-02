@@ -29,33 +29,18 @@ export default class AuthMiddleware {
     }
 
     // check for auth token in headers or cookies
-    let auth = ctx.cookies.get("auth");
-
-    if (!auth && ctx.request.body.auth) {
-      auth = ctx.request.body.auth;
-    }
+    const auth = ctx.request.body.auth;
 
     if (!auth) {
       ctx.body = error(i18n.t("unauthorized"));
       return;
     }
 
-    const isValid = this.validate(auth);
-    if (!isValid) {
+    if (auth !== apiKey) {
       ctx.body = error(i18n.t("unauthorized"));
       return;
     }
 
-    ctx.cookies.set("auth", auth, {
-      httpOnly: true,
-      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-    });
-
-    next();
-  }
-
-  validate(auth: string): boolean {
-    // Implement your authentication logic here
-    return auth === "valid_token"; // Example validation
+    await next();
   }
 }

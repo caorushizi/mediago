@@ -371,9 +371,6 @@ importers:
       immer:
         specifier: ^10.1.1
         version: 10.2.0
-      js-cookie:
-        specifier: ^3.0.5
-        version: 3.0.5
       localforage:
         specifier: ^1.10.0
         version: 1.10.0
@@ -429,9 +426,6 @@ importers:
       '@types/crypto-js':
         specifier: ^4.2.2
         version: 4.2.2
-      '@types/js-cookie':
-        specifier: ^3.0.6
-        version: 3.0.6
       '@types/node':
         specifier: ^24.7.2
         version: 24.9.2
