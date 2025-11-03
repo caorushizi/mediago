@@ -22,7 +22,7 @@
     "@typescript/native-preview": "7.0.0-dev.20251023.1",
     "cross-env": "^10.1.0",
     "dotenv-flow": "^4.1.0",
-    "electron": "35.7.5",
+    "electron": "39.0.0",
     "electron-builder": "26.0.12",
     "electron-updater": "^6.6.2",
     "glob": "^11.0.3",
