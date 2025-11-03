@@ -36,7 +36,7 @@
     "@mediago/shared-common": "workspace:*",
     "@mediago/shared-node": "workspace:*",
     "@mediago/core": "0.0.13",
-    "@mediago/deps": "0.0.4",
+    "@mediago/deps": "0.0.5",
     "@mediago/player": "0.0.10",
     "axios": "^1.12.2",
     "better-sqlite3": "12.4.1",
