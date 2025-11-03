@@ -227,4 +227,5 @@ export const en = {
   signinFailed: "Sign in failed",
   unauthorized: "Unauthorized",
   setup: "Setup",
+  apiKey: "API Key",
 };

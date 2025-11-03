@@ -220,4 +220,5 @@ export const zh = {
   signinFailed: "登录失败",
   unauthorized: "未授权",
   setup: "设置",
+  apiKey: "API 密钥",
 };
