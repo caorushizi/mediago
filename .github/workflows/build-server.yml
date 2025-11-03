@@ -1,14 +1,23 @@
 name: Make MediaGo Docker Image
 
 on:
-  push:
-    branches: [master]
   workflow_dispatch:
 
 jobs:
   build:
-    name: Build and Push Docker Image
-    runs-on: ubuntu-latest
+    name: Build Docker Image
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            arch: amd64
+            platform: linux/amd64
+          - runner: ubuntu-22.04-arm64
+            arch: arm64
+            platform: linux/arm64
+
+    runs-on: ${{ matrix.runner }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -31,9 +40,6 @@ jobs:
       - name: Build
         run: pnpm release:server
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -44,12 +50,68 @@ jobs:
           username: ${{ secrets.ALIYUN_USERNAME }}
           password: ${{ secrets.ALIYUN_PASSWORD }}
 
+      - name: Get short SHA
+        id: sha
+        run: echo "SHORT_SHA=${GITHUB_SHA::8}" >> $GITHUB_OUTPUT
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: ./apps/server
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ matrix.platform }}
           push: true
           tags: |
-            registry.cn-beijing.aliyuncs.com/caorushizi/mediago:latest
-            registry.cn-beijing.aliyuncs.com/caorushizi/mediago:${{ github.sha }}
+            registry.cn-beijing.aliyuncs.com/caorushizi/mediago:latest-${{ matrix.arch }}
+            registry.cn-beijing.aliyuncs.com/caorushizi/mediago:${{ steps.sha.outputs.SHORT_SHA }}-${{ matrix.arch }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  create-manifest:
+    name: Create Multi-Arch Manifest
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Login to Aliyun Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_USERNAME }}
+          password: ${{ secrets.ALIYUN_PASSWORD }}
+
+      - name: Get short SHA
+        id: sha
+        run: echo "SHORT_SHA=${GITHUB_SHA::8}" >> $GITHUB_OUTPUT
+
+      - name: Create and push multi-arch manifest
+        run: |
+          IMAGE=registry.cn-beijing.aliyuncs.com/caorushizi/mediago
+          SHA=${{ steps.sha.outputs.SHORT_SHA }}
+
+          # 创建 latest 标签的多架构镜像
+          docker buildx imagetools create -t ${IMAGE}:latest \
+            ${IMAGE}:latest-amd64 \
+            ${IMAGE}:latest-arm64
+
+          # 创建带 commit SHA 的多架构镜像
+          docker buildx imagetools create -t ${IMAGE}:${SHA} \
+            ${IMAGE}:${SHA}-amd64 \
+            ${IMAGE}:${SHA}-arm64
+
+          # 同时保留完整 SHA 标签
+          docker buildx imagetools create -t ${IMAGE}:${{ github.sha }} \
+            ${IMAGE}:${SHA}-amd64 \
+            ${IMAGE}:${SHA}-arm64
+
+      - name: Build Summary
+        run: |
+          echo "### 🎉 Multi-Arch Docker Image Built Successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Image:** \`registry.cn-beijing.aliyuncs.com/caorushizi/mediago:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Architectures:** amd64, arm64" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit SHA:** ${{ steps.sha.outputs.SHORT_SHA }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Available Tags:**" >> $GITHUB_STEP_SUMMARY
+          echo "- \`latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ steps.sha.outputs.SHORT_SHA }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
