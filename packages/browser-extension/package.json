@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "tsdown --watch ./src",
     "build": "tsdown",
-    "lint": "boxlint ."
+    "lint": "boxlint .",
+    "type:check": "tsc --noEmit"
   },
   "dependencies": {
     "@mediago/shared-common": "workspace:*",

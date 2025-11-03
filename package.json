@@ -23,7 +23,8 @@
     "release:server": "pnpm pack:server && pnpm -F @mediago/server run release",
     "release:electron": "pnpm build:electron && pnpm -F @mediago/electron run release",
     "docs:dev": "pnpm -F @mediago/docs run docs:dev",
-    "docs:build": "pnpm -F @mediago/docs run docs:build"
+    "docs:build": "pnpm -F @mediago/docs run docs:build",
+    "type:check": "turbo type:check"
   },
   "keywords": [],
   "license": "MIT",

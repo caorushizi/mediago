@@ -12,7 +12,8 @@
   "scripts": {
     "dev": "tsdown --watch ./src",
     "build": "tsdown",
-    "lint": "oxlint ."
+    "lint": "oxlint .",
+    "type:check": "tsc --noEmit"
   },
   "files": [
     "build"

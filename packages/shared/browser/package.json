@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "tsdown --watch ./src",
     "build": "tsdown",
-    "types": "tsc --noEmit"
+    "type:check": "tsc --noEmit"
   },
   "keywords": [],
   "author": "caorushizi",
