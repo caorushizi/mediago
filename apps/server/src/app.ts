@@ -72,7 +72,7 @@ export default class ElectronApp extends Koa {
     this.socket.initSocketIO(server);
 
     const local = this.store.get("local");
-    this.videoServer.start({ local });
+    this.videoServer.start({ local, enableMobilePlayer: true });
 
     // Initialize download service
     this.downloaderServer.start({

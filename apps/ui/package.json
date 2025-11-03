@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "report": "vite-bundle-visualizer",
-    "lint": "oxlint ."
+    "lint": "oxlint .",
+    "type:check": "tsc --noEmit"
   },
   "dependencies": {
     "@ant-design/icons": "^6.1.0",

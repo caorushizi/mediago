@@ -9,7 +9,8 @@
     "pack": "tsx scripts/build.ts",
     "release": "docker build -t mediago-server .",
     "clean": "rimraf .mediago-server",
-    "lint": "oxlint ."
+    "lint": "oxlint .",
+    "type:check": "tsc --noEmit"
   },
   "author": "caorushizi",
   "license": "MIT",
