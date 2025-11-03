@@ -221,4 +221,6 @@ export const zh = {
   unauthorized: "未授权",
   setup: "设置",
   apiKey: "API 密钥",
+  pleaseEnterApiKey: "请输入 API 密钥",
+  confirm: "确认",
 };

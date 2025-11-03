@@ -1,10 +1,10 @@
-import { ADD_DOWNLOAD_ITEMS } from "@mediago/shared-common";
+import { ADD_DOWNLOAD_ITEMS, DownloadTask } from "@mediago/shared-common";
 import axios from "axios";
 import { useShallow } from "zustand/react/shallow";
 import { appStoreSelector, useAppStore } from "@/store/app";
 
 export function useDockerApi() {
-  const { dockerUrl } = useAppStore(useShallow(appStoreSelector));
+  const { dockerUrl, apiKey } = useAppStore(useShallow(appStoreSelector));
 
   const addVideosToDocker = ({
     items,
@@ -16,6 +16,7 @@ export function useDockerApi() {
     return axios.post(`${dockerUrl}/api/${ADD_DOWNLOAD_ITEMS}`, {
       videos: items,
       startDownload: immediate,
+      auth: apiKey,
     });
   };
 

@@ -60,6 +60,7 @@ const SettingPage: React.FC = () => {
     addIpcListener,
     removeIpcListener,
     installUpdate,
+    appContextMenu,
   } = useAPI();
   const { t } = useTranslation();
   const formRef = useRef<FormInstance<AppStore>>(null);
@@ -269,7 +270,11 @@ const SettingPage: React.FC = () => {
             <Switch />
           </Form.Item>
           <Form.Item name="proxy" label={t("proxySetting")}>
-            <Input width="xl" placeholder={t("pleaseEnterProxy")} />
+            <Input
+              width="xl"
+              placeholder={t("pleaseEnterProxy")}
+              onContextMenu={appContextMenu}
+            />
           </Form.Item>
           <Form.Item
             name="useProxy"
@@ -334,11 +339,11 @@ const SettingPage: React.FC = () => {
       label: t("downloadSetting"),
       children: (
         <>
-          <Form.Item name="proxy" label={t("proxySetting")}>
-            <Input width="xl" placeholder={t("pleaseEnterProxy")} />
-          </Form.Item>
           <Form.Item hidden={!isWeb} name="proxy" label={t("proxySetting")}>
-            <Input placeholder={t("pleaseEnterProxy")} />
+            <Input
+              placeholder={t("pleaseEnterProxy")}
+              onContextMenu={appContextMenu}
+            />
           </Form.Item>
           <Form.Item
             name="downloadProxySwitch"
@@ -375,8 +380,17 @@ const SettingPage: React.FC = () => {
       disabled: isWeb,
       children: (
         <>
-          <Form.Item hidden={isWeb} name="dockerUrl" label={t("dockerUrl")}>
-            <Input placeholder={t("pleaseEnterDockerUrl")} />
+          <Form.Item name="apiKey" label={t("apiKey")}>
+            <Input
+              placeholder={t("pleaseEnterApiKey")}
+              onContextMenu={appContextMenu}
+            />
+          </Form.Item>
+          <Form.Item name="dockerUrl" label={t("dockerUrl")}>
+            <Input
+              placeholder={t("pleaseEnterDockerUrl")}
+              onContextMenu={appContextMenu}
+            />
           </Form.Item>
           <Form.Item label={t("enableDocker")} name="enableDocker">
             <Switch />

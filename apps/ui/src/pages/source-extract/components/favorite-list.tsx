@@ -5,7 +5,12 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import { ADD_FAVORITE, OPEN_FAVORITE } from "@/const";
-import { BrowserStatus, PageMode, setBrowserSelector, useBrowserStore } from "@/store/browser";
+import {
+  BrowserStatus,
+  PageMode,
+  setBrowserSelector,
+  useBrowserStore,
+} from "@/store/browser";
 import { getFavIcon, tdApp } from "@/utils";
 import { FavItem } from "./fav-item";
 import useAPI from "@/hooks/use-api";
@@ -126,7 +131,12 @@ export function FavoriteList() {
             />
           );
         })}
-        <FavItem key={"add"} onClick={showModal} icon={<PlusOutlined />} title={t("addFavorite")} />
+        <FavItem
+          key={"add"}
+          onClick={showModal}
+          icon={<PlusOutlined />}
+          title={t("addFavorite")}
+        />
       </div>
       <Modal
         open={isModalOpen}
@@ -134,7 +144,9 @@ export function FavoriteList() {
         onCancel={handleCancel}
         title={t("addShortcut")}
         width={500}
-        destroyOnClose
+        destroyOnHidden
+        okText={t("confirm")}
+        cancelText={t("cancel")}
       >
         <div className="flex min-h-36 flex-col justify-center">
           <Form<Favorite> form={favoriteAddForm} autoFocus>
