@@ -53,6 +53,11 @@ export default class ElectronApp extends Koa {
 
     this.use(cors());
 
+    this.use(bodyParser());
+    this.use(this.authMiddleware.handle.bind(this.authMiddleware));
+    this.use(this.router.routes());
+    this.use(this.router.allowedMethods());
+
     if (process.env.NODE_ENV === "production") {
       this.use(serve(STATIC_DIR));
 
@@ -61,11 +66,6 @@ export default class ElectronApp extends Koa {
         await send(ctx, ctx.path, { root: STATIC_DIR });
       });
     }
-
-    this.use(bodyParser());
-    this.use(this.authMiddleware.handle.bind(this.authMiddleware));
-    this.use(this.router.routes());
-    this.use(this.router.allowedMethods());
 
     const server = http.createServer(this.callback());
 
