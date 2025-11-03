@@ -389,6 +389,9 @@ const SettingPage: React.FC = () => {
       label: t("moreSettings"),
       children: (
         <>
+          <Form.Item hidden={!isWeb} name="apiKey" label={t("apiKey")}>
+            <Input disabled />
+          </Form.Item>
           <Form.Item hidden={isWeb} label={t("moreAction")}>
             <Space>
               <Button
