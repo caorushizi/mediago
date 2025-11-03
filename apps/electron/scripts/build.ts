@@ -57,9 +57,12 @@ function getReleaseConfig(): Configuration {
       target: [
         {
           target: "nsis",
-          arch: ["x64"],
+          arch: [process.arch === "arm64" ? "arm64" : "x64"],
         },
-        "portable",
+        {
+          target: "portable",
+          arch: [process.arch === "arm64" ? "arm64" : "x64"],
+        },
       ],
     },
     portable: {
