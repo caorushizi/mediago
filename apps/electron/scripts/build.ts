@@ -11,6 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const projectRoot = path.resolve(__dirname, "../../..");
 const appRoot = path.resolve(__dirname, "..");
+const arch = process.arch === "arm64" ? "arm64" : "x64";
 
 dotenvFlow.config({
   path: projectRoot,
@@ -57,11 +58,11 @@ function getReleaseConfig(): Configuration {
       target: [
         {
           target: "nsis",
-          arch: [process.arch === "arm64" ? "arm64" : "x64"],
+          arch,
         },
         {
           target: "portable",
-          arch: [process.arch === "arm64" ? "arm64" : "x64"],
+          arch,
         },
       ],
     },
@@ -89,7 +90,7 @@ function getReleaseConfig(): Configuration {
       target: [
         {
           target: "dmg",
-          arch: [process.arch === "arm64" ? "arm64" : "x64"],
+          arch,
         },
       ],
       extendInfo: {
@@ -107,7 +108,7 @@ function getReleaseConfig(): Configuration {
       maintainer: "caorushizi <84996057@qq.com>",
       target: {
         target: "deb",
-        arch: ["x64"],
+        arch,
       },
     },
     nsis: {
