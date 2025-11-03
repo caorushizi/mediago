@@ -1,4 +1,4 @@
-FROM node:20-bookworm-slim AS runner
+FROM node:20 AS runner
 
 RUN apt-get update && apt-get install -y \
   libssl-dev \
