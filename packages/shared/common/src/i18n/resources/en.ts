@@ -228,4 +228,6 @@ export const en = {
   unauthorized: "Unauthorized",
   setup: "Setup",
   apiKey: "API Key",
+  pleaseEnterApiKey: "Please enter API Key",
+  confirm: "Confirm",
 };
