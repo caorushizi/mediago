@@ -52,7 +52,7 @@
     "@types/node": "^24.7.2",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "@typescript/native-preview": "7.0.0-dev.20251023.1",
+    "@typescript/native-preview": "7.0.0-dev.20251102.1",
     "@vitejs/plugin-react": "^5.0.4",
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.39",
