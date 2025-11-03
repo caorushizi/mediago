@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 import Input, { TextAreaProps } from "antd/es/input";
-import { cn } from "@/utils";
+import { cn, isWeb } from "@/utils";
 
 const { TextArea } = Input;
 
@@ -55,7 +55,10 @@ export function BatchUrlTextarea({
     <div className="relative inline-block w-full">
       <div
         ref={highlightRef}
-        className="z-1 whitespace-pre wrap-break-word absolute top-0 left-0 right-0 bottom-0 pointer-events-none overflow-hidden py-1 px-[11px] border border-transparent text-transparent"
+        className={cn(
+          "z-1 whitespace-pre wrap-break-word absolute top-0 left-0 right-0 bottom-0 pointer-events-none overflow-hidden border border-transparent text-transparent",
+          [isWeb ? "py-1 px-[11px]" : "py-0 px-[7px]"],
+        )}
       >
         {renderHighlightedText()}
       </div>
