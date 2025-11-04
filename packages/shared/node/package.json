@@ -21,7 +21,7 @@
     "@inversifyjs/binding-decorators": "^1.1.3",
     "@mediago/core": "0.0.13",
     "@mediago/core-sdk": "0.0.4",
-    "@mediago/deps": "0.0.5",
+    "@mediago/deps": "0.0.6",
     "@mediago/player": "0.0.10",
     "@mediago/service-runner": "^0.0.1",
     "@mediago/shared-common": "workspace:*",
