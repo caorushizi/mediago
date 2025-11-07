@@ -9,15 +9,16 @@
   <a href="https://github.com/caorushizi/mediago/discussions">Discussions</a>
   <br>
 
-  <a href="https://github.com/caorushizi/mediago/blob/master/README.en.md">English</a>
-  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://github.com/caorushizi/mediago/blob/master/README.jp.md">日本語</a>
-  <br>
+<a href="https://github.com/caorushizi/mediago/blob/master/README.en.md">English</a>
+<span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+<a href="https://github.com/caorushizi/mediago/blob/master/README.jp.md">日本語</a>
+<br>
 
   <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/caorushizi/mediago/total">
   <img alt="GitHub Downloads (all assets, latest release)" src="https://img.shields.io/github/downloads/caorushizi/mediago/latest/total">
   <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/caorushizi/mediago">
   <img alt="GitHub forks" src="https://img.shields.io/github/forks/caorushizi/mediago">
+  <img alt="GitCode" src="https://gitcode.com/caorushizi/mediago/star/badge.svg">
   <br>
 
   <a href="https://trendshift.io/repositories/11083" target="_blank">
