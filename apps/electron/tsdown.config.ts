@@ -5,6 +5,7 @@ import electron from "electron";
 import { defineConfig } from "tsdown";
 import dotenvFlow from "dotenv-flow";
 import copy from "rollup-plugin-copy";
+import fs from "node:fs/promises";
 
 const isDev = process.env.NODE_ENV === "development";
 
@@ -14,6 +15,9 @@ const projectRoot = path.resolve(__dirname, "../..");
 const env = dotenvFlow.config({
   path: projectRoot,
 });
+const appRoot = path.resolve(projectRoot, "apps/electron/app");
+const packageJsonPath = path.resolve(appRoot, "package.json");
+const pkg = JSON.parse(await fs.readFile(packageJsonPath, "utf-8"));
 
 export class ElectronApp {
   process: ChildProcessWithoutNullStreams | null = null;
@@ -74,6 +78,7 @@ export default defineConfig({
     "process.env.APP_TARGET": JSON.stringify(
       process.env.APP_TARGET || "electron",
     ),
+    "process.env.APP_VERSION": JSON.stringify(pkg.version),
   },
   loader: {
     ".jpg": "asset",

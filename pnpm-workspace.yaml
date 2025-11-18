@@ -3,16 +3,17 @@ packages:
   - docs
   - apps/**
   - packages/**
-  - "!**/test/**"
-  - "!**/release/**"
+  - '!**/test/**'
+  - '!**/release/**'
 
 onlyBuiltDependencies:
-  - "@mediago/core"
-  - "@mediago/deps"
-  - "@mediago/player"
-  - "@parcel/watcher"
-  - "@swc/core"
-  - "@tailwindcss/oxide"
+  - '@mediago/core'
+  - '@mediago/deps'
+  - '@mediago/player'
+  - '@parcel/watcher'
+  - '@sentry-internal/node-cpu-profiler'
+  - '@swc/core'
+  - '@tailwindcss/oxide'
   - better-sqlite3
   - core-js
   - electron
