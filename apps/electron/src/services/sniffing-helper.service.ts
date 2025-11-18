@@ -71,6 +71,8 @@ export class SniffingHelper extends EventEmitter {
 
   update(pageInfo: PageInfo) {
     this.pageInfo = pageInfo;
+    // Reset dedup cache when navigating to a new page
+    urlCache.clear();
   }
 
   checkPageInfo() {
