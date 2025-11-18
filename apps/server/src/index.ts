@@ -1,3 +1,4 @@
+import "./utils/sentry";
 import "reflect-metadata";
 import { buildProviderModule } from "@inversifyjs/binding-decorators";
 import { Container } from "inversify";
