@@ -37,7 +37,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     useShallow(downloadFormSelector),
   );
 
-  const { pagination, total, mutate, setPage } = useTasks(filter);
+  const { pagination, total, mutate, setPage, setPageSize } = useTasks(filter);
   const { data: envPath } = useSWR(GET_ENV_PATH, getEnvPath);
 
   useUrlInvoke({
@@ -49,8 +49,9 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
     },
   });
 
-  const handleChangePage = useMemoizedFn((page: number, _: number) => {
+  const handleChangePage = useMemoizedFn((page: number, pageSize: number) => {
     setPage(page);
+    setPageSize(pageSize);
   });
 
   const handleOpenForm = useMemoizedFn(() => {
@@ -120,7 +121,6 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
         pageSize={pagination.pageSize}
         onChange={handleChangePage}
         total={total}
-        showSizeChanger={false}
       />
 
       <DownloadForm

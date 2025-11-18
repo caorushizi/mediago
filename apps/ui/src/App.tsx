@@ -1,14 +1,19 @@
 import { ConfigProvider, theme } from "antd";
-import { type FC, lazy, Suspense, useEffect } from "react";
+import { type FC, lazy, Suspense, useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import "dayjs/locale/zh-cn";
 import { useAsyncEffect, useMemoizedFn } from "ahooks";
 import { App as AntdApp } from "antd";
-import zhCN from "antd/locale/zh_CN";
+import zhCN from "antd/es/locale/zh_CN";
+import enUS from "antd/es/locale/en_US";
 import { useShallow } from "zustand/react/shallow";
 import Loading from "./components/loading";
 import { DOWNLOAD_FAIL, DOWNLOAD_SUCCESS, PAGE_LOAD } from "./const";
-import { setAppStoreSelector, useAppStore } from "./store/app";
+import {
+  appStoreSelector,
+  setAppStoreSelector,
+  useAppStore,
+} from "./store/app";
 import { PageMode, setBrowserSelector, useBrowserStore } from "./store/browser";
 import { downloadStoreSelector, useDownloadStore } from "./store/download";
 import {
@@ -16,10 +21,11 @@ import {
   updateSelector,
   useSessionStore,
 } from "./store/session";
-import { isWeb, tdApp } from "./utils";
+import { getBrowserLang, isWeb, tdApp } from "./utils";
 import useAPI from "./hooks/use-api";
-import { AppStore, DownloadFilter } from "@mediago/shared-common";
+import { AppLanguage, AppStore, DownloadFilter } from "@mediago/shared-common";
 import { useAuth } from "./hooks/use-auth";
+import { Locale } from "antd/es/locale";
 
 const AppLayout = lazy(() => import("./layout/app-layout"));
 const HomePage = lazy(() => import("./pages/home-page"));
@@ -39,9 +45,26 @@ const App: FC = () => {
     useShallow(updateSelector),
   );
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
+  const { language } = useAppStore(useShallow(appStoreSelector));
   const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
   const { increase } = useDownloadStore(useShallow(downloadStoreSelector));
   const { theme, setTheme } = useSessionStore(useShallow(themeSelector));
+  const [appLocale, setAppLocale] = useState<Locale>();
+
+  useEffect(() => {
+    if (language == AppLanguage.ZH) {
+      setAppLocale(zhCN);
+    } else if (language == AppLanguage.EN) {
+      setAppLocale(enUS);
+    } else {
+      const lang = getBrowserLang();
+      if (lang.startsWith("zh")) {
+        setAppLocale(zhCN);
+      } else {
+        setAppLocale(enUS);
+      }
+    }
+  }, [language]);
 
   const themeChange = useMemoizedFn((event: MediaQueryListEvent) => {
     if (event.matches) {
@@ -125,7 +148,7 @@ const App: FC = () => {
 
   return (
     <ConfigProvider
-      locale={zhCN}
+      locale={appLocale}
       componentSize={isWeb ? undefined : "small"}
       theme={{ algorithm: getAlgorithm(theme) }}
     >

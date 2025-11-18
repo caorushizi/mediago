@@ -94,3 +94,12 @@ export const urlDownloadType = (url: string): DownloadType => {
 export const convertPlainObject = (obj: unknown) => {
   return JSON.parse(JSON.stringify(obj));
 };
+
+export function getBrowserLang(): string {
+  const lang =
+    navigator.languages && navigator.languages.length
+      ? navigator.languages[0]
+      : navigator.language;
+
+  return lang.toLowerCase();
+}
