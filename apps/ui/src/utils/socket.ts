@@ -6,7 +6,8 @@ export function getSocket() {
     return _instance;
   }
 
-  _instance = io("http://localhost:8899");
+  const serverUrl = import.meta.env.DEV ? "http://localhost:8899" : "/";
+  _instance = io(serverUrl);
 
   return _instance;
 }
