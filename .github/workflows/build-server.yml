@@ -68,7 +68,7 @@ jobs:
             fi
           else
             # 非 tag 触发，只推送 dev 版本
-            DEV_TAG="dev-$(date +%Y%m%d-%H%M%S)"
+            DEV_TAG="dev-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
             TAGS="registry.cn-beijing.aliyuncs.com/caorushizi/mediago:${DEV_TAG}-${{ matrix.arch }}"
           fi
 
@@ -119,7 +119,7 @@ jobs:
             fi
           else
             # 非 tag 触发，只创建 dev 版本
-            DEV_TAG="dev-$(date +%Y%m%d-%H%M%S)"
+            DEV_TAG="dev-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
 
             docker buildx imagetools create -t ${IMAGE}:${DEV_TAG} \
               ${IMAGE}:${DEV_TAG}-amd64 \
@@ -144,7 +144,7 @@ jobs:
               echo "- \`latest\`" >> $GITHUB_STEP_SUMMARY
             fi
           else
-            DEV_TAG="dev-$(date +%Y%m%d-%H%M%S)"
+            DEV_TAG="dev-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
             echo "**Version:** ${DEV_TAG}" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "**Available Tags:**" >> $GITHUB_STEP_SUMMARY
