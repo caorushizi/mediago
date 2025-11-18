@@ -85,6 +85,7 @@ export default class WebviewService {
     this.view.webContents.on("did-navigate", this.onDidNavigate);
     this.view.webContents.on("did-fail-load", this.onDidFailLoad);
     this.view.webContents.on("did-navigate-in-page", this.onDidNavigateInPage);
+    this.view.webContents.on("page-title-updated", this.onPageTitleUpdated);
     this.view.webContents.on("will-navigate", this.onWillNavigate);
     this.view.webContents.setWindowOpenHandler(this.onOpenNewWindow);
   }
@@ -127,7 +128,14 @@ export default class WebviewService {
     if (!this.view) return;
     const pageInfo = this.getPageInfo();
     this.sniffingHelper.update(pageInfo);
+    this.sniffingHelper.checkPageInfo();
     this.window.webContents.send("webview-did-navigate-in-page", pageInfo);
+  };
+
+  onPageTitleUpdated = () => {
+    if (!this.view) return;
+    const pageInfo = this.getPageInfo();
+    this.sniffingHelper.update(pageInfo);
   };
 
   onOpenNewWindow = ({ url }: HandlerDetails) => {
