@@ -398,6 +398,9 @@ importers:
       nanoid:
         specifier: ^5.1.6
         version: 5.1.6
+      qs:
+        specifier: ^6.14.0
+        version: 6.14.0
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -444,6 +447,9 @@ importers:
       '@types/node':
         specifier: ^24.7.2
         version: 24.9.2
+      '@types/qs':
+        specifier: ^6.14.0
+        version: 6.14.0
       '@types/react':
         specifier: ^18.3.3
         version: 18.3.26

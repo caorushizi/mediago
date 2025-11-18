@@ -161,12 +161,4 @@ export default class ElectronApp {
     const url = commandLine.pop() || "";
     this.mainWindow.showWindow(url);
   };
-
-  handleOpenUrl(url: string): void {
-    this.mainWindow.handleUrl(url);
-  }
-
-  send(url: string): void {
-    this.mainWindow.send("url-params", url);
-  }
 }

@@ -1,14 +1,9 @@
 import { QrcodeOutlined } from "@ant-design/icons";
-import {
-  DownloadFilter,
-  DownloadTask,
-  GET_ENV_PATH,
-} from "@mediago/shared-common";
+import { DownloadFilter, GET_ENV_PATH } from "@mediago/shared-common";
 import { useMemoizedFn } from "ahooks";
 import { Pagination, Popover, QRCode } from "antd";
-import { type FC, useEffect, useId, useRef } from "react";
+import { type FC, useId, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router-dom";
 import { useShallow } from "zustand/react/shallow";
 import { ExtractIcon, FolderIcon } from "@/assets/svg";
 import DownloadForm, {
@@ -23,23 +18,17 @@ import useAPI from "@/hooks/use-api";
 import { useTasks } from "@/hooks/use-tasks";
 import { appStoreSelector, useAppStore } from "@/store/app";
 import { downloadFormSelector, useConfigStore } from "@/store/config";
-import { isDownloadType, isWeb, tdApp, urlDownloadType } from "@/utils";
+import { isWeb, tdApp } from "@/utils";
 import { DownloadList } from "./components/download-list";
 import useSWR from "swr";
+import { useUrlInvoke } from "@/hooks/use-url-invoke";
 
 interface Props {
   filter?: DownloadFilter;
 }
 
 const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
-  const {
-    openDir,
-    showBrowserWindow,
-    createDownloadTasks,
-    addIpcListener,
-    removeIpcListener,
-    getEnvPath,
-  } = useAPI();
+  const { openDir, showBrowserWindow, getEnvPath } = useAPI();
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
   const newFormRef = useRef<DownloadFormRef>(null);
@@ -47,68 +36,18 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   const { lastIsBatch, lastDownloadTypes } = useConfigStore(
     useShallow(downloadFormSelector),
   );
-  const location = useLocation();
+
   const { pagination, total, mutate, setPage } = useTasks(filter);
   const { data: envPath } = useSWR(GET_ENV_PATH, getEnvPath);
 
-  useEffect(() => {
-    const search = new URLSearchParams(location.search);
-
-    // new
-    if (search.has("n")) {
-      const typeParam = search.get("type");
-      const silent = !!search.get("silent");
-      const urlDecode = decodeURIComponent(search.get("encodedURL") || "");
-      const url = urlDecode || search.get("url") || "";
-      const name = search.get("name");
-      const type = isDownloadType(typeParam) ? typeParam : urlDownloadType(url);
-      const headers = decodeURIComponent(search.get("headers") || "");
-
-      if (silent) {
-        const item: Omit<DownloadTask, "id"> = {
-          type,
-          url,
-          name,
-          headers,
-          folder: "",
-        };
-        createDownloadTasks([item], true);
-      } else {
-        const item: DownloadFormItem = {
-          batch: false,
-          type,
-          url,
-          name,
-          headers,
-        };
-        newFormRef.current?.openModal(item);
-      }
-    }
-  }, [location.search]);
-
-  // mac ipc event get url params in macos schceme
-  useEffect(() => {
-    const handleUrlEvent = (event: unknown, url: string) => {
-      const searchParams = new URLSearchParams(url.split("?")[1]);
-      if (searchParams.get("n") === "true") {
-        const name = searchParams.get("name");
-        const urlParam = searchParams.get("url") || "";
-        const item: DownloadFormItem = {
-          batch: false,
-          type: urlDownloadType(urlParam),
-          url: urlParam,
-          name,
-          headers: "",
-        };
-        newFormRef.current?.openModal(item);
-      }
-    };
-
-    addIpcListener("url-params", handleUrlEvent);
-    return () => {
-      removeIpcListener("url-params", handleUrlEvent);
-    };
-  }, []);
+  useUrlInvoke({
+    onOpenForm: (item: DownloadFormItem) => {
+      newFormRef.current?.openModal(item);
+    },
+    refresh: () => {
+      mutate();
+    },
+  });
 
   const handleChangePage = useMemoizedFn((page: number, _: number) => {
     setPage(page);
@@ -154,7 +93,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
               <Popover
                 content={
                   <div>
-                    <QRCode value={envPath.playerUrl} />
+                    <QRCode value={envPath?.playerUrl || ""} />
                     <div className="text-xs">{t("scanToWatch")}</div>
                   </div>
                 }
