@@ -26,7 +26,7 @@
     "@mediago/service-runner": "^0.0.1",
     "@mediago/shared-common": "workspace:*",
     "axios": "^1.12.2",
-    "glob": "^11.0.3",
+    "glob": "^11.1.0",
     "i18next": "^25.6.0",
     "inversify": "^7.9.1",
     "tree-kill": "^1.2.2",
