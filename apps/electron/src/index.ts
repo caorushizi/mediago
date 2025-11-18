@@ -6,6 +6,14 @@ import { Container } from "inversify";
 import ElectronApp from "./app";
 import { defaultScheme, noop } from "./utils";
 import isDev from "electron-is-dev";
+import path from "node:path";
+
+if (process.env.PORTABLE_EXECUTABLE_DIR) {
+  app.setPath(
+    "userData",
+    path.join(process.env.PORTABLE_EXECUTABLE_DIR, "data"),
+  );
+}
 
 const container = new Container({
   defaultScope: "Singleton",
