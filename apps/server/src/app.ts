@@ -20,6 +20,8 @@ import SocketIO from "./vendor/SocketIO";
 import StoreService from "./vendor/Store";
 import "./controller";
 import AuthMiddleware from "./middleware/auth";
+import path from "node:path";
+import fs from "node:fs/promises";
 
 @injectable()
 @provide()
@@ -63,7 +65,13 @@ export default class ElectronApp extends Koa {
 
       // Middleware that handles static files and front-end routing
       this.use(async (ctx) => {
-        await send(ctx, ctx.path, { root: STATIC_DIR });
+        const filePath = path.join(STATIC_DIR, ctx.path);
+        try {
+          await fs.access(filePath);
+          await send(ctx, filePath, { root: STATIC_DIR });
+        } catch {
+          await send(ctx, "index.html", { root: STATIC_DIR });
+        }
       });
     }
 
