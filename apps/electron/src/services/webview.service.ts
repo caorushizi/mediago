@@ -251,7 +251,8 @@ export default class WebviewService {
     }
 
     // Process the validity of the proxy address
-    if (!/https?:\/\//.test(proxy)) {
+    // Support http/https/socks5 proxies; default to http if no scheme provided
+    if (!/^(https?|socks5):\/\//i.test(proxy)) {
       proxy = `http://${proxy}`;
     }
 
