@@ -99,14 +99,14 @@ export default class WebviewService {
     if (!this.view) return;
     const pageInfo = this.getPageInfo();
     this.sniffingHelper.update(pageInfo);
-    this.window.webContents.send("webview-dom-ready", pageInfo);
+    this.window?.webContents.send("webview-dom-ready", pageInfo);
   };
 
   onDidNavigate = async () => {
     if (!this.view) return;
     const pageInfo = this.getPageInfo();
     this.sniffingHelper.update(pageInfo);
-    this.window.webContents.send("webview-did-navigate", pageInfo);
+    this.window?.webContents.send("webview-did-navigate", pageInfo);
 
     try {
       const content = await readFile(pluginUrl, "utf-8");
@@ -127,7 +127,7 @@ export default class WebviewService {
     if (!this.view) return;
     const pageInfo = this.getPageInfo();
     this.sniffingHelper.update(pageInfo);
-    this.window.webContents.send("webview-did-navigate-in-page", pageInfo);
+    this.window?.webContents.send("webview-did-navigate-in-page", pageInfo);
   };
 
   onOpenNewWindow = ({ url }: HandlerDetails) => {
@@ -141,7 +141,7 @@ export default class WebviewService {
     // Here you need to determine whether to use a browser plug-in
     const useExtension = this.store.get("useExtension");
     if (useExtension) {
-      this.window.webContents.send("webview-link-message", item);
+      this.window?.webContents.send("webview-link-message", item);
     } else {
       const video = await this.downloadTaskService.addDownloadTask(item);
       const mainWebContents = this.mainWindow.window?.webContents;
@@ -180,13 +180,13 @@ export default class WebviewService {
 
   show() {
     if (!this.view) return;
-    this.window.contentView.addChildView(this.view);
+    this.window?.contentView.addChildView(this.view);
     this.viewShow = true;
   }
 
   hide() {
     if (!this.view) return;
-    this.window.contentView.removeChildView(this.view);
+    this.window?.contentView.removeChildView(this.view);
     this.viewShow = false;
   }
 
@@ -237,7 +237,9 @@ export default class WebviewService {
   get window() {
     if (this.browserWindow.window) return this.browserWindow.window;
     if (this.mainWindow.window) return this.mainWindow.window;
-    throw new Error(i18n.t("currentWindowNotFound"));
+
+    this.logger.error("Current window not found");
+    return null;
   }
 
   private get session() {
@@ -341,7 +343,7 @@ export default class WebviewService {
   }
 
   sendToWindow(channel: string, ...args: unknown[]) {
-    this.window.webContents.send(channel, ...args);
+    this.window?.webContents.send(channel, ...args);
   }
 
   destroyView() {
@@ -375,7 +377,7 @@ export default class WebviewService {
     }
 
     if (!init) {
-      this.window.webContents.send("change-privacy");
+      this.window?.webContents.send("change-privacy");
     }
   }
 }
