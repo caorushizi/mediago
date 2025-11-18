@@ -31,7 +31,7 @@
   "devDependencies": {
     "@prettier/plugin-oxc": "^0.0.4",
     "@types/node": "^24.9.2",
-    "@typescript/native-preview": "7.0.0-dev.20251023.1",
+    "@typescript/native-preview": "7.0.0-dev.20251118.1",
     "cross-env": "^10.1.0",
     "knip": "^5.66.4",
     "oxlint-tsgolint": "^0.3.0",

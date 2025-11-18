@@ -20,7 +20,7 @@
   ],
   "devDependencies": {
     "@types/node": "^24.7.2",
-    "@typescript/native-preview": "7.0.0-dev.20251023.1",
+    "@typescript/native-preview": "7.0.0-dev.20251118.1",
     "electron": "35.7.5",
     "esbuild": "^0.25.10",
     "tsdown": "^0.15.9",
