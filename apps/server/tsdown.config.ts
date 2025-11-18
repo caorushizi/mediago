@@ -3,6 +3,7 @@ import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
 import path, { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "tsdown";
+import fs from "node:fs/promises";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -10,6 +11,9 @@ const projectRoot = path.resolve(__dirname, "../..");
 const env = dotenvFlow.config({
   path: projectRoot,
 });
+const appRoot = path.resolve(projectRoot, "apps/electron/app");
+const packageJsonPath = path.resolve(appRoot, "package.json");
+const pkg = JSON.parse(await fs.readFile(packageJsonPath, "utf-8"));
 
 export class NodeApp {
   process: ChildProcessWithoutNullStreams | null = null;
@@ -54,6 +58,7 @@ export default defineConfig({
     "process.env.NODE_ENV": JSON.stringify(
       process.env.NODE_ENV || "production",
     ),
+    "process.env.APP_VERSION": JSON.stringify(pkg.version),
   },
   env: { ...env.parsed },
   noExternal: [/.*/],

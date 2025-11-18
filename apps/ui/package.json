@@ -19,6 +19,8 @@
     "@radix-ui/react-checkbox": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-slot": "^1.2.3",
+    "@sentry/electron": "^7.2.0",
+    "@sentry/react": "10.17.0",
     "@xterm/addon-fit": "^0.10.0",
     "@xterm/xterm": "^5.5.0",
     "ahooks": "^3.8.0",

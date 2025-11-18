@@ -1,3 +1,4 @@
+import "./utils/sentry";
 import dayjs from "dayjs";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
