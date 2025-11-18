@@ -33,7 +33,7 @@
     "i18next": "^25.6.0",
     "immer": "^10.1.1",
     "localforage": "^1.10.0",
-    "lucide-react": "^0.548.0",
+    "lucide-react": "^0.554.0",
     "match-sorter": "^8.1.0",
     "nanoid": "^5.1.6",
     "qs": "^6.14.0",
