@@ -39,7 +39,7 @@
     "@mediago/player": "0.0.10",
     "@mediago/shared-common": "workspace:*",
     "@mediago/shared-node": "workspace:*",
-    "@sentry/node": "^10.25.0",
+    "@sentry/node": "^10.26.0",
     "@sentry/profiling-node": "^10.25.0",
     "axios": "^1.12.2",
     "better-sqlite3": "12.4.1",
