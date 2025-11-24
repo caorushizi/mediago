@@ -34,7 +34,7 @@
     "@typescript/native-preview": "7.0.0-dev.20251023.1",
     "cross-env": "^10.1.0",
     "knip": "^5.66.4",
-    "oxlint-tsgolint": "^0.3.0",
+    "oxlint-tsgolint": "^0.8.1",
     "prettier": "^3.6.2",
     "turbo": "^2.6.0"
   }
