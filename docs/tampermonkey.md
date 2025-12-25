@@ -1,4 +1,7 @@
-
+---
+layout: doc
+outline: deep
+---
 # m3u8 /bilibili 资源嗅探下载器 (MediaGo 助手)
 
 本脚本由 **zhecydn** 提供技术支持与教程分享。通过此脚本，你可以直接在浏览器页面完成视频地址的提取与投喂，无需手动复制链接，极大提升了 MediaGo 的使用效率。
