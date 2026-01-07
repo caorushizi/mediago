@@ -1,4 +1,5 @@
 import path from "node:path";
+import { exec } from "node:child_process";
 import { provide } from "@inversifyjs/binding-decorators";
 import {
   ADD_FAVORITE,
@@ -69,6 +70,7 @@ import ElectronStore from "../vendor/ElectronStore";
 import ElectronUpdater from "../vendor/ElectronUpdater";
 import BrowserWindow from "../windows/browser.window";
 import MainWindow from "../windows/main.window";
+import {isLinux} from "../constants/index";
 
 const { machineId } = MachineId;
 
@@ -95,6 +97,25 @@ export default class HomeController implements Controller {
     },
     theme: (value) => {
       nativeTheme.themeSource = value;
+
+      //fix linux dark top bar issue
+      if (isLinux) {
+          const gsettingsCommand = value === 'dark'
+            ? 'gsettings set org.gnome.desktop.interface color-scheme prefer-dark'
+            : 'gsettings set org.gnome.desktop.interface color-scheme default';
+
+          exec(gsettingsCommand, (error, stdout, stderr) => {
+            if (error) {
+              this.logger.error(`执行 gsettings 命令失败: ${stderr}`);
+              return;
+            }
+            if (stderr) {
+              this.logger.error(`gsettings 命令输出错误: ${stderr}`);
+              return;
+            }
+            this.logger.info(`gsettings 命令成功执行: ${stdout}`);
+          });
+        }
     },
     isMobile: (value) => {
       this.webviewService.setUserAgent(value);
