@@ -5,6 +5,7 @@ import { watchEffect } from "vue";
 import Comments from "./components/Comments.vue";
 import Footer from "./components/Footer.vue";
 import QrCode from "./components/QrCode.vue";
+import TopBanner from "./components/TopBanner.vue";
 import { useI18n } from "vue-i18n";
 import AdBanner from "./components/AdBanner.vue";
 
@@ -23,6 +24,9 @@ const { Layout } = DefaultTheme;
 
 <template>
   <Layout>
+    <template #layout-top>
+      <TopBanner />
+    </template>
     <!-- <template #sidebar-nav-before>
       <AdBanner />
     </template> -->
