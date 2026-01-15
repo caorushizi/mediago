@@ -14,6 +14,15 @@
 <a href="https://github.com/caorushizi/mediago/blob/master/README.jp.md">日本語</a>
 <br>
 
+  <!-- MediaGo Pro 推广 -->
+  <a href="https://mediago.torchstellar.com/?from=github">
+    <img src="https://img.shields.io/badge/✨_全新发布-MediaGo_Pro-ff6b6b?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiAyTDMgN2wzIDMgNi00IDYgNCAzLTMtOS01eiIvPjxwYXRoIGQ9Ik0zIDE3bDkgNSA5LTUtMy0zLTYgNC02LTQtMyAzeiIvPjwvc3ZnPg==" alt="MediaGo Pro" />
+  </a>
+  <a href="https://mediago.torchstellar.com/?from=github">
+    <img src="https://img.shields.io/badge/🚀_立即体验-在线版本_无需安装-2a82f6?style=for-the-badge" alt="Try Now" />
+  </a>
+  <br>
+
   <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/caorushizi/mediago/total">
   <img alt="GitHub Downloads (all assets, latest release)" src="https://img.shields.io/github/downloads/caorushizi/mediago/latest/total">
   <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/caorushizi/mediago">

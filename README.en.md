@@ -7,6 +7,13 @@
   <a href="https://downloader.caorushizi.cn/en/documents.html?form=github">Docs</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="https://github.com/caorushizi/mediago/discussions">Discussions</a>
+  <!-- MediaGo Pro -->
+  <a href="https://mediago.torchstellar.com/?from=github">
+    <img src="https://img.shields.io/badge/✨_New_Release-MediaGo_Pro-ff6b6b?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiAyTDMgN2wzIDMgNi00IDYgNCAzLTMtOS01eiIvPjxwYXRoIGQ9Ik0zIDE3bDkgNSA5LTUtMy0zLTYgNC02LTQtMyAzeiIvPjwvc3ZnPg==" alt="MediaGo Pro" />
+  </a>
+  <a href="https://mediago.torchstellar.com/?from=github">
+    <img src="https://img.shields.io/badge/🚀_Try_Now-Online_Version_No_Install-2a82f6?style=for-the-badge" alt="Try Now" />
+  </a>
   <br>
   <br>
 
