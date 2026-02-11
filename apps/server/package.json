@@ -41,7 +41,7 @@
     "@mediago/shared-node": "workspace:*",
     "@sentry/node": "^10.25.0",
     "@sentry/profiling-node": "^10.25.0",
-    "axios": "^1.12.2",
+    "axios": "^1.13.5",
     "better-sqlite3": "12.4.1",
     "conf": "^15.0.2",
     "inversify": "^7.9.1",
