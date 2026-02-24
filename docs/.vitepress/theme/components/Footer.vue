@@ -42,7 +42,7 @@
             </div>
             <ul class="list-none m-0 p-0">
               <li class="mb-1">
-                <a href="https://www.jiexi.im/player.php"
+                <a href="https://www.jiexi.im/player/"
                   class="text-[var(--vp-c-text-2)] no-underline transition-colors hover:text-[var(--vp-c-text-1)] duration-300"
                   target="_blank">
                   {{ t("jiexi.im") }}
@@ -82,3 +82,4 @@ import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 const { hasSidebar } = useLayout();
 </script>
+
