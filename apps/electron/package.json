@@ -54,7 +54,7 @@
     "electron-log": "^5.1.5",
     "electron-store": "^11.0.2",
     "inversify": "^7.9.1",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "lru-cache": "^11.0.1",
     "mime-types": "^3.0.1",
     "nanoid": "^5.0.7",
