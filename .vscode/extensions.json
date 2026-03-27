@@ -1,0 +1,4 @@
+{
+  "recommendations": ["oxc.oxc-vscode", "EditorConfig.EditorConfig"],
+  "unwantedRecommendations": ["esbenp.prettier-vscode"]
+}

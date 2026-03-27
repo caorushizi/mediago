@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "tsdown --watch ./src",
     "build": "tsdown",
-    "lint": "boxlint .",
+    "lint": "oxlint .",
     "type:check": "tsc --noEmit"
   },
   "dependencies": {
