@@ -15,7 +15,11 @@
     "start:server": "cross-env APP_TARGET=server turbo run dev -F @mediago/server -F @mediago/ui",
     "build:electron": "pnpm rebuild:electron && cross-env APP_TARGET=electron NODE_ENV=production turbo run build -F @mediago/electron -F @mediago/ui",
     "build:server": "pnpm rebuild:server && cross-env APP_TARGET=server NODE_ENV=production turbo run build -F @mediago/server -F @mediago/ui",
-    "lint": "turbo run lint",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint --fix .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check .",
+    "check": "pnpm lint && pnpm format:check && turbo type:check",
     "rebuild:server": "pnpm -F @mediago/server rebuild",
     "rebuild:electron": "pnpm -F @mediago/electron run rebuild",
     "pack:server": "pnpm build:server && pnpm -F @mediago/server run pack",
@@ -24,18 +28,30 @@
     "release:electron": "pnpm build:electron && pnpm -F @mediago/electron run release",
     "docs:dev": "pnpm -F @mediago/docs run docs:dev",
     "docs:build": "pnpm -F @mediago/docs run docs:build",
-    "type:check": "turbo type:check"
+    "type:check": "turbo type:check",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,mjs,cjs}": [
+      "oxlint --fix",
+      "oxfmt --write"
+    ],
+    "*.{json,css,md,html,yml,yaml}": [
+      "oxfmt --write"
+    ]
   },
   "keywords": [],
   "license": "MIT",
   "devDependencies": {
-    "@prettier/plugin-oxc": "^0.0.4",
     "@types/node": "^24.9.2",
-    "typescript": "^6.0.2",
     "cross-env": "^10.1.0",
+    "husky": "^9.1.7",
     "knip": "^5.66.4",
-    "oxlint-tsgolint": "^0.3.0",
-    "prettier": "^3.6.2",
-    "turbo": "^2.6.0"
+    "lint-staged": "^16.4.0",
+    "oxfmt": "^0.42.0",
+    "oxlint": "^1.57.0",
+    "oxlint-tsgolint": "^0.17.4",
+    "turbo": "^2.6.0",
+    "typescript": "^6.0.2"
   }
 }

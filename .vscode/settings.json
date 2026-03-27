@@ -1,5 +1,13 @@
 {
   "cSpell.words": ["intlify", "unplugin", "vitepress", "waline"],
   "typescript.experimental.useTsgo": true,
-  "oxc.enable": true
+  "oxc.enable": true,
+  "oxc.lint.enable": true,
+  "oxc.fmt.experimental": true,
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.oxc": "explicit"
+  },
+  "prettier.enable": false
 }

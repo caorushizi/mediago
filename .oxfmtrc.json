@@ -1,0 +1,24 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 80,
+  "indentStyle": "space",
+  "indentWidth": 2,
+  "endOfLine": "lf",
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    "build",
+    "dist",
+    "release",
+    "coverage",
+    "docs/.vitepress/cache",
+    "docs/.vitepress/dist"
+  ],
+  "overrides": [
+    {
+      "files": ["*.md"],
+      "options": {
+        "proseWrap": "preserve"
+      }
+    }
+  ]
+}
