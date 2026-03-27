@@ -14,15 +14,12 @@ importers:
       '@types/node':
         specifier: ^24.9.2
         version: 24.9.2
-      '@typescript/native-preview':
-        specifier: 7.0.0-dev.20251023.1
-        version: 7.0.0-dev.20251023.1
       cross-env:
         specifier: ^10.1.0
         version: 10.1.0
       knip:
         specifier: ^5.66.4
-        version: 5.66.4(@types/node@24.9.2)(typescript@5.9.3)
+        version: 5.66.4(@types/node@24.9.2)(typescript@6.0.2)
       oxlint-tsgolint:
         specifier: ^0.3.0
         version: 0.3.0
@@ -32,6 +29,9 @@ importers:
       turbo:
         specifier: ^2.6.0
         version: 2.6.0
+      typescript:
+        specifier: ^6.0.2
+        version: 6.0.2
 
   apps/electron:
     dependencies:
@@ -129,9 +129,6 @@ importers:
       '@types/node':
         specifier: ^24.7.2
         version: 24.9.2
-      '@typescript/native-preview':
-        specifier: 7.0.0-dev.20251023.1
-        version: 7.0.0-dev.20251023.1
       cross-env:
         specifier: ^10.1.0
         version: 10.1.0
@@ -161,10 +158,13 @@ importers:
         version: 3.5.0
       tsdown:
         specifier: ^0.15.9
-        version: 0.15.12(@typescript/native-preview@7.0.0-dev.20251023.1)(oxc-resolver@11.13.0)(typescript@5.9.3)
+        version: 0.15.12(@typescript/native-preview@7.0.0-dev.20251023.1)(oxc-resolver@11.13.0)(typescript@6.0.2)
       tsx:
         specifier: ^4.20.6
         version: 4.20.6
+      typescript:
+        specifier: ^6.0.2
+        version: 6.0.2
 
   apps/electron/app:
     dependencies:
@@ -302,9 +302,6 @@ importers:
       '@types/node':
         specifier: ^24.7.2
         version: 24.9.2
-      '@typescript/native-preview':
-        specifier: 7.0.0-dev.20251023.1
-        version: 7.0.0-dev.20251023.1
       cross-env:
         specifier: ^10.1.0
         version: 10.1.0
@@ -316,10 +313,13 @@ importers:
         version: 6.1.0
       tsdown:
         specifier: ^0.15.9
-        version: 0.15.12(@typescript/native-preview@7.0.0-dev.20251023.1)(oxc-resolver@11.13.0)(typescript@5.9.3)
+        version: 0.15.12(@typescript/native-preview@7.0.0-dev.20251023.1)(oxc-resolver@11.13.0)(typescript@6.0.2)
       tsx:
         specifier: ^4.20.6
         version: 4.20.6
+      typescript:
+        specifier: ^6.0.2
+        version: 6.0.2
 
   apps/ui:
     dependencies:
@@ -382,7 +382,7 @@ importers:
         version: 1.11.19
       i18next:
         specifier: ^25.6.0
-        version: 25.6.0(typescript@5.9.3)
+        version: 25.6.0(typescript@6.0.2)
       immer:
         specifier: ^10.1.1
         version: 10.2.0
@@ -409,7 +409,7 @@ importers:
         version: 18.3.1(react@18.3.1)
       react-i18next:
         specifier: ^16.0.1
-        version: 16.2.3(i18next@25.6.0(typescript@5.9.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3)
+        version: 16.2.3(i18next@25.6.0(typescript@6.0.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@6.0.2)
       react-router-dom:
         specifier: ^7.9.4
         version: 7.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -456,9 +456,6 @@ importers:
       '@types/react-dom':
         specifier: ^18.3.0
         version: 18.3.7(@types/react@18.3.26)
-      '@typescript/native-preview':
-        specifier: 7.0.0-dev.20251023.1
-        version: 7.0.0-dev.20251023.1
       '@vitejs/plugin-react':
         specifier: ^5.0.4
         version: 5.1.0(rolldown-vite@7.2.5(@types/node@24.9.2)(esbuild@0.25.11)(jiti@2.6.1)(tsx@4.20.6)(yaml@2.8.1))
@@ -474,6 +471,9 @@ importers:
       tw-animate-css:
         specifier: ^1.4.0
         version: 1.4.0
+      typescript:
+        specifier: ^6.0.2
+        version: 6.0.2
       vite:
         specifier: npm:rolldown-vite@latest
         version: rolldown-vite@7.2.5(@types/node@24.9.2)(esbuild@0.25.11)(jiti@2.6.1)(tsx@4.20.6)(yaml@2.8.1)
@@ -491,7 +491,7 @@ importers:
         version: 4.1.16(vite@7.1.12(@types/node@24.9.2)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.20.6)(yaml@2.8.1))
       '@waline/client':
         specifier: ^3.5.1
-        version: 3.7.1(typescript@5.9.3)
+        version: 3.7.1(typescript@6.0.2)
       gray-matter:
         specifier: ^4.0.3
         version: 4.0.3
@@ -503,20 +503,20 @@ importers:
         version: 4.1.16
       vue:
         specifier: ^3.5.13
-        version: 3.5.22(typescript@5.9.3)
+        version: 3.5.22(typescript@6.0.2)
       vue-i18n:
         specifier: ^11.1.1
-        version: 11.1.12(vue@3.5.22(typescript@5.9.3))
+        version: 11.1.12(vue@3.5.22(typescript@6.0.2))
     devDependencies:
       '@intlify/unplugin-vue-i18n':
         specifier: ^6.0.3
-        version: 6.0.8(@vue/compiler-dom@3.5.22)(eslint@9.38.0(jiti@2.6.1))(rollup@4.52.5)(typescript@5.9.3)(vue-i18n@11.1.12(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))
+        version: 6.0.8(@vue/compiler-dom@3.5.22)(eslint@9.38.0(jiti@2.6.1))(rollup@4.52.5)(typescript@6.0.2)(vue-i18n@11.1.12(vue@3.5.22(typescript@6.0.2)))(vue@3.5.22(typescript@6.0.2))
       '@types/node':
         specifier: ^24.7.2
         version: 24.9.2
       vitepress:
         specifier: 2.0.0-alpha.12
-        version: 2.0.0-alpha.12(@types/node@24.9.2)(axios@1.13.1)(jiti@2.6.1)(lightningcss@1.30.2)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+        version: 2.0.0-alpha.12(@types/node@24.9.2)(axios@1.13.1)(jiti@2.6.1)(lightningcss@1.30.2)(postcss@8.5.6)(tsx@4.20.6)(typescript@6.0.2)(yaml@2.8.1)
 
   packages/browser-extension:
     dependencies:
@@ -539,21 +539,21 @@ importers:
       '@types/node':
         specifier: ^24.7.2
         version: 24.9.2
-      '@typescript/native-preview':
-        specifier: 7.0.0-dev.20251023.1
-        version: 7.0.0-dev.20251023.1
       tsdown:
         specifier: ^0.15.9
-        version: 0.15.12(@typescript/native-preview@7.0.0-dev.20251023.1)(oxc-resolver@11.13.0)(typescript@5.9.3)
+        version: 0.15.12(@typescript/native-preview@7.0.0-dev.20251023.1)(oxc-resolver@11.13.0)(typescript@6.0.2)
+      typescript:
+        specifier: ^6.0.2
+        version: 6.0.2
 
   packages/config:
     devDependencies:
       '@types/node':
         specifier: ^24.7.2
         version: 24.9.2
-      '@typescript/native-preview':
-        specifier: 7.0.0-dev.20251023.1
-        version: 7.0.0-dev.20251023.1
+      typescript:
+        specifier: ^6.0.2
+        version: 6.0.2
 
   packages/electron-preload:
     dependencies:
@@ -567,9 +567,6 @@ importers:
       '@types/node':
         specifier: ^24.7.2
         version: 24.9.2
-      '@typescript/native-preview':
-        specifier: 7.0.0-dev.20251023.1
-        version: 7.0.0-dev.20251023.1
       electron:
         specifier: 35.7.5
         version: 35.7.5
@@ -578,10 +575,13 @@ importers:
         version: 0.25.11
       tsdown:
         specifier: ^0.15.9
-        version: 0.15.12(@typescript/native-preview@7.0.0-dev.20251023.1)(oxc-resolver@11.13.0)(typescript@5.9.3)
+        version: 0.15.12(@typescript/native-preview@7.0.0-dev.20251023.1)(oxc-resolver@11.13.0)(typescript@6.0.2)
       tsx:
         specifier: ^4.11.0
         version: 4.20.6
+      typescript:
+        specifier: ^6.0.2
+        version: 6.0.2
 
   packages/shared/browser:
     dependencies:
@@ -590,35 +590,35 @@ importers:
         version: link:../common
       i18next:
         specifier: ^25.6.0
-        version: 25.6.0(typescript@5.9.3)
+        version: 25.6.0(typescript@6.0.2)
       i18next-browser-languagedetector:
         specifier: ^8.0.2
         version: 8.2.0
       react-i18next:
         specifier: ^16.0.1
-        version: 16.2.3(i18next@25.6.0(typescript@5.9.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3)
+        version: 16.2.3(i18next@25.6.0(typescript@6.0.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@6.0.2)
     devDependencies:
       '@types/node':
         specifier: ^24.7.2
         version: 24.9.2
-      '@typescript/native-preview':
-        specifier: 7.0.0-dev.20251023.1
-        version: 7.0.0-dev.20251023.1
       tsdown:
         specifier: ^0.15.9
-        version: 0.15.12(@typescript/native-preview@7.0.0-dev.20251023.1)(oxc-resolver@11.13.0)(typescript@5.9.3)
+        version: 0.15.12(@typescript/native-preview@7.0.0-dev.20251023.1)(oxc-resolver@11.13.0)(typescript@6.0.2)
+      typescript:
+        specifier: ^6.0.2
+        version: 6.0.2
 
   packages/shared/common:
     devDependencies:
       '@types/node':
         specifier: ^24.7.2
         version: 24.9.2
-      '@typescript/native-preview':
-        specifier: 7.0.0-dev.20251023.1
-        version: 7.0.0-dev.20251023.1
       tsdown:
         specifier: ^0.15.9
-        version: 0.15.12(@typescript/native-preview@7.0.0-dev.20251023.1)(oxc-resolver@11.13.0)(typescript@5.9.3)
+        version: 0.15.12(@typescript/native-preview@7.0.0-dev.20251023.1)(oxc-resolver@11.13.0)(typescript@6.0.2)
+      typescript:
+        specifier: ^6.0.2
+        version: 6.0.2
 
   packages/shared/node:
     dependencies:
@@ -654,7 +654,7 @@ importers:
         version: 11.0.3
       i18next:
         specifier: ^25.6.0
-        version: 25.6.0(typescript@5.9.3)
+        version: 25.6.0(typescript@6.0.2)
       inversify:
         specifier: ^7.9.1
         version: 7.10.4(reflect-metadata@0.2.2)
@@ -671,12 +671,12 @@ importers:
       '@types/node':
         specifier: ^24.7.2
         version: 24.9.2
-      '@typescript/native-preview':
-        specifier: 7.0.0-dev.20251023.1
-        version: 7.0.0-dev.20251023.1
       tsdown:
         specifier: ^0.15.9
-        version: 0.15.12(@typescript/native-preview@7.0.0-dev.20251023.1)(oxc-resolver@11.13.0)(typescript@5.9.3)
+        version: 0.15.12(@typescript/native-preview@7.0.0-dev.20251023.1)(oxc-resolver@11.13.0)(typescript@6.0.2)
+      typescript:
+        specifier: ^6.0.2
+        version: 6.0.2
 
 packages:
 
@@ -4269,7 +4269,7 @@ packages:
   glob@8.1.0:
     resolution: {integrity: sha512-r8hpEjiQEYlF2QU0df3dS+nxxSIreXQS1qRhMJM0Q5NDdR386C7jb7Hwwod8Fgiuex+k0GFjgft18yvxm5XoCQ==}
     engines: {node: '>=12'}
-    deprecated: Glob versions prior to v9 are no longer supported
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   global-agent@3.0.0:
     resolution: {integrity: sha512-PT6XReJ+D07JvGoxQMkT6qji/jVNfX/h364XHZOWeRzy64sSFr+xJ5OX7LI3b4MPQzdL4H8Y8M0xzPpsVMwA8Q==}
@@ -6511,6 +6511,11 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
+  typescript@6.0.2:
+    resolution: {integrity: sha512-bGdAIrZ0wiGDo5l8c++HWtbaNCWTS4UTv7RaTH/ThVIgjkveJt83m74bBHMJkuCbslY8ixgLBVZJIOiQlQTjfQ==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+
   ufo@1.6.1:
     resolution: {integrity: sha512-9a4/uxlTWJ4+a5i0ooc1rU7C7YOw3wT+UGqdeNNHWnOF9qcMBgLRS+4IYUqbczewFx4mLEig6gawh7X6mFlEkA==}
 
@@ -7427,7 +7432,7 @@ snapshots:
 
   '@iconify/types@2.0.0': {}
 
-  '@intlify/bundle-utils@10.0.1(vue-i18n@11.1.12(vue@3.5.22(typescript@5.9.3)))':
+  '@intlify/bundle-utils@10.0.1(vue-i18n@11.1.12(vue@3.5.22(typescript@6.0.2)))':
     dependencies:
       '@intlify/message-compiler': 11.1.12
       '@intlify/shared': 11.1.12
@@ -7439,7 +7444,7 @@ snapshots:
       source-map-js: 1.2.1
       yaml-eslint-parser: 1.3.0
     optionalDependencies:
-      vue-i18n: 11.1.12(vue@3.5.22(typescript@5.9.3))
+      vue-i18n: 11.1.12(vue@3.5.22(typescript@6.0.2))
 
   '@intlify/core-base@11.1.12':
     dependencies:
@@ -7453,15 +7458,15 @@ snapshots:
 
   '@intlify/shared@11.1.12': {}
 
-  '@intlify/unplugin-vue-i18n@6.0.8(@vue/compiler-dom@3.5.22)(eslint@9.38.0(jiti@2.6.1))(rollup@4.52.5)(typescript@5.9.3)(vue-i18n@11.1.12(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))':
+  '@intlify/unplugin-vue-i18n@6.0.8(@vue/compiler-dom@3.5.22)(eslint@9.38.0(jiti@2.6.1))(rollup@4.52.5)(typescript@6.0.2)(vue-i18n@11.1.12(vue@3.5.22(typescript@6.0.2)))(vue@3.5.22(typescript@6.0.2))':
     dependencies:
       '@eslint-community/eslint-utils': 4.9.0(eslint@9.38.0(jiti@2.6.1))
-      '@intlify/bundle-utils': 10.0.1(vue-i18n@11.1.12(vue@3.5.22(typescript@5.9.3)))
+      '@intlify/bundle-utils': 10.0.1(vue-i18n@11.1.12(vue@3.5.22(typescript@6.0.2)))
       '@intlify/shared': 11.1.12
-      '@intlify/vue-i18n-extensions': 8.0.0(@intlify/shared@11.1.12)(@vue/compiler-dom@3.5.22)(vue-i18n@11.1.12(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))
+      '@intlify/vue-i18n-extensions': 8.0.0(@intlify/shared@11.1.12)(@vue/compiler-dom@3.5.22)(vue-i18n@11.1.12(vue@3.5.22(typescript@6.0.2)))(vue@3.5.22(typescript@6.0.2))
       '@rollup/pluginutils': 5.3.0(rollup@4.52.5)
       '@typescript-eslint/scope-manager': 8.46.2
-      '@typescript-eslint/typescript-estree': 8.46.2(typescript@5.9.3)
+      '@typescript-eslint/typescript-estree': 8.46.2(typescript@6.0.2)
       debug: 4.4.3
       fast-glob: 3.3.3
       js-yaml: 4.1.0
@@ -7470,9 +7475,9 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
       unplugin: 1.16.1
-      vue: 3.5.22(typescript@5.9.3)
+      vue: 3.5.22(typescript@6.0.2)
     optionalDependencies:
-      vue-i18n: 11.1.12(vue@3.5.22(typescript@5.9.3))
+      vue-i18n: 11.1.12(vue@3.5.22(typescript@6.0.2))
     transitivePeerDependencies:
       - '@vue/compiler-dom'
       - eslint
@@ -7480,14 +7485,14 @@ snapshots:
       - supports-color
       - typescript
 
-  '@intlify/vue-i18n-extensions@8.0.0(@intlify/shared@11.1.12)(@vue/compiler-dom@3.5.22)(vue-i18n@11.1.12(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))':
+  '@intlify/vue-i18n-extensions@8.0.0(@intlify/shared@11.1.12)(@vue/compiler-dom@3.5.22)(vue-i18n@11.1.12(vue@3.5.22(typescript@6.0.2)))(vue@3.5.22(typescript@6.0.2))':
     dependencies:
       '@babel/parser': 7.28.5
     optionalDependencies:
       '@intlify/shared': 11.1.12
       '@vue/compiler-dom': 3.5.22
-      vue: 3.5.22(typescript@5.9.3)
-      vue-i18n: 11.1.12(vue@3.5.22(typescript@5.9.3))
+      vue: 3.5.22(typescript@6.0.2)
+      vue-i18n: 11.1.12(vue@3.5.22(typescript@6.0.2))
 
   '@inversifyjs/binding-decorators@1.1.5(inversify@7.10.4(reflect-metadata@0.2.2))(reflect-metadata@0.2.2)':
     dependencies:
@@ -9168,12 +9173,12 @@ snapshots:
       '@types/node': 24.9.2
     optional: true
 
-  '@typescript-eslint/project-service@8.46.2(typescript@5.9.3)':
+  '@typescript-eslint/project-service@8.46.2(typescript@6.0.2)':
     dependencies:
-      '@typescript-eslint/tsconfig-utils': 8.46.2(typescript@5.9.3)
+      '@typescript-eslint/tsconfig-utils': 8.46.2(typescript@6.0.2)
       '@typescript-eslint/types': 8.46.2
       debug: 4.4.3
-      typescript: 5.9.3
+      typescript: 6.0.2
     transitivePeerDependencies:
       - supports-color
 
@@ -9182,16 +9187,16 @@ snapshots:
       '@typescript-eslint/types': 8.46.2
       '@typescript-eslint/visitor-keys': 8.46.2
 
-  '@typescript-eslint/tsconfig-utils@8.46.2(typescript@5.9.3)':
+  '@typescript-eslint/tsconfig-utils@8.46.2(typescript@6.0.2)':
     dependencies:
-      typescript: 5.9.3
+      typescript: 6.0.2
 
   '@typescript-eslint/types@8.46.2': {}
 
-  '@typescript-eslint/typescript-estree@8.46.2(typescript@5.9.3)':
+  '@typescript-eslint/typescript-estree@8.46.2(typescript@6.0.2)':
     dependencies:
-      '@typescript-eslint/project-service': 8.46.2(typescript@5.9.3)
-      '@typescript-eslint/tsconfig-utils': 8.46.2(typescript@5.9.3)
+      '@typescript-eslint/project-service': 8.46.2(typescript@6.0.2)
+      '@typescript-eslint/tsconfig-utils': 8.46.2(typescript@6.0.2)
       '@typescript-eslint/types': 8.46.2
       '@typescript-eslint/visitor-keys': 8.46.2
       debug: 4.4.3
@@ -9199,8 +9204,8 @@ snapshots:
       is-glob: 4.0.3
       minimatch: 9.0.5
       semver: 7.7.3
-      ts-api-utils: 2.1.0(typescript@5.9.3)
-      typescript: 5.9.3
+      ts-api-utils: 2.1.0(typescript@6.0.2)
+      typescript: 6.0.2
     transitivePeerDependencies:
       - supports-color
 
@@ -9239,6 +9244,7 @@ snapshots:
       '@typescript/native-preview-linux-x64': 7.0.0-dev.20251023.1
       '@typescript/native-preview-win32-arm64': 7.0.0-dev.20251023.1
       '@typescript/native-preview-win32-x64': 7.0.0-dev.20251023.1
+    optional: true
 
   '@ungap/structured-clone@1.3.0': {}
 
@@ -9254,11 +9260,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitejs/plugin-vue@6.0.1(vite@7.1.12(@types/node@24.9.2)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.20.6)(yaml@2.8.1))(vue@3.5.22(typescript@5.9.3))':
+  '@vitejs/plugin-vue@6.0.1(vite@7.1.12(@types/node@24.9.2)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.20.6)(yaml@2.8.1))(vue@3.5.22(typescript@6.0.2))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-beta.29
       vite: 7.1.12(@types/node@24.9.2)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.20.6)(yaml@2.8.1)
-      vue: 3.5.22(typescript@5.9.3)
+      vue: 3.5.22(typescript@6.0.2)
 
   '@vue/compiler-core@3.5.22':
     dependencies:
@@ -9326,33 +9332,33 @@ snapshots:
       '@vue/shared': 3.5.22
       csstype: 3.1.3
 
-  '@vue/server-renderer@3.5.22(vue@3.5.22(typescript@5.9.3))':
+  '@vue/server-renderer@3.5.22(vue@3.5.22(typescript@6.0.2))':
     dependencies:
       '@vue/compiler-ssr': 3.5.22
       '@vue/shared': 3.5.22
-      vue: 3.5.22(typescript@5.9.3)
+      vue: 3.5.22(typescript@6.0.2)
 
   '@vue/shared@3.5.22': {}
 
-  '@vueuse/core@13.9.0(vue@3.5.22(typescript@5.9.3))':
+  '@vueuse/core@13.9.0(vue@3.5.22(typescript@6.0.2))':
     dependencies:
       '@types/web-bluetooth': 0.0.21
       '@vueuse/metadata': 13.9.0
-      '@vueuse/shared': 13.9.0(vue@3.5.22(typescript@5.9.3))
-      vue: 3.5.22(typescript@5.9.3)
+      '@vueuse/shared': 13.9.0(vue@3.5.22(typescript@6.0.2))
+      vue: 3.5.22(typescript@6.0.2)
 
-  '@vueuse/core@14.0.0(vue@3.5.22(typescript@5.9.3))':
+  '@vueuse/core@14.0.0(vue@3.5.22(typescript@6.0.2))':
     dependencies:
       '@types/web-bluetooth': 0.0.21
       '@vueuse/metadata': 14.0.0
-      '@vueuse/shared': 14.0.0(vue@3.5.22(typescript@5.9.3))
-      vue: 3.5.22(typescript@5.9.3)
+      '@vueuse/shared': 14.0.0(vue@3.5.22(typescript@6.0.2))
+      vue: 3.5.22(typescript@6.0.2)
 
-  '@vueuse/integrations@13.9.0(axios@1.13.1)(focus-trap@7.6.6)(vue@3.5.22(typescript@5.9.3))':
+  '@vueuse/integrations@13.9.0(axios@1.13.1)(focus-trap@7.6.6)(vue@3.5.22(typescript@6.0.2))':
     dependencies:
-      '@vueuse/core': 13.9.0(vue@3.5.22(typescript@5.9.3))
-      '@vueuse/shared': 13.9.0(vue@3.5.22(typescript@5.9.3))
-      vue: 3.5.22(typescript@5.9.3)
+      '@vueuse/core': 13.9.0(vue@3.5.22(typescript@6.0.2))
+      '@vueuse/shared': 13.9.0(vue@3.5.22(typescript@6.0.2))
+      vue: 3.5.22(typescript@6.0.2)
     optionalDependencies:
       axios: 1.13.1
       focus-trap: 7.6.6
@@ -9361,25 +9367,25 @@ snapshots:
 
   '@vueuse/metadata@14.0.0': {}
 
-  '@vueuse/shared@13.9.0(vue@3.5.22(typescript@5.9.3))':
+  '@vueuse/shared@13.9.0(vue@3.5.22(typescript@6.0.2))':
     dependencies:
-      vue: 3.5.22(typescript@5.9.3)
+      vue: 3.5.22(typescript@6.0.2)
 
-  '@vueuse/shared@14.0.0(vue@3.5.22(typescript@5.9.3))':
+  '@vueuse/shared@14.0.0(vue@3.5.22(typescript@6.0.2))':
     dependencies:
-      vue: 3.5.22(typescript@5.9.3)
+      vue: 3.5.22(typescript@6.0.2)
 
   '@waline/api@1.0.0': {}
 
-  '@waline/client@3.7.1(typescript@5.9.3)':
+  '@waline/client@3.7.1(typescript@6.0.2)':
     dependencies:
-      '@vueuse/core': 14.0.0(vue@3.5.22(typescript@5.9.3))
+      '@vueuse/core': 14.0.0(vue@3.5.22(typescript@6.0.2))
       '@waline/api': 1.0.0
       autosize: 6.0.1
       marked: 16.4.1
       marked-highlight: 2.2.2(marked@16.4.1)
       recaptcha-v3: 1.11.3
-      vue: 3.5.22(typescript@5.9.3)
+      vue: 3.5.22(typescript@6.0.2)
     transitivePeerDependencies:
       - typescript
 
@@ -10926,11 +10932,11 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.28.4
 
-  i18next@25.6.0(typescript@5.9.3):
+  i18next@25.6.0(typescript@6.0.2):
     dependencies:
       '@babel/runtime': 7.28.4
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 6.0.2
 
   iconv-corefoundation@1.1.7:
     dependencies:
@@ -11152,7 +11158,7 @@ snapshots:
 
   kind-of@6.0.3: {}
 
-  knip@5.66.4(@types/node@24.9.2)(typescript@5.9.3):
+  knip@5.66.4(@types/node@24.9.2)(typescript@6.0.2):
     dependencies:
       '@nodelib/fs.walk': 1.2.8
       '@types/node': 24.9.2
@@ -11166,7 +11172,7 @@ snapshots:
       picomatch: 4.0.3
       smol-toml: 1.4.2
       strip-json-comments: 5.0.2
-      typescript: 5.9.3
+      typescript: 6.0.2
       zod: 4.1.12
 
   koa-bodyparser@4.4.1:
@@ -12275,16 +12281,16 @@ snapshots:
 
   react-fast-compare@3.2.2: {}
 
-  react-i18next@16.2.3(i18next@25.6.0(typescript@5.9.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3):
+  react-i18next@16.2.3(i18next@25.6.0(typescript@6.0.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@6.0.2):
     dependencies:
       '@babel/runtime': 7.28.4
       html-parse-stringify: 3.0.1
-      i18next: 25.6.0(typescript@5.9.3)
+      i18next: 25.6.0(typescript@6.0.2)
       react: 18.3.1
       use-sync-external-store: 1.6.0(react@18.3.1)
     optionalDependencies:
       react-dom: 18.3.1(react@18.3.1)
-      typescript: 5.9.3
+      typescript: 6.0.2
 
   react-is@16.13.1: {}
 
@@ -12450,7 +12456,7 @@ snapshots:
       sprintf-js: 1.1.3
     optional: true
 
-  rolldown-plugin-dts@0.17.3(@typescript/native-preview@7.0.0-dev.20251023.1)(oxc-resolver@11.13.0)(rolldown@1.0.0-beta.45)(typescript@5.9.3):
+  rolldown-plugin-dts@0.17.3(@typescript/native-preview@7.0.0-dev.20251023.1)(oxc-resolver@11.13.0)(rolldown@1.0.0-beta.45)(typescript@6.0.2):
     dependencies:
       '@babel/generator': 7.28.5
       '@babel/parser': 7.28.5
@@ -12464,7 +12470,7 @@ snapshots:
       rolldown: 1.0.0-beta.45
     optionalDependencies:
       '@typescript/native-preview': 7.0.0-dev.20251023.1
-      typescript: 5.9.3
+      typescript: 6.0.2
     transitivePeerDependencies:
       - oxc-resolver
       - supports-color
@@ -13007,11 +13013,11 @@ snapshots:
     dependencies:
       utf8-byte-length: 1.0.5
 
-  ts-api-utils@2.1.0(typescript@5.9.3):
+  ts-api-utils@2.1.0(typescript@6.0.2):
     dependencies:
-      typescript: 5.9.3
+      typescript: 6.0.2
 
-  tsdown@0.15.12(@typescript/native-preview@7.0.0-dev.20251023.1)(oxc-resolver@11.13.0)(typescript@5.9.3):
+  tsdown@0.15.12(@typescript/native-preview@7.0.0-dev.20251023.1)(oxc-resolver@11.13.0)(typescript@6.0.2):
     dependencies:
       ansis: 4.2.0
       cac: 6.7.14
@@ -13021,14 +13027,14 @@ snapshots:
       empathic: 2.0.0
       hookable: 5.5.3
       rolldown: 1.0.0-beta.45
-      rolldown-plugin-dts: 0.17.3(@typescript/native-preview@7.0.0-dev.20251023.1)(oxc-resolver@11.13.0)(rolldown@1.0.0-beta.45)(typescript@5.9.3)
+      rolldown-plugin-dts: 0.17.3(@typescript/native-preview@7.0.0-dev.20251023.1)(oxc-resolver@11.13.0)(rolldown@1.0.0-beta.45)(typescript@6.0.2)
       semver: 7.7.3
       tinyexec: 1.0.1
       tinyglobby: 0.2.15
       tree-kill: 1.2.2
       unconfig: 7.3.3
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 6.0.2
     transitivePeerDependencies:
       - '@ts-macro/tsc'
       - '@typescript/native-preview'
@@ -13134,6 +13140,8 @@ snapshots:
       - supports-color
 
   typescript@5.9.3: {}
+
+  typescript@6.0.2: {}
 
   ufo@1.6.1: {}
 
@@ -13296,7 +13304,7 @@ snapshots:
       tsx: 4.20.6
       yaml: 2.8.1
 
-  vitepress@2.0.0-alpha.12(@types/node@24.9.2)(axios@1.13.1)(jiti@2.6.1)(lightningcss@1.30.2)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1):
+  vitepress@2.0.0-alpha.12(@types/node@24.9.2)(axios@1.13.1)(jiti@2.6.1)(lightningcss@1.30.2)(postcss@8.5.6)(tsx@4.20.6)(typescript@6.0.2)(yaml@2.8.1):
     dependencies:
       '@docsearch/css': 4.2.0
       '@docsearch/js': 4.2.0
@@ -13305,17 +13313,17 @@ snapshots:
       '@shikijs/transformers': 3.14.0
       '@shikijs/types': 3.14.0
       '@types/markdown-it': 14.1.2
-      '@vitejs/plugin-vue': 6.0.1(vite@7.1.12(@types/node@24.9.2)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.20.6)(yaml@2.8.1))(vue@3.5.22(typescript@5.9.3))
+      '@vitejs/plugin-vue': 6.0.1(vite@7.1.12(@types/node@24.9.2)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.20.6)(yaml@2.8.1))(vue@3.5.22(typescript@6.0.2))
       '@vue/devtools-api': 8.0.3
       '@vue/shared': 3.5.22
-      '@vueuse/core': 13.9.0(vue@3.5.22(typescript@5.9.3))
-      '@vueuse/integrations': 13.9.0(axios@1.13.1)(focus-trap@7.6.6)(vue@3.5.22(typescript@5.9.3))
+      '@vueuse/core': 13.9.0(vue@3.5.22(typescript@6.0.2))
+      '@vueuse/integrations': 13.9.0(axios@1.13.1)(focus-trap@7.6.6)(vue@3.5.22(typescript@6.0.2))
       focus-trap: 7.6.6
       mark.js: 8.11.1
       minisearch: 7.2.0
       shiki: 3.14.0
       vite: 7.1.12(@types/node@24.9.2)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.20.6)(yaml@2.8.1)
-      vue: 3.5.22(typescript@5.9.3)
+      vue: 3.5.22(typescript@6.0.2)
     optionalDependencies:
       postcss: 8.5.6
     transitivePeerDependencies:
@@ -13345,22 +13353,22 @@ snapshots:
 
   void-elements@3.1.0: {}
 
-  vue-i18n@11.1.12(vue@3.5.22(typescript@5.9.3)):
+  vue-i18n@11.1.12(vue@3.5.22(typescript@6.0.2)):
     dependencies:
       '@intlify/core-base': 11.1.12
       '@intlify/shared': 11.1.12
       '@vue/devtools-api': 6.6.4
-      vue: 3.5.22(typescript@5.9.3)
+      vue: 3.5.22(typescript@6.0.2)
 
-  vue@3.5.22(typescript@5.9.3):
+  vue@3.5.22(typescript@6.0.2):
     dependencies:
       '@vue/compiler-dom': 3.5.22
       '@vue/compiler-sfc': 3.5.22
       '@vue/runtime-dom': 3.5.22
-      '@vue/server-renderer': 3.5.22(vue@3.5.22(typescript@5.9.3))
+      '@vue/server-renderer': 3.5.22(vue@3.5.22(typescript@6.0.2))
       '@vue/shared': 3.5.22
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 6.0.2
 
   walk-up-path@4.0.0: {}
 
