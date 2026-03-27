@@ -5,21 +5,26 @@
   "tasks": {
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "dependsOn": ["^build"]
     },
     "build": {
       "cache": true,
       "persistent": false,
-      "outputs": ["build"],
-      "dependsOn": ["^build"]
+      "outputs": ["build/**"],
+      "dependsOn": ["^build"],
+      "env": ["NODE_ENV"]
     },
     "lint": {
       "cache": true,
-      "inputs": ["src/**/*.{ts,tsx,js,jsx}"]
+      "outputs": [],
+      "inputs": ["src/**/*.{ts,tsx,js,jsx}", "../../.oxlintrc.json"]
     },
     "type:check": {
-      "cache": false,
-      "persistent": false
+      "cache": true,
+      "persistent": false,
+      "outputs": [],
+      "dependsOn": ["^build"]
     },
     "clean": {
       "cache": false,
