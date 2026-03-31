@@ -149,10 +149,9 @@ func main() {
 	}
 	logger.Infof("App store initialized at: %s", appStore.Path())
 
-	// 从命令行传入的值同步到 appStore（命令行优先级高于持久化配置）
-	syncCLIToAppStore(cfg, appStore)
-
-	// 从 appStore 同步回 cfg（确保 cfg 反映最终状态）
+	// 从 appStore 同步回 cfg（确保 cfg 反映持久化配置的最终状态）
+	// 注意：不再将 CLI 参数写入 appStore，避免每次启动覆盖用户在 UI 中保存的设置。
+	// CLI 参数仅作为 cfg 的初始默认值，appStore（用户配置）优先级更高。
 	syncAppStoreToCfg(appStore, cfg)
 
 	// 如果下载目录为空、是默认值或不存在，使用系统下载目录
@@ -272,28 +271,6 @@ func main() {
 
 	if err := server.Run(addr); err != nil {
 		logger.Fatalf("Failed to start server: %v", err)
-	}
-}
-
-// syncCLIToAppStore syncs non-default CLI values into the appStore.
-func syncCLIToAppStore(cfg *AppConfig, store *conf.Conf[AppStore]) {
-	sync := func(key string, value any) {
-		if err := store.Set(key, value); err != nil {
-			logger.Warnf("syncCLIToAppStore: failed to set %q: %v", key, err)
-		}
-	}
-	// Only sync if CLI explicitly set these (non-empty/non-default)
-	if cfg.LocalDir != "" && cfg.LocalDir != "./downloads" {
-		sync("local", cfg.LocalDir)
-	}
-	if cfg.Proxy != "" {
-		sync("proxy", cfg.Proxy)
-	}
-	if cfg.UseProxy {
-		sync("useProxy", cfg.UseProxy)
-	}
-	if cfg.MaxRunner != 2 {
-		sync("maxRunner", cfg.MaxRunner)
 	}
 }
 

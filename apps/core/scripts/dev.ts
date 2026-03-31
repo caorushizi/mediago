@@ -1,6 +1,6 @@
 import { config, devConfig } from "./config";
 import { getExeExt, mkdir, runCommand } from "./utils";
-import { join } from "path";
+import { join } from "node:path";
 
 /**
  * 启动开发服务器
@@ -14,6 +14,7 @@ export async function dev() {
     config.CMD_PATH,
     `-log-level=${devConfig.log_level}`,
     `-log-dir=${devConfig.log_dir}`,
+    `-config-dir=${devConfig.config_dir}`,
     `-schema-path=${devConfig.schema_path}`,
     `-max-runner=${devConfig.max_runner.toString()}`,
     `-local-dir=${devConfig.local_dir}`,
@@ -36,7 +37,7 @@ export async function devBuild() {
   const output = join(config.BIN_DIR, config.APP_NAME + getExeExt());
   await runCommand(
     `go build -ldflags "${config.GO_LDFLAGS}" -o ${output} ${config.CMD_PATH}`,
-    "编译当前平台二进制文件"
+    "编译当前平台二进制文件",
   );
   console.log(`✅ 开发版本编译成功 -> ${output}`);
 }

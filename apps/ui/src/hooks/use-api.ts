@@ -8,6 +8,43 @@ import {
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
+/** All PlatformApi method names — Proxy doesn't support Object.keys() */
+const PLATFORM_API_KEYS: (keyof PlatformApi)[] = [
+  "onSelectDownloadDir",
+  "openDir",
+  "setWebviewBounds",
+  "webviewGoBack",
+  "webviewReload",
+  "webviewLoadURL",
+  "webviewGoHome",
+  "webviewHide",
+  "webviewShow",
+  "onDownloadListContextMenu",
+  "onFavoriteItemContextMenu",
+  "convertToAudio",
+  "showBrowserWindow",
+  "appContextMenu",
+  "combineToHomePage",
+  "selectFile",
+  "getSharedState",
+  "setSharedState",
+  "setUserAgent",
+  "showDownloadDialog",
+  "pluginReady",
+  "getMachineId",
+  "clearWebviewCache",
+  "exportFavorites",
+  "importFavorites",
+  "checkUpdate",
+  "startUpdate",
+  "installUpdate",
+  "exportDownloadList",
+  "openBrowser",
+  "getLocalIP",
+  "rendererEvent",
+  "removeEventListener",
+];
+
 /** All GoApi method names — used to create lazy wrappers */
 const GO_API_KEYS: (keyof GoApi)[] = [
   "getEnvPath",
@@ -76,16 +113,17 @@ export default function useAPI(): MediaGoApi & IpcListener {
       };
     }
 
-    // PlatformApi: wrap directly (always available)
+    // PlatformApi: use explicit key list (Electron Proxy doesn't support Object.keys)
     const eventMethods = new Set(["rendererEvent", "removeEventListener"]);
-    for (const key of Object.keys(platformApi) as (keyof PlatformApi)[]) {
+    for (const key of PLATFORM_API_KEYS) {
       const fn = platformApi[key];
       if (typeof fn === "function") {
         if (eventMethods.has(key)) {
           result[key] = fn;
         } else {
+          const boundFn = fn as (...a: any[]) => any;
           result[key] = async (...args: any[]) => {
-            const res = await (fn as any)(...args);
+            const res = await boundFn(...args);
             return unwrapResponse(res, navigate);
           };
         }
