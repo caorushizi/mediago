@@ -1,0 +1,7 @@
+**/node_modules
+**/build
+**/dist
+**/release
+**/.turbo
+**/.git
+*.md

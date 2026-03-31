@@ -2,7 +2,6 @@ import { provide } from "@inversifyjs/binding-decorators";
 import {
   ADD_DOWNLOAD_ITEMS,
   type Controller,
-  DELETE_DOWNLOAD_ITEM,
   type DownloadTask,
   type DownloadTaskPagination,
   EDIT_DOWNLOAD_ITEM,
@@ -10,7 +9,6 @@ import {
   type ListPagination,
   SHOW_DOWNLOAD_DIALOG,
   START_DOWNLOAD,
-  STOP_DOWNLOAD,
 } from "@mediago/shared-common";
 import { DownloaderServer, handle, TYPES } from "@mediago/shared-node";
 import type { IpcMainEvent } from "electron/main";
@@ -103,17 +101,5 @@ export default class DownloadController implements Controller {
       localPath: this.configCache.get("local"),
       deleteSegments: this.configCache.get("deleteSegments"),
     });
-  }
-
-  @handle(STOP_DOWNLOAD)
-  async stopDownloadTask(_e: IpcMainEvent, id: number) {
-    const client = this.downloaderServer.getClient();
-    await client.stopDownload(id);
-  }
-
-  @handle(DELETE_DOWNLOAD_ITEM)
-  async deleteDownloadTask(_e: IpcMainEvent, id: number) {
-    const client = this.downloaderServer.getClient();
-    await client.deleteDownloadTask(id);
   }
 }

@@ -2,56 +2,24 @@
   "name": "@mediago/server",
   "version": "0.1.0",
   "type": "module",
-  "main": "dist/index.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development tsdown --watch src",
-    "build": "tsdown",
-    "pack": "tsx scripts/build.ts",
-    "release": "docker build -t mediago-server .",
-    "clean": "rimraf .mediago-server",
-    "lint": "oxlint .",
+    "dev": "cross-env NODE_ENV=development tsdown --watch ./src",
+    "build": "cross-env NODE_ENV=production tsdown",
     "type:check": "tsc --noEmit"
   },
-  "author": "caorushizi",
-  "license": "MIT",
-  "devDependencies": {
-    "@types/koa": "^3.0.0",
-    "@types/koa-bodyparser": "^4.3.12",
-    "@types/koa-send": "^4.1.6",
-    "@types/koa-static": "^4.0.4",
-    "@types/koa__cors": "^5.0.0",
-    "@types/koa__router": "^12.0.4",
-    "@types/lodash": "^4.17.4",
-    "@types/node": "^24.7.2",
-    "typescript": "^6.0.2",
-    "cross-env": "^10.1.0",
-    "dotenv-flow": "^4.1.0",
-    "rimraf": "^6.0.1",
-    "tsdown": "^0.15.9",
-    "tsx": "^4.20.6"
-  },
   "dependencies": {
-    "@inversifyjs/binding-decorators": "^1.1.3",
-    "@koa/cors": "^5.0.0",
-    "@koa/router": "^14.0.0",
     "@mediago/core": "0.0.13",
     "@mediago/deps": "0.0.6",
-    "@mediago/player": "0.0.10",
-    "@mediago/shared-common": "workspace:*",
     "@mediago/shared-node": "workspace:*",
-    "@sentry/node": "^10.25.0",
-    "@sentry/profiling-node": "^10.25.0",
-    "axios": "^1.12.2",
-    "inversify": "^7.9.1",
-    "koa": "^3.0.1",
-    "koa-bodyparser": "^4.4.1",
-    "koa-send": "^5.0.1",
-    "koa-static": "^5.0.0",
-    "lodash": "^4.17.21",
-    "reflect-metadata": "^0.2.2",
-    "socket.io": "^4.8.0",
-    "winston": "^3.14.2",
-    "winston-daily-rotate-file": "^5.0.0"
+    "@mediago/service-runner": "^0.0.1",
+    "reflect-metadata": "^0.2.2"
   },
-  "keywords": []
+  "devDependencies": {
+    "@types/node": "^24.7.2",
+    "cross-env": "^10.1.0",
+    "dotenv-flow": "^4.1.0",
+    "tsdown": "^0.15.9",
+    "typescript": "^6.0.2"
+  },
+  "license": "MIT"
 }

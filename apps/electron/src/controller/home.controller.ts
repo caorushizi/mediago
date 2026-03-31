@@ -1,7 +1,5 @@
 import { provide } from "@inversifyjs/binding-decorators";
 import {
-  ADD_FAVORITE,
-  AppStore,
   CHECK_UPDATE,
   COMBINE_TO_HOME_PAGE,
   CONVERT_TO_AUDIO,
@@ -9,25 +7,17 @@ import {
   EXPORT_DOWNLOAD_LIST,
   EXPORT_FAVORITES,
   EnvPath,
-  GET_APP_STORE,
-  GET_DOWNLOAD_LOG,
   GET_ENV_PATH,
-  GET_FAVORITES,
-  GET_LOCAL_IP,
   GET_MACHINE_ID,
-  GET_PAGE_TITLE,
   GET_SHARED_STATE,
-  GET_VIDEO_FOLDERS,
   IMPORT_FAVORITES,
   INSTALL_UPDATE,
   ON_DOWNLOAD_LIST_CONTEXT_MENU,
   ON_FAVORITE_ITEM_CONTEXT_MENU,
   OPEN_DIR,
   OPEN_URL,
-  REMOVE_FAVORITE,
   SELECT_DOWNLOAD_DIR,
   SELECT_FILE,
-  SET_APP_STORE,
   SET_SHARED_STATE,
   SHOW_BROWSER_WINDOW,
   START_UPDATE,
@@ -35,11 +25,8 @@ import {
 } from "@mediago/shared-common";
 import {
   DownloaderServer,
-  getLocalIP,
-  getPageTitle,
   handle,
   i18n,
-  randomName,
   TYPES,
   VideoServer,
 } from "@mediago/shared-node";
@@ -95,36 +82,6 @@ export default class HomeController implements Controller {
     };
   }
 
-  @handle(GET_FAVORITES)
-  async getFavorites() {
-    const client = this.downloaderServer.getClient();
-    const res = await client.getFavorites();
-    return res.data;
-  }
-
-  @handle(ADD_FAVORITE)
-  async addFavorite(
-    _e: IpcMainEvent,
-    favorite: { title: string; url: string; icon?: string },
-  ) {
-    const client = this.downloaderServer.getClient();
-    const res = await client.addFavorite(favorite);
-    return res.data;
-  }
-
-  @handle(REMOVE_FAVORITE)
-  async removeFavorite(_e: IpcMainEvent, id: number): Promise<void> {
-    const client = this.downloaderServer.getClient();
-    await client.removeFavorite(id);
-  }
-
-  @handle(GET_APP_STORE)
-  async getAppStore() {
-    const client = this.downloaderServer.getClient();
-    const res = await client.getConfig();
-    return res.data;
-  }
-
   @handle(ON_FAVORITE_ITEM_CONTEXT_MENU)
   async onFavoriteItemContextMenu(e: IpcMainEvent, id: number) {
     const send = (action: string) => {
@@ -169,16 +126,6 @@ export default class HomeController implements Controller {
       return dir;
     }
     return "";
-  }
-
-  @handle(SET_APP_STORE)
-  async setAppStore<K extends keyof AppStore>(
-    _e: IpcMainEvent,
-    key: K,
-    val: AppStore[K],
-  ) {
-    const client = this.downloaderServer.getClient();
-    await client.setConfigKey(String(key), val);
   }
 
   @handle(OPEN_DIR)
@@ -255,11 +202,6 @@ export default class HomeController implements Controller {
     await client.setConfigKey("openInNewWindow", false);
   }
 
-  @handle(GET_LOCAL_IP)
-  async getLocalIp() {
-    return getLocalIP();
-  }
-
   @handle(GET_SHARED_STATE)
   async getSharedState() {
     return this.sharedState;
@@ -268,13 +210,6 @@ export default class HomeController implements Controller {
   @handle(SET_SHARED_STATE)
   async setSharedState(event: IpcMainEvent, state: any) {
     this.sharedState = state;
-  }
-
-  @handle(GET_DOWNLOAD_LOG)
-  async getDownloadLog(_event: IpcMainEvent, id: number) {
-    const client = this.downloaderServer.getClient();
-    const res = await client.getDownloadLogs(id);
-    return res.data.log;
   }
 
   @handle(SELECT_FILE)
@@ -381,22 +316,5 @@ export default class HomeController implements Controller {
     if (!result.canceled && result.filePath) {
       await fs.writeFile(result.filePath, content, "utf-8");
     }
-  }
-
-  @handle(GET_VIDEO_FOLDERS)
-  async getVideoFolders() {
-    const client = this.downloaderServer.getClient();
-    const res = await client.getDownloadFolders();
-    return res.data;
-  }
-
-  @handle(GET_PAGE_TITLE)
-  async getPageTitle(
-    event: IpcMainEvent,
-    url: string,
-  ): Promise<{ data: string }> {
-    const fallbackTitle = randomName();
-    const title = await getPageTitle(url, fallbackTitle);
-    return { data: title };
   }
 }

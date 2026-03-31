@@ -4,6 +4,7 @@ import type {
   DownloadTask,
   DownloadTaskPagination,
   MediaGoApi,
+  SetupAuthRequest,
 } from "@mediago/shared-common";
 
 interface StoreValues {
@@ -21,13 +22,19 @@ function wrapResponse<T>(
   }));
 }
 
+export interface GoAdapterHandle {
+  adapter: Partial<MediaGoApi>;
+  setApiKey: (key: string) => void;
+}
+
 export function createGoAdapter(
   coreUrl: string,
   getStoreValues: () => StoreValues,
-): Partial<MediaGoApi> {
-  const client = new MediaGoClient({ baseURL: coreUrl });
+  apiKey?: string,
+): GoAdapterHandle {
+  const client = new MediaGoClient({ baseURL: coreUrl, apiKey });
 
-  return {
+  const adapter: Partial<MediaGoApi> = {
     getFavorites: async () => {
       return wrapResponse(client.getFavorites());
     },
@@ -151,5 +158,84 @@ export function createGoAdapter(
     setAppStore: async (key: string, val: any) => {
       return wrapResponse(client.setConfigKey(key, val));
     },
-  } as any;
+
+    // Auth methods
+    setupAuth: async (req: SetupAuthRequest) => {
+      const res = await client.setupAuth(req.apiKey);
+      if (res.success) {
+        client.setApiKey(req.apiKey);
+      }
+      return {
+        code: res.success ? 0 : res.code,
+        data: res.data,
+        message: res.message,
+      };
+    },
+
+    signin: async (req: SetupAuthRequest) => {
+      const res = await client.signin(req.apiKey);
+      if (res.success && res.data) {
+        // After successful signin, set the apiKey for subsequent requests
+        client.setApiKey(req.apiKey);
+      }
+      return {
+        code: res.success ? 0 : res.code,
+        data: res.data,
+        message: res.message,
+      };
+    },
+
+    isSetup: async () => {
+      return wrapResponse(client.isSetup());
+    },
+
+    // Utility methods
+    getPageTitle: async (url: string) => {
+      return wrapResponse(client.getPageTitle(url));
+    },
+
+    getEnvPath: async () => {
+      const configRes = await client.getConfig();
+      return {
+        code: 0,
+        data: {
+          binPath: "",
+          dbPath: "",
+          workspace: "",
+          platform: "linux",
+          local: configRes.data.local,
+          playerUrl: "",
+          coreUrl: coreUrl,
+        },
+        message: "OK",
+      } as any;
+    },
+
+    exportFavorites: async () => {
+      return wrapResponse(client.exportFavorites());
+    },
+
+    importFavorites: async (favorites: any[]) => {
+      return wrapResponse(client.importFavorites(favorites));
+    },
+
+    exportDownloadList: async () => {
+      return wrapResponse(client.exportDownloadList());
+    },
+
+    // Web-mode stubs for Electron-only features
+    openUrl: async (url: string) => {
+      const a = document.createElement("a");
+      a.href = url;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.click();
+      return { code: 0, data: {}, message: "" } as any;
+    },
+  };
+
+  return {
+    adapter,
+    setApiKey: (key: string) => client.setApiKey(key),
+  };
 }

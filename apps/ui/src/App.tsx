@@ -7,14 +7,13 @@ import zhCN from "antd/es/locale/zh_CN";
 import enUS from "antd/es/locale/en_US";
 import { useShallow } from "zustand/react/shallow";
 import Loading from "./components/loading";
-import { DOWNLOAD_FAIL, DOWNLOAD_SUCCESS, PAGE_LOAD } from "./const";
+import { PAGE_LOAD } from "./const";
 import {
   appStoreSelector,
   setAppStoreSelector,
   useAppStore,
 } from "./store/app";
 import { PageMode, setBrowserSelector, useBrowserStore } from "./store/browser";
-import { downloadStoreSelector, useDownloadStore } from "./store/download";
 import {
   themeSelector,
   updateSelector,
@@ -48,7 +47,6 @@ const App: FC = () => {
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
   const { language } = useAppStore(useShallow(appStoreSelector));
   const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
-  const { increase } = useDownloadStore(useShallow(downloadStoreSelector));
   const { theme, setTheme } = useSessionStore(useShallow(themeSelector));
   const [appLocale, setAppLocale] = useState<Locale>();
 
@@ -82,10 +80,6 @@ const App: FC = () => {
     },
   );
 
-  const onReceiveDownloadItem = useMemoizedFn(() => {
-    increase();
-  });
-
   const onChangePrivacy = useMemoizedFn(() => {
     setBrowserStore({ url: "", title: "", mode: PageMode.Default });
   });
@@ -102,30 +96,18 @@ const App: FC = () => {
     const checkingForUpdate = () => {
       setUploadChecking(true);
     };
-    const onDownloadSuccess = () => {
-      tdApp.onEvent(DOWNLOAD_SUCCESS);
-    };
-    const onDownloadFailed = () => {
-      tdApp.onEvent(DOWNLOAD_FAIL);
-    };
     addIpcListener("config-changed", onConfigChanged);
-    addIpcListener("download-item-notifier", onReceiveDownloadItem);
     addIpcListener("change-privacy", onChangePrivacy);
     addIpcListener("updateAvailable", updateAvailable);
     addIpcListener("updateNotAvailable", updateNotAvailable);
     addIpcListener("checkingForUpdate", checkingForUpdate);
-    addIpcListener("download-success", onDownloadSuccess);
-    addIpcListener("download-failed", onDownloadFailed);
 
     return () => {
       removeIpcListener("config-changed", onConfigChanged);
-      removeIpcListener("download-item-notifier", onReceiveDownloadItem);
       removeIpcListener("change-privacy", onChangePrivacy);
       removeIpcListener("updateAvailable", updateAvailable);
       removeIpcListener("updateNotAvailable", updateNotAvailable);
       removeIpcListener("checkingForUpdate", checkingForUpdate);
-      removeIpcListener("download-success", onDownloadSuccess);
-      removeIpcListener("download-failed", onDownloadFailed);
     };
   }, []);
 
@@ -136,9 +118,19 @@ const App: FC = () => {
 
   useAsyncEffect(async () => {
     try {
-      const envPath = await getEnvPath();
-      if (envPath?.coreUrl) {
-        initGoAdapter(envPath.coreUrl);
+      if (isWeb) {
+        // Web mode: Go Core serves both API and static files, same origin
+        const coreUrl = import.meta.env.DEV
+          ? "http://127.0.0.1:9900"
+          : window.location.origin;
+        const storedApiKey = useAppStore.getState().apiKey;
+        initGoAdapter(coreUrl, storedApiKey || undefined);
+      } else {
+        // Electron mode: get coreUrl from IPC
+        const envPath = await getEnvPath();
+        if (envPath?.coreUrl) {
+          initGoAdapter(envPath.coreUrl);
+        }
       }
     } catch (err) {
       console.warn(

@@ -83,14 +83,20 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
 
     useAsyncEffect(async () => {
       if (modalOpen) {
-        const folders = await getVideoFolders();
-        setVideoFolders(folders);
-        setFolders(() =>
-          folders.map((f) => ({
-            value: f,
-            label: f,
-          })),
-        );
+        try {
+          const folders = await getVideoFolders();
+          if (Array.isArray(folders)) {
+            setVideoFolders(folders);
+            setFolders(() =>
+              folders.map((f) => ({
+                value: f,
+                label: f,
+              })),
+            );
+          }
+        } catch {
+          // Go Core may not be ready yet, ignore
+        }
       }
     }, [modalOpen]);
 
