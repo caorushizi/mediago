@@ -28,6 +28,7 @@ const Terminal: FC<TerminalProps> = ({ className, id, header }) => {
       disableStdin: true,
       cursorBlink: false,
       allowProposedApi: true,
+      convertEol: true,
     });
     const fitAddon = new FitAddon();
     terminal.loadAddon(fitAddon);

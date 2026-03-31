@@ -2,31 +2,17 @@
 package runner
 
 import (
-	"bufio"
 	"context"
 	"io"
-	"time"
 )
 
 // PTYRunner 基于伪终端的命令执行器
 // 支持捕获进度条等需要终端交互的输出
-type PTYRunner struct {
-	// 输出刷新间隔(用于进度条更新)
-	flushInterval time.Duration
-}
+type PTYRunner struct{}
 
 // NewPTYRunner 创建 PTY 命令执行器实例
 func NewPTYRunner() *PTYRunner {
-	return &PTYRunner{
-		flushInterval: 100 * time.Millisecond, // 默认100ms刷新一次
-	}
-}
-
-// NewPTYRunnerWithInterval 创建带自定义刷新间隔的 PTY 执行器
-func NewPTYRunnerWithInterval(interval time.Duration) *PTYRunner {
-	return &PTYRunner{
-		flushInterval: interval,
-	}
+	return &PTYRunner{}
 }
 
 // Run 执行命令并通过伪终端读取输出
@@ -40,22 +26,22 @@ func (r *PTYRunner) Run(ctx context.Context, binPath string, args []string, onSt
 // - pty_windows.go: Windows ConPTY 实现
 // - pty_unix.go: Unix/Linux/Mac PTY 实现
 
-// readPTYOutput 读取 PTY 输出并按行处理
-// 使用定时刷新机制捕获进度条更新
+// readPTYOutput 读取 PTY 输出并按块传递原始字节
+// 直接传递原始 PTY 输出（包含 ANSI 转义序列），由前端终端渲染器处理
 func (r *PTYRunner) readPTYOutput(reader io.Reader, onStdLine func(string)) error {
-	scanner := bufio.NewScanner(reader)
-
-	// 自定义分割函数: 同时支持 \n 和 \r 作为行分隔符
-	scanner.Split(func(data []byte, atEOF bool) (advance int, token []byte, err error) {
-		onStdLine(string(data))
-
-		return bufio.ScanLines(data, atEOF)
-	})
-
-	for scanner.Scan() {
+	buf := make([]byte, 4096)
+	for {
+		n, err := reader.Read(buf)
+		if n > 0 && onStdLine != nil {
+			onStdLine(string(buf[:n]))
+		}
+		if err != nil {
+			if err == io.EOF {
+				return nil
+			}
+			return err
+		}
 	}
-
-	return scanner.Err()
 }
 
 // fallbackToPipe PTY 失败时的降级方案
