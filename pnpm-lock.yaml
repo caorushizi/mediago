@@ -56,6 +56,9 @@ importers:
       '@mediago/core':
         specifier: 0.0.13
         version: 0.0.13
+      '@mediago/core-sdk':
+        specifier: file://../../../mediago-core/packages/sdk
+        version: file:../mediago-core/packages/sdk
       '@mediago/deps':
         specifier: 0.0.6
         version: 0.0.6
@@ -65,12 +68,12 @@ importers:
       '@mediago/player':
         specifier: 0.0.10
         version: 0.0.10
+      '@mediago/service-runner':
+        specifier: ^0.0.1
+        version: 0.0.1
       '@mediago/shared-common':
         specifier: workspace:*
         version: link:../../packages/shared/common
-      '@mediago/shared-node':
-        specifier: workspace:*
-        version: link:../../packages/shared/node
       '@sentry/electron':
         specifier: ^7.2.0
         version: 7.2.0
@@ -95,6 +98,9 @@ importers:
       electron-store:
         specifier: ^11.0.2
         version: 11.0.2
+      i18next:
+        specifier: ^25.6.0
+        version: 25.6.0(typescript@6.0.2)
       inversify:
         specifier: ^7.9.1
         version: 7.10.4(reflect-metadata@0.2.2)
@@ -208,9 +214,6 @@ importers:
       '@mediago/service-runner':
         specifier: ^0.0.1
         version: 0.0.1
-      '@mediago/shared-node':
-        specifier: workspace:*
-        version: link:../../packages/shared/node
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -239,15 +242,9 @@ importers:
       '@mediago/core-sdk':
         specifier: file://../../../mediago-core/packages/sdk
         version: file:../mediago-core/packages/sdk
-      '@mediago/shared-browser':
-        specifier: workspace:*
-        version: link:../../packages/shared/browser
       '@mediago/shared-common':
         specifier: workspace:*
         version: link:../../packages/shared/common
-      '@mediago/shared-node':
-        specifier: workspace:*
-        version: link:../../packages/shared/node
       '@radix-ui/react-checkbox':
         specifier: ^1.1.1
         version: 1.3.3(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -293,6 +290,9 @@ importers:
       i18next:
         specifier: ^25.6.0
         version: 25.6.0(typescript@6.0.2)
+      i18next-browser-languagedetector:
+        specifier: ^8.0.2
+        version: 8.2.0
       immer:
         specifier: ^10.1.1
         version: 10.2.0
@@ -453,23 +453,11 @@ importers:
         specifier: ^6.0.2
         version: 6.0.2
 
-  packages/config:
-    devDependencies:
-      '@types/node':
-        specifier: ^24.7.2
-        version: 24.9.2
-      typescript:
-        specifier: ^6.0.2
-        version: 6.0.2
-
   packages/electron-preload:
     dependencies:
       '@mediago/shared-common':
         specifier: workspace:*
         version: link:../shared/common
-      '@mediago/shared-node':
-        specifier: workspace:*
-        version: link:../shared/node
     devDependencies:
       '@types/node':
         specifier: ^24.7.2
@@ -490,90 +478,7 @@ importers:
         specifier: ^6.0.2
         version: 6.0.2
 
-  packages/shared/browser:
-    dependencies:
-      '@mediago/shared-common':
-        specifier: workspace:*
-        version: link:../common
-      i18next:
-        specifier: ^25.6.0
-        version: 25.6.0(typescript@6.0.2)
-      i18next-browser-languagedetector:
-        specifier: ^8.0.2
-        version: 8.2.0
-      react-i18next:
-        specifier: ^16.0.1
-        version: 16.2.3(i18next@25.6.0(typescript@6.0.2))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@6.0.2)
-    devDependencies:
-      '@types/node':
-        specifier: ^24.7.2
-        version: 24.9.2
-      tsdown:
-        specifier: ^0.15.9
-        version: 0.15.12(@typescript/native-preview@7.0.0-dev.20251023.1)(oxc-resolver@11.13.0)(typescript@6.0.2)
-      typescript:
-        specifier: ^6.0.2
-        version: 6.0.2
-
   packages/shared/common:
-    devDependencies:
-      '@types/node':
-        specifier: ^24.7.2
-        version: 24.9.2
-      tsdown:
-        specifier: ^0.15.9
-        version: 0.15.12(@typescript/native-preview@7.0.0-dev.20251023.1)(oxc-resolver@11.13.0)(typescript@6.0.2)
-      typescript:
-        specifier: ^6.0.2
-        version: 6.0.2
-
-  packages/shared/node:
-    dependencies:
-      '@inversifyjs/binding-decorators':
-        specifier: ^1.1.3
-        version: 1.1.5(inversify@7.10.4(reflect-metadata@0.2.2))(reflect-metadata@0.2.2)
-      '@mediago/core':
-        specifier: 0.0.13
-        version: 0.0.13
-      '@mediago/core-sdk':
-        specifier: 0.0.4
-        version: 0.0.4
-      '@mediago/deps':
-        specifier: 0.0.6
-        version: 0.0.6
-      '@mediago/player':
-        specifier: 0.0.10
-        version: 0.0.10
-      '@mediago/service-runner':
-        specifier: ^0.0.1
-        version: 0.0.1
-      '@mediago/shared-common':
-        specifier: workspace:*
-        version: link:../common
-      axios:
-        specifier: ^1.12.2
-        version: 1.13.1
-      dayjs:
-        specifier: ^1.11.18
-        version: 1.11.19
-      glob:
-        specifier: ^11.0.3
-        version: 11.0.3
-      i18next:
-        specifier: ^25.6.0
-        version: 25.6.0(typescript@6.0.2)
-      inversify:
-        specifier: ^7.9.1
-        version: 7.10.4(reflect-metadata@0.2.2)
-      nanoid:
-        specifier: ^5.1.6
-        version: 5.1.6
-      reflect-metadata:
-        specifier: ^0.2.2
-        version: 0.2.2
-      tree-kill:
-        specifier: ^1.2.2
-        version: 1.2.2
     devDependencies:
       '@types/node':
         specifier: ^24.7.2
@@ -1146,9 +1051,6 @@ packages:
     cpu: [x64]
     os: [linux]
     hasBin: true
-
-  '@mediago/core-sdk@0.0.4':
-    resolution: {integrity: sha512-l3VtmQ/T0kQ1SkpikJGRFFydsPg03acXSzaW62M/7Bdtwa5NHFjCfOnNZSeuhXkaXgYTvMFn1NoDnN1SGAl7nw==}
 
   '@mediago/core-sdk@file:../mediago-core/packages/sdk':
     resolution: {directory: ../mediago-core/packages/sdk, type: directory}
@@ -7016,14 +6918,6 @@ snapshots:
 
   '@mediago/core-linux-x64@0.0.13':
     optional: true
-
-  '@mediago/core-sdk@0.0.4':
-    dependencies:
-      axios: 1.13.1
-      eventsource: 4.1.0
-      mitt: 3.0.1
-    transitivePeerDependencies:
-      - debug
 
   '@mediago/core-sdk@file:../mediago-core/packages/sdk':
     dependencies:

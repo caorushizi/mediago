@@ -13,7 +13,10 @@ import {
   type DownloadType,
 } from "@mediago/shared-common";
 import { injectable } from "inversify";
-import { resolveCoreBinaries, resolveDepsBinaries } from "../utils";
+import {
+  resolveCoreBinaries,
+  resolveDepsBinaries,
+} from "../utils/binaryResolver";
 
 export interface DownloadTaskOptions {
   deleteSegments: boolean;

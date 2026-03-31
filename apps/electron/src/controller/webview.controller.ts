@@ -13,7 +13,10 @@ import {
   WEBVIEW_SHOW,
   WEBVIEW_URL_CONTEXTMENU,
 } from "@mediago/shared-common";
-import { DownloaderServer, handle, i18n, TYPES } from "@mediago/shared-node";
+import { handle } from "../core/decorators";
+import { i18n } from "../core/i18n";
+import { DownloaderServer } from "../services/downloader.server";
+import { TYPES } from "../types/symbols";
 import {
   type IpcMainEvent,
   Menu,

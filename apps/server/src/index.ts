@@ -3,7 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import fs from "node:fs";
 import { ServiceRunner } from "@mediago/service-runner";
-import { resolveCoreBinaries, resolveDepsBinaries } from "@mediago/shared-node";
+import { resolveCoreBinaries, resolveDepsBinaries } from "./binaryResolver";
 
 const DATA_DIR = path.resolve(os.homedir(), ".mediago-server");
 const LOG_DIR = path.resolve(DATA_DIR, "logs");

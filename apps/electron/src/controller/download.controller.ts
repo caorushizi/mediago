@@ -10,7 +10,9 @@ import {
   SHOW_DOWNLOAD_DIALOG,
   START_DOWNLOAD,
 } from "@mediago/shared-common";
-import { DownloaderServer, handle, TYPES } from "@mediago/shared-node";
+import { handle } from "../core/decorators";
+import { DownloaderServer } from "../services/downloader.server";
+import { TYPES } from "../types/symbols";
 import type { IpcMainEvent } from "electron/main";
 import { inject, injectable } from "inversify";
 import GoConfigCache from "../services/go-config-cache";

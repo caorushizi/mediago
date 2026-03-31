@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { ElectronBlocker } from "@ghostery/adblocker-electron";
 import { provide } from "@inversifyjs/binding-decorators";
-import { i18n } from "@mediago/shared-node";
+import { i18n } from "../core/i18n";
 import {
   type Event,
   type HandlerDetails,
