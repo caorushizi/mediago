@@ -22,7 +22,7 @@ export const zh = {
   download: "下载",
   pause: "暂停",
   redownload: "重新下载",
-  watting: "等待下载",
+  pending: "等待下载",
   continueDownload: "继续下载",
   playVideo: "播放视频",
   scanToWatch: "扫码观看(需要连接相同 WIFI)",

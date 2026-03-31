@@ -13,7 +13,7 @@ import {
   type DownloadType,
 } from "@mediago/shared-common";
 import { injectable } from "inversify";
-import { loadModule } from "../utils";
+import { resolveCoreBinaries, resolveDepsBinaries } from "../utils";
 
 export interface DownloadTaskOptions {
   deleteSegments: boolean;
@@ -27,18 +27,9 @@ export interface DownloadTaskOptions {
   url: string;
 }
 
-export interface ChangeConfigOptions {
-  maxRunner?: number;
-  proxy?: string;
-}
-
 export interface DownloadServiceOptions {
   logDir: string;
-  localDir: string;
-  deleteSegments: boolean;
-  proxy: string;
-  useProxy: boolean;
-  maxRunner: number;
+  dbPath: string;
 }
 
 @injectable()
@@ -48,34 +39,33 @@ export class DownloaderServer extends EventEmitter {
   private client: MediaGoClient | null = null;
 
   async start(opts: DownloadServiceOptions) {
-    const coreBin = loadModule("@mediago/core");
-    const coreBinDir = path.dirname(coreBin);
-    const dpesBin = loadModule("@mediago/deps");
-    const dpesBinDir = path.dirname(dpesBin);
+    const core = resolveCoreBinaries();
+    const deps = resolveDepsBinaries();
+
+    console.log("Resolved core binary:", path.dirname(core.coreBin));
 
     const runner = new ServiceRunner({
       executableName: "mediago-core",
-      executableDir: path.resolve(coreBinDir, "files"),
+      executableDir: path.dirname(core.coreBin),
       preferredPort: 9900,
       internal: true,
       extraArgs: [
         `-log-level=info`,
         `-log-dir=${opts.logDir}`,
-        `-schema-path=${path.resolve(coreBinDir, "files/config.json")}`,
-        `-m3u8-bin=${path.resolve(dpesBinDir, "bin/N_m3u8DL-RE")}`,
-        `-bilibili-bin=${path.resolve(dpesBinDir, "bin/BBDown")}`,
-        `-direct-bin=${path.resolve(dpesBinDir, "bin/gopeed")}`,
-        `-max-runner=${opts.maxRunner}`,
-        `-local-dir=${opts.localDir}`,
-        `-delete-segments=${opts.deleteSegments}`,
-        `-proxy=${opts.proxy}`,
-        `-use-proxy=${opts.useProxy}`,
+        `-schema-path=${core.coreConfig}`,
+        `-m3u8-bin=${deps.n_m3u8dl_re}`,
+        `-bilibili-bin=${deps.bbdown}`,
+        `-direct-bin=${deps.gopeed}`,
+        `-db-path=${opts.dbPath}`,
+        `-config-dir=${path.dirname(opts.dbPath)}`,
       ],
     });
 
     await runner.start();
 
     this.serverUrl = runner.getURL();
+
+    console.log("Downloader server started at:", this.serverUrl);
 
     this.client = new MediaGoClient({
       baseURL: this.serverUrl,
@@ -91,11 +81,15 @@ export class DownloaderServer extends EventEmitter {
     });
 
     events.on("download-failed", (payload) => {
-      this.emit("download-failed", payload.id);
+      this.emit("download-failed", payload.id, payload.error);
     });
 
     events.on("download-stop", (payload) => {
       this.emit("download-stop", payload.id);
+    });
+
+    events.on("config-changed", (payload) => {
+      this.emit("config-changed", payload.key, payload.value);
     });
 
     // 2. 轮询获取进度
@@ -160,13 +154,16 @@ export class DownloaderServer extends EventEmitter {
     return this.client?.stopTask(id);
   }
 
-  async changeConfig(opts: ChangeConfigOptions) {
-    return this.client?.updateConfig(opts);
-  }
-
   async getTaskLogs(id: string) {
     const logResult = await this.client?.getTaskLogs(id);
     return logResult?.data.log || "";
+  }
+
+  getClient(): MediaGoClient {
+    if (!this.client) {
+      throw new Error("DownloaderServer not started");
+    }
+    return this.client;
   }
 
   async getURL() {

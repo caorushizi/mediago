@@ -1,17 +1,17 @@
 import { provide } from "@inversifyjs/binding-decorators";
 import { IS_SETUP, SETUP_AUTH, SIGNIN } from "@mediago/shared-common";
 import { inject, injectable } from "inversify";
-import StoreService from "../vendor/Store";
 import { API_PREFIX, error } from "../utils";
 import { i18n } from "@mediago/shared-node";
+import ServerConfigCache from "../services/server-config-cache";
 import Logger from "../vendor/Logger";
 
 @injectable()
 @provide()
 export default class AuthMiddleware {
   constructor(
-    @inject(StoreService)
-    private readonly store: StoreService,
+    @inject(ServerConfigCache)
+    private readonly configCache: ServerConfigCache,
     @inject(Logger)
     private readonly logger: Logger,
   ) {}
@@ -31,7 +31,7 @@ export default class AuthMiddleware {
     }
 
     // check if apiKey is set up
-    const apiKey = this.store.get("apiKey");
+    const apiKey = this.configCache.get("apiKey");
     if (!apiKey) {
       ctx.body = error(i18n.t("unauthorized"), 401);
       return;

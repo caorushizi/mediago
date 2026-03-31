@@ -1,13 +1,7 @@
 import http from "node:http";
 import { provide } from "@inversifyjs/binding-decorators";
 import cors from "@koa/cors";
-import { DownloadStatus } from "@mediago/shared-common";
-import {
-  DownloaderServer,
-  TypeORM,
-  DownloadTaskService,
-  VideoServer,
-} from "@mediago/shared-node";
+import { DownloaderServer, VideoServer } from "@mediago/shared-node";
 import { inject, injectable } from "inversify";
 import Koa from "koa";
 import bodyParser from "koa-bodyparser";
@@ -15,9 +9,9 @@ import send from "koa-send";
 import serve from "koa-static";
 import RouterHandlerService from "./core/router";
 import { DB_PATH, LOG_DIR, STATIC_DIR } from "./constants";
+import ServerConfigCache from "./services/server-config-cache";
 import Logger from "./vendor/Logger";
 import SocketIO from "./vendor/SocketIO";
-import StoreService from "./vendor/Store";
 import "./controller";
 import AuthMiddleware from "./middleware/auth";
 import path from "node:path";
@@ -29,29 +23,24 @@ export default class ElectronApp extends Koa {
   constructor(
     @inject(RouterHandlerService)
     private readonly router: RouterHandlerService,
-    @inject(TypeORM)
-    private readonly db: TypeORM,
     @inject(Logger)
     private readonly logger: Logger,
     @inject(SocketIO)
     private readonly socket: SocketIO,
-    @inject(DownloadTaskService)
-    private readonly downloadTaskService: DownloadTaskService,
-    @inject(StoreService)
-    private readonly store: StoreService,
     @inject(DownloaderServer)
     private readonly downloaderServer: DownloaderServer,
     @inject(VideoServer)
     private readonly videoServer: VideoServer,
     @inject(AuthMiddleware)
     private readonly authMiddleware: AuthMiddleware,
+    @inject(ServerConfigCache)
+    private readonly configCache: ServerConfigCache,
   ) {
     super();
   }
 
   async init(): Promise<void> {
     this.router.init();
-    await this.db.init({ dbPath: DB_PATH });
 
     this.use(cors());
 
@@ -79,35 +68,29 @@ export default class ElectronApp extends Koa {
 
     this.socket.initSocketIO(server);
 
-    const local = this.store.get("local");
-    this.videoServer.start({ local, enableMobilePlayer: true });
-
-    // Initialize download service
-    this.downloaderServer.start({
+    // Start Go download service first (reads config from its own conf file)
+    await this.downloaderServer.start({
       logDir: LOG_DIR,
-      localDir: this.store.get("local"),
-      deleteSegments: this.store.get("deleteSegments"),
-      proxy: this.store.get("proxy"),
-      useProxy: this.store.get("useProxy"),
-      maxRunner: this.store.get("maxRunner"),
+      dbPath: DB_PATH,
     });
-    this.store.onDidChange("maxRunner", (maxRunner) => {
-      this.downloaderServer.changeConfig({ maxRunner: maxRunner || 1 });
-    });
-    this.store.onDidChange("proxy", (proxy) => {
-      this.downloaderServer.changeConfig({ proxy: proxy || "" });
-    });
+
+    // Read config from Go (single source of truth) and seed cache
+    const client = this.downloaderServer.getClient();
+    const { data: config } = await client.getConfig();
+    this.configCache.seed(config as any);
+
+    this.videoServer.start({ local: config.local, enableMobilePlayer: true });
+
+    // Listen for Go config changes → update cache
+    this.downloaderServer.on(
+      "config-changed",
+      (key: string, value: unknown) => {
+        this.configCache.update(key, value);
+      },
+    );
 
     server.listen(8899, () => {
       this.logger.info("Server running on port 8899");
     });
-  }
-
-  // If there are still videos being downloaded after the restart, change the status to download failed
-  async resetDownloadStatus(): Promise<void> {
-    // If data in the downloading state still fails after the restart, all downloads fail
-    const videos = await this.downloadTaskService.findActiveTasks();
-    const videoIds = videos.map((video) => video.id);
-    await this.downloadTaskService.setStatus(videoIds, DownloadStatus.Failed);
   }
 }

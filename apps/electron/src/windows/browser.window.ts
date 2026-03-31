@@ -3,6 +3,7 @@ import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
 import _ from "lodash";
 import Window from "../core/window";
+import GoConfigCache from "../services/go-config-cache";
 import { preloadUrl } from "../utils";
 import ElectronStore from "../vendor/ElectronStore";
 
@@ -16,6 +17,8 @@ export default class BrowserWindow extends Window {
   constructor(
     @inject(ElectronStore)
     private readonly store: ElectronStore,
+    @inject(GoConfigCache)
+    private readonly configCache: GoConfigCache,
   ) {
     super({
       width: 1100,
@@ -30,13 +33,8 @@ export default class BrowserWindow extends Window {
       },
     });
 
-    this.store.onDidChange("openInNewWindow", this.handleNewWindowsVal);
-    this.store.onDidAnyChange(this.storeChange);
+    this.configCache.onDidChange("openInNewWindow", this.handleNewWindowsVal);
   }
-
-  storeChange = (store: unknown) => {
-    this.send("store-change", store);
-  };
 
   handleNewWindowsVal = (newValue: unknown) => {
     if (!this.window) return;
@@ -63,7 +61,7 @@ export default class BrowserWindow extends Window {
     }
 
     this.window.show();
-    isDev && this.window.webContents.openDevTools();
+    if (isDev) this.window.webContents.openDevTools();
 
     const browserBounds = this.store.get("browserBounds");
     if (browserBounds) {

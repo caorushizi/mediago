@@ -11,96 +11,98 @@ import {
   START_DOWNLOAD,
   STOP_DOWNLOAD,
 } from "@mediago/shared-common";
-import { DownloadTaskService, handle, TYPES } from "@mediago/shared-node";
+import { DownloaderServer, handle, TYPES } from "@mediago/shared-node";
 import { inject, injectable } from "inversify";
-import Logger from "../vendor/Logger";
-import SocketIO from "../vendor/SocketIO";
-import StoreService from "../vendor/Store";
+import ServerConfigCache from "../services/server-config-cache";
 
 @injectable()
 @provide(TYPES.Controller)
 export default class DownloadController implements Controller {
   constructor(
-    @inject(DownloadTaskService)
-    private readonly downloadService: DownloadTaskService,
-    @inject(Logger)
-    private readonly logger: Logger,
-    @inject(SocketIO)
-    private readonly socket: SocketIO,
-    @inject(StoreService)
-    private readonly store: StoreService,
+    @inject(DownloaderServer)
+    private readonly downloaderServer: DownloaderServer,
+    @inject(ServerConfigCache)
+    private readonly configCache: ServerConfigCache,
   ) {}
 
   @handle(ADD_DOWNLOAD_ITEMS)
-  async createDownloadTasks({
-    videos,
-    startDownload,
-  }: {
+  async createDownloadTasks(params: {
     videos: Omit<DownloadTask, "id">[];
     startDownload?: boolean;
   }) {
-    const items = await this.downloadService.addDownloadTasks(videos);
-
-    this.socket.refreshList();
-
-    // Start downloading immediately if requested
-    if (startDownload) {
-      const local = await this.store.get("local");
-      const deleteSegments = await this.store.get("deleteSegments");
-      items.forEach((item: any) => {
-        this.downloadService.startDownload(item.id, local, deleteSegments);
-      });
-    }
-
-    return items;
+    const client = this.downloaderServer.getClient();
+    const tasks = params.videos.map((v) => ({
+      type: v.type,
+      url: v.url,
+      name: v.name,
+      headers: v.headers,
+      folder: v.folder,
+    }));
+    const res = await client.addDownloadTasks({
+      tasks,
+      startDownload: params.startDownload,
+    });
+    return res.data;
   }
 
   @handle(GET_DOWNLOAD_ITEMS)
   async getDownloadTasks(pagination: DownloadTaskPagination) {
-    const local = await this.store.get("local");
-    return await this.downloadService.getDownloadTasks(pagination, local);
+    const client = this.downloaderServer.getClient();
+    const res = await client.getDownloadTasks({
+      current: pagination.current,
+      pageSize: pagination.pageSize,
+      filter: pagination.filter,
+      localPath: this.configCache.get("local"),
+    });
+    return res.data;
   }
 
   @handle(START_DOWNLOAD)
-  async startDownloadTask({ vid }: { vid: number }) {
-    const local = await this.store.get("local");
-    const deleteSegments = await this.store.get("deleteSegments");
-    await this.downloadService.startDownload(vid, local, deleteSegments);
+  async startDownloadTask(params: { vid: number }) {
+    const client = this.downloaderServer.getClient();
+    await client.startDownload(params.vid, {
+      localPath: this.configCache.get("local"),
+      deleteSegments: this.configCache.get("deleteSegments"),
+    });
   }
 
   @handle(DELETE_DOWNLOAD_ITEM)
-  async deleteDownloadTask({ id }: { id: number }) {
-    await this.downloadService.deleteDownloadTask(id);
+  async deleteDownloadTask(params: { id: number }) {
+    const client = this.downloaderServer.getClient();
+    await client.deleteDownloadTask(params.id);
   }
 
   @handle(EDIT_DOWNLOAD_ITEM)
-  async updateDownloadTask({
-    video,
-    startDownload,
-  }: {
+  async updateDownloadTask(params: {
     video: DownloadTask;
     startDownload?: boolean;
   }) {
-    this.logger.info("editDownloadTask", video);
-    const item = await this.downloadService.editDownloadTask(video);
-
-    // Start downloading immediately if requested
+    const client = this.downloaderServer.getClient();
+    const { video, startDownload } = params;
+    await client.editDownloadTask(video.id, {
+      name: video.name,
+      url: video.url,
+      headers: video.headers ?? undefined,
+      folder: video.folder,
+    });
     if (startDownload) {
-      const local = await this.store.get("local");
-      const deleteSegments = await this.store.get("deleteSegments");
-      await this.downloadService.startDownload(item.id, local, deleteSegments);
+      await client.startDownload(video.id, {
+        localPath: this.configCache.get("local"),
+        deleteSegments: this.configCache.get("deleteSegments"),
+      });
     }
-
-    return item;
   }
 
   @handle(STOP_DOWNLOAD)
-  async stopDownloadTask({ id }: { id: number }) {
-    this.downloadService.stopDownload(id);
+  async stopDownloadTask(params: { id: number }) {
+    const client = this.downloaderServer.getClient();
+    await client.stopDownload(params.id);
   }
 
   @handle(GET_VIDEO_FOLDERS)
   async getVideoFolders() {
-    return this.downloadService.getTaskFolders();
+    const client = this.downloaderServer.getClient();
+    const res = await client.getDownloadFolders();
+    return res.data;
   }
 }

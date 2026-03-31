@@ -42,7 +42,7 @@ export interface ConversionResponse {
 
 export enum DownloadStatus {
   Ready = "ready",
-  Watting = "watting",
+  Pending = "pending",
   Downloading = "downloading",
   Stopped = "stopped",
   Success = "success",
@@ -151,8 +151,9 @@ export interface DownloadFailedEvent extends DownloadEvent<DownloadFailedData> {
   type: "failed";
 }
 
-export interface DownloadProgressEvent
-  extends DownloadEvent<DownloadProgress[]> {
+export interface DownloadProgressEvent extends DownloadEvent<
+  DownloadProgress[]
+> {
   type: "progress";
 }
 
@@ -163,6 +164,7 @@ export interface EnvPath {
   platform: string;
   local: string;
   playerUrl: string;
+  coreUrl: string;
 }
 
 export interface Rectangle {

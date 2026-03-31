@@ -1,24 +1,36 @@
+import { existsSync, readFileSync, unlinkSync } from "node:fs";
+import { resolve } from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
-import { appStoreDefaults, appStoreSharedOptions } from "@mediago/shared-node";
 import Store from "electron-store";
 import { injectable } from "inversify";
-import { download, workspace } from "../utils";
-import { AppStore } from "@mediago/shared-common";
+import { workspace } from "../utils";
+
+interface WindowBoundsStore {
+  mainBounds?: Electron.Rectangle;
+  browserBounds?: Electron.Rectangle;
+}
 
 @injectable()
 @provide()
-export default class StoreService extends Store<AppStore> {
+export default class ElectronStore extends Store<WindowBoundsStore> {
   constructor() {
     super({
-      ...appStoreSharedOptions,
-      name: "config",
+      name: "window-state",
       cwd: workspace,
-      defaults: {
-        ...appStoreDefaults,
-        local: download,
-      },
+      defaults: {},
     });
-  }
 
-  async init() {}
+    // Migrate bounds from old config.json (pre-refactoring)
+    const oldConfigPath = resolve(workspace, "config.json");
+    if (existsSync(oldConfigPath)) {
+      try {
+        const old = JSON.parse(readFileSync(oldConfigPath, "utf-8"));
+        if (old.mainBounds) this.set("mainBounds", old.mainBounds);
+        if (old.browserBounds) this.set("browserBounds", old.browserBounds);
+        unlinkSync(oldConfigPath);
+      } catch {
+        // ignore migration errors
+      }
+    }
+  }
 }

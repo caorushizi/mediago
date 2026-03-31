@@ -113,7 +113,7 @@ export const DownloadTaskItem = ({
 
     switch (task.status) {
       case DownloadStatus.Ready:
-        terminalBtn && buttons.push(terminalBtn);
+        if (terminalBtn) buttons.push(terminalBtn);
         buttons.push(editBtn);
         buttons.push(
           <IconButton
@@ -125,7 +125,7 @@ export const DownloadTaskItem = ({
         );
         break;
       case DownloadStatus.Downloading:
-        terminalBtn && buttons.push(terminalBtn);
+        if (terminalBtn) buttons.push(terminalBtn);
         buttons.push(
           <IconButton
             key="stop"
@@ -136,7 +136,7 @@ export const DownloadTaskItem = ({
         );
         break;
       case DownloadStatus.Failed:
-        terminalBtn && buttons.push(terminalBtn);
+        if (terminalBtn) buttons.push(terminalBtn);
         buttons.push(editBtn);
         buttons.push(
           <IconButton
@@ -147,11 +147,11 @@ export const DownloadTaskItem = ({
           />,
         );
         break;
-      case DownloadStatus.Watting:
-        buttons.push(<span key="watting">{t("watting")}</span>);
+      case DownloadStatus.Pending:
+        buttons.push(<span key="pending">{t("pending")}</span>);
         break;
       case DownloadStatus.Stopped:
-        terminalBtn && buttons.push(terminalBtn);
+        if (terminalBtn) buttons.push(terminalBtn);
         buttons.push(editBtn);
         buttons.push(
           <IconButton

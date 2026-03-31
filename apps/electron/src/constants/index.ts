@@ -2,7 +2,6 @@ import { dirname, resolve } from "node:path";
 import { app } from "electron";
 
 export const appData = app.getPath("appData");
-export const download = app.getPath("downloads");
 export const exePath = dirname(app.getPath("exe"));
 
 export enum Platform {

@@ -42,8 +42,6 @@
     "@sentry/node": "^10.25.0",
     "@sentry/profiling-node": "^10.25.0",
     "axios": "^1.12.2",
-    "better-sqlite3": "12.4.1",
-    "conf": "^15.0.2",
     "inversify": "^7.9.1",
     "koa": "^3.0.1",
     "koa-bodyparser": "^4.4.1",
@@ -52,7 +50,6 @@
     "lodash": "^4.17.21",
     "reflect-metadata": "^0.2.2",
     "socket.io": "^4.8.0",
-    "typeorm": "0.3.27",
     "winston": "^3.14.2",
     "winston-daily-rotate-file": "^5.0.0"
   },
