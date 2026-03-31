@@ -3,7 +3,7 @@ import type {
   ConversionPagination,
   DownloadTask,
   DownloadTaskPagination,
-  MediaGoApi,
+  GoApi,
   SetupAuthRequest,
 } from "@mediago/shared-common";
 
@@ -23,7 +23,7 @@ function wrapResponse<T>(
 }
 
 export interface GoAdapterHandle {
-  adapter: Partial<MediaGoApi>;
+  adapter: GoApi;
   setApiKey: (key: string) => void;
 }
 
@@ -34,7 +34,7 @@ export function createGoAdapter(
 ): GoAdapterHandle {
   const client = new MediaGoClient({ baseURL: coreUrl, apiKey });
 
-  const adapter: Partial<MediaGoApi> = {
+  const adapter: GoApi = {
     getFavorites: async () => {
       return wrapResponse(client.getFavorites());
     },
