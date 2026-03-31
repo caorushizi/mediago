@@ -62,14 +62,7 @@ const app = new ElectronApp();
 export default defineConfig({
   outDir: "build",
   shims: true,
-  external: [
-    "electron",
-    "typeorm",
-    "better-sqlite3",
-    "@mediago/player",
-    "@mediago/core",
-    "@mediago/deps",
-  ],
+  external: ["electron", "@mediago/player", "@mediago/core", "@mediago/deps"],
   noExternal: [/.*/],
   define: {
     "process.env.NODE_ENV": JSON.stringify(

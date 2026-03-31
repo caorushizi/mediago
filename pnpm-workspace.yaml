@@ -11,7 +11,6 @@ onlyBuiltDependencies:
   - "@sentry-internal/node-cpu-profiler"
   - "@swc/core"
   - "@tailwindcss/oxide"
-  - better-sqlite3
   - core-js
   - electron
   - electron-winstaller
