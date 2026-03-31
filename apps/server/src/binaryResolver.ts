@@ -37,6 +37,23 @@ export function resolveCoreBinaries(): {
 }
 
 /**
+ * Resolves the mediago-player binary path.
+ *
+ * Uses monorepo paths: apps/player/dist/mediago-player
+ * Override with MEDIAGO_PLAYER_BIN env var.
+ */
+export function resolvePlayerBinary(): { playerBin: string } {
+  if (process.env.MEDIAGO_PLAYER_BIN) {
+    return { playerBin: process.env.MEDIAGO_PLAYER_BIN };
+  }
+
+  const playerDir = path.join(getMonorepoRoot(), "apps", "player");
+  return {
+    playerBin: path.join(playerDir, "dist", `mediago-player${ext}`),
+  };
+}
+
+/**
  * Resolves paths to helper binaries: ffmpeg, N_m3u8DL-RE, BBDown, gopeed.
  *
  * Uses .deps/{platform}-{arch}/ directory.

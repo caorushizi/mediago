@@ -49,6 +49,17 @@ func (h *DownloadHandler) Create(c *gin.Context) {
 		return
 	}
 
+	// Auto-start downloads if requested
+	if req.StartDownload {
+		localPath, _ := h.conf.Get("local").(string)
+		deleteSegments, _ := h.conf.Get("deleteSegments").(bool)
+		for _, v := range videos {
+			if err := h.svc.StartDownload(v.ID, localPath, deleteSegments); err != nil {
+				logger.Warn("auto-start download failed", zap.Int64("id", v.ID), zap.Error(err))
+			}
+		}
+	}
+
 	c.JSON(http.StatusOK, dto.SuccessResponse{Success: true, Code: http.StatusOK, Message: i18n.T(c, i18n.MsgOK), Data: videos})
 }
 

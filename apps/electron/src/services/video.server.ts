@@ -19,6 +19,14 @@ export class VideoServer {
   }) {
     const { playerBin } = resolvePlayerBinary();
 
+    const fs = await import("node:fs");
+    if (!fs.existsSync(playerBin)) {
+      console.warn(
+        `[VideoServer] Player binary not found: ${playerBin}. Run "pnpm player:build" first.`,
+      );
+      return;
+    }
+
     this.runner = new ServiceRunner({
       executableDir: path.dirname(playerBin),
       executableName: "mediago-player",

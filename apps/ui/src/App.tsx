@@ -39,8 +39,13 @@ function getAlgorithm(appTheme: "dark" | "light") {
 
 const App: FC = () => {
   useAuth();
-  const { addIpcListener, removeIpcListener, getMachineId, getEnvPath } =
-    useAPI();
+  const {
+    addIpcListener,
+    removeIpcListener,
+    getMachineId,
+    getEnvPath,
+    getAppStore: fetchAppStore,
+  } = useAPI();
   const { setUpdateAvailable, setUploadChecking } = useSessionStore(
     useShallow(updateSelector),
   );
@@ -131,6 +136,12 @@ const App: FC = () => {
         if (envPath?.coreUrl) {
           initGoAdapter(envPath.coreUrl);
         }
+      }
+
+      // Sync config from Go Core (single source of truth) to Zustand
+      const config = await fetchAppStore();
+      if (config) {
+        setAppStore(config);
       }
     } catch (err) {
       console.warn(
