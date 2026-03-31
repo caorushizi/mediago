@@ -6,8 +6,6 @@ import {
   devServerTask,
   devUiTask,
   docsTask,
-  npmAssembleTask,
-  npmPublishTask,
 } from "./scripts/tasks";
 
 /**
@@ -28,15 +26,3 @@ export { dev };
 const build = series(docsTask, buildUiTask, buildServerTask);
 build.displayName = "build";
 export { build };
-
-/**
- * 3. npm:assemble - Generate all npm packages
- * Builds binaries for all platforms and assembles npm packages
- */
-export { npmAssembleTask as "npm:assemble" };
-
-/**
- * 4. npm:publish - Publish npm packages to registry
- * Publishes all generated npm packages to npm registry
- */
-export { npmPublishTask as "npm:publish" };

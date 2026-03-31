@@ -1,36 +1,19 @@
 {
-  "name": "@mediago/player",
+  "name": "@mediago/player-build",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "private": true,
+  "description": "MediaGo Player - Go video player build scripts",
   "scripts": {
-    "dev": "turbo dev",
-    "build": "turbo build",
-    "preview": "turbo preview",
-    "npm:assemble": "cross-env VERSION=0.0.10 gulp npm:assemble",
-    "npm:publish": "cross-env VERSION=0.0.10 PUBLISH=true gulp npm:publish"
+    "dev": "gulp dev",
+    "build": "gulp build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.8.1",
   "devDependencies": {
-    "@biomejs/biome": "2.2.5",
     "@swc/register": "^0.1.10",
     "@types/gulp": "^4.0.18",
     "cross-env": "^10.1.0",
-    "gulp": "^5.0.1",
-    "turbo": "^2.5.8"
-  },
-  "pnpm": {
-    "overrides": {
-      "vite": "npm:rolldown-vite@7.1.14"
-    },
-    "onlyBuiltDependencies": [
-      "@swc/core",
-      "@tailwindcss/oxide",
-      "core-js",
-      "es5-ext"
-    ]
+    "gulp": "^5.0.1"
   }
 }
