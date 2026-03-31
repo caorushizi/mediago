@@ -22,8 +22,7 @@ import {
   Tabs,
   type TabsProps,
 } from "antd";
-import type React from "react";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import PageContainer from "@/components/page-container";
@@ -215,11 +214,7 @@ const SettingPage: React.FC = () => {
           >
             <Switch />
           </Form.Item>
-          <Form.Item
-            hidden={isWeb}
-            label={t("showTerminal")}
-            name="showTerminal"
-          >
+          <Form.Item label={t("showTerminal")} name="showTerminal">
             <Switch />
           </Form.Item>
           <Form.Item
