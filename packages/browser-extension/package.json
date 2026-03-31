@@ -27,5 +27,6 @@
     ".": "./build/index.js",
     "./package.json": "./package.json"
   },
+  "author": "caorushizi",
   "license": "MIT"
 }

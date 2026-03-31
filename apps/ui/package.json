@@ -65,5 +65,6 @@
     "vite-bundle-visualizer": "^1.2.1",
     "xgplayer": "^3.0.19"
   },
+  "author": "caorushizi",
   "license": "MIT"
 }

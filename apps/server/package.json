@@ -18,5 +18,6 @@
     "tsdown": "^0.15.9",
     "typescript": "^6.0.2"
   },
+  "author": "caorushizi",
   "license": "MIT"
 }
