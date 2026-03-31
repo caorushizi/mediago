@@ -49,6 +49,9 @@ export const CHECK_UPDATE = "check-update";
 export const START_UPDATE = "start-update";
 export const INSTALL_UPDATE = "install-update";
 
+// SWR cache keys (not IPC channels)
+export const IS_SETUP = "is-setup";
+
 // ============================================================
 // Shared event names (used by both Go Core SSE and UI)
 // ============================================================
