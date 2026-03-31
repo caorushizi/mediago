@@ -54,6 +54,7 @@ const App: FC = () => {
   const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
   const { theme, setTheme } = useSessionStore(useShallow(themeSelector));
   const [appLocale, setAppLocale] = useState<Locale>();
+  const [adapterReady, setAdapterReady] = useState(false);
 
   useEffect(() => {
     if (language == AppLanguage.ZH) {
@@ -117,9 +118,10 @@ const App: FC = () => {
   }, []);
 
   useAsyncEffect(async () => {
+    if (!adapterReady) return;
     const deviceId = await getMachineId();
     tdApp.onEvent(PAGE_LOAD, { deviceId });
-  }, []);
+  }, [adapterReady]);
 
   useAsyncEffect(async () => {
     try {
@@ -148,6 +150,8 @@ const App: FC = () => {
         "Go adapter init failed, falling back to platform adapter:",
         err,
       );
+    } finally {
+      setAdapterReady(true);
     }
   }, []);
 
@@ -165,6 +169,10 @@ const App: FC = () => {
       isDarkTheme.removeEventListener("change", themeChange);
     };
   }, []);
+
+  if (!adapterReady) {
+    return <Loading />;
+  }
 
   return (
     <ConfigProvider

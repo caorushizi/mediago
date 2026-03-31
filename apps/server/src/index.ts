@@ -58,16 +58,24 @@ console.log(`Go Core started at ${state.url} (pid: ${state.pid})`);
 // Start Player server (optional — skip if binary not found)
 let playerRunner: ServiceRunner | undefined;
 const { playerBin } = resolvePlayerBinary();
+console.log(`[Player] Resolved binary: ${playerBin}`);
+console.log(`[Player] Binary exists: ${fs.existsSync(playerBin)}`);
 if (fs.existsSync(playerBin)) {
-  playerRunner = new ServiceRunner({
-    executableName: "mediago-player",
-    executableDir: path.dirname(playerBin),
-    preferredPort: 9800,
-    internal: false,
-    extraArgs: ["-video-root", path.resolve(DATA_DIR, "downloads")],
-  });
-  const playerState = await playerRunner.start();
-  console.log(`Player started at ${playerState.url} (pid: ${playerState.pid})`);
+  try {
+    playerRunner = new ServiceRunner({
+      executableName: "mediago-player",
+      executableDir: path.dirname(playerBin),
+      preferredPort: 9800,
+      internal: true,
+      extraArgs: ["-video-root", path.resolve(DATA_DIR, "downloads")],
+    });
+    const playerState = await playerRunner.start();
+    console.log(
+      `Player started at ${playerState.url} (pid: ${playerState.pid})`,
+    );
+  } catch (err) {
+    console.error(`[Player] Failed to start:`, err);
+  }
 } else {
   console.warn(
     `[Player] Binary not found: ${playerBin}. Run "pnpm player:build" to enable video playback.`,
