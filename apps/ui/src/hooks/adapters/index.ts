@@ -96,9 +96,6 @@ const GO_METHODS = new Set<string>([
   "signin",
   "isSetup",
   "getEnvPath",
-  "exportFavorites",
-  "importFavorites",
-  "exportDownloadList",
   "openUrl",
 ]);
 
