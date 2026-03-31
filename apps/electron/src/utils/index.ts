@@ -3,7 +3,7 @@ import EventEmitter from "node:events";
 import fs from "node:fs/promises";
 import { createRequire } from "node:module";
 import { LRUCache } from "lru-cache";
-import { resolveDepsBinaries } from "@mediago/shared-node";
+import { resolveDepsBinaries } from "./binaryResolver";
 
 const deps = resolveDepsBinaries();
 export const ffmpegPath = deps.ffmpeg;

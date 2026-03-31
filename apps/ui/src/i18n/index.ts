@@ -1,4 +1,4 @@
-import { createBrowserI18n } from "@mediago/shared-browser";
+import { createBrowserI18n } from "./createBrowserI18n";
 
 const i18n = createBrowserI18n({
   debug: import.meta.env.MODE === "development",

@@ -27,8 +27,7 @@
     "tsx": "^4.11.0"
   },
   "dependencies": {
-    "@mediago/shared-common": "workspace:*",
-    "@mediago/shared-node": "workspace:*"
+    "@mediago/shared-common": "workspace:*"
   },
   "module": "./build/index.js"
 }

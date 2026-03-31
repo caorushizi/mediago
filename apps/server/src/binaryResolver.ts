@@ -25,16 +25,7 @@ function getPlatformSuffix(): string {
 
 /**
  * Resolves a platform-specific package directory by using the root package
- * as a resolution base. This is necessary because:
- *
- * 1. Root packages (@mediago/core, @mediago/deps, @mediago/player) are in
- *    the tsdown `external` list, so `require.resolve` works at runtime.
- * 2. Platform packages (@mediago/core-darwin-arm64) are optionalDependencies
- *    of root packages, so they're only resolvable from the root package's
- *    node_modules in pnpm's strict structure.
- * 3. We use `{ paths: [rootDir] }` to resolve from the root package location.
- *
- * Handles Electron ASAR path rewriting for production builds.
+ * as a resolution base.
  */
 function resolvePlatformPackageDir(
   rootPackage: string,

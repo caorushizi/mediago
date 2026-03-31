@@ -1,6 +1,8 @@
 import { resolve } from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
-import { DownloaderServer, i18n, VideoServer } from "@mediago/shared-node";
+import { i18n } from "./core/i18n";
+import { DownloaderServer } from "./services/downloader.server";
+import { VideoServer } from "./services/video.server";
 import {
   app,
   BrowserWindow,

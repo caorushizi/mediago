@@ -2,7 +2,7 @@ import path from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
 import { ServiceRunner } from "@mediago/service-runner";
 import { injectable } from "inversify";
-import { resolvePlayerBinary } from "../utils";
+import { resolvePlayerBinary } from "../utils/binaryResolver";
 
 @injectable()
 @provide()

@@ -13,9 +13,8 @@
   "dependencies": {
     "@ant-design/icons": "^6.1.1",
     "@mediago/core-sdk": "file://../../../mediago-core/packages/sdk",
-    "@mediago/shared-browser": "workspace:*",
+    "i18next-browser-languagedetector": "^8.0.2",
     "@mediago/shared-common": "workspace:*",
-    "@mediago/shared-node": "workspace:*",
     "@radix-ui/react-checkbox": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-slot": "^1.2.3",

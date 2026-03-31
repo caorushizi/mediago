@@ -8,7 +8,8 @@ import {
   type DownloadSuccessEvent,
   type DownloadTask,
 } from "@mediago/shared-common";
-import { DownloaderServer, i18n } from "@mediago/shared-node";
+import { i18n } from "../core/i18n";
+import { DownloaderServer } from "../services/downloader.server";
 import { app, Menu, Notification } from "electron";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";

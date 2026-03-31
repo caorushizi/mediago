@@ -23,13 +23,11 @@ import {
   START_UPDATE,
   safeParseJSON,
 } from "@mediago/shared-common";
-import {
-  DownloaderServer,
-  handle,
-  i18n,
-  TYPES,
-  VideoServer,
-} from "@mediago/shared-node";
+import { handle } from "../core/decorators";
+import { i18n } from "../core/i18n";
+import { DownloaderServer } from "../services/downloader.server";
+import { VideoServer } from "../services/video.server";
+import { TYPES } from "../types/symbols";
 import {
   dialog,
   type IpcMainEvent,
