@@ -14,8 +14,8 @@
     "bilibili",
     "mediago"
   ],
-  "author": "",
-  "license": "ISC",
+  "author": "caorushizi",
+  "license": "MIT",
   "devDependencies": {
     "@swc/register": "^0.1.10",
     "@types/gulp": "^4.0.17",

@@ -8,6 +8,7 @@
     ".": "./build/index.cjs",
     "./package.json": "./package.json"
   },
+  "author": "caorushizi",
   "license": "MIT",
   "scripts": {
     "dev": "tsdown --watch ./src",

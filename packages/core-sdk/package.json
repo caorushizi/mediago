@@ -12,7 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/author/library.git"
   },
-  "author": "Author Name <author.name@mail.com>",
+  "author": "caorushizi",
   "files": [
     "dist"
   ],
