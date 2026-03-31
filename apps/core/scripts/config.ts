@@ -1,5 +1,5 @@
-import { join } from "path";
-import { win32 } from "path/win32";
+import { join } from "node:path";
+import { win32 } from "node:path/win32";
 
 // ============================================================
 // Configuration Variables
@@ -25,6 +25,7 @@ export const devConfig = {
   gin_mode: "debug",
   log_level: "debug",
   log_dir: `${homeDir}/logs`,
+  config_dir: `${homeDir}/data`,
   schema_path: "./configs/config.json",
   m3u8_bin: `${config.DEPS_DIR}/${platformKey}/N_m3u8DL-RE${exeExt}`,
   bilibili_bin: `${config.DEPS_DIR}/${platformKey}/BBDown${exeExt}`,
@@ -105,7 +106,7 @@ export const PLATFORMS: PlatformDefinition[] = [
 ];
 
 export const BUILD_PLATFORMS: BuildConfig[] = PLATFORMS.map(
-  ({ goos, goarch }) => ({ goos, goarch })
+  ({ goos, goarch }) => ({ goos, goarch }),
 );
 
 export const PACKAGE_PLATFORMS: BuildConfig[] = PLATFORMS.map(
@@ -114,5 +115,5 @@ export const PACKAGE_PLATFORMS: BuildConfig[] = PLATFORMS.map(
     goarch,
     platform: toolsPlatform,
     arch: toolsArch,
-  })
+  }),
 );
