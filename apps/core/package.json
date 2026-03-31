@@ -1,15 +1,11 @@
 {
-  "name": "mediago-core",
+  "name": "@mediago/core-build",
   "version": "1.0.0",
-  "description": "MediaGo Core - 多任务下载系统",
-  "main": "index.js",
+  "private": true,
+  "description": "MediaGo Core - Go download backend build scripts",
   "scripts": {
     "dev": "gulp dev",
-    "build": "gulp devBuild",
-    "npm:build:core": "cross-env VERSION=0.0.13 gulp buildCore",
-    "npm:build:deps": "cross-env VERSION=0.0.6 gulp buildDeps",
-    "npm:publish:core": "gulp publishCore",
-    "npm:publish:deps": "gulp publishDeps"
+    "build": "gulp devBuild"
   },
   "keywords": [
     "video",
@@ -20,7 +16,6 @@
   ],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.15.0",
   "devDependencies": {
     "@swc/register": "^0.1.10",
     "@types/gulp": "^4.0.17",
