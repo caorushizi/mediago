@@ -195,14 +195,17 @@ export function createGoAdapter(
     },
 
     getEnvPath: async () => {
-      const configRes = await client.getConfig();
+      const [envRes, configRes] = await Promise.all([
+        client.getEnvPaths(),
+        client.getConfig(),
+      ]);
       return {
         code: 0,
         data: {
-          binPath: "",
+          binPath: envRes.data.binDir,
           dbPath: "",
-          workspace: "",
-          platform: "linux",
+          workspace: envRes.data.configDir,
+          platform: envRes.data.platform,
           local: configRes.data.local,
           playerUrl: "",
           coreUrl: coreUrl,
