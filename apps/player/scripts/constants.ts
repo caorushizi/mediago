@@ -9,11 +9,9 @@ export interface PlatformTarget {
 
 // Directory paths
 const ROOT_DIR = path.resolve(__dirname, "..");
-export const UI_DIR = path.join(ROOT_DIR, "ui");
+export const UI_DIR = path.join(ROOT_DIR, "player-ui");
 export const ASSETS_UI_DIR = path.join(ROOT_DIR, "assets", "ui");
 export const DIST_DIR = path.join(ROOT_DIR, "dist");
-export const NPM_DIR = path.join(ROOT_DIR, "npm");
-export const RELEASE_NPM_DIR = path.join(ROOT_DIR, "release", "npm");
 export const ROOT_PATH = ROOT_DIR;
 
 // Platform detection
