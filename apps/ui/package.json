@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^6.1.1",
-    "@mediago/core-sdk": "0.0.4",
+    "@mediago/core-sdk": "file://../../../mediago-core/packages/sdk",
     "@mediago/shared-browser": "workspace:*",
     "@mediago/shared-common": "workspace:*",
     "@mediago/shared-node": "workspace:*",
@@ -41,7 +41,6 @@
     "react-dom": "^19.2.4",
     "react-i18next": "^16.0.1",
     "react-router-dom": "^7.9.4",
-    "socket.io-client": "^4.8.1",
     "sort-by": "^1.2.0",
     "swr": "^2.3.6",
     "tailwind-merge": "^3.3.1",

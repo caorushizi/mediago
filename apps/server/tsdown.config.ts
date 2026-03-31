@@ -1,9 +1,10 @@
-import dotenvFlow from "dotenv-flow";
 import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
 import path, { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "tsdown";
-import fs from "node:fs/promises";
+import dotenvFlow from "dotenv-flow";
+
+const isDev = process.env.NODE_ENV === "development";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -11,17 +12,17 @@ const projectRoot = path.resolve(__dirname, "../..");
 const env = dotenvFlow.config({
   path: projectRoot,
 });
-const appRoot = path.resolve(projectRoot, "apps/electron/app");
-const packageJsonPath = path.resolve(appRoot, "package.json");
-const pkg = JSON.parse(await fs.readFile(packageJsonPath, "utf-8"));
 
-export class NodeApp {
+class NodeApp {
   process: ChildProcessWithoutNullStreams | null = null;
 
   start() {
-    const args = [path.resolve(__dirname, "./build/index.cjs")];
+    const args = [path.resolve(__dirname, "./build/index.js")];
 
-    this.process = spawn("node", args);
+    this.process = spawn("node", args, {
+      stdio: ["ignore", "pipe", "pipe"],
+      env: { ...process.env },
+    });
 
     this.process.stdout.on("data", (data) => {
       process.stdout.write(String(data));
@@ -53,24 +54,19 @@ const app = new NodeApp();
 
 export default defineConfig({
   outDir: "build",
-  format: "commonjs",
+  shims: true,
+  external: ["@mediago/core", "@mediago/deps"],
+  noExternal: [/.*/],
   define: {
     "process.env.NODE_ENV": JSON.stringify(
       process.env.NODE_ENV || "production",
     ),
-    "process.env.APP_VERSION": JSON.stringify(pkg.version),
+    "process.env.APP_TARGET": JSON.stringify("server"),
   },
   env: { ...env.parsed },
-  noExternal: [/.*/],
-  external: [
-    "@mediago/player",
-    "@mediago/core",
-    "@mediago/deps",
-    "better-sqlite3",
-  ],
   hooks: {
     "build:done": () => {
-      if (process.env.NODE_ENV === "development") {
+      if (isDev) {
         app.restart();
       }
     },

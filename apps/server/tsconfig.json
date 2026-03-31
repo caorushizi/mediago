@@ -1,10 +1,7 @@
 {
   "extends": "../../packages/config/src/tsconfig.node.json",
   "compilerOptions": {
-    "declaration": true,
-    "declarationDir": "./types",
-    "outDir": "app/output/build/main"
+    "outDir": "build"
   },
-  "include": ["src"],
-  "references": []
+  "include": ["src"]
 }
