@@ -2,7 +2,7 @@ import { join } from "path";
 import { win32 } from "path/win32";
 
 // ============================================================
-// 配置变量 (Configuration Variables)
+// Configuration Variables
 // ============================================================
 
 export const config = {
@@ -10,11 +10,12 @@ export const config = {
   CMD_PATH: "./cmd/server",
   BIN_DIR: "./bin",
   RELEASE_DIR: "./release",
-  TOOLS_BIN_DIR: ".bin",
+  DEPS_DIR: join("..", "..", ".deps"),
   GO_LDFLAGS: "-s -w",
 };
 
 const exeExt = process.platform === "win32" ? ".exe" : "";
+const platformKey = `${process.platform}/${process.arch}`;
 const homeDir =
   process.platform === "win32"
     ? win32.join(process.env.USERPROFILE || "C:\\", ".mediago")
@@ -25,9 +26,9 @@ export const devConfig = {
   log_level: "debug",
   log_dir: `${homeDir}/logs`,
   schema_path: "./configs/config.json",
-  m3u8_bin: `./.bin/${process.platform}/${process.arch}/N_m3u8DL-RE${exeExt}`,
-  bilibili_bin: `./.bin/${process.platform}/${process.arch}/BBDown${exeExt}`,
-  direct_bin: `./.bin/${process.platform}/${process.arch}/gopeed${exeExt}`,
+  m3u8_bin: `${config.DEPS_DIR}/${platformKey}/N_m3u8DL-RE${exeExt}`,
+  bilibili_bin: `${config.DEPS_DIR}/${platformKey}/BBDown${exeExt}`,
+  direct_bin: `${config.DEPS_DIR}/${platformKey}/gopeed${exeExt}`,
   max_runner: 3,
   local_dir: `${homeDir}/downloads`,
   delete_segments: true,
@@ -48,25 +49,8 @@ export interface PlatformDefinition extends BuildConfig {
   toolsArch: string;
 }
 
-export const templateConfig = {
-  dir: join("scripts", "templates"),
-};
-
-export const npmConfig = {
-  rootDir: "npm",
-  scope: "@mediago",
-  filesDir: "files",
-  packageJsonFile: "package.json",
-  readmeFile: "README.md",
-  corePackageName: "core",
-  depsPackageName: "deps",
-  corePlatformPrefix: "core-",
-  depsPlatformPrefix: "deps-",
-};
-
 export const releaseConfig = {
   packagesDir: "packages",
-  npmDir: "npm",
   packageBinDir: "bin",
   packageConfigsDir: "configs",
   packageLogsDir: "logs",
@@ -132,26 +116,3 @@ export const PACKAGE_PLATFORMS: BuildConfig[] = PLATFORMS.map(
     arch: toolsArch,
   })
 );
-
-export const NPM_PACKAGE_MAPPINGS = PLATFORMS.map(({ goos, goarch, id }) => ({
-  src: `${config.APP_NAME}-${goos}-${goarch}`,
-  dst: `core-${id}`,
-}));
-
-const npmScopePath = `${npmConfig.rootDir}/${npmConfig.scope}`;
-
-export const CORE_NPM_PACKAGES = [
-  `${npmScopePath}/${npmConfig.corePackageName}`,
-  ...PLATFORMS.map(
-    ({ id }) => `${npmScopePath}/${npmConfig.corePlatformPrefix}${id}`
-  ),
-];
-
-export const DEPS_NPM_PACKAGES = [
-  `${npmScopePath}/${npmConfig.depsPackageName}`,
-  ...PLATFORMS.map(
-    ({ id }) => `${npmScopePath}/${npmConfig.depsPlatformPrefix}${id}`
-  ),
-];
-
-export const NPM_PACKAGES = [...CORE_NPM_PACKAGES, ...DEPS_NPM_PACKAGES];

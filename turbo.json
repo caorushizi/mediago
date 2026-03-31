@@ -11,7 +11,7 @@
     "build": {
       "cache": true,
       "persistent": false,
-      "outputs": ["build/**"],
+      "outputs": ["build/**", "dist/**"],
       "dependsOn": ["^build"],
       "env": ["NODE_ENV"]
     },
