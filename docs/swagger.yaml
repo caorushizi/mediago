@@ -1,0 +1,444 @@
+basePath: /api
+definitions:
+  caorushizi_cn_mediago_internal_api_dto.CreateTaskReq:
+    properties:
+      folder:
+        description: 子文件夹
+        example: movies
+        type: string
+      headers:
+        description: HTTP 请求头
+        example:
+        - 'User-Agent: custom'
+        items:
+          type: string
+        type: array
+      id:
+        description: (可选) 自定义任务 ID
+        example: my-custom-id
+        type: string
+      name:
+        description: 文件名
+        example: video
+        type: string
+      type:
+        allOf:
+        - $ref: '#/definitions/caorushizi_cn_mediago_internal_core.DownloadType'
+        description: 下载类型
+        example: m3u8
+      url:
+        description: 下载 URL
+        example: https://example.com/video.m3u8
+        type: string
+    required:
+    - name
+    - type
+    - url
+    type: object
+  caorushizi_cn_mediago_internal_api_dto.CreateTaskResponse:
+    properties:
+      id:
+        description: 任务ID
+        type: string
+      message:
+        description: 响应消息
+        type: string
+      status:
+        description: 任务状态 (pending/success)
+        type: string
+    type: object
+  caorushizi_cn_mediago_internal_api_dto.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  caorushizi_cn_mediago_internal_api_dto.HealthResponse:
+    properties:
+      status:
+        example: ok
+        type: string
+    type: object
+  caorushizi_cn_mediago_internal_api_dto.StopTaskResponse:
+    properties:
+      message:
+        description: 响应消息
+        example: Task stopped
+        type: string
+    type: object
+  caorushizi_cn_mediago_internal_api_dto.SuccessResponse:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data: {}
+      message:
+        example: OK
+        type: string
+      success:
+        example: true
+        type: boolean
+    type: object
+  caorushizi_cn_mediago_internal_api_dto.TaskListResponse:
+    properties:
+      tasks:
+        description: 任务列表
+        items:
+          $ref: '#/definitions/caorushizi_cn_mediago_internal_core.TaskInfo'
+        type: array
+      total:
+        description: 总数量
+        type: integer
+    type: object
+  caorushizi_cn_mediago_internal_api_dto.TaskLogResponse:
+    properties:
+      id:
+        description: 任务ID
+        type: string
+      log:
+        description: 日志内容
+        type: string
+    type: object
+  caorushizi_cn_mediago_internal_api_dto.UpdateConfigRequest:
+    properties:
+      deleteSegments:
+        description: 是否删除分段
+        type: boolean
+      localDir:
+        description: 本地保存目录
+        type: string
+      maxRunner:
+        description: 最大并发下载数
+        type: integer
+      proxy:
+        description: 代理地址
+        type: string
+      useProxy:
+        description: 是否使用代理
+        type: boolean
+    type: object
+  caorushizi_cn_mediago_internal_api_dto.UpdateConfigResponse:
+    properties:
+      message:
+        description: 响应消息
+        example: Config updated
+        type: string
+    type: object
+  caorushizi_cn_mediago_internal_core.DownloadType:
+    enum:
+    - m3u8
+    - bilibili
+    - direct
+    type: string
+    x-enum-varnames:
+    - TypeM3U8
+    - TypeBilibili
+    - TypeDirect
+  caorushizi_cn_mediago_internal_core.TaskInfo:
+    properties:
+      error:
+        description: 错误信息（如果有）
+        type: string
+      id:
+        description: 任务ID
+        type: string
+      isLive:
+        description: 是否为直播流
+        type: boolean
+      name:
+        description: 文件名
+        type: string
+      percent:
+        description: 完成百分比
+        type: number
+      speed:
+        description: 下载速度
+        type: string
+      status:
+        allOf:
+        - $ref: '#/definitions/caorushizi_cn_mediago_internal_core.TaskStatus'
+        description: 任务状态
+      type:
+        allOf:
+        - $ref: '#/definitions/caorushizi_cn_mediago_internal_core.DownloadType'
+        description: 下载类型
+      url:
+        description: 下载URL
+        type: string
+    type: object
+  caorushizi_cn_mediago_internal_core.TaskStatus:
+    enum:
+    - pending
+    - downloading
+    - success
+    - failed
+    - stopped
+    type: string
+    x-enum-comments:
+      StatusDownloading: 下载中
+      StatusFailed: 失败
+      StatusPending: 等待中
+      StatusStopped: 已停止
+      StatusSuccess: 成功完成
+    x-enum-descriptions:
+    - 等待中
+    - 下载中
+    - 成功完成
+    - 失败
+    - 已停止
+    x-enum-varnames:
+    - StatusPending
+    - StatusDownloading
+    - StatusSuccess
+    - StatusFailed
+    - StatusStopped
+host: localhost:8080
+info:
+  contact:
+    email: support@mediago.local
+    name: API Support
+    url: https://github.com/caorushizi/mediago-core
+  description: |-
+    MediaGo 多任务下载系统 API 文档
+    支持 M3U8、Bilibili、Direct 三种下载类型
+    提供任务管理、配置更新、实时事件推送等功能
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: MediaGo Downloader API
+  version: "1.0"
+paths:
+  /config:
+    post:
+      consumes:
+      - application/json
+      description: 更新系统配置，包括最大并发下载数、下载目录、代理、代理开关等、下载目录、代理等
+      parameters:
+      - description: 配置参数
+        in: body
+        name: config
+        required: true
+        schema:
+          $ref: '#/definitions/caorushizi_cn_mediago_internal_api_dto.UpdateConfigRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 配置更新成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/caorushizi_cn_mediago_internal_api_dto.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/caorushizi_cn_mediago_internal_api_dto.UpdateConfigResponse'
+              type: object
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/caorushizi_cn_mediago_internal_api_dto.ErrorResponse'
+      summary: 更新系统配置
+      tags:
+      - Config
+  /events:
+    get:
+      description: |-
+        订阅服务器推送事件（SSE），实时接收下载任务的状态变更通知
+        事件类型包括：download-start（任务开始）, download-success（任务成功）, download-failed（任务失败）, download-stop（任务停止）
+        注意：不包含进度更新事件，如需获取下载进度，请通过 GET /api/tasks/{id} 接口轮询
+      produces:
+      - text/event-stream
+      responses:
+        "200":
+          description: SSE 事件流
+          schema:
+            type: string
+      summary: SSE 事件流
+      tags:
+      - Events
+  /healthy:
+    get:
+      consumes:
+      - application/json
+      description: 检查服务是否正常运行
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 服务正常
+          schema:
+            allOf:
+            - $ref: '#/definitions/caorushizi_cn_mediago_internal_api_dto.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/caorushizi_cn_mediago_internal_api_dto.HealthResponse'
+              type: object
+      summary: 健康检查
+      tags:
+      - Health
+  /tasks:
+    get:
+      consumes:
+      - application/json
+      description: 获取所有任务的状态和进度信息列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 任务列表
+          schema:
+            allOf:
+            - $ref: '#/definitions/caorushizi_cn_mediago_internal_api_dto.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/caorushizi_cn_mediago_internal_api_dto.TaskListResponse'
+              type: object
+      summary: 获取所有任务状态
+      tags:
+      - Tasks
+    post:
+      consumes:
+      - application/json
+      description: |-
+        创建一个新的下载任务并加入队列，可选择性提供任务 ID
+        支持 M3U8、Bilibili、Direct 三种下载类型
+      parameters:
+      - description: 下载任务参数
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/caorushizi_cn_mediago_internal_api_dto.CreateTaskReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 任务创建成功，返回任务状态 (pending/success)
+          schema:
+            allOf:
+            - $ref: '#/definitions/caorushizi_cn_mediago_internal_api_dto.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/caorushizi_cn_mediago_internal_api_dto.CreateTaskResponse'
+              type: object
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/caorushizi_cn_mediago_internal_api_dto.ErrorResponse'
+      summary: 创建下载任务
+      tags:
+      - Tasks
+  /tasks/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 获取指定ID的任务状态和进度信息
+      parameters:
+      - description: 任务ID
+        example: task-1
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 任务信息
+          schema:
+            allOf:
+            - $ref: '#/definitions/caorushizi_cn_mediago_internal_api_dto.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/caorushizi_cn_mediago_internal_core.TaskInfo'
+              type: object
+        "404":
+          description: 任务不存在
+          schema:
+            $ref: '#/definitions/caorushizi_cn_mediago_internal_api_dto.ErrorResponse'
+      summary: 获取任务状态
+      tags:
+      - Tasks
+  /tasks/{id}/logs:
+    get:
+      consumes:
+      - application/json
+      description: 获取指定任务ID的完整下载日志内容
+      parameters:
+      - description: 任务ID
+        example: task-1
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 任务日志内容
+          schema:
+            allOf:
+            - $ref: '#/definitions/caorushizi_cn_mediago_internal_api_dto.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/caorushizi_cn_mediago_internal_api_dto.TaskLogResponse'
+              type: object
+        "404":
+          description: 日志不存在
+          schema:
+            $ref: '#/definitions/caorushizi_cn_mediago_internal_api_dto.ErrorResponse'
+        "500":
+          description: 日志系统未配置或读取失败
+          schema:
+            $ref: '#/definitions/caorushizi_cn_mediago_internal_api_dto.ErrorResponse'
+      summary: 获取任务日志
+      tags:
+      - Tasks
+  /tasks/{id}/stop:
+    post:
+      consumes:
+      - application/json
+      description: 停止指定ID的下载任务
+      parameters:
+      - description: 任务ID
+        example: task-1
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 任务停止成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/caorushizi_cn_mediago_internal_api_dto.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/caorushizi_cn_mediago_internal_api_dto.StopTaskResponse'
+              type: object
+        "404":
+          description: 任务不存在
+          schema:
+            $ref: '#/definitions/caorushizi_cn_mediago_internal_api_dto.ErrorResponse'
+      summary: 停止下载任务
+      tags:
+      - Tasks
+schemes:
+- http
+- https
+swagger: "2.0"
+tags:
+- description: 健康检查相关接口
+  name: Health
+- description: 下载任务管理相关接口
+  name: Tasks
+- description: 系统配置相关接口
+  name: Config
+- description: 实时事件推送相关接口
+  name: Events
