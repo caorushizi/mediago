@@ -214,18 +214,6 @@ export function createGoAdapter(
       } as any;
     },
 
-    exportFavorites: async () => {
-      return wrapResponse(client.exportFavorites());
-    },
-
-    importFavorites: async (favorites: any[]) => {
-      return wrapResponse(client.importFavorites(favorites));
-    },
-
-    exportDownloadList: async () => {
-      return wrapResponse(client.exportDownloadList());
-    },
-
     // Web-mode stubs for Electron-only features
     openUrl: async (url: string) => {
       const a = document.createElement("a");

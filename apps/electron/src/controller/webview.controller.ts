@@ -2,8 +2,10 @@ import { provide } from "@inversifyjs/binding-decorators";
 import {
   CLEAR_WEBVIEW_CACHE,
   type Controller,
+  type DownloadTask,
   PLUGIN_READY,
   SET_WEBVIEW_BOUNDS,
+  SHOW_DOWNLOAD_DIALOG,
   WEBVIEW_CHANGE_USER_AGENT,
   WEBVIEW_GO_BACK,
   WEBVIEW_GO_HOME,
@@ -106,5 +108,11 @@ export default class WebviewController implements Controller {
   @handle(CLEAR_WEBVIEW_CACHE)
   async clearWebviewCache() {
     return this.webview.clearCache();
+  }
+
+  @handle(SHOW_DOWNLOAD_DIALOG)
+  async showDownloadDialog(e: IpcMainEvent, data: DownloadTask) {
+    const image = await this.webview.captureView();
+    this.webview.sendToWindow(SHOW_DOWNLOAD_DIALOG, data, image?.toDataURL());
   }
 }
