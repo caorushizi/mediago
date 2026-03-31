@@ -1,8 +1,10 @@
 import { provide } from "@inversifyjs/binding-decorators";
 import {
   DOWNLOAD_EVENT_NAME,
+  type DownloadFailedEvent,
   type DownloadProgress,
   type DownloadProgressEvent,
+  type DownloadStoppedEvent,
   type DownloadSuccessEvent,
   type DownloadTask,
 } from "@mediago/shared-common";
@@ -131,6 +133,12 @@ export default class MainWindow extends Window {
         body: i18n.t("videoDownloadFailed", { name: String(id) }),
       }).show();
     }
+
+    const data: DownloadFailedEvent = {
+      type: "failed",
+      data: { id, error: String(err) },
+    };
+    this.send(DOWNLOAD_EVENT_NAME, data);
   };
 
   onDownloadStart = async (id: number) => {
@@ -139,6 +147,12 @@ export default class MainWindow extends Window {
 
   onDownloadStop = async (id: number) => {
     this.logger.info(`taskId: ${id} stopped`);
+
+    const data: DownloadStoppedEvent = {
+      type: "stopped",
+      data: { id },
+    };
+    this.send(DOWNLOAD_EVENT_NAME, data);
   };
 
   showWindow(url?: string) {

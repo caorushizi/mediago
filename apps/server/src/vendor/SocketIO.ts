@@ -2,8 +2,10 @@ import type http from "node:http";
 import { provide } from "@inversifyjs/binding-decorators";
 import {
   DOWNLOAD_EVENT_NAME,
+  type DownloadFailedEvent,
   type DownloadProgress,
   type DownloadProgressEvent,
+  type DownloadStoppedEvent,
 } from "@mediago/shared-common";
 import { DownloaderServer } from "@mediago/shared-node";
 import { inject, injectable } from "inversify";
@@ -59,6 +61,11 @@ export default class SocketIO implements Vendor {
 
   onDownloadFailed = async (id: number, err: unknown) => {
     this.logger.error(`download task: ${id} failed: ${err}`);
+    const data: DownloadFailedEvent = {
+      type: "failed",
+      data: { id, error: String(err) },
+    };
+    this.io.emit(DOWNLOAD_EVENT_NAME, data);
   };
 
   onDownloadStart = async (id: number) => {
@@ -67,5 +74,10 @@ export default class SocketIO implements Vendor {
 
   onDownloadStop = async (id: number) => {
     this.logger.info(`download task: ${id} stop`);
+    const data: DownloadStoppedEvent = {
+      type: "stopped",
+      data: { id },
+    };
+    this.io.emit(DOWNLOAD_EVENT_NAME, data);
   };
 }
