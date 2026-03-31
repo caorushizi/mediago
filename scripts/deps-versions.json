@@ -7,8 +7,7 @@
       "darwin-arm64": "ffmpeg-darwin-arm64.gz",
       "linux-x64": "ffmpeg-linux-x64.gz",
       "linux-arm64": "ffmpeg-linux-arm64.gz",
-      "win32-x64": "ffmpeg-win32-x64.gz",
-      "win32-arm64": "ffmpeg-win32-arm64.gz"
+      "win32-x64": "ffmpeg-win32-x64.gz"
     },
     "binaryName": {
       "default": "ffmpeg",
@@ -17,14 +16,14 @@
   },
   "N_m3u8DL-RE": {
     "repo": "nilaoda/N_m3u8DL-RE",
-    "version": "v0.3.2-beta",
+    "version": "v0.3.0-beta",
     "assets": {
-      "darwin-x64": "N_m3u8DL-RE_Beta_osx-x64_20250524.tar.gz",
-      "darwin-arm64": "N_m3u8DL-RE_Beta_osx-arm64_20250524.tar.gz",
-      "linux-x64": "N_m3u8DL-RE_Beta_linux-x64_20250524.tar.gz",
-      "linux-arm64": "N_m3u8DL-RE_Beta_linux-arm64_20250524.tar.gz",
-      "win32-x64": "N_m3u8DL-RE_Beta_win-x64_20250524.zip",
-      "win32-arm64": "N_m3u8DL-RE_Beta_win-arm64_20250524.zip"
+      "darwin-x64": "N_m3u8DL-RE_v0.3.0-beta_osx-x64_20241203.tar.gz",
+      "darwin-arm64": "N_m3u8DL-RE_v0.3.0-beta_osx-arm64_20241203.tar.gz",
+      "linux-x64": "N_m3u8DL-RE_v0.3.0-beta_linux-x64_20241203.tar.gz",
+      "linux-arm64": "N_m3u8DL-RE_v0.3.0-beta_linux-arm64_20241203.tar.gz",
+      "win32-x64": "N_m3u8DL-RE_v0.3.0-beta_win-x64_20241203.zip",
+      "win32-arm64": "N_m3u8DL-RE_v0.3.0-beta_win-arm64_20241203.zip"
     },
     "binaryName": {
       "default": "N_m3u8DL-RE",
@@ -59,12 +58,12 @@
     "repo": "GopeedLab/gopeed",
     "version": "v1.6.5",
     "assets": {
-      "darwin-x64": "Gopeed-v1.6.5-macos-amd64.zip",
-      "darwin-arm64": "Gopeed-v1.6.5-macos-arm64.zip",
-      "linux-x64": "Gopeed-v1.6.5-linux-amd64.zip",
-      "linux-arm64": "Gopeed-v1.6.5-linux-arm64.zip",
-      "win32-x64": "Gopeed-v1.6.5-windows-amd64.zip",
-      "win32-arm64": "Gopeed-v1.6.5-windows-arm64.zip"
+      "darwin-x64": "gopeed-web-v1.6.5-macos-amd64.zip",
+      "darwin-arm64": "gopeed-web-v1.6.5-macos-arm64.zip",
+      "linux-x64": "gopeed-web-v1.6.5-linux-amd64.zip",
+      "linux-arm64": "gopeed-web-v1.6.5-linux-arm64.zip",
+      "win32-x64": "gopeed-web-v1.6.5-windows-amd64.zip",
+      "win32-arm64": "gopeed-web-v1.6.5-windows-arm64.zip"
     },
     "binaryName": {
       "default": "gopeed",

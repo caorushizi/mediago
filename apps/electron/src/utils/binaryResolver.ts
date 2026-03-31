@@ -7,11 +7,11 @@ const ext = isWindows ? ".exe" : "";
 const isDev = !app.isPackaged;
 
 /**
- * Returns the monorepo root (two levels up from apps/electron/).
- * Only meaningful in development mode.
+ * Returns the monorepo root.
+ * At runtime __dirname = apps/electron/build/, so 3 levels up = monorepo root.
  */
 function getMonorepoRoot(): string {
-  return path.resolve(__dirname, "..", "..", "..", "..");
+  return path.resolve(__dirname, "..", "..", "..");
 }
 
 /**
@@ -101,10 +101,6 @@ export function resolvePlayerBinary(): { playerBin: string } {
   }
 
   return {
-    playerBin: path.join(
-      process.resourcesPath,
-      "bin",
-      `mediago-player${ext}`,
-    ),
+    playerBin: path.join(process.resourcesPath, "bin", `mediago-player${ext}`),
   };
 }

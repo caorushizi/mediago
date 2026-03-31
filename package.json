@@ -53,6 +53,7 @@
     "oxfmt": "^0.42.0",
     "oxlint": "^1.57.0",
     "oxlint-tsgolint": "^0.17.4",
+    "tsx": "^4.20.6",
     "turbo": "^2.6.0",
     "typescript": "^6.0.2"
   }

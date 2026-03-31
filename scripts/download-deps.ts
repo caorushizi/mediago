@@ -9,16 +9,28 @@
  *   tsx scripts/download-deps.ts --all     # Download for all platforms
  */
 
-import { createWriteStream, existsSync, chmodSync, mkdirSync } from "node:fs";
+import {
+  createWriteStream,
+  createReadStream,
+  existsSync,
+  chmodSync,
+  mkdirSync,
+  readFileSync,
+} from "node:fs";
 import { rename, unlink, readdir, rm } from "node:fs/promises";
-import { createReadStream } from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { pipeline } from "node:stream/promises";
 import { createGunzip } from "node:zlib";
 import { execSync } from "node:child_process";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // Load tool definitions
-import depsVersions from "./deps-versions.json";
+const depsVersions = JSON.parse(
+  readFileSync(path.join(__dirname, "deps-versions.json"), "utf-8"),
+);
 
 // ============================================================
 // Types
@@ -52,7 +64,7 @@ function getCurrentPlatformKey(): string {
   const arch = ARCH_MAP[process.arch];
   if (!platform || !arch) {
     throw new Error(
-      `Unsupported platform: ${process.platform}-${process.arch}`
+      `Unsupported platform: ${process.platform}-${process.arch}`,
     );
   }
   return `${platform}-${arch}`;
@@ -75,7 +87,10 @@ function getBinaryName(tool: ToolDef, platformKey: string): string {
     : tool.binaryName.default;
 }
 
-function getExtractBinaryName(tool: ToolDef, platformKey: string): string | undefined {
+function getExtractBinaryName(
+  tool: ToolDef,
+  platformKey: string,
+): string | undefined {
   if (!tool.extractBinary) return undefined;
   const isWin = platformKey.startsWith("win32");
   return isWin && tool.extractBinary.win32
@@ -98,7 +113,9 @@ async function downloadFile(url: string, dest: string): Promise<void> {
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to download ${url}: ${response.status} ${response.statusText}`);
+    throw new Error(
+      `Failed to download ${url}: ${response.status} ${response.statusText}`,
+    );
   }
 
   const fileStream = createWriteStream(dest);
@@ -117,14 +134,17 @@ async function extractZip(zipPath: string, outputDir: string): Promise<void> {
   execSync(`unzip -o "${zipPath}" -d "${outputDir}"`, { stdio: "pipe" });
 }
 
-async function extractTarGz(tarGzPath: string, outputDir: string): Promise<void> {
+async function extractTarGz(
+  tarGzPath: string,
+  outputDir: string,
+): Promise<void> {
   execSync(`tar -xzf "${tarGzPath}" -C "${outputDir}"`, { stdio: "pipe" });
 }
 
 async function downloadTool(
   toolName: string,
   tool: ToolDef,
-  platformKey: string
+  platformKey: string,
 ): Promise<void> {
   const assetName = tool.assets[platformKey];
   if (!assetName) {
@@ -164,11 +184,16 @@ async function downloadTool(
     await extractTarGz(tempFile, extractDir);
 
     // Find the binary in extracted directory
-    const found = await findBinaryInDir(extractDir, extractBinaryName || binaryName);
+    const found = await findBinaryInDir(
+      extractDir,
+      extractBinaryName || binaryName,
+    );
     if (found) {
       await rename(found, binaryPath);
     } else {
-      throw new Error(`Could not find ${extractBinaryName || binaryName} in extracted archive`);
+      throw new Error(
+        `Could not find ${extractBinaryName || binaryName} in extracted archive`,
+      );
     }
 
     await rm(extractDir, { recursive: true, force: true });
@@ -180,11 +205,16 @@ async function downloadTool(
     await extractZip(tempFile, extractDir);
 
     // Find the binary in extracted directory
-    const found = await findBinaryInDir(extractDir, extractBinaryName || binaryName);
+    const found = await findBinaryInDir(
+      extractDir,
+      extractBinaryName || binaryName,
+    );
     if (found) {
       await rename(found, binaryPath);
     } else {
-      throw new Error(`Could not find ${extractBinaryName || binaryName} in extracted archive`);
+      throw new Error(
+        `Could not find ${extractBinaryName || binaryName} in extracted archive`,
+      );
     }
 
     await rm(extractDir, { recursive: true, force: true });
@@ -206,7 +236,10 @@ async function downloadTool(
   console.log(`  ✓ ${toolName} ready for ${platformKey}`);
 }
 
-async function findBinaryInDir(dir: string, name: string): Promise<string | null> {
+async function findBinaryInDir(
+  dir: string,
+  name: string,
+): Promise<string | null> {
   const entries = await readdir(dir, { withFileTypes: true, recursive: true });
   for (const entry of entries) {
     if (entry.isFile() && entry.name === name) {
@@ -225,7 +258,7 @@ async function main() {
   const platforms = isAll ? getAllPlatformKeys() : [getCurrentPlatformKey()];
 
   console.log(
-    `Downloading third-party tools for ${isAll ? "all platforms" : platforms[0]}...`
+    `Downloading third-party tools for ${isAll ? "all platforms" : platforms[0]}...`,
   );
 
   const tools = depsVersions as Record<string, ToolDef>;
@@ -236,7 +269,9 @@ async function main() {
       try {
         await downloadTool(toolName, tool, platformKey);
       } catch (err) {
-        console.error(`  ✗ Failed to download ${toolName} for ${platformKey}: ${err}`);
+        console.error(
+          `  ✗ Failed to download ${toolName} for ${platformKey}: ${err}`,
+        );
       }
     }
   }
