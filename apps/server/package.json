@@ -8,8 +8,6 @@
     "type:check": "tsc --noEmit"
   },
   "dependencies": {
-    "@mediago/core": "0.0.13",
-    "@mediago/deps": "0.0.6",
     "@mediago/service-runner": "^0.0.1",
     "reflect-metadata": "^0.2.2"
   },

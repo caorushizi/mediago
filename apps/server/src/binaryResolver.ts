@@ -1,58 +1,23 @@
 import os from "node:os";
 import path from "node:path";
 
-/**
- * Detects the current platform suffix used in @mediago/* package names.
- * e.g. "darwin-arm64", "win32-x64", "linux-x64"
- */
-function getPlatformSuffix(): string {
-  const platform = os.platform();
-  const arch = os.arch();
-
-  const supported: Record<string, string[]> = {
-    darwin: ["x64", "arm64"],
-    linux: ["x64", "arm64"],
-    win32: ["x64", "arm64"],
-  };
-
-  const archList = supported[platform];
-  if (!archList || !archList.includes(arch)) {
-    throw new Error(`Unsupported platform: ${platform}-${arch}`);
-  }
-
-  return `${platform}-${arch}`;
-}
-
-/**
- * Resolves a platform-specific package directory by using the root package
- * as a resolution base.
- */
-function resolvePlatformPackageDir(
-  rootPackage: string,
-  platformPackage: string,
-): string {
-  const rootDir = path.dirname(require.resolve(`${rootPackage}/package.json`));
-
-  let pkgPath = require.resolve(`${platformPackage}/package.json`, {
-    paths: [rootDir],
-  });
-
-  if (
-    process.env.NODE_ENV === "production" &&
-    process.env.APP_TARGET === "electron"
-  ) {
-    pkgPath = pkgPath.replace("app.asar", "app.asar.unpacked");
-  }
-
-  return path.dirname(pkgPath);
-}
-
-const suffix = getPlatformSuffix();
 const isWindows = os.platform() === "win32";
+const ext = isWindows ? ".exe" : "";
+
+/**
+ * Returns the monorepo root (two levels up from apps/server/).
+ */
+function getMonorepoRoot(): string {
+  return path.resolve(__dirname, "..", "..", "..");
+}
 
 /**
  * Resolves the mediago-core binary and config.json paths.
- * Override with MEDIAGO_CORE_BIN env var (path to the binary).
+ *
+ * Uses monorepo paths: apps/core/bin/mediago-core
+ * In Docker: the binary is placed at /usr/local/bin/mediago-core
+ *
+ * Override with MEDIAGO_CORE_BIN env var.
  */
 export function resolveCoreBinaries(): {
   coreBin: string;
@@ -64,21 +29,19 @@ export function resolveCoreBinaries(): {
     return { coreBin, coreConfig };
   }
 
-  const pkgDir = resolvePlatformPackageDir(
-    "@mediago/core",
-    `@mediago/core-${suffix}`,
-  );
-  const binaryName = `mediago-core${isWindows ? ".exe" : ""}`;
-
+  const coreDir = path.join(getMonorepoRoot(), "apps", "core");
   return {
-    coreBin: path.resolve(pkgDir, binaryName),
-    coreConfig: path.resolve(pkgDir, "config.json"),
+    coreBin: path.join(coreDir, "bin", `mediago-core${ext}`),
+    coreConfig: path.join(coreDir, "configs", "config.json"),
   };
 }
 
 /**
  * Resolves paths to helper binaries: ffmpeg, N_m3u8DL-RE, BBDown, gopeed.
- * Override with MEDIAGO_DEPS_DIR env var (path to directory containing binaries).
+ *
+ * Uses .deps/{platform}-{arch}/ directory.
+ *
+ * Override with MEDIAGO_DEPS_DIR env var.
  */
 export function resolveDepsBinaries(): {
   ffmpeg: string;
@@ -91,39 +54,14 @@ export function resolveDepsBinaries(): {
   if (process.env.MEDIAGO_DEPS_DIR) {
     binDir = process.env.MEDIAGO_DEPS_DIR;
   } else {
-    const pkgDir = resolvePlatformPackageDir(
-      "@mediago/deps",
-      `@mediago/deps-${suffix}`,
-    );
-    binDir = path.resolve(pkgDir, "bin");
+    const platformKey = `${os.platform()}-${os.arch()}`;
+    binDir = path.join(getMonorepoRoot(), ".deps", platformKey);
   }
-
-  const ext = isWindows ? ".exe" : "";
 
   return {
     ffmpeg: path.resolve(binDir, `ffmpeg${ext}`),
     n_m3u8dl_re: path.resolve(binDir, `N_m3u8DL-RE${ext}`),
     bbdown: path.resolve(binDir, `BBDown${ext}`),
     gopeed: path.resolve(binDir, `gopeed${ext}`),
-  };
-}
-
-/**
- * Resolves the mediago-player binary path.
- * Override with MEDIAGO_PLAYER_BIN env var (path to the binary).
- */
-export function resolvePlayerBinary(): { playerBin: string } {
-  if (process.env.MEDIAGO_PLAYER_BIN) {
-    return { playerBin: process.env.MEDIAGO_PLAYER_BIN };
-  }
-
-  const pkgDir = resolvePlatformPackageDir(
-    "@mediago/player",
-    `@mediago/player-${suffix}`,
-  );
-  const binaryName = `mediago-player${isWindows ? ".exe" : ""}`;
-
-  return {
-    playerBin: path.resolve(pkgDir, "bin", binaryName),
   };
 }
