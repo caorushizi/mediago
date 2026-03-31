@@ -5,29 +5,29 @@ import (
 	"caorushizi.cn/mediago/internal/db/repo"
 )
 
-// ConversionService 转换记录业务逻辑层。
+// ConversionService is the business logic layer for conversion records.
 type ConversionService struct {
 	repo *repo.ConversionRepository
 }
 
-// NewConversionService 创建 ConversionService。
+// NewConversionService creates a ConversionService.
 func NewConversionService(repo *repo.ConversionRepository) *ConversionService {
 	return &ConversionService{repo: repo}
 }
 
-// AddConversionInput 添加转换记录的输入。
+// AddConversionInput holds the input for adding a conversion record.
 type AddConversionInput struct {
 	Name *string `json:"name"`
 	Path string  `json:"path"`
 }
 
-// ConversionPaginatedResult 分页结果。
+// ConversionPaginatedResult holds the paginated result.
 type ConversionPaginatedResult struct {
 	Total int64            `json:"total"`
 	List  []*db.Conversion `json:"list"`
 }
 
-// GetConversions 分页获取转换记录。
+// GetConversions retrieves conversion records with pagination.
 func (s *ConversionService) GetConversions(current, pageSize int) (*ConversionPaginatedResult, error) {
 	result, err := s.repo.FindWithPagination(current, pageSize)
 	if err != nil {
@@ -39,7 +39,7 @@ func (s *ConversionService) GetConversions(current, pageSize int) (*ConversionPa
 	}, nil
 }
 
-// AddConversion 添加转换记录。
+// AddConversion adds a conversion record.
 func (s *ConversionService) AddConversion(input *AddConversionInput) (*db.Conversion, error) {
 	conv := &db.Conversion{
 		Name: input.Name,
@@ -48,12 +48,12 @@ func (s *ConversionService) AddConversion(input *AddConversionInput) (*db.Conver
 	return s.repo.Create(conv)
 }
 
-// DeleteConversion 删除转换记录。
+// DeleteConversion removes a conversion record.
 func (s *ConversionService) DeleteConversion(id int64) error {
 	return s.repo.Delete(id)
 }
 
-// FindByIDOrFail 根据 ID 查找转换记录，不存在时返回错误。
+// FindByIDOrFail looks up a conversion record by ID, returning an error if not found.
 func (s *ConversionService) FindByIDOrFail(id int64) (*db.Conversion, error) {
 	return s.repo.FindByIDOrFail(id)
 }

@@ -1,4 +1,4 @@
-// Package parser 控制台输出解析
+// Package parser parses console output
 package parser
 
 import (
@@ -9,15 +9,15 @@ import (
 	"caorushizi.cn/mediago/internal/core/schema"
 )
 
-// ParseState 解析状态
+// ParseState holds the current parse state
 type ParseState struct {
-	Ready   bool    // 是否已进入 ready 状态
-	Percent float64 // 当前进度百分比
-	Speed   string  // 当前下载速度
-	IsLive  bool    // 是否为直播
+	Ready   bool    // whether the ready state has been entered
+	Percent float64 // current progress percentage
+	Speed   string  // current download speed
+	IsLive  bool    // whether this is a live stream
 }
 
-// LineParser 控制台输出解析器
+// LineParser is a console output parser
 type LineParser struct {
 	percentReg *regexp.Regexp
 	speedReg   *regexp.Regexp
@@ -26,18 +26,18 @@ type LineParser struct {
 	isLiveReg  *regexp.Regexp
 }
 
-// 处理退格符，返回真实显示的字符串
+// processBackspaces processes backspace characters and returns the visually displayed string
 func processBackspaces(s string) string {
 	result := []rune{}
 
 	for _, ch := range s {
 		if ch == '\b' {
-			// 遇到退格符，删除最后一个字符
+			// Backspace character: remove the last character
 			if len(result) > 0 {
 				result = result[:len(result)-1]
 			}
 		} else {
-			// 普通字符，添加到结果
+			// Regular character: append to result
 			result = append(result, ch)
 		}
 	}
@@ -45,7 +45,7 @@ func processBackspaces(s string) string {
 	return string(result)
 }
 
-// NewLineParser 创建解析器
+// NewLineParser creates a parser
 func NewLineParser(cr schema.ConsoleReg) (*LineParser, error) {
 	lp := &LineParser{}
 	var err error
@@ -84,24 +84,24 @@ func NewLineParser(cr schema.ConsoleReg) (*LineParser, error) {
 	return lp, nil
 }
 
-// Parse 解析一行控制台输出，返回事件类型和错误信息
+// Parse parses a line of console output and returns the event type and error message
 func (lp *LineParser) Parse(line string, state *ParseState) (event string, errMsg string) {
-	// 错误行
+	// Error line
 	if lp.errorReg != nil && lp.errorReg.MatchString(line) {
 		return "", line
 	}
 
-	// 是否直播
+	// Check if it is a live stream
 	if lp.isLiveReg != nil && lp.isLiveReg.MatchString(line) {
 		state.IsLive = true
 	}
 
-	// 检测开始标识，进入 ready 状态
+	// Detect start marker and enter the ready state
 	if !state.Ready && lp.startReg != nil && lp.startReg.MatchString(line) {
 		return "ready", ""
 	}
 
-	// 解析进度百分比（记录是否匹配到）
+	// Parse progress percentage (track whether a match was found)
 	matchedPercent := false
 	if lp.percentReg != nil {
 		line = processBackspaces(line)
@@ -114,7 +114,7 @@ func (lp *LineParser) Parse(line string, state *ParseState) (event string, errMs
 		}
 	}
 
-	// 解析下载速度（记录是否匹配到）
+	// Parse download speed (track whether a match was found)
 	matchedSpeed := false
 	if lp.speedReg != nil {
 		matches := lp.speedReg.FindStringSubmatch(line)
@@ -124,7 +124,7 @@ func (lp *LineParser) Parse(line string, state *ParseState) (event string, errMs
 		}
 	}
 
-	// 若未 ready，但已解析到进度或速度，自动进入 ready（即便配置了 start 但未命中）
+	// If not yet ready but progress or speed was parsed, automatically enter ready (even if start was configured but not matched)
 	if !state.Ready && (matchedPercent || matchedSpeed) {
 		state.Ready = true
 		return "ready", ""

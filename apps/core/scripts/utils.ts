@@ -1,60 +1,69 @@
-import { exec as execCallback, spawn } from 'child_process';
-import { promisify } from 'util';
-import { existsSync, mkdirSync, rmSync, cpSync, chmodSync, writeFileSync, readFileSync } from 'fs';
-import { join, basename } from 'path';
-import { platform as osPlatform } from 'os';
-import { config, releaseConfig, templateConfig, npmConfig } from './config';
+import { exec as execCallback, spawn } from "node:child_process";
+import { promisify } from "node:util";
+import {
+  existsSync,
+  mkdirSync,
+  rmSync,
+  cpSync,
+  writeFileSync,
+  readFileSync,
+} from "node:fs";
+import { join } from "node:path";
+import { platform as osPlatform } from "node:os";
+import { config, templateConfig, npmConfig } from "./config";
 
 const exec = promisify(execCallback);
 
 // ============================================================
-// 工具函数 (Utility Functions)
+// Utility Functions
 // ============================================================
 
 /**
- * 获取版本号
- * 优先级：环境变量 VERSION > Git Tag > 'dev'
+ * Get version number
+ * Priority: environment variable VERSION > Git Tag > 'dev'
  *
  * @example
- * # 使用环境变量指定版本
+ * # Specify version via environment variable
  * VERSION=1.2.3 gulp npmBuild
  *
- * # 或在 package.json 的 scripts 中
+ * # Or in package.json scripts
  * "npm:build": "VERSION=1.2.3 gulp npmBuild"
  */
 export async function getVersion(): Promise<string> {
-  // 1. 优先使用环境变量
+  // 1. Prefer environment variable
   if (process.env.VERSION) {
     console.log(`📌 使用指定版本: ${process.env.VERSION}`);
     return process.env.VERSION;
   }
 
-  // 2. 尝试从 git 获取
+  // 2. Try to get from git
   try {
-    const { stdout } = await exec('git describe --tags --always --dirty 2>/dev/null');
+    const { stdout } = await exec(
+      "git describe --tags --always --dirty 2>/dev/null",
+    );
     const version = stdout.trim();
     if (version) {
       console.log(`📌 使用 Git 版本: ${version}`);
       return version;
     }
   } catch {
-    // Git 命令失败，继续
+    // Git command failed, continue
   }
 
-  // 3. 默认版本
-  console.log('⚠️  未找到版本信息，使用默认版本: dev');
-  return 'dev';
+  // 3. Default version
+  console.log("⚠️  未找到版本信息，使用默认版本: dev");
+  return "dev";
 }
 
 /**
- * 获取可执行文件扩展名
+ * Get executable file extension
  */
 export function getExeExt(os: string = osPlatform()): string {
-  return os === 'win32' ? '.exe' : '';
+  return os === "win32" ? ".exe" : "";
 }
 
 /**
- * 创建目录
+ * Create directory
  */
 export function mkdir(dir: string): void {
   if (!existsSync(dir)) {
@@ -63,7 +72,7 @@ export function mkdir(dir: string): void {
 }
 
 /**
- * 递归删除文件或目录
+ * Recursively delete a file or directory
  */
 export function rmrf(path: string): void {
   if (existsSync(path)) {
@@ -72,21 +81,24 @@ export function rmrf(path: string): void {
 }
 
 /**
- * 复制文件或目录
+ * Copy a file or directory
  */
 export function copyFile(src: string, dst: string): void {
   cpSync(src, dst, { recursive: true });
 }
 
 /**
- * 渲染模板文件
+ * Render a template file
  */
-export function renderTemplate(templateName: string, context: Record<string, string> = {}): string {
+export function renderTemplate(
+  templateName: string,
+  context: Record<string, string> = {},
+): string {
   const templatePath = join(templateConfig.dir, templateName);
-  let template = readFileSync(templatePath, 'utf-8');
+  let template = readFileSync(templatePath, "utf-8");
 
   for (const [key, value] of Object.entries(context)) {
-    const pattern = new RegExp(`{{\\s*${key}\\s*}}`, 'g');
+    const pattern = new RegExp(`{{\\s*${key}\\s*}}`, "g");
     template = template.replace(pattern, value);
   }
 
@@ -94,79 +106,86 @@ export function renderTemplate(templateName: string, context: Record<string, str
 }
 
 /**
- * 渲染并解析 JSON 模板
+ * Render and parse a JSON template
  */
-export function renderJsonTemplate<T = any>(templateName: string, context: Record<string, string> = {}): T {
+export function renderJsonTemplate<T = any>(
+  templateName: string,
+  context: Record<string, string> = {},
+): T {
   return JSON.parse(renderTemplate(templateName, context)) as T;
 }
 
 /**
- * 缩进多行文本
+ * Indent multi-line text
  */
 export function indentMultiline(content: string, spaces: number): string {
-  const padding = ' '.repeat(spaces);
+  const padding = " ".repeat(spaces);
   return content
-    .split('\n')
+    .split("\n")
     .map((line, index) => (index === 0 ? line : padding + line))
-    .join('\n');
+    .join("\n");
 }
 
 /**
- * 解析 release 目录下的路径
+ * Resolve a path under the release directory
  */
 export function resolveReleasePath(...segments: string[]): string {
   return join(config.RELEASE_DIR, ...segments);
 }
 
 /**
- * 解析 npm scope 目录下的路径
+ * Resolve a path under the npm scope directory
  */
 export function resolveNpmScopePath(...segments: string[]): string {
   return join(npmConfig.rootDir, npmConfig.scope, ...segments);
 }
 
 /**
- * 写入 JSON 文件
+ * Write a JSON file
  */
 export function writeJsonFile(filePath: string, data: any): void {
-  writeFileSync(filePath, JSON.stringify(data, null, 2) + '\n');
+  writeFileSync(filePath, JSON.stringify(data, null, 2) + "\n");
 }
 
 /**
- * 写入文本文件
+ * Write a text file
  */
 export function writeTextFile(filePath: string, content: string): void {
-  writeFileSync(filePath, content, 'utf-8');
+  writeFileSync(filePath, content, "utf-8");
 }
 
 /**
- * 运行命令（实时输出）
- * @param command 要执行的命令
- * @param description 命令描述（可选）
- * @param env 环境变量（可选）
+ * Run a command (with live output)
+ * @param command The command to execute
+ * @param description Command description (optional)
+ * @param env Environment variables (optional)
  */
-export async function runCommand(command: string, description?: string, env?: Record<string, string>): Promise<void> {
+export async function runCommand(
+  command: string,
+  description?: string,
+  env?: Record<string, string>,
+): Promise<void> {
   if (description) {
     console.log(`\n▶ ${description}: ${command}`);
   }
 
   return new Promise((resolve, reject) => {
-    // 使用 shell 模式执行命令，以支持管道、环境变量等
+    // Use shell mode to execute the command, supporting pipes, env vars, etc.
     const child = spawn(command, {
       shell: true,
-      stdio: 'inherit', // 直接继承父进程的 stdio，实现实时输出
+      stdio: "inherit", // Inherit parent process stdio directly for live output
       env: {
         ...process.env,
-        ...env
+        ...env,
       },
     });
 
-    child.on('error', (error) => {
+    child.on("error", (error) => {
       console.error(`执行命令失败: ${error.message}`);
       reject(error);
     });
 
-    child.on('close', (code) => {
+    child.on("close", (code) => {
       if (code !== 0) {
         const error = new Error(`命令执行失败，退出码: ${code}`);
         reject(error);
@@ -176,4 +195,3 @@ export async function runCommand(command: string, description?: string, env?: Re
     });
   });
 }
-

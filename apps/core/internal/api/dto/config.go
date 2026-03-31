@@ -1,14 +1,14 @@
 package dto
 
-// UpdateConfigRequest 更新配置请求（部分更新）
+// UpdateConfigRequest Update config request (partial update)
 type UpdateConfigRequest = map[string]any
 
-// UpdateConfigResponse 更新配置响应
+// UpdateConfigResponse Update config response
 type UpdateConfigResponse struct {
-	Message string `json:"message" example:"Config updated"` // 响应消息
+	Message string `json:"message" example:"Config updated"` // Response message
 }
 
-// SetKeyRequest 设置单个配置项
+// SetKeyRequest Set a single config item
 type SetKeyRequest struct {
-	Value any `json:"value"` // 配置值
+	Value any `json:"value"` // Config value
 }

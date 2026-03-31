@@ -1,5 +1,5 @@
-// Package logger 提供日志管理功能
-// 支持同时输出到控制台和文件，自动日志轮转
+// Package logger provides log management functionality.
+// Supports concurrent output to console and file with automatic log rotation.
 package logger
 
 import (
@@ -10,57 +10,57 @@ import (
 )
 
 var (
-	// Logger 全局日志实例
+	// Logger is the global logger instance.
 	Logger *zap.Logger
-	// Sugar 便捷日志实例
+	// Sugar is the convenience sugared logger instance.
 	Sugar *zap.SugaredLogger
 )
 
-// Config 日志配置
+// Config holds the logger configuration.
 type Config struct {
-	// Level 日志级别: debug, info, warn, error
+	// Level is the log level: debug, info, warn, error
 	Level string
-	// LogDir 日志文件存储目录
+	// LogDir is the directory where log files are stored.
 	LogDir string
-	// LogFileName 日志文件名
+	// LogFileName is the name of the log file.
 	LogFileName string
-	// MaxSize 单个日志文件最大大小(MB)
+	// MaxSize is the maximum size of a single log file in MB.
 	MaxSize int
-	// MaxBackups 保留旧日志文件的最大数量
+	// MaxBackups is the maximum number of old log files to retain.
 	MaxBackups int
-	// MaxAge 保留旧日志文件的最大天数
+	// MaxAge is the maximum number of days to retain old log files.
 	MaxAge int
-	// Compress 是否压缩旧日志文件
+	// Compress indicates whether to compress old log files.
 	Compress bool
-	// Console 是否输出到控制台
+	// Console indicates whether to output logs to the console.
 	Console bool
 }
 
-// DefaultConfig 返回默认配置
+// DefaultConfig returns the default logger configuration.
 func DefaultConfig() Config {
 	return Config{
 		Level:       "info",
 		LogDir:      "./logs",
 		LogFileName: "mediago-core.log",
 		MaxSize:     100,  // 100MB
-		MaxBackups:  5,    // 保留5个备份
-		MaxAge:      30,   // 30天
-		Compress:    true, // 压缩旧日志
-		Console:     true, // 输出到控制台
+		MaxBackups:  5,    // retain 5 backups
+		MaxAge:      30,   // 30 days
+		Compress:    true, // compress old logs
+		Console:     true, // output to console
 	}
 }
 
-// Init 初始化日志系统
+// Init initializes the logging system.
 func Init(cfg Config) error {
-	// 创建日志目录
+	// Create the log directory
 	if err := os.MkdirAll(cfg.LogDir, 0755); err != nil {
 		return err
 	}
 
-	// 解析日志级别
+	// Parse the log level
 	level := parseLevel(cfg.Level)
 
-	// 配置编码器
+	// Configure the encoder
 	encoderConfig := zapcore.EncoderConfig{
 		TimeKey:        "time",
 		LevelKey:       "level",
@@ -69,37 +69,37 @@ func Init(cfg Config) error {
 		MessageKey:     "msg",
 		StacktraceKey:  "stacktrace",
 		LineEnding:     zapcore.DefaultLineEnding,
-		EncodeLevel:    zapcore.CapitalColorLevelEncoder, // 彩色级别输出
-		EncodeTime:     zapcore.ISO8601TimeEncoder,       // ISO8601 时间格式
+		EncodeLevel:    zapcore.CapitalColorLevelEncoder, // colored level output
+		EncodeTime:     zapcore.ISO8601TimeEncoder,       // ISO8601 time format
 		EncodeDuration: zapcore.SecondsDurationEncoder,
-		EncodeCaller:   zapcore.ShortCallerEncoder, // 短路径格式
+		EncodeCaller:   zapcore.ShortCallerEncoder, // short path format
 	}
 
-	// 文件编码器配置(不使用彩色)
+	// File encoder config (no color)
 	fileEncoderConfig := encoderConfig
 	fileEncoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
 
-	// 控制台编码器(彩色输出)
+	// Console encoder (colored output)
 	consoleEncoder := zapcore.NewConsoleEncoder(encoderConfig)
-	// 文件编码器(JSON格式)
+	// File encoder (JSON format)
 	fileEncoder := zapcore.NewJSONEncoder(fileEncoderConfig)
 
-	// 配置日志写入：默认按天拆分
+	// Configure log writer: split by day by default
 	fileWriter := zapcore.AddSync(newDailyRotateWriter(cfg))
 
-	// 创建多个输出核心
+	// Create multiple output cores
 	var cores []zapcore.Core
 
-	// 文件输出核心
+	// File output core
 	cores = append(cores, zapcore.NewCore(fileEncoder, fileWriter, level))
 
-	// 控制台输出核心
+	// Console output core
 	if cfg.Console {
 		consoleWriter := zapcore.Lock(os.Stdout)
 		cores = append(cores, zapcore.NewCore(consoleEncoder, consoleWriter, level))
 	}
 
-	// 创建 logger
+	// Create the logger
 	core := zapcore.NewTee(cores...)
 	Logger = zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1))
 	Sugar = Logger.Sugar()
@@ -107,7 +107,7 @@ func Init(cfg Config) error {
 	return nil
 }
 
-// parseLevel 解析日志级别
+// parseLevel parses a log level string into a zapcore.Level.
 func parseLevel(levelStr string) zapcore.Level {
 	switch levelStr {
 	case "debug":
@@ -123,7 +123,7 @@ func parseLevel(levelStr string) zapcore.Level {
 	}
 }
 
-// Sync 刷新日志缓冲区
+// Sync flushes any buffered log entries.
 func Sync() {
 	if Logger != nil {
 		_ = Logger.Sync()
@@ -133,7 +133,7 @@ func Sync() {
 	}
 }
 
-// 便捷方法 - 结构化日志
+// Convenience methods - structured logging
 func Debug(msg string, fields ...zap.Field) {
 	Logger.Debug(msg, fields...)
 }
@@ -154,7 +154,7 @@ func Fatal(msg string, fields ...zap.Field) {
 	Logger.Fatal(msg, fields...)
 }
 
-// 便捷方法 - 格式化日志
+// Convenience methods - formatted logging
 func Debugf(template string, args ...interface{}) {
 	Sugar.Debugf(template, args...)
 }

@@ -1,5 +1,5 @@
 /**
- * 适用于 m3u8 视频下载的浮动按钮
+ * Floating button for m3u8 video downloads
  */
 import { css, html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";

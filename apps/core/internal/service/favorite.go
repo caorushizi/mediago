@@ -11,29 +11,29 @@ import (
 // ErrURLAlreadyExists is returned when attempting to add a duplicate favorite URL.
 var ErrURLAlreadyExists = errors.New("url_already_exists")
 
-// FavoriteService 收藏夹业务逻辑层。
+// FavoriteService is the business logic layer for favorites.
 type FavoriteService struct {
 	repo *repo.FavoriteRepository
 }
 
-// NewFavoriteService 创建 FavoriteService。
+// NewFavoriteService creates a FavoriteService.
 func NewFavoriteService(repo *repo.FavoriteRepository) *FavoriteService {
 	return &FavoriteService{repo: repo}
 }
 
-// AddFavoriteInput 添加收藏的输入。
+// AddFavoriteInput holds the input for adding a favorite.
 type AddFavoriteInput struct {
 	Title string  `json:"title"`
 	URL   string  `json:"url"`
 	Icon  *string `json:"icon"`
 }
 
-// GetFavorites 获取所有收藏（按创建时间降序）。
+// GetFavorites retrieves all favorites (sorted by creation time descending).
 func (s *FavoriteService) GetFavorites() ([]*db.Favorite, error) {
 	return s.repo.FindAll("DESC")
 }
 
-// AddFavorite 添加收藏（检查 URL 唯一性）。
+// AddFavorite adds a favorite (with URL uniqueness check).
 func (s *FavoriteService) AddFavorite(input *AddFavoriteInput) (*db.Favorite, error) {
 	existing, err := s.repo.FindByURL(input.URL)
 	if err != nil {
@@ -51,19 +51,19 @@ func (s *FavoriteService) AddFavorite(input *AddFavoriteInput) (*db.Favorite, er
 	return s.repo.Create(fav)
 }
 
-// RemoveFavorite 删除收藏。
+// RemoveFavorite removes a favorite.
 func (s *FavoriteService) RemoveFavorite(id int64) error {
 	return s.repo.Delete(id)
 }
 
-// FavoriteExportItem 导出的收藏项。
+// FavoriteExportItem is a favorite entry for export.
 type FavoriteExportItem struct {
 	Title string  `json:"title"`
 	URL   string  `json:"url"`
 	Icon  *string `json:"icon,omitempty"`
 }
 
-// ExportFavorites 导出收藏为 JSON 字符串。
+// ExportFavorites exports favorites as a JSON string.
 func (s *FavoriteService) ExportFavorites() (string, error) {
 	favs, err := s.repo.FindAll("DESC")
 	if err != nil {
@@ -86,7 +86,7 @@ func (s *FavoriteService) ExportFavorites() (string, error) {
 	return string(data), nil
 }
 
-// ImportFavorites 批量导入收藏。
+// ImportFavorites imports favorites in bulk.
 func (s *FavoriteService) ImportFavorites(inputs []*AddFavoriteInput) error {
 	favs := make([]*db.Favorite, 0, len(inputs))
 	for _, input := range inputs {

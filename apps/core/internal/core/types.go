@@ -1,9 +1,9 @@
-// Package core 包含下载系统的核心类型定义
+// Package core contains the core type definitions for the download system
 package core
 
 import "context"
 
-// DownloadType 下载类型枚举
+// DownloadType is the download type enum
 type DownloadType string
 
 const (
@@ -12,71 +12,71 @@ const (
 	TypeDirect   DownloadType = "direct"
 )
 
-// TaskID 任务唯一标识符
+// TaskID is the unique identifier for a task
 type TaskID string
 
-// TaskStatus 任务状态枚举
+// TaskStatus is the task status enum
 type TaskStatus string
 
 const (
-	StatusPending     TaskStatus = "pending"     // 等待中
-	StatusDownloading TaskStatus = "downloading" // 下载中
-	StatusSuccess     TaskStatus = "success"     // 成功完成
-	StatusFailed      TaskStatus = "failed"      // 失败
-	StatusStopped     TaskStatus = "stopped"     // 已停止
+	StatusPending     TaskStatus = "pending"     // waiting
+	StatusDownloading TaskStatus = "downloading" // downloading
+	StatusSuccess     TaskStatus = "success"     // completed successfully
+	StatusFailed      TaskStatus = "failed"      // failed
+	StatusStopped     TaskStatus = "stopped"     // stopped
 )
 
-// DownloadParams 下载任务参数
+// DownloadParams holds the parameters for a download task
 type DownloadParams struct {
-	ID      TaskID          `json:"id"`             // 任务 ID
-	Type    DownloadType    `json:"type"`           // 下载类型
-	URL     string          `json:"url"`            // 下载 URL
-	Name    string          `json:"name"`           // 文件名
-	Folder  string          `json:"folder"`         // 子文件夹
-	Headers []string        `json:"headers"`        // HTTP 请求头
+	ID      TaskID       `json:"id"`      // task ID
+	Type    DownloadType `json:"type"`    // download type
+	URL     string       `json:"url"`     // download URL
+	Name    string       `json:"name"`    // file name
+	Folder  string       `json:"folder"`  // subdirectory
+	Headers []string     `json:"headers"` // HTTP request headers
 }
 
-// ProgressEvent 进度事件
+// ProgressEvent is a progress update event
 type ProgressEvent struct {
-	ID      TaskID  `json:"id"`      // 任务ID
-	Type    string  `json:"type"`    // 事件类型: "ready" | "progress"
-	Percent float64 `json:"percent"` // 完成百分比
-	Speed   string  `json:"speed"`   // 下载速度
-	IsLive  bool    `json:"isLive"`  // 是否为直播流
+	ID      TaskID  `json:"id"`      // task ID
+	Type    string  `json:"type"`    // event type: "ready" | "progress"
+	Percent float64 `json:"percent"` // completion percentage
+	Speed   string  `json:"speed"`   // download speed
+	IsLive  bool    `json:"isLive"`  // whether this is a live stream
 }
 
-// MessageEvent 消息事件（控制台输出）
+// MessageEvent is a message event (console output)
 type MessageEvent struct {
-	ID      TaskID `json:"id"`      // 任务ID
-	Message string `json:"message"` // 消息内容
+	ID      TaskID `json:"id"`      // task ID
+	Message string `json:"message"` // message content
 }
 
-// TaskInfo 任务信息
+// TaskInfo holds information about a task
 type TaskInfo struct {
-	ID      TaskID       `json:"id"`              // 任务ID
-	Type    DownloadType `json:"type"`            // 下载类型
-	URL     string       `json:"url"`             // 下载URL
-	Name    string       `json:"name"`            // 文件名
-	Status  TaskStatus   `json:"status"`          // 任务状态
-	Percent float64      `json:"percent"`         // 完成百分比
-	Speed   string       `json:"speed"`           // 下载速度
-	IsLive  bool         `json:"isLive"`          // 是否为直播流
-	Error   string       `json:"error,omitempty"` // 错误信息（如果有）
+	ID      TaskID       `json:"id"`              // task ID
+	Type    DownloadType `json:"type"`            // download type
+	URL     string       `json:"url"`             // download URL
+	Name    string       `json:"name"`            // file name
+	Status  TaskStatus   `json:"status"`          // task status
+	Percent float64      `json:"percent"`         // completion percentage
+	Speed   string       `json:"speed"`           // download speed
+	IsLive  bool         `json:"isLive"`          // whether this is a live stream
+	Error   string       `json:"error,omitempty"` // error message (if any)
 }
 
-// Callbacks 下载回调函数集合
+// Callbacks is a collection of download callback functions
 type Callbacks struct {
-	OnProgress func(ProgressEvent) // 进度更新回调
-	OnMessage  func(MessageEvent)  // 消息输出回调
+	OnProgress func(ProgressEvent) // progress update callback
+	OnMessage  func(MessageEvent)  // message output callback
 }
 
-// Runner 命令执行器接口
+// Runner is the interface for a command executor
 type Runner interface {
-	// Run 执行命令并逐行处理标准输出/错误输出
+	// Run executes a command and processes stdout/stderr line by line
 	Run(ctx context.Context, binPath string, args []string, onStdLine func(line string)) error
 }
 
-// Downloader 下载器接口
+// Downloader is the interface for a downloader
 type Downloader interface {
 	Download(ctx context.Context, p DownloadParams, cb Callbacks) error
 	Config() interface{}

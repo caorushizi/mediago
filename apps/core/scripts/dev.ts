@@ -3,7 +3,7 @@ import { getExeExt, mkdir, runCommand } from "./utils";
 import { join } from "node:path";
 
 /**
- * 启动开发服务器
+ * Start the development server
  */
 export async function dev() {
   console.log("🚀 启动开发服务器...");
@@ -25,11 +25,11 @@ export async function dev() {
     `-m3u8-bin=${devConfig.m3u8_bin}`,
     `-direct-bin=${devConfig.direct_bin}`,
   ];
-  await runCommand(command.join(" "), "启动开发服务器");
+  await runCommand(command.join(" "), "Start development server");
 }
 
 /**
- * 编译当前平台的开发版本
+ * Compile the development build for the current platform
  */
 export async function devBuild() {
   console.log("🔨 编译开发版本...");
@@ -37,7 +37,7 @@ export async function devBuild() {
   const output = join(config.BIN_DIR, config.APP_NAME + getExeExt());
   await runCommand(
     `go build -ldflags "${config.GO_LDFLAGS}" -o ${output} ${config.CMD_PATH}`,
-    "编译当前平台二进制文件",
+    "Compile binary for current platform",
   );
   console.log(`✅ 开发版本编译成功 -> ${output}`);
 }

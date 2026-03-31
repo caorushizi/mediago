@@ -5,17 +5,17 @@ import (
 	"github.com/google/uuid"
 )
 
-// CreateTaskReq 创建任务请求 DTO
+// CreateTaskReq Create task request DTO
 type CreateTaskReq struct {
-	ID      string            `json:"id,omitempty" example:"my-custom-id"`                             // (可选) 自定义任务 ID
-	Type    core.DownloadType `json:"type" binding:"required" example:"m3u8"`                          // 下载类型
-	URL     string            `json:"url" binding:"required" example:"https://example.com/video.m3u8"` // 下载 URL
-	Name    string            `json:"name" binding:"required" example:"video"`                         // 文件名
-	Folder  string            `json:"folder" example:"movies"`                                         // 子文件夹
-	Headers []string          `json:"headers" example:"User-Agent: custom"`                            // HTTP 请求头
+	ID      string            `json:"id,omitempty" example:"my-custom-id"`                             // (optional) Custom task ID
+	Type    core.DownloadType `json:"type" binding:"required" example:"m3u8"`                          // Download type
+	URL     string            `json:"url" binding:"required" example:"https://example.com/video.m3u8"` // Download URL
+	Name    string            `json:"name" binding:"required" example:"video"`                         // File name
+	Folder  string            `json:"folder" example:"movies"`                                         // Sub-folder
+	Headers []string          `json:"headers" example:"User-Agent: custom"`                            // HTTP request headers
 }
 
-// ToDownloadParams 转换为核心下载参数
+// ToDownloadParams Convert to core download parameters
 func (r *CreateTaskReq) ToDownloadParams() core.DownloadParams {
 	id := r.ID
 	if id == "" {
@@ -31,26 +31,26 @@ func (r *CreateTaskReq) ToDownloadParams() core.DownloadParams {
 	}
 }
 
-// CreateTaskResponse 创建任务响应
+// CreateTaskResponse Create task response
 type CreateTaskResponse struct {
-	ID      string `json:"id"`      // 任务ID
-	Message string `json:"message"` // 响应消息
-	Status  string `json:"status"`  // 任务状态 (pending/success)
+	ID      string `json:"id"`      // Task ID
+	Message string `json:"message"` // Response message
+	Status  string `json:"status"`  // Task status (pending/success)
 }
 
-// TaskListResponse 任务列表响应
+// TaskListResponse Task list response
 type TaskListResponse struct {
-	Tasks []core.TaskInfo `json:"tasks"` // 任务列表
-	Total int             `json:"total"` // 总数量
+	Tasks []core.TaskInfo `json:"tasks"` // Task list
+	Total int             `json:"total"` // Total count
 }
 
-// StopTaskResponse 停止任务响应
+// StopTaskResponse Stop task response
 type StopTaskResponse struct {
-	Message string `json:"message" example:"Task stopped"` // 响应消息
+	Message string `json:"message" example:"Task stopped"` // Response message
 }
 
-// TaskLogResponse 任务日志响应
+// TaskLogResponse Task log response
 type TaskLogResponse struct {
-	ID  string `json:"id"`  // 任务ID
-	Log string `json:"log"` // 日志内容
+	ID  string `json:"id"`  // Task ID
+	Log string `json:"log"` // Log content
 }

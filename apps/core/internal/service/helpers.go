@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-// videoExtensions 视频文件扩展名列表（与 TypeScript videoPattern 一致）。
+// videoExtensions is the list of video file extensions (aligned with the TypeScript videoPattern).
 var videoExtensions = []string{
 	"mp4", "flv", "avi", "rmvb", "wmv", "mov", "mkv", "webm",
 	"mpeg", "mpg", "m4v", "3gp", "3g2", "f4v", "f4p", "f4a", "f4b",
@@ -23,7 +23,7 @@ var titleRegexp = regexp.MustCompile(`(?i)<title[^>]*>(.*?)</title>`)
 
 const randomChars = "abcdefghijklmnopqrstuvwxyz0123456789"
 
-// RandomName 生成 "YYYYMMDD-<10随机字符>" 格式的名称。
+// RandomName generates a name in the format "YYYYMMDD-<10 random characters>".
 func RandomName() string {
 	now := time.Now()
 	prefix := now.Format("20060102")
@@ -34,7 +34,7 @@ func RandomName() string {
 	return fmt.Sprintf("%s-%s", prefix, string(b))
 }
 
-// GetPageTitle 通过 HTTP GET 请求获取网页标题。
+// GetPageTitle fetches the page title via an HTTP GET request.
 func GetPageTitle(url string, fallback string) string {
 	client := &http.Client{Timeout: 10 * time.Second}
 	resp, err := client.Get(url)
@@ -43,7 +43,7 @@ func GetPageTitle(url string, fallback string) string {
 	}
 	defer resp.Body.Close()
 
-	// 只读取前 64KB 来查找 title
+	// Read only the first 64KB to find the title
 	body, err := io.ReadAll(io.LimitReader(resp.Body, 64*1024))
 	if err != nil {
 		return fallback
@@ -60,8 +60,8 @@ func GetPageTitle(url string, fallback string) string {
 	return fallback
 }
 
-// CheckFileExists 检查指定名称的视频文件是否存在于 localPath 目录中。
-// 返回是否存在以及完整文件路径。
+// CheckFileExists checks whether a video file with the given name exists in the localPath directory.
+// Returns whether it exists and the full file path.
 func CheckFileExists(name, localPath string) (bool, string) {
 	for _, ext := range videoExtensions {
 		pattern := filepath.Join(localPath, name+"."+ext)
@@ -74,7 +74,7 @@ func CheckFileExists(name, localPath string) (bool, string) {
 		}
 	}
 
-	// 也检查不带扩展名的目录（某些下载器输出到文件夹）
+	// Also check a directory without extension (some downloaders output to a folder)
 	dirPath := filepath.Join(localPath, name)
 	if info, err := os.Stat(dirPath); err == nil && info.IsDir() {
 		return true, dirPath

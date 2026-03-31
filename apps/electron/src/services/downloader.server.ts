@@ -95,8 +95,8 @@ export class DownloaderServer extends EventEmitter {
       this.emit("config-changed", payload.key, payload.value);
     });
 
-    // 2. 轮询获取进度
-    // FIXME: 需要优化性能
+    // 2. Poll for progress
+    // FIXME: performance needs to be optimized
     const startPolling = () => {
       setInterval(async () => {
         if (!this.client) {

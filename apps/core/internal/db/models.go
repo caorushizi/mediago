@@ -2,8 +2,8 @@ package db
 
 import "time"
 
-// Video 映射到 "video" 表（历史命名，实际代表下载任务）。
-// 列名必须与 TypeORM 创建的表结构完全一致（camelCase）。
+// Video maps to the "video" table (legacy naming; actually represents download tasks).
+// Column names must exactly match the table schema created by TypeORM (camelCase).
 type Video struct {
 	ID          int64     `gorm:"column:id;primaryKey;autoIncrement" json:"id"`
 	Name        string    `gorm:"column:name;type:text;not null;uniqueIndex" json:"name"`
@@ -19,7 +19,7 @@ type Video struct {
 
 func (Video) TableName() string { return "video" }
 
-// Favorite 映射到 "favorite" 表。
+// Favorite maps to the "favorite" table.
 type Favorite struct {
 	ID          int64     `gorm:"column:id;primaryKey;autoIncrement" json:"id"`
 	Title       string    `gorm:"column:title;type:text;not null" json:"title"`
@@ -31,7 +31,7 @@ type Favorite struct {
 
 func (Favorite) TableName() string { return "favorite" }
 
-// Conversion 映射到 "conversion" 表。
+// Conversion maps to the "conversion" table.
 type Conversion struct {
 	ID          int64     `gorm:"column:id;primaryKey;autoIncrement" json:"id"`
 	Name        *string   `gorm:"column:name;type:text" json:"name"`

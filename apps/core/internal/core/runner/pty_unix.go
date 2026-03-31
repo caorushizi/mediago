@@ -10,32 +10,32 @@ import (
 	"github.com/creack/pty"
 )
 
-// runWithPTY Unix 平台(Linux/Mac)使用 creack/pty 实现
+// runWithPTY uses creack/pty on Unix platforms (Linux/Mac)
 func (r *PTYRunner) runWithPTY(ctx context.Context, binPath string, args []string, onStdLine func(string)) error {
-	// 创建命令
+	// create the command
 	cmd := exec.CommandContext(ctx, binPath, args...)
 
-	// 启动 PTY
+	// start the PTY
 	ptmx, err := pty.Start(cmd)
 	if err != nil {
-		// PTY 失败,降级到普通管道
+		// PTY failed, fall back to regular pipe
 		return r.fallbackToPipe(ctx, binPath, args, onStdLine)
 	}
 	defer ptmx.Close()
 
-	// 设置 PTY 大小
+	// set PTY window size
 	_ = pty.Setsize(ptmx, &pty.Winsize{
 		Rows: 24,
 		Cols: 80,
 	})
 
-	// 读取输出
+	// read output
 	done := make(chan error, 1)
 	go func() {
 		done <- r.readPTYOutput(ptmx, onStdLine)
 	}()
 
-	// 等待进程完成
+	// wait for the process to complete
 	cmdDone := make(chan error, 1)
 	go func() {
 		cmdDone <- cmd.Wait()

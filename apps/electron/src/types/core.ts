@@ -1,7 +1,7 @@
 /**
- * @description: 路由接口
+ * @description: Router interface
  */
 export interface MediaGoRouter {
-  // 初始化
+  // Initialize
   init(): void;
 }

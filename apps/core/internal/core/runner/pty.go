@@ -1,4 +1,4 @@
-// Package runner PTY-based 命令执行器(支持进度条)
+// Package runner contains the PTY-based command executor (supports progress bars)
 package runner
 
 import (
@@ -6,28 +6,28 @@ import (
 	"io"
 )
 
-// PTYRunner 基于伪终端的命令执行器
-// 支持捕获进度条等需要终端交互的输出
+// PTYRunner is a command executor based on a pseudo-terminal
+// It supports capturing output that requires terminal interaction, such as progress bars
 type PTYRunner struct{}
 
-// NewPTYRunner 创建 PTY 命令执行器实例
+// NewPTYRunner creates a new PTY command executor instance
 func NewPTYRunner() *PTYRunner {
 	return &PTYRunner{}
 }
 
-// Run 执行命令并通过伪终端读取输出
-// 这个方法能够正确捕获使用 \r、\b 等控制符的进度条
-// 平台特定的实现在 pty_windows.go 和 pty_unix.go 中
+// Run executes a command and reads output via a pseudo-terminal
+// This method correctly captures progress bars that use control characters like \r and \b
+// Platform-specific implementations are in pty_windows.go and pty_unix.go
 func (r *PTYRunner) Run(ctx context.Context, binPath string, args []string, onStdLine func(string)) error {
 	return r.runWithPTY(ctx, binPath, args, onStdLine)
 }
 
-// runWithPTY 的具体实现在平台特定的文件中:
-// - pty_windows.go: Windows ConPTY 实现
-// - pty_unix.go: Unix/Linux/Mac PTY 实现
+// The concrete implementation of runWithPTY is in the platform-specific files:
+// - pty_windows.go: Windows ConPTY implementation
+// - pty_unix.go: Unix/Linux/Mac PTY implementation
 
-// readPTYOutput 读取 PTY 输出并按块传递原始字节
-// 直接传递原始 PTY 输出（包含 ANSI 转义序列），由前端终端渲染器处理
+// readPTYOutput reads PTY output and passes raw bytes in chunks
+// Raw PTY output (including ANSI escape sequences) is passed directly and handled by the frontend terminal renderer
 func (r *PTYRunner) readPTYOutput(reader io.Reader, onStdLine func(string)) error {
 	buf := make([]byte, 4096)
 	for {
@@ -44,9 +44,9 @@ func (r *PTYRunner) readPTYOutput(reader io.Reader, onStdLine func(string)) erro
 	}
 }
 
-// fallbackToPipe PTY 失败时的降级方案
+// fallbackToPipe is the fallback strategy when PTY fails
 func (r *PTYRunner) fallbackToPipe(ctx context.Context, binPath string, args []string, onStdLine func(string)) error {
-	// 使用原有的 ExecRunner 作为降级方案
+	// use the existing ExecRunner as the fallback
 	runner := NewExecRunner()
 	return runner.Run(ctx, binPath, args, onStdLine)
 }

@@ -54,23 +54,23 @@ func WrapConfStore[T any](c interface {
 // reference types to help swagger parsing
 var _ dto.UpdateConfigResponse
 
-// ConfigHandler 处理配置相关接口。
+// ConfigHandler handles configuration-related endpoints.
 type ConfigHandler struct {
 	conf ConfigStore
 	hub  *sse.Hub
 }
 
-// NewConfigHandler 创建 ConfigHandler。
+// NewConfigHandler creates a ConfigHandler.
 func NewConfigHandler(conf ConfigStore, hub *sse.Hub) *ConfigHandler {
 	return &ConfigHandler{conf: conf, hub: hub}
 }
 
-// GetStore 获取完整配置
-// @Summary 获取完整配置
-// @Description 返回所有配置项的当前值
+// GetStore returns the full configuration.
+// @Summary Get full configuration
+// @Description Returns the current values of all configuration options
 // @Tags Config
 // @Produce json
-// @Success 200 {object} dto.SuccessResponse "完整配置"
+// @Success 200 {object} dto.SuccessResponse "Full configuration"
 // @Router /config [get]
 func (h *ConfigHandler) GetStore(c *gin.Context) {
 	store := h.conf.Store()
@@ -82,15 +82,15 @@ func (h *ConfigHandler) GetStore(c *gin.Context) {
 	})
 }
 
-// Update 更新配置（部分更新）
-// @Summary 更新系统配置
-// @Description 更新配置，只需提供要修改的字段
+// Update updates the configuration (partial update).
+// @Summary Update system configuration
+// @Description Updates configuration; only the fields to be changed need to be provided
 // @Tags Config
 // @Accept json
 // @Produce json
-// @Param config body dto.UpdateConfigRequest true "配置参数"
-// @Success 200 {object} dto.SuccessResponse{data=dto.UpdateConfigResponse} "配置更新成功"
-// @Failure 400 {object} dto.ErrorResponse "请求参数错误"
+// @Param config body dto.UpdateConfigRequest true "Configuration parameters"
+// @Success 200 {object} dto.SuccessResponse{data=dto.UpdateConfigResponse} "Configuration updated successfully"
+// @Failure 400 {object} dto.ErrorResponse "Invalid request parameters"
 // @Router /config [post]
 func (h *ConfigHandler) Update(c *gin.Context) {
 	var req dto.UpdateConfigRequest
@@ -110,7 +110,7 @@ func (h *ConfigHandler) Update(c *gin.Context) {
 		return
 	}
 
-	// 广播每个变更的 key
+	// Broadcast each changed key
 	for key, value := range req {
 		h.hub.Broadcast("config-changed", map[string]any{"key": key, "value": value})
 	}
@@ -123,13 +123,13 @@ func (h *ConfigHandler) Update(c *gin.Context) {
 	})
 }
 
-// GetKey 获取单个配置项
-// @Summary 获取单个配置项
-// @Description 通过 key 获取配置值，支持 dot-notation
+// GetKey retrieves a single configuration value.
+// @Summary Get a single configuration value
+// @Description Retrieves a configuration value by key; supports dot-notation
 // @Tags Config
 // @Produce json
-// @Param key path string true "配置键名"
-// @Success 200 {object} dto.SuccessResponse "配置值"
+// @Param key path string true "Configuration key name"
+// @Success 200 {object} dto.SuccessResponse "Configuration value"
 // @Router /config/{key} [get]
 func (h *ConfigHandler) GetKey(c *gin.Context) {
 	key := c.Param("key")
@@ -143,16 +143,16 @@ func (h *ConfigHandler) GetKey(c *gin.Context) {
 	})
 }
 
-// SetKey 设置单个配置项
-// @Summary 设置单个配置项
-// @Description 通过 key 设置配置值
+// SetKey sets a single configuration value.
+// @Summary Set a single configuration value
+// @Description Sets a configuration value by key
 // @Tags Config
 // @Accept json
 // @Produce json
-// @Param key path string true "配置键名"
-// @Param body body dto.SetKeyRequest true "配置值"
-// @Success 200 {object} dto.SuccessResponse{data=dto.UpdateConfigResponse} "设置成功"
-// @Failure 400 {object} dto.ErrorResponse "请求参数错误"
+// @Param key path string true "Configuration key name"
+// @Param body body dto.SetKeyRequest true "Configuration value"
+// @Success 200 {object} dto.SuccessResponse{data=dto.UpdateConfigResponse} "Set successfully"
+// @Failure 400 {object} dto.ErrorResponse "Invalid request parameters"
 // @Router /config/{key} [put]
 func (h *ConfigHandler) SetKey(c *gin.Context) {
 	key := c.Param("key")
