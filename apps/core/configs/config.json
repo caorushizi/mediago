@@ -1,0 +1,103 @@
+{
+  "schemas": [
+    {
+      "type": "m3u8",
+      "args": {
+        "url": {
+          "argsName": []
+        },
+        "localDir": {
+          "argsName": ["--tmp-dir", "--save-dir"]
+        },
+        "name": {
+          "argsName": ["--save-name"]
+        },
+        "headers": {
+          "argsName": ["--header"]
+        },
+        "deleteSegments": {
+          "argsName": ["--del-after-done"]
+        },
+        "proxy": {
+          "argsName": ["--custom-proxy"]
+        },
+        "__common__": {
+          "argsName": [
+            "--no-log",
+            "--auto-select",
+            "--ui-language",
+            "zh-CN",
+            "--live-real-time-merge",
+            "--check-segments-count",
+            "false"
+          ]
+        }
+      },
+      "consoleReg": {
+        "percent": "([\\d.]+)%",
+        "speed": "([\\d.]+[GMK]Bps)",
+        "error": "ERROR",
+        "start": "保存文件名:",
+        "isLive": "检测到直播流"
+      }
+    },
+    {
+      "type": "bilibili",
+      "args": {
+        "url": {
+          "argsName": []
+        },
+        "localDir": {
+          "argsName": ["--work-dir"]
+        },
+        "name": {
+          "argsName": ["--file-pattern"]
+        },
+        "__common__": {
+          "argsName": [
+            "--use-app-api"
+          ]
+        }
+      },
+      "consoleReg": {
+        "percent": "([\\d.]+)%",
+        "speed": "([\\d.]+\\s[GMK]B/s)",
+        "error": "ERROR",
+        "start": "开始下载",
+        "isLive": "检测到直播流"
+      }
+    },
+    {
+      "type": "direct",
+      "args": {
+        "localDir": {
+          "argsName": ["-D"]
+        },
+        "name": {
+          "argsName": ["-N"],
+          "postfix": "@@AUTO@@"
+        },
+        "url": {
+          "argsName": []
+        },
+        "__common__": {
+          "argsName": [
+            "-x",
+            "16",
+            "-s",
+            "16",
+            "-k",
+            "1M"
+          ]
+        }
+      },
+      "consoleReg": {
+        "percent": "([\\d.]+)%",
+        "speed": "([\\d.]+[GMK]B/s)",
+        "error": "fail",
+        "start": "downloading...",
+        "isLive": "检测到直播流"
+      }
+    }
+  ]
+}

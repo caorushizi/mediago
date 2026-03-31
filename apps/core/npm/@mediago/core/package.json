@@ -1,0 +1,38 @@
+{
+  "name": "@mediago/core",
+  "version": "0.0.13",
+  "description": "MediaGo Player - A hybrid Go+React video player server",
+  "main": "install.js",
+  "scripts": {
+    "postinstall": "node install.js"
+  },
+  "bin": {
+    "mediago-core": "bin/mediago-core"
+  },
+  "optionalDependencies": {
+    "@mediago/core-linux-x64": "0.0.13",
+    "@mediago/core-linux-arm64": "0.0.13",
+    "@mediago/core-darwin-x64": "0.0.13",
+    "@mediago/core-darwin-arm64": "0.0.13",
+    "@mediago/core-win32-x64": "0.0.13",
+    "@mediago/core-win32-arm64": "0.0.13"
+  },
+  "files": [
+    "install.js",
+    "bin"
+  ],
+  "keywords": [
+    "video",
+    "core",
+    "server",
+    "go",
+    "react",
+    "mediago"
+  ],
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mediago/mediago-core"
+  }
+}

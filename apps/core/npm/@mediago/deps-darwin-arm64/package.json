@@ -1,0 +1,15 @@
+{
+  "name": "@mediago/deps-darwin-arm64",
+  "version": "0.0.6",
+  "description": "MediaGo Player dependency binaries for darwin arm64",
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "arm64"
+  ],
+  "files": [
+    "bin"
+  ],
+  "license": "ISC"
+}
