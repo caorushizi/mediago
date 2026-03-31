@@ -1,0 +1,19 @@
+{
+  "name": "@mediago/core-linux-x64",
+  "version": "0.0.13",
+  "description": "MediaGo Player core binary for linux x64",
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "bin": {
+    "mediago-core": "mediago-core"
+  },
+  "files": [
+    "mediago-core",
+    "config.json"
+  ],
+  "license": "ISC"
+}
