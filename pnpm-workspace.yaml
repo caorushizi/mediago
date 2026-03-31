@@ -1,7 +1,8 @@
 packages:
   - app
   - docs
-  - apps/**
+  - apps/*
+  - apps/player/player-ui
   - packages/**
   - "!**/test/**"
   - "!**/release/**"

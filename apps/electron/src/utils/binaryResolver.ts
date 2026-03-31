@@ -1,58 +1,26 @@
+import { app } from "electron";
 import os from "node:os";
 import path from "node:path";
 
-/**
- * Detects the current platform suffix used in @mediago/* package names.
- * e.g. "darwin-arm64", "win32-x64", "linux-x64"
- */
-function getPlatformSuffix(): string {
-  const platform = os.platform();
-  const arch = os.arch();
-
-  const supported: Record<string, string[]> = {
-    darwin: ["x64", "arm64"],
-    linux: ["x64", "arm64"],
-    win32: ["x64", "arm64"],
-  };
-
-  const archList = supported[platform];
-  if (!archList || !archList.includes(arch)) {
-    throw new Error(`Unsupported platform: ${platform}-${arch}`);
-  }
-
-  return `${platform}-${arch}`;
-}
-
-/**
- * Resolves a platform-specific package directory by using the root package
- * as a resolution base.
- */
-function resolvePlatformPackageDir(
-  rootPackage: string,
-  platformPackage: string,
-): string {
-  const rootDir = path.dirname(require.resolve(`${rootPackage}/package.json`));
-
-  let pkgPath = require.resolve(`${platformPackage}/package.json`, {
-    paths: [rootDir],
-  });
-
-  if (
-    process.env.NODE_ENV === "production" &&
-    process.env.APP_TARGET === "electron"
-  ) {
-    pkgPath = pkgPath.replace("app.asar", "app.asar.unpacked");
-  }
-
-  return path.dirname(pkgPath);
-}
-
-const suffix = getPlatformSuffix();
 const isWindows = os.platform() === "win32";
+const ext = isWindows ? ".exe" : "";
+const isDev = !app.isPackaged;
+
+/**
+ * Returns the monorepo root (two levels up from apps/electron/).
+ * Only meaningful in development mode.
+ */
+function getMonorepoRoot(): string {
+  return path.resolve(__dirname, "..", "..", "..", "..");
+}
 
 /**
  * Resolves the mediago-core binary and config.json paths.
- * Override with MEDIAGO_CORE_BIN env var (path to the binary).
+ *
+ * Development: apps/core/bin/mediago-core (compiled by `pnpm core:build`)
+ * Production: extraResources/bin/mediago-core (copied by electron-builder)
+ *
+ * Override with MEDIAGO_CORE_BIN env var.
  */
 export function resolveCoreBinaries(): {
   coreBin: string;
@@ -64,21 +32,28 @@ export function resolveCoreBinaries(): {
     return { coreBin, coreConfig };
   }
 
-  const pkgDir = resolvePlatformPackageDir(
-    "@mediago/core",
-    `@mediago/core-${suffix}`,
-  );
-  const binaryName = `mediago-core${isWindows ? ".exe" : ""}`;
+  if (isDev) {
+    const coreDir = path.join(getMonorepoRoot(), "apps", "core");
+    return {
+      coreBin: path.join(coreDir, "bin", `mediago-core${ext}`),
+      coreConfig: path.join(coreDir, "configs", "config.json"),
+    };
+  }
 
+  // Production: extraResources
   return {
-    coreBin: path.resolve(pkgDir, binaryName),
-    coreConfig: path.resolve(pkgDir, "config.json"),
+    coreBin: path.join(process.resourcesPath, "bin", `mediago-core${ext}`),
+    coreConfig: path.join(process.resourcesPath, "bin", "config.json"),
   };
 }
 
 /**
  * Resolves paths to helper binaries: ffmpeg, N_m3u8DL-RE, BBDown, gopeed.
- * Override with MEDIAGO_DEPS_DIR env var (path to directory containing binaries).
+ *
+ * Development: .deps/{platform}-{arch}/ (downloaded by `pnpm deps:download`)
+ * Production: extraResources/deps/
+ *
+ * Override with MEDIAGO_DEPS_DIR env var.
  */
 export function resolveDepsBinaries(): {
   ffmpeg: string;
@@ -90,15 +65,12 @@ export function resolveDepsBinaries(): {
 
   if (process.env.MEDIAGO_DEPS_DIR) {
     binDir = process.env.MEDIAGO_DEPS_DIR;
+  } else if (isDev) {
+    const platformKey = `${os.platform()}-${os.arch()}`;
+    binDir = path.join(getMonorepoRoot(), ".deps", platformKey);
   } else {
-    const pkgDir = resolvePlatformPackageDir(
-      "@mediago/deps",
-      `@mediago/deps-${suffix}`,
-    );
-    binDir = path.resolve(pkgDir, "bin");
+    binDir = path.join(process.resourcesPath, "deps");
   }
-
-  const ext = isWindows ? ".exe" : "";
 
   return {
     ffmpeg: path.resolve(binDir, `ffmpeg${ext}`),
@@ -110,20 +82,29 @@ export function resolveDepsBinaries(): {
 
 /**
  * Resolves the mediago-player binary path.
- * Override with MEDIAGO_PLAYER_BIN env var (path to the binary).
+ *
+ * Development: apps/player/dist/mediago-player (compiled by `pnpm player:build`)
+ * Production: extraResources/bin/mediago-player
+ *
+ * Override with MEDIAGO_PLAYER_BIN env var.
  */
 export function resolvePlayerBinary(): { playerBin: string } {
   if (process.env.MEDIAGO_PLAYER_BIN) {
     return { playerBin: process.env.MEDIAGO_PLAYER_BIN };
   }
 
-  const pkgDir = resolvePlatformPackageDir(
-    "@mediago/player",
-    `@mediago/player-${suffix}`,
-  );
-  const binaryName = `mediago-player${isWindows ? ".exe" : ""}`;
+  if (isDev) {
+    const playerDir = path.join(getMonorepoRoot(), "apps", "player");
+    return {
+      playerBin: path.join(playerDir, "dist", `mediago-player${ext}`),
+    };
+  }
 
   return {
-    playerBin: path.resolve(pkgDir, "bin", binaryName),
+    playerBin: path.join(
+      process.resourcesPath,
+      "bin",
+      `mediago-player${ext}`,
+    ),
   };
 }
