@@ -9,4 +9,8 @@ log
 .claude
 .store
 release
+go.work.sum
+apps/core/bin/
+apps/player/dist/
+.deps/
 
