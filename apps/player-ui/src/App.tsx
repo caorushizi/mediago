@@ -1,6 +1,6 @@
 import { useMemoizedFn, useSize } from "ahooks";
 import { List } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import videojs from "video.js";
 import "video.js/dist/video-js.css";
 import "@videojs/themes/dist/sea/index.css";
@@ -18,6 +18,60 @@ import { getVideoList, getVideoListKey } from "./api";
 import { cn, getVideoURL } from "./lib/utils";
 import { usePlayerSize } from "./hooks/usePlayerSize";
 
+interface PlaylistItemProps {
+  title: string;
+  url: string;
+  isActive: boolean;
+  onClick: (url: string) => void;
+  variant?: "desktop" | "mobile";
+}
+
+const PlaylistItem = memo(function PlaylistItem({
+  title,
+  url,
+  isActive,
+  onClick,
+  variant = "desktop",
+}: PlaylistItemProps) {
+  const handleClick = useMemoizedFn(() => onClick(url));
+
+  if (variant === "mobile") {
+    return (
+      <li>
+        <button
+          type="button"
+          onClick={handleClick}
+          className={cn(
+            "w-full rounded-md border p-3 text-left text-sm transition-colors hover:bg-accent",
+            {
+              "border-blue-500 bg-blue-50 text-blue-600 dark:border-blue-500 dark:bg-blue-950 dark:text-blue-400":
+                isActive,
+            },
+          )}
+        >
+          <div className="line-clamp-2">{title}</div>
+        </button>
+      </li>
+    );
+  }
+
+  return (
+    <li
+      className={cn(
+        "cursor-pointer rounded-md p-3 text-sm transition-colors hover:bg-accent",
+        {
+          "bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400":
+            isActive,
+        },
+      )}
+    >
+      <button type="button" className="w-full text-left" onClick={handleClick}>
+        <div className="line-clamp-2">{title}</div>
+      </button>
+    </li>
+  );
+});
+
 export default function PlayerPage() {
   const [currentVideo, setCurrentVideo] = useState("");
   const [open, setOpen] = useState(false);
@@ -26,7 +80,10 @@ export default function PlayerPage() {
   const playerRef = useRef<Player | null>(null);
   const size = useSize(videoContainer);
 
-  const { data: videoList } = useSWR(getVideoListKey, getVideoList);
+  const { data: videoList } = useSWR(getVideoListKey, getVideoList, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  });
 
   const { calculateAndSetPlayerSize } = usePlayerSize(
     playerRef,
@@ -122,24 +179,13 @@ export default function PlayerPage() {
           <ScrollArea className="mt-4 h-[calc(100vh-8rem)]">
             <ul className="flex flex-col gap-1 pr-4">
               {videoList?.map((video) => (
-                <li
+                <PlaylistItem
                   key={video.url}
-                  className={cn(
-                    "cursor-pointer rounded-md p-3 text-sm transition-colors hover:bg-accent",
-                    {
-                      "bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400":
-                        video.url === currentVideo,
-                    },
-                  )}
-                >
-                  <button
-                    type="button"
-                    className="w-full text-left"
-                    onClick={() => handleVideoClick(video.url)}
-                  >
-                    <div className="line-clamp-2">{video.title}</div>
-                  </button>
-                </li>
+                  title={video.title}
+                  url={video.url}
+                  isActive={video.url === currentVideo}
+                  onClick={handleVideoClick}
+                />
               ))}
             </ul>
           </ScrollArea>
@@ -165,21 +211,14 @@ export default function PlayerPage() {
           <ScrollArea className="flex-1">
             <ul className="flex flex-col gap-2 pr-4">
               {videoList?.map((video) => (
-                <li key={video.url}>
-                  <button
-                    type="button"
-                    onClick={() => handleVideoClick(video.url)}
-                    className={cn(
-                      "w-full rounded-md border p-3 text-left text-sm transition-colors hover:bg-accent",
-                      {
-                        "border-blue-500 bg-blue-50 text-blue-600 dark:border-blue-500 dark:bg-blue-950 dark:text-blue-400":
-                          video.url === currentVideo,
-                      },
-                    )}
-                  >
-                    <div className="line-clamp-2">{video.title}</div>
-                  </button>
-                </li>
+                <PlaylistItem
+                  key={video.url}
+                  title={video.title}
+                  url={video.url}
+                  isActive={video.url === currentVideo}
+                  onClick={handleVideoClick}
+                  variant="mobile"
+                />
               ))}
             </ul>
           </ScrollArea>

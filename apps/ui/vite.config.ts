@@ -28,6 +28,15 @@ export default defineConfig({
   build: {
     outDir: isWeb ? "build/server" : "build/electron",
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ["react", "react-dom", "react-router-dom"],
+          antd: ["antd"],
+          zustand: ["zustand", "immer"],
+        },
+      },
+    },
   },
   resolve: {
     alias: {
