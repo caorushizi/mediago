@@ -7,12 +7,7 @@ import {
   SERVER_BINARY_PATH,
   UI_DIR,
 } from "./constants";
-import {
-  copyDirectory,
-  ensureDir,
-  pathExists,
-  runCommand,
-} from "./utils";
+import { copyDirectory, ensureDir, pathExists, runCommand } from "./utils";
 
 // Documentation tasks
 export async function docsTask() {
@@ -44,7 +39,9 @@ export async function buildUiTask() {
   await runCommand("pnpm", ["build"], { cwd: UI_DIR });
   const distDir = path.join(UI_DIR, "dist");
   if (!existsSync(distDir)) {
-    throw new Error("Expected UI build output at player-ui/dist but it was not found");
+    throw new Error(
+      "Expected UI build output at apps/player-ui/dist but it was not found",
+    );
   }
   await copyDirectory(distDir, ASSETS_UI_DIR);
 }

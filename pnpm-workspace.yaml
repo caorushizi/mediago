@@ -2,7 +2,6 @@ packages:
   - app
   - docs
   - apps/*
-  - apps/player/player-ui
   - packages/**
   - "!**/test/**"
   - "!**/release/**"
