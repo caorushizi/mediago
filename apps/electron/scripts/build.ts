@@ -92,6 +92,7 @@ function getReleaseConfig(): Configuration {
     },
     mac: {
       icon: "../assets/icon.icns",
+      identity: null,
       target: [
         {
           target: "dmg",
