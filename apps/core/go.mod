@@ -5,7 +5,7 @@ go 1.25.0
 require (
 	github.com/UserExistsError/conpty v0.1.4
 	github.com/creack/pty v1.1.24
-	github.com/gin-contrib/cors v1.5.0
+	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-gonic/gin v1.11.0
 	github.com/glebarez/sqlite v1.11.0
 	github.com/google/uuid v1.6.0
