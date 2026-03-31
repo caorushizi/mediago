@@ -207,7 +207,7 @@ export function createGoAdapter(
           workspace: envRes.data.configDir,
           platform: envRes.data.platform,
           local: configRes.data.local,
-          playerUrl: "",
+          playerUrl: `${window.location.protocol}//${window.location.hostname}:9800`,
           coreUrl: coreUrl,
         },
         message: "OK",

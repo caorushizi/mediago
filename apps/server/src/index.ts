@@ -3,7 +3,11 @@ import os from "node:os";
 import path from "node:path";
 import fs from "node:fs";
 import { ServiceRunner } from "@mediago/service-runner";
-import { resolveCoreBinaries, resolveDepsBinaries } from "./binaryResolver";
+import {
+  resolveCoreBinaries,
+  resolveDepsBinaries,
+  resolvePlayerBinary,
+} from "./binaryResolver";
 
 const DATA_DIR = path.resolve(os.homedir(), ".mediago-server");
 const LOG_DIR = path.resolve(DATA_DIR, "logs");
@@ -51,10 +55,29 @@ runner.on("exit", (code, signal) => {
 const state = await runner.start();
 console.log(`Go Core started at ${state.url} (pid: ${state.pid})`);
 
+// Start Player server (optional — skip if binary not found)
+let playerRunner: ServiceRunner | undefined;
+const { playerBin } = resolvePlayerBinary();
+if (fs.existsSync(playerBin)) {
+  playerRunner = new ServiceRunner({
+    executableName: "mediago-player",
+    executableDir: path.dirname(playerBin),
+    preferredPort: 9800,
+    internal: false,
+    extraArgs: ["-video-root", path.resolve(DATA_DIR, "downloads")],
+  });
+  const playerState = await playerRunner.start();
+  console.log(`Player started at ${playerState.url} (pid: ${playerState.pid})`);
+} else {
+  console.warn(
+    `[Player] Binary not found: ${playerBin}. Run "pnpm player:build" to enable video playback.`,
+  );
+}
+
 // Handle graceful shutdown
 const shutdown = async () => {
   console.log("Shutting down...");
-  await runner.stop();
+  await Promise.all([runner.stop(), playerRunner?.stop()]);
   process.exit(0);
 };
 
