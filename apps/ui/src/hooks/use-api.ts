@@ -3,7 +3,7 @@ import { apiAdapter, type IpcListener, ipcAdapter } from "./adapters";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
-const eventFun = ["rendererEvent", "removeEventListener"];
+const eventFun = new Set(["rendererEvent", "removeEventListener"]);
 
 export default function useAPI(): MediaGoApi & IpcListener {
   const navigate = useNavigate();
@@ -16,11 +16,15 @@ export default function useAPI(): MediaGoApi & IpcListener {
         }
 
         const adapterFun: any = apiAdapter[funName as keyof MediaGoApi];
-        if (eventFun.includes(String(funName))) {
+        if (eventFun.has(String(funName))) {
           return null;
         }
 
-        const { code, data, message } = await adapterFun(...args);
+        const result = await adapterFun(...args);
+        if (!result) {
+          return null;
+        }
+        const { code, data, message } = result;
         if (code !== 0) {
           if (code === 401) {
             navigate("/signin");

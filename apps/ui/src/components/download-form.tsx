@@ -22,6 +22,7 @@ import useAPI from "@/hooks/use-api";
 import { useDockerApi } from "@/hooks/use-docker-api";
 import { appStoreSelector, useAppStore } from "@/store/app";
 import { downloadFormSelector, useConfigStore } from "@/store/config";
+import { downloadStoreSelector, useDownloadStore } from "@/store/download";
 import { tdApp } from "@/utils";
 import { DownloadTask, DownloadType } from "@mediago/shared-common";
 import { BatchUrlTextarea } from "./batchurl-textarea";
@@ -80,6 +81,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
     const [videoFolders, setVideoFolders] = useState<string[]>([]);
     const { createDownloadTasks, getVideoFolders, appContextMenu } = useAPI();
     const { addVideosToDocker } = useDockerApi();
+    const { increase } = useDownloadStore(useShallow(downloadStoreSelector));
 
     useAsyncEffect(async () => {
       if (modalOpen) {
@@ -143,6 +145,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
       try {
         const tasks = await getFormItems();
         await createDownloadTasks(tasks);
+        increase();
         setModalOpen(false);
         onConfirm?.(form.getFieldsValue());
         tdApp.onEvent(ADD_TO_LIST, { id });
@@ -177,6 +180,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
       try {
         const tasks = await getFormItems();
         await createDownloadTasks(tasks, true);
+        increase();
         setModalOpen(false);
         onConfirm?.(form.getFieldsValue());
         tdApp.onEvent(DOWNLOAD_NOW, { id });
