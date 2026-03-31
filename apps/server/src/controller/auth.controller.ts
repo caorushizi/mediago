@@ -7,10 +7,9 @@ import {
   type SetupAuthRequest,
   SIGNIN,
 } from "@mediago/shared-common";
-import { handle, i18n, TYPES } from "@mediago/shared-node";
+import { DownloaderServer, handle, i18n, TYPES } from "@mediago/shared-node";
 import { inject, injectable } from "inversify";
 import Logger from "../vendor/Logger";
-import StoreService from "../vendor/Store";
 
 @injectable()
 @provide(TYPES.Controller)
@@ -18,20 +17,22 @@ export default class AuthController implements Controller {
   constructor(
     @inject(Logger)
     private readonly logger: Logger,
-    @inject(StoreService)
-    private readonly store: StoreService,
+    @inject(DownloaderServer)
+    private readonly downloaderServer: DownloaderServer,
   ) {}
 
   @handle(SETUP_AUTH)
   async setupAuth({ apiKey }: SetupAuthRequest) {
-    this.store.set("apiKey", apiKey);
-
+    const client = this.downloaderServer.getClient();
+    await client.setConfigKey("apiKey", apiKey);
     return true;
   }
 
   @handle(SIGNIN)
   async signin({ apiKey }: SetupAuthRequest) {
-    if (apiKey === this.store.get("apiKey")) {
+    const client = this.downloaderServer.getClient();
+    const { data: config } = await client.getConfig();
+    if (apiKey === config.apiKey) {
       return true;
     } else {
       throw new Error(i18n.t("signinFailed"));
@@ -40,7 +41,8 @@ export default class AuthController implements Controller {
 
   @handle(IS_SETUP)
   async isSetup(_: Record<string, never>): Promise<IS_SETUP_RESPONSE> {
-    const apiKey = this.store.get("apiKey");
-    return { setuped: !!apiKey };
+    const client = this.downloaderServer.getClient();
+    const { data: config } = await client.getConfig();
+    return { setuped: !!config.apiKey };
   }
 }

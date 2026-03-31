@@ -22,7 +22,7 @@ export const en = {
   download: "Download",
   pause: "Pause",
   redownload: "Redownload",
-  watting: "Watting",
+  pending: "Pending",
   continueDownload: "Continue download",
   playVideo: "Play video",
   scanToWatch: "Scan to watch (need to connect the same WIFI)",

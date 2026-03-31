@@ -2,7 +2,7 @@ import path from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
 import { ServiceRunner } from "@mediago/service-runner";
 import { injectable } from "inversify";
-import { loadModule } from "../utils";
+import { resolvePlayerBinary } from "../utils";
 
 @injectable()
 @provide()
@@ -17,10 +17,10 @@ export class VideoServer {
     local: string;
     enableMobilePlayer?: boolean;
   }) {
-    const binaryUrl = loadModule("@mediago/player");
+    const { playerBin } = resolvePlayerBinary();
 
     this.runner = new ServiceRunner({
-      executableDir: path.resolve(path.dirname(binaryUrl), "bin"),
+      executableDir: path.dirname(playerBin),
       executableName: "mediago-player",
       preferredPort: 9800,
       internal: !enableMobilePlayer,
@@ -35,7 +35,7 @@ export class VideoServer {
   enableMobilePlayer(enable: boolean) {
     if (this.runner) {
       this.runner.restart({
-        internal: enable,
+        internal: !enable,
       });
     }
   }

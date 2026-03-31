@@ -1,13 +1,6 @@
 import { resolve } from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
-import { DownloadStatus } from "@mediago/shared-common";
-import {
-  DownloaderServer,
-  i18n,
-  TypeORM,
-  DownloadTaskService,
-  VideoServer,
-} from "@mediago/shared-node";
+import { DownloaderServer, i18n, VideoServer } from "@mediago/shared-node";
 import {
   app,
   BrowserWindow,
@@ -24,8 +17,10 @@ import ProtocolService from "./core/protocol";
 import ElectronRouter from "./core/router";
 import { db, isMac, logDir } from "./constants";
 import ElectronDevtools from "./vendor/ElectronDevtools";
-import ElectronStore from "./vendor/ElectronStore";
 import ElectronUpdater from "./vendor/ElectronUpdater";
+import GoConfigCache from "./services/go-config-cache";
+import WebviewService from "./services/webview.service";
+import BrowserWindowService from "./windows/browser.window";
 import MainWindow from "./windows/main.window";
 import "./controller";
 
@@ -41,18 +36,18 @@ export default class ElectronApp {
     private readonly updater: ElectronUpdater,
     @inject(ElectronRouter)
     private readonly router: ElectronRouter,
-    @inject(TypeORM)
-    private readonly db: TypeORM,
-    @inject(DownloadTaskService)
-    private readonly downloadTaskService: DownloadTaskService,
     @inject(ElectronDevtools)
     private readonly devTools: ElectronDevtools,
-    @inject(ElectronStore)
-    private readonly store: ElectronStore,
     @inject(VideoServer)
     private readonly videoServer: VideoServer,
     @inject(DownloaderServer)
     private readonly downloaderServer: DownloaderServer,
+    @inject(WebviewService)
+    private readonly webviewService: WebviewService,
+    @inject(GoConfigCache)
+    private readonly configCache: GoConfigCache,
+    @inject(BrowserWindowService)
+    private readonly browserWindow: BrowserWindowService,
   ) {}
 
   private async serviceInit(): Promise<void> {
@@ -60,7 +55,6 @@ export default class ElectronApp {
   }
 
   private async vendorInit() {
-    await this.db.init({ dbPath: db });
     this.updater.init();
     this.devTools.init();
   }
@@ -69,9 +63,27 @@ export default class ElectronApp {
     this.protocol.create();
     this.router.init();
 
-    // vendor
+    // 1. Start Go download service (reads config from its own conf file)
+    await this.downloaderServer.start({
+      logDir: logDir,
+      dbPath: db,
+    });
+
+    // 2. Read config from Go (single source of truth) and seed cache
+    const client = this.downloaderServer.getClient();
+    const { data: config } = await client.getConfig();
+    this.configCache.seed(config);
+
+    // 3. Apply initial config
+    nativeTheme.themeSource = config.theme || "system";
+    i18n.changeLanguage(config.language);
+    this.videoServer.start({
+      local: config.local,
+      enableMobilePlayer: config.enableMobilePlayer,
+    });
+
+    // 4. Initialize vendors and services (can now read from configCache)
     await this.vendorInit();
-    // service
     await this.serviceInit();
 
     app.on("activate", () => {
@@ -80,47 +92,54 @@ export default class ElectronApp {
       }
     });
 
-    this.initAppTheme();
-    this.initLanguage();
-    this.resetDownloadStatus();
-
     this.initTray();
 
-    const {
-      local,
-      enableMobilePlayer,
-      proxy,
-      useProxy,
-      maxRunner,
-      deleteSegments,
-    } = this.store.store;
-    this.videoServer.start({ local, enableMobilePlayer });
+    // 5. Listen for Go config changes → update cache + platform side effects + IPC to UI
+    this.downloaderServer.on(
+      "config-changed",
+      (key: string, value: unknown) => {
+        this.configCache.update(key, value);
 
-    // Start the download service
-    this.downloaderServer.start({
-      logDir: logDir,
-      localDir: local,
-      deleteSegments,
-      proxy,
-      useProxy,
-      maxRunner,
-    });
-    this.store.onDidChange("maxRunner", (maxRunner) => {
-      this.downloaderServer.changeConfig({ maxRunner: maxRunner || 1 });
-    });
-    this.store.onDidChange("proxy", (proxy) => {
-      this.downloaderServer.changeConfig({ proxy: proxy || "" });
-    });
-  }
+        // Forward to UI windows
+        this.mainWindow.send("config-changed", { key, value });
+        this.browserWindow.send("config-changed", { key, value });
 
-  initAppTheme(): void {
-    const theme = this.store.get("theme");
-    nativeTheme.themeSource = theme;
-  }
-
-  initLanguage(): void {
-    const language = this.store.get("language");
-    i18n.changeLanguage(language);
+        // Platform side effects
+        const handlers: Record<string, (v: any) => void> = {
+          theme: (v) => {
+            nativeTheme.themeSource = v;
+          },
+          useProxy: (v) => {
+            this.webviewService.setProxy(v, this.configCache.get("proxy"));
+          },
+          proxy: (v) => {
+            this.webviewService.setProxy(this.configCache.get("useProxy"), v);
+          },
+          blockAds: (v) => {
+            this.webviewService.setBlocking(v);
+          },
+          isMobile: (v) => {
+            this.webviewService.setUserAgent(v);
+          },
+          privacy: (v) => {
+            this.webviewService.setDefaultSession(v);
+          },
+          language: (v) => {
+            i18n.changeLanguage(v);
+          },
+          allowBeta: (v) => {
+            this.updater.changeAllowBeta(v);
+          },
+          audioMuted: (v) => {
+            this.webviewService.setAudioMuted(v);
+          },
+          enableMobilePlayer: (v) => {
+            this.videoServer.enableMobilePlayer(v);
+          },
+        };
+        handlers[key]?.(value);
+      },
+    );
   }
 
   initTray() {
@@ -147,14 +166,6 @@ export default class ElectronApp {
       },
     ]);
     tray.setContextMenu(contextMenu);
-  }
-
-  // If there are still videos being downloaded after the restart, change the status to download failed
-  async resetDownloadStatus(): Promise<void> {
-    // If data in the downloading state still fails after the restart, all downloads fail
-    const videos = await this.downloadTaskService.findActiveTasks();
-    const videoIds = videos.map((video) => video.id);
-    await this.downloadTaskService.setStatus(videoIds, DownloadStatus.Failed);
   }
 
   secondInstance = (event: Event, commandLine: string[]) => {

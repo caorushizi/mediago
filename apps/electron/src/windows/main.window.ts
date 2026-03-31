@@ -3,15 +3,10 @@ import {
   DOWNLOAD_EVENT_NAME,
   type DownloadProgress,
   type DownloadProgressEvent,
-  DownloadStatus,
   type DownloadSuccessEvent,
   type DownloadTask,
 } from "@mediago/shared-common";
-import {
-  DownloaderServer,
-  DownloadTaskService,
-  i18n,
-} from "@mediago/shared-node";
+import { DownloaderServer, i18n } from "@mediago/shared-node";
 import { app, Menu, Notification } from "electron";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
@@ -19,6 +14,7 @@ import _ from "lodash";
 import Window from "../core/window";
 import { preloadUrl } from "../utils";
 import { isWin } from "../constants";
+import GoConfigCache from "../services/go-config-cache";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";
 
@@ -31,10 +27,10 @@ export default class MainWindow extends Window {
   constructor(
     @inject(ElectronLogger)
     private readonly logger: ElectronLogger,
-    @inject(DownloadTaskService)
-    private readonly downloadTaskService: DownloadTaskService,
     @inject(ElectronStore)
     private readonly store: ElectronStore,
+    @inject(GoConfigCache)
+    private readonly configCache: GoConfigCache,
     @inject(DownloaderServer)
     private readonly downloaderServer: DownloaderServer,
   ) {
@@ -51,18 +47,15 @@ export default class MainWindow extends Window {
       },
     });
 
-    // this.taskQueue.on("download-ready-start", this.onDownloadReadyStart);
     this.downloaderServer.on("download-success", this.onDownloadSuccess);
     this.downloaderServer.on("download-failed", this.onDownloadFailed);
     this.downloaderServer.on("download-start", this.onDownloadStart);
     this.downloaderServer.on("download-progress", this.onDownloadProgress);
     this.downloaderServer.on("download-stop", this.onDownloadStop);
-    // this.taskQueue.on("download-message", this.onDownloadMessage);
-    this.store.onDidAnyChange(this.storeChange);
   }
 
   closeMainWindow = () => {
-    const { closeMainWindow } = this.store.store;
+    const { closeMainWindow } = this.configCache.store;
     if (closeMainWindow) {
       app.quit();
     }
@@ -74,12 +67,6 @@ export default class MainWindow extends Window {
       data: tasks,
     };
     this.send(DOWNLOAD_EVENT_NAME, data);
-  };
-
-  onDownloadReadyStart = async ({ id, isLive }: DownloadProgress) => {
-    if (isLive) {
-      await this.downloadTaskService.setIsLive(id, true);
-    }
   };
 
   init(): void {
@@ -115,61 +102,43 @@ export default class MainWindow extends Window {
     this.store.set("mainBounds", _.omit(bounds, ["x", "y"]));
   };
 
-  storeChange = (store: unknown) => {
-    // Send notifications to all Windows
-    this.send("store-change", store);
-  };
-
+  // DB status updates are now handled by Go queue callbacks
   onDownloadSuccess = async (id: number) => {
     this.logger.info(`taskId: ${id} success`);
-    await this.downloadTaskService.setStatus(id, DownloadStatus.Success);
-    const video = await this.downloadTaskService.findByIdOrFail(id);
 
-    const promptTone = this.store.get("promptTone");
+    const promptTone = this.configCache.get("promptTone");
     if (promptTone) {
       new Notification({
         title: i18n.t("downloadSuccess"),
-        body: i18n.t("videoDownloadSuccess", {
-          name: video.name,
-        }),
+        body: i18n.t("videoDownloadSuccess", { name: String(id) }),
       }).show();
     }
 
     const data: DownloadSuccessEvent = {
       type: "success",
-      // FIXME: Type 'Video' is not assignable to type 'DownloadTask'.
-      data: video as unknown as DownloadTask,
+      data: { id } as unknown as DownloadTask,
     };
     this.send(DOWNLOAD_EVENT_NAME, data);
   };
 
   onDownloadFailed = async (id: number, err: unknown) => {
     this.logger.info(`taskId: ${id} failed`, err);
-    await this.downloadTaskService.setStatus(id, DownloadStatus.Failed);
 
-    const promptTone = this.store.get("promptTone");
+    const promptTone = this.configCache.get("promptTone");
     if (promptTone) {
-      const video = await this.downloadTaskService.findByIdOrFail(id);
       new Notification({
         title: i18n.t("downloadFailed"),
-        body: i18n.t("videoDownloadFailed", { name: video.name }),
+        body: i18n.t("videoDownloadFailed", { name: String(id) }),
       }).show();
     }
   };
 
   onDownloadStart = async (id: number) => {
     this.logger.info(`taskId: ${id} start`);
-    await this.downloadTaskService.setStatus(id, DownloadStatus.Downloading);
   };
 
   onDownloadStop = async (id: number) => {
     this.logger.info(`taskId: ${id} stopped`);
-    await this.downloadTaskService.setStatus(id, DownloadStatus.Stopped);
-  };
-
-  onDownloadMessage = async (id: number, message: string) => {
-    await this.downloadTaskService.appendLog(id, message);
-    // const showTerminal = this.store.get("showTerminal");
   };
 
   showWindow(url?: string) {

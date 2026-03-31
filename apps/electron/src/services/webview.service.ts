@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { ElectronBlocker } from "@ghostery/adblocker-electron";
 import { provide } from "@inversifyjs/binding-decorators";
-import { DownloadTaskService, i18n } from "@mediago/shared-node";
+import { i18n } from "@mediago/shared-node";
 import {
   type Event,
   type HandlerDetails,
@@ -20,7 +20,7 @@ import {
   pluginUrl,
 } from "../utils";
 import ElectronLogger from "../vendor/ElectronLogger";
-import ElectronStore from "../vendor/ElectronStore";
+import GoConfigCache from "./go-config-cache";
 import BrowserWindow from "../windows/browser.window";
 import MainWindow from "../windows/main.window";
 import { SniffingHelper, type SourceParams } from "./sniffing-helper.service";
@@ -45,17 +45,15 @@ export default class WebviewService {
     private readonly logger: ElectronLogger,
     @inject(BrowserWindow)
     private readonly browserWindow: BrowserWindow,
-    @inject(ElectronStore)
-    private readonly store: ElectronStore,
-    @inject(DownloadTaskService)
-    private readonly downloadTaskService: DownloadTaskService,
+    @inject(GoConfigCache)
+    private readonly configCache: GoConfigCache,
     @inject(SniffingHelper)
     private readonly sniffingHelper: SniffingHelper,
   ) {
     // Initialize the blocker
     this.initBlocker();
 
-    const { useProxy, proxy, privacy } = this.store.store;
+    const { useProxy, proxy, privacy } = this.configCache.store;
 
     this.sniffingHelper.start(privacy);
     this.sniffingHelper.on("source", this.onSource);
@@ -77,7 +75,7 @@ export default class WebviewService {
     }
 
     this.view.setBackgroundColor("#fff");
-    const { isMobile, audioMuted } = this.store.store;
+    const { isMobile, audioMuted } = this.configCache.store;
     this.setAudioMuted(audioMuted);
     this.setUserAgent(isMobile);
 
@@ -129,7 +127,7 @@ export default class WebviewService {
     const pageInfo = this.getPageInfo();
     this.sniffingHelper.update(pageInfo);
     this.sniffingHelper.checkPageInfo();
-    this.window.webContents.send("webview-did-navigate-in-page", pageInfo);
+    this.window?.webContents.send("webview-did-navigate-in-page", pageInfo);
   };
 
   onPageTitleUpdated = () => {
@@ -146,17 +144,9 @@ export default class WebviewService {
 
   onSource = async (item: SourceParams) => {
     if (!this.view) return;
-    // Here you need to determine whether to use a browser plug-in
-    const useExtension = this.store.get("useExtension");
-    if (useExtension) {
-      this.window?.webContents.send("webview-link-message", item);
-    } else {
-      const video = await this.downloadTaskService.addDownloadTask(item);
-      const mainWebContents = this.mainWindow.window?.webContents;
-      if (!mainWebContents) return;
-      // This sends a message to the page notifying it of the update
-      mainWebContents.send("download-item-notifier", video);
-    }
+    // Send to the window for processing
+    // Previously addDownloadTask was called here; now handled by Go server
+    this.window?.webContents.send("webview-link-message", item);
   };
 
   getPageInfo() {
@@ -296,7 +286,7 @@ export default class WebviewService {
       "https://easylist.to/easylist/easylist.txt",
     ]);
 
-    const enableBlocking = this.store.get("blockAds");
+    const enableBlocking = this.configCache.get("blockAds");
     this.setBlocking(enableBlocking);
   }
 
@@ -377,7 +367,7 @@ export default class WebviewService {
     }
 
     if (this.view) {
-      const { useProxy, proxy } = this.store.store;
+      const { useProxy, proxy } = this.configCache.store;
       this.destroyView();
       this.init();
       this.setProxy(useProxy, proxy);

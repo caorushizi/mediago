@@ -13,7 +13,7 @@ import {
   WEBVIEW_SHOW,
   WEBVIEW_URL_CONTEXTMENU,
 } from "@mediago/shared-common";
-import { handle, i18n, TYPES } from "@mediago/shared-node";
+import { DownloaderServer, handle, i18n, TYPES } from "@mediago/shared-node";
 import {
   type IpcMainEvent,
   Menu,
@@ -23,7 +23,6 @@ import {
 import { inject, injectable } from "inversify";
 import { SniffingHelper } from "../services/sniffing-helper.service";
 import WebviewService from "../services/webview.service";
-import ElectronStore from "../vendor/ElectronStore";
 
 @injectable()
 @provide(TYPES.Controller)
@@ -31,8 +30,8 @@ export default class WebviewController implements Controller {
   constructor(
     @inject(WebviewService)
     private readonly webview: WebviewService,
-    @inject(ElectronStore)
-    private readonly store: ElectronStore,
+    @inject(DownloaderServer)
+    private readonly downloaderServer: DownloaderServer,
     @inject(SniffingHelper)
     private readonly sniffingHelper: SniffingHelper,
   ) {}
@@ -92,7 +91,8 @@ export default class WebviewController implements Controller {
   @handle(WEBVIEW_CHANGE_USER_AGENT)
   async webviewChangeUserAgent(e: IpcMainEvent, isMobile: boolean) {
     this.webview.setUserAgent(isMobile);
-    this.store.set("isMobile", isMobile);
+    const client = this.downloaderServer.getClient();
+    await client.setConfigKey("isMobile", isMobile);
   }
 
   @handle(PLUGIN_READY)

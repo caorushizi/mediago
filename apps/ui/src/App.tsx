@@ -1,9 +1,8 @@
-import { ConfigProvider, theme } from "antd";
+import { App as AntdApp, ConfigProvider, theme } from "antd";
 import { type FC, lazy, Suspense, useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import "dayjs/locale/zh-cn";
 import { useAsyncEffect, useMemoizedFn } from "ahooks";
-import { App as AntdApp } from "antd";
 import zhCN from "antd/es/locale/zh_CN";
 import enUS from "antd/es/locale/en_US";
 import { useShallow } from "zustand/react/shallow";
@@ -23,7 +22,8 @@ import {
 } from "./store/session";
 import { getBrowserLang, isWeb, tdApp } from "./utils";
 import useAPI from "./hooks/use-api";
-import { AppLanguage, AppStore, DownloadFilter } from "@mediago/shared-common";
+import { initGoAdapter } from "./hooks/adapters";
+import { AppLanguage, DownloadFilter } from "@mediago/shared-common";
 import { useAuth } from "./hooks/use-auth";
 import { Locale } from "antd/es/locale";
 
@@ -40,7 +40,8 @@ function getAlgorithm(appTheme: "dark" | "light") {
 
 const App: FC = () => {
   useAuth();
-  const { addIpcListener, removeIpcListener, getMachineId } = useAPI();
+  const { addIpcListener, removeIpcListener, getMachineId, getEnvPath } =
+    useAPI();
   const { setUpdateAvailable, setUploadChecking } = useSessionStore(
     useShallow(updateSelector),
   );
@@ -74,10 +75,12 @@ const App: FC = () => {
     }
   });
 
-  // 监听store变化
-  const onAppStoreChange = useMemoizedFn((event: any, store: AppStore) => {
-    setAppStore(store);
-  });
+  // 监听config变化
+  const onConfigChanged = useMemoizedFn(
+    (_event: any, data: { key: string; value: unknown }) => {
+      setAppStore({ [data.key]: data.value });
+    },
+  );
 
   const onReceiveDownloadItem = useMemoizedFn(() => {
     increase();
@@ -105,7 +108,7 @@ const App: FC = () => {
     const onDownloadFailed = () => {
       tdApp.onEvent(DOWNLOAD_FAIL);
     };
-    addIpcListener("store-change", onAppStoreChange);
+    addIpcListener("config-changed", onConfigChanged);
     addIpcListener("download-item-notifier", onReceiveDownloadItem);
     addIpcListener("change-privacy", onChangePrivacy);
     addIpcListener("updateAvailable", updateAvailable);
@@ -115,7 +118,7 @@ const App: FC = () => {
     addIpcListener("download-failed", onDownloadFailed);
 
     return () => {
-      removeIpcListener("store-change", onAppStoreChange);
+      removeIpcListener("config-changed", onConfigChanged);
       removeIpcListener("download-item-notifier", onReceiveDownloadItem);
       removeIpcListener("change-privacy", onChangePrivacy);
       removeIpcListener("updateAvailable", updateAvailable);
@@ -129,6 +132,20 @@ const App: FC = () => {
   useAsyncEffect(async () => {
     const deviceId = await getMachineId();
     tdApp.onEvent(PAGE_LOAD, { deviceId });
+  }, []);
+
+  useAsyncEffect(async () => {
+    try {
+      const envPath = await getEnvPath();
+      if (envPath?.coreUrl) {
+        initGoAdapter(envPath.coreUrl);
+      }
+    } catch (err) {
+      console.warn(
+        "Go adapter init failed, falling back to platform adapter:",
+        err,
+      );
+    }
   }, []);
 
   useEffect(() => {
