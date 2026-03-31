@@ -40,6 +40,7 @@ export interface DownloadServiceOptions {
 export class DownloaderServer extends EventEmitter {
   private serverUrl = "";
   private client: MediaGoClient | null = null;
+  private pollingTimer: ReturnType<typeof setInterval> | null = null;
 
   async start(opts: DownloadServiceOptions) {
     const core = resolveCoreBinaries();
@@ -77,66 +78,27 @@ export class DownloaderServer extends EventEmitter {
 
     events.on("download-start", (payload) => {
       this.emit("download-start", payload.id);
+      this.startPolling();
     });
 
     events.on("download-success", (payload) => {
       this.emit("download-success", payload.id);
+      this.stopPollingIfIdle();
     });
 
     events.on("download-failed", (payload) => {
       this.emit("download-failed", payload.id, payload.error);
+      this.stopPollingIfIdle();
     });
 
     events.on("download-stop", (payload) => {
       this.emit("download-stop", payload.id);
+      this.stopPollingIfIdle();
     });
 
     events.on("config-changed", (payload) => {
       this.emit("config-changed", payload.key, payload.value);
     });
-
-    // 2. Poll for progress
-    // FIXME: performance needs to be optimized
-    const startPolling = () => {
-      setInterval(async () => {
-        if (!this.client) {
-          return;
-        }
-
-        const { data } = await this.client.listTasks();
-
-        const tasks: DownloadProgress[] = data.tasks
-          .filter((task) => {
-            if (!task.percent) {
-              return false;
-            }
-
-            return (
-              task.percent > 0 &&
-              task.percent < 100 &&
-              task.status === TaskStatus.Downloading
-            );
-          })
-          .map((task) => {
-            return {
-              id: Number(task.id),
-              type: task.type,
-              percent: String(task.percent || 0),
-              speed: task.speed || "",
-              isLive: task.isLive || false,
-              status: task.status as unknown as DownloadStatus,
-            };
-          });
-
-        if (tasks.length === 0) {
-          return;
-        }
-
-        this.emit("download-progress", tasks);
-      }, 1000);
-    };
-
-    startPolling();
   }
 
   async startTask(
@@ -171,5 +133,61 @@ export class DownloaderServer extends EventEmitter {
 
   async getURL() {
     return this.serverUrl;
+  }
+
+  private startPolling() {
+    if (this.pollingTimer) return;
+    this.pollingTimer = setInterval(async () => {
+      if (!this.client) return;
+
+      try {
+        const { data } = await this.client.listTasks();
+
+        const tasks: DownloadProgress[] = data.tasks
+          .filter(
+            (task) =>
+              task.percent &&
+              task.percent > 0 &&
+              task.percent < 100 &&
+              task.status === TaskStatus.Downloading,
+          )
+          .map((task) => ({
+            id: Number(task.id),
+            type: task.type,
+            percent: String(task.percent || 0),
+            speed: task.speed || "",
+            isLive: task.isLive || false,
+            status: task.status as unknown as DownloadStatus,
+          }));
+
+        if (tasks.length > 0) {
+          this.emit("download-progress", tasks);
+        }
+      } catch {
+        // ignore
+      }
+    }, 1000);
+  }
+
+  private stopPolling() {
+    if (this.pollingTimer) {
+      clearInterval(this.pollingTimer);
+      this.pollingTimer = null;
+    }
+  }
+
+  private async stopPollingIfIdle() {
+    if (!this.client) return;
+    try {
+      const { data } = await this.client.listTasks();
+      const hasActive = data.tasks.some(
+        (task) => task.status === TaskStatus.Downloading,
+      );
+      if (!hasActive) {
+        this.stopPolling();
+      }
+    } catch {
+      // ignore
+    }
   }
 }

@@ -18,11 +18,20 @@ export function createGoEventBridge(
   // --- SSE subscription ---
   const events = client.streamEvents();
 
+  events.on("download-start", (payload) => {
+    dispatch(DOWNLOAD_EVENT_NAME, {
+      type: "start",
+      data: { id: Number(payload.id) },
+    });
+    startPolling();
+  });
+
   events.on("download-success", (payload) => {
     dispatch(DOWNLOAD_EVENT_NAME, {
       type: "success",
       data: { id: Number(payload.id) },
     });
+    stopPollingIfIdle();
   });
 
   events.on("download-failed", (payload) => {
@@ -30,6 +39,7 @@ export function createGoEventBridge(
       type: "failed",
       data: { id: Number(payload.id), error: payload.error },
     });
+    stopPollingIfIdle();
   });
 
   events.on("download-stop", (payload) => {
@@ -37,13 +47,14 @@ export function createGoEventBridge(
       type: "stopped",
       data: { id: Number(payload.id) },
     });
+    stopPollingIfIdle();
   });
 
   events.on("config-changed", (payload) => {
     dispatch("config-changed", { key: payload.key, value: payload.value });
   });
 
-  // --- Progress polling ---
+  // --- Progress polling (only while downloads are active) ---
   let pollingTimer: ReturnType<typeof setInterval> | null = null;
 
   function startPolling() {
@@ -76,7 +87,26 @@ export function createGoEventBridge(
     }, 1000);
   }
 
-  startPolling();
+  function stopPolling() {
+    if (pollingTimer) {
+      clearInterval(pollingTimer);
+      pollingTimer = null;
+    }
+  }
+
+  async function stopPollingIfIdle() {
+    try {
+      const { data } = await client.listTasks();
+      const hasActive = data.tasks.some(
+        (t) => t.status === TaskStatus.Downloading,
+      );
+      if (!hasActive) {
+        stopPolling();
+      }
+    } catch {
+      // ignore
+    }
+  }
 
   function dispatch(channel: string, data: unknown) {
     const set = listenersMap.get(channel);
