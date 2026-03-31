@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import os from "node:os";
 import { MEDIAGO_EVENT, MEDIAGO_METHOD } from "@mediago/shared-common";
 import axios from "axios";
@@ -53,20 +54,11 @@ export const videoType = [
 
 export const videoPattern = videoType.join(",");
 
-export function loadModule(moduleName: string) {
-  try {
-    let bin = require.resolve(moduleName);
-    if (
-      process.env.NODE_ENV === "production" &&
-      process.env.APP_TARGET === "electron"
-    ) {
-      bin = bin.replace("app.asar", "app.asar.unpacked");
-    }
-    return bin;
-  } catch {
-    return "";
-  }
-}
+export {
+  resolveCoreBinaries,
+  resolveDepsBinaries,
+  resolvePlayerBinary,
+} from "./binaryResolver";
 
 export async function getPageTitle(
   url: string,

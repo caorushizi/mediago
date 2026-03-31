@@ -3,15 +3,10 @@ import EventEmitter from "node:events";
 import fs from "node:fs/promises";
 import { createRequire } from "node:module";
 import { LRUCache } from "lru-cache";
-import { loadModule } from "@mediago/shared-node";
-import path from "node:path";
+import { resolveDepsBinaries } from "@mediago/shared-node";
 
-const ffmpegModule = loadModule("@mediago/deps");
-export const ffmpegPath = path.resolve(
-  path.dirname(ffmpegModule),
-  "bin",
-  "ffmpeg",
-);
+const deps = resolveDepsBinaries();
+export const ffmpegPath = deps.ffmpeg;
 
 export * from "../constants";
 export { error, type IpcResponse, success } from "./ipcResponse";

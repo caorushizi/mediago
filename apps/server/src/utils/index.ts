@@ -1,15 +1,10 @@
-import { loadModule } from "@mediago/shared-node";
+import { resolveDepsBinaries } from "@mediago/shared-node";
 import { spawn } from "node:child_process";
 import EventEmitter from "node:events";
 import os from "node:os";
-import path from "node:path";
 
-const ffmpegModule = loadModule("@mediago/deps");
-export const ffmpegPath = path.resolve(
-  path.dirname(ffmpegModule),
-  "bin",
-  "ffmpeg",
-);
+const deps = resolveDepsBinaries();
+export const ffmpegPath = deps.ffmpeg;
 
 export async function sleep(second = 1): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, second * 1000));

@@ -46,7 +46,6 @@
     "@mediago/shared-node": "workspace:*",
     "@sentry/electron": "^7.2.0",
     "axios": "^1.12.2",
-    "better-sqlite3": "12.4.1",
     "cross-fetch": "^4.1.0",
     "dayjs": "^1.11.11",
     "electron-devtools-installer": "^4.0.0",
@@ -59,7 +58,6 @@
     "mime-types": "^3.0.1",
     "nanoid": "^5.0.7",
     "node-machine-id": "^1.1.12",
-    "reflect-metadata": "^0.2.2",
-    "typeorm": "0.3.27"
+    "reflect-metadata": "^0.2.2"
   }
 }

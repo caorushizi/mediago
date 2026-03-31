@@ -58,8 +58,9 @@ import {
   EnvPath,
   AppStore,
   BrowserStore,
+  type Conversion,
+  type Favorite,
 } from "@mediago/shared-common";
-import type { Conversion, Favorite } from "@mediago/shared-node";
 import { contextBridge, ipcRenderer, shell } from "electron";
 
 const apiFunctions: Record<string, any> = {};

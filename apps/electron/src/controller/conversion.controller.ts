@@ -6,7 +6,7 @@ import {
   DELETE_CONVERSION,
   GET_CONVERSIONS,
 } from "@mediago/shared-common";
-import { type ConversionService, handle, TYPES, type Conversion } from "@mediago/shared-node";
+import { DownloaderServer, handle, TYPES } from "@mediago/shared-node";
 import type { IpcMainEvent } from "electron/main";
 import { inject, injectable } from "inversify";
 
@@ -14,22 +14,33 @@ import { inject, injectable } from "inversify";
 @provide(TYPES.Controller)
 export default class ConversionController implements Controller {
   constructor(
-    @inject(TYPES.ConversionService)
-    private readonly conversionService: ConversionService,
+    @inject(DownloaderServer)
+    private readonly downloaderServer: DownloaderServer,
   ) {}
 
   @handle(GET_CONVERSIONS)
-  async getConversions(e: IpcMainEvent, pagination: ConversionPagination) {
-    return await this.conversionService.getConversions(pagination);
+  async getConversions(_e: IpcMainEvent, pagination: ConversionPagination) {
+    const client = this.downloaderServer.getClient();
+    const res = await client.getConversions({
+      current: pagination.current,
+      pageSize: pagination.pageSize,
+    });
+    return res.data;
   }
 
   @handle(ADD_CONVERSION)
-  async addConversion(e: IpcMainEvent, conversion: Conversion) {
-    return await this.conversionService.addConversion(conversion);
+  async addConversion(
+    _e: IpcMainEvent,
+    conversion: { name?: string; path: string },
+  ) {
+    const client = this.downloaderServer.getClient();
+    const res = await client.addConversion(conversion);
+    return res.data;
   }
 
   @handle(DELETE_CONVERSION)
-  async deleteConversion(e: IpcMainEvent, id: number) {
-    return await this.conversionService.deleteConversion(id);
+  async deleteConversion(_e: IpcMainEvent, id: number) {
+    const client = this.downloaderServer.getClient();
+    await client.deleteConversion(id);
   }
 }

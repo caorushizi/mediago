@@ -1,5 +1,3 @@
-import path from "node:path";
-import { exec } from "node:child_process";
 import { provide } from "@inversifyjs/binding-decorators";
 import {
   ADD_FAVORITE,
@@ -8,7 +6,6 @@ import {
   COMBINE_TO_HOME_PAGE,
   CONVERT_TO_AUDIO,
   type Controller,
-  DownloadStatus,
   EXPORT_DOWNLOAD_LIST,
   EXPORT_FAVORITES,
   EnvPath,
@@ -37,10 +34,7 @@ import {
   safeParseJSON,
 } from "@mediago/shared-common";
 import {
-  type ConversionService,
-  DownloadTaskService,
-  type Favorite,
-  type FavoriteManagementService,
+  DownloaderServer,
   getLocalIP,
   getPageTitle,
   handle,
@@ -50,27 +44,21 @@ import {
   VideoServer,
 } from "@mediago/shared-node";
 import {
-  clipboard,
   dialog,
   type IpcMainEvent,
   Menu,
   type MenuItem,
   type MenuItemConstructorOptions,
-  nativeTheme,
   shell,
 } from "electron";
 import fs from "node:fs/promises";
 import { inject, injectable } from "inversify";
 import { nanoid } from "nanoid";
 import MachineId from "node-machine-id";
-import { convertToAudio, db, exePath, workspace } from "../utils";
-import WebviewService from "../services/webview.service";
-import ElectronLogger from "../vendor/ElectronLogger";
-import ElectronStore from "../vendor/ElectronStore";
+import { convertToAudio, exePath, workspace } from "../utils";
 import ElectronUpdater from "../vendor/ElectronUpdater";
 import BrowserWindow from "../windows/browser.window";
 import MainWindow from "../windows/main.window";
-import {isLinux} from "../constants/index";
 
 const { machineId } = MachineId;
 
@@ -79,117 +67,62 @@ const { machineId } = MachineId;
 export default class HomeController implements Controller {
   private sharedState: Record<string, unknown> = {};
 
-  private readonly appStoreHandlers: Partial<{
-    [K in keyof AppStore]: (value: AppStore[K]) => void | Promise<void>;
-  }> = {
-    useProxy: (value) => {
-      const proxy = this.store.get("proxy");
-      this.webviewService.setProxy(value, proxy);
-    },
-    proxy: (value) => {
-      const useProxy = this.store.get("useProxy");
-      if (useProxy) {
-        this.webviewService.setProxy(true, value);
-      }
-    },
-    blockAds: (value) => {
-      this.webviewService.setBlocking(value);
-    },
-    theme: (value) => {
-      nativeTheme.themeSource = value;
-
-      //fix linux dark top bar issue
-      if (isLinux) {
-          const gsettingsCommand = value === 'dark'
-            ? 'gsettings set org.gnome.desktop.interface color-scheme prefer-dark'
-            : 'gsettings set org.gnome.desktop.interface color-scheme default';
-
-          exec(gsettingsCommand, (error, stdout, stderr) => {
-            if (error) {
-              this.logger.error(`执行 gsettings 命令失败: ${stderr}`);
-              return;
-            }
-            if (stderr) {
-              this.logger.error(`gsettings 命令输出错误: ${stderr}`);
-              return;
-            }
-            this.logger.info(`gsettings 命令成功执行: ${stdout}`);
-          });
-        }
-    },
-    isMobile: (value) => {
-      this.webviewService.setUserAgent(value);
-    },
-    privacy: (value) => {
-      this.webviewService.setDefaultSession(value);
-    },
-    language: async (value) => {
-      await i18n.changeLanguage(value);
-    },
-    allowBeta: (value) => {
-      this.updater.changeAllowBeta(value);
-    },
-    audioMuted: (value) => {
-      this.webviewService.setAudioMuted(value);
-    },
-    enableMobilePlayer: (value) => {
-      this.videoServer.enableMobilePlayer(value);
-    },
-  };
-
   constructor(
-    @inject(ElectronStore)
-    private readonly store: ElectronStore,
-    @inject(TYPES.FavoriteManagementService)
-    private readonly favoriteService: FavoriteManagementService,
     @inject(MainWindow)
     private readonly mainWindow: MainWindow,
-    @inject(DownloadTaskService)
-    private readonly downloadTaskService: DownloadTaskService,
     @inject(BrowserWindow)
     private readonly browserWindow: BrowserWindow,
-    @inject(WebviewService)
-    private readonly webviewService: WebviewService,
-    @inject(TYPES.ConversionService)
-    private readonly conversionService: ConversionService,
-    @inject(ElectronLogger)
-    private readonly logger: ElectronLogger,
     @inject(ElectronUpdater)
     private readonly updater: ElectronUpdater,
     @inject(VideoServer)
     private readonly videoServer: VideoServer,
+    @inject(DownloaderServer)
+    private readonly downloaderServer: DownloaderServer,
   ) {}
 
   @handle(GET_ENV_PATH)
   async getEnvPath(): Promise<EnvPath> {
+    const client = this.downloaderServer.getClient();
+    const { data: config } = await client.getConfig();
     return {
       binPath: exePath,
-      dbPath: db,
+      dbPath: "",
       workspace: workspace,
       platform: process.platform,
-      local: this.store.get("local"),
-      playerUrl: this.videoServer.getURL(),
+      local: config.local,
+      playerUrl: this.videoServer.getURL() ?? "",
+      coreUrl: (await this.downloaderServer.getURL()) ?? "",
     };
   }
 
   @handle(GET_FAVORITES)
-  getFavorites() {
-    return this.favoriteService.getFavorites();
+  async getFavorites() {
+    const client = this.downloaderServer.getClient();
+    const res = await client.getFavorites();
+    return res.data;
   }
 
   @handle(ADD_FAVORITE)
-  addFavorite(e: IpcMainEvent, favorite: Favorite) {
-    return this.favoriteService.addFavorite(favorite);
+  async addFavorite(
+    _e: IpcMainEvent,
+    favorite: { title: string; url: string; icon?: string },
+  ) {
+    const client = this.downloaderServer.getClient();
+    const res = await client.addFavorite(favorite);
+    return res.data;
   }
 
   @handle(REMOVE_FAVORITE)
-  removeFavorite(e: IpcMainEvent, id: number): Promise<void> {
-    return this.favoriteService.removeFavorite(id);
+  async removeFavorite(_e: IpcMainEvent, id: number): Promise<void> {
+    const client = this.downloaderServer.getClient();
+    await client.removeFavorite(id);
   }
 
   @handle(GET_APP_STORE)
-  getAppStore() {
-    return this.store.store;
+  async getAppStore() {
+    const client = this.downloaderServer.getClient();
+    const res = await client.getConfig();
+    return res.data;
   }
 
   @handle(ON_FAVORITE_ITEM_CONTEXT_MENU)
@@ -231,7 +164,8 @@ export default class HomeController implements Controller {
 
     if (!result.canceled) {
       const dir = result.filePaths[0];
-      this.store.set("local", dir);
+      const client = this.downloaderServer.getClient();
+      await client.setConfigKey("local", dir);
       return dir;
     }
     return "";
@@ -243,12 +177,8 @@ export default class HomeController implements Controller {
     key: K,
     val: AppStore[K],
   ) {
-    const handler = this.appStoreHandlers[key];
-    if (handler) {
-      await handler(val);
-    }
-
-    this.store.set(key, val);
+    const client = this.downloaderServer.getClient();
+    await client.setConfigKey(String(key), val);
   }
 
   @handle(OPEN_DIR)
@@ -269,18 +199,7 @@ export default class HomeController implements Controller {
         payload: id,
       });
     };
-    const item = await this.downloadTaskService.getDownloadTasks(
-      { current: 1, pageSize: 1 },
-      this.store.get("local"),
-    );
-    const task = item.list.find((t: any) => t.id === id);
     const template: Array<MenuItemConstructorOptions | MenuItem> = [
-      {
-        label: i18n.t("copyLinkAddress"),
-        click: () => {
-          clipboard.writeText(task?.url || "");
-        },
-      },
       {
         label: i18n.t("select"),
         click: () => {
@@ -289,7 +208,6 @@ export default class HomeController implements Controller {
       },
       {
         label: i18n.t("download"),
-        visible: task?.status !== DownloadStatus.Success,
         click: () => {
           send("download");
         },
@@ -309,41 +227,17 @@ export default class HomeController implements Controller {
       },
     ];
 
-    if (task?.status === DownloadStatus.Success && task?.exists && task?.file) {
-      template.unshift(
-        {
-          label: i18n.t("openFolder"),
-          click: () => {
-            shell.showItemInFolder(task.file!);
-          },
-        },
-        {
-          label: i18n.t("openFile"),
-          click: () => {
-            shell.openPath(task.file!);
-          },
-        },
-        { type: "separator" },
-      );
-    }
-
     const menu = Menu.buildFromTemplate(template);
     menu.popup();
   }
 
   @handle(CONVERT_TO_AUDIO)
-  async convertToAudio(e: IpcMainEvent, id: number) {
-    const conversion = await this.conversionService.findByIdOrFail(id);
-    const local = this.store.get("local");
-    const input = conversion.path;
-    const outName = `${path.basename(input, path.extname(input))}.mp3`;
-    const output = path.join(local, outName);
-
-    const exist = await fs.stat(input);
-    if (exist) {
-      return await convertToAudio(input, output);
-    } else {
-      return Promise.reject(i18n.t("noFileFound"));
+  async convertToAudio(_e: IpcMainEvent, id: number) {
+    const client = this.downloaderServer.getClient();
+    const res = await client.getConversion(id);
+    const conversion = res.data;
+    if (conversion?.path) {
+      await convertToAudio(conversion.path);
     }
   }
 
@@ -357,7 +251,8 @@ export default class HomeController implements Controller {
     // Close browser window
     this.browserWindow.hideWindow();
     // Modify the properties in the Settings
-    this.store.set("openInNewWindow", false);
+    const client = this.downloaderServer.getClient();
+    await client.setConfigKey("openInNewWindow", false);
   }
 
   @handle(GET_LOCAL_IP)
@@ -376,12 +271,10 @@ export default class HomeController implements Controller {
   }
 
   @handle(GET_DOWNLOAD_LOG)
-  async getDownloadLog(event: IpcMainEvent, id: number) {
-    try {
-      return await this.downloadTaskService.getDownloadLog(id);
-    } catch {
-      return "";
-    }
+  async getDownloadLog(_event: IpcMainEvent, id: number) {
+    const client = this.downloaderServer.getClient();
+    const res = await client.getDownloadLogs(id);
+    return res.data.log;
   }
 
   @handle(SELECT_FILE)
@@ -401,53 +294,58 @@ export default class HomeController implements Controller {
 
   @handle(GET_MACHINE_ID)
   async getMachineId() {
+    const client = this.downloaderServer.getClient();
     try {
-      const id = this.store.get("machineId");
-      if (id) return id;
+      const { data: config } = await client.getConfig();
+      if (config.machineId) return config.machineId;
       const newId = await machineId();
-      this.store.set("machineId", newId);
+      await client.setConfigKey("machineId", newId);
       return newId;
     } catch {
-      const id = this.store.get("machineId");
-      if (id) return id;
+      const { data: config } = await client.getConfig();
+      if (config.machineId) return config.machineId;
       const newId = nanoid();
-      this.store.set("machineId", newId);
+      await client.setConfigKey("machineId", newId);
       return newId;
     }
   }
 
   @handle(EXPORT_FAVORITES)
   async exportFavorites() {
-    const json = await this.favoriteService.exportFavorites();
     const window = this.mainWindow.window;
-    if (!window) return Promise.reject(i18n.t("noMainWindow"));
+    if (!window) return;
+
+    const client = this.downloaderServer.getClient();
+    const res = await client.exportFavorites();
+    const content = res.data;
 
     const result = await dialog.showSaveDialog(window, {
-      title: i18n.t("exportFavorites"),
       defaultPath: "favorites.json",
       filters: [{ name: "JSON", extensions: ["json"] }],
     });
 
-    if (!result.canceled) {
-      await fs.writeFile(result.filePath, json);
+    if (!result.canceled && result.filePath) {
+      await fs.writeFile(result.filePath, content, "utf-8");
     }
   }
 
   @handle(IMPORT_FAVORITES)
   async importFavorites() {
     const window = this.mainWindow.window;
-    if (!window) return Promise.reject(i18n.t("noMainWindow"));
+    if (!window) return;
 
     const result = await dialog.showOpenDialog(window, {
       properties: ["openFile"],
       filters: [{ name: "JSON", extensions: ["json"] }],
     });
 
-    if (!result.canceled) {
-      const filePath = result.filePaths[0];
-      const json = await fs.readFile(filePath, "utf-8");
-      const data = safeParseJSON(json, {}) as unknown as any;
-      await this.favoriteService.importFavorites(data);
+    if (!result.canceled && result.filePaths[0]) {
+      const content = await fs.readFile(result.filePaths[0], "utf-8");
+      const favorites = safeParseJSON(content);
+      if (Array.isArray(favorites)) {
+        const client = this.downloaderServer.getClient();
+        await client.importFavorites(favorites);
+      }
     }
   }
 
@@ -468,24 +366,28 @@ export default class HomeController implements Controller {
 
   @handle(EXPORT_DOWNLOAD_LIST)
   async exportDownloadList() {
-    const txt = await this.downloadTaskService.exportDownloadList();
     const window = this.mainWindow.window;
-    if (!window) return Promise.reject(i18n.t("noMainWindow"));
+    if (!window) return;
+
+    const client = this.downloaderServer.getClient();
+    const res = await client.exportDownloadList();
+    const content = res.data;
 
     const result = await dialog.showSaveDialog(window, {
-      title: i18n.t("exportDownloadList"),
-      defaultPath: "download-list.txt",
+      defaultPath: "downloads.txt",
       filters: [{ name: "Text", extensions: ["txt"] }],
     });
 
-    if (!result.canceled) {
-      await fs.writeFile(result.filePath, txt);
+    if (!result.canceled && result.filePath) {
+      await fs.writeFile(result.filePath, content, "utf-8");
     }
   }
 
   @handle(GET_VIDEO_FOLDERS)
   async getVideoFolders() {
-    return this.downloadTaskService.getTaskFolders();
+    const client = this.downloaderServer.getClient();
+    const res = await client.getDownloadFolders();
+    return res.data;
   }
 
   @handle(GET_PAGE_TITLE)

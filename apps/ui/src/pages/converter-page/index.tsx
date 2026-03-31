@@ -1,5 +1,5 @@
 import { DeleteOutlined, SyncOutlined } from "@ant-design/icons";
-import type { Conversion } from "@mediago/shared-node";
+import { type Conversion, GET_CONVERSIONS } from "@mediago/shared-common";
 import { useMemoizedFn } from "ahooks";
 import { App, Empty } from "antd";
 import { produce } from "immer";
@@ -12,7 +12,6 @@ import { ADD_CONVERT_TASK, DELETE_CONVERT, START_CONVERT } from "@/const";
 import { getFileName, tdApp } from "@/utils";
 import useAPI from "@/hooks/use-api";
 import useSWR from "swr";
-import { GET_CONVERSIONS } from "@mediago/shared-common";
 import Loading from "@/components/loading";
 
 const Converter = () => {

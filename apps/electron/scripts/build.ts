@@ -22,6 +22,11 @@ const pkg = JSON.parse(await fs.readFile("./app/package.json", "utf-8"));
 function getReleaseConfig(): Configuration {
   return {
     asar: true,
+    asarUnpack: [
+      "node_modules/@mediago/core-*/**",
+      "node_modules/@mediago/deps-*/**",
+      "node_modules/@mediago/player-*/**",
+    ],
     productName: process.env.APP_NAME,
     buildVersion: pkg.version,
     appId: process.env.APP_ID,
