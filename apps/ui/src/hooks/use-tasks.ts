@@ -3,7 +3,9 @@ import {
   DownloadFilter,
   DownloadStatus,
   type DownloadEvent,
+  type DownloadFailedEvent,
   type DownloadProgress,
+  type DownloadStoppedEvent,
   type DownloadSuccessEvent,
   type DownloadTask,
 } from "@mediago/shared-common";
@@ -30,6 +32,10 @@ export interface DownloadTaskDetails extends DownloadTask {
 
 const isSuccessEvent = (obj: DownloadEvent): obj is DownloadSuccessEvent =>
   obj.type === "success";
+const isFailedEvent = (obj: DownloadEvent): obj is DownloadFailedEvent =>
+  obj.type === "failed";
+const isStoppedEvent = (obj: DownloadEvent): obj is DownloadStoppedEvent =>
+  obj.type === "stopped";
 const isProgressEvent = (
   obj: DownloadEvent,
 ): obj is DownloadEvent<DownloadProgress[]> => obj.type === "progress";
@@ -113,30 +119,17 @@ export function useTasks(filter: DownloadFilter = DownloadFilter.list) {
   const handleDownloadEvent = useCallback(
     (_: unknown, eventData: DownloadEvent) => {
       if (isSuccessEvent(eventData)) {
-        mutate(
-          (current) => {
-            if (!current) {
-              return current;
-            }
+        mutate();
+        return;
+      }
 
-            const index = current.list.findIndex(
-              (item) => item.id === eventData.data.id,
-            );
-            if (index === -1) {
-              return current;
-            }
+      if (isFailedEvent(eventData)) {
+        mutate();
+        return;
+      }
 
-            const nextList = [...current.list];
-            nextList.splice(index, 1);
-
-            return {
-              ...current,
-              list: nextList,
-              total: Math.max(0, current.total - 1),
-            };
-          },
-          { revalidate: false },
-        );
+      if (isStoppedEvent(eventData)) {
+        mutate();
         return;
       }
 

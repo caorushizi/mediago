@@ -151,6 +151,10 @@ export interface DownloadFailedEvent extends DownloadEvent<DownloadFailedData> {
   type: "failed";
 }
 
+export interface DownloadStoppedEvent extends DownloadEvent<{ id: number }> {
+  type: "stopped";
+}
+
 export interface DownloadProgressEvent extends DownloadEvent<
   DownloadProgress[]
 > {
