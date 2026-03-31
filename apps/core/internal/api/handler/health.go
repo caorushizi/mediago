@@ -7,21 +7,21 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// HealthHandler 处理健康检查相关接口。
+// HealthHandler handles health check endpoints.
 type HealthHandler struct{}
 
-// NewHealthHandler 创建 HealthHandler。
+// NewHealthHandler creates a HealthHandler.
 func NewHealthHandler() *HealthHandler {
 	return &HealthHandler{}
 }
 
-// Check 健康检查
-// @Summary 健康检查
-// @Description 检查服务是否正常运行
+// Check performs a health check.
+// @Summary Health check
+// @Description Checks whether the service is running normally
 // @Tags Health
 // @Accept json
 // @Produce json
-// @Success 200 {object} dto.SuccessResponse{data=dto.HealthResponse} "服务正常"
+// @Success 200 {object} dto.SuccessResponse{data=dto.HealthResponse} "Service is healthy"
 // @Router /healthy [get]
 func (h *HealthHandler) Check(c *gin.Context) {
     c.JSON(http.StatusOK, dto.SuccessResponse{

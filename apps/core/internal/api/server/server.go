@@ -17,7 +17,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Server 包装 Gin Engine 与业务依赖。
+// Server wraps the Gin Engine with its business dependencies.
 type Server struct {
 	queue  *core.TaskQueue
 	hub    *sse.Hub
@@ -31,12 +31,12 @@ type Server struct {
 	authHandler   *handler.AuthHandler
 	utilHandler   *handler.UtilHandler
 
-	// 数据库持久化 handlers（当 database 不为 nil 时可用）
+	// Database persistence handlers (available when database is non-nil)
 	downloadHandler   *handler.DownloadHandler
 	favoriteHandler   *handler.FavoriteHandler
 	conversionHandler *handler.ConversionHandler
 
-	// 下载任务服务（用于队列回调更新数据库状态）
+	// Download task service (used by queue callbacks to update database state)
 	downloadService *service.DownloadTaskService
 }
 
@@ -47,7 +47,7 @@ type Options struct {
 	EnvPaths   handler.EnvPaths
 }
 
-// New 创建 HTTP 服务器实例。
+// New creates an HTTP server instance.
 func New(queue *core.TaskQueue, logs *tasklog.Manager, database *db.Database, confStore handler.ConfigStore, opts ...Options) *Server {
 	var opt Options
 	if len(opts) > 0 {
@@ -90,7 +90,7 @@ func New(queue *core.TaskQueue, logs *tasklog.Manager, database *db.Database, co
 		utilHandler:   handler.NewUtilHandler(opt.EnvPaths),
 	}
 
-	// 当提供了数据库时，初始化持久化相关组件
+	// Initialize persistence-related components when a database is provided
 	if database != nil {
 		videoRepo := repo.NewVideoRepository(database)
 		favoriteRepo := repo.NewFavoriteRepository(database)
@@ -131,12 +131,12 @@ func (s *Server) serveStatic(dir string) {
 	})
 }
 
-// Run 启动 HTTP 服务。
+// Run starts the HTTP server on the given address.
 func (s *Server) Run(addr string) error {
 	return s.engine.Run(addr)
 }
 
-// Engine 返回底层 Gin Engine（主要用于测试）。
+// Engine returns the underlying Gin Engine (primarily used for testing).
 func (s *Server) Engine() *gin.Engine {
 	return s.engine
 }

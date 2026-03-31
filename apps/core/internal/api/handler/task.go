@@ -16,7 +16,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// TaskHandler 处理任务相关接口。
+// TaskHandler handles task-related endpoints.
 type TaskHandler struct {
 	queue *core.TaskQueue
 	logs  *tasklog.Manager
@@ -24,7 +24,7 @@ type TaskHandler struct {
 	seq   int64
 }
 
-// NewTaskHandler 创建 TaskHandler。
+// NewTaskHandler creates a TaskHandler.
 func NewTaskHandler(queue *core.TaskQueue, logs *tasklog.Manager) *TaskHandler {
 	return &TaskHandler{
 		queue: queue,
@@ -32,16 +32,16 @@ func NewTaskHandler(queue *core.TaskQueue, logs *tasklog.Manager) *TaskHandler {
 	}
 }
 
-// Create 创建下载任务
-// @Summary 创建下载任务
-// @Description 创建一个新的下载任务并加入队列，可选择性提供任务 ID
-// @Description 支持 M3U8、Bilibili、Direct 三种下载类型
+// Create creates a download task.
+// @Summary Create a download task
+// @Description Creates a new download task and adds it to the queue; task ID is optional
+// @Description Supports M3U8, Bilibili, and Direct download types
 // @Tags Tasks
 // @Accept json
 // @Produce json
-// @Param task body dto.CreateTaskReq true "下载任务参数"
-// @Success 200 {object} dto.SuccessResponse{data=dto.CreateTaskResponse} "任务创建成功，返回任务状态 (pending/success)"
-// @Failure 400 {object} dto.ErrorResponse "请求参数错误"
+// @Param task body dto.CreateTaskReq true "Download task parameters"
+// @Success 200 {object} dto.SuccessResponse{data=dto.CreateTaskResponse} "Task created successfully, returns task status (pending/success)"
+// @Failure 400 {object} dto.ErrorResponse "Invalid request parameters"
 // @Router /tasks [post]
 func (h *TaskHandler) Create(c *gin.Context) {
 	var req dto.CreateTaskReq
@@ -75,15 +75,15 @@ func (h *TaskHandler) Create(c *gin.Context) {
 	})
 }
 
-// Get 获取任务状态
-// @Summary 获取任务状态
-// @Description 获取指定ID的任务状态和进度信息
+// Get retrieves task status.
+// @Summary Get task status
+// @Description Retrieves the status and progress information for the specified task ID
 // @Tags Tasks
 // @Accept json
 // @Produce json
-// @Param id path string true "任务ID" example(task-1)
-// @Success 200 {object} dto.SuccessResponse{data=core.TaskInfo} "任务信息"
-// @Failure 404 {object} dto.ErrorResponse "任务不存在"
+// @Param id path string true "Task ID" example(task-1)
+// @Success 200 {object} dto.SuccessResponse{data=core.TaskInfo} "Task information"
+// @Failure 404 {object} dto.ErrorResponse "Task not found"
 // @Router /tasks/{id} [get]
 func (h *TaskHandler) Get(c *gin.Context) {
 	id := c.Param("id")
@@ -110,13 +110,13 @@ func (h *TaskHandler) Get(c *gin.Context) {
 	})
 }
 
-// List 获取所有任务状态
-// @Summary 获取所有任务状态
-// @Description 获取所有任务的状态和进度信息列表
+// List retrieves all task statuses.
+// @Summary Get all task statuses
+// @Description Retrieves the status and progress information for all tasks
 // @Tags Tasks
 // @Accept json
 // @Produce json
-// @Success 200 {object} dto.SuccessResponse{data=dto.TaskListResponse} "任务列表"
+// @Success 200 {object} dto.SuccessResponse{data=dto.TaskListResponse} "Task list"
 // @Router /tasks [get]
 func (h *TaskHandler) List(c *gin.Context) {
 	tasks := h.queue.GetAllTasks()
@@ -136,15 +136,15 @@ func (h *TaskHandler) List(c *gin.Context) {
 	})
 }
 
-// Stop 停止下载任务
-// @Summary 停止下载任务
-// @Description 停止指定ID的下载任务
+// Stop stops a download task.
+// @Summary Stop a download task
+// @Description Stops the download task with the specified ID
 // @Tags Tasks
 // @Accept json
 // @Produce json
-// @Param id path string true "任务ID" example(task-1)
-// @Success 200 {object} dto.SuccessResponse{data=dto.StopTaskResponse} "任务停止成功"
-// @Failure 404 {object} dto.ErrorResponse "任务不存在"
+// @Param id path string true "Task ID" example(task-1)
+// @Success 200 {object} dto.SuccessResponse{data=dto.StopTaskResponse} "Task stopped successfully"
+// @Failure 404 {object} dto.ErrorResponse "Task not found"
 // @Router /tasks/{id}/stop [post]
 func (h *TaskHandler) Stop(c *gin.Context) {
 	id := c.Param("id")
@@ -169,16 +169,16 @@ func (h *TaskHandler) Stop(c *gin.Context) {
 	})
 }
 
-// Logs 获取任务日志
-// @Summary 获取任务日志
-// @Description 获取指定任务ID的完整下载日志内容
+// Logs retrieves task logs.
+// @Summary Get task logs
+// @Description Retrieves the full download log content for the specified task ID
 // @Tags Tasks
 // @Accept json
 // @Produce json
-// @Param id path string true "任务ID" example(task-1)
-// @Success 200 {object} dto.SuccessResponse{data=dto.TaskLogResponse} "任务日志内容"
-// @Failure 404 {object} dto.ErrorResponse "日志不存在"
-// @Failure 500 {object} dto.ErrorResponse "日志系统未配置或读取失败"
+// @Param id path string true "Task ID" example(task-1)
+// @Success 200 {object} dto.SuccessResponse{data=dto.TaskLogResponse} "Task log content"
+// @Failure 404 {object} dto.ErrorResponse "Log not found"
+// @Failure 500 {object} dto.ErrorResponse "Log system not configured or read failed"
 // @Router /tasks/{id}/logs [get]
 func (h *TaskHandler) Logs(c *gin.Context) {
 	id := c.Param("id")

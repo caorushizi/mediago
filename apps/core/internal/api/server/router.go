@@ -37,7 +37,7 @@ func (s *Server) registerRoutes() {
 		api.GET("/env", s.utilHandler.GetEnvPaths)
 	}
 
-	// 数据库持久化路由（仅当 database 可用时注册）
+	// Database persistence routes (only registered when database is available)
 	if s.downloadHandler != nil {
 		downloads := api.Group("/downloads")
 		{

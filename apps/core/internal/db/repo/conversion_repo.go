@@ -10,17 +10,17 @@ import (
 // ErrConversionNotFound is returned when a conversion record is not found by ID.
 var ErrConversionNotFound = errors.New("conversion_not_found")
 
-// ConversionRepository 转换记录数据访问层。
+// ConversionRepository is the data access layer for conversion records.
 type ConversionRepository struct {
 	db *gorm.DB
 }
 
-// NewConversionRepository 创建 ConversionRepository。
+// NewConversionRepository creates a ConversionRepository.
 func NewConversionRepository(database *db.Database) *ConversionRepository {
 	return &ConversionRepository{db: database.DB}
 }
 
-// Create 创建转换记录。
+// Create creates a conversion record.
 func (r *ConversionRepository) Create(conv *db.Conversion) (*db.Conversion, error) {
 	if err := r.db.Create(conv).Error; err != nil {
 		return nil, err
@@ -28,7 +28,7 @@ func (r *ConversionRepository) Create(conv *db.Conversion) (*db.Conversion, erro
 	return conv, nil
 }
 
-// FindByID 根据 ID 查找转换记录。
+// FindByID looks up a conversion record by ID.
 func (r *ConversionRepository) FindByID(id int64) (*db.Conversion, error) {
 	var conv db.Conversion
 	err := r.db.Where("id = ?", id).First(&conv).Error
@@ -41,7 +41,7 @@ func (r *ConversionRepository) FindByID(id int64) (*db.Conversion, error) {
 	return &conv, nil
 }
 
-// FindByIDOrFail 根据 ID 查找转换记录，不存在时返回错误。
+// FindByIDOrFail looks up a conversion record by ID, returning an error if not found.
 func (r *ConversionRepository) FindByIDOrFail(id int64) (*db.Conversion, error) {
 	conv, err := r.FindByID(id)
 	if err != nil {
@@ -53,13 +53,13 @@ func (r *ConversionRepository) FindByIDOrFail(id int64) (*db.Conversion, error) 
 	return conv, nil
 }
 
-// ConversionPaginationResult 分页查询结果。
+// ConversionPaginationResult holds the result of a paginated query.
 type ConversionPaginationResult struct {
 	Items []*db.Conversion `json:"items"`
 	Total int64            `json:"total"`
 }
 
-// FindWithPagination 分页查询转换记录。
+// FindWithPagination queries conversion records with pagination.
 func (r *ConversionRepository) FindWithPagination(current, pageSize int) (*ConversionPaginationResult, error) {
 	if current <= 0 {
 		current = 1
@@ -83,7 +83,7 @@ func (r *ConversionRepository) FindWithPagination(current, pageSize int) (*Conve
 	return &ConversionPaginationResult{Items: items, Total: total}, nil
 }
 
-// Delete 删除转换记录。
+// Delete removes a conversion record.
 func (r *ConversionRepository) Delete(id int64) error {
 	return r.db.Delete(&db.Conversion{}, id).Error
 }

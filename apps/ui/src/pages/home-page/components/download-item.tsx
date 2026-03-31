@@ -68,7 +68,7 @@ export const DownloadTaskItem = ({
 
   // Handlers
   const handlePlay = useMemoizedFn(() => {
-    // FIXME: 播放器接入
+    // FIXME: Player integration
     tdApp.onEvent(PLAY_VIDEO);
     openUrl(envPath.playerUrl);
   });

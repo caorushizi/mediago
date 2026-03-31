@@ -12,18 +12,18 @@ import (
 	"go.uber.org/zap"
 )
 
-// DownloadHandler 处理数据库持久化的下载任务接口。
+// DownloadHandler handles database-persisted download task endpoints.
 type DownloadHandler struct {
 	svc  *service.DownloadTaskService
 	conf ConfigStore
 }
 
-// NewDownloadHandler 创建 DownloadHandler。
+// NewDownloadHandler creates a DownloadHandler.
 func NewDownloadHandler(svc *service.DownloadTaskService, conf ConfigStore) *DownloadHandler {
 	return &DownloadHandler{svc: svc, conf: conf}
 }
 
-// Create 添加下载任务（支持批量）。
+// Create adds download tasks (supports batch creation).
 func (h *DownloadHandler) Create(c *gin.Context) {
 	var req dto.AddDownloadBatchReq
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -63,7 +63,7 @@ func (h *DownloadHandler) Create(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.SuccessResponse{Success: true, Code: http.StatusOK, Message: i18n.T(c, i18n.MsgOK), Data: videos})
 }
 
-// List 分页获取下载任务列表。
+// List retrieves a paginated list of download tasks.
 func (h *DownloadHandler) List(c *gin.Context) {
 	var req dto.DownloadPaginationReq
 	if err := c.ShouldBindQuery(&req); err != nil {
@@ -82,7 +82,7 @@ func (h *DownloadHandler) List(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.SuccessResponse{Success: true, Code: http.StatusOK, Message: i18n.T(c, i18n.MsgOK), Data: result})
 }
 
-// Get 获取单个下载任务。
+// Get retrieves a single download task.
 func (h *DownloadHandler) Get(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -99,7 +99,7 @@ func (h *DownloadHandler) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.SuccessResponse{Success: true, Code: http.StatusOK, Message: i18n.T(c, i18n.MsgOK), Data: video})
 }
 
-// Edit 编辑下载任务。
+// Edit edits a download task.
 func (h *DownloadHandler) Edit(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -137,7 +137,7 @@ func (h *DownloadHandler) Edit(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.SuccessResponse{Success: true, Code: http.StatusOK, Message: i18n.T(c, i18n.MsgOK), Data: video})
 }
 
-// Delete 删除下载任务。
+// Delete removes a download task.
 func (h *DownloadHandler) Delete(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -154,7 +154,7 @@ func (h *DownloadHandler) Delete(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.SuccessResponse{Success: true, Code: http.StatusOK, Message: i18n.T(c, i18n.MsgDeleted)})
 }
 
-// Start 开始下载。
+// Start begins downloading a task.
 func (h *DownloadHandler) Start(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -168,7 +168,7 @@ func (h *DownloadHandler) Start(c *gin.Context) {
 		return
 	}
 
-	// 同步客户端传入的 localPath 到运行时配置
+	// Sync the client-provided localPath into the runtime configuration
 	if req.LocalPath != "" {
 		if err := h.conf.Set("local", req.LocalPath); err != nil {
 			logger.Warn("Failed to sync localPath to config", zap.Error(err))
@@ -184,7 +184,7 @@ func (h *DownloadHandler) Start(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.SuccessResponse{Success: true, Code: http.StatusOK, Message: i18n.T(c, i18n.MsgDownloadStarted)})
 }
 
-// Stop 停止下载。
+// Stop stops a download.
 func (h *DownloadHandler) Stop(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -201,7 +201,7 @@ func (h *DownloadHandler) Stop(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.SuccessResponse{Success: true, Code: http.StatusOK, Message: i18n.T(c, i18n.MsgDownloadStopped)})
 }
 
-// Logs 获取下载日志。
+// Logs retrieves the download log.
 func (h *DownloadHandler) Logs(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -221,7 +221,7 @@ func (h *DownloadHandler) Logs(c *gin.Context) {
 	}})
 }
 
-// Folders 获取文件夹列表。
+// Folders retrieves the folder list.
 func (h *DownloadHandler) Folders(c *gin.Context) {
 	folders, err := h.svc.GetTaskFolders()
 	if err != nil {
@@ -233,7 +233,7 @@ func (h *DownloadHandler) Folders(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.SuccessResponse{Success: true, Code: http.StatusOK, Message: i18n.T(c, i18n.MsgOK), Data: folders})
 }
 
-// Export 导出下载列表。
+// Export exports the download list.
 func (h *DownloadHandler) Export(c *gin.Context) {
 	text, err := h.svc.ExportDownloadList()
 	if err != nil {
@@ -245,7 +245,7 @@ func (h *DownloadHandler) Export(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.SuccessResponse{Success: true, Code: http.StatusOK, Message: i18n.T(c, i18n.MsgOK), Data: text})
 }
 
-// UpdateStatus 批量更新状态。
+// UpdateStatus bulk-updates task statuses.
 func (h *DownloadHandler) UpdateStatus(c *gin.Context) {
 	var req dto.UpdateStatusReq
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -262,7 +262,7 @@ func (h *DownloadHandler) UpdateStatus(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.SuccessResponse{Success: true, Code: http.StatusOK, Message: i18n.T(c, i18n.MsgStatusUpdated)})
 }
 
-// UpdateIsLive 更新直播标志。
+// UpdateIsLive updates the live-stream flag.
 func (h *DownloadHandler) UpdateIsLive(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -286,7 +286,7 @@ func (h *DownloadHandler) UpdateIsLive(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.SuccessResponse{Success: true, Code: http.StatusOK, Message: i18n.T(c, i18n.MsgOK), Data: video})
 }
 
-// Active 获取活跃任务。
+// Active retrieves active tasks.
 func (h *DownloadHandler) Active(c *gin.Context) {
 	tasks, err := h.svc.FindActiveTasks()
 	if err != nil {

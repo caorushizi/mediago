@@ -1,4 +1,4 @@
-// Package core 包含任务队列实现
+// Package core contains the task queue implementation
 package core
 
 import (
@@ -14,17 +14,17 @@ var (
 	ErrTaskNotFound = errors.New("task not found")
 )
 
-// TaskQueue 任务队列，负责并发控制、任务调度与事件分发
+// TaskQueue is the task queue, responsible for concurrency control, task scheduling, and event dispatching
 type TaskQueue struct {
-	downloader Downloader // 下载器实例
-	maxRunner  int        // 最大并发数
+	downloader Downloader // downloader instance
+	maxRunner  int        // maximum concurrency
 
-	mu     sync.RWMutex                  // 读写锁
-	queue  []DownloadParams              // 待执行任务队列
-	active map[TaskID]context.CancelFunc // 活跃任务（任务ID -> 取消函数）
-	tasks  map[TaskID]*TaskInfo          // 任务信息表（任务ID -> 任务信息）
+	mu     sync.RWMutex                  // read-write lock
+	queue  []DownloadParams              // pending task queue
+	active map[TaskID]context.CancelFunc // active tasks (task ID -> cancel function)
+	tasks  map[TaskID]*TaskInfo          // task info table (task ID -> task info)
 
-	// 事件回调函数
+	// event callback functions
 	onStart    func(TaskID)
 	onSuccess  func(TaskID)
 	onFailed   func(TaskID, error)
@@ -33,7 +33,7 @@ type TaskQueue struct {
 	onMessage  func(MessageEvent)
 }
 
-// NewTaskQueue 创建任务队列实例
+// NewTaskQueue creates a new task queue instance
 func NewTaskQueue(d Downloader, maxRunner int) *TaskQueue {
 	return &TaskQueue{
 		downloader: d,
@@ -53,7 +53,7 @@ func (q *TaskQueue) Downloader() Downloader {
 	return q.downloader
 }
 
-// SetMaxRunner 设置最大并发数
+// SetMaxRunner sets the maximum concurrency
 func (q *TaskQueue) SetMaxRunner(n int) {
 	q.mu.Lock()
 	q.maxRunner = n
@@ -61,11 +61,11 @@ func (q *TaskQueue) SetMaxRunner(n int) {
 	q.tryRun()
 }
 
-// Enqueue 添加任务到队列
+// Enqueue adds a task to the queue
 func (q *TaskQueue) Enqueue(p DownloadParams) TaskStatus {
 	q.mu.Lock()
 
-	// 初始化任务信息
+	// initialize task info
 	q.tasks[p.ID] = &TaskInfo{
 		ID:      p.ID,
 		Type:    p.Type,
@@ -98,7 +98,7 @@ func (q *TaskQueue) Enqueue(p DownloadParams) TaskStatus {
 	}
 }
 
-// Stop 停止指定任务
+// Stop stops the specified task
 func (q *TaskQueue) Stop(id TaskID) error {
 	q.mu.Lock()
 	cancel, ok := q.active[id]
@@ -110,12 +110,12 @@ func (q *TaskQueue) Stop(id TaskID) error {
 	}
 
 	logger.Info("Stopping task", zap.String("id", string(id)))
-	// 调用取消函数
+	// invoke the cancel function
 	cancel()
 	return nil
 }
 
-// tryRun 尝试运行队列中的任务
+// tryRun attempts to run tasks from the queue
 func (q *TaskQueue) tryRun() {
 	q.mu.Lock()
 	defer q.mu.Unlock()
@@ -132,28 +132,28 @@ func (q *TaskQueue) tryRun() {
 	}
 }
 
-// execute 执行单个下载任务
+// execute runs a single download task
 func (q *TaskQueue) execute(p DownloadParams, ctx context.Context) {
 	logger.Info("Executing task",
 		zap.String("id", string(p.ID)),
 		zap.String("type", string(p.Type)))
 
-	// 更新任务状态为下载中
+	// update task status to downloading
 	q.mu.Lock()
 	if task, ok := q.tasks[p.ID]; ok {
 		task.Status = StatusDownloading
 	}
 	q.mu.Unlock()
 
-	// 发送开始事件
+	// emit start event
 	if q.onStart != nil {
 		q.onStart(p.ID)
 	}
 
-	// 执行下载
+	// execute the download
 	err := q.downloader.Download(ctx, p, Callbacks{
 		OnProgress: func(e ProgressEvent) {
-			// 更新任务进度信息
+			// update task progress info
 			q.mu.Lock()
 			if task, ok := q.tasks[p.ID]; ok {
 				task.Percent = e.Percent
@@ -173,15 +173,15 @@ func (q *TaskQueue) execute(p DownloadParams, ctx context.Context) {
 		},
 	})
 
-	// 从活跃任务表中移除
+	// remove from the active task map
 	q.mu.Lock()
 	delete(q.active, p.ID)
 	q.mu.Unlock()
 
-	// 根据错误类型发送相应事件并更新任务状态
+	// dispatch the appropriate event and update task status based on error type
 	switch {
 	case err == nil:
-		// 成功完成
+		// completed successfully
 		logger.Info("Task completed successfully", zap.String("id", string(p.ID)))
 		q.mu.Lock()
 		if task, ok := q.tasks[p.ID]; ok {
@@ -193,7 +193,7 @@ func (q *TaskQueue) execute(p DownloadParams, ctx context.Context) {
 			q.onSuccess(p.ID)
 		}
 	case errors.Is(err, context.Canceled):
-		// 被取消
+		// cancelled
 		logger.Info("Task was stopped", zap.String("id", string(p.ID)))
 		q.mu.Lock()
 		if task, ok := q.tasks[p.ID]; ok {
@@ -204,7 +204,7 @@ func (q *TaskQueue) execute(p DownloadParams, ctx context.Context) {
 			q.onStopped(p.ID)
 		}
 	default:
-		// 失败
+		// failed
 		logger.Error("Task failed",
 			zap.String("id", string(p.ID)),
 			zap.Error(err))
@@ -221,7 +221,7 @@ func (q *TaskQueue) execute(p DownloadParams, ctx context.Context) {
 		
 			q.tryRun()
 		}
-// 事件钩子注册方法（供 API 层使用）
+// Event hook registration methods (for use by the API layer)
 
 func (q *TaskQueue) OnStart(fn func(TaskID)) {
 	q.onStart = fn
@@ -247,7 +247,7 @@ func (q *TaskQueue) OnMessage(fn func(MessageEvent)) {
 	q.onMessage = fn
 }
 
-// GetTask 获取指定任务的信息
+// GetTask retrieves information about the specified task
 func (q *TaskQueue) GetTask(id TaskID) (*TaskInfo, bool) {
 	q.mu.RLock()
 	defer q.mu.RUnlock()
@@ -255,12 +255,12 @@ func (q *TaskQueue) GetTask(id TaskID) (*TaskInfo, bool) {
 	if !ok {
 		return nil, false
 	}
-	// 返回副本，避免外部修改
+	// return a copy to prevent external modification
 	taskCopy := *task
 	return &taskCopy, true
 }
 
-// GetAllTasks 获取所有任务的信息
+// GetAllTasks retrieves information about all tasks
 func (q *TaskQueue) GetAllTasks() []TaskInfo {
 	q.mu.RLock()
 	defer q.mu.RUnlock()

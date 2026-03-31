@@ -15,7 +15,7 @@ export function createGoEventBridge(
   const client = new MediaGoClient({ baseURL: coreUrl, apiKey });
   const listenersMap = new Map<string, Set<Callback>>();
 
-  // --- SSE 订阅 ---
+  // --- SSE subscription ---
   const events = client.streamEvents();
 
   events.on("download-success", (payload) => {
@@ -43,7 +43,7 @@ export function createGoEventBridge(
     dispatch("config-changed", { key: payload.key, value: payload.value });
   });
 
-  // --- 进度轮询 ---
+  // --- Progress polling ---
   let pollingTimer: ReturnType<typeof setInterval> | null = null;
 
   function startPolling() {
@@ -71,7 +71,7 @@ export function createGoEventBridge(
           dispatch(DOWNLOAD_EVENT_NAME, { type: "progress", data: tasks });
         }
       } catch {
-        // Go Core 可能未就绪，静默忽略
+        // Go Core may not be ready yet, silently ignore
       }
     }, 1000);
   }

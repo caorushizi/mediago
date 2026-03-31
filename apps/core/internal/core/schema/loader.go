@@ -1,4 +1,4 @@
-// Package schema 包含 Schema 配置加载逻辑
+// Package schema contains the Schema configuration loading logic
 package schema
 
 import (
@@ -9,34 +9,34 @@ import (
 	"go.uber.org/zap"
 )
 
-// ArgSpec 参数规格定义
+// ArgSpec defines the specification for a command-line argument
 type ArgSpec struct {
-	ArgsName []string `json:"argsName"`          // 命令行参数名列表
-	Postfix  string   `json:"postfix,omitempty"` // 后缀（如 @@AUTO@@ 表示自动推断扩展名）
+	ArgsName []string `json:"argsName"`          // list of command-line argument names
+	Postfix  string   `json:"postfix,omitempty"` // postfix (e.g. @@AUTO@@ means auto-infer extension)
 }
 
-// ConsoleReg 控制台输出正则表达式配置
+// ConsoleReg holds the regular expression configuration for console output parsing
 type ConsoleReg struct {
-	Percent string `json:"percent"` // 进度百分比正则
-	Speed   string `json:"speed"`   // 下载速度正则
-	Error   string `json:"error"`   // 错误标识正则
-	Start   string `json:"start"`   // 开始下载标识正则
-	IsLive  string `json:"isLive"`  // 直播流标识正则
+	Percent string `json:"percent"` // regex for progress percentage
+	Speed   string `json:"speed"`   // regex for download speed
+	Error   string `json:"error"`   // regex for error indicator
+	Start   string `json:"start"`   // regex for download start indicator
+	IsLive  string `json:"isLive"`  // regex for live stream indicator
 }
 
-// Schema 下载类型的配置模式
+// Schema is the configuration schema for a download type
 type Schema struct {
-	Type       string             `json:"type"`       // 下载类型
-	Args       map[string]ArgSpec `json:"args"`       // 参数映射表
-	ConsoleReg ConsoleReg         `json:"consoleReg"` // 控制台解析规则
+	Type       string             `json:"type"`       // download type
+	Args       map[string]ArgSpec `json:"args"`       // argument mapping table
+	ConsoleReg ConsoleReg         `json:"consoleReg"` // console parsing rules
 }
 
-// SchemaList Schema 列表容器
+// SchemaList is a container for a list of Schemas
 type SchemaList struct {
-	Schemas []Schema `json:"schemas"` // 所有下载类型的 Schema
+	Schemas []Schema `json:"schemas"` // schemas for all download types
 }
 
-// GetByType 根据下载类型获取对应的 Schema
+// GetByType retrieves the Schema corresponding to the given download type
 func (sl SchemaList) GetByType(t string) (Schema, bool) {
 	for _, s := range sl.Schemas {
 		if s.Type == t {
@@ -46,7 +46,7 @@ func (sl SchemaList) GetByType(t string) (Schema, bool) {
 	return Schema{}, false
 }
 
-// DefaultSchemas 返回内置的默认 Schema 配置，与 Node.js 端 config.json 保持一致。
+// DefaultSchemas returns the built-in default Schema configuration, kept in sync with the Node.js config.json.
 func DefaultSchemas() SchemaList {
 	return SchemaList{
 		Schemas: []Schema{
@@ -105,8 +105,8 @@ func DefaultSchemas() SchemaList {
 	}
 }
 
-// LoadSchemasFromJSON 从 JSON 文件加载 Schema 配置。
-// 如果文件不存在，返回内置默认值。
+// LoadSchemasFromJSON loads Schema configuration from a JSON file.
+// If the file does not exist, the built-in defaults are returned.
 func LoadSchemasFromJSON(path string) (SchemaList, error) {
 	logger.Debug("Loading schemas from file", zap.String("path", path))
 

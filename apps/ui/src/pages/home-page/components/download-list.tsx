@@ -58,7 +58,7 @@ export function DownloadTaskList({ filter }: Props) {
     return () => {
       removeIpcListener("download-item-event", onDownloadMenuEvent);
 
-      // 清理未完成的刷新定时器
+      // Clean up any pending refresh timers
       if (refreshTimeoutRef.current) {
         clearTimeout(refreshTimeoutRef.current);
         refreshTimeoutRef.current = null;

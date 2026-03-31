@@ -22,7 +22,7 @@ func (s *Server) setupQueueCallbacks() {
 			}
 		}
 
-		// 更新数据库状态
+		// Update database status
 		if s.downloadService != nil {
 			if dbID, err := strconv.ParseInt(string(id), 10, 64); err == nil {
 				if err := s.downloadService.SetStatus([]int64{dbID}, "downloading"); err != nil {
@@ -45,7 +45,7 @@ func (s *Server) setupQueueCallbacks() {
 			}
 		}
 
-		// 更新数据库状态
+		// Update database status
 		if s.downloadService != nil {
 			if dbID, err := strconv.ParseInt(string(id), 10, 64); err == nil {
 				if err := s.downloadService.SetStatus([]int64{dbID}, "success"); err != nil {
@@ -68,7 +68,7 @@ func (s *Server) setupQueueCallbacks() {
 			}
 		}
 
-		// 更新数据库状态
+		// Update database status
 		if s.downloadService != nil {
 			if dbID, parseErr := strconv.ParseInt(string(id), 10, 64); parseErr == nil {
 				if updateErr := s.downloadService.SetStatus([]int64{dbID}, "failed"); updateErr != nil {
@@ -102,7 +102,7 @@ func (s *Server) setupQueueCallbacks() {
 			}
 		}
 
-		// 更新数据库状态
+		// Update database status
 		if s.downloadService != nil {
 			if dbID, err := strconv.ParseInt(string(id), 10, 64); err == nil {
 				if err := s.downloadService.SetStatus([]int64{dbID}, "stopped"); err != nil {

@@ -1,4 +1,4 @@
-// MediaGo 下载服务主程序
+// MediaGo download service main entry point
 package main
 
 import (
@@ -18,14 +18,14 @@ import (
 	"caorushizi.cn/mediago/pkg/conf"
 	"github.com/gin-gonic/gin"
 
-	_ "caorushizi.cn/mediago/docs" // Swagger 文档
+	_ "caorushizi.cn/mediago/docs" // Swagger documentation
 )
 
 // @title MediaGo Downloader API
 // @version 1.0
-// @description MediaGo 多任务下载系统 API 文档
-// @description 支持 M3U8、Bilibili、Direct 三种下载类型
-// @description 提供任务管理、配置更新、实时事件推送等功能
+// @description MediaGo multi-task download system API documentation
+// @description Supports M3U8, Bilibili, and Direct download types
+// @description Provides task management, configuration updates, and real-time event streaming
 // @termsOfService http://swagger.io/terms/
 
 // @contact.name API Support
@@ -40,15 +40,15 @@ import (
 // @schemes http https
 
 // @tag.name Health
-// @tag.description 健康检查相关接口
+// @tag.description Health check endpoints
 // @tag.name Tasks
-// @tag.description 下载任务管理相关接口
+// @tag.description Download task management endpoints
 // @tag.name Config
-// @tag.description 系统配置相关接口
+// @tag.description System configuration endpoints
 // @tag.name Events
-// @tag.description 实时事件推送相关接口
+// @tag.description Real-time event streaming endpoints
 
-// AppConfig 存储所有配置项（命令行/环境变量传入的启动配置）
+// AppConfig stores all startup configuration options (passed via command-line flags or environment variables).
 type AppConfig struct {
 	GinMode        string `json:"gin_mode"`
 	Host           string `json:"host"`
@@ -102,8 +102,8 @@ func (c *AppConfig) SetUseProxy(useProxy bool) {
 	c.UseProxy = useProxy
 }
 
-// getSystemDownloadsDir 获取系统下载目录。
-// 优先使用 $HOME/Downloads，不存在则回退到 $HOME。
+// getSystemDownloadsDir returns the system downloads directory.
+// Prefers $HOME/Downloads; falls back to $HOME if it does not exist.
 func getSystemDownloadsDir() string {
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -117,16 +117,16 @@ func getSystemDownloadsDir() string {
 }
 
 func main() {
-	// 1. 先用默认配置初始化日志系统，以便在配置解析过程中使用
+	// 1. Initialize the logger with default config first so it is available during config parsing
 	if err := logger.Init(logger.DefaultConfig()); err != nil {
 		panic("Failed to initialize logger: " + err.Error())
 	}
 	defer logger.Sync()
 
-	// 2. 初始化和解析配置
+	// 2. Initialize and parse configuration
 	cfg := initConfig()
 
-	// 3. 根据配置重新初始化日志系统
+	// 3. Re-initialize the logger using the resolved configuration
 	logCfg := logger.DefaultConfig()
 	logCfg.Level = cfg.LogLevel
 	logCfg.LogDir = cfg.LogDir
@@ -138,7 +138,7 @@ func main() {
 	logger.Info("MediaGo Downloader Service Starting...")
 	logger.Infof("Final Config: %+v", cfg)
 
-	// 4. 初始化 AppStore 配置（用户级持久化配置）
+	// 4. Initialize AppStore configuration (user-level persistent config)
 	appStore, err := conf.New(conf.Options[AppStore]{
 		ConfigName: "config",
 		CWD:        cfg.ConfigDir,
@@ -149,12 +149,13 @@ func main() {
 	}
 	logger.Infof("App store initialized at: %s", appStore.Path())
 
-	// 从 appStore 同步回 cfg（确保 cfg 反映持久化配置的最终状态）
-	// 注意：不再将 CLI 参数写入 appStore，避免每次启动覆盖用户在 UI 中保存的设置。
-	// CLI 参数仅作为 cfg 的初始默认值，appStore（用户配置）优先级更高。
+	// Sync appStore values back into cfg (so cfg reflects the final state of persistent config).
+	// Note: CLI arguments are no longer written into appStore to avoid overwriting settings
+	// saved by the user in the UI on every startup. CLI args serve only as initial defaults;
+	// appStore (user config) takes higher priority.
 	syncAppStoreToCfg(appStore, cfg)
 
-	// 如果下载目录为空、是默认值或不存在，使用系统下载目录
+	// If the download directory is empty, is the default value, or does not exist, use the system downloads directory
 	{
 		needDefault := cfg.LocalDir == "" || cfg.LocalDir == "./downloads"
 		if !needDefault {
@@ -170,7 +171,7 @@ func main() {
 		}
 	}
 
-	// 5. 加载 JSON Schema 配置
+	// 5. Load JSON Schema configuration
 	logger.Infof("Loading schemas from: %s", cfg.SchemaPath)
 	schemas, err := schema.LoadSchemasFromJSON(cfg.SchemaPath)
 	if err != nil {
@@ -178,7 +179,7 @@ func main() {
 	}
 	logger.Infof("Loaded %d download schemas", len(schemas.Schemas))
 
-	// 6. 配置下载器二进制路径
+	// 6. Configure downloader binary paths
 	binMap := getBinaryMap(cfg)
 	for dt, binPath := range binMap {
 		logger.Infof("%s downloader: %s", dt, binPath)
@@ -192,7 +193,7 @@ func main() {
 		}
 	}
 
-	// 7. 创建核心组件
+	// 7. Create core components
 	r := runner.NewPTYRunner()
 	downloader := core.NewDownloader(binMap, r, schemas, cfg)
 	queue := core.NewTaskQueue(downloader, cfg.MaxRunner)
@@ -201,7 +202,7 @@ func main() {
 	logger.Infof("Task queue initialized (maxRunner=%d)", cfg.MaxRunner)
 	logger.Infof("Task logs will be stored in %s", filepath.Join(cfg.LogDir, "tasks"))
 
-	// 8. 监听 appStore 变更，同步到下载器
+	// 8. Watch appStore changes and sync them to the downloader
 	appStore.OnDidChange("maxRunner", func(newVal, oldVal any) {
 		if v, ok := toInt(newVal); ok {
 			queue.SetMaxRunner(v)
@@ -233,10 +234,10 @@ func main() {
 		}
 	})
 
-	// 9. 初始化数据库（可选）
+	// 9. Initialize database (optional)
 	var database *db.Database
 	if cfg.DBPath != "" {
-		// 确保数据库父目录存在
+		// Ensure the database parent directory exists
 		if dir := filepath.Dir(cfg.DBPath); dir != "" {
 			if err := os.MkdirAll(dir, 0o755); err != nil {
 				logger.Fatalf("Failed to create database directory %s: %v", dir, err)
@@ -253,7 +254,7 @@ func main() {
 		logger.Info("No database path provided, running without persistence")
 	}
 
-	// 10. 启动 HTTP 服务器
+	// 10. Start HTTP server
 	confStore := handler.WrapConfStore[AppStore](appStore)
 	execPath, _ := os.Executable()
 	server := api.NewServer(queue, taskLogs, database, confStore, api.ServerOptions{
@@ -288,16 +289,16 @@ func syncAppStoreToCfg(store *conf.Conf[AppStore], cfg *AppConfig) {
 	}
 }
 
-// initConfig 初始化配置，遵循优先级：命令行 > 环境变量 > JSON字符串 > 默认值
+// initConfig initializes configuration following priority order: CLI flags > environment variables > JSON string > defaults.
 func initConfig() *AppConfig {
-	// 默认配置
+	// Default configuration
 	cfg := &AppConfig{
 		GinMode:        "release",
 		Host:           "0.0.0.0",
 		Port:           "8080",
 		LogLevel:       "info",
 		LogDir:         "./logs",
-		SchemaPath:     "", // 稍后计算默认值
+		SchemaPath:     "", // computed later
 		M3U8Bin:        "",
 		BilibiliBin:    "",
 		DirectBin:      "",
@@ -309,7 +310,7 @@ func initConfig() *AppConfig {
 		ConfigDir:      "",
 	}
 
-	// 1. 定义其他命令行标志
+	// 1. Define command-line flags
 	flag.StringVar(&cfg.LogLevel, "log-level", cfg.LogLevel, "Log level (debug/info/warn/error)")
 	flag.StringVar(&cfg.LogDir, "log-dir", cfg.LogDir, "Log directory")
 	flag.StringVar(&cfg.M3U8Bin, "m3u8-bin", cfg.M3U8Bin, "M3U8 downloader binary path")
@@ -329,18 +330,18 @@ func initConfig() *AppConfig {
 
 	flag.Parse()
 
-	// 3. 从环境变量加载（会覆盖 JSON 和默认值）
+	// 3. Load from environment variables (overrides JSON and defaults)
 	cfg.GinMode = getEnv("GIN_MODE", cfg.GinMode)
 	cfg.Host = getEnv("HOST", cfg.Host)
 	cfg.Port = getEnv("PORT", cfg.Port)
 	cfg.DBPath = getEnv("DB_PATH", cfg.DBPath)
 
-	// 如果 SchemaPath 仍然为空，则计算其默认值
+	// If SchemaPath is still empty, compute its default value
 	if cfg.SchemaPath == "" {
 		cfg.SchemaPath = getDefaultSchemaPath()
 	}
 
-	// 如果 ConfigDir 为空，默认使用 LogDir 的父目录
+	// If ConfigDir is empty, default to the LogDir path
 	if cfg.ConfigDir == "" {
 		cfg.ConfigDir = cfg.LogDir
 	}
@@ -348,20 +349,20 @@ func initConfig() *AppConfig {
 	return cfg
 }
 
-// getDefaultSchemaPath 获取配置文件的默认路径
+// getDefaultSchemaPath returns the default path for the schema config file.
 func getDefaultSchemaPath() string {
-	// 默认路径：优先使用可执行文件所在目录下的 config.json
+	// Default path: prefer config.json in the same directory as the executable
 	execPath, _ := os.Executable()
 	execDir := filepath.Dir(execPath)
 	localConfig := filepath.Join(execDir, "config.json")
 	if _, err := os.Stat(localConfig); err == nil {
 		return localConfig
 	}
-	// 回退到仓库内的配置文件路径
+	// Fall back to the config file path inside the repository
 	return "configs/config.json"
 }
 
-// getBinaryMap 从配置中获取下载器二进制路径映射
+// getBinaryMap returns a map of downloader binary paths from the configuration.
 func getBinaryMap(cfg *AppConfig) map[core.DownloadType]string {
 	return map[core.DownloadType]string{
 		core.TypeM3U8:     cfg.M3U8Bin,

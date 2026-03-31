@@ -12,24 +12,24 @@ import (
 	"go.uber.org/zap"
 )
 
-// EventHandler 处理 SSE 事件推送。
+// EventHandler handles SSE event streaming.
 type EventHandler struct {
 	hub *sse.Hub
 }
 
-// NewEventHandler 创建 EventHandler。
+// NewEventHandler creates an EventHandler.
 func NewEventHandler(hub *sse.Hub) *EventHandler {
 	return &EventHandler{hub: hub}
 }
 
-// Stream SSE 事件流
-// @Summary SSE 事件流
-// @Description 订阅服务器推送事件（SSE），实时接收下载任务的状态变更通知
-// @Description 事件类型包括：download-start（任务开始）, download-success（任务成功）, download-failed（任务失败）, download-stop（任务停止）
-// @Description 注意：不包含进度更新事件，如需获取下载进度，请通过 GET /api/tasks/{id} 接口轮询
+// Stream serves the SSE event stream.
+// @Summary SSE event stream
+// @Description Subscribe to Server-Sent Events (SSE) to receive real-time download task status change notifications
+// @Description Event types include: download-start (task started), download-success (task succeeded), download-failed (task failed), download-stop (task stopped)
+// @Description Note: progress update events are not included; poll GET /api/tasks/{id} to retrieve download progress
 // @Tags Events
 // @Produce text/event-stream
-// @Success 200 {string} string "SSE 事件流"
+// @Success 200 {string} string "SSE event stream"
 // @Router /events [get]
 func (h *EventHandler) Stream(c *gin.Context) {
 	logger.Info("SSE client connected", zap.String("clientIP", c.ClientIP()))

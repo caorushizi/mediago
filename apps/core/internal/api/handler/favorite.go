@@ -12,17 +12,17 @@ import (
 	"go.uber.org/zap"
 )
 
-// FavoriteHandler 处理收藏夹接口。
+// FavoriteHandler handles favorites endpoints.
 type FavoriteHandler struct {
 	svc *service.FavoriteService
 }
 
-// NewFavoriteHandler 创建 FavoriteHandler。
+// NewFavoriteHandler creates a FavoriteHandler.
 func NewFavoriteHandler(svc *service.FavoriteService) *FavoriteHandler {
 	return &FavoriteHandler{svc: svc}
 }
 
-// List 获取所有收藏。
+// List retrieves all favorites.
 func (h *FavoriteHandler) List(c *gin.Context) {
 	favs, err := h.svc.GetFavorites()
 	if err != nil {
@@ -34,7 +34,7 @@ func (h *FavoriteHandler) List(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.SuccessResponse{Success: true, Code: http.StatusOK, Message: i18n.T(c, i18n.MsgOK), Data: favs})
 }
 
-// Create 添加收藏。
+// Create adds a favorite.
 func (h *FavoriteHandler) Create(c *gin.Context) {
 	var req dto.AddFavoriteReq
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -56,7 +56,7 @@ func (h *FavoriteHandler) Create(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.SuccessResponse{Success: true, Code: http.StatusOK, Message: i18n.T(c, i18n.MsgOK), Data: fav})
 }
 
-// Delete 删除收藏。
+// Delete removes a favorite.
 func (h *FavoriteHandler) Delete(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -73,7 +73,7 @@ func (h *FavoriteHandler) Delete(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.SuccessResponse{Success: true, Code: http.StatusOK, Message: i18n.T(c, i18n.MsgDeleted)})
 }
 
-// Export 导出收藏。
+// Export exports favorites.
 func (h *FavoriteHandler) Export(c *gin.Context) {
 	json, err := h.svc.ExportFavorites()
 	if err != nil {
@@ -85,7 +85,7 @@ func (h *FavoriteHandler) Export(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.SuccessResponse{Success: true, Code: http.StatusOK, Message: i18n.T(c, i18n.MsgOK), Data: json})
 }
 
-// Import 导入收藏。
+// Import imports favorites.
 func (h *FavoriteHandler) Import(c *gin.Context) {
 	var req dto.ImportFavoritesReq
 	if err := c.ShouldBindJSON(&req); err != nil {
