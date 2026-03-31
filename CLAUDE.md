@@ -4,7 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-MediaGo is a cross-platform video downloader supporting m3u8/HLS streams. It ships as both an Electron desktop app and a Node.js web server, sharing a single React UI. The codebase is a pnpm monorepo orchestrated by Turborepo.
+MediaGo is a cross-platform video downloader supporting m3u8/HLS streams. The codebase is a pnpm monorepo with three products:
+
+1. **Desktop app** (`apps/electron` + `apps/ui`) — Electron wrapper that launches Go Core as a subprocess
+2. **Web server** (`apps/server` + `apps/ui`) — Koa 3 server that launches Go Core as a subprocess
+3. **Video player** (`apps/player` + `apps/player-ui`) — Standalone Go server with embedded React UI for video playback
+
+All three products share the Go Core backend (`apps/core`) for download orchestration.
 
 ## Common Commands
 
@@ -14,6 +20,13 @@ pnpm dev:electron           # Start Electron desktop dev environment (HMR)
 pnpm dev:server             # Start Koa web server dev environment (HMR)
 pnpm build:electron         # Production build for Electron
 pnpm build:server           # Production build for server
+pnpm build:web              # Build UI only (server mode)
+pnpm core:dev               # Start Go Core dev server (port 9900)
+pnpm core:build             # Compile Go Core binary
+pnpm player:dev             # Start Player dev (Go backend + UI)
+pnpm player:build           # Build Player (UI embedded in Go binary)
+pnpm deps:download          # Download third-party tools (ffmpeg, BBDown, etc.)
+pnpm deps:download:all      # Download tools for all platforms
 pnpm lint                   # Lint with oxlint
 pnpm lint:fix               # Auto-fix lint issues
 pnpm format                 # Format with oxfmt
@@ -24,32 +37,44 @@ pnpm pack:electron          # Build + package Electron distributable
 pnpm pack:server            # Build + package server distributable
 ```
 
-Commits use Conventional Commits format (e.g. `feat(electron): add queue UI`). Use `pnpm commit` for Commitizen-guided commits.
+Commits use Conventional Commits format (e.g. `feat(electron): add queue UI`).
 
 ## Architecture
 
 ### Monorepo Layout
 
-- **`apps/electron/`** - Electron main process (tsdown build, inversify DI, TypeORM + better-sqlite3)
-- **`apps/server/`** - Koa 3 web server backend (tsdown build, inversify DI, TypeORM + better-sqlite3, socket.io)
-- **`apps/ui/`** - Shared React 19 frontend (Vite 8, Ant Design 6, Zustand, TailwindCSS 4, socket.io-client, i18next)
-- **`packages/shared/common/`** - Platform-agnostic shared types and utilities
-- **`packages/shared/node/`** - Node.js-specific shared code (uses @mediago/core, inversify, typeorm)
-- **`packages/shared/browser/`** - Browser-specific shared code
-- **`packages/electron-preload/`** - Electron preload scripts for IPC bridge
-- **`packages/browser-extension/`** - Browser extension (Lit web components)
-- **`packages/config/`** - Shared TypeScript configs (tsconfig.base, tsconfig.app, tsconfig.node)
-- **`docs/`** - VitePress documentation (Chinese, English, Japanese)
+**Apps:**
+
+- **`apps/core/`** — Go (Gin) REST API backend for download orchestration. Runs on port 9900. Uses SQLite (GORM), SSE for real-time events, PTY for capturing download tool output. Built with Gulp + Go cross-compilation.
+- **`apps/electron/`** — Electron main process (tsdown build, inversify DI). Launches Go Core via `@mediago/service-runner`.
+- **`apps/server/`** — Koa 3 web server backend (tsdown build, inversify DI, socket.io). Launches Go Core via `@mediago/service-runner`.
+- **`apps/ui/`** — Shared React 19 frontend (Vite 8, Ant Design 6, Zustand, TailwindCSS 4, i18next). Used by both Electron and server targets.
+- **`apps/player/`** — Go (Gin) video player server. Embeds React UI via `//go:embed`. Built with Gulp + Go.
+- **`apps/player-ui/`** — React 19 frontend for player (Vite 8, shadcn/ui, video.js, TailwindCSS 4).
+
+**Packages:**
+
+- **`packages/shared/common/`** — Platform-agnostic shared types, constants, and utilities
+- **`packages/core-sdk/`** — TypeScript SDK for Go Core REST API (Axios, SSE via eventsource)
+- **`packages/electron-preload/`** — Electron preload scripts for IPC bridge
+- **`packages/browser-extension/`** — Browser extension (Lit web components)
+- **`docs/`** — VitePress documentation (Chinese, English, Japanese)
 
 ### Multi-Target Build
 
-The `APP_TARGET` env var (`electron` | `server`) controls which backend the UI builds against. Both targets share the same React UI but connect via different transports (Electron IPC vs HTTP/WebSocket).
+The `APP_TARGET` env var (`electron` | `server`) controls which backend the UI builds against. Both targets share the same React UI but connect via different transports:
+
+- **Electron**: IPC bridge (preload) + Go Core direct (via `@mediago/core-sdk`)
+- **Server/Web**: HTTP/WebSocket + Go Core direct (via `@mediago/core-sdk`)
+
+The UI adapter layer (`apps/ui/src/hooks/adapters/`) abstracts this: `go-adapter.ts` calls Go Core SDK directly, `electron/` adapter uses IPC, and a Proxy-based `apiAdapter` routes to whichever is available.
 
 ### Key Patterns
 
-- **Dependency Injection**: inversify with `@inversifyjs/binding-decorators` throughout both backends
-- **ORM**: TypeORM with better-sqlite3 for local database
+- **Go Core as subprocess**: Both Electron and server apps launch Go Core via `@mediago/service-runner`, which manages the process lifecycle and port allocation
+- **Dependency Injection**: inversify with `@inversifyjs/binding-decorators` in Electron and server backends
 - **State Management**: Zustand in the UI
+- **Real-time events**: Go Core emits SSE events (`/api/events`); the UI's `go-event-bridge.ts` subscribes and dispatches to React via a listener pattern
 - **TypeScript**: Strict mode with experimental decorators and decorator metadata enabled
 - **Module format**: ES Modules everywhere except server output (CommonJS)
 
@@ -57,7 +82,8 @@ The `APP_TARGET` env var (`electron` | `server`) controls which backend the UI b
 
 - **Package manager**: pnpm 10.15.0 (enforced via `packageManager` field)
 - **Build orchestration**: Turborepo
-- **App bundling**: tsdown for Node/Electron, Vite 8 for UI
+- **App bundling**: tsdown for Node/Electron, Vite 8 for UI apps
+- **Go builds**: Gulp orchestrating `go build` / `go run` in `apps/core` and `apps/player`
 - **Linter**: oxlint (config in `.oxlintrc.json`)
 - **Formatter**: oxfmt (config in `.oxfmtrc.json`)
 - **Pre-commit**: husky + lint-staged (runs oxlint --fix + oxfmt --write on staged files)
@@ -67,4 +93,4 @@ The `APP_TARGET` env var (`electron` | `server`) controls which backend the UI b
 
 - TypeScript, ES modules, 2-space indentation, UTF-8, LF endings
 - Components: PascalCase. Utilities: camelCase. Constants: SCREAMING_SNAKE_CASE
-- UI port: 8555 (strict)
+- UI port: 8555 (strict). Go Core port: 9900. Player UI port: 8556
