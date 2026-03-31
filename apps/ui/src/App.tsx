@@ -21,7 +21,7 @@ import {
 } from "./store/session";
 import { getBrowserLang, isWeb, tdApp } from "./utils";
 import useAPI from "./hooks/use-api";
-import { initGoAdapter } from "./hooks/adapters";
+import { initGoAdapter, getGoApi } from "./hooks/adapters";
 import { AppLanguage, DownloadFilter } from "@mediago/shared-common";
 import { useAuth } from "./hooks/use-auth";
 import { Locale } from "antd/es/locale";
@@ -39,13 +39,7 @@ function getAlgorithm(appTheme: "dark" | "light") {
 
 const App: FC = () => {
   useAuth();
-  const {
-    addIpcListener,
-    removeIpcListener,
-    getMachineId,
-    getEnvPath,
-    getAppStore: fetchAppStore,
-  } = useAPI();
+  const { addIpcListener, removeIpcListener, getMachineId } = useAPI();
   const { setUpdateAvailable, setUploadChecking } = useSessionStore(
     useShallow(updateSelector),
   );
@@ -133,23 +127,32 @@ const App: FC = () => {
         const storedApiKey = useAppStore.getState().apiKey;
         initGoAdapter(coreUrl, storedApiKey || undefined);
       } else {
-        // Electron mode: get coreUrl from IPC
-        const envPath = await getEnvPath();
+        // Electron mode: get coreUrl directly from preload IPC (before Go adapter exists)
+        const ipcResult = await window.electron?.getEnvPath();
+        const envPath = ipcResult?.code === 0 ? ipcResult.data : ipcResult;
         if (envPath?.coreUrl) {
           initGoAdapter(envPath.coreUrl);
         }
       }
 
       // Sync config from Go Core (single source of truth) to Zustand
-      const config = await fetchAppStore();
-      if (config) {
-        setAppStore(config);
+      try {
+        const goApi = getGoApi();
+        const configResult = await goApi.getAppStore();
+        const config =
+          configResult &&
+          typeof configResult === "object" &&
+          "code" in configResult
+            ? (configResult as any).data
+            : configResult;
+        if (config) {
+          setAppStore(config);
+        }
+      } catch {
+        // Go adapter may not be initialized (e.g., coreUrl was empty)
       }
     } catch (err) {
-      console.warn(
-        "Go adapter init failed, falling back to platform adapter:",
-        err,
-      );
+      console.warn("Go adapter init failed:", err);
     } finally {
       setAdapterReady(true);
     }
