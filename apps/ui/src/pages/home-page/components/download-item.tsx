@@ -12,7 +12,7 @@ import {
 } from "@mediago/shared-common";
 import { useMemoizedFn } from "ahooks";
 import { Progress } from "antd";
-import { type ReactNode, useMemo } from "react";
+import { memo, type ReactNode, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import selectedBg from "@/assets/images/select-item-bg.png";
@@ -52,7 +52,7 @@ interface Props {
   downloadStatus?: DownloadStatus;
 }
 
-export const DownloadTaskItem = ({
+export const DownloadTaskItem = memo(function DownloadTaskItem({
   task,
   onSelectChange,
   selected,
@@ -60,7 +60,7 @@ export const DownloadTaskItem = ({
   onStopDownload,
   onContextMenu,
   onShowEditForm,
-}: Props) => {
+}: Props) {
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
   const { openUrl, getEnvPath } = useAPI();
@@ -343,4 +343,4 @@ export const DownloadTaskItem = ({
       </div>
     </div>
   );
-};
+});

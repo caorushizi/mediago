@@ -239,7 +239,7 @@ const App: FC = () => {
           <Route
             path="signin"
             element={
-              <Suspense>
+              <Suspense fallback={<Loading />}>
                 <SigninPage />
               </Suspense>
             }

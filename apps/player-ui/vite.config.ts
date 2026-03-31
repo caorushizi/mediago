@@ -11,6 +11,16 @@ export default defineConfig({
     strictPort: true,
   },
   envDir: "../../",
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          videojs: ["video.js"],
+          vendor: ["react", "react-dom"],
+        },
+      },
+    },
+  },
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {

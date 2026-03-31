@@ -84,13 +84,6 @@ export function usePlayerSize(
     };
   }, [calculateAndSetPlayerSize, containerRef]);
 
-  /**
-   * Recalculate when container size changes (from useSize hook)
-   */
-  useEffect(() => {
-    calculateAndSetPlayerSize();
-  }, [calculateAndSetPlayerSize]);
-
   return {
     calculateAndSetPlayerSize,
   };
