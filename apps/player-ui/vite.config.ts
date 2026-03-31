@@ -14,9 +14,10 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          videojs: ["video.js"],
-          vendor: ["react", "react-dom"],
+        manualChunks(id) {
+          if (id.includes("video.js")) return "videojs";
+          if (id.includes("react-dom") || id.includes("react/"))
+            return "vendor";
         },
       },
     },
