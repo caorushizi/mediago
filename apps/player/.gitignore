@@ -1,0 +1,11 @@
+node_modules
+.turbo
+dist
+.claude
+.idea
+
+# npm release artifacts
+release/
+npm/@mediago/*/bin/
+npm/@mediago/*/*.tgz
+*.tgz

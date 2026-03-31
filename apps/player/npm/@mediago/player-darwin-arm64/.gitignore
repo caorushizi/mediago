@@ -1,0 +1,2 @@
+# Ignore bin directories containing compiled binaries
+bin/

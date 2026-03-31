@@ -1,0 +1,50 @@
+basePath: /api/v1
+definitions:
+  video.Video:
+    properties:
+      title:
+        type: string
+      url:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: MediaGo Player backend API for managing and streaming video files
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: MediaGo Player API
+  version: "1.0"
+paths:
+  /videos:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all video files from the configured directory
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of videos
+          schema:
+            items:
+              $ref: '#/definitions/video.Video'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List all videos
+      tags:
+      - videos
+schemes:
+- http
+- https
+swagger: "2.0"
