@@ -15,9 +15,7 @@
     "@mediago/deps": "0.0.6",
     "@mediago/electron-preload": "workspace:*",
     "@mediago/player": "0.0.10",
-    "better-sqlite3": "12.4.1",
-    "reflect-metadata": "^0.2.2",
-    "typeorm": "0.3.27"
+    "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
     "electron": "35.7.5"

@@ -37,7 +37,7 @@ export default class RouterHandlerService extends Router {
             }
             ctx.body = success(result as Record<string, any>);
           } catch (e: unknown) {
-            this.logger.error(e);
+            this.logger.error(e instanceof Error ? e : String(e));
             if (e instanceof Error) {
               ctx.body = error(e.message);
             } else {

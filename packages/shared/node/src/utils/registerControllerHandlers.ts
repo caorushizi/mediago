@@ -1,4 +1,9 @@
-import { MEDIAGO_EVENT, MEDIAGO_METHOD, type Controller } from "@mediago/shared-common";
+import "reflect-metadata";
+import {
+  MEDIAGO_EVENT,
+  MEDIAGO_METHOD,
+  type Controller,
+} from "@mediago/shared-common";
 
 export interface ControllerHandlerRegistration {
   controller: Controller;
@@ -8,7 +13,9 @@ export interface ControllerHandlerRegistration {
   method: string;
 }
 
-export type ControllerHandlerBinder = (registration: ControllerHandlerRegistration) => void;
+export type ControllerHandlerBinder = (
+  registration: ControllerHandlerRegistration,
+) => void;
 
 export function registerControllerHandlers(
   controllers: Controller[],
@@ -25,7 +32,11 @@ export function registerControllerHandlers(
       if (typeof handler !== "function") continue;
 
       const event = Reflect.getMetadata(MEDIAGO_EVENT, controller, propertyKey);
-      const method = Reflect.getMetadata(MEDIAGO_METHOD, controller, propertyKey);
+      const method = Reflect.getMetadata(
+        MEDIAGO_METHOD,
+        controller,
+        propertyKey,
+      );
 
       if (typeof event !== "string" || typeof method !== "string") continue;
 
