@@ -65,26 +65,7 @@ export default class ElectronApp {
     this.protocol.create();
     this.router.init();
 
-    // 1. Start Go download service (reads config from its own conf file)
-    await this.downloaderServer.start({
-      logDir: logDir,
-      dbPath: db,
-    });
-
-    // 2. Read config from Go (single source of truth) and seed cache
-    const client = this.downloaderServer.getClient();
-    const { data: config } = await client.getConfig();
-    this.configCache.seed(config as any);
-
-    // 3. Apply initial config
-    nativeTheme.themeSource = config.theme || "system";
-    i18n.changeLanguage(config.language);
-    this.videoServer.start({
-      local: config.local,
-      enableMobilePlayer: config.enableMobilePlayer,
-    });
-
-    // 4. Initialize vendors and services (can now read from configCache)
+    // 1. Show the window immediately — must happen regardless of backend status
     await this.vendorInit();
     await this.serviceInit();
 
@@ -95,6 +76,29 @@ export default class ElectronApp {
     });
 
     this.initTray();
+
+    // 2. Start Go download service in the background; errors are non-fatal
+    try {
+      await this.downloaderServer.start({
+        logDir: logDir,
+        dbPath: db,
+      });
+
+      // 3. Read config from Go (single source of truth) and seed cache
+      const client = this.downloaderServer.getClient();
+      const { data: config } = await client.getConfig();
+      this.configCache.seed(config as any);
+
+      // 4. Apply initial config
+      nativeTheme.themeSource = config.theme || "system";
+      i18n.changeLanguage(config.language);
+      this.videoServer.start({
+        local: config.local,
+        enableMobilePlayer: config.enableMobilePlayer,
+      });
+    } catch (err) {
+      console.error("[ElectronApp] Failed to start Go core service:", err);
+    }
 
     // 5. Listen for Go config changes → update cache + platform side effects + IPC to UI
     this.downloaderServer.on(

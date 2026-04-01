@@ -45,7 +45,7 @@ const start = async (): Promise<void> => {
   await app.whenReady();
   await container.load(buildProviderModule());
   const mediago = container.get(ElectronApp);
-  mediago.init();
+  await mediago.init();
   app.on("window-all-closed", noop);
   app.on("second-instance", mediago.secondInstance);
 };
