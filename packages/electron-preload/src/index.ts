@@ -2,7 +2,6 @@ import {
   CHECK_UPDATE,
   CLEAR_WEBVIEW_CACHE,
   COMBINE_TO_HOME_PAGE,
-  CONVERT_TO_AUDIO,
   EXPORT_DOWNLOAD_LIST,
   EXPORT_FAVORITES,
   GET_ENV_PATH,
@@ -88,9 +87,6 @@ const electronApi: PlatformApi & { getEnvPath(): Promise<EnvPath> } = {
   },
   onFavoriteItemContextMenu(id: number): Promise<void> {
     return ipcRenderer.invoke(ON_FAVORITE_ITEM_CONTEXT_MENU, id);
-  },
-  convertToAudio(id: number): Promise<void> {
-    return ipcRenderer.invoke(CONVERT_TO_AUDIO, id);
   },
   showBrowserWindow(): Promise<void> {
     return ipcRenderer.invoke(SHOW_BROWSER_WINDOW);

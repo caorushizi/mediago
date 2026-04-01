@@ -2,9 +2,6 @@
 // Platform IPC channels (Electron-only, have @handle() handlers)
 // ============================================================
 
-// Conversion
-export const CONVERT_TO_AUDIO = "convert-to-audio";
-
 // Download management (platform-specific: context menus, file dialogs)
 export const SHOW_DOWNLOAD_DIALOG = "show-download-dialog";
 export const ON_DOWNLOAD_LIST_CONTEXT_MENU = "on-download-list-context-menu";

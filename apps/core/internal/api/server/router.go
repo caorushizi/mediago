@@ -75,6 +75,8 @@ func (s *Server) registerRoutes() {
 			conversions.POST("", s.conversionHandler.Create)
 			conversions.DELETE("/:id", s.conversionHandler.Delete)
 			conversions.GET("/:id", s.conversionHandler.Get)
+			conversions.POST("/:id/start", s.conversionHandler.Start)
+			conversions.POST("/:id/stop", s.conversionHandler.Stop)
 		}
 	}
 }

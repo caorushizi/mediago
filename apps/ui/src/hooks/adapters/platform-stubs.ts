@@ -18,7 +18,6 @@ export const webPlatformStubs: PlatformApi = {
   webviewShow: noop,
   onDownloadListContextMenu: noop,
   onFavoriteItemContextMenu: noop,
-  convertToAudio: noop,
   showBrowserWindow: noop,
   appContextMenu: noop,
   combineToHomePage: noop,

@@ -44,6 +44,7 @@ type Server struct {
 type Options struct {
 	EnableAuth bool
 	StaticDir  string
+	FFmpegBin  string
 	EnvPaths   handler.EnvPaths
 }
 
@@ -98,7 +99,8 @@ func New(queue *core.TaskQueue, logs *tasklog.Manager, database *db.Database, co
 
 		downloadSvc := service.NewDownloadTaskService(videoRepo, queue, logs)
 		favoriteSvc := service.NewFavoriteService(favoriteRepo)
-		conversionSvc := service.NewConversionService(conversionRepo)
+		converter := service.NewConverter(opt.FFmpegBin)
+		conversionSvc := service.NewConversionService(conversionRepo, converter, hub)
 
 		srv.downloadHandler = handler.NewDownloadHandler(downloadSvc, confStore)
 		srv.favoriteHandler = handler.NewFavoriteHandler(favoriteSvc)

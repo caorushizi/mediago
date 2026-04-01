@@ -12,20 +12,20 @@ export interface ApiResponse<T> {
  * Download type for a task.
  */
 export enum DownloadType {
-  M3U8 = 'm3u8',
-  Bilibili = 'bilibili',
-  Direct = 'direct',
+  M3U8 = "m3u8",
+  Bilibili = "bilibili",
+  Direct = "direct",
 }
 
 /**
  * Status of a download task.
  */
 export enum TaskStatus {
-  Pending = 'pending',
-  Downloading = 'downloading',
-  Success = 'success',
-  Failed = 'failed',
-  Stopped = 'stopped',
+  Pending = "pending",
+  Downloading = "downloading",
+  Success = "success",
+  Failed = "failed",
+  Stopped = "stopped",
 }
 
 /**
@@ -210,6 +210,12 @@ export interface ConversionItem {
   id: number;
   name?: string | null;
   path: string;
+  status: string;
+  outputPath: string;
+  outputFormat: string;
+  quality: string;
+  progress: number;
+  error?: string | null;
   createdDate: string;
   updatedDate: string;
 }
@@ -220,6 +226,8 @@ export interface ConversionItem {
 export interface AddConversionParams {
   name?: string;
   path: string;
+  outputFormat: string;
+  quality: string;
 }
 
 /**
@@ -294,13 +302,13 @@ export interface ConfigChangedPayload {
 }
 
 export interface TaskEventMap {
-  'download-start': TaskEventPayload;
-  'download-success': TaskEventPayload;
-  'download-failed': TaskFailedEventPayload;
-  'download-stop': TaskEventPayload;
-  'config-changed': ConfigChangedPayload;
-  'open': Event;
-  'error': Event;
+  "download-start": TaskEventPayload;
+  "download-success": TaskEventPayload;
+  "download-failed": TaskFailedEventPayload;
+  "download-stop": TaskEventPayload;
+  "config-changed": ConfigChangedPayload;
+  open: Event;
+  error: Event;
 }
 
 /**
@@ -309,26 +317,26 @@ export interface TaskEventMap {
 export interface TypedEventEmitter<TEventMap extends Record<string, any>> {
   on<TEventName extends keyof TEventMap>(
     eventName: TEventName,
-    listener: (payload: TEventMap[TEventName]) => void
+    listener: (payload: TEventMap[TEventName]) => void,
   ): this;
 
   off<TEventName extends keyof TEventMap>(
     eventName: TEventName,
-    listener: (payload: TEventMap[TEventName]) => void
+    listener: (payload: TEventMap[TEventName]) => void,
   ): this;
 
   once<TEventName extends keyof TEventMap>(
     eventName: TEventName,
-    listener: (payload: TEventMap[TEventName]) => void
+    listener: (payload: TEventMap[TEventName]) => void,
   ): this;
 
   emit<TEventName extends keyof TEventMap>(
     eventName: TEventName,
-    payload: TEventMap[TEventName]
+    payload: TEventMap[TEventName],
   ): boolean;
 
   removeAllListeners<TEventName extends keyof TEventMap>(
-    eventName?: TEventName
+    eventName?: TEventName,
   ): this;
 
   /**

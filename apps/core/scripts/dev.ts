@@ -24,6 +24,7 @@ export async function dev() {
     `-bilibili-bin=${devConfig.bilibili_bin}`,
     `-m3u8-bin=${devConfig.m3u8_bin}`,
     `-direct-bin=${devConfig.direct_bin}`,
+    `-ffmpeg-bin=${devConfig.ffmpeg_bin}`,
   ];
   await runCommand(command.join(" "), "Start development server");
 }

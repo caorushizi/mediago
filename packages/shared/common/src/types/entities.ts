@@ -4,6 +4,12 @@ export interface Conversion {
   id: number;
   name: string;
   path: string;
+  status: string;
+  outputPath: string;
+  outputFormat: string;
+  quality: string;
+  progress: number;
+  error?: string | null;
   createdDate?: Date;
   updatedDate?: Date;
 }

@@ -281,8 +281,15 @@ export interface GoApi {
   getVideoFolders(): Promise<string[]>;
   getDownloadLog(id: number): Promise<string>;
   getConversions(pagination: ConversionPagination): Promise<ConversionResponse>;
-  addConversion(conversion: Omit<Conversion, "id">): Promise<Conversion>;
+  addConversion(conversion: {
+    name: string;
+    path: string;
+    outputFormat: string;
+    quality: string;
+  }): Promise<Conversion>;
   deleteConversion(id: number): Promise<void>;
+  startConversion(id: number): Promise<void>;
+  stopConversion(id: number): Promise<void>;
   getPageTitle(url: string): Promise<string | undefined>;
   setupAuth(req: SetupAuthRequest): Promise<void>;
   signin(req: SetupAuthRequest): Promise<void>;
@@ -306,7 +313,6 @@ export interface PlatformApi {
   webviewShow(): Promise<void>;
   onDownloadListContextMenu(id: number): Promise<void>;
   onFavoriteItemContextMenu(id: number): Promise<void>;
-  convertToAudio(id: number): Promise<void>;
   showBrowserWindow(): Promise<void>;
   appContextMenu(): Promise<void>;
   combineToHomePage(store: BrowserStore): Promise<void>;

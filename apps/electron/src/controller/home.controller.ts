@@ -2,7 +2,6 @@ import { provide } from "@inversifyjs/binding-decorators";
 import {
   CHECK_UPDATE,
   COMBINE_TO_HOME_PAGE,
-  CONVERT_TO_AUDIO,
   type Controller,
   EXPORT_DOWNLOAD_LIST,
   EXPORT_FAVORITES,
@@ -40,7 +39,7 @@ import fs from "node:fs/promises";
 import { inject, injectable } from "inversify";
 import { nanoid } from "nanoid";
 import MachineId from "node-machine-id";
-import { convertToAudio, exePath, workspace } from "../utils";
+import { exePath, workspace } from "../utils";
 import ElectronUpdater from "../vendor/ElectronUpdater";
 import BrowserWindow from "../windows/browser.window";
 import MainWindow from "../windows/main.window";
@@ -174,16 +173,6 @@ export default class HomeController implements Controller {
 
     const menu = Menu.buildFromTemplate(template);
     menu.popup();
-  }
-
-  @handle(CONVERT_TO_AUDIO)
-  async convertToAudio(_e: IpcMainEvent, id: number) {
-    const client = this.downloaderServer.getClient();
-    const res = await client.getConversion(id);
-    const conversion = res.data;
-    if (conversion?.path) {
-      await convertToAudio(conversion.path);
-    }
   }
 
   @handle(SHOW_BROWSER_WINDOW)
