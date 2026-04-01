@@ -1,4 +1,8 @@
-import axios, { type AxiosInstance, AxiosError, type AxiosResponse } from 'axios';
+import axios, {
+  type AxiosInstance,
+  AxiosError,
+  type AxiosResponse,
+} from "axios";
 
 /**
  * Creates and configures an Axios instance for the MediaGo API.
@@ -9,7 +13,7 @@ export function createApiClient(baseURL: string): AxiosInstance {
   const api = axios.create({
     baseURL,
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
   });
 

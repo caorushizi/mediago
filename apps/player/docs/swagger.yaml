@@ -24,16 +24,16 @@ paths:
   /videos:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get a list of all video files from the configured directory
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: List of videos
           schema:
             items:
-              $ref: '#/definitions/video.Video'
+              $ref: "#/definitions/video.Video"
             type: array
         "500":
           description: Internal server error
@@ -43,8 +43,8 @@ paths:
             type: object
       summary: List all videos
       tags:
-      - videos
+        - videos
 schemes:
-- http
-- https
+  - http
+  - https
 swagger: "2.0"

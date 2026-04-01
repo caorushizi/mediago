@@ -1,7 +1,7 @@
 ---
-layout: doc  
-outline: deep  
----  
+layout: doc
+outline: deep
+---
 
 # 使用方法
 

@@ -5,6 +5,7 @@ The React-based frontend application that provides the user interface for MediaG
 ## Overview
 
 This package contains the React frontend that:
+
 - Provides the main user interface for video downloading
 - Handles video URL input and processing
 - Displays download progress and history
@@ -52,6 +53,7 @@ pnpm types:renderer
 ## Architecture
 
 The frontend is designed to work in two contexts:
+
 1. **Electron Renderer**: Loaded in Electron's BrowserWindow
 2. **Standalone Web**: Served by the webapi backend for browser access
 
