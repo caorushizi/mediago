@@ -25,6 +25,7 @@ import WebviewService from "./services/webview.service";
 import BrowserWindowService from "./windows/browser.window";
 import MainWindow from "./windows/main.window";
 import "./controller";
+import ElectronLogger from "./vendor/ElectronLogger";
 
 @injectable()
 @provide()
@@ -50,6 +51,8 @@ export default class ElectronApp {
     private readonly configCache: GoConfigCache,
     @inject(BrowserWindowService)
     private readonly browserWindow: BrowserWindowService,
+    @inject(ElectronLogger)
+    private readonly logger: ElectronLogger,
   ) {}
 
   private async serviceInit(): Promise<void> {
@@ -79,6 +82,10 @@ export default class ElectronApp {
 
     // 2. Start Go download service in the background; errors are non-fatal
     try {
+      this.logger.info("[ElectronApp] Starting Go core service...", {
+        logDir,
+        db,
+      });
       await this.downloaderServer.start({
         logDir: logDir,
         dbPath: db,
@@ -97,7 +104,7 @@ export default class ElectronApp {
         enableMobilePlayer: config.enableMobilePlayer,
       });
     } catch (err) {
-      console.error("[ElectronApp] Failed to start Go core service:", err);
+      this.logger.error("[ElectronApp] Failed to start Go core service:", err);
     }
 
     // 5. Listen for Go config changes → update cache + platform side effects + IPC to UI

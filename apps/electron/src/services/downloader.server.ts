@@ -12,11 +12,12 @@ import {
   DownloadStatus,
   type DownloadType,
 } from "@mediago/shared-common";
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
 import {
   resolveCoreBinaries,
   resolveDepsBinaries,
 } from "../utils/binaryResolver";
+import ElectronLogger from "../vendor/ElectronLogger";
 
 export interface DownloadTaskOptions {
   deleteSegments: boolean;
@@ -42,11 +43,18 @@ export class DownloaderServer extends EventEmitter {
   private client: MediaGoClient | null = null;
   private pollingTimer: ReturnType<typeof setInterval> | null = null;
 
+  constructor(
+    @inject(ElectronLogger)
+    private readonly logger: ElectronLogger,
+  ) {
+    super();
+  }
+
   async start(opts: DownloadServiceOptions) {
     const core = resolveCoreBinaries();
     const deps = resolveDepsBinaries();
 
-    console.log("Resolved core binary:", path.dirname(core.coreBin));
+    this.logger.info("Resolved core binary:", path.dirname(core.coreBin));
 
     const runner = new ServiceRunner({
       executableName: "mediago-core",
@@ -70,7 +78,7 @@ export class DownloaderServer extends EventEmitter {
 
     this.serverUrl = runner.getURL();
 
-    console.log("Downloader server started at:", this.serverUrl);
+    this.logger.info("Downloader server started at:", this.serverUrl);
 
     this.client = new MediaGoClient({
       baseURL: this.serverUrl,

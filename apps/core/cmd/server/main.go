@@ -117,10 +117,9 @@ func getSystemDownloadsDir() string {
 
 func main() {
 	// 1. Initialize the logger with default config first so it is available during config parsing
-	if err := logger.Init(logger.DefaultConfig()); err != nil {
-		panic("Failed to initialize logger: " + err.Error())
-	}
-	defer logger.Sync()
+	// if err := logger.Init(logger.DefaultConfig()); err != nil {
+	// 	panic("Failed to initialize logger: " + err.Error())
+	// }
 
 	// 2. Initialize and parse configuration
 	cfg := initConfig()
@@ -133,6 +132,7 @@ func main() {
 	if err := logger.Init(logCfg); err != nil {
 		logger.Fatalf("Failed to reinitialize logger with config: %v", err)
 	}
+	defer logger.Sync()
 
 	logger.Info("MediaGo Downloader Service Starting...")
 	logger.Infof("Final Config: %+v", cfg)
