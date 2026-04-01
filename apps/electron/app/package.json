@@ -15,6 +15,6 @@
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
-    "electron": "35.7.5"
+    "electron": "41.1.0"
   }
 }

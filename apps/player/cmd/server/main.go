@@ -8,7 +8,6 @@ import (
 	"os"
 	"time"
 
-	_ "github.com/caorushizi/mediago-player/docs"
 	router "github.com/caorushizi/mediago-player/internal/http"
 	"github.com/caorushizi/mediago-player/internal/util"
 	"github.com/gin-gonic/gin"

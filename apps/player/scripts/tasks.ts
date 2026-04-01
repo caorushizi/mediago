@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { chmodSync, existsSync } from "node:fs";
 import path from "node:path";
 
 import {
@@ -18,6 +18,8 @@ export async function docsTask() {
 export async function devServerTask() {
   await runCommand("go", [
     "run",
+    "-tags",
+    "dev",
     "./cmd/server",
     "-enable-docs",
     "-video-root",
@@ -48,7 +50,18 @@ export async function buildUiTask() {
 
 export async function buildServerTask() {
   await ensureDir(DIST_DIR);
-  await runCommand("go", ["build", "-o", SERVER_BINARY_PATH, "./cmd/server"]);
+  // No -tags dev: swagger excluded from production builds
+  await runCommand("go", [
+    "build",
+    "-trimpath",
+    "-ldflags=-s -w",
+    "-o",
+    SERVER_BINARY_PATH,
+    "./cmd/server",
+  ]);
+  if (process.platform !== "win32") {
+    chmodSync(SERVER_BINARY_PATH, 0o755);
+  }
 }
 
 // Run task

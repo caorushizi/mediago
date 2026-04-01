@@ -1,6 +1,7 @@
+import { chmodSync } from "node:fs";
+import { join } from "node:path";
 import { config, devConfig } from "./config";
 import { getExeExt, mkdir, runCommand } from "./utils";
-import { join } from "node:path";
 
 /**
  * Start the development server
@@ -10,6 +11,8 @@ export async function dev() {
   const command = [
     "go",
     "run",
+    "-tags",
+    "dev",
     "-work",
     config.CMD_PATH,
     `-log-level=${devConfig.log_level}`,
@@ -37,8 +40,11 @@ export async function devBuild() {
   mkdir(config.BIN_DIR);
   const output = join(config.BIN_DIR, config.APP_NAME + getExeExt());
   await runCommand(
-    `go build -ldflags "${config.GO_LDFLAGS}" -o ${output} ${config.CMD_PATH}`,
+    `go build -tags dev -trimpath -ldflags "${config.GO_LDFLAGS}" -o ${output} ${config.CMD_PATH}`,
     "Compile binary for current platform",
   );
+  if (process.platform !== "win32") {
+    chmodSync(output, 0o755);
+  }
   console.log(`✅ 开发版本编译成功 -> ${output}`);
 }

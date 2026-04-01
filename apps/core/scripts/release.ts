@@ -31,7 +31,7 @@ async function buildBinary(cfg: BuildConfig) {
   const output = join(config.BIN_DIR, `${getPackageName(cfg)}${ext}`);
 
   await runCommand(
-    `go build -ldflags="${config.GO_LDFLAGS}" -o ${output} ${config.CMD_PATH}`,
+    `go build -trimpath -ldflags="${config.GO_LDFLAGS}" -o ${output} ${config.CMD_PATH}`,
     `✓ ${cfg.goos}/${cfg.goarch}`,
     {
       GOOS: cfg.goos,
@@ -39,6 +39,9 @@ async function buildBinary(cfg: BuildConfig) {
       CGO_ENABLED: "0",
     },
   );
+  if (cfg.goos !== "windows") {
+    chmodSync(output, 0o755);
+  }
 }
 
 /**

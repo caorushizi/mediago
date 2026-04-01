@@ -17,8 +17,6 @@ import (
 	"caorushizi.cn/mediago/internal/tasklog"
 	"caorushizi.cn/mediago/pkg/conf"
 	"github.com/gin-gonic/gin"
-
-	_ "caorushizi.cn/mediago/docs" // Swagger documentation
 )
 
 // @title MediaGo Downloader API
