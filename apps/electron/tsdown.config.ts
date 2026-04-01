@@ -62,7 +62,7 @@ const app = new ElectronApp();
 export default defineConfig({
   outDir: "build",
   shims: true,
-  external: ["electron", "@mediago/player", "@mediago/core", "@mediago/deps"],
+  external: ["electron"],
   noExternal: [/.*/],
   define: {
     "process.env.NODE_ENV": JSON.stringify(
