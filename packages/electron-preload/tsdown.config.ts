@@ -7,4 +7,6 @@ export default defineConfig({
   format: "cjs",
   noExternal: [/.*/],
   external: ["electron"],
+  minify: true,
+  sourcemap: true,
 });
