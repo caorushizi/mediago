@@ -34,6 +34,7 @@ internal/core/
 - **PTYRunner**: 伪终端执行器,支持捕获进度条(使用 `\r` 更新)
 
 **使用示例**:
+
 ```go
 import "caorushizi.cn/mediago/internal/core/runner"
 
@@ -52,6 +53,7 @@ r := runner.NewExecRunner()
 - **ProgressTracker**: 进度节流,避免过于频繁的更新
 
 **使用示例**:
+
 ```go
 import (
     "caorushizi.cn/mediago/internal/core/parser"
@@ -71,6 +73,7 @@ event, errMsg := lp.Parse(line, state)
 从 JSON 文件加载下载器配置。
 
 **使用示例**:
+
 ```go
 import "caorushizi.cn/mediago/internal/core/schema"
 
@@ -105,14 +108,14 @@ core.DownloaderSvc
 
 如果你有代码引用了旧的类型,请按以下方式更新:
 
-| 旧引用 | 新引用 |
-|--------|--------|
-| `core.NewExecRunner()` | `runner.NewExecRunner()` |
-| `core.NewPTYRunner()` | `runner.NewPTYRunner()` |
-| `core.newLineParser()` | `parser.NewLineParser()` |
-| `core.parseState` | `parser.ParseState` |
+| 旧引用                       | 新引用                         |
+| ---------------------------- | ------------------------------ |
+| `core.NewExecRunner()`       | `runner.NewExecRunner()`       |
+| `core.NewPTYRunner()`        | `runner.NewPTYRunner()`        |
+| `core.newLineParser()`       | `parser.NewLineParser()`       |
+| `core.parseState`            | `parser.ParseState`            |
 | `core.LoadSchemasFromJSON()` | `schema.LoadSchemasFromJSON()` |
-| `core.SchemaList` | `schema.SchemaList` |
+| `core.SchemaList`            | `schema.SchemaList`            |
 
 ### 导入示例
 

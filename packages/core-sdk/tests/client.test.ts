@@ -1,8 +1,8 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { MediaGoClient } from '../src';
-import * as EventSourceModule from 'eventsource';
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { MediaGoClient } from "../src";
+import * as EventSourceModule from "eventsource";
 
-vi.mock('eventsource', () => {
+vi.mock("eventsource", () => {
   const instances: any[] = [];
 
   class BaseEvent {
@@ -58,14 +58,17 @@ vi.mock('eventsource', () => {
       this.listeners.clear();
     }
 
-    dispatch(type: string, init: { data?: unknown; code?: number; message?: string } = {}): void {
+    dispatch(
+      type: string,
+      init: { data?: unknown; code?: number; message?: string } = {},
+    ): void {
       const listeners = this.listeners.get(type);
       if (!listeners || listeners.size === 0) {
         return;
       }
 
       const event =
-        type === 'error'
+        type === "error"
           ? new MockErrorEvent(type, { code: init.code, message: init.message })
           : new MockMessageEvent(type, { data: init.data });
 
@@ -84,41 +87,41 @@ vi.mock('eventsource', () => {
 });
 
 const getInstances = () =>
-  ((EventSourceModule as unknown as { __instances: any[] }).__instances) ?? [];
+  (EventSourceModule as unknown as { __instances: any[] }).__instances ?? [];
 
-describe('MediaGoClient.streamEvents', () => {
+describe("MediaGoClient.streamEvents", () => {
   beforeEach(() => {
     getInstances().length = 0;
   });
 
-  it('connects to /api/events and re-emits task events', () => {
-    const client = new MediaGoClient({ baseURL: 'http://example.com' });
+  it("connects to /api/events and re-emits task events", () => {
+    const client = new MediaGoClient({ baseURL: "http://example.com" });
     const emitter = client.streamEvents();
 
     const instances = getInstances();
     expect(instances).toHaveLength(1);
-    expect(instances[0]?.url).toBe('http://example.com/api/events');
+    expect(instances[0]?.url).toBe("http://example.com/api/events");
 
     const onStart = vi.fn();
-    emitter.on('download-start', onStart);
+    emitter.on("download-start", onStart);
 
-    instances[0]?.dispatch('download-start', {
-      data: JSON.stringify({ id: 'task-1' }),
+    instances[0]?.dispatch("download-start", {
+      data: JSON.stringify({ id: "task-1" }),
     });
 
-    expect(onStart).toHaveBeenCalledWith({ id: 'task-1' });
+    expect(onStart).toHaveBeenCalledWith({ id: "task-1" });
   });
 
-  it('emits error events for invalid payloads and closes the source', () => {
+  it("emits error events for invalid payloads and closes the source", () => {
     const client = new MediaGoClient();
     const emitter = client.streamEvents();
     const instances = getInstances();
     const source = instances.at(-1)!;
 
     const onError = vi.fn();
-    emitter.on('error', onError);
+    emitter.on("error", onError);
 
-    source.dispatch('download-start', { data: 'not-json' });
+    source.dispatch("download-start", { data: "not-json" });
     expect(onError).toHaveBeenCalledTimes(1);
 
     emitter.close();

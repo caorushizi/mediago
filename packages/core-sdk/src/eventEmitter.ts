@@ -1,13 +1,16 @@
-import { EventSource, ErrorEvent } from 'eventsource';
-import type { EventListenerOrEventListenerObject } from 'eventsource';
-import mitt, { type Emitter, type Handler as MittHandler } from 'mitt';
+import {
+  EventSource,
+  ErrorEvent,
+  type EventListenerOrEventListenerObject,
+} from "eventsource";
+import mitt, { type Emitter, type Handler as MittHandler } from "mitt";
 import type {
   ConfigChangedPayload,
   TaskEventEmitter,
   TaskEventMap,
   TaskEventPayload,
   TaskFailedEventPayload,
-} from './types';
+} from "./types";
 
 type TaskEventName = keyof TaskEventMap;
 type InternalEventMap = TaskEventMap & {
@@ -42,7 +45,8 @@ export class TaskStreamEventEmitter implements TaskEventEmitter {
     eventName: TEventName,
     listener: (payload: TaskEventMap[TEventName]) => void,
   ): this {
-    const handler: MittHandler<InternalEventMap[TEventName]> = (payload) => listener(payload);
+    const handler: MittHandler<InternalEventMap[TEventName]> = (payload) =>
+      listener(payload);
     this.trackHandler(eventName, listener, handler);
     this.emitter.on(eventName, handler);
     return this;
@@ -118,55 +122,43 @@ export class TaskStreamEventEmitter implements TaskEventEmitter {
   }
 
   private attachSourceListeners(): void {
-    this.registerListener(
-      'open',
-      ((event: Event) => {
-        this.emit('open', event);
-      }) as EventListenerOrEventListenerObject,
-    );
+    this.registerListener("open", ((event: Event) => {
+      this.emit("open", event);
+    }) as EventListenerOrEventListenerObject);
 
-    this.registerListener(
-      'error',
-      ((event: ErrorEvent) => {
-        this.emit('error', event);
-      }) as EventListenerOrEventListenerObject,
-    );
+    this.registerListener("error", ((event: ErrorEvent) => {
+      this.emit("error", event);
+    }) as EventListenerOrEventListenerObject);
 
     const taskEvents: Array<
-      Extract<TaskEventName, 'download-start' | 'download-success' | 'download-stop'>
-    > = ['download-start', 'download-success', 'download-stop'];
+      Extract<
+        TaskEventName,
+        "download-start" | "download-success" | "download-stop"
+      >
+    > = ["download-start", "download-success", "download-stop"];
 
     for (const eventName of taskEvents) {
-      this.registerListener(
-        eventName,
-        ((event: MessageEventLike) => {
-          const payload = this.safeParse<TaskEventPayload>(event);
-          if (payload) {
-            this.emit(eventName, payload);
-          }
-        }) as EventListenerOrEventListenerObject,
-      );
+      this.registerListener(eventName, ((event: MessageEventLike) => {
+        const payload = this.safeParse<TaskEventPayload>(event);
+        if (payload) {
+          this.emit(eventName, payload);
+        }
+      }) as EventListenerOrEventListenerObject);
     }
 
-    this.registerListener(
-      'download-failed',
-      ((event: MessageEventLike) => {
-        const payload = this.safeParse<TaskFailedEventPayload>(event);
-        if (payload) {
-          this.emit('download-failed', payload);
-        }
-      }) as EventListenerOrEventListenerObject,
-    );
+    this.registerListener("download-failed", ((event: MessageEventLike) => {
+      const payload = this.safeParse<TaskFailedEventPayload>(event);
+      if (payload) {
+        this.emit("download-failed", payload);
+      }
+    }) as EventListenerOrEventListenerObject);
 
-    this.registerListener(
-      'config-changed',
-      ((event: MessageEventLike) => {
-        const payload = this.safeParse<ConfigChangedPayload>(event);
-        if (payload) {
-          this.emit('config-changed', payload);
-        }
-      }) as EventListenerOrEventListenerObject,
-    );
+    this.registerListener("config-changed", ((event: MessageEventLike) => {
+      const payload = this.safeParse<ConfigChangedPayload>(event);
+      if (payload) {
+        this.emit("config-changed", payload);
+      }
+    }) as EventListenerOrEventListenerObject);
   }
 
   private registerListener(
@@ -178,17 +170,17 @@ export class TaskStreamEventEmitter implements TaskEventEmitter {
   }
 
   private safeParse<T>(event: MessageEventLike): T | null {
-    if (typeof event.data !== 'string' || event.data.length === 0) {
+    if (typeof event.data !== "string" || event.data.length === 0) {
       return null;
     }
 
     try {
       return JSON.parse(event.data) as T;
-    } catch (err) {
-      const errorEvent = new ErrorEvent('error', {
+    } catch {
+      const errorEvent = new ErrorEvent("error", {
         message: `Failed to parse SSE payload for "${event.type}"`,
       });
-      this.emit('error', errorEvent);
+      this.emit("error", errorEvent);
       return null;
     }
   }

@@ -5,7 +5,9 @@ import { baiduAnalytics, googleAnalytics } from "./plugins";
 
 const isDev = process.env.NODE_ENV === "development";
 
-const head: HeadConfig[] = [["link", { rel: "shortcut icon", href: "/favicon.svg" }]];
+const head: HeadConfig[] = [
+  ["link", { rel: "shortcut icon", href: "/favicon.svg" }],
+];
 if (!isDev) {
   head.push(...baiduAnalytics(), ...googleAnalytics());
 }
@@ -45,7 +47,9 @@ export default defineConfig({
       },
     ],
 
-    socialLinks: [{ icon: "github", link: "https://github.com/caorushizi/m3u8-downloader" }],
+    socialLinks: [
+      { icon: "github", link: "https://github.com/caorushizi/m3u8-downloader" },
+    ],
   },
 
   locales: {

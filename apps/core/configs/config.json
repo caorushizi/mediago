@@ -54,9 +54,7 @@
           "argsName": ["--file-pattern"]
         },
         "__common__": {
-          "argsName": [
-            "--use-app-api"
-          ]
+          "argsName": ["--use-app-api"]
         }
       },
       "consoleReg": {
@@ -81,14 +79,7 @@
           "argsName": []
         },
         "__common__": {
-          "argsName": [
-            "-x",
-            "16",
-            "-s",
-            "16",
-            "-k",
-            "1M"
-          ]
+          "argsName": ["-x", "16", "-s", "16", "-k", "1M"]
         }
       },
       "consoleReg": {

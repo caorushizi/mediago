@@ -57,7 +57,7 @@ Settings related to the browser window
 
 When enabled, the browser page will open in a separate window.
 
-   ![step 1](../images/documents-step2.png)
+![step 1](../images/documents-step2.png)
 
 ### 2. Proxy Settings
 
@@ -75,7 +75,7 @@ When enabled, the ads on the page will be filtered.
 
 When enabled, the browser will mimic a mobile browser and request the mobile version of the site (on the left is the screenshot with mobile mode enabled).
 
-  ![step 2](../images/documents-step3.png)
+![step 2](../images/documents-step3.png)
 
 ### 6. Use Immersive Sniffing
 
@@ -87,7 +87,7 @@ When enabled, the browser will mimic a mobile browser and request the mobile ver
 
 ### 7. Privacy Mode: When enabled, the software will not save your browsing history
 
-  ![step 4](../images/documents-step5.png)
+![step 4](../images/documents-step5.png)
 
 ### 8. More Operations
 

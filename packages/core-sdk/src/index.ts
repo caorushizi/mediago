@@ -6,5 +6,5 @@
  * and listen to real-time events.
  */
 
-export * from './types';
-export * from './client';
+export * from "./types";
+export * from "./client";

@@ -18,15 +18,18 @@ The backend follows a clean architecture pattern with clear separation of concer
 - **Static Assets**: [assets/embed.go](assets/embed.go) - Embeds the UI dist directory into the Go binary using `//go:embed`
 
 The router serves a single responsive SPA:
+
 - Main application at `/` (from `ui/dist`)
 - Mobile path `/m/` also serves the same responsive UI (for backward compatibility)
 
 ### Frontend (React + TypeScript + Vite)
 
 A single responsive React application in the monorepo:
+
 - [ui/](ui/) - Responsive web UI that adapts to desktop and mobile screens
 
 Tech stack:
+
 - React 18.3
 - TypeScript 5.9
 - Vite 7 (using `rolldown-vite` fork for faster builds)
@@ -99,6 +102,7 @@ The project includes Swagger/OpenAPI documentation:
 - **Generation**: Run `pnpm run gulp docs` to regenerate docs (automatically done during `pnpm run gulp build`)
 
 **Enabling Documentation**:
+
 - **Development**: Use `pnpm run gulp dev` or add `-enable-docs` flag when running the server
 - **Production**: Disabled by default, can be explicitly enabled with `-enable-docs` flag
 - **Note**: `.env` file is NOT automatically loaded. Use command-line flags or set environment variables manually.
@@ -114,6 +118,7 @@ The project includes Swagger/OpenAPI documentation:
   ```
 
 To add API documentation to new endpoints:
+
 1. Add Swagger comments to handler functions (see [internal/video/handler.go](internal/video/handler.go) for examples)
 2. Run `pnpm run gulp docs` to regenerate documentation
 3. Swagger comments follow [swaggo annotation format](https://github.com/swaggo/swag#declarative-comments-format)
@@ -145,6 +150,7 @@ pnpm dlx shadcn@latest add [component-name]
 ### Environment Variables
 
 See [.env.example](.env.example):
+
 - `HTTP_ADDR` - Server address in `host:port` format (default: `0.0.0.0:8080`)
 - `GIN_MODE` - Gin mode: `debug`, `release`, or `test` (default: `release`)
 - `VIDEO_ROOT_PATH` - Local folder for video files (can also pass `-video-root` flag)
@@ -152,6 +158,7 @@ See [.env.example](.env.example):
 ### Command-Line Flags
 
 All flags are optional and override environment variables:
+
 - `-host` - Server host address (e.g., `0.0.0.0` for LAN access, `localhost` for local only)
 - `-port` - Server port (e.g., `8080`, `3000`)
 - `-video-root` - Local folder path containing video files
@@ -160,6 +167,7 @@ All flags are optional and override environment variables:
 **Priority**: Command-line flags > `HTTP_ADDR` environment variable > default (`0.0.0.0:8080`)
 
 **Examples**:
+
 ```bash
 # Listen on all interfaces (LAN accessible) on port 8080
 go run ./cmd/server -host 0.0.0.0 -port 8080
@@ -216,6 +224,7 @@ See [internal/video/](internal/video/) for reference implementation.
 ### Embedded Static Files
 
 Frontend builds are embedded into the Go binary at compile time. The build pipeline:
+
 1. `pnpm run gulp build` runs the UI build (`pnpm build` in `ui/`) and syncs assets
 2. The Gulp build task copies `ui/dist/` to the embedded assets directory (git-ignored)
 3. Go's `//go:embed` directive in [assets/embed.go](assets/embed.go) embeds these directories

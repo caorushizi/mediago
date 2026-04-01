@@ -90,6 +90,7 @@ npx @mediago/player
 ```
 
 Available environment variables:
+
 - `HTTP_ADDR` - Server address in `host:port` format (default: `0.0.0.0:8080`)
 - `GIN_MODE` - Gin mode: `debug`, `release`, or `test` (default: `release`)
 - `VIDEO_ROOT_PATH` - Local folder for video files
@@ -106,6 +107,7 @@ Available environment variables:
 ## API Documentation
 
 When running with `-enable-docs`, Swagger documentation is available at:
+
 - Swagger UI: `http://localhost:8080/docs/index.html`
 - JSON Spec: `http://localhost:8080/docs/doc.json`
 
@@ -194,6 +196,7 @@ pnpm run gulp release:npm:build-binaries
 ```
 
 This creates binaries for:
+
 - macOS (x64 and ARM64)
 - Linux (x64 and ARM64)
 - Windows (x64)
@@ -228,12 +231,14 @@ The correct binary is automatically selected during installation based on your p
 ## Technology Stack
 
 ### Backend
+
 - Go 1.21+
 - Gin web framework
 - Swagger/OpenAPI documentation
 - Embedded file system for static assets
 
 ### Frontend
+
 - React 18.3
 - TypeScript 5.9
 - Vite 7 (rolldown-vite fork)

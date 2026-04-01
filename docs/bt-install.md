@@ -15,13 +15,13 @@ outline: deep
 ## 部署
 
 1. 登录宝塔面板，在左侧菜单栏中点击 `Docker`
-  ![Docker](./images/bt-install-step1.png)
+   ![Docker](./images/bt-install-step1.png)
 
 2. 首次会提示安装 `Docker` 和 `Docker Compose` 服务，点击立即安装，若已安装请忽略。
-  ![Docker](./images/bt-install-step2.png)
+   ![Docker](./images/bt-install-step2.png)
 
 3. 安装完成后在`Docker-应用商店`中找到 `MediaGo`，点击`安装`
-  ![Docker](./images/bt-install-step3.png)
+   ![Docker](./images/bt-install-step3.png)
 
 4. 提交后面板会自动进行应用初始化，大概需要1-3分钟，初始化完成后即可访问。
 

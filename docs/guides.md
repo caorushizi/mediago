@@ -70,7 +70,7 @@ v3.x.x 是最新版本，大家的意见可以尽量在 3.x.x 版本中提出，
 
 ### 批量下载
 
-   ![step 3](./images/guides-step6.png)
+![step 3](./images/guides-step6.png)
 
 ### 附加功能
 
@@ -84,11 +84,11 @@ v3.x.x 是最新版本，大家的意见可以尽量在 3.x.x 版本中提出，
 
 - PC 播放
 
-     ![step 2](./images/addition-step3.png)
+  ![step 2](./images/addition-step3.png)
 
 - 移动端播放
 
-     ![step 3](./images/addition-step4.png)
+  ![step 3](./images/addition-step4.png)
 
 ## 开始你的视频下载吧
 

@@ -1,7 +1,7 @@
 ---
-layout: doc  
-outline: deep  
----  
+layout: doc
+outline: deep
+---
 
 # クイックスタート
 
@@ -83,7 +83,7 @@ v3.0 は最新バージョンです。皆さんの意見はできるだけ3.0バ
 
 ### バッチダウンロード
 
-   ![step 3](../images/guides-step6.png)
+![step 3](../images/guides-step6.png)
 
 ### 追加機能
 
@@ -97,11 +97,11 @@ v3.0 は最新バージョンです。皆さんの意見はできるだけ3.0バ
 
 - PC再生
 
-     ![step 2](../images/addition-step3.png)
+  ![step 2](../images/addition-step3.png)
 
 - モバイル端末再生
 
-     ![step 3](../images/addition-step4.png)
+  ![step 3](../images/addition-step4.png)
 
 ## 動画ダウンロードを始めましょう
 
