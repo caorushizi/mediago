@@ -74,7 +74,7 @@ export default class ElectronApp {
     // 2. Read config from Go (single source of truth) and seed cache
     const client = this.downloaderServer.getClient();
     const { data: config } = await client.getConfig();
-    this.configCache.seed(config);
+    this.configCache.seed(config as any);
 
     // 3. Apply initial config
     nativeTheme.themeSource = config.theme || "system";
