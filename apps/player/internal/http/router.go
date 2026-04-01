@@ -8,8 +8,6 @@ import (
 	"github.com/caorushizi/mediago-player/internal/http/middleware"
 	"github.com/caorushizi/mediago-player/internal/video"
 	"github.com/gin-gonic/gin"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // Config controls router features
@@ -38,8 +36,7 @@ func NewWithConfig(cfg Config) *gin.Engine {
 
 	// Swagger documentation (only in development/debug mode)
 	if cfg.EnableSwagger {
-		r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-		log.Println("[swagger] API documentation enabled at /docs/index.html")
+		registerSwagger(r)
 	}
 
 	// Versioned API
