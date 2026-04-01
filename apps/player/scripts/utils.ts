@@ -1,5 +1,4 @@
-import type { ChildProcess } from "node:child_process";
-import { spawn } from "node:child_process";
+import { type ChildProcess, spawn } from "node:child_process";
 import fsp from "node:fs/promises";
 
 import { ROOT_PATH } from "./constants";
