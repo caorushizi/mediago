@@ -64,6 +64,8 @@ export default defineConfig({
   shims: true,
   external: ["electron"],
   noExternal: [/.*/],
+  minify: !isDev,
+  sourcemap: isDev,
   define: {
     "process.env.NODE_ENV": JSON.stringify(
       process.env.NODE_ENV || "production",

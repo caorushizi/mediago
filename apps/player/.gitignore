@@ -9,3 +9,7 @@ release/
 npm/@mediago/*/bin/
 npm/@mediago/*/*.tgz
 *.tgz
+
+swagger.json
+swagger.yaml
+

@@ -48,6 +48,10 @@ function getReleaseConfig(): Configuration {
         to: "./preload",
       },
       "./package.json",
+      "!**/node_modules/**",
+      "**/node_modules/@mediago/electron-preload/**",
+      "**/node_modules/@mediago/browser-extension/**",
+      "**/node_modules/@ghostery/adblocker-electron-preload/**",
     ],
     extraResources: [
       {
@@ -97,6 +101,7 @@ function getReleaseConfig(): Configuration {
     },
     mac: {
       icon: "../assets/icon.icns",
+      identity: null,
       target: [
         {
           target: "dmg",

@@ -7,13 +7,7 @@
   "author": "caorushizi",
   "homepage": "https://downloader.caorushizi.cn/",
   "license": "MIT",
-  "dependencies": {
-    "@ghostery/adblocker-electron": "2.12.5",
-    "@ghostery/adblocker-electron-preload": "^2.12.5",
-    "@mediago/browser-extension": "workspace:*",
-    "@mediago/electron-preload": "workspace:*",
-    "reflect-metadata": "^0.2.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "electron": "41.1.0"
   }

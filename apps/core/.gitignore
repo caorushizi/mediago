@@ -30,3 +30,8 @@ bin
 release
 files
 !.bin/**/*
+
+swagger.json
+swagger.yaml
+
+./server
