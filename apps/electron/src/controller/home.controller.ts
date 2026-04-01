@@ -263,7 +263,7 @@ export default class HomeController implements Controller {
 
     if (!result.canceled && result.filePaths[0]) {
       const content = await fs.readFile(result.filePaths[0], "utf-8");
-      const favorites = safeParseJSON(content);
+      const favorites = safeParseJSON(content, []);
       if (Array.isArray(favorites)) {
         const client = this.downloaderServer.getClient();
         await client.importFavorites(favorites);

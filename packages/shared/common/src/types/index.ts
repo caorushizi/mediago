@@ -330,6 +330,7 @@ export interface PlatformApi {
   startUpdate(): Promise<void>;
   installUpdate(): Promise<void>;
   exportDownloadList(): Promise<void>;
+  openUrl(url: string): Promise<void>;
   openBrowser(url: string): Promise<void>;
   getLocalIP(): Promise<string>;
   rendererEvent(
