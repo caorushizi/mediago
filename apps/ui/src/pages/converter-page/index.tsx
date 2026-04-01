@@ -297,13 +297,14 @@ const Converter = () => {
 
       <div className="flex flex-col gap-3 rounded-lg bg-white p-3 dark:bg-[#1F2024] flex-1 overflow-auto">
         {isLoading && <Loading />}
-        {!isLoading && data.list.length === 0 && (
+        {!isLoading && data?.list.length === 0 && (
           <div className="flex h-full flex-1 flex-row items-center justify-center rounded-lg bg-white dark:bg-[#1F2024]">
             <Empty description={t("noData")} />
           </div>
         )}
         {!isLoading &&
-          data.list.length > 0 &&
+          data?.list?.length &&
+          data?.list?.length > 0 &&
           data.list.map((item: Conversion) => (
             <div
               key={item.id}

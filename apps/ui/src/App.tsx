@@ -128,11 +128,14 @@ const App: FC = () => {
         initGoAdapter(coreUrl, storedApiKey || undefined);
       } else {
         // Electron mode: get coreUrl directly from preload IPC (before Go adapter exists)
-        const ipcResult = await window.electron?.getEnvPath();
-        const envPath = ipcResult?.code === 0 ? ipcResult.data : ipcResult;
-        if (envPath?.coreUrl) {
-          initGoAdapter(envPath.coreUrl);
-        }
+        // FIXME: this is a bit hacky
+        setTimeout(async () => {
+          const ipcResult = await window.electron?.getEnvPath();
+          const envPath = ipcResult?.code === 0 ? ipcResult.data : ipcResult;
+          if (envPath?.coreUrl) {
+            initGoAdapter(envPath.coreUrl);
+          }
+        }, 1000);
       }
 
       // Sync config from Go Core (single source of truth) to Zustand
