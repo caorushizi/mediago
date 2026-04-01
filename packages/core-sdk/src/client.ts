@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
-import type { AxiosInstance } from 'axios';
-import { createApiClient } from './api';
-import { EventSource } from 'eventsource';
+import type { AxiosInstance } from "axios";
+import { createApiClient } from "./api";
+import { EventSource } from "eventsource";
 import type {
   AddConversionParams,
   AddDownloadBatchParams,
@@ -25,8 +25,8 @@ import type {
   TaskListResponse,
   TaskLogResponse,
   UpdateConfigParams,
-} from './types';
-import { TaskStreamEventEmitter } from './eventEmitter';
+} from "./types";
+import { TaskStreamEventEmitter } from "./eventEmitter";
 
 /**
  * Options for initializing the MediaGoClient.
@@ -58,7 +58,7 @@ export class MediaGoClient {
    * @param options - Configuration options for the client.
    */
   constructor(options: MediaGoClientOptions = {}) {
-    this.baseURL = options.baseURL ?? 'http://localhost:8080';
+    this.baseURL = options.baseURL ?? "http://localhost:8080";
     this.api = createApiClient(this.baseURL);
     if (options.apiKey) {
       this.setApiKey(options.apiKey);
@@ -71,7 +71,7 @@ export class MediaGoClient {
    */
   setApiKey(key: string): void {
     this.apiKey = key;
-    this.api.defaults.headers.common['Authorization'] = `Bearer ${key}`;
+    this.api.defaults.headers.common["Authorization"] = `Bearer ${key}`;
   }
 
   /**
@@ -79,7 +79,7 @@ export class MediaGoClient {
    * @returns A promise that resolves to the health status message.
    */
   async health(): Promise<ApiResponse<HealthResponse>> {
-    return this.api.get('/healthy');
+    return this.api.get("/healthy");
   }
 
   /**
@@ -90,7 +90,7 @@ export class MediaGoClient {
   async createTask(
     params: CreateTaskParams,
   ): Promise<ApiResponse<CreateTaskResponse>> {
-    return this.api.post('/api/tasks', params);
+    return this.api.post("/api/tasks", params);
   }
 
   /**
@@ -107,7 +107,7 @@ export class MediaGoClient {
    * @returns A list of all tasks.
    */
   async listTasks(): Promise<ApiResponse<TaskListResponse>> {
-    return this.api.get('/api/tasks');
+    return this.api.get("/api/tasks");
   }
 
   /**
@@ -115,9 +115,7 @@ export class MediaGoClient {
    * @param id - The ID of the task to stop.
    * @returns A confirmation message.
    */
-  async stopTask(
-    id: string,
-  ): Promise<ApiResponse<{ message: string }>> {
+  async stopTask(id: string): Promise<ApiResponse<{ message: string }>> {
     return this.api.post(`/api/tasks/${id}/stop`);
   }
 
@@ -138,7 +136,7 @@ export class MediaGoClient {
   async updateConfig(
     config: UpdateConfigParams,
   ): Promise<ApiResponse<{ message: string }>> {
-    return this.api.post('/api/config', config);
+    return this.api.post("/api/config", config);
   }
 
   // #region Database-Persisted Download Tasks
@@ -149,7 +147,7 @@ export class MediaGoClient {
   async addDownloadTasks(
     params: AddDownloadBatchParams,
   ): Promise<ApiResponse<DownloadTask[]>> {
-    return this.api.post('/api/downloads', params);
+    return this.api.post("/api/downloads", params);
   }
 
   /**
@@ -159,10 +157,10 @@ export class MediaGoClient {
     params: DownloadPaginationParams = {},
   ): Promise<ApiResponse<PaginatedResponse<DownloadTask>>> {
     const query = new URLSearchParams();
-    if (params.current) query.set('current', String(params.current));
-    if (params.pageSize) query.set('pageSize', String(params.pageSize));
-    if (params.filter) query.set('filter', params.filter);
-    if (params.localPath) query.set('localPath', params.localPath);
+    if (params.current) query.set("current", String(params.current));
+    if (params.pageSize) query.set("pageSize", String(params.pageSize));
+    if (params.filter) query.set("filter", params.filter);
+    if (params.localPath) query.set("localPath", params.localPath);
     return this.api.get(`/api/downloads?${query.toString()}`);
   }
 
@@ -186,9 +184,7 @@ export class MediaGoClient {
   /**
    * Deletes a download task.
    */
-  async deleteDownloadTask(
-    id: number,
-  ): Promise<ApiResponse<void>> {
+  async deleteDownloadTask(id: number): Promise<ApiResponse<void>> {
     return this.api.delete(`/api/downloads/${id}`);
   }
 
@@ -205,9 +201,7 @@ export class MediaGoClient {
   /**
    * Stops downloading a task.
    */
-  async stopDownload(
-    id: number,
-  ): Promise<ApiResponse<void>> {
+  async stopDownload(id: number): Promise<ApiResponse<void>> {
     return this.api.post(`/api/downloads/${id}/stop`);
   }
 
@@ -224,14 +218,14 @@ export class MediaGoClient {
    * Gets distinct download folders.
    */
   async getDownloadFolders(): Promise<ApiResponse<string[]>> {
-    return this.api.get('/api/downloads/folders');
+    return this.api.get("/api/downloads/folders");
   }
 
   /**
    * Exports download list as text.
    */
   async exportDownloadList(): Promise<ApiResponse<string>> {
-    return this.api.get('/api/downloads/export');
+    return this.api.get("/api/downloads/export");
   }
 
   /**
@@ -241,7 +235,7 @@ export class MediaGoClient {
     ids: number[],
     status: string,
   ): Promise<ApiResponse<void>> {
-    return this.api.put('/api/downloads/status', { ids, status });
+    return this.api.put("/api/downloads/status", { ids, status });
   }
 
   /**
@@ -258,7 +252,7 @@ export class MediaGoClient {
    * Gets active download tasks (waiting or downloading).
    */
   async getActiveTasks(): Promise<ApiResponse<DownloadTask[]>> {
-    return this.api.get('/api/downloads/active');
+    return this.api.get("/api/downloads/active");
   }
 
   // #endregion
@@ -269,7 +263,7 @@ export class MediaGoClient {
    * Gets all favorites.
    */
   async getFavorites(): Promise<ApiResponse<FavoriteItem[]>> {
-    return this.api.get('/api/favorites');
+    return this.api.get("/api/favorites");
   }
 
   /**
@@ -278,7 +272,7 @@ export class MediaGoClient {
   async addFavorite(
     params: AddFavoriteParams,
   ): Promise<ApiResponse<FavoriteItem>> {
-    return this.api.post('/api/favorites', params);
+    return this.api.post("/api/favorites", params);
   }
 
   /**
@@ -292,7 +286,7 @@ export class MediaGoClient {
    * Exports favorites as JSON.
    */
   async exportFavorites(): Promise<ApiResponse<string>> {
-    return this.api.get('/api/favorites/export');
+    return this.api.get("/api/favorites/export");
   }
 
   /**
@@ -301,7 +295,7 @@ export class MediaGoClient {
   async importFavorites(
     favorites: AddFavoriteParams[],
   ): Promise<ApiResponse<void>> {
-    return this.api.post('/api/favorites/import', { favorites });
+    return this.api.post("/api/favorites/import", { favorites });
   }
 
   // #endregion
@@ -315,8 +309,8 @@ export class MediaGoClient {
     params: ConversionPaginationParams = {},
   ): Promise<ApiResponse<PaginatedResponse<ConversionItem>>> {
     const query = new URLSearchParams();
-    if (params.current) query.set('current', String(params.current));
-    if (params.pageSize) query.set('pageSize', String(params.pageSize));
+    if (params.current) query.set("current", String(params.current));
+    if (params.pageSize) query.set("pageSize", String(params.pageSize));
     return this.api.get(`/api/conversions?${query.toString()}`);
   }
 
@@ -326,7 +320,7 @@ export class MediaGoClient {
   async addConversion(
     params: AddConversionParams,
   ): Promise<ApiResponse<ConversionItem>> {
-    return this.api.post('/api/conversions', params);
+    return this.api.post("/api/conversions", params);
   }
 
   /**
@@ -343,6 +337,20 @@ export class MediaGoClient {
     return this.api.get(`/api/conversions/${id}`);
   }
 
+  /**
+   * Starts a conversion.
+   */
+  async startConversion(id: number): Promise<ApiResponse<void>> {
+    return this.api.post(`/api/conversions/${id}/start`);
+  }
+
+  /**
+   * Stops a conversion.
+   */
+  async stopConversion(id: number): Promise<ApiResponse<void>> {
+    return this.api.post(`/api/conversions/${id}/stop`);
+  }
+
   // #endregion
 
   // #region Auth
@@ -352,21 +360,21 @@ export class MediaGoClient {
    * Only works if no API key is currently configured.
    */
   async setupAuth(apiKey: string): Promise<ApiResponse<boolean>> {
-    return this.api.post('/api/auth/setup', { apiKey });
+    return this.api.post("/api/auth/setup", { apiKey });
   }
 
   /**
    * Signs in by validating the provided API key.
    */
   async signin(apiKey: string): Promise<ApiResponse<boolean>> {
-    return this.api.post('/api/auth/signin', { apiKey });
+    return this.api.post("/api/auth/signin", { apiKey });
   }
 
   /**
    * Checks whether authentication has been configured.
    */
   async isSetup(): Promise<ApiResponse<{ setuped: boolean }>> {
-    return this.api.get('/api/auth/status');
+    return this.api.get("/api/auth/status");
   }
 
   // #endregion
@@ -384,7 +392,7 @@ export class MediaGoClient {
    * Gets server environment paths (configDir, binDir, platform).
    */
   async getEnvPaths(): Promise<ApiResponse<EnvPaths>> {
-    return this.api.get('/api/env');
+    return this.api.get("/api/env");
   }
 
   // #endregion
@@ -395,14 +403,16 @@ export class MediaGoClient {
    * Gets the full application configuration.
    */
   async getConfig(): Promise<ApiResponse<AppStore>> {
-    return this.api.get('/api/config');
+    return this.api.get("/api/config");
   }
 
   /**
    * Updates multiple configuration fields at once.
    */
-  async setConfig(params: Partial<AppStore>): Promise<ApiResponse<{ message: string }>> {
-    return this.api.post('/api/config', params);
+  async setConfig(
+    params: Partial<AppStore>,
+  ): Promise<ApiResponse<{ message: string }>> {
+    return this.api.post("/api/config", params);
   }
 
   /**
@@ -415,7 +425,10 @@ export class MediaGoClient {
   /**
    * Sets a single configuration value by key.
    */
-  async setConfigKey(key: string, value: any): Promise<ApiResponse<{ message: string }>> {
+  async setConfigKey(
+    key: string,
+    value: any,
+  ): Promise<ApiResponse<{ message: string }>> {
     return this.api.put(`/api/config/${key}`, { value });
   }
 
@@ -445,9 +458,9 @@ export class MediaGoClient {
    * @returns A strongly-typed event emitter for SSE events.
    */
   streamEvents(): TaskEventEmitter {
-    const eventsURL = new URL('/api/events', this.baseURL);
+    const eventsURL = new URL("/api/events", this.baseURL);
     if (this.apiKey) {
-      eventsURL.searchParams.set('token', this.apiKey);
+      eventsURL.searchParams.set("token", this.apiKey);
     }
     const source = new EventSource(eventsURL.toString());
     return new TaskStreamEventEmitter(source);

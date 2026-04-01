@@ -49,8 +49,10 @@ func (h *ConversionHandler) Create(c *gin.Context) {
 	}
 
 	conv, err := h.svc.AddConversion(&service.AddConversionInput{
-		Name: req.Name,
-		Path: req.Path,
+		Name:         req.Name,
+		Path:         req.Path,
+		OutputFormat: req.OutputFormat,
+		Quality:      req.Quality,
 	})
 	if err != nil {
 		logger.Error("Failed to add conversion", zap.Error(err))
@@ -93,4 +95,38 @@ func (h *ConversionHandler) Get(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, dto.SuccessResponse{Success: true, Code: http.StatusOK, Message: i18n.T(c, i18n.MsgOK), Data: conv})
+}
+
+// Start begins a conversion.
+func (h *ConversionHandler) Start(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Success: false, Code: http.StatusBadRequest, Message: i18n.T(c, i18n.MsgInvalidID)})
+		return
+	}
+
+	if err := h.svc.StartConversion(id); err != nil {
+		logger.Error("Failed to start conversion", zap.Int64("id", id), zap.Error(err))
+		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Success: false, Code: http.StatusInternalServerError, Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, dto.SuccessResponse{Success: true, Code: http.StatusOK, Message: i18n.T(c, i18n.MsgOK)})
+}
+
+// Stop cancels a running conversion.
+func (h *ConversionHandler) Stop(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrorResponse{Success: false, Code: http.StatusBadRequest, Message: i18n.T(c, i18n.MsgInvalidID)})
+		return
+	}
+
+	if err := h.svc.StopConversion(id); err != nil {
+		logger.Error("Failed to stop conversion", zap.Int64("id", id), zap.Error(err))
+		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Success: false, Code: http.StatusInternalServerError, Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, dto.SuccessResponse{Success: true, Code: http.StatusOK, Message: i18n.T(c, i18n.MsgOK)})
 }

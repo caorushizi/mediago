@@ -143,8 +143,18 @@ export function createGoAdapter(
         client.addConversion({
           name: (conversion as any).name,
           path: (conversion as any).path,
+          outputFormat: (conversion as any).outputFormat,
+          quality: (conversion as any).quality,
         }),
       );
+    },
+
+    startConversion: async (id: number) => {
+      return wrapResponse(client.startConversion(id));
+    },
+
+    stopConversion: async (id: number) => {
+      return wrapResponse(client.stopConversion(id));
     },
 
     deleteConversion: async (id: number) => {

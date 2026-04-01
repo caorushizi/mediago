@@ -30,6 +30,7 @@ export const devConfig = {
   m3u8_bin: `${config.DEPS_DIR}/${platformKey}/N_m3u8DL-RE${exeExt}`,
   bilibili_bin: `${config.DEPS_DIR}/${platformKey}/BBDown${exeExt}`,
   direct_bin: `${config.DEPS_DIR}/${platformKey}/gopeed${exeExt}`,
+  ffmpeg_bin: `${config.DEPS_DIR}/${platformKey}/ffmpeg${exeExt}`,
   max_runner: 3,
   local_dir: `${homeDir}/downloads`,
   delete_segments: true,

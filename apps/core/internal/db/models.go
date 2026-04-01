@@ -33,11 +33,17 @@ func (Favorite) TableName() string { return "favorite" }
 
 // Conversion maps to the "conversion" table.
 type Conversion struct {
-	ID          int64     `gorm:"column:id;primaryKey;autoIncrement" json:"id"`
-	Name        *string   `gorm:"column:name;type:text" json:"name"`
-	Path        string    `gorm:"column:path;type:text;not null;default:''" json:"path"`
-	CreatedDate time.Time `gorm:"column:createdDate;autoCreateTime" json:"createdDate"`
-	UpdatedDate time.Time `gorm:"column:updatedDate;autoUpdateTime" json:"updatedDate"`
+	ID           int64     `gorm:"column:id;primaryKey;autoIncrement" json:"id"`
+	Name         *string   `gorm:"column:name;type:text" json:"name"`
+	Path         string    `gorm:"column:path;type:text;not null;default:''" json:"path"`
+	Status       string    `gorm:"column:status;type:text;not null;default:'pending'" json:"status"`
+	OutputPath   string    `gorm:"column:outputPath;type:text;default:''" json:"outputPath"`
+	OutputFormat string    `gorm:"column:outputFormat;type:text;default:''" json:"outputFormat"`
+	Quality      string    `gorm:"column:quality;type:text;default:'medium'" json:"quality"`
+	Progress     int       `gorm:"column:progress;not null;default:0" json:"progress"`
+	Error        *string   `gorm:"column:error;type:text" json:"error"`
+	CreatedDate  time.Time `gorm:"column:createdDate;autoCreateTime" json:"createdDate"`
+	UpdatedDate  time.Time `gorm:"column:updatedDate;autoUpdateTime" json:"updatedDate"`
 }
 
 func (Conversion) TableName() string { return "conversion" }

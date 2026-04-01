@@ -83,6 +83,19 @@ func (r *ConversionRepository) FindWithPagination(current, pageSize int) (*Conve
 	return &ConversionPaginationResult{Items: items, Total: total}, nil
 }
 
+// UpdateStatus updates the status, progress, outputPath, and error fields.
+func (r *ConversionRepository) UpdateStatus(id int64, status string, progress int, outputPath string, errMsg *string) error {
+	updates := map[string]any{
+		"status":     status,
+		"progress":   progress,
+		"outputPath": outputPath,
+	}
+	if errMsg != nil {
+		updates["error"] = *errMsg
+	}
+	return r.db.Model(&db.Conversion{}).Where("id = ?", id).Updates(updates).Error
+}
+
 // Delete removes a conversion record.
 func (r *ConversionRepository) Delete(id int64) error {
 	return r.db.Delete(&db.Conversion{}, id).Error

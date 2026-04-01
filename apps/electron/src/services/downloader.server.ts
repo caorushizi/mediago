@@ -60,6 +60,7 @@ export class DownloaderServer extends EventEmitter {
         `-m3u8-bin=${deps.n_m3u8dl_re}`,
         `-bilibili-bin=${deps.bbdown}`,
         `-direct-bin=${deps.gopeed}`,
+        `-ffmpeg-bin=${deps.ffmpeg}`,
         `-db-path=${opts.dbPath}`,
         `-config-dir=${path.dirname(opts.dbPath)}`,
       ],

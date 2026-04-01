@@ -66,6 +66,7 @@ type AppConfig struct {
 	UseProxy       bool   `json:"use_proxy"`
 	DBPath         string `json:"db_path"`
 	ConfigDir      string `json:"config_dir"`
+	FFmpegBin      string `json:"ffmpeg_bin"`
 	EnableAuth     bool   `json:"enable_auth"`
 	StaticDir      string `json:"static_dir"`
 }
@@ -260,6 +261,7 @@ func main() {
 	server := api.NewServer(queue, taskLogs, database, confStore, api.ServerOptions{
 		EnableAuth: cfg.EnableAuth,
 		StaticDir:  cfg.StaticDir,
+		FFmpegBin:  cfg.FFmpegBin,
 		EnvPaths: handler.EnvPaths{
 			ConfigDir: cfg.ConfigDir,
 			BinDir:    filepath.Dir(execPath),
@@ -325,6 +327,7 @@ func initConfig() *AppConfig {
 	flag.IntVar(&cfg.MaxRunner, "max-runner", cfg.MaxRunner, "Maximum concurrent download runners")
 	flag.StringVar(&cfg.DBPath, "db-path", cfg.DBPath, "Path to SQLite database file")
 	flag.StringVar(&cfg.ConfigDir, "config-dir", cfg.ConfigDir, "Directory for persistent config file")
+	flag.StringVar(&cfg.FFmpegBin, "ffmpeg-bin", cfg.FFmpegBin, "FFmpeg binary path")
 	flag.BoolVar(&cfg.EnableAuth, "enable-auth", cfg.EnableAuth, "Enable API key authentication")
 	flag.StringVar(&cfg.StaticDir, "static-dir", cfg.StaticDir, "Directory to serve static files from (SPA mode)")
 

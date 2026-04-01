@@ -21,7 +21,6 @@ const PLATFORM_API_KEYS: (keyof PlatformApi)[] = [
   "webviewShow",
   "onDownloadListContextMenu",
   "onFavoriteItemContextMenu",
-  "convertToAudio",
   "showBrowserWindow",
   "appContextMenu",
   "combineToHomePage",
@@ -69,6 +68,8 @@ const GO_API_KEYS: (keyof GoApi)[] = [
   "signin",
   "isSetup",
   "openUrl",
+  "startConversion",
+  "stopConversion",
 ];
 
 /**
