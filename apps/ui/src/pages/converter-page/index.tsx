@@ -6,14 +6,25 @@ import {
 } from "@ant-design/icons";
 import { type Conversion, GET_CONVERSIONS } from "@mediago/shared-common";
 import { useMemoizedFn } from "ahooks";
-import { App, Badge, Empty, Progress, Select, Space } from "antd";
+import {
+  App,
+  Badge,
+  Empty,
+  Form,
+  Input,
+  Modal,
+  Progress,
+  Select,
+  Space,
+  Button as AntButton,
+} from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IconButton } from "@/components/icon-button";
 import PageContainer from "@/components/page-container";
 import { Button } from "@/components/ui/button";
 import { ADD_CONVERT_TASK, DELETE_CONVERT, START_CONVERT } from "@/const";
-import { getFileName, tdApp } from "@/utils";
+import { tdApp } from "@/utils";
 import useAPI from "@/hooks/use-api";
 import useSWR from "swr";
 import Loading from "@/components/loading";
@@ -65,6 +76,8 @@ const Converter = () => {
   const { message } = App.useApp();
   const [outputFormat, setOutputFormat] = useState("mp3");
   const [quality, setQuality] = useState("medium");
+  const [filePath, setFilePath] = useState("");
+  const [addModalOpen, setAddModalOpen] = useState(false);
 
   const { data, mutate, isLoading } = useSWR(
     {
@@ -86,17 +99,42 @@ const Converter = () => {
     },
   );
 
-  const handleSelectFile = useMemoizedFn(async () => {
-    const file = await selectFile();
-    if (!file) return;
-    await addConversion({
-      name: getFileName(file),
-      path: file,
-      outputFormat,
-      quality,
-    });
-    mutate();
-    tdApp.onEvent(ADD_CONVERT_TASK);
+  const handleBrowseFile = useMemoizedFn(async () => {
+    try {
+      const file = await selectFile();
+      if (file) setFilePath(file);
+    } catch (e: any) {
+      message.error(e.message);
+    }
+  });
+
+  const handleOpenModal = useMemoizedFn(() => {
+    setFilePath("");
+    setAddModalOpen(true);
+  });
+
+  const doAddConversion = useMemoizedFn(async (startImmediately: boolean) => {
+    if (!filePath) {
+      message.warning(t("pleaseSelectFile"));
+      return;
+    }
+    try {
+      const name = filePath.split(/[/\\]/).pop() || filePath;
+      const conv = await addConversion({
+        name,
+        path: filePath,
+        outputFormat,
+        quality,
+      });
+      tdApp.onEvent(ADD_CONVERT_TASK);
+      if (startImmediately && conv?.id) {
+        await startConversion(conv.id);
+      }
+      setAddModalOpen(false);
+      mutate();
+    } catch (e: any) {
+      message.error(e.message);
+    }
   });
 
   const handleStart = useMemoizedFn(async (id: number) => {
@@ -205,32 +243,59 @@ const Converter = () => {
               {t("convertAll")}
             </Button>
           )}
-          <Button onClick={handleSelectFile}>{t("addFile")}</Button>
+          <Button onClick={handleOpenModal}>{t("addFile")}</Button>
         </Space>
       }
       className="rounded-lg bg-white dark:bg-[#1F2024] flex"
     >
-      <div className="flex flex-col gap-3 rounded-lg bg-white p-3 dark:bg-[#1F2024] flex-1 overflow-auto">
-        {/* Format & Quality toolbar */}
-        <div className="flex flex-row items-center gap-3">
-          <span className="text-xs text-[#AAB5CB]">{t("outputFormat")}:</span>
-          <Select
-            size="small"
-            value={outputFormat}
-            onChange={setOutputFormat}
-            options={FORMAT_OPTIONS}
-            style={{ width: 100 }}
-          />
-          <span className="text-xs text-[#AAB5CB]">{t("quality")}:</span>
-          <Select
-            size="small"
-            value={quality}
-            onChange={setQuality}
-            options={QUALITY_OPTIONS}
-            style={{ width: 100 }}
-          />
-        </div>
+      <Modal
+        title={t("addFile")}
+        open={addModalOpen}
+        onCancel={() => setAddModalOpen(false)}
+        footer={
+          <Space>
+            <Button
+              key="add"
+              variant="outline"
+              onClick={() => doAddConversion(false)}
+            >
+              {t("addToList")}
+            </Button>
+            <Button key="convert" onClick={() => doAddConversion(true)}>
+              {t("convertNow")}
+            </Button>
+          </Space>
+        }
+      >
+        <Form layout="vertical" className="mt-4">
+          <Form.Item label={t("filePath")}>
+            <Space.Compact style={{ width: "100%" }}>
+              <Input
+                value={filePath}
+                readOnly
+                placeholder={t("pleaseSelectFile")}
+              />
+              <AntButton onClick={handleBrowseFile}>{t("browse")}</AntButton>
+            </Space.Compact>
+          </Form.Item>
+          <Form.Item label={t("outputFormat")}>
+            <Select
+              value={outputFormat}
+              onChange={setOutputFormat}
+              options={FORMAT_OPTIONS}
+            />
+          </Form.Item>
+          <Form.Item label={t("quality")}>
+            <Select
+              value={quality}
+              onChange={setQuality}
+              options={QUALITY_OPTIONS}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
 
+      <div className="flex flex-col gap-3 rounded-lg bg-white p-3 dark:bg-[#1F2024] flex-1 overflow-auto">
         {isLoading && <Loading />}
         {!isLoading && data.list.length === 0 && (
           <div className="flex h-full flex-1 flex-row items-center justify-center rounded-lg bg-white dark:bg-[#1F2024]">

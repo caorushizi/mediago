@@ -81,6 +81,7 @@ export const en = {
   localDir: "Local Directory",
   currentVersion: "Current Version",
   selectFolder: "Select Folder",
+  selectFile: "Select File",
   proxySwitch: "Proxy Switch",
   downloadProxySwitch: "Download Proxy Switch",
   proxyDescription:
@@ -215,6 +216,10 @@ export const en = {
   untitled: "Untitled",
   noData: "No Data",
   addToList: "Add to List",
+  convertNow: "Convert Now",
+  filePath: "File",
+  pleaseSelectFile: "Please select a file",
+  browse: "Browse",
   enableMobilePlayer: "Enable Mobile Player",
   adminPassword: "Admin Password",
   forgotPassword: "Forgot Password?",
