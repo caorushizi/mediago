@@ -1,6 +1,5 @@
 import { useAsyncEffect, useMemoizedFn } from "ahooks";
-import type React from "react";
-import { useEffect, useRef } from "react";
+import { type React, useEffect, useRef } from "react";
 import { useShallow } from "zustand/react/shallow";
 import PageContainer from "@/components/page-container";
 import { setAppStoreSelector, useAppStore } from "@/store/app";
