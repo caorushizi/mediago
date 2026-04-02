@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge";
 import { isUrl } from "./url";
 import { DownloadType } from "@mediago/shared-common";
 
-export { http, setupHttp, setHttpApiKey } from "./http";
+export { http, setupHttp } from "./http";
 export { tdApp } from "./tdapp";
 
 export const requestImage = (url: string, timeout = 1000): Promise<void> => {

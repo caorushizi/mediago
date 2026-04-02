@@ -14,7 +14,6 @@ import { useNavigate } from "react-router-dom";
 import { setAppStoreSelector, useAppStore } from "@/store/app";
 import { useShallow } from "zustand/react/shallow";
 import { APIKEY_SALT_KEY } from "@mediago/shared-common";
-import { setHttpApiKey } from "@/utils";
 
 export default function SigninPage() {
   const { isSetuped, setupAuth, signin } = useAuthApi();
@@ -44,7 +43,6 @@ export default function SigninPage() {
           await setupAuth(apiKey);
         }
 
-        setHttpApiKey(apiKey);
         setAppStore({ apiKey });
 
         navigate("/");

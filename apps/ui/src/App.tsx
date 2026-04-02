@@ -138,9 +138,8 @@ const App: FC = () => {
         coreUrl = import.meta.env.DEV
           ? "http://127.0.0.1:9900"
           : window.location.origin;
-        const storedApiKey = useAppStore.getState().apiKey;
-        setupHttp(coreUrl, storedApiKey || undefined);
-        initGoEvents(coreUrl, storedApiKey || undefined);
+        setupHttp(coreUrl);
+        initGoEvents(coreUrl);
       } else {
         // Electron mode: get coreUrl directly from preload IPC
         // FIXME: wait for Go Core to fully start
