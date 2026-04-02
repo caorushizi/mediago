@@ -15,7 +15,7 @@ outline: deep
 - 安装 [猫爪](https://github.com/xifangczy/cat-catch) 最新版
 - 在设置中添加调用程序：
 
-  `mediago://index.html/?n=true&name=${title}&url=${url}&headers=${referer|exists:'Referer:*'|to:urlEncode}&type=m3u8&silent=true`
+  `mediago-community://index.html/?n=true&name=${title}&url=${url|to:urlEncode}&headers=${referer|exists:'Referer:*'|to:urlEncode}&silent=true&downloadNow=false`
 
   ![alt text](./images/catcatch-3.png)
 
