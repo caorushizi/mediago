@@ -7,7 +7,6 @@ import {
   EXPORT_FAVORITES,
   EnvPath,
   GET_ENV_PATH,
-  GET_MACHINE_ID,
   GET_SHARED_STATE,
   IMPORT_FAVORITES,
   INSTALL_UPDATE,
@@ -37,14 +36,10 @@ import {
 } from "electron";
 import fs from "node:fs/promises";
 import { inject, injectable } from "inversify";
-import { nanoid } from "nanoid";
-import MachineId from "node-machine-id";
 import { exePath, workspace } from "../utils";
 import ElectronUpdater from "../vendor/ElectronUpdater";
 import BrowserWindow from "../windows/browser.window";
 import MainWindow from "../windows/main.window";
-
-const { machineId } = MachineId;
 
 @injectable()
 @provide(TYPES.Controller)
@@ -212,24 +207,6 @@ export default class HomeController implements Controller {
       return result.filePaths[0];
     }
     return "";
-  }
-
-  @handle(GET_MACHINE_ID)
-  async getMachineId() {
-    const client = this.downloaderServer.getClient();
-    try {
-      const { data: config } = await client.getConfig();
-      if (config.machineId) return config.machineId;
-      const newId = await machineId();
-      await client.setConfigKey("machineId", newId);
-      return newId;
-    } catch {
-      const { data: config } = await client.getConfig();
-      if (config.machineId) return config.machineId;
-      const newId = nanoid();
-      await client.setConfigKey("machineId", newId);
-      return newId;
-    }
   }
 
   @handle(EXPORT_FAVORITES)
