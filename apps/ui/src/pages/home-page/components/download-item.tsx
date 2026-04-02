@@ -6,7 +6,6 @@ import {
 import {
   DownloadProgress,
   DownloadStatus,
-  GET_ENV_PATH,
   type DownloadTask,
   type DownloadTaskWithFile,
 } from "@mediago/shared-common";
@@ -37,8 +36,8 @@ import type { DownloadTaskDetails } from "@/hooks/use-tasks";
 import { appStoreSelector, useAppStore } from "@/store/app";
 import { cn, fromatDateTime, tdApp } from "@/utils";
 import { TerminalDialog } from "./terminal-dialog";
-import useAPI from "@/hooks/use-api";
-import useSWR from "swr";
+import { usePlatform } from "@/hooks/use-platform";
+import { useEnvPath } from "@/hooks/use-config";
 
 interface Props {
   task: DownloadTaskDetails;
@@ -63,8 +62,8 @@ export const DownloadTaskItem = memo(function DownloadTaskItem({
 }: Props) {
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
-  const { openUrl, getEnvPath } = useAPI();
-  const { data: envPath } = useSWR(GET_ENV_PATH, getEnvPath);
+  const { openUrl } = usePlatform();
+  const { envPath } = useEnvPath();
 
   // Handlers
   const handlePlay = useMemoizedFn(() => {
@@ -187,19 +186,21 @@ export const DownloadTaskItem = memo(function DownloadTaskItem({
     t,
   ]);
 
-  const renderTitle = useMemoizedFn((task: DownloadTaskWithFile): ReactNode => {
-    return (
-      <div
-        className={cn("truncate text-sm dark:text-[#B4B4B4]", {
-          "text-[#127af3]": selected,
-        })}
-        title={task.name}
-      >
-        {task.folder ? `${task.folder}/` : task.folder}
-        {task.name}
-      </div>
-    );
-  });
+  const renderTitle = useMemoizedFn(
+    (taskItem: DownloadTaskWithFile): ReactNode => {
+      return (
+        <div
+          className={cn("truncate text-sm dark:text-[#B4B4B4]", {
+            "text-[#127af3]": selected,
+          })}
+          title={taskItem.name}
+        >
+          {taskItem.folder ? `${taskItem.folder}/` : taskItem.folder}
+          {taskItem.name}
+        </div>
+      );
+    },
+  );
 
   const tags = useMemo<ReactNode[]>(() => {
     const list: ReactNode[] = [];
@@ -249,7 +250,7 @@ export const DownloadTaskItem = memo(function DownloadTaskItem({
                 className="cursor-pointer"
               />
             }
-            title={task.name}
+            title={taskItem.name}
             id={task.id}
           />,
         );
@@ -269,7 +270,7 @@ export const DownloadTaskItem = memo(function DownloadTaskItem({
   }, [task, t]);
 
   const renderDescription = useMemoizedFn(
-    (task: DownloadTaskDetails): ReactNode => {
+    (taskItem: DownloadTaskDetails): ReactNode => {
       if (task.percent && task.status === DownloadStatus.Downloading) {
         const val = Math.round(Number(task.percent));
 
@@ -298,7 +299,7 @@ export const DownloadTaskItem = memo(function DownloadTaskItem({
                   {t("failReason")}: ...
                 </div>
               }
-              title={task.name}
+              title={taskItem.name}
               id={task.id}
             />
           )}

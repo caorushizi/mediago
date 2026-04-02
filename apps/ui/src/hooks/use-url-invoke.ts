@@ -1,10 +1,10 @@
 import { useLocation } from "react-router-dom";
-import useAPI from "./use-api";
-import { useEffect } from "react";
+import { createDownloadTasks } from "@/api/download-task";
 import { isDownloadType, isWeb, urlDownloadType } from "@/utils";
 import { DownloadTask } from "@mediago/shared-common";
 import { DownloadFormItem } from "@/components/download-form";
 import qs from "qs";
+import { useAsyncEffect } from "ahooks";
 
 export interface UseUrlInvokeProps {
   onOpenForm?: (item: DownloadFormItem) => void;
@@ -12,10 +12,9 @@ export interface UseUrlInvokeProps {
 }
 
 export function useUrlInvoke({ onOpenForm, refresh }: UseUrlInvokeProps) {
-  const { createDownloadTasks } = useAPI();
   const location = useLocation();
 
-  useEffect(() => {
+  useAsyncEffect(async () => {
     if (isWeb) return;
 
     const {
@@ -45,7 +44,7 @@ export function useUrlInvoke({ onOpenForm, refresh }: UseUrlInvokeProps) {
           headers,
           folder: "",
         };
-        createDownloadTasks([item], !!downloadNow);
+        await createDownloadTasks([item], !!downloadNow);
         refresh?.();
       } else {
         const item: DownloadFormItem = {

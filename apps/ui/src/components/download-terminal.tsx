@@ -3,9 +3,9 @@ import "@xterm/xterm/css/xterm.css";
 import { FitAddon } from "@xterm/addon-fit";
 import { Terminal as XTerminal } from "@xterm/xterm";
 import { cn } from "@/utils";
-import useAPI from "@/hooks/use-api";
+import { usePlatform } from "@/hooks/use-platform";
 import useSWR from "swr";
-import { GET_DOWNLOAD_LOG } from "@mediago/shared-common";
+import { getDownloadLog } from "@/api/download-task";
 
 interface TerminalProps {
   className?: string;
@@ -15,8 +15,8 @@ interface TerminalProps {
 
 const Terminal: FC<TerminalProps> = ({ className, id, header }) => {
   const terminalRef = useRef<HTMLDivElement | null>(null);
-  const { addIpcListener, removeIpcListener, getDownloadLog } = useAPI();
-  const { data } = useSWR({ key: GET_DOWNLOAD_LOG, args: id }, ({ args }) =>
+  const { addIpcListener, removeIpcListener } = usePlatform();
+  const { data } = useSWR({ key: "download-log", args: id }, ({ args }) =>
     getDownloadLog(args),
   );
 

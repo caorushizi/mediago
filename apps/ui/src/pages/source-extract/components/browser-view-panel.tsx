@@ -15,7 +15,8 @@ import {
   setBrowserSelector,
   useBrowserStore,
 } from "@/store/browser";
-import useAPI from "@/hooks/use-api";
+import { usePlatform } from "@/hooks/use-platform";
+import { createDownloadTasks } from "@/api/download-task";
 import { DownloadTask } from "@mediago/shared-common";
 
 export function BrowserViewPanel() {
@@ -25,7 +26,7 @@ export function BrowserViewPanel() {
     useShallow(setBrowserSelector),
   );
   const { t } = useTranslation();
-  const { showDownloadDialog, createDownloadTasks } = useAPI();
+  const { showDownloadDialog } = usePlatform();
   const { message } = App.useApp();
 
   const handleClear = useMemoizedFn(() => {
@@ -43,7 +44,7 @@ export function BrowserViewPanel() {
       };
       await createDownloadTasks([downloadTask], true);
     } catch (e) {
-      message.error((e as any).message);
+      message.error((e as Error).message);
     }
   });
 

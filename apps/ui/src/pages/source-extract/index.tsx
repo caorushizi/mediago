@@ -14,20 +14,16 @@ import { cn, convertPlainObject } from "@/utils";
 import { BrowserView } from "./components/browser-view";
 import { FavoriteList } from "./components/favorite-list";
 import { ToolBar } from "./components/tool-bar";
-import useAPI from "@/hooks/use-api";
+import { usePlatform } from "@/hooks/use-platform";
+import { getConfig } from "@/api/config";
 
 interface SourceExtractProps {
   page?: boolean;
 }
 
 const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
-  const {
-    addIpcListener,
-    removeIpcListener,
-    getSharedState,
-    getAppStore: ipcGetAppStore,
-    setSharedState,
-  } = useAPI();
+  const { addIpcListener, removeIpcListener, getSharedState, setSharedState } =
+    usePlatform();
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
   const store = useBrowserStore(useShallow(browserStoreSelector));
   const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
@@ -47,13 +43,17 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   }, []);
 
   useAsyncEffect(async () => {
-    const store = await ipcGetAppStore();
-    setAppStore(store);
+    try {
+      const configData = await getConfig();
+      setAppStore(configData as Record<string, unknown>);
+    } catch {
+      // ignore
+    }
   }, []);
 
   useAsyncEffect(async () => {
     const state = await getSharedState();
-    setBrowserStore(state as any);
+    setBrowserStore(state as Record<string, unknown>);
   }, []);
 
   useEffect(() => {
