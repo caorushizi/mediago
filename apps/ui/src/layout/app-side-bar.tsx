@@ -1,7 +1,6 @@
 import { useMemoizedFn } from "ahooks";
 import { Badge } from "antd";
 import {
-  type React,
   cloneElement,
   type PropsWithChildren,
   type ReactElement,
@@ -28,7 +27,6 @@ import { downloadStoreSelector, useDownloadStore } from "@/store/download";
 import { updateSelector, useSessionStore } from "@/store/session";
 import { cn, isWeb } from "@/utils";
 import { usePlatform } from "@/hooks/use-platform";
-import { setConfigValue } from "@/api/config";
 
 function processLocation(pathname: string) {
   let name = pathname;
@@ -44,7 +42,7 @@ type MenuItem = {
 };
 
 interface AppMenuItemProps extends PropsWithChildren {
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
   link: string;
   activeKey: string;
   className?: string;
@@ -90,7 +88,7 @@ interface Props {
 }
 
 export function AppSideBar({ className }: Props) {
-  const { showBrowserWindow } = usePlatform();
+  const { showBrowserWindow, combineToHomePage } = usePlatform();
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
@@ -111,19 +109,36 @@ export function AppSideBar({ className }: Props) {
       e.stopPropagation();
       e.preventDefault();
 
-      setAppStore({ openInNewWindow: true });
-      if (location.pathname === "/source") {
-        navigate("/");
+      if (appStore.openInNewWindow) {
+        setAppStore({ openInNewWindow: false });
+        navigate("/source");
+        await combineToHomePage({
+          url: "",
+          sourceList: [],
+        });
+      } else {
+        setAppStore({ openInNewWindow: true });
+        if (location.pathname === "/source") {
+          navigate("/");
+        }
+        await showBrowserWindow();
       }
-      // FIXME: It is possible that the webview is not completely hidden yet
-      await setConfigValue("openInNewWindow", true);
-      await showBrowserWindow();
     },
   );
 
   const handleClearCount = useMemoizedFn(() => {
     clearCount();
   });
+
+  const handleExtractPage = useMemoizedFn(
+    (e: React.MouseEvent<HTMLAnchorElement>) => {
+      if (appStore.openInNewWindow) {
+        e.preventDefault();
+        e.stopPropagation();
+        showBrowserWindow();
+      }
+    },
+  );
 
   const items1: MenuItem[] = useMemo(() => {
     return [
@@ -170,6 +185,7 @@ export function AppSideBar({ className }: Props) {
             activeKey={activeKey}
             className="group"
             icon={<ExtractIcon />}
+            onClick={handleExtractPage}
           >
             <span className="flex flex-1">{t("materialExtraction")}</span>
             <div
@@ -178,6 +194,7 @@ export function AppSideBar({ className }: Props) {
               onClick={handleExternalLink}
             >
               <ShareIcon
+                className={cn({ "rotate-180": appStore.openInNewWindow })}
                 fill={"/source" === location.pathname ? "#fff" : "#AAB5CB"}
               />
             </div>
@@ -210,14 +227,10 @@ export function AppSideBar({ className }: Props) {
   ]);
 
   const finalItems = useMemo(() => {
-    return items1
-      .filter((i) =>
-        isWeb ? i.key !== "source" && i.key !== "converter" : true,
-      )
-      .filter((item) =>
-        appStore.openInNewWindow ? item?.key !== "source" : true,
-      );
-  }, [items1, appStore.openInNewWindow]);
+    return items1.filter((i) =>
+      isWeb ? i.key !== "source" && i.key !== "converter" : true,
+    );
+  }, [items1]);
 
   return (
     <div

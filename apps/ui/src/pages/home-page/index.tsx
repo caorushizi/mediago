@@ -5,7 +5,7 @@ import { Pagination, Popover, QRCode } from "antd";
 import { type FC, useId, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
-import { ExtractIcon, FolderIcon } from "@/assets/svg";
+import { FolderIcon } from "@/assets/svg";
 import DownloadForm, {
   type DownloadFormItem,
   type DownloadFormRef,
@@ -28,7 +28,7 @@ interface Props {
 }
 
 const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
-  const { openDir, showBrowserWindow } = usePlatform();
+  const { openDir } = usePlatform();
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
   const newFormRef = useRef<DownloadFormRef>(null);
@@ -80,12 +80,6 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
             <Button onClick={() => openDir(appStore.local)}>
               <FolderIcon />
               {t("openFolder")}
-            </Button>
-          )}
-          {filter === DownloadFilter.list && appStore.openInNewWindow && (
-            <Button onClick={() => showBrowserWindow()}>
-              <ExtractIcon fill="#fff" />
-              {t("materialExtraction")}
             </Button>
           )}
           {filter === DownloadFilter.done &&

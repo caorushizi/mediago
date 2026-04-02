@@ -54,7 +54,6 @@
     "lru-cache": "^11.0.1",
     "mime-types": "^3.0.1",
     "nanoid": "^5.0.7",
-    "node-machine-id": "^1.1.12",
     "reflect-metadata": "^0.2.2"
   }
 }
