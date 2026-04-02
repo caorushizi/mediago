@@ -43,7 +43,7 @@ function getAlgorithm(appTheme: "dark" | "light") {
 
 const App: FC = () => {
   useAuth();
-  const { addIpcListener, removeIpcListener, getMachineId } = usePlatform();
+  const { addIpcListener, removeIpcListener } = usePlatform();
   const { setUpdateAvailable, setUploadChecking } = useSessionStore(
     useShallow(updateSelector),
   );
@@ -120,8 +120,13 @@ const App: FC = () => {
 
   useAsyncEffect(async () => {
     if (!adapterReady) return;
-    const deviceId = await getMachineId();
-    tdApp.onEvent(PAGE_LOAD, { deviceId });
+    try {
+      const config = await getConfig();
+      const deviceId = (config as Record<string, unknown>)?.machineId || "";
+      tdApp.onEvent(PAGE_LOAD, { deviceId });
+    } catch {
+      tdApp.onEvent(PAGE_LOAD, { deviceId: "" });
+    }
   }, [adapterReady]);
 
   useAsyncEffect(async () => {

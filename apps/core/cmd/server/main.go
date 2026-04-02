@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"runtime"
 
+	"github.com/google/uuid"
+
 	"caorushizi.cn/mediago/internal/api"
 	"caorushizi.cn/mediago/internal/api/handler"
 	"caorushizi.cn/mediago/internal/core"
@@ -147,6 +149,13 @@ func main() {
 		logger.Fatalf("Failed to initialize app store: %v", err)
 	}
 	logger.Infof("App store initialized at: %s", appStore.Path())
+
+	// Ensure machineId is set (generate on first run)
+	if appStore.Store().MachineId == "" {
+		newId := uuid.New().String()
+		_ = appStore.Set("machineId", newId)
+		logger.Infof("Generated new machineId: %s", newId)
+	}
 
 	// Sync appStore values back into cfg (so cfg reflects the final state of persistent config).
 	// Note: CLI arguments are no longer written into appStore to avoid overwriting settings
