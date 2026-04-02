@@ -5,13 +5,20 @@ import fs from "node:fs";
 import { ServiceRunner } from "@mediago/service-runner";
 import { resolveCoreBinaries, resolveDepsBinaries } from "./binaryResolver";
 
-const DATA_DIR = path.resolve(os.homedir(), ".mediago-server");
-const LOG_DIR = path.resolve(DATA_DIR, "logs");
-const DB_PATH = path.resolve(DATA_DIR, "app.db");
-const CONFIG_DIR = DATA_DIR;
+// All persistent data under one root: ~/.mediago-server/
+//   data/       — database + config
+//   logs/       — runtime & task logs
+//   downloads/  — downloaded files (also video-root for player)
+const ROOT_DIR = path.resolve(os.homedir(), ".mediago-server");
+const DATA_DIR = path.resolve(ROOT_DIR, "data");
+const LOG_DIR = path.resolve(ROOT_DIR, "logs");
+const DOWNLOAD_DIR = path.resolve(ROOT_DIR, "downloads");
+const DB_PATH = path.resolve(DATA_DIR, "mediago.db");
 
-// Ensure data directories exist
+// Ensure directories exist
+fs.mkdirSync(DATA_DIR, { recursive: true });
 fs.mkdirSync(LOG_DIR, { recursive: true });
+fs.mkdirSync(DOWNLOAD_DIR, { recursive: true });
 
 const core = resolveCoreBinaries();
 const deps = resolveDepsBinaries();
@@ -27,12 +34,13 @@ const runner = new ServiceRunner({
     `--enable-auth`,
     `--log-level=debug`,
     `--log-dir=${LOG_DIR}`,
+    `--local-dir=${DOWNLOAD_DIR}`,
     `--schema-path=${core.coreConfig}`,
     `--m3u8-bin=${deps.n_m3u8dl_re}`,
     `--bilibili-bin=${deps.bbdown}`,
     `--direct-bin=${deps.gopeed}`,
     `--db-path=${DB_PATH}`,
-    `--config-dir=${CONFIG_DIR}`,
+    `--config-dir=${DATA_DIR}`,
   ],
 });
 

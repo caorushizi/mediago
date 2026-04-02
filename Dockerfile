@@ -96,20 +96,20 @@ RUN mkdir -p /app/deps && \
     chmod +x /app/deps/* 2>/dev/null || true && \
     rm -rf /app/deps-tmp
 
-RUN mkdir -p /app/data /app/logs /app/downloads
+RUN mkdir -p /app/mediago/data /app/mediago/logs /app/mediago/downloads
 
 EXPOSE 8899
 
-VOLUME ["/app/data", "/app/downloads"]
+VOLUME ["/app/mediago"]
 
 CMD ["mediago-core", \
      "--port=8899", \
      "--static-dir=/app/static", \
      "--enable-auth", \
-     "--db-path=/app/data/mediago.db", \
-     "--config-dir=/app/data", \
-     "--log-dir=/app/logs", \
-     "--local-dir=/app/downloads", \
+     "--db-path=/app/mediago/data/mediago.db", \
+     "--config-dir=/app/mediago/data", \
+     "--log-dir=/app/mediago/logs", \
+     "--local-dir=/app/mediago/downloads", \
      "--m3u8-bin=/app/deps/N_m3u8DL-RE", \
      "--bilibili-bin=/app/deps/BBDown", \
      "--direct-bin=/app/deps/gopeed", \

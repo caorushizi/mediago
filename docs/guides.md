@@ -43,7 +43,7 @@ MacOS 使用
 - [【mediago】 macos arm64（apple 芯片） v3.0.1](https://github.com/caorushizi/mediago/releases/download/v3.0.1/mediago-setup-darwin-arm64-3.0.1.dmg)
 - [【mediago】 macos x64（intel 芯片） v3.0.1](https://github.com/caorushizi/mediago/releases/download/v3.0.1/mediago-setup-darwin-x64-3.0.1.dmg)
 - [【mediago】 linux v3.0.1](https://github.com/caorushizi/mediago/releases/download/v3.0.1/mediago-setup-linux-amd64-3.0.1.deb)
-- 【mediago】 docker v3.0 `docker run -d --name mediago -p 8899:8899 -v /root/mediago:/root/mediago registry.cn-beijing.aliyuncs.com/caorushizi/mediago:v3.0.0`
+- 【mediago】 docker v3.0 `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:latest`
 
 ## 操作说明
 

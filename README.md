@@ -87,7 +87,7 @@ pnpm release:server
 - [【mediago】 macos arm64（apple 芯片） v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-darwin-arm64-3.0.0.dmg)
 - [【mediago】 macos x64（intel 芯片） v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-darwin-x64-3.0.0.dmg)
 - [【mediago】 linux v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-linux-amd64-3.0.0.deb)
-- 【mediago】 docker v3.0 `docker run -d --name mediago -p 8899:8899 -v /root/mediago:/root/mediago registry.cn-beijing.aliyuncs.com/caorushizi/mediago:v3.0.0`
+- 【mediago】 docker `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:latest`
 
 ### docker 宝塔面板一键部署（推荐）
 
@@ -145,6 +145,16 @@ pnpm release:server
 
 ## 鸣谢
 
-- N_m2u8DL-CLI 来自于 <https://github.com/nilaoda/N_m3u8DL-CLI>
 - N_m3u8DL-RE 来自于 <https://github.com/nilaoda/N_m3u8DL-RE>
-- mediago 来自于 <https://github.com/caorushizi/hls-downloader>
+- BBDown 来自于 <https://github.com/nilaoda/BBDown>
+- mediago 来自于 <https://github.com/caorushizi/mediago-core>
+
+## 免责声明
+
+> **本项目仅供学习和研究使用，请勿用于任何商业或非法用途。**
+>
+> 1. 本项目提供的所有代码和功能仅作为学习流媒体技术的参考，使用者需自行遵守所在地区的法律法规。
+> 2. 使用本项目下载的任何内容，其版权归原始内容所有者所有。使用者应在下载后 24 小时内删除，或取得版权方授权。
+> 3. 本项目开发者不对使用者的任何行为承担责任，包括但不限于：下载受版权保护的内容、对第三方平台造成的影响等。
+> 4. 禁止将本项目用于大规模抓取、破坏平台服务或任何侵犯他人合法权益的行为。
+> 5. 使用本项目即表示您已阅读并同意本免责声明。如不同意，请立即停止使用并删除本项目。
