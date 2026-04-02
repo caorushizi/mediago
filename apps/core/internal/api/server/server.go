@@ -43,7 +43,6 @@ type Server struct {
 
 	// Video player handler (available when video-root is configured)
 	videoHandler *video.Handler
-	videoRoot    string
 }
 
 // Options holds optional configuration for the server.
@@ -118,7 +117,6 @@ func New(queue *core.TaskQueue, logs *tasklog.Manager, database *db.Database, co
 		if opt.VideoRoot != "" {
 			videoSvc := video.NewService(videoRepo, opt.VideoRoot)
 			srv.videoHandler = video.NewHandler(videoSvc)
-			srv.videoRoot = opt.VideoRoot
 		}
 	}
 

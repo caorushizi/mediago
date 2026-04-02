@@ -1,7 +1,5 @@
 package server
 
-import "caorushizi.cn/mediago/internal/video"
-
 func (s *Server) registerRoutes() {
 	s.engine.GET("/healthy", s.healthHandler.Check)
 	s.registerSwaggerRoute()
@@ -10,7 +8,7 @@ func (s *Server) registerRoutes() {
 	if s.videoHandler != nil {
 		v1 := s.engine.Group("/api/v1")
 		s.videoHandler.RegisterRoutes(v1)
-		s.engine.GET("/videos/*filepath", video.ServeVideo(s.videoRoot))
+		s.engine.GET("/videos/:id", s.videoHandler.ServeVideoByID)
 	}
 
 	api := s.engine.Group("/api")

@@ -2,9 +2,7 @@ package video
 
 import (
 	"net/http"
-	"path/filepath"
 	"strconv"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -70,24 +68,27 @@ func (h *Handler) GetVideoByID(c *gin.Context) {
 	c.JSON(http.StatusOK, video)
 }
 
-// ServeVideo serves static video files with proper headers for streaming
-func ServeVideo(videoDir string) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		requestedPath := c.Param("filepath")
-		requestedPath = strings.TrimPrefix(requestedPath, "/")
-
-		if strings.Contains(requestedPath, "..") {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file path"})
-			return
-		}
-
-		filePath := filepath.Join(videoDir, requestedPath)
-		fileInfo, err := filepath.Abs(filePath)
-		if err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "File not found"})
-			return
-		}
-
-		c.File(fileInfo)
+// ServeVideoByID serves a video file by its download task ID
+// @Summary      Stream video by ID
+// @Description  Serves the video file for streaming, looked up by download task ID
+// @Tags         Videos
+// @Produce      application/octet-stream
+// @Param        id   path  int  true  "Download task ID"
+// @Success      200
+// @Failure      404  {object}  map[string]string
+// @Router       /videos/{id} [get]
+func (h *Handler) ServeVideoByID(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid video ID"})
+		return
 	}
+
+	filePath, err := h.service.GetVideoFilePath(id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.File(filePath)
 }

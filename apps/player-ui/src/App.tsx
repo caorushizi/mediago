@@ -14,26 +14,29 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { getVideoById, getVideoList, getVideoListKey } from "./api";
+import {
+  type VideoItem,
+  getVideoById,
+  getVideoList,
+  getVideoListKey,
+} from "./api";
 import { cn, getVideoURL } from "./lib/utils";
 import { usePlayerSize } from "./hooks/usePlayerSize";
 
 interface PlaylistItemProps {
-  title: string;
-  url: string;
+  video: VideoItem;
   isActive: boolean;
-  onClick: (url: string) => void;
+  onClick: (video: VideoItem) => void;
   variant?: "desktop" | "mobile";
 }
 
 const PlaylistItem = memo(function PlaylistItem({
-  title,
-  url,
+  video,
   isActive,
   onClick,
   variant = "desktop",
 }: PlaylistItemProps) {
-  const handleClick = useMemoizedFn(() => onClick(url));
+  const handleClick = useMemoizedFn(() => onClick(video));
 
   if (variant === "mobile") {
     return (
@@ -49,7 +52,7 @@ const PlaylistItem = memo(function PlaylistItem({
             },
           )}
         >
-          <div className="line-clamp-2">{title}</div>
+          <div className="line-clamp-2">{video.title}</div>
         </button>
       </li>
     );
@@ -66,7 +69,7 @@ const PlaylistItem = memo(function PlaylistItem({
       )}
     >
       <button type="button" className="w-full text-left" onClick={handleClick}>
-        <div className="line-clamp-2">{title}</div>
+        <div className="line-clamp-2">{video.title}</div>
       </button>
     </li>
   );
@@ -91,11 +94,14 @@ export default function PlayerPage() {
     size,
   );
 
-  const changeVideoAndPlay = useMemoizedFn((url: string) => {
+  const changeVideoAndPlay = useMemoizedFn((url: string, mimeType?: string) => {
     if (!playerRef.current) return;
 
     setCurrentVideo(url);
-    playerRef.current.src(getVideoURL(url));
+    playerRef.current.src({
+      src: getVideoURL(url),
+      type: mimeType || "video/mp4",
+    });
     playerRef.current.play();
   });
 
@@ -142,13 +148,14 @@ export default function PlayerPage() {
       getVideoById(Number(targetId))
         .then((video) => {
           if (video?.url) {
-            changeVideoAndPlay(video.url);
+            changeVideoAndPlay(video.url, video.mimeType);
           }
         })
         .catch(() => {
           // Fallback to first video in list
           if (Array.isArray(videoList) && videoList.length > 0) {
-            changeVideoAndPlay(videoList[0].url);
+            const v = videoList[0];
+            changeVideoAndPlay(v.url, v.mimeType);
           }
         });
       return;
@@ -156,12 +163,13 @@ export default function PlayerPage() {
 
     // Default: play the first video in the list
     if (Array.isArray(videoList) && videoList.length > 0) {
-      changeVideoAndPlay(videoList[0].url);
+      const v = videoList[0];
+      changeVideoAndPlay(v.url, v.mimeType);
     }
   }, [videoList, changeVideoAndPlay]);
 
-  const handleVideoClick = useMemoizedFn((url: string) => {
-    changeVideoAndPlay(url);
+  const handleVideoClick = useMemoizedFn((video: VideoItem) => {
+    changeVideoAndPlay(video.url, video.mimeType);
     setOpen(false);
   });
 
@@ -201,9 +209,8 @@ export default function PlayerPage() {
             <ul className="flex flex-col gap-1 pr-4">
               {videoList?.map((video) => (
                 <PlaylistItem
-                  key={video.url}
-                  title={video.title}
-                  url={video.url}
+                  key={video.id}
+                  video={video}
                   isActive={video.url === currentVideo}
                   onClick={handleVideoClick}
                 />
@@ -233,9 +240,8 @@ export default function PlayerPage() {
             <ul className="flex flex-col gap-2 pr-4">
               {videoList?.map((video) => (
                 <PlaylistItem
-                  key={video.url}
-                  title={video.title}
-                  url={video.url}
+                  key={video.id}
+                  video={video}
                   isActive={video.url === currentVideo}
                   onClick={handleVideoClick}
                   variant="mobile"

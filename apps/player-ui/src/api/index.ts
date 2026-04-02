@@ -4,6 +4,7 @@ export interface VideoItem {
   id: number;
   url: string;
   title: string;
+  mimeType: string;
 }
 export const getVideoListKey = "/api/v1/videos";
 export async function getVideoList() {

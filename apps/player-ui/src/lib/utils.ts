@@ -12,10 +12,11 @@ export const http = axios.create({
 
 export function getVideoURL(url: string) {
   if (isDev) {
-    return `${devUrl}/${url}`;
+    // Dev mode: prepend dev server URL
+    return url.startsWith("/") ? `${devUrl}${url}` : `${devUrl}/${url}`;
   }
-  // Use absolute path so it works when served under /player/ prefix
-  return `/${url}`;
+  // Production: URL from API is already absolute (e.g. "/videos/xxx"), use as-is
+  return url.startsWith("/") ? url : `/${url}`;
 }
 
 export function cn(...inputs: ClassValue[]) {
