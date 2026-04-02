@@ -16,7 +16,7 @@ import { inject, injectable } from "inversify";
 import _ from "lodash";
 import Window from "../core/window";
 import { preloadUrl } from "../utils";
-import { isWin } from "../constants";
+import { defaultScheme, isWin } from "../constants";
 import GoConfigCache from "../services/go-config-cache";
 import ElectronLogger from "../vendor/ElectronLogger";
 import ElectronStore from "../vendor/ElectronStore";
@@ -24,7 +24,7 @@ import ElectronStore from "../vendor/ElectronStore";
 @injectable()
 @provide()
 export default class MainWindow extends Window {
-  url = isDev ? "http://localhost:8555/" : "mediago://index.html/";
+  url = isDev ? "http://localhost:8555/" : `${defaultScheme}://index.html/`;
   private initialUrl: string | null = null;
 
   constructor(

@@ -4,7 +4,7 @@ import { inject, injectable } from "inversify";
 import _ from "lodash";
 import Window from "../core/window";
 import GoConfigCache from "../services/go-config-cache";
-import { preloadUrl } from "../utils";
+import { defaultScheme, preloadUrl } from "../utils";
 import ElectronStore from "../vendor/ElectronStore";
 
 @injectable()
@@ -12,7 +12,7 @@ import ElectronStore from "../vendor/ElectronStore";
 export default class BrowserWindow extends Window {
   url = isDev
     ? "http://localhost:8555/browser"
-    : "mediago://index.html/browser";
+    : `${defaultScheme}://index.html/browser`;
 
   constructor(
     @inject(ElectronStore)

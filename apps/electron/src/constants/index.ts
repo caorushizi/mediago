@@ -20,7 +20,7 @@ if (!process.env.APP_NAME) {
 
 export const appName = process.env.APP_NAME;
 export const workspace = resolve(appData, appName);
-export const defaultScheme = "mediago";
+export const defaultScheme = appName;
 export const PERSIST_MEDIAGO = "persist:mediago";
 export const PERSIST_WEBVIEW = "persist:webview";
 export const PRIVACY_WEBVIEW = "webview";
