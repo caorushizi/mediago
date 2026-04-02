@@ -34,4 +34,8 @@ files
 swagger.json
 swagger.yaml
 
+# Embedded player UI assets (populated by build)
+assets/player/*
+!assets/player/.gitkeep
+
 ./server

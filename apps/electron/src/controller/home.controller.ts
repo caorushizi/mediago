@@ -24,7 +24,6 @@ import {
 import { handle } from "../core/decorators";
 import { i18n } from "../core/i18n";
 import { DownloaderServer } from "../services/downloader.server";
-import { VideoServer } from "../services/video.server";
 import { TYPES } from "../types/symbols";
 import {
   dialog,
@@ -53,8 +52,6 @@ export default class HomeController implements Controller {
     private readonly browserWindow: BrowserWindow,
     @inject(ElectronUpdater)
     private readonly updater: ElectronUpdater,
-    @inject(VideoServer)
-    private readonly videoServer: VideoServer,
     @inject(DownloaderServer)
     private readonly downloaderServer: DownloaderServer,
   ) {}
@@ -63,14 +60,15 @@ export default class HomeController implements Controller {
   async getEnvPath(): Promise<EnvPath> {
     const client = this.downloaderServer.getClient();
     const { data: config } = await client.getConfig();
+    const coreUrl = (await this.downloaderServer.getURL()) ?? "";
     return {
       binPath: exePath,
       dbPath: "",
       workspace: workspace,
       platform: process.platform,
       local: config.local,
-      playerUrl: this.videoServer.getURL() ?? "",
-      coreUrl: (await this.downloaderServer.getURL()) ?? "",
+      playerUrl: coreUrl ? `${coreUrl}/player/` : "",
+      coreUrl,
     };
   }
 

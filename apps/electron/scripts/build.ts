@@ -185,12 +185,6 @@ await fs.copyFile(
   path.join(binDir, "config.json"),
 );
 
-// Copy mediago-player binary
-await fs.copyFile(
-  path.resolve(projectRoot, `apps/player/dist/mediago-player${ext}`),
-  path.join(binDir, `mediago-player${ext}`),
-);
-
 // Copy dependency binaries (ffmpeg, N_m3u8DL-RE, BBDown, gopeed)
 const platformKey = `${os.platform()}-${os.arch()}`;
 const localDepsDir = path.resolve(projectRoot, ".deps", platformKey);

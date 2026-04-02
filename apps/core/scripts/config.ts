@@ -12,6 +12,8 @@ export const config = {
   RELEASE_DIR: "./release",
   DEPS_DIR: join("..", "..", ".deps"),
   GO_LDFLAGS: "-s -w",
+  PLAYER_UI_DIR: join("..", "player-ui"),
+  PLAYER_ASSETS_DIR: join("assets", "player"),
 };
 
 const exeExt = process.platform === "win32" ? ".exe" : "";

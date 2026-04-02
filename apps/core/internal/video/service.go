@@ -7,8 +7,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/caorushizi/mediago-player/internal/util"
 )
 
 // Service provides video-related operations
@@ -21,12 +19,10 @@ type Service interface {
 
 type service struct {
 	videoDir string
-	serverIP string
-	port     string
 }
 
 // NewService creates a new video service
-func NewService(videoDir, serverAddr string) (Service, error) {
+func NewService(videoDir string) (Service, error) {
 	if videoDir == "" {
 		return nil, fmt.Errorf("video directory not configured")
 	}
@@ -36,19 +32,8 @@ func NewService(videoDir, serverAddr string) (Service, error) {
 		return nil, fmt.Errorf("video directory does not exist: %s", videoDir)
 	}
 
-	// Get local IP
-	localIP := util.GetLocalIP()
-
-	// Extract port from server address (e.g., ":8080" -> "8080")
-	port := strings.TrimPrefix(serverAddr, ":")
-	if port == "" {
-		port = "8080"
-	}
-
 	return &service{
 		videoDir: videoDir,
-		serverIP: localIP,
-		port:     port,
 	}, nil
 }
 

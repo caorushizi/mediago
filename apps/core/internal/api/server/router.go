@@ -1,8 +1,17 @@
 package server
 
+import "caorushizi.cn/mediago/internal/video"
+
 func (s *Server) registerRoutes() {
 	s.engine.GET("/healthy", s.healthHandler.Check)
 	s.registerSwaggerRoute()
+
+	// Video player routes (when video-root is configured)
+	if s.videoHandler != nil {
+		v1 := s.engine.Group("/api/v1")
+		s.videoHandler.RegisterRoutes(v1)
+		s.engine.GET("/videos/*filepath", video.ServeVideo(s.videoRoot))
+	}
 
 	api := s.engine.Group("/api")
 	{

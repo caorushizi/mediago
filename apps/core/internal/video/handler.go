@@ -27,12 +27,12 @@ func (h *Handler) RegisterRoutes(rg *gin.RouterGroup) {
 // GetVideos handles GET /api/v1/videos
 // @Summary      List all videos
 // @Description  Get a list of all video files from the configured directory
-// @Tags         videos
+// @Tags         Videos
 // @Accept       json
 // @Produce      json
 // @Success      200  {array}   Video  "List of videos"
 // @Failure      500  {object}  map[string]string  "Internal server error"
-// @Router       /videos [get]
+// @Router       /v1/videos [get]
 func (h *Handler) GetVideos(c *gin.Context) {
 	videos, err := h.service.GetVideoFiles()
 	if err != nil {

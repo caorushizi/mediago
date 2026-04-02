@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"caorushizi.cn/mediago/assets"
 	"caorushizi.cn/mediago/internal/api/handler"
 	"caorushizi.cn/mediago/internal/api/middleware"
 	"caorushizi.cn/mediago/internal/api/sse"
@@ -13,6 +14,7 @@ import (
 	"caorushizi.cn/mediago/internal/i18n"
 	"caorushizi.cn/mediago/internal/service"
 	"caorushizi.cn/mediago/internal/tasklog"
+	"caorushizi.cn/mediago/internal/video"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -38,6 +40,10 @@ type Server struct {
 
 	// Download task service (used by queue callbacks to update database state)
 	downloadService *service.DownloadTaskService
+
+	// Video player handler (available when video-root is configured)
+	videoHandler *video.Handler
+	videoRoot    string
 }
 
 // Options holds optional configuration for the server.
@@ -45,6 +51,7 @@ type Options struct {
 	EnableAuth bool
 	StaticDir  string
 	FFmpegBin  string
+	VideoRoot  string
 	EnvPaths   handler.EnvPaths
 }
 
@@ -108,6 +115,15 @@ func New(queue *core.TaskQueue, logs *tasklog.Manager, database *db.Database, co
 		srv.downloadService = downloadSvc
 	}
 
+	// Initialize video player service (when video-root is configured)
+	if opt.VideoRoot != "" {
+		videoSvc, err := video.NewService(opt.VideoRoot)
+		if err == nil {
+			srv.videoHandler = video.NewHandler(videoSvc)
+			srv.videoRoot = opt.VideoRoot
+		}
+	}
+
 	srv.registerRoutes()
 	srv.setupQueueCallbacks()
 
@@ -115,6 +131,13 @@ func New(queue *core.TaskQueue, logs *tasklog.Manager, database *db.Database, co
 	if opt.StaticDir != "" {
 		srv.serveStatic(opt.StaticDir)
 	}
+
+	// Serve embedded player UI at /player/
+	srv.engine.Use(newPlayerSPAHandler(playerSPAConfig{
+		FS:         assets.PlayerFS,
+		Root:       "player",
+		PathPrefix: "/player",
+	}))
 
 	return srv
 }

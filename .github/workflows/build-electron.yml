@@ -50,7 +50,6 @@ jobs:
           go-version: "1.25.0"
           cache-dependency-path: |
             apps/core/go.sum
-            apps/player/go.sum
 
       - name: Install swag
         run: go install github.com/swaggo/swag/cmd/swag@latest

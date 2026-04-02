@@ -1,7 +1,7 @@
-import { chmodSync } from "node:fs";
+import { chmodSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { config, devConfig } from "./config";
-import { getExeExt, mkdir, runCommand } from "./utils";
+import { getExeExt, mkdir, runCommand, copyFile, rmrf } from "./utils";
 
 /**
  * Start the development server
@@ -32,10 +32,38 @@ export async function dev() {
 }
 
 /**
+ * Build player-ui and copy dist to core assets for embedding
+ */
+export async function buildPlayerUI() {
+  console.log("🎬 构建 Player UI...");
+  const playerUiDist = join(config.PLAYER_UI_DIR, "dist");
+
+  // Build player-ui
+  await runCommand("pnpm", ["build"], { cwd: config.PLAYER_UI_DIR });
+
+  if (!existsSync(playerUiDist)) {
+    throw new Error(
+      `Expected player-ui build output at ${playerUiDist} but it was not found`,
+    );
+  }
+
+  // Copy dist to core assets/player/ for go:embed
+  rmrf(config.PLAYER_ASSETS_DIR);
+  mkdir(config.PLAYER_ASSETS_DIR);
+  copyFile(playerUiDist, config.PLAYER_ASSETS_DIR);
+
+  console.log(`✅ Player UI 已复制到 ${config.PLAYER_ASSETS_DIR}`);
+}
+
+/**
  * Compile the development build for the current platform
  */
 export async function devBuild() {
   console.log("🔨 编译开发版本...");
+
+  // Build and embed player-ui first
+  await buildPlayerUI();
+
   mkdir(config.BIN_DIR);
   const output = join(config.BIN_DIR, config.APP_NAME + getExeExt());
   await runCommand(

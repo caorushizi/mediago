@@ -2,7 +2,6 @@ import { resolve } from "node:path";
 import { provide } from "@inversifyjs/binding-decorators";
 import { i18n } from "./core/i18n";
 import { DownloaderServer } from "./services/downloader.server";
-import { VideoServer } from "./services/video.server";
 import {
   app,
   BrowserWindow,
@@ -42,8 +41,6 @@ export default class ElectronApp {
     private readonly router: ElectronRouter,
     @inject(ElectronDevtools)
     private readonly devTools: ElectronDevtools,
-    @inject(VideoServer)
-    private readonly videoServer: VideoServer,
     @inject(DownloaderServer)
     private readonly downloaderServer: DownloaderServer,
     @inject(WebviewService)
@@ -99,10 +96,6 @@ export default class ElectronApp {
       // 4. Apply initial config
       nativeTheme.themeSource = (config.theme || "system") as AppTheme;
       i18n.changeLanguage(config.language);
-      this.videoServer.start({
-        local: config.local,
-        enableMobilePlayer: config.enableMobilePlayer,
-      });
     } catch (err) {
       this.logger.error("[ElectronApp] Failed to start Go core service:", err);
     }
@@ -145,9 +138,6 @@ export default class ElectronApp {
           },
           audioMuted: (v) => {
             this.webviewService.setAudioMuted(v);
-          },
-          enableMobilePlayer: (v) => {
-            this.videoServer.enableMobilePlayer(v);
           },
         };
         handlers[key]?.(value);

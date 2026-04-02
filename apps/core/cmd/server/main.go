@@ -269,6 +269,7 @@ func main() {
 		EnableAuth: cfg.EnableAuth,
 		StaticDir:  cfg.StaticDir,
 		FFmpegBin:  cfg.FFmpegBin,
+		VideoRoot:  cfg.LocalDir,
 		EnvPaths: handler.EnvPaths{
 			ConfigDir: cfg.ConfigDir,
 			BinDir:    filepath.Dir(execPath),

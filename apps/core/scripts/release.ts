@@ -16,6 +16,7 @@ import {
   chmodExecutable,
   resolveReleasePath,
 } from "./utils";
+import { buildPlayerUI } from "./dev";
 
 // ============================================================
 // Release Tasks
@@ -145,6 +146,7 @@ export async function releaseClean() {
 }
 export const releasePackageFull = series(
   releaseClean,
+  buildPlayerUI,
   releaseBuild,
   releasePackage,
 );
