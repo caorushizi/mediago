@@ -31,21 +31,21 @@ import { usePlatform } from "@/hooks/use-platform";
 import Loading from "@/components/loading";
 
 const FORMAT_OPTIONS = [
-  {
-    label: "Video",
-    options: [
-      { label: "MP4", value: "mp4" },
-      { label: "MKV", value: "mkv" },
-      { label: "WebM", value: "webm" },
-    ],
-  },
+  // {
+  //   label: "Video",
+  //   options: [
+  //     { label: "MP4", value: "mp4" },
+  //     { label: "MKV", value: "mkv" },
+  //     { label: "WebM", value: "webm" },
+  //   ],
+  // },
   {
     label: "Audio",
     options: [
       { label: "MP3", value: "mp3" },
-      { label: "AAC", value: "aac" },
-      { label: "FLAC", value: "flac" },
-      { label: "WAV", value: "wav" },
+      // { label: "AAC", value: "aac" },
+      // { label: "FLAC", value: "flac" },
+      // { label: "WAV", value: "wav" },
     ],
   },
 ];
