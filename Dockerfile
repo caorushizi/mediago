@@ -4,6 +4,7 @@
 # ===== Stage 1: Node Builder (runs natively on build machine) =====
 FROM --platform=$BUILDPLATFORM node:22-bookworm-slim AS node-builder
 
+RUN apt-get update && apt-get install -y --no-install-recommends unzip && rm -rf /var/lib/apt/lists/*
 RUN corepack enable && corepack prepare pnpm@10.15.0 --activate
 
 # Map Docker TARGETARCH to Node arch naming for deps download
@@ -26,11 +27,12 @@ COPY apps/electron/package.json apps/electron/package.json
 COPY packages/ packages/
 RUN pnpm install --frozen-lockfile
 
-# Copy source files
+# Copy source files and root configs needed by builds
+COPY tsconfig*.json turbo.json .env* ./
 COPY apps/ui/ apps/ui/
 COPY apps/player-ui/ apps/player-ui/
+COPY apps/electron/app/package.json apps/electron/app/package.json
 COPY scripts/ scripts/
-COPY .env* turbo.json ./
 
 # Build player-ui (will be embedded in Go core binary)
 RUN pnpm --filter @mediago/player-ui run build
@@ -60,6 +62,9 @@ COPY apps/core/ apps/core/
 
 # Copy player-ui dist into assets for go:embed
 COPY --from=node-builder /src/apps/player-ui/dist apps/core/assets/player/
+
+# Ensure all dependencies are downloaded (go.sum may have been updated)
+RUN cd apps/core && go mod download
 
 # Build Go core binary (cross-compile, no CGO)
 RUN cd apps/core && \

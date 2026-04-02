@@ -12,10 +12,9 @@
 apps/core/bin/
 apps/core/server
 
-# Electron source (not needed, but keep package.json for workspace resolution)
+# Electron source (not needed, but keep package.json files for workspace/build)
 apps/electron/src/
 apps/electron/scripts/
-apps/electron/app/
 docs/
 
 # OS files
