@@ -60,7 +60,7 @@ export class DownloaderServer extends EventEmitter {
       executableName: "mediago-core",
       executableDir: path.dirname(core.coreBin),
       preferredPort: 39719,
-      internal: true,
+      internal: false,
       extraArgs: [
         `-log-level=info`,
         `-log-dir=${opts.logDir}`,
