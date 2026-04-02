@@ -1,7 +1,6 @@
 import { series } from "gulp";
 import { existsSync, chmodSync } from "node:fs";
 import { join } from "node:path";
-import { platform as osPlatform } from "node:os";
 import {
   config,
   releaseConfig,
@@ -9,7 +8,14 @@ import {
   BUILD_PLATFORMS,
   PACKAGE_PLATFORMS,
 } from "./config";
-import { mkdir, rmrf, copyFile, runCommand, resolveReleasePath } from "./utils";
+import {
+  mkdir,
+  rmrf,
+  copyFile,
+  runCommand,
+  chmodExecutable,
+  resolveReleasePath,
+} from "./utils";
 
 // ============================================================
 // Release Tasks
@@ -31,12 +37,23 @@ async function buildBinary(cfg: BuildConfig) {
   const output = join(config.BIN_DIR, `${getPackageName(cfg)}${ext}`);
 
   await runCommand(
-    `go build -trimpath -ldflags="${config.GO_LDFLAGS}" -o ${output} ${config.CMD_PATH}`,
-    `✓ ${cfg.goos}/${cfg.goarch}`,
+    "go",
+    [
+      "build",
+      "-trimpath",
+      "-ldflags",
+      config.GO_LDFLAGS,
+      "-o",
+      output,
+      config.CMD_PATH,
+    ],
     {
-      GOOS: cfg.goos,
-      GOARCH: cfg.goarch,
-      CGO_ENABLED: "0",
+      description: `✓ ${cfg.goos}/${cfg.goarch}`,
+      env: {
+        GOOS: cfg.goos,
+        GOARCH: cfg.goarch,
+        CGO_ENABLED: "0",
+      },
     },
   );
   if (cfg.goos !== "windows") {
@@ -90,13 +107,11 @@ async function packagePlatform(cfg: BuildConfig) {
   }
 
   // Set executable permissions
-  if (cfg.goos !== "windows" && osPlatform() !== "win32") {
+  if (cfg.goos !== "windows" && process.platform !== "win32") {
     try {
       chmodSync(join(pkgDir, config.APP_NAME), 0o755);
       const binDir = join(pkgDir, releaseConfig.packageBinDir);
-      if (existsSync(binDir)) {
-        await runCommand(`chmod +x ${join(binDir, "*")}`, undefined);
-      }
+      chmodExecutable(binDir);
     } catch {
       // Ignore permission errors
     }

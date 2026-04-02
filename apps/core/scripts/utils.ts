@@ -1,4 +1,8 @@
-import { exec as execCallback, spawn } from "node:child_process";
+import {
+  type ChildProcess,
+  exec as execCallback,
+  spawn,
+} from "node:child_process";
 import { promisify } from "node:util";
 import {
   existsSync,
@@ -7,6 +11,8 @@ import {
   cpSync,
   writeFileSync,
   readFileSync,
+  chmodSync,
+  readdirSync,
 } from "node:fs";
 import { join } from "node:path";
 import { platform as osPlatform } from "node:os";
@@ -38,9 +44,7 @@ export async function getVersion(): Promise<string> {
 
   // 2. Try to get from git
   try {
-    const { stdout } = await exec(
-      "git describe --tags --always --dirty 2>/dev/null",
-    );
+    const { stdout } = await exec("git describe --tags --always --dirty");
     const version = stdout.trim();
     if (version) {
       console.log(`📌 使用 Git 版本: ${version}`);
@@ -154,38 +158,82 @@ export function writeTextFile(filePath: string, content: string): void {
   writeFileSync(filePath, content, "utf-8");
 }
 
+export interface RunCommandOptions {
+  description?: string;
+  env?: Record<string, string>;
+  cwd?: string;
+}
+
+const childProcesses = new Set<ChildProcess>();
+let cleanupRegistered = false;
+
+function registerCleanup() {
+  if (cleanupRegistered) {
+    return;
+  }
+  cleanupRegistered = true;
+
+  const cleanup = () => {
+    for (const child of childProcesses) {
+      if (!child.killed) {
+        try {
+          child.kill();
+        } catch {
+          // Ignore cleanup errors
+        }
+      }
+    }
+  };
+
+  process.on("exit", cleanup);
+  process.on("SIGINT", () => {
+    cleanup();
+    process.exit(130);
+  });
+  process.on("SIGTERM", () => {
+    cleanup();
+    process.exit(143);
+  });
+}
+
 /**
  * Run a command (with live output)
  * @param command The command to execute
- * @param description Command description (optional)
- * @param env Environment variables (optional)
+ * @param args Command arguments
+ * @param options Options (description, env, cwd)
  */
 export async function runCommand(
   command: string,
-  description?: string,
-  env?: Record<string, string>,
+  args: string[] = [],
+  options: RunCommandOptions = {},
 ): Promise<void> {
-  if (description) {
-    console.log(`\n▶ ${description}: ${command}`);
+  registerCleanup();
+
+  if (options.description) {
+    console.log(`\n▶ ${options.description}: ${command} ${args.join(" ")}`);
   }
 
   return new Promise((resolve, reject) => {
-    // Use shell mode to execute the command, supporting pipes, env vars, etc.
-    const child = spawn(command, {
-      shell: true,
-      stdio: "inherit", // Inherit parent process stdio directly for live output
+    const child = spawn(command, args, {
+      cwd: options.cwd,
+      stdio: "inherit",
       env: {
         ...process.env,
-        ...env,
+        ...options.env,
       },
+      shell: process.platform === "win32",
     });
 
+    childProcesses.add(child);
+
     child.on("error", (error) => {
+      childProcesses.delete(child);
       console.error(`执行命令失败: ${error.message}`);
       reject(error);
     });
 
     child.on("close", (code) => {
+      childProcesses.delete(child);
       if (code !== 0) {
         const error = new Error(`命令执行失败，退出码: ${code}`);
         reject(error);
@@ -194,4 +242,17 @@ export async function runCommand(
       }
     });
   });
+}
+
+/**
+ * Set executable permissions on all files in a directory (Unix only)
+ */
+export function chmodExecutable(dir: string): void {
+  if (osPlatform() === "win32" || !existsSync(dir)) {
+    return;
+  }
+  const entries = readdirSync(dir);
+  for (const entry of entries) {
+    chmodSync(join(dir, entry), 0o755);
+  }
 }

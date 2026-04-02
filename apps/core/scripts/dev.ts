@@ -8,8 +8,7 @@ import { getExeExt, mkdir, runCommand } from "./utils";
  */
 export async function dev() {
   console.log("🚀 启动开发服务器...");
-  const command = [
-    "go",
+  const args = [
     "run",
     "-tags",
     "dev",
@@ -29,7 +28,7 @@ export async function dev() {
     `-direct-bin=${devConfig.direct_bin}`,
     `-ffmpeg-bin=${devConfig.ffmpeg_bin}`,
   ];
-  await runCommand(command.join(" "), "Start development server");
+  await runCommand("go", args, { description: "Start development server" });
 }
 
 /**
@@ -40,8 +39,19 @@ export async function devBuild() {
   mkdir(config.BIN_DIR);
   const output = join(config.BIN_DIR, config.APP_NAME + getExeExt());
   await runCommand(
-    `go build -tags dev -trimpath -ldflags "${config.GO_LDFLAGS}" -o ${output} ${config.CMD_PATH}`,
-    "Compile binary for current platform",
+    "go",
+    [
+      "build",
+      "-tags",
+      "dev",
+      "-trimpath",
+      "-ldflags",
+      config.GO_LDFLAGS,
+      "-o",
+      output,
+      config.CMD_PATH,
+    ],
+    { description: "Compile binary for current platform" },
   );
   if (process.platform !== "win32") {
     chmodSync(output, 0o755);
