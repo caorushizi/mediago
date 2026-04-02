@@ -7,7 +7,7 @@ import { useShallow } from "zustand/react/shallow";
 import DownloadForm, { type DownloadFormRef } from "@/components/download-form";
 import { Button } from "@/components/ui/button";
 import WebView from "@/components/web-view";
-import useAPI from "@/hooks/use-api";
+import { usePlatform } from "@/hooks/use-platform";
 import {
   BrowserStatus,
   browserStoreSelector,
@@ -20,7 +20,7 @@ import { BrowserViewPanel } from "./browser-view-panel";
 
 export function BrowserView() {
   const { webviewLoadURL, addIpcListener, removeIpcListener, webviewGoHome } =
-    useAPI();
+    usePlatform();
   const downloadForm = useRef<DownloadFormRef>(null);
   const store = useBrowserStore(useShallow(browserStoreSelector));
   const { addSource, setBrowserStore } = useBrowserStore(
@@ -50,7 +50,7 @@ export function BrowserView() {
       });
     };
 
-    const onWebviewLinkMessage = async (e: unknown, data: any) => {
+    const onWebviewLinkMessage = async (e: unknown, data: unknown) => {
       addSource(data);
     };
 

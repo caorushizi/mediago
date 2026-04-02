@@ -1,5 +1,4 @@
 import {
-  DOWNLOAD_EVENT_NAME,
   DownloadFilter,
   DownloadStatus,
   type DownloadEvent,
@@ -13,20 +12,17 @@ import { useCallback, useEffect, useMemo } from "react";
 import useSWR from "swr";
 import { useShallow } from "zustand/react/shallow";
 import { downloadStoreSelector, useDownloadStore } from "@/store/download";
-import useAPI from "./use-api";
+import { getDownloadTasks as fetchDownloadTasks } from "@/api/download-task";
+import { onDownloadEvent } from "@/api/events";
 import { homeSelector, useHomeStore } from "@/store/home";
 
 /**
  * Extended Download Task with real-time details
  */
 export interface DownloadTaskDetails extends DownloadTask {
-  // Current download progress percentage
   percent: string;
-  // Current download speed
   speed: string;
-  // Whether the downloaded file still exists
   exists?: boolean;
-  // Local file path
   file?: string;
 }
 
@@ -40,38 +36,6 @@ const isProgressEvent = (
   obj: DownloadEvent,
 ): obj is DownloadEvent<DownloadProgress[]> => obj.type === "progress";
 
-type RawDownloadListener = (_: unknown, event: DownloadEvent) => void;
-
-const globalListeners = new Set<RawDownloadListener>();
-let detachGlobalListener: (() => void) | null = null;
-
-const dispatchDownloadEvent: RawDownloadListener = (_, event) => {
-  globalListeners.forEach((listener) => listener(_, event));
-};
-
-function registerGlobalDownloadListener(
-  addIpcListener: (channel: string, listener: RawDownloadListener) => void,
-  removeIpcListener: (channel: string, listener: RawDownloadListener) => void,
-  listener: RawDownloadListener,
-): () => void {
-  globalListeners.add(listener);
-
-  if (!detachGlobalListener) {
-    addIpcListener(DOWNLOAD_EVENT_NAME, dispatchDownloadEvent);
-    detachGlobalListener = () => {
-      removeIpcListener(DOWNLOAD_EVENT_NAME, dispatchDownloadEvent);
-      detachGlobalListener = null;
-    };
-  }
-
-  return () => {
-    globalListeners.delete(listener);
-    if (globalListeners.size === 0 && detachGlobalListener) {
-      detachGlobalListener();
-    }
-  };
-}
-
 export function useTasks(filter: DownloadFilter = DownloadFilter.list) {
   const { setEvents, eventsMap } = useDownloadStore(
     useShallow(downloadStoreSelector),
@@ -79,8 +43,6 @@ export function useTasks(filter: DownloadFilter = DownloadFilter.list) {
   const { page, pageSize, setPage, setPageSize } = useHomeStore(
     useShallow(homeSelector),
   );
-  const api = useAPI();
-  const { addIpcListener, removeIpcListener, getDownloadTasks } = api;
 
   const { data, error, isLoading, mutate } = useSWR(
     {
@@ -92,7 +54,7 @@ export function useTasks(filter: DownloadFilter = DownloadFilter.list) {
       },
     },
     ({ args }) => {
-      return getDownloadTasks(args);
+      return fetchDownloadTasks(args);
     },
   );
 
@@ -181,14 +143,10 @@ export function useTasks(filter: DownloadFilter = DownloadFilter.list) {
     [mutate, setEvents],
   );
 
+  // Subscribe to Go SSE download events
   useEffect(() => {
-    const listener: RawDownloadListener = handleDownloadEvent;
-    return registerGlobalDownloadListener(
-      addIpcListener,
-      removeIpcListener,
-      listener,
-    );
-  }, [addIpcListener, removeIpcListener, handleDownloadEvent]);
+    return onDownloadEvent(handleDownloadEvent);
+  }, [handleDownloadEvent]);
 
   return {
     data: detail,

@@ -27,7 +27,9 @@ import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import PageContainer from "@/components/page-container";
 import { CHECK_UPDATE } from "@/const";
-import useAPI from "@/hooks/use-api";
+import { usePlatform } from "@/hooks/use-platform";
+import { useEnvPath } from "@/hooks/use-config";
+import { setConfigValue } from "@/api/config";
 import {
   appStoreSelector,
   setAppStoreSelector,
@@ -35,21 +37,13 @@ import {
 } from "@/store/app";
 import { updateSelector, useSessionStore } from "@/store/session";
 import { isWeb, tdApp } from "@/utils";
-import useSWR from "swr";
-import {
-  AppLanguage,
-  AppStore,
-  AppTheme,
-  GET_ENV_PATH,
-} from "@mediago/shared-common";
+import { AppLanguage, AppStore, AppTheme } from "@mediago/shared-common";
 
 const version = import.meta.env.APP_VERSION;
 
 const SettingPage: React.FC = () => {
   const {
     onSelectDownloadDir,
-    setAppStore: ipcSetAppStore,
-    getEnvPath,
     openDir,
     clearWebviewCache,
     exportFavorites,
@@ -60,12 +54,12 @@ const SettingPage: React.FC = () => {
     removeIpcListener,
     installUpdate,
     appContextMenu,
-  } = useAPI();
+  } = usePlatform();
   const { t } = useTranslation();
   const formRef = useRef<FormInstance<AppStore>>(null);
   const settings = useAppStore(useShallow(appStoreSelector));
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
-  const { data: envPath } = useSWR(GET_ENV_PATH, getEnvPath);
+  const { envPath } = useEnvPath();
   const { message } = App.useApp();
   const { updateAvailable, updateChecking } = useSessionStore(
     useShallow(updateSelector),
@@ -100,14 +94,14 @@ const SettingPage: React.FC = () => {
 
   const onFormValueChange = useMemoizedFn(async (values: Partial<AppStore>) => {
     try {
-      for (const key of Object.keys(values)) {
-        if (values[key] != null) {
-          await ipcSetAppStore(key, values[key]);
-        }
-      }
+      await Promise.all(
+        Object.entries(values)
+          .filter(([, value]) => value !== undefined && value !== null)
+          .map(([key, value]) => setConfigValue(key, value)),
+      );
       setAppStore(values);
-    } catch (e: any) {
-      message.error(e.message);
+    } catch (e: unknown) {
+      message.error((e as Error).message);
     }
   });
 
@@ -148,7 +142,10 @@ const SettingPage: React.FC = () => {
   });
 
   useEffect(() => {
-    const onDownloadProgress = (event: any, progress: any) => {
+    const onDownloadProgress = (
+      _event: unknown,
+      progress: { percent: number },
+    ) => {
       setDownloadProgress(progress.percent);
     };
     const onDownloaded = () => {

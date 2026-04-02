@@ -3,14 +3,14 @@ import { useTranslation } from "react-i18next";
 import { HelpIcon } from "@/assets/svg";
 import { cn } from "@/utils";
 import LogoImg from "../assets/images/logo.png";
-import useAPI from "@/hooks/use-api";
+import { usePlatform } from "@/hooks/use-platform";
 
 interface Props {
   className?: string;
 }
 
 export function AppHeader({ className }: Props) {
-  const { openUrl } = useAPI();
+  const { openUrl } = usePlatform();
   const { t } = useTranslation();
 
   const openHelpUrl = useMemoizedFn(() => {

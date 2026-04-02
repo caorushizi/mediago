@@ -26,6 +26,7 @@ import BrowserWindowService from "./windows/browser.window";
 import MainWindow from "./windows/main.window";
 import "./controller";
 import ElectronLogger from "./vendor/ElectronLogger";
+import { AppTheme } from "@mediago/shared-common";
 
 @injectable()
 @provide()
@@ -70,7 +71,6 @@ export default class ElectronApp {
 
     // 1. Show the window immediately — must happen regardless of backend status
     await this.vendorInit();
-    await this.serviceInit();
 
     app.on("activate", () => {
       if (BrowserWindow.getAllWindows().length === 0) {
@@ -97,7 +97,7 @@ export default class ElectronApp {
       this.configCache.seed(config as any);
 
       // 4. Apply initial config
-      nativeTheme.themeSource = config.theme || "system";
+      nativeTheme.themeSource = (config.theme || "system") as AppTheme;
       i18n.changeLanguage(config.language);
       this.videoServer.start({
         local: config.local,
@@ -153,6 +153,8 @@ export default class ElectronApp {
         handlers[key]?.(value);
       },
     );
+
+    await this.serviceInit();
   }
 
   initTray() {

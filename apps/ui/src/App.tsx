@@ -1,4 +1,4 @@
-import { App as AntdApp, ConfigProvider, theme } from "antd";
+import { App as AntdApp, ConfigProvider, theme as antdTheme } from "antd";
 import { type FC, lazy, Suspense, useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import "dayjs/locale/zh-cn";
@@ -20,8 +20,10 @@ import {
   useSessionStore,
 } from "./store/session";
 import { getBrowserLang, isWeb, tdApp } from "./utils";
-import useAPI from "./hooks/use-api";
-import { initGoAdapter, getGoApi } from "./hooks/adapters";
+import { usePlatform } from "./hooks/use-platform";
+import { setupHttp } from "./utils/http";
+import { getConfig } from "./api/config";
+import { initGoEvents, onConfigChanged } from "./api/events";
 import { AppLanguage, DownloadFilter } from "@mediago/shared-common";
 import { useAuth } from "./hooks/use-auth";
 import { Locale } from "antd/es/locale";
@@ -34,12 +36,14 @@ const ConverterPage = lazy(() => import("./pages/converter-page"));
 const SigninPage = lazy(() => import("./pages/signin-page"));
 
 function getAlgorithm(appTheme: "dark" | "light") {
-  return appTheme === "dark" ? theme.darkAlgorithm : theme.defaultAlgorithm;
+  return appTheme === "dark"
+    ? antdTheme.darkAlgorithm
+    : antdTheme.defaultAlgorithm;
 }
 
 const App: FC = () => {
   useAuth();
-  const { addIpcListener, removeIpcListener, getMachineId } = useAPI();
+  const { addIpcListener, removeIpcListener, getMachineId } = usePlatform();
   const { setUpdateAvailable, setUploadChecking } = useSessionStore(
     useShallow(updateSelector),
   );
@@ -51,9 +55,9 @@ const App: FC = () => {
   const [adapterReady, setAdapterReady] = useState(false);
 
   useEffect(() => {
-    if (language == AppLanguage.ZH) {
+    if (language === AppLanguage.ZH) {
       setAppLocale(zhCN);
-    } else if (language == AppLanguage.EN) {
+    } else if (language === AppLanguage.EN) {
       setAppLocale(enUS);
     } else {
       const lang = getBrowserLang();
@@ -74,8 +78,8 @@ const App: FC = () => {
   });
 
   // 监听config变化
-  const onConfigChanged = useMemoizedFn(
-    (_event: any, data: { key: string; value: unknown }) => {
+  const handleConfigChanged = useMemoizedFn(
+    (_event: unknown, data: { key: string; value: unknown }) => {
       setAppStore({ [data.key]: data.value });
     },
   );
@@ -85,28 +89,31 @@ const App: FC = () => {
   });
 
   useEffect(() => {
-    const updateAvailable = () => {
+    const onUpdateAvailable = () => {
       setUpdateAvailable(true);
       setUploadChecking(false);
     };
-    const updateNotAvailable = () => {
+    const onUpdateNotAvailable = () => {
       setUpdateAvailable(false);
       setUploadChecking(false);
     };
     const checkingForUpdate = () => {
       setUploadChecking(true);
     };
-    addIpcListener("config-changed", onConfigChanged);
+    // Go SSE events
+    const unsubConfig = onConfigChanged(handleConfigChanged);
+
+    // Electron IPC events
     addIpcListener("change-privacy", onChangePrivacy);
-    addIpcListener("updateAvailable", updateAvailable);
-    addIpcListener("updateNotAvailable", updateNotAvailable);
+    addIpcListener("updateAvailable", onUpdateAvailable);
+    addIpcListener("updateNotAvailable", onUpdateNotAvailable);
     addIpcListener("checkingForUpdate", checkingForUpdate);
 
     return () => {
-      removeIpcListener("config-changed", onConfigChanged);
+      unsubConfig();
       removeIpcListener("change-privacy", onChangePrivacy);
-      removeIpcListener("updateAvailable", updateAvailable);
-      removeIpcListener("updateNotAvailable", updateNotAvailable);
+      removeIpcListener("updateAvailable", onUpdateAvailable);
+      removeIpcListener("updateNotAvailable", onUpdateNotAvailable);
       removeIpcListener("checkingForUpdate", checkingForUpdate);
     };
   }, []);
@@ -119,42 +126,42 @@ const App: FC = () => {
 
   useAsyncEffect(async () => {
     try {
+      let coreUrl = "";
+
       if (isWeb) {
         // Web mode: Go Core serves both API and static files, same origin
-        const coreUrl = import.meta.env.DEV
+        coreUrl = import.meta.env.DEV
           ? "http://127.0.0.1:9900"
           : window.location.origin;
         const storedApiKey = useAppStore.getState().apiKey;
-        initGoAdapter(coreUrl, storedApiKey || undefined);
+        setupHttp(coreUrl, storedApiKey || undefined);
+        initGoEvents(coreUrl, storedApiKey || undefined);
       } else {
-        // Electron mode: get coreUrl directly from preload IPC (before Go adapter exists)
-        // FIXME: this is a bit hacky
-        setTimeout(async () => {
-          const ipcResult = await window.electron?.getEnvPath();
-          const envPath = ipcResult?.code === 0 ? ipcResult.data : ipcResult;
-          if (envPath?.coreUrl) {
-            initGoAdapter(envPath.coreUrl);
-          }
-        }, 1000);
+        // Electron mode: get coreUrl directly from preload IPC
+        // FIXME: wait for Go Core to fully start
+        await new Promise((r) => setTimeout(r, 1000));
+        const ipcResult = await window.electron?.getEnvPath();
+        const envPath = ipcResult?.code === 0 ? ipcResult.data : ipcResult;
+        if (envPath?.coreUrl) {
+          coreUrl = envPath.coreUrl;
+          setupHttp(coreUrl);
+          initGoEvents(coreUrl);
+        }
       }
 
       // Sync config from Go Core (single source of truth) to Zustand
-      try {
-        const goApi = getGoApi();
-        const configResult = await goApi.getAppStore();
-        const config =
-          configResult &&
-          typeof configResult === "object" &&
-          "code" in configResult
-            ? (configResult as any).data
-            : configResult;
-        if (config) {
-          setAppStore(config);
+      if (coreUrl) {
+        try {
+          const config = await getConfig();
+          if (config) {
+            setAppStore(config as Record<string, unknown>);
+          }
+        } catch {
+          // Go Core may not be fully ready yet
         }
-      } catch {
-        // Go adapter may not be initialized (e.g., coreUrl was empty)
       }
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.warn("Go adapter init failed:", err);
     } finally {
       setAdapterReady(true);

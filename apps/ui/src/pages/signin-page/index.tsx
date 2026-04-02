@@ -7,19 +7,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import useSWR from "swr";
-import { APIKEY_SALT_KEY, IS_SETUP } from "@mediago/shared-common";
-import useAPI from "@/hooks/use-api";
+import { useAuthApi } from "@/hooks/use-auth-api";
 import { useMemoizedFn } from "ahooks";
 import md5 from "crypto-js/md5";
 import { useNavigate } from "react-router-dom";
 import { setAppStoreSelector, useAppStore } from "@/store/app";
 import { useShallow } from "zustand/react/shallow";
+import { APIKEY_SALT_KEY } from "@mediago/shared-common";
 
 export default function SigninPage() {
-  const { isSetup, setupAuth, signin } = useAPI();
+  const { isSetuped, setupAuth, signin } = useAuthApi();
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
-  const { data: { setuped = false } = {} } = useSWR(IS_SETUP, isSetup);
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -32,11 +30,9 @@ export default function SigninPage() {
         const password = formData.get("password") as string;
         const apiKey = md5(password + APIKEY_SALT_KEY).toString();
 
-        if (setuped) {
-          // Signin logic
-          await signin({ apiKey });
+        if (isSetuped) {
+          await signin(apiKey);
         } else {
-          // Setup logic
           const repeatPassword = formData.get("repeat-password") as string;
 
           if (password !== repeatPassword) {
@@ -44,8 +40,7 @@ export default function SigninPage() {
             return;
           }
 
-          // Call setup API
-          await setupAuth({ apiKey });
+          await setupAuth(apiKey);
         }
 
         setAppStore({ apiKey });
@@ -63,7 +58,7 @@ export default function SigninPage() {
         <div className="mx-auto w-full max-w-sm lg:w-96">
           <div>
             <h2 className="mt-8 text-2xl/9 font-bold tracking-tight text-gray-900 dark:text-white">
-              {setuped
+              {isSetuped
                 ? t("signinMediaGoServer")
                 : t("initializeMediaGoServer")}
             </h2>
@@ -82,7 +77,9 @@ export default function SigninPage() {
                     htmlFor="password"
                     className="block text-sm/6 font-medium text-gray-900 dark:text-gray-100"
                   >
-                    {setuped ? t("adminPassword") : t("settingUpAdminPassword")}
+                    {isSetuped
+                      ? t("adminPassword")
+                      : t("settingUpAdminPassword")}
                   </label>
                   <div className="mt-2">
                     <input
@@ -96,7 +93,7 @@ export default function SigninPage() {
                   </div>
                 </div>
 
-                {!setuped && (
+                {!isSetuped && (
                   <div>
                     <label
                       htmlFor="repeat-password"
@@ -117,7 +114,7 @@ export default function SigninPage() {
                   </div>
                 )}
 
-                {setuped && (
+                {isSetuped && (
                   <div className="flex items-center justify-end">
                     <div className="text-sm/6">
                       <Dialog>
@@ -142,7 +139,7 @@ export default function SigninPage() {
                     type="submit"
                     className="flex w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-500"
                   >
-                    {setuped ? t("signin") : t("setup")}
+                    {isSetuped ? t("signin") : t("setup")}
                   </button>
                 </div>
               </form>

@@ -3,7 +3,7 @@ import { App, Button, Dropdown, type MenuProps } from "antd";
 import { useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Checkbox } from "@/components/ui/checkbox";
-import useAPI from "@/hooks/use-api";
+import { usePlatform } from "@/hooks/use-platform";
 import { isWeb } from "@/utils";
 import { DownloadFilter } from "@mediago/shared-common";
 
@@ -29,7 +29,7 @@ export function ListHeader({
   const { message } = App.useApp();
   const { t } = useTranslation();
   const disabled = useMemo(() => selected.length === 0, [selected.length]);
-  const { exportDownloadList } = useAPI();
+  const { exportDownloadList } = usePlatform();
   const items: MenuProps["items"] = useMemo(() => {
     return [
       {

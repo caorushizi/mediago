@@ -7,16 +7,19 @@ import { setAppStoreSelector, useAppStore } from "@/store/app";
 import { tdApp } from "@/utils";
 import { AppHeader } from "./app-header";
 import { AppSideBar } from "./app-side-bar";
-import useAPI from "@/hooks/use-api";
+import { getConfig } from "@/api/config";
 
 const App: FC = () => {
-  const { getAppStore: ipcGetAppStore } = useAPI();
   const location = useLocation();
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
 
   useAsyncEffect(async () => {
-    const store = await ipcGetAppStore();
-    setAppStore(store);
+    try {
+      const configData = await getConfig();
+      setAppStore(configData as Record<string, unknown>);
+    } catch {
+      // ignore
+    }
   }, []);
 
   useEffect(() => {

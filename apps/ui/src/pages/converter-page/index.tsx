@@ -4,7 +4,7 @@ import {
   CaretRightOutlined,
   PauseOutlined,
 } from "@ant-design/icons";
-import { type Conversion, GET_CONVERSIONS } from "@mediago/shared-common";
+import { type Conversion } from "@mediago/shared-common";
 import { useMemoizedFn } from "ahooks";
 import {
   App,
@@ -25,8 +25,8 @@ import PageContainer from "@/components/page-container";
 import { Button } from "@/components/ui/button";
 import { ADD_CONVERT_TASK, DELETE_CONVERT, START_CONVERT } from "@/const";
 import { tdApp } from "@/utils";
-import useAPI from "@/hooks/use-api";
-import useSWR from "swr";
+import { useConversions } from "@/hooks/use-conversions";
+import { usePlatform } from "@/hooks/use-platform";
 import Loading from "@/components/loading";
 
 const FORMAT_OPTIONS = [
@@ -65,46 +65,27 @@ const STATUS_COLORS: Record<string, string> = {
 const Converter = () => {
   const { t } = useTranslation();
   const {
-    selectFile,
-    getConversions,
+    data,
+    isLoading,
+    mutate,
     addConversion,
     deleteConversion,
     startConversion,
     stopConversion,
-    openDir,
-  } = useAPI();
+  } = useConversions({ current: 1, pageSize: 500 });
+  const { selectFile, openDir } = usePlatform();
   const { message } = App.useApp();
   const [outputFormat, setOutputFormat] = useState("mp3");
   const [quality, setQuality] = useState("medium");
   const [filePath, setFilePath] = useState("");
   const [addModalOpen, setAddModalOpen] = useState(false);
 
-  const { data, mutate, isLoading } = useSWR(
-    {
-      key: GET_CONVERSIONS,
-      args: { current: 1, pageSize: 500 },
-    },
-    ({ args }) => getConversions(args),
-    {
-      refreshInterval: (latestData: any) => {
-        const list = latestData?.list;
-        if (
-          Array.isArray(list) &&
-          list.some((item: Conversion) => item.status === "converting")
-        ) {
-          return 1000;
-        }
-        return 0;
-      },
-    },
-  );
-
   const handleBrowseFile = useMemoizedFn(async () => {
     try {
       const file = await selectFile();
       if (file) setFilePath(file);
-    } catch (e: any) {
-      message.error(e.message);
+    } catch (e: unknown) {
+      message.error((e as Error).message);
     }
   });
 
@@ -127,13 +108,12 @@ const Converter = () => {
         quality,
       });
       tdApp.onEvent(ADD_CONVERT_TASK);
-      if (startImmediately && conv?.id) {
-        await startConversion(conv.id);
+      if (startImmediately && (conv as Record<string, unknown>)?.id) {
+        await startConversion((conv as Record<string, unknown>).id);
       }
       setAddModalOpen(false);
-      mutate();
-    } catch (e: any) {
-      message.error(e.message);
+    } catch (e: unknown) {
+      message.error((e as Error).message);
     }
   });
 
@@ -141,33 +121,30 @@ const Converter = () => {
     tdApp.onEvent(START_CONVERT);
     try {
       await startConversion(id);
-      mutate();
-    } catch (e: any) {
-      message.error(e.message);
+    } catch (e: unknown) {
+      message.error((e as Error).message);
     }
   });
 
   const handleStop = useMemoizedFn(async (id: number) => {
     try {
       await stopConversion(id);
-      mutate();
-    } catch (e: any) {
-      message.error(e.message);
+    } catch (e: unknown) {
+      message.error((e as Error).message);
     }
   });
 
   const handleDelete = useMemoizedFn(async (id: number) => {
     tdApp.onEvent(DELETE_CONVERT);
     await deleteConversion(id);
-    mutate();
   });
 
-  const handleOpenFolder = useMemoizedFn(async (filePath: string) => {
+  const handleOpenFolder = useMemoizedFn(async (targetPath: string) => {
     try {
       const dir =
-        filePath.substring(0, filePath.lastIndexOf("/")) ||
-        filePath.substring(0, filePath.lastIndexOf("\\"));
-      await openDir(dir || filePath);
+        targetPath.substring(0, targetPath.lastIndexOf("/")) ||
+        targetPath.substring(0, targetPath.lastIndexOf("\\"));
+      await openDir(dir || targetPath);
     } catch {
       // ignore
     }
@@ -179,13 +156,7 @@ const Converter = () => {
       (item: Conversion) =>
         item.status === "pending" || item.status === "failed",
     );
-    for (const item of pending) {
-      try {
-        await startConversion(item.id);
-      } catch {
-        // continue with next
-      }
-    }
+    await Promise.allSettled(pending.map((item) => startConversion(item.id)));
     mutate();
   });
 
@@ -297,14 +268,14 @@ const Converter = () => {
 
       <div className="flex flex-col gap-3 rounded-lg bg-white p-3 dark:bg-[#1F2024] flex-1 overflow-auto">
         {isLoading && <Loading />}
-        {!isLoading && data?.list.length === 0 && (
+        {!isLoading && data?.list?.length === 0 && (
           <div className="flex h-full flex-1 flex-row items-center justify-center rounded-lg bg-white dark:bg-[#1F2024]">
             <Empty description={t("noData")} />
           </div>
         )}
         {!isLoading &&
           data?.list?.length &&
-          data?.list?.length > 0 &&
+          data.list.length > 0 &&
           data.list.map((item: Conversion) => (
             <div
               key={item.id}
@@ -316,7 +287,13 @@ const Converter = () => {
                     {item.name}
                   </span>
                   <Badge
-                    status={STATUS_COLORS[item.status] as any}
+                    status={
+                      STATUS_COLORS[item.status] as
+                        | "default"
+                        | "processing"
+                        | "success"
+                        | "error"
+                    }
                     text={
                       <span className="text-xs">
                         {item.status === "converting"

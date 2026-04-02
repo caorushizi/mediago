@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge";
 import { isUrl } from "./url";
 import { DownloadType } from "@mediago/shared-common";
 
-export { http } from "./http";
+export { http, setupHttp, setHttpApiKey } from "./http";
 export { tdApp } from "./tdapp";
 
 export const requestImage = (url: string, timeout = 1000): Promise<void> => {
@@ -19,8 +19,8 @@ export const requestImage = (url: string, timeout = 1000): Promise<void> => {
       clearTimeout(timer);
       resolve();
     };
-    img.onerror = handleError;
-    img.onload = handleOnLoad;
+    img.addEventListener("error", handleError);
+    img.addEventListener("load", handleOnLoad);
     img.src = url;
   });
 };
