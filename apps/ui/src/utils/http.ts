@@ -31,7 +31,7 @@ http.interceptors.response.use(
         return res.data;
       }
       if (res.code === 401) {
-        window.location.hash = "#/signin";
+        window.location.pathname = "/signin";
       }
       return Promise.reject(new Error(res.message || "Request failed"));
     }
