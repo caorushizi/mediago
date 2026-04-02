@@ -186,21 +186,19 @@ export const DownloadTaskItem = memo(function DownloadTaskItem({
     t,
   ]);
 
-  const renderTitle = useMemoizedFn(
-    (taskItem: DownloadTaskWithFile): ReactNode => {
-      return (
-        <div
-          className={cn("truncate text-sm dark:text-[#B4B4B4]", {
-            "text-[#127af3]": selected,
-          })}
-          title={taskItem.name}
-        >
-          {taskItem.folder ? `${taskItem.folder}/` : taskItem.folder}
-          {taskItem.name}
-        </div>
-      );
-    },
-  );
+  const renderTitle = useMemoizedFn((task: DownloadTaskWithFile): ReactNode => {
+    return (
+      <div
+        className={cn("truncate text-sm dark:text-[#B4B4B4]", {
+          "text-[#127af3]": selected,
+        })}
+        title={task.name}
+      >
+        {task.folder ? `${task.folder}/` : task.folder}
+        {task.name}
+      </div>
+    );
+  });
 
   const tags = useMemo<ReactNode[]>(() => {
     const list: ReactNode[] = [];
@@ -250,7 +248,7 @@ export const DownloadTaskItem = memo(function DownloadTaskItem({
                 className="cursor-pointer"
               />
             }
-            title={taskItem.name}
+            title={task.name}
             id={task.id}
           />,
         );
@@ -270,7 +268,7 @@ export const DownloadTaskItem = memo(function DownloadTaskItem({
   }, [task, t]);
 
   const renderDescription = useMemoizedFn(
-    (taskItem: DownloadTaskDetails): ReactNode => {
+    (task: DownloadTaskDetails): ReactNode => {
       if (task.percent && task.status === DownloadStatus.Downloading) {
         const val = Math.round(Number(task.percent));
 
@@ -299,7 +297,7 @@ export const DownloadTaskItem = memo(function DownloadTaskItem({
                   {t("failReason")}: ...
                 </div>
               }
-              title={taskItem.name}
+              title={task.name}
               id={task.id}
             />
           )}

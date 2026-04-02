@@ -95,18 +95,25 @@ function startProgressPolling() {
   if (pollingTimer) return;
   pollingTimer = setInterval(async () => {
     try {
-      const data = await http.get("/api/downloads/active");
-      const tasks = data as unknown as Array<{
-        id: number;
-        type: string;
-        percent: number;
-        speed: string;
-        isLive: boolean;
-        status: string;
-      }>;
-      if (Array.isArray(tasks) && tasks.length > 0) {
-        const progress = tasks.map((t) => ({
-          id: t.id,
+      // Use /api/tasks which returns TaskInfo with percent/speed/isLive
+      const data = await http.get("/api/tasks");
+      const result = data as {
+        tasks: Array<{
+          id: string;
+          type: string;
+          percent: number;
+          speed: string;
+          isLive: boolean;
+          status: string;
+        }>;
+        total: number;
+      };
+      const activeTasks = result.tasks.filter(
+        (t) => t.percent > 0 && t.percent < 100 && t.status === "downloading",
+      );
+      if (activeTasks.length > 0) {
+        const progress = activeTasks.map((t) => ({
+          id: Number(t.id),
           type: t.type,
           percent: String(t.percent || 0),
           speed: t.speed || "",
@@ -130,9 +137,10 @@ function stopPolling() {
 
 async function stopProgressPollingIfIdle() {
   try {
-    const data = await http.get("/api/downloads/active");
-    const tasks = data as unknown as unknown[];
-    if (!Array.isArray(tasks) || tasks.length === 0) {
+    const data = await http.get("/api/tasks");
+    const result = data as { tasks: Array<{ status: string }>; total: number };
+    const hasActive = result.tasks.some((t) => t.status === "downloading");
+    if (!hasActive) {
       stopPolling();
     }
   } catch {
