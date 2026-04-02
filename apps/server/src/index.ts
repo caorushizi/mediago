@@ -1,15 +1,28 @@
 import "reflect-metadata";
 import os from "node:os";
-import path from "node:path";
+import path, { dirname } from "node:path";
 import fs from "node:fs";
 import { ServiceRunner } from "@mediago/service-runner";
 import { resolveCoreBinaries, resolveDepsBinaries } from "./binaryResolver";
+import dotenvFlow from "dotenv-flow";
+import { fileURLToPath } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const projectRoot = path.resolve(__dirname, "../../..");
+dotenvFlow.config({
+  path: projectRoot,
+});
+
+if (!process.env.APP_NAME) {
+  throw new Error("APP_NAME is not defined in environment variables");
+}
 
 // All persistent data under one root: ~/.mediago-server/
 //   data/       — database + config
 //   logs/       — runtime & task logs
 //   downloads/  — downloaded files (also video-root for player)
-const ROOT_DIR = path.resolve(os.homedir(), ".mediago-server");
+const ROOT_DIR = path.resolve(os.homedir(), `.${process.env.APP_NAME}-server`);
 const DATA_DIR = path.resolve(ROOT_DIR, "data");
 const LOG_DIR = path.resolve(ROOT_DIR, "logs");
 const DOWNLOAD_DIR = path.resolve(ROOT_DIR, "downloads");
