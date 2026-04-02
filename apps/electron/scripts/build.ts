@@ -112,7 +112,7 @@ function getReleaseConfig(): Configuration {
         CFBundleURLTypes: [
           {
             CFBundleURLName: "Mediago URL Scheme",
-            CFBundleURLSchemes: ["mediago"],
+            CFBundleURLSchemes: ["mediagoaaa"],
           },
         ],
       },
