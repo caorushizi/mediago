@@ -5,22 +5,21 @@ import axios from "axios";
 const http = axios.create({});
 
 /**
- * Initialize http instance with Go Core base URL and optional API key.
+ * Initialize http instance with Go Core base URL.
  * Called once from App.tsx after discovering the core URL.
  */
-export function setupHttp(baseURL: string, apiKey?: string) {
+export function setupHttp(baseURL: string) {
   http.defaults.baseURL = baseURL;
-  if (apiKey) {
-    http.defaults.headers.common["X-API-Key"] = apiKey;
-  }
 }
 
-/**
- * Update the API key on the existing http instance (e.g. after signin).
- */
-export function setHttpApiKey(apiKey: string) {
-  http.defaults.headers.common["X-API-Key"] = apiKey;
-}
+// Request interceptor: auto-inject apiKey from Zustand store on every request
+http.interceptors.request.use((config) => {
+  const { apiKey } = useAppStore.getState();
+  if (apiKey) {
+    config.headers.set("X-API-Key", apiKey);
+  }
+  return config;
+});
 
 // Response interceptor: unwrap Go Core { success, code, data, message } format
 http.interceptors.response.use(
@@ -38,7 +37,18 @@ http.interceptors.response.use(
     // Non-standard response (e.g. raw data), return as-is
     return res;
   },
-  (error) => Promise.reject(error),
+  (error) => {
+    const resp = error.response;
+    if (
+      resp &&
+      resp.status === 401 &&
+      !window.location.pathname.startsWith("/signin")
+    ) {
+      useAppStore.getState().setAppStore({ apiKey: "" });
+      window.location.pathname = "/signin";
+    }
+    return Promise.reject(error);
+  },
 );
 
 export { http };
