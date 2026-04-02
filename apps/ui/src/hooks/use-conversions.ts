@@ -7,7 +7,10 @@ import {
   startConversion as startApi,
   stopConversion as stopApi,
 } from "@/api/conversion";
-import type { Conversion, ConversionPagination } from "@mediago/shared-common";
+import type {
+  ConversionPagination,
+  ConversionResponse,
+} from "@mediago/shared-common";
 
 export function useConversions(pagination: ConversionPagination) {
   const { data, isLoading, error, mutate } = useSWR(
@@ -15,7 +18,7 @@ export function useConversions(pagination: ConversionPagination) {
     () => getConversions(pagination),
     {
       refreshInterval: (latestData: unknown) => {
-        const d = latestData as { list?: Conversion[] } | undefined;
+        const d = latestData as ConversionResponse | undefined;
         return d?.list?.some((i) => i.status === "converting") ? 1000 : 0;
       },
     },
@@ -27,8 +30,9 @@ export function useConversions(pagination: ConversionPagination) {
     outputFormat: string;
     quality?: string;
   }) => {
-    await addApi(conv);
+    const result = await addApi(conv);
     mutate();
+    return result;
   };
 
   const deleteConversion = async (id: number) => {
@@ -47,7 +51,7 @@ export function useConversions(pagination: ConversionPagination) {
   };
 
   return {
-    data: data as { list: Conversion[]; total: number } | undefined,
+    data: data as ConversionResponse | undefined,
     isLoading,
     error,
     mutate,

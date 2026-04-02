@@ -4,6 +4,7 @@ import {
   getAuthStatus,
   setupAuth as setupApi,
   signin as signinApi,
+  type AuthStatus,
 } from "@/api/auth";
 
 export function useAuthApi() {
@@ -22,7 +23,7 @@ export function useAuthApi() {
   };
 
   return {
-    isSetuped: (data as Record<string, unknown>)?.initialized ?? false,
+    isSetuped: (data as AuthStatus)?.setuped ?? false,
     isLoading,
     error,
     setupAuth,

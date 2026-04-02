@@ -5,7 +5,9 @@ import {
   setConfigValue,
   getEnvPathKey,
   getEnvPath,
+  type GoEnvPath,
 } from "@/api/config";
+import type { AppStore } from "@mediago/shared-common";
 
 export function useConfig() {
   const { data, isLoading, error, mutate } = useSWR(getConfigKey, getConfig);
@@ -16,7 +18,7 @@ export function useConfig() {
   };
 
   return {
-    config: data as Record<string, unknown> | undefined,
+    config: data as AppStore | undefined,
     isLoading,
     error,
     setConfigKey,
@@ -27,7 +29,7 @@ export function useConfig() {
 export function useEnvPath() {
   const { data, isLoading, error } = useSWR(getEnvPathKey, getEnvPath);
   return {
-    envPath: data as Record<string, unknown> | undefined,
+    envPath: data as GoEnvPath | undefined,
     isLoading,
     error,
   };

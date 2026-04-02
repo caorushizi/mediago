@@ -2,10 +2,14 @@ import { http } from "@/utils";
 import type {
   DownloadTask,
   DownloadTaskPagination,
+  DownloadTaskResponse,
+  Video,
 } from "@mediago/shared-common";
 
 export const getDownloadTasksKey = "/api/downloads";
-export const getDownloadTasks = (p: DownloadTaskPagination) =>
+export const getDownloadTasks = (
+  p: DownloadTaskPagination,
+): Promise<DownloadTaskResponse> =>
   http.get(getDownloadTasksKey, {
     params: {
       current: p.current,
@@ -17,33 +21,42 @@ export const getDownloadTasks = (p: DownloadTaskPagination) =>
 export const createDownloadTasks = (
   tasks: Omit<DownloadTask, "id">[],
   startDownload?: boolean,
-) => http.post("/api/downloads", { tasks, startDownload });
+): Promise<Video[]> => http.post("/api/downloads", { tasks, startDownload });
 
 export const startDownload = (
   id: number,
-  params: { localPath: string; deleteSegments: boolean },
-) => http.post(`/api/downloads/${id}/start`, params);
+  params?: { localPath: string; deleteSegments: boolean },
+): Promise<void> => http.post(`/api/downloads/${id}/start`, params);
 
-export const stopDownload = (id: number) =>
+export const stopDownload = (id: number): Promise<void> =>
   http.post(`/api/downloads/${id}/stop`);
 
-export const deleteDownloadTask = (id: number) =>
+export const deleteDownloadTask = (id: number): Promise<void> =>
   http.delete(`/api/downloads/${id}`);
 
-export const editDownloadTask = (id: number, data: Partial<DownloadTask>) =>
-  http.put(`/api/downloads/${id}`, data);
+export const editDownloadTask = (
+  id: number,
+  data: Partial<DownloadTask>,
+): Promise<Video> => http.put(`/api/downloads/${id}`, data);
 
-export const getDownloadLog = (id: number) =>
+export const getDownloadLog = (
+  id: number,
+): Promise<{ id: number; log: string }> =>
   http.get(`/api/downloads/${id}/logs`);
 
-export const getDownloadFolders = () => http.get("/api/downloads/folders");
+export const getDownloadFolders = (): Promise<string[]> =>
+  http.get("/api/downloads/folders");
 
-export const exportDownloadList = () => http.get("/api/downloads/export");
+export const exportDownloadList = (): Promise<string> =>
+  http.get("/api/downloads/export");
 
-export const updateDownloadStatus = (ids: number[], status: number) =>
-  http.put("/api/downloads/status", { ids, status });
+export const updateDownloadStatus = (
+  ids: number[],
+  status: number,
+): Promise<void> => http.put("/api/downloads/status", { ids, status });
 
-export const getActiveTasks = () => http.get("/api/downloads/active");
+export const getActiveTasks = (): Promise<Video[]> =>
+  http.get("/api/downloads/active");
 
-export const updateIsLive = (id: number, isLive: boolean) =>
+export const updateIsLive = (id: number, isLive: boolean): Promise<Video> =>
   http.put(`/api/downloads/${id}/live`, { isLive });
