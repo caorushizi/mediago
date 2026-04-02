@@ -214,14 +214,21 @@ export async function runCommand(
   }
 
   return new Promise((resolve, reject) => {
-    const child = spawn(command, args, {
+    const isWindows = process.platform === "win32";
+    // On Windows with shell mode, args containing spaces must be quoted
+    // because Node.js joins them with spaces without escaping
+    const escapedArgs = isWindows
+      ? args.map((arg) => (arg.includes(" ") ? `"${arg}"` : arg))
+      : args;
+
+    const child = spawn(command, escapedArgs, {
       cwd: options.cwd,
       stdio: "inherit",
       env: {
         ...process.env,
         ...options.env,
       },
-      shell: process.platform === "win32",
+      shell: isWindows,
     });
 
     childProcesses.add(child);
