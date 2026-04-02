@@ -16,6 +16,13 @@ v3.x.x 是最新版本，大家的意见可以尽量在 3.x.x 版本中提出，
 
 :::
 
+::: tip
+MacOS 使用
+
+- 【Intel 芯片】需要安装 release 中的 x64 版本。安装完成后需要在 Mac 的安全设置中打开来自身份不明开发者的 Mac App
+- 【Apple 芯片】需要安装 release 中的 arm64 芯片。安装完成后需要在控制台执行 `sudo xattr -dr com.apple.quarantine /Applications/mediago-community.app` 命令
+  :::
+
 ## 下载安装
 
 ### v3.0.1 (2025.1.14 发布)
