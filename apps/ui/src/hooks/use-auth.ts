@@ -17,16 +17,15 @@ export function useAuth() {
     // If we already have an apiKey stored, no need to check
     if (apiKey) return;
 
-    // No apiKey — check if Go Core has auth enabled
+    // No apiKey — check if Go Core has auth configured
     getAuthStatus()
       .then((data) => {
         const status = data as Record<string, unknown>;
-        // Auth is configured (setuped=true) but we have no apiKey → must sign in
-        if (status?.initialized) {
+        if (status?.setuped) {
+          // Password already set, user must sign in
           navigate("/signin");
-        }
-        // Auth not configured yet (first time) → go to signin to set up
-        if (status?.enableAuth && !status?.initialized) {
+        } else {
+          // First time — go to signin page to set up password
           navigate("/signin");
         }
       })
