@@ -28,15 +28,5 @@ export default class ProtocolService {
         headers: { "Content-Type": mimeType || "text/html" },
       });
     });
-
-    if (process.defaultApp) {
-      if (process.argv.length >= 2) {
-        app.setAsDefaultProtocolClient(defaultScheme, process.execPath, [
-          path.resolve(process.argv[1]),
-        ]);
-      }
-    } else {
-      app.setAsDefaultProtocolClient(defaultScheme);
-    }
   }
 }

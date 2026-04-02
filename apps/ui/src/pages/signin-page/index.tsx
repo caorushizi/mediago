@@ -9,11 +9,9 @@ import {
 } from "@/components/ui/dialog";
 import { useAuthApi } from "@/hooks/use-auth-api";
 import { useMemoizedFn } from "ahooks";
-import md5 from "crypto-js/md5";
 import { useNavigate } from "react-router-dom";
 import { setAppStoreSelector, useAppStore } from "@/store/app";
 import { useShallow } from "zustand/react/shallow";
-import { APIKEY_SALT_KEY } from "@mediago/shared-common";
 
 export default function SigninPage() {
   const { isSetuped, setupAuth, signin } = useAuthApi();
@@ -28,10 +26,10 @@ export default function SigninPage() {
       try {
         const formData = new FormData(e.currentTarget);
         const password = formData.get("password") as string;
-        const apiKey = md5(password + APIKEY_SALT_KEY).toString();
 
+        let apiKey: string;
         if (isSetuped) {
-          await signin(apiKey);
+          apiKey = await signin(password);
         } else {
           const repeatPassword = formData.get("repeat-password") as string;
 
@@ -40,7 +38,7 @@ export default function SigninPage() {
             return;
           }
 
-          await setupAuth(apiKey);
+          apiKey = await setupAuth(password);
         }
 
         setAppStore({ apiKey });

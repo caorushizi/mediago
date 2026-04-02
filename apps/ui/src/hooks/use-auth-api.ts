@@ -4,7 +4,6 @@ import {
   getAuthStatus,
   setupAuth as setupApi,
   signin as signinApi,
-  type AuthStatus,
 } from "@/api/auth";
 
 export function useAuthApi() {
@@ -13,17 +12,18 @@ export function useAuthApi() {
     getAuthStatus,
   );
 
-  const setupAuth = async (apiKey: string) => {
-    await setupApi(apiKey);
+  const setupAuth = async (password: string): Promise<string> => {
+    const apiKey = await setupApi(password);
     mutate();
+    return apiKey;
   };
 
-  const signin = async (apiKey: string) => {
-    return signinApi(apiKey);
+  const signin = async (password: string): Promise<string> => {
+    return signinApi(password);
   };
 
   return {
-    isSetuped: (data as AuthStatus)?.setuped ?? false,
+    isSetuped: data?.setuped ?? false,
     isLoading,
     error,
     setupAuth,

@@ -8,8 +8,8 @@ export const getAuthStatusKey = "/api/auth/status";
 export const getAuthStatus = (): Promise<AuthStatus> =>
   http.get(getAuthStatusKey);
 
-export const setupAuth = (apiKey: string): Promise<boolean> =>
-  http.post("/api/auth/setup", { apiKey });
+export const setupAuth = (password: string): Promise<string> =>
+  http.post("/api/auth/setup", { password });
 
-export const signin = (apiKey: string): Promise<boolean> =>
-  http.post("/api/auth/signin", { apiKey });
+export const signin = (password: string): Promise<string> =>
+  http.post("/api/auth/signin", { password });

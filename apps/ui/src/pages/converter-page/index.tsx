@@ -277,7 +277,7 @@ const Converter = () => {
           </div>
         )}
         {!isLoading &&
-          data?.list?.length &&
+          Array.isArray(data?.list) &&
           data.list.length > 0 &&
           data.list.map((item: Conversion) => (
             <div

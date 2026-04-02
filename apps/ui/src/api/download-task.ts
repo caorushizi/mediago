@@ -1,4 +1,5 @@
 import { http } from "@/utils";
+import { useAppStore } from "@/store/app";
 import type {
   DownloadTask,
   DownloadTaskPagination,
@@ -9,24 +10,30 @@ import type {
 export const getDownloadTasksKey = "/api/downloads";
 export const getDownloadTasks = (
   p: DownloadTaskPagination,
-): Promise<DownloadTaskResponse> =>
-  http.get(getDownloadTasksKey, {
+): Promise<DownloadTaskResponse> => {
+  const { local } = useAppStore.getState();
+  return http.get(getDownloadTasksKey, {
     params: {
       current: p.current,
       pageSize: p.pageSize,
       filter: p.filter,
+      localPath: local,
     },
   });
+};
 
 export const createDownloadTasks = (
   tasks: Omit<DownloadTask, "id">[],
   startDownload?: boolean,
 ): Promise<Video[]> => http.post("/api/downloads", { tasks, startDownload });
 
-export const startDownload = (
-  id: number,
-  params?: { localPath: string; deleteSegments: boolean },
-): Promise<void> => http.post(`/api/downloads/${id}/start`, params);
+export const startDownload = (id: number): Promise<void> => {
+  const { local, deleteSegments } = useAppStore.getState();
+  return http.post(`/api/downloads/${id}/start`, {
+    localPath: local,
+    deleteSegments,
+  });
+};
 
 export const stopDownload = (id: number): Promise<void> =>
   http.post(`/api/downloads/${id}/stop`);
