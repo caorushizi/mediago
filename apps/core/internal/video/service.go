@@ -2,82 +2,87 @@ package video
 
 import (
 	"fmt"
-	"mime"
 	"net/url"
-	"os"
 	"path/filepath"
-	"strings"
+
+	"caorushizi.cn/mediago/internal/db/repo"
+	"caorushizi.cn/mediago/internal/service"
 )
 
-// Service provides video-related operations
+// Service provides video-related operations backed by the download database
 type Service interface {
-	// GetVideoFiles returns all video files from the configured directory
 	GetVideoFiles() ([]Video, error)
-	// GetVideoDir returns the video directory path
-	GetVideoDir() string
+	GetVideoByID(id int64) (*Video, error)
 }
 
-type service struct {
-	videoDir string
+type dbService struct {
+	repo      *repo.VideoRepository
+	localPath string
 }
 
-// NewService creates a new video service
-func NewService(videoDir string) (Service, error) {
-	if videoDir == "" {
-		return nil, fmt.Errorf("video directory not configured")
+// NewService creates a video service backed by the download database
+func NewService(repo *repo.VideoRepository, localPath string) Service {
+	return &dbService{
+		repo:      repo,
+		localPath: localPath,
 	}
-
-	// Check if directory exists
-	if _, err := os.Stat(videoDir); os.IsNotExist(err) {
-		return nil, fmt.Errorf("video directory does not exist: %s", videoDir)
-	}
-
-	return &service{
-		videoDir: videoDir,
-	}, nil
 }
 
-// GetVideoFiles scans the video directory and returns all video files
-func (s *service) GetVideoFiles() ([]Video, error) {
-	var videos []Video
-
-	// Walk through all files in the directory
-	err := filepath.Walk(s.videoDir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-
-		// Skip directories
-		if info.IsDir() {
-			return nil
-		}
-
-		// Check if file is a video based on MIME type
-		ext := filepath.Ext(path)
-		mimeType := mime.TypeByExtension(ext)
-
-		if mimeType != "" && strings.HasPrefix(mimeType, "video") {
-			fileName := filepath.Base(path)
-			encodedFileName := url.PathEscape(fileName)
-
-			video := Video{
-				Title: fileName,
-				URL:   fmt.Sprintf("videos/%s", encodedFileName),
-			}
-			videos = append(videos, video)
-		}
-
-		return nil
-	})
-
+// GetVideoFiles returns all successfully downloaded videos that exist on disk
+func (s *dbService) GetVideoFiles() ([]Video, error) {
+	records, err := s.repo.FindByStatus([]string{"success"})
 	if err != nil {
-		return nil, fmt.Errorf("failed to scan video directory: %w", err)
+		return nil, fmt.Errorf("failed to query download records: %w", err)
+	}
+
+	var videos []Video
+	for _, rec := range records {
+		searchDir := s.localPath
+		if rec.Folder != nil && *rec.Folder != "" {
+			searchDir = filepath.Join(s.localPath, *rec.Folder)
+		}
+
+		exists, filePath := service.CheckFileExists(rec.Name, searchDir)
+		if !exists {
+			continue
+		}
+
+		fileName := filepath.Base(filePath)
+		videos = append(videos, Video{
+			ID:    rec.ID,
+			Title: rec.Name,
+			URL:   fmt.Sprintf("/videos/%s", url.PathEscape(fileName)),
+		})
 	}
 
 	return videos, nil
 }
 
-// GetVideoDir returns the configured video directory path
-func (s *service) GetVideoDir() string {
-	return s.videoDir
+// GetVideoByID returns a single video by its download task ID
+func (s *dbService) GetVideoByID(id int64) (*Video, error) {
+	rec, err := s.repo.FindByIDOrFail(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if rec.Status != "success" {
+		return nil, fmt.Errorf("download task %d is not completed", id)
+	}
+
+	searchDir := s.localPath
+	if rec.Folder != nil && *rec.Folder != "" {
+		searchDir = filepath.Join(s.localPath, *rec.Folder)
+	}
+
+	exists, filePath := service.CheckFileExists(rec.Name, searchDir)
+	if !exists {
+		return nil, fmt.Errorf("video file not found for task %d", id)
+	}
+
+	fileName := filepath.Base(filePath)
+	return &Video{
+		ID:    rec.ID,
+		Title: rec.Name,
+		URL:   fmt.Sprintf("/videos/%s", url.PathEscape(fileName)),
+	}, nil
 }

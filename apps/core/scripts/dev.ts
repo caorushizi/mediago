@@ -49,7 +49,6 @@ export async function buildPlayerUI() {
 
   // Copy dist to core assets/player/ for go:embed
   rmrf(config.PLAYER_ASSETS_DIR);
-  mkdir(config.PLAYER_ASSETS_DIR);
   copyFile(playerUiDist, config.PLAYER_ASSETS_DIR);
 
   console.log(`✅ Player UI 已复制到 ${config.PLAYER_ASSETS_DIR}`);

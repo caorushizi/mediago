@@ -35,6 +35,13 @@ export const webPlatformStubs: PlatformApi = {
   startUpdate: noop,
   installUpdate: noop,
   exportDownloadList: noop,
+  openUrl: async (url: string) => {
+    const a = document.createElement("a");
+    a.href = url;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    a.click();
+  },
   openBrowser: async (url: string) => {
     const a = document.createElement("a");
     a.href = url;

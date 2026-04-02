@@ -67,9 +67,10 @@ export const DownloadTaskItem = memo(function DownloadTaskItem({
 
   // Handlers
   const handlePlay = useMemoizedFn(() => {
-    // FIXME: Player integration
     tdApp.onEvent(PLAY_VIDEO);
-    openUrl(envPath.playerUrl);
+    if (envPath?.playerUrl) {
+      openUrl(`${envPath.playerUrl}?id=${task.id}`);
+    }
   });
 
   const startWithEvent = useMemoizedFn((eventName: string) => {

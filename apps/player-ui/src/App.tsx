@@ -14,7 +14,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { getVideoList, getVideoListKey } from "./api";
+import { getVideoById, getVideoList, getVideoListKey } from "./api";
 import { cn, getVideoURL } from "./lib/utils";
 import { usePlayerSize } from "./hooks/usePlayerSize";
 
@@ -134,6 +134,27 @@ export default function PlayerPage() {
   useEffect(() => {
     if (!playerRef.current) return;
 
+    // Check for ?id= query parameter to auto-play a specific video by task ID
+    const params = new URLSearchParams(window.location.search);
+    const targetId = params.get("id");
+
+    if (targetId) {
+      getVideoById(Number(targetId))
+        .then((video) => {
+          if (video?.url) {
+            changeVideoAndPlay(video.url);
+          }
+        })
+        .catch(() => {
+          // Fallback to first video in list
+          if (Array.isArray(videoList) && videoList.length > 0) {
+            changeVideoAndPlay(videoList[0].url);
+          }
+        });
+      return;
+    }
+
+    // Default: play the first video in the list
     if (Array.isArray(videoList) && videoList.length > 0) {
       changeVideoAndPlay(videoList[0].url);
     }

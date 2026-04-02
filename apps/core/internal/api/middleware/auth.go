@@ -27,7 +27,10 @@ func AuthMiddleware(confStore handler.ConfigStore) gin.HandlerFunc {
 		path := c.Request.URL.Path
 
 		// Whitelist check
-		if whitelist[path] || strings.HasPrefix(path, "/swagger/") {
+		if whitelist[path] || strings.HasPrefix(path, "/swagger/") ||
+			strings.HasPrefix(path, "/player") ||
+			strings.HasPrefix(path, "/api/v1/") ||
+			strings.HasPrefix(path, "/videos/") {
 			c.Next()
 			return
 		}

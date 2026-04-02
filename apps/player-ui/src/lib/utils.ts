@@ -14,7 +14,8 @@ export function getVideoURL(url: string) {
   if (isDev) {
     return `${devUrl}/${url}`;
   }
-  return url;
+  // Use absolute path so it works when served under /player/ prefix
+  return `/${url}`;
 }
 
 export function cn(...inputs: ClassValue[]) {

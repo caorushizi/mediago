@@ -5,6 +5,7 @@ export interface GoEnvPath {
   configDir: string;
   binDir: string;
   platform: string;
+  playerUrl: string;
 }
 
 export const getConfigKey = "/api/config";

@@ -21,6 +21,7 @@ type EnvPaths struct {
 	ConfigDir string `json:"configDir"`
 	BinDir    string `json:"binDir"`
 	Platform  string `json:"platform"`
+	PlayerUrl string `json:"playerUrl,omitempty"`
 }
 
 // UtilHandler handles utility endpoints.
@@ -40,11 +41,19 @@ func NewUtilHandler(env EnvPaths) *UtilHandler {
 // @Success 200 {object} dto.SuccessResponse
 // @Router /env [get]
 func (h *UtilHandler) GetEnvPaths(c *gin.Context) {
+	env := h.env
+	// Compute playerUrl dynamically from the request host
+	scheme := "http"
+	if c.Request.TLS != nil {
+		scheme = "https"
+	}
+	env.PlayerUrl = fmt.Sprintf("%s://%s/player/", scheme, c.Request.Host)
+
 	c.JSON(http.StatusOK, dto.SuccessResponse{
 		Success: true,
 		Code:    http.StatusOK,
 		Message: i18n.T(c, i18n.MsgOK),
-		Data:    h.env,
+		Data:    env,
 	})
 }
 

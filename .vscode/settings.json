@@ -8,5 +8,8 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.oxc": "explicit"
   },
-  "prettier.enable": false
+  "prettier.enable": false,
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
+  }
 }

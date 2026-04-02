@@ -11,6 +11,7 @@ export default defineConfig({
     strictPort: true,
   },
   envDir: "../../",
+  base: "/player/",
   build: {
     rollupOptions: {
       output: {

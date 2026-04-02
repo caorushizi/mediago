@@ -113,12 +113,10 @@ func New(queue *core.TaskQueue, logs *tasklog.Manager, database *db.Database, co
 		srv.favoriteHandler = handler.NewFavoriteHandler(favoriteSvc)
 		srv.conversionHandler = handler.NewConversionHandler(conversionSvc)
 		srv.downloadService = downloadSvc
-	}
 
-	// Initialize video player service (when video-root is configured)
-	if opt.VideoRoot != "" {
-		videoSvc, err := video.NewService(opt.VideoRoot)
-		if err == nil {
+		// Video player service (requires video root directory)
+		if opt.VideoRoot != "" {
+			videoSvc := video.NewService(videoRepo, opt.VideoRoot)
 			srv.videoHandler = video.NewHandler(videoSvc)
 			srv.videoRoot = opt.VideoRoot
 		}

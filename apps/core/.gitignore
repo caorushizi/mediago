@@ -38,4 +38,4 @@ swagger.yaml
 assets/player/*
 !assets/player/.gitkeep
 
-./server
+/server
