@@ -1,0 +1,15 @@
+services:
+  mediago:
+    build:
+      context: ..
+      dockerfile: mediago/Dockerfile
+    ports:
+      - "8899:8899"
+    volumes:
+      - mediago-data:/app/data
+      - mediago-logs:/app/logs
+    restart: unless-stopped
+
+volumes:
+  mediago-data:
+  mediago-logs:

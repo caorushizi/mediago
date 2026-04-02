@@ -1,0 +1,4 @@
+http:
+  addr: ":8080"
+log:
+  level: "info"

@@ -21,10 +21,14 @@ const container = new Container({
 
 const gotTheLock = app.requestSingleInstanceLock();
 
-if (!isDev) {
-  app.setAsDefaultProtocolClient("mediago");
+if (process.defaultApp) {
+  if (process.argv.length >= 2) {
+    app.setAsDefaultProtocolClient(defaultScheme, process.execPath, [
+      path.resolve(process.argv[1]),
+    ]);
+  }
 } else {
-  app.removeAsDefaultProtocolClient("mediago");
+  app.setAsDefaultProtocolClient(defaultScheme);
 }
 
 const start = async (): Promise<void> => {
@@ -45,7 +49,7 @@ const start = async (): Promise<void> => {
   await app.whenReady();
   await container.load(buildProviderModule());
   const mediago = container.get(ElectronApp);
-  mediago.init();
+  await mediago.init();
   app.on("window-all-closed", noop);
   app.on("second-instance", mediago.secondInstance);
 };

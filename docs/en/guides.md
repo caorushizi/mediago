@@ -84,7 +84,7 @@ v3.0 is the latest version. Please feel free to provide feedback within version 
 
 ### Batch Download
 
-   ![step 3](../images/guides-step6.png)
+![step 3](../images/guides-step6.png)
 
 ### Additional Features
 
@@ -98,11 +98,11 @@ v3.0 is the latest version. Please feel free to provide feedback within version 
 
 - PC Playback
 
-     ![step 2](../images/addition-step3.png)
+  ![step 2](../images/addition-step3.png)
 
 - Mobile Playback
 
-     ![step 3](../images/addition-step4.png)
+  ![step 3](../images/addition-step4.png)
 
 ## Start Downloading Your Videos
 

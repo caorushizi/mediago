@@ -1,22 +1,27 @@
-import type { MediaGoApi } from "@mediago/shared-common";
+import { type PlatformApi } from "@mediago/shared-common";
 import { isWeb } from "@/utils";
-import { electronAdapter, electronIpcAdapter } from "./electron";
-import { webAdapter, webIpcAdapter } from "./web";
+import { electronPlatformAdapter, electronIpcAdapter } from "./electron";
+import { webPlatformStubs } from "./platform-stubs";
+import type { IpcListener } from "./utils";
+
+// ============================================================
+// Platform adapter (Electron IPC or web stubs)
+// ============================================================
 
 /**
- * 根据环境自动选择合适的适配器
- * - Web 环境：使用 webAdapter，通过 HTTP API 与后端通信
- * - Electron 环境：使用 electronAdapter，直接调用 window.electron API
+ * Platform adapter: Electron-native operations in desktop mode,
+ * no-op stubs in web/server mode.
  */
-export const apiAdapter: MediaGoApi = isWeb ? webAdapter : electronAdapter;
+export const platformApi: PlatformApi = isWeb
+  ? webPlatformStubs
+  : electronPlatformAdapter;
 
 /**
- * 根据环境自动选择合适的 IPC 适配器
- * - Web 环境：使用 Socket.io 通信
- * - Electron 环境：使用 Electron IPC 通信
+ * Electron IPC event listener (pure platform events only).
+ * Go SSE events are handled separately by api/events.ts.
  */
-export const ipcAdapter = isWeb ? webIpcAdapter : electronIpcAdapter;
+export const platformEventListener: IpcListener = isWeb
+  ? { addIpcListener: () => {}, removeIpcListener: () => {} }
+  : electronIpcAdapter;
 
-export type { IpcListener } from "./electron";
-export { electronAdapter, electronIpcAdapter } from "./electron";
-export { webAdapter, webIpcAdapter } from "./web";
+export type { IpcListener } from "./utils";

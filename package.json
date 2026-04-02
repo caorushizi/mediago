@@ -9,33 +9,50 @@
   "packageManager": "pnpm@10.15.0",
   "scripts": {
     "knip": "knip",
-    "dev:electron": "cross-env APP_TARGET=electron NODE_ENV=development pnpm build:electron && pnpm start:electron",
-    "dev:server": "cross-env APP_TARGET=server NODE_ENV=development pnpm build:server && pnpm start:server",
+    "dev:electron": "pnpm core:build && pnpm player:build && cross-env APP_TARGET=electron NODE_ENV=development pnpm build:electron && pnpm start:electron",
     "start:electron": "cross-env APP_TARGET=electron turbo run dev -F @mediago/electron -F @mediago/ui",
-    "start:server": "cross-env APP_TARGET=server turbo run dev -F @mediago/server -F @mediago/ui",
-    "build:electron": "pnpm rebuild:electron && cross-env APP_TARGET=electron NODE_ENV=production turbo run build -F @mediago/electron -F @mediago/ui",
-    "build:server": "pnpm rebuild:server && cross-env APP_TARGET=server NODE_ENV=production turbo run build -F @mediago/server -F @mediago/ui",
-    "lint": "turbo run lint",
-    "rebuild:server": "pnpm -F @mediago/server rebuild",
-    "rebuild:electron": "pnpm -F @mediago/electron run rebuild",
-    "pack:server": "pnpm build:server && pnpm -F @mediago/server run pack",
-    "pack:electron": "pnpm build:electron && pnpm -F @mediago/electron run pack",
-    "release:server": "pnpm pack:server && pnpm -F @mediago/server run release",
-    "release:electron": "pnpm build:electron && pnpm -F @mediago/electron run release",
+    "build:electron": "cross-env APP_TARGET=electron NODE_ENV=production turbo run build -F @mediago/electron -F @mediago/ui",
+    "dev:server": "pnpm core:build && pnpm player:build && cross-env APP_TARGET=server NODE_ENV=development turbo run dev -F @mediago/server -F @mediago/ui",
+    "build:web": "cross-env APP_TARGET=server NODE_ENV=production turbo run build -F @mediago/ui",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint --fix .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check .",
+    "check": "pnpm lint && pnpm format:check && turbo type:check",
+    "pack:electron": "pnpm core:build && pnpm player:build && pnpm build:electron && pnpm -F @mediago/electron run pack",
+    "release:electron": "pnpm core:build && pnpm player:build && pnpm build:electron && pnpm -F @mediago/electron run release",
     "docs:dev": "pnpm -F @mediago/docs run docs:dev",
     "docs:build": "pnpm -F @mediago/docs run docs:build",
-    "type:check": "turbo type:check"
+    "type:check": "turbo type:check",
+    "core:dev": "pnpm --filter @mediago/core-build run dev",
+    "core:build": "pnpm --filter @mediago/core-build run build",
+    "player:dev": "pnpm --filter @mediago/player-build run dev",
+    "player:build": "pnpm --filter @mediago/player-build run build",
+    "deps:download": "tsx scripts/download-deps.ts",
+    "deps:download:all": "tsx scripts/download-deps.ts --all",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,mjs,cjs}": [
+      "oxlint --fix",
+      "oxfmt --write"
+    ],
+    "*.{json,css,md,html,yml,yaml}": [
+      "oxfmt --write"
+    ]
   },
   "keywords": [],
   "license": "MIT",
   "devDependencies": {
-    "@prettier/plugin-oxc": "^0.0.4",
     "@types/node": "^24.9.2",
-    "@typescript/native-preview": "7.0.0-dev.20251023.1",
     "cross-env": "^10.1.0",
-    "knip": "^5.66.4",
-    "oxlint-tsgolint": "^0.3.0",
-    "prettier": "^3.6.2",
-    "turbo": "^2.6.0"
+    "husky": "^9.1.7",
+    "knip": "^6.1.1",
+    "lint-staged": "^16.4.0",
+    "oxfmt": "^0.42.0",
+    "oxlint": "^1.57.0",
+    "tsx": "^4.20.6",
+    "turbo": "^2.9.1",
+    "typescript": "^6.0.2"
   }
 }

@@ -1,29 +1,30 @@
-import { ConfigProvider, theme } from "antd";
+import { App as AntdApp, ConfigProvider, theme as antdTheme } from "antd";
 import { type FC, lazy, Suspense, useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import "dayjs/locale/zh-cn";
 import { useAsyncEffect, useMemoizedFn } from "ahooks";
-import { App as AntdApp } from "antd";
 import zhCN from "antd/es/locale/zh_CN";
 import enUS from "antd/es/locale/en_US";
 import { useShallow } from "zustand/react/shallow";
 import Loading from "./components/loading";
-import { DOWNLOAD_FAIL, DOWNLOAD_SUCCESS, PAGE_LOAD } from "./const";
+import { PAGE_LOAD } from "./const";
 import {
   appStoreSelector,
   setAppStoreSelector,
   useAppStore,
 } from "./store/app";
 import { PageMode, setBrowserSelector, useBrowserStore } from "./store/browser";
-import { downloadStoreSelector, useDownloadStore } from "./store/download";
 import {
   themeSelector,
   updateSelector,
   useSessionStore,
 } from "./store/session";
 import { getBrowserLang, isWeb, tdApp } from "./utils";
-import useAPI from "./hooks/use-api";
-import { AppLanguage, AppStore, DownloadFilter } from "@mediago/shared-common";
+import { usePlatform } from "./hooks/use-platform";
+import { setupHttp } from "./utils/http";
+import { getConfig } from "./api/config";
+import { initGoEvents, onConfigChanged } from "./api/events";
+import { AppLanguage, DownloadFilter } from "@mediago/shared-common";
 import { useAuth } from "./hooks/use-auth";
 import { Locale } from "antd/es/locale";
 
@@ -35,26 +36,28 @@ const ConverterPage = lazy(() => import("./pages/converter-page"));
 const SigninPage = lazy(() => import("./pages/signin-page"));
 
 function getAlgorithm(appTheme: "dark" | "light") {
-  return appTheme === "dark" ? theme.darkAlgorithm : theme.defaultAlgorithm;
+  return appTheme === "dark"
+    ? antdTheme.darkAlgorithm
+    : antdTheme.defaultAlgorithm;
 }
 
 const App: FC = () => {
   useAuth();
-  const { addIpcListener, removeIpcListener, getMachineId } = useAPI();
+  const { addIpcListener, removeIpcListener } = usePlatform();
   const { setUpdateAvailable, setUploadChecking } = useSessionStore(
     useShallow(updateSelector),
   );
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
   const { language } = useAppStore(useShallow(appStoreSelector));
   const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
-  const { increase } = useDownloadStore(useShallow(downloadStoreSelector));
   const { theme, setTheme } = useSessionStore(useShallow(themeSelector));
   const [appLocale, setAppLocale] = useState<Locale>();
+  const [adapterReady, setAdapterReady] = useState(false);
 
   useEffect(() => {
-    if (language == AppLanguage.ZH) {
+    if (language === AppLanguage.ZH) {
       setAppLocale(zhCN);
-    } else if (language == AppLanguage.EN) {
+    } else if (language === AppLanguage.EN) {
       setAppLocale(enUS);
     } else {
       const lang = getBrowserLang();
@@ -74,61 +77,99 @@ const App: FC = () => {
     }
   });
 
-  // 监听store变化
-  const onAppStoreChange = useMemoizedFn((event: any, store: AppStore) => {
-    setAppStore(store);
-  });
-
-  const onReceiveDownloadItem = useMemoizedFn(() => {
-    increase();
-  });
+  // 监听config变化
+  const handleConfigChanged = useMemoizedFn(
+    (_event: unknown, data: { key: string; value: unknown }) => {
+      setAppStore({ [data.key]: data.value });
+    },
+  );
 
   const onChangePrivacy = useMemoizedFn(() => {
     setBrowserStore({ url: "", title: "", mode: PageMode.Default });
   });
 
   useEffect(() => {
-    const updateAvailable = () => {
+    const onUpdateAvailable = () => {
       setUpdateAvailable(true);
       setUploadChecking(false);
     };
-    const updateNotAvailable = () => {
+    const onUpdateNotAvailable = () => {
       setUpdateAvailable(false);
       setUploadChecking(false);
     };
     const checkingForUpdate = () => {
       setUploadChecking(true);
     };
-    const onDownloadSuccess = () => {
-      tdApp.onEvent(DOWNLOAD_SUCCESS);
-    };
-    const onDownloadFailed = () => {
-      tdApp.onEvent(DOWNLOAD_FAIL);
-    };
-    addIpcListener("store-change", onAppStoreChange);
-    addIpcListener("download-item-notifier", onReceiveDownloadItem);
+    // Go SSE events
+    const unsubConfig = onConfigChanged(handleConfigChanged);
+
+    // Electron IPC events
     addIpcListener("change-privacy", onChangePrivacy);
-    addIpcListener("updateAvailable", updateAvailable);
-    addIpcListener("updateNotAvailable", updateNotAvailable);
+    addIpcListener("updateAvailable", onUpdateAvailable);
+    addIpcListener("updateNotAvailable", onUpdateNotAvailable);
     addIpcListener("checkingForUpdate", checkingForUpdate);
-    addIpcListener("download-success", onDownloadSuccess);
-    addIpcListener("download-failed", onDownloadFailed);
 
     return () => {
-      removeIpcListener("store-change", onAppStoreChange);
-      removeIpcListener("download-item-notifier", onReceiveDownloadItem);
+      unsubConfig();
       removeIpcListener("change-privacy", onChangePrivacy);
-      removeIpcListener("updateAvailable", updateAvailable);
-      removeIpcListener("updateNotAvailable", updateNotAvailable);
+      removeIpcListener("updateAvailable", onUpdateAvailable);
+      removeIpcListener("updateNotAvailable", onUpdateNotAvailable);
       removeIpcListener("checkingForUpdate", checkingForUpdate);
-      removeIpcListener("download-success", onDownloadSuccess);
-      removeIpcListener("download-failed", onDownloadFailed);
     };
   }, []);
 
   useAsyncEffect(async () => {
-    const deviceId = await getMachineId();
-    tdApp.onEvent(PAGE_LOAD, { deviceId });
+    if (!adapterReady) return;
+    try {
+      const config = await getConfig();
+      const deviceId = (config as Record<string, unknown>)?.machineId || "";
+      tdApp.onEvent(PAGE_LOAD, { deviceId });
+    } catch {
+      tdApp.onEvent(PAGE_LOAD, { deviceId: "" });
+    }
+  }, [adapterReady]);
+
+  useAsyncEffect(async () => {
+    try {
+      let coreUrl = "";
+
+      if (isWeb) {
+        // Web mode: Go Core serves both API and static files, same origin
+        coreUrl = import.meta.env.DEV
+          ? "http://127.0.0.1:9900"
+          : window.location.origin;
+        setupHttp(coreUrl);
+        initGoEvents(coreUrl);
+      } else {
+        // Electron mode: get coreUrl directly from preload IPC
+        // FIXME: wait for Go Core to fully start
+        await new Promise((r) => setTimeout(r, 1000));
+        const ipcResult = await window.electron?.getEnvPath();
+        const envPath = ipcResult?.code === 0 ? ipcResult.data : ipcResult;
+        if (envPath?.coreUrl) {
+          coreUrl = envPath.coreUrl;
+          setupHttp(coreUrl);
+          initGoEvents(coreUrl);
+        }
+      }
+
+      // Sync config from Go Core (single source of truth) to Zustand
+      if (coreUrl) {
+        try {
+          const config = await getConfig();
+          if (config) {
+            setAppStore(config as Record<string, unknown>);
+          }
+        } catch {
+          // Go Core may not be fully ready yet
+        }
+      }
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.warn("Go adapter init failed:", err);
+    } finally {
+      setAdapterReady(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -145,6 +186,10 @@ const App: FC = () => {
       isDarkTheme.removeEventListener("change", themeChange);
     };
   }, []);
+
+  if (!adapterReady) {
+    return <Loading />;
+  }
 
   return (
     <ConfigProvider
@@ -208,7 +253,7 @@ const App: FC = () => {
           <Route
             path="signin"
             element={
-              <Suspense>
+              <Suspense fallback={<Loading />}>
                 <SigninPage />
               </Suspense>
             }

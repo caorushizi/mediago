@@ -1,0 +1,25 @@
+{
+  "name": "@mediago/core-build",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MediaGo Core - Go download backend build scripts",
+  "scripts": {
+    "dev": "gulp dev",
+    "build": "gulp devBuild"
+  },
+  "keywords": [
+    "video",
+    "download",
+    "m3u8",
+    "bilibili",
+    "mediago"
+  ],
+  "author": "caorushizi",
+  "license": "MIT",
+  "devDependencies": {
+    "@swc/register": "^0.1.10",
+    "@types/gulp": "^4.0.17",
+    "cross-env": "^10.1.0",
+    "gulp": "^5.0.1"
+  }
+}

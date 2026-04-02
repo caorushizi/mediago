@@ -1,4 +1,5 @@
 import fs from "node:fs/promises";
+import os from "node:os";
 import path, { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import dotenvFlow from "dotenv-flow";
@@ -22,6 +23,7 @@ const pkg = JSON.parse(await fs.readFile("./app/package.json", "utf-8"));
 function getReleaseConfig(): Configuration {
   return {
     asar: true,
+    asarUnpack: [],
     productName: process.env.APP_NAME,
     buildVersion: pkg.version,
     appId: process.env.APP_ID,
@@ -46,11 +48,23 @@ function getReleaseConfig(): Configuration {
         to: "./preload",
       },
       "./package.json",
+      "!**/node_modules/**",
+      "**/node_modules/@mediago/electron-preload/**",
+      "**/node_modules/@mediago/browser-extension/**",
+      "**/node_modules/@ghostery/adblocker-electron-preload/**",
     ],
     extraResources: [
       {
         from: "./app/build/plugin",
         to: "plugin",
+      },
+      {
+        from: "./app/build/bin",
+        to: "bin",
+      },
+      {
+        from: "./app/build/deps",
+        to: "deps",
       },
     ],
     win: {
@@ -87,6 +101,7 @@ function getReleaseConfig(): Configuration {
     },
     mac: {
       icon: "../assets/icon.icns",
+      identity: null,
       target: [
         {
           target: "dmg",
@@ -97,7 +112,7 @@ function getReleaseConfig(): Configuration {
         CFBundleURLTypes: [
           {
             CFBundleURLName: "Mediago URL Scheme",
-            CFBundleURLSchemes: ["mediago"],
+            CFBundleURLSchemes: ["mediagoaaa"],
           },
         ],
       },
@@ -149,6 +164,40 @@ for (const task of electronTask) {
       force: true,
     },
   );
+}
+
+// Copy Go binaries to app/build/bin/ and app/build/deps/ for extraResources
+const isWindows = os.platform() === "win32";
+const ext = isWindows ? ".exe" : "";
+const binDir = path.resolve(appRoot, "app/build/bin");
+const depsDir = path.resolve(appRoot, "app/build/deps");
+
+await fs.mkdir(binDir, { recursive: true });
+await fs.mkdir(depsDir, { recursive: true });
+
+// Copy mediago-core binary + config
+await fs.copyFile(
+  path.resolve(projectRoot, `apps/core/bin/mediago-core${ext}`),
+  path.join(binDir, `mediago-core${ext}`),
+);
+await fs.copyFile(
+  path.resolve(projectRoot, "apps/core/configs/config.json"),
+  path.join(binDir, "config.json"),
+);
+
+// Copy mediago-player binary
+await fs.copyFile(
+  path.resolve(projectRoot, `apps/player/dist/mediago-player${ext}`),
+  path.join(binDir, `mediago-player${ext}`),
+);
+
+// Copy dependency binaries (ffmpeg, N_m3u8DL-RE, BBDown, gopeed)
+const platformKey = `${os.platform()}-${os.arch()}`;
+const localDepsDir = path.resolve(projectRoot, ".deps", platformKey);
+try {
+  await fs.cp(localDepsDir, depsDir, { recursive: true, force: true });
+} catch {
+  console.warn(`Warning: .deps/${platformKey} not found, skipping deps copy`);
 }
 
 const config = getReleaseConfig();

@@ -1,11 +1,11 @@
 import { QrcodeOutlined } from "@ant-design/icons";
-import { DownloadFilter, GET_ENV_PATH } from "@mediago/shared-common";
+import { DownloadFilter } from "@mediago/shared-common";
 import { useMemoizedFn } from "ahooks";
 import { Pagination, Popover, QRCode } from "antd";
 import { type FC, useId, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
-import { ExtractIcon, FolderIcon } from "@/assets/svg";
+import { FolderIcon } from "@/assets/svg";
 import DownloadForm, {
   type DownloadFormItem,
   type DownloadFormRef,
@@ -14,13 +14,13 @@ import { HomeDownloadButton } from "@/components/home-download-button";
 import PageContainer from "@/components/page-container";
 import { Button } from "@/components/ui/button";
 import { CLICK_DOWNLOAD } from "@/const";
-import useAPI from "@/hooks/use-api";
+import { usePlatform } from "@/hooks/use-platform";
+import { useEnvPath } from "@/hooks/use-config";
 import { useTasks } from "@/hooks/use-tasks";
 import { appStoreSelector, useAppStore } from "@/store/app";
 import { downloadFormSelector, useConfigStore } from "@/store/config";
 import { isWeb, tdApp } from "@/utils";
 import { DownloadList } from "./components/download-list";
-import useSWR from "swr";
 import { useUrlInvoke } from "@/hooks/use-url-invoke";
 
 interface Props {
@@ -28,7 +28,7 @@ interface Props {
 }
 
 const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
-  const { openDir, showBrowserWindow, getEnvPath } = useAPI();
+  const { openDir } = usePlatform();
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
   const newFormRef = useRef<DownloadFormRef>(null);
@@ -38,7 +38,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
   );
 
   const { pagination, total, mutate, setPage, setPageSize } = useTasks(filter);
-  const { data: envPath } = useSWR(GET_ENV_PATH, getEnvPath);
+  const { envPath } = useEnvPath();
 
   useUrlInvoke({
     onOpenForm: (item: DownloadFormItem) => {
@@ -80,12 +80,6 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
             <Button onClick={() => openDir(appStore.local)}>
               <FolderIcon />
               {t("openFolder")}
-            </Button>
-          )}
-          {filter === DownloadFilter.list && appStore.openInNewWindow && (
-            <Button onClick={() => showBrowserWindow()}>
-              <ExtractIcon fill="#fff" />
-              {t("materialExtraction")}
             </Button>
           )}
           {filter === DownloadFilter.done &&

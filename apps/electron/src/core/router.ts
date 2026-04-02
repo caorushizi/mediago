@@ -1,6 +1,7 @@
 import { provide } from "@inversifyjs/binding-decorators";
 import type { Controller } from "@mediago/shared-common";
-import { registerControllerHandlers, TYPES } from "@mediago/shared-node";
+import { registerControllerHandlers } from "./registerControllerHandlers";
+import { TYPES } from "../types/symbols";
 import { ipcMain } from "electron";
 import { inject, injectable, multiInject } from "inversify";
 import type { MediaGoRouter } from "../types/core";

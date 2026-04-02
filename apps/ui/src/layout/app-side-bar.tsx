@@ -1,6 +1,5 @@
 import { useMemoizedFn } from "ahooks";
 import { Badge } from "antd";
-import type React from "react";
 import {
   cloneElement,
   type PropsWithChildren,
@@ -27,7 +26,7 @@ import {
 import { downloadStoreSelector, useDownloadStore } from "@/store/download";
 import { updateSelector, useSessionStore } from "@/store/session";
 import { cn, isWeb } from "@/utils";
-import useAPI from "@/hooks/use-api";
+import { usePlatform } from "@/hooks/use-platform";
 
 function processLocation(pathname: string) {
   let name = pathname;
@@ -43,7 +42,7 @@ type MenuItem = {
 };
 
 interface AppMenuItemProps extends PropsWithChildren {
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
   link: string;
   activeKey: string;
   className?: string;
@@ -63,27 +62,23 @@ function AppMenuItem({
   }, [activeKey, link]);
 
   return (
-    <Link
-      discover="render"
-      to={link}
-
-      onClick={onClick}
-    >
-      <div className={cn(
-        "flex h-10 flex-row items-center gap-1 rounded-lg bg-[#FAFCFF] px-3 text-sm text-[#636D7E] hover:bg-[#E1F0FF] hover:text-[#636D7E] dark:bg-[#2C2E33] dark:text-[rgba(255,255,255,0.85)] dark:hover:bg-[#3B3C41] dark:hover:text-[rgba(255,255,255,0.85)]",
-        {
-          "bg-linear-to-r from-[#127AF3] to-[#06D5FB] text-white hover:text-white dark:text-white":
-            isActive,
-        },
-        className
-      )}>
+    <Link discover="render" to={link} onClick={onClick}>
+      <div
+        className={cn(
+          "flex h-10 flex-row items-center gap-1 rounded-lg bg-[#FAFCFF] px-3 text-sm text-[#636D7E] hover:bg-[#E1F0FF] hover:text-[#636D7E] dark:bg-[#2C2E33] dark:text-[rgba(255,255,255,0.85)] dark:hover:bg-[#3B3C41] dark:hover:text-[rgba(255,255,255,0.85)]",
+          {
+            "bg-linear-to-r from-[#127AF3] to-[#06D5FB] text-white hover:text-white dark:text-white":
+              isActive,
+          },
+          className,
+        )}
+      >
         {icon &&
           cloneElement(icon as React.ReactElement, {
             fill: isActive ? "#fff" : "#AAB5CB",
           })}
         {children}
       </div>
-
     </Link>
   );
 }
@@ -93,12 +88,12 @@ interface Props {
 }
 
 export function AppSideBar({ className }: Props) {
-  const { setAppStore: ipcSetAppStore, showBrowserWindow } = useAPI();
+  const { showBrowserWindow, combineToHomePage } = usePlatform();
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const { count, clearCount } = useDownloadStore(
-    useShallow(downloadStoreSelector)
+    useShallow(downloadStoreSelector),
   );
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
@@ -106,7 +101,7 @@ export function AppSideBar({ className }: Props) {
 
   const activeKey = useMemo(
     () => processLocation(location.pathname),
-    [location.pathname]
+    [location.pathname],
   );
 
   const handleExternalLink = useMemoizedFn(
@@ -114,19 +109,36 @@ export function AppSideBar({ className }: Props) {
       e.stopPropagation();
       e.preventDefault();
 
-      setAppStore({ openInNewWindow: true });
-      if (location.pathname === "/source") {
-        navigate("/");
+      if (appStore.openInNewWindow) {
+        setAppStore({ openInNewWindow: false });
+        navigate("/source");
+        await combineToHomePage({
+          url: "",
+          sourceList: [],
+        });
+      } else {
+        setAppStore({ openInNewWindow: true });
+        if (location.pathname === "/source") {
+          navigate("/");
+        }
+        await showBrowserWindow();
       }
-      // FIXME: It is possible that the webview is not completely hidden yet
-      await ipcSetAppStore("openInNewWindow", true);
-      await showBrowserWindow();
-    }
+    },
   );
 
   const handleClearCount = useMemoizedFn(() => {
     clearCount();
   });
+
+  const handleExtractPage = useMemoizedFn(
+    (e: React.MouseEvent<HTMLAnchorElement>) => {
+      if (appStore.openInNewWindow) {
+        e.preventDefault();
+        e.stopPropagation();
+        showBrowserWindow();
+      }
+    },
+  );
 
   const items1: MenuItem[] = useMemo(() => {
     return [
@@ -173,6 +185,7 @@ export function AppSideBar({ className }: Props) {
             activeKey={activeKey}
             className="group"
             icon={<ExtractIcon />}
+            onClick={handleExtractPage}
           >
             <span className="flex flex-1">{t("materialExtraction")}</span>
             <div
@@ -181,6 +194,7 @@ export function AppSideBar({ className }: Props) {
               onClick={handleExternalLink}
             >
               <ShareIcon
+                className={cn({ "rotate-180": appStore.openInNewWindow })}
                 fill={"/source" === location.pathname ? "#fff" : "#AAB5CB"}
               />
             </div>
@@ -213,20 +227,16 @@ export function AppSideBar({ className }: Props) {
   ]);
 
   const finalItems = useMemo(() => {
-    return items1
-      .filter((i) =>
-        isWeb ? i.key !== "source" && i.key !== "converter" : true
-      )
-      .filter((item) =>
-        appStore.openInNewWindow ? item?.key !== "source" : true
-      );
-  }, [items1, appStore.openInNewWindow]);
+    return items1.filter((i) =>
+      isWeb ? i.key !== "source" && i.key !== "converter" : true,
+    );
+  }, [items1]);
 
   return (
     <div
       className={cn(
         "relative select-none bg-white p-3 dark:bg-[#1F2024]",
-        className
+        className,
       )}
     >
       <div className="relative z-10 flex flex-row gap-3 sm:w-[180px] sm:flex-col">

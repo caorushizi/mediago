@@ -7,7 +7,12 @@ import { useTranslation } from "react-i18next";
 import DownloadForm, { type DownloadFormRef } from "@/components/download-form";
 import Loading from "@/components/loading";
 import { EDIT_DOWNLOAD } from "@/const";
-import useAPI from "@/hooks/use-api";
+import { usePlatform } from "@/hooks/use-platform";
+import {
+  startDownload,
+  stopDownload,
+  deleteDownloadTask,
+} from "@/api/download-task";
 import { useTasks } from "@/hooks/use-tasks";
 import { cn, tdApp } from "@/utils";
 import { DownloadTaskItem } from "./download-item";
@@ -19,14 +24,8 @@ interface Props {
 
 export function DownloadTaskList({ filter }: Props) {
   const [selected, setSelected] = useState<number[]>([]);
-  const {
-    startDownload,
-    addIpcListener,
-    removeIpcListener,
-    stopDownload,
-    onDownloadListContextMenu,
-    deleteDownloadTask,
-  } = useAPI();
+  const { addIpcListener, removeIpcListener, onDownloadListContextMenu } =
+    usePlatform();
   const { message } = App.useApp();
   const { t } = useTranslation();
   const editFormRef = useRef<DownloadFormRef>(null);
@@ -58,7 +57,7 @@ export function DownloadTaskList({ filter }: Props) {
     return () => {
       removeIpcListener("download-item-event", onDownloadMenuEvent);
 
-      // 清理未完成的刷新定时器
+      // Clean up any pending refresh timers
       if (refreshTimeoutRef.current) {
         clearTimeout(refreshTimeoutRef.current);
         refreshTimeoutRef.current = null;
@@ -125,17 +124,13 @@ export function DownloadTaskList({ filter }: Props) {
   });
 
   const onDeleteItems = useMemoizedFn(async (ids: number[]) => {
-    for (const id of ids) {
-      await deleteDownloadTask(Number(id));
-    }
+    await Promise.allSettled(ids.map((id) => deleteDownloadTask(Number(id))));
     setSelected([]);
     mutate();
   });
 
   const onDownloadItems = useMemoizedFn(async (ids: number[]) => {
-    for (const id of ids) {
-      await startDownload(Number(id));
-    }
+    await Promise.allSettled(ids.map((id) => startDownload(Number(id))));
 
     message.success(t("addTaskSuccess"));
     mutate();

@@ -2,8 +2,10 @@ import { provide } from "@inversifyjs/binding-decorators";
 import {
   CLEAR_WEBVIEW_CACHE,
   type Controller,
+  type DownloadTask,
   PLUGIN_READY,
   SET_WEBVIEW_BOUNDS,
+  SHOW_DOWNLOAD_DIALOG,
   WEBVIEW_CHANGE_USER_AGENT,
   WEBVIEW_GO_BACK,
   WEBVIEW_GO_HOME,
@@ -13,7 +15,10 @@ import {
   WEBVIEW_SHOW,
   WEBVIEW_URL_CONTEXTMENU,
 } from "@mediago/shared-common";
-import { handle, i18n, TYPES } from "@mediago/shared-node";
+import { handle } from "../core/decorators";
+import { i18n } from "../core/i18n";
+import { DownloaderServer } from "../services/downloader.server";
+import { TYPES } from "../types/symbols";
 import {
   type IpcMainEvent,
   Menu,
@@ -23,7 +28,6 @@ import {
 import { inject, injectable } from "inversify";
 import { SniffingHelper } from "../services/sniffing-helper.service";
 import WebviewService from "../services/webview.service";
-import ElectronStore from "../vendor/ElectronStore";
 
 @injectable()
 @provide(TYPES.Controller)
@@ -31,8 +35,8 @@ export default class WebviewController implements Controller {
   constructor(
     @inject(WebviewService)
     private readonly webview: WebviewService,
-    @inject(ElectronStore)
-    private readonly store: ElectronStore,
+    @inject(DownloaderServer)
+    private readonly downloaderServer: DownloaderServer,
     @inject(SniffingHelper)
     private readonly sniffingHelper: SniffingHelper,
   ) {}
@@ -92,7 +96,8 @@ export default class WebviewController implements Controller {
   @handle(WEBVIEW_CHANGE_USER_AGENT)
   async webviewChangeUserAgent(e: IpcMainEvent, isMobile: boolean) {
     this.webview.setUserAgent(isMobile);
-    this.store.set("isMobile", isMobile);
+    const client = this.downloaderServer.getClient();
+    await client.setConfigKey("isMobile", isMobile);
   }
 
   @handle(PLUGIN_READY)
@@ -103,5 +108,11 @@ export default class WebviewController implements Controller {
   @handle(CLEAR_WEBVIEW_CACHE)
   async clearWebviewCache() {
     return this.webview.clearCache();
+  }
+
+  @handle(SHOW_DOWNLOAD_DIALOG)
+  async showDownloadDialog(e: IpcMainEvent, data: DownloadTask) {
+    const image = await this.webview.captureView();
+    this.webview.sendToWindow(SHOW_DOWNLOAD_DIALOG, data, image?.toDataURL());
   }
 }

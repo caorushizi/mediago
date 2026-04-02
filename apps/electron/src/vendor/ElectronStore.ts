@@ -1,24 +1,21 @@
 import { provide } from "@inversifyjs/binding-decorators";
-import { appStoreDefaults, appStoreSharedOptions } from "@mediago/shared-node";
 import Store from "electron-store";
 import { injectable } from "inversify";
-import { download, workspace } from "../utils";
-import { AppStore } from "@mediago/shared-common";
+import { workspace } from "../utils";
+
+interface WindowBoundsStore {
+  mainBounds?: Electron.Rectangle;
+  browserBounds?: Electron.Rectangle;
+}
 
 @injectable()
 @provide()
-export default class StoreService extends Store<AppStore> {
+export default class ElectronStore extends Store<WindowBoundsStore> {
   constructor() {
     super({
-      ...appStoreSharedOptions,
-      name: "config",
+      name: "window-state",
       cwd: workspace,
-      defaults: {
-        ...appStoreDefaults,
-        local: download,
-      },
+      defaults: {},
     });
   }
-
-  async init() {}
 }

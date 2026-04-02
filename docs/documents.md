@@ -57,7 +57,7 @@ outline: deep
 
 开启了之后浏览器页面会独立出一个窗口
 
-   ![step 1](./images/documents-step2.png)
+![step 1](./images/documents-step2.png)
 
 ### 2. 代理设置
 
@@ -75,7 +75,7 @@ outline: deep
 
 打开后会将浏览器伪装成手机浏览器，请求移动端的站点（左侧是开启手机模式的截图）
 
-  ![step 2](./images/documents-step3.png)
+![step 2](./images/documents-step3.png)
 
 ### 6. 使用沉浸式嗅探
 
@@ -87,7 +87,7 @@ outline: deep
 
 ### 7. 隐私模式： 打开后软件不会保存用户的浏览记录
 
-  ![step 4](./images/documents-step5.png)
+![step 4](./images/documents-step5.png)
 
 ### 8. 更多操作
 

@@ -2,7 +2,6 @@ import { dirname, resolve } from "node:path";
 import { app } from "electron";
 
 export const appData = app.getPath("appData");
-export const download = app.getPath("downloads");
 export const exePath = dirname(app.getPath("exe"));
 
 export enum Platform {
@@ -15,9 +14,13 @@ export const isMac = process.platform === Platform.MacOS;
 export const isWin = process.platform === Platform.Windows;
 export const isLinux = process.platform === Platform.Linux;
 
-export const appName = process.env.APP_NAME || "mediago";
+if (!process.env.APP_NAME) {
+  throw new Error("APP_NAME is not defined in environment variables");
+}
+
+export const appName = process.env.APP_NAME;
 export const workspace = resolve(appData, appName);
-export const defaultScheme = "mediago";
+export const defaultScheme = appName;
 export const PERSIST_MEDIAGO = "persist:mediago";
 export const PERSIST_WEBVIEW = "persist:webview";
 export const PRIVACY_WEBVIEW = "webview";

@@ -18,10 +18,12 @@ import { forwardRef, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import { ADD_TO_LIST, DOWNLOAD_NOW } from "@/const";
-import useAPI from "@/hooks/use-api";
+import { usePlatform } from "@/hooks/use-platform";
+import { createDownloadTasks, getDownloadFolders } from "@/api/download-task";
 import { useDockerApi } from "@/hooks/use-docker-api";
 import { appStoreSelector, useAppStore } from "@/store/app";
 import { downloadFormSelector, useConfigStore } from "@/store/config";
+import { downloadStoreSelector, useDownloadStore } from "@/store/download";
 import { tdApp } from "@/utils";
 import { DownloadTask, DownloadType } from "@mediago/shared-common";
 import { BatchUrlTextarea } from "./batchurl-textarea";
@@ -78,19 +80,26 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
     );
     const [folders, setFolders] = useState<Options[]>([]);
     const [videoFolders, setVideoFolders] = useState<string[]>([]);
-    const { createDownloadTasks, getVideoFolders, appContextMenu } = useAPI();
+    const { appContextMenu } = usePlatform();
     const { addVideosToDocker } = useDockerApi();
+    const { increase } = useDownloadStore(useShallow(downloadStoreSelector));
 
     useAsyncEffect(async () => {
       if (modalOpen) {
-        const folders = await getVideoFolders();
-        setVideoFolders(folders);
-        setFolders(() =>
-          folders.map((f) => ({
-            value: f,
-            label: f,
-          })),
-        );
+        try {
+          const fetchedFolders = await getDownloadFolders();
+          if (Array.isArray(fetchedFolders)) {
+            setVideoFolders(fetchedFolders);
+            setFolders(() =>
+              fetchedFolders.map((f) => ({
+                value: f,
+                label: f,
+              })),
+            );
+          }
+        } catch {
+          // Go Core may not be ready yet, ignore
+        }
       }
     }, [modalOpen]);
 
@@ -109,15 +118,17 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
       };
     }, []);
 
-    const handleValuesChange = useMemoizedFn((values: any) => {
-      const { type, batch } = values;
-      if (type) {
-        setLastDownloadTypes(type);
-      }
-      if (batch != null) {
-        setLastIsBatch(batch);
-      }
-    });
+    const handleValuesChange = useMemoizedFn(
+      (values: Record<string, unknown>) => {
+        const { type, batch } = values;
+        if (type) {
+          setLastDownloadTypes(type);
+        }
+        if (batch !== null && batch !== undefined) {
+          setLastIsBatch(batch);
+        }
+      },
+    );
 
     const afterOpenChange = useMemoizedFn((open: boolean) => {
       onFormVisibleChange?.(open);
@@ -137,11 +148,12 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
       try {
         const tasks = await getFormItems();
         await createDownloadTasks(tasks);
+        increase();
         setModalOpen(false);
         onConfirm?.(form.getFieldsValue());
         tdApp.onEvent(ADD_TO_LIST, { id });
-      } catch (e: any) {
-        message.error(e?.message || t("pleaseEnterCorrectFormInfo"));
+      } catch (e: unknown) {
+        message.error((e as Error)?.message || t("pleaseEnterCorrectFormInfo"));
       }
     });
 
@@ -157,8 +169,8 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
         await addVideosToDocker({ items: tasks });
 
         message.success(t("addToDockerSuccess"));
-      } catch (e: any) {
-        message.error(e?.message || t("pleaseEnterCorrectFormInfo"));
+      } catch (e: unknown) {
+        message.error((e as Error)?.message || t("pleaseEnterCorrectFormInfo"));
       }
     });
 
@@ -171,11 +183,12 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
       try {
         const tasks = await getFormItems();
         await createDownloadTasks(tasks, true);
+        increase();
         setModalOpen(false);
         onConfirm?.(form.getFieldsValue());
         tdApp.onEvent(DOWNLOAD_NOW, { id });
-      } catch (e: any) {
-        message.error(e?.message || t("pleaseEnterCorrectFormInfo"));
+      } catch (e: unknown) {
+        message.error((e as Error)?.message || t("pleaseEnterCorrectFormInfo"));
       }
     });
 
@@ -313,8 +326,8 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
             />
           </Form.Item>
           <Form.Item noStyle shouldUpdate>
-            {(form) => {
-              const isBatch = form.getFieldValue("batch");
+            {(formInstance) => {
+              const isBatch = formInstance.getFieldValue("batch");
               if (isBatch) {
                 return null;
               }
@@ -326,7 +339,8 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
                   label={t("videoName")}
                   rules={[
                     {
-                      required: form.getFieldsValue().type !== "bilibili",
+                      required:
+                        formInstance.getFieldsValue().type !== "bilibili",
                       message: t("pleaseEnterCorrectFormInfo"),
                     },
                   ]}
@@ -340,8 +354,8 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
             }}
           </Form.Item>
           <Form.Item noStyle shouldUpdate>
-            {(form) => {
-              if (isEdit || !form.getFieldValue("batch")) {
+            {(formInstance) => {
+              if (isEdit || !formInstance.getFieldValue("batch")) {
                 return null;
               }
               return (
@@ -386,8 +400,8 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
             }}
           </Form.Item>
           <Form.Item noStyle shouldUpdate>
-            {(form) => {
-              if (form.getFieldValue("batch") && !isEdit) {
+            {(formInstance) => {
+              if (formInstance.getFieldValue("batch") && !isEdit) {
                 return null;
               }
               return (
@@ -410,9 +424,11 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
                     placeholder={t("pleaseEnterOnlineVideoUrlOrDragM3U8Here")}
                     onContextMenu={appContextMenu}
                     onDrop={(e) => {
-                      const file: any = e.dataTransfer.files[0];
-                      form.setFieldValue("url", `file://${file.path}`);
-                      form.validateFields(["url"]);
+                      const file = e.dataTransfer.files[0] as File & {
+                        path: string;
+                      };
+                      formInstance.setFieldValue("url", `file://${file.path}`);
+                      formInstance.validateFields(["url"]);
                     }}
                   />
                 </Form.Item>
@@ -420,8 +436,8 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
             }}
           </Form.Item>
           <Form.Item noStyle shouldUpdate>
-            {(form) => {
-              if (form.getFieldValue("batch")) {
+            {(formInstance) => {
+              if (formInstance.getFieldValue("batch")) {
                 return null;
               }
               return (
@@ -437,10 +453,10 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
             }}
           </Form.Item>
           <Form.Item noStyle shouldUpdate>
-            {(form) => {
+            {(formInstance) => {
               if (
-                form.getFieldValue("type") !== "m3u8" &&
-                !form.getFieldValue("batch")
+                formInstance.getFieldValue("type") !== "m3u8" &&
+                !formInstance.getFieldValue("batch")
               ) {
                 return null;
               }

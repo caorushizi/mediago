@@ -1,4 +1,4 @@
-import { type ControllerHandlerBinder } from "@mediago/shared-node";
+import { type ControllerHandlerBinder } from "./registerControllerHandlers";
 import { error, success } from "../utils";
 import type ElectronLogger from "../vendor/ElectronLogger";
 

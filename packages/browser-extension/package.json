@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "tsdown --watch ./src",
     "build": "tsdown",
-    "lint": "boxlint .",
+    "lint": "oxlint .",
     "type:check": "tsc --noEmit"
   },
   "dependencies": {
@@ -17,7 +17,7 @@
   "devDependencies": {
     "@types/jquery": "^3.5.30",
     "@types/node": "^24.7.2",
-    "@typescript/native-preview": "7.0.0-dev.20251023.1",
+    "typescript": "^6.0.2",
     "tsdown": "^0.15.9"
   },
   "main": "./build/index.js",
@@ -27,5 +27,6 @@
     ".": "./build/index.js",
     "./package.json": "./package.json"
   },
+  "author": "caorushizi",
   "license": "MIT"
 }

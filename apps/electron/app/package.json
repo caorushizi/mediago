@@ -7,19 +7,8 @@
   "author": "caorushizi",
   "homepage": "https://downloader.caorushizi.cn/",
   "license": "MIT",
-  "dependencies": {
-    "@ghostery/adblocker-electron": "2.12.5",
-    "@ghostery/adblocker-electron-preload": "^2.12.5",
-    "@mediago/browser-extension": "workspace:*",
-    "@mediago/core": "0.0.13",
-    "@mediago/deps": "0.0.6",
-    "@mediago/electron-preload": "workspace:*",
-    "@mediago/player": "0.0.10",
-    "better-sqlite3": "12.4.1",
-    "reflect-metadata": "^0.2.2",
-    "typeorm": "0.3.27"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "electron": "35.7.5"
+    "electron": "41.1.0"
   }
 }

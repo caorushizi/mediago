@@ -25,7 +25,10 @@ export function isUrl(string: string) {
     return false;
   }
 
-  if (localhostDomainRE.test(everythingAfterProtocol) || nonLocalhostDomainRE.test(everythingAfterProtocol)) {
+  if (
+    localhostDomainRE.test(everythingAfterProtocol) ||
+    nonLocalhostDomainRE.test(everythingAfterProtocol)
+  ) {
     return true;
   }
 
@@ -33,11 +36,11 @@ export function isUrl(string: string) {
 }
 
 /**
- * 判断URL是否经过编码
- * @param url 需要判断的URL字符串
- * @returns boolean 如果URL被编码返回true，否则返回false
+ * Determine whether a URL has been encoded
+ * @param url URL string to check
+ * @returns boolean Returns true if the URL is encoded, false otherwise
  */
 export function isEncodedURL(url: string): boolean {
-  // 如果解码后的URL与原URL不同，说明URL被编码过
+  // If the decoded URL differs from the original, the URL was encoded
   return decodeURIComponent(url) !== url;
 }

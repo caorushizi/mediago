@@ -1,20 +1,16 @@
 packages:
   - app
   - docs
-  - apps/**
+  - apps/*
   - packages/**
-  - '!**/test/**'
-  - '!**/release/**'
+  - "!**/test/**"
+  - "!**/release/**"
 
 onlyBuiltDependencies:
-  - '@mediago/core'
-  - '@mediago/deps'
-  - '@mediago/player'
-  - '@parcel/watcher'
-  - '@sentry-internal/node-cpu-profiler'
-  - '@swc/core'
-  - '@tailwindcss/oxide'
-  - better-sqlite3
+  - "@parcel/watcher"
+  - "@sentry-internal/node-cpu-profiler"
+  - "@swc/core"
+  - "@tailwindcss/oxide"
   - core-js
   - electron
   - electron-winstaller

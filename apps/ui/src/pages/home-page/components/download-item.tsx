@@ -6,13 +6,12 @@ import {
 import {
   DownloadProgress,
   DownloadStatus,
-  GET_ENV_PATH,
   type DownloadTask,
   type DownloadTaskWithFile,
 } from "@mediago/shared-common";
 import { useMemoizedFn } from "ahooks";
 import { Progress } from "antd";
-import { type ReactNode, useMemo } from "react";
+import { memo, type ReactNode, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import selectedBg from "@/assets/images/select-item-bg.png";
@@ -37,8 +36,8 @@ import type { DownloadTaskDetails } from "@/hooks/use-tasks";
 import { appStoreSelector, useAppStore } from "@/store/app";
 import { cn, fromatDateTime, tdApp } from "@/utils";
 import { TerminalDialog } from "./terminal-dialog";
-import useAPI from "@/hooks/use-api";
-import useSWR from "swr";
+import { usePlatform } from "@/hooks/use-platform";
+import { useEnvPath } from "@/hooks/use-config";
 
 interface Props {
   task: DownloadTaskDetails;
@@ -52,7 +51,7 @@ interface Props {
   downloadStatus?: DownloadStatus;
 }
 
-export const DownloadTaskItem = ({
+export const DownloadTaskItem = memo(function DownloadTaskItem({
   task,
   onSelectChange,
   selected,
@@ -60,15 +59,15 @@ export const DownloadTaskItem = ({
   onStopDownload,
   onContextMenu,
   onShowEditForm,
-}: Props) => {
+}: Props) {
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
-  const { openUrl, getEnvPath } = useAPI();
-  const { data: envPath } = useSWR(GET_ENV_PATH, getEnvPath);
+  const { openUrl } = usePlatform();
+  const { envPath } = useEnvPath();
 
   // Handlers
   const handlePlay = useMemoizedFn(() => {
-    // FIXME: 播放器接入
+    // FIXME: Player integration
     tdApp.onEvent(PLAY_VIDEO);
     openUrl(envPath.playerUrl);
   });
@@ -113,7 +112,7 @@ export const DownloadTaskItem = ({
 
     switch (task.status) {
       case DownloadStatus.Ready:
-        terminalBtn && buttons.push(terminalBtn);
+        if (terminalBtn) buttons.push(terminalBtn);
         buttons.push(editBtn);
         buttons.push(
           <IconButton
@@ -125,7 +124,7 @@ export const DownloadTaskItem = ({
         );
         break;
       case DownloadStatus.Downloading:
-        terminalBtn && buttons.push(terminalBtn);
+        if (terminalBtn) buttons.push(terminalBtn);
         buttons.push(
           <IconButton
             key="stop"
@@ -136,7 +135,7 @@ export const DownloadTaskItem = ({
         );
         break;
       case DownloadStatus.Failed:
-        terminalBtn && buttons.push(terminalBtn);
+        if (terminalBtn) buttons.push(terminalBtn);
         buttons.push(editBtn);
         buttons.push(
           <IconButton
@@ -147,11 +146,11 @@ export const DownloadTaskItem = ({
           />,
         );
         break;
-      case DownloadStatus.Watting:
-        buttons.push(<span key="watting">{t("watting")}</span>);
+      case DownloadStatus.Pending:
+        buttons.push(<span key="pending">{t("pending")}</span>);
         break;
       case DownloadStatus.Stopped:
-        terminalBtn && buttons.push(terminalBtn);
+        if (terminalBtn) buttons.push(terminalBtn);
         buttons.push(editBtn);
         buttons.push(
           <IconButton
@@ -343,4 +342,4 @@ export const DownloadTaskItem = ({
       </div>
     </div>
   );
-};
+});

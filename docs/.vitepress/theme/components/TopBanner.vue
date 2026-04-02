@@ -21,7 +21,11 @@ const closeBanner = () => {
         </span>
       </div>
       <div class="banner-right">
-        <a href="https://mediago.torchstellar.com/?from=banner" target="_blank" class="banner-button">
+        <a
+          href="https://mediago.torchstellar.com/?from=banner"
+          target="_blank"
+          class="banner-button"
+        >
           {{ t("banner.action") }}
           <svg
             class="banner-icon"
@@ -33,8 +37,17 @@ const closeBanner = () => {
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
         </a>
-        <button class="banner-close" @click="closeBanner" :aria-label="t('banner.close')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button
+          class="banner-close"
+          @click="closeBanner"
+          :aria-label="t('banner.close')"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
             <path d="M18 6L6 18M6 6l12 12" />
           </svg>
         </button>
@@ -65,7 +78,7 @@ const closeBanner = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex:1;
+  flex: 1;
   padding: 0 36px;
   position: relative;
   z-index: 2;

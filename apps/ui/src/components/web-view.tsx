@@ -1,6 +1,6 @@
 import { type FC, useEffect, useRef } from "react";
 import { cn } from "@/utils";
-import useAPI from "@/hooks/use-api";
+import { usePlatform } from "@/hooks/use-platform";
 
 interface DivRect {
   left: number;
@@ -27,7 +27,7 @@ const WebView: FC<WebViewProps> = ({ className }) => {
   const webviewRef = useRef<HTMLDivElement>(null);
   const resizeObserver = useRef<ResizeObserver>();
 
-  const { setWebviewBounds, webviewHide, webviewShow } = useAPI();
+  const { setWebviewBounds, webviewHide, webviewShow } = usePlatform();
 
   useEffect(() => {
     if (!webviewRef.current) return;

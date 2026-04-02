@@ -5,6 +5,7 @@ The Electron main process that handles the desktop application lifecycle, window
 ## Overview
 
 This package contains the Electron main process code that:
+
 - Creates and manages application windows
 - Handles system tray integration
 - Manages application menus and shortcuts

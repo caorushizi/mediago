@@ -23,7 +23,7 @@ const initialState: AppStore = {
   autoUpgrade: true,
   audioMuted: true,
   enableMobilePlayer: false,
-  blockAds: false,
+  blockAds: true,
   allowBeta: false,
   enableDocker: false,
   dockerUrl: "",

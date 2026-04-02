@@ -42,7 +42,7 @@ export interface ConversionResponse {
 
 export enum DownloadStatus {
   Ready = "ready",
-  Watting = "watting",
+  Pending = "pending",
   Downloading = "downloading",
   Stopped = "stopped",
   Success = "success",
@@ -151,8 +151,13 @@ export interface DownloadFailedEvent extends DownloadEvent<DownloadFailedData> {
   type: "failed";
 }
 
-export interface DownloadProgressEvent
-  extends DownloadEvent<DownloadProgress[]> {
+export interface DownloadStoppedEvent extends DownloadEvent<{ id: number }> {
+  type: "stopped";
+}
+
+export interface DownloadProgressEvent extends DownloadEvent<
+  DownloadProgress[]
+> {
   type: "progress";
 }
 
@@ -163,6 +168,7 @@ export interface EnvPath {
   platform: string;
   local: string;
   playerUrl: string;
+  coreUrl: string;
 }
 
 export interface Rectangle {
@@ -244,64 +250,78 @@ export interface IS_SETUP_RESPONSE {
   setuped: boolean;
 }
 
-export interface MediaGoApi {
+/**
+ * Data/CRUD operations — routed to Go Core HTTP API.
+ * Available in both Electron and web/server modes.
+ */
+export interface GoApi {
   getEnvPath(): Promise<EnvPath>;
   getFavorites(): Promise<Favorite[]>;
   addFavorite(
     favorite: Omit<Favorite, "id" | "createdDate" | "updatedDate">,
   ): Promise<Favorite>;
   removeFavorite(id: number): Promise<void>;
-  setWebviewBounds(rect: Rectangle): Promise<void>;
-  webviewGoBack(): Promise<boolean>;
-  webviewReload(): Promise<void>;
-  webviewLoadURL(url?: string): Promise<void>;
-  webviewGoHome(): Promise<void>;
   getAppStore(): Promise<AppStore>;
-  onSelectDownloadDir(): Promise<string>;
   setAppStore(
     key: keyof AppStore,
     val: AppStore[keyof AppStore],
   ): Promise<void>;
-  openDir(dir?: string): Promise<void>;
   createDownloadTasks(
     tasks: Omit<DownloadTask, "id">[],
     startDownload?: boolean,
   ): Promise<Video[]>;
   getDownloadTasks(p: DownloadTaskPagination): Promise<DownloadTaskResponse>;
   startDownload(vid: number): Promise<void>;
-  openUrl(url: string): Promise<void>;
   stopDownload(id: number): Promise<void>;
-  onDownloadListContextMenu(id: number): Promise<void>;
-  onFavoriteItemContextMenu(id: number): Promise<void>;
   deleteDownloadTask(id: number): Promise<void>;
-  convertToAudio(id: number): Promise<void>;
-  rendererEvent(
-    channel: string,
-    funcId: string,
-    listener: (...args: unknown[]) => void, // More specific than 'any'
-  ): void;
-  removeEventListener(channel: string, funcId: string): void;
-  showBrowserWindow(): Promise<void>;
-  webviewHide(): Promise<void>;
-  webviewShow(): Promise<void>;
-  appContextMenu(): Promise<void>;
-  combineToHomePage(store: BrowserStore): Promise<void>;
   updateDownloadTask(
     task: DownloadTask,
     startDownload?: boolean,
   ): Promise<void>;
-  getLocalIP(): Promise<string>;
-  openBrowser(url: string): Promise<void>;
-  selectFile(): Promise<string>;
-  getSharedState(): Promise<unknown>; // Use 'unknown' for better type safety than 'any'
-  setSharedState(state: unknown): Promise<void>; // Use 'unknown'
-  setUserAgent(isMobile: boolean): Promise<void>;
+  getVideoFolders(): Promise<string[]>;
   getDownloadLog(id: number): Promise<string>;
-  showDownloadDialog(data: Omit<DownloadTask, "id">[]): Promise<unknown>; // Result depends on main process handler
-  pluginReady(): Promise<void>;
   getConversions(pagination: ConversionPagination): Promise<ConversionResponse>;
-  addConversion(conversion: Omit<Conversion, "id">): Promise<Conversion>;
+  addConversion(conversion: {
+    name: string;
+    path: string;
+    outputFormat: string;
+    quality: string;
+  }): Promise<Conversion>;
   deleteConversion(id: number): Promise<void>;
+  startConversion(id: number): Promise<void>;
+  stopConversion(id: number): Promise<void>;
+  getPageTitle(url: string): Promise<string | undefined>;
+  setupAuth(req: SetupAuthRequest): Promise<void>;
+  signin(req: SetupAuthRequest): Promise<void>;
+  isSetup(): Promise<IS_SETUP_RESPONSE>;
+  openUrl(url: string): Promise<void>;
+}
+
+/**
+ * Platform-specific operations — routed to Electron IPC in desktop mode,
+ * no-op stubs in web/server mode.
+ */
+export interface PlatformApi {
+  onSelectDownloadDir(): Promise<string>;
+  openDir(dir?: string): Promise<void>;
+  setWebviewBounds(rect: Rectangle): Promise<void>;
+  webviewGoBack(): Promise<boolean>;
+  webviewReload(): Promise<void>;
+  webviewLoadURL(url?: string): Promise<void>;
+  webviewGoHome(): Promise<void>;
+  webviewHide(): Promise<void>;
+  webviewShow(): Promise<void>;
+  onDownloadListContextMenu(id: number): Promise<void>;
+  onFavoriteItemContextMenu(id: number): Promise<void>;
+  showBrowserWindow(): Promise<void>;
+  appContextMenu(): Promise<void>;
+  combineToHomePage(store: BrowserStore): Promise<void>;
+  selectFile(): Promise<string>;
+  getSharedState(): Promise<unknown>;
+  setSharedState(state: unknown): Promise<void>;
+  setUserAgent(isMobile: boolean): Promise<void>;
+  showDownloadDialog(data: Omit<DownloadTask, "id">[]): Promise<unknown>;
+  pluginReady(): Promise<void>;
   getMachineId(): Promise<string>;
   clearWebviewCache(): Promise<void>;
   exportFavorites(): Promise<void>;
@@ -310,9 +330,16 @@ export interface MediaGoApi {
   startUpdate(): Promise<void>;
   installUpdate(): Promise<void>;
   exportDownloadList(): Promise<void>;
-  getVideoFolders(): Promise<string[]>;
-  getPageTitle(url: string): Promise<string | undefined>;
-  setupAuth(req: SetupAuthRequest): Promise<void>;
-  signin(req: SetupAuthRequest): Promise<void>;
-  isSetup(): Promise<IS_SETUP_RESPONSE>;
+  openUrl(url: string): Promise<void>;
+  openBrowser(url: string): Promise<void>;
+  getLocalIP(): Promise<string>;
+  rendererEvent(
+    channel: string,
+    funcId: string,
+    listener: (...args: unknown[]) => void,
+  ): void;
+  removeEventListener(channel: string, funcId: string): void;
 }
+
+/** Combined API — backward compatible union of Go + Platform */
+export type MediaGoApi = GoApi & PlatformApi;

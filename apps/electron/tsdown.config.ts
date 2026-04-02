@@ -62,15 +62,10 @@ const app = new ElectronApp();
 export default defineConfig({
   outDir: "build",
   shims: true,
-  external: [
-    "electron",
-    "typeorm",
-    "better-sqlite3",
-    "@mediago/player",
-    "@mediago/core",
-    "@mediago/deps",
-  ],
+  external: ["electron"],
   noExternal: [/.*/],
+  minify: !isDev,
+  sourcemap: isDev,
   define: {
     "process.env.NODE_ENV": JSON.stringify(
       process.env.NODE_ENV || "production",
@@ -79,6 +74,7 @@ export default defineConfig({
       process.env.APP_TARGET || "electron",
     ),
     "process.env.APP_VERSION": JSON.stringify(pkg.version),
+    "process.env.APP_NAME": JSON.stringify(process.env.APP_NAME),
   },
   loader: {
     ".jpg": "asset",

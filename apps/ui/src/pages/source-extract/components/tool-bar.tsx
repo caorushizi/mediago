@@ -1,8 +1,7 @@
 import { EyeInvisibleOutlined } from "@ant-design/icons";
-import { useMemoizedFn, useRequest } from "ahooks";
+import { useMemoizedFn } from "ahooks";
 import { Input, Tooltip } from "antd";
-import type React from "react";
-import { useMemo } from "react";
+import { type React, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import {
@@ -33,31 +32,29 @@ import {
 } from "@/store/browser";
 import { themeSelector, useSessionStore } from "@/store/session";
 import { cn, generateUrl, getFavIcon, tdApp } from "@/utils";
-import useAPI from "@/hooks/use-api";
+import { useFavorites } from "@/hooks/use-favorites";
+import { usePlatform } from "@/hooks/use-platform";
 
 interface Props {
   page: boolean;
 }
 
 export function ToolBar({ page }: Props) {
+  const { data: favoriteList, addFavorite, removeFavorite } = useFavorites();
   const {
-    getFavorites,
-    addFavorite,
-    removeFavorite,
     webviewLoadURL,
     webviewGoBack,
     webviewGoHome,
     combineToHomePage,
     setUserAgent,
     appContextMenu,
-  } = useAPI();
+  } = usePlatform();
   const { theme } = useSessionStore(useShallow(themeSelector));
   const store = useBrowserStore(useShallow(browserStoreSelector));
   const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
   const { t } = useTranslation();
-  const { data: favoriteList = [], refresh } = useRequest(getFavorites);
 
   const disabled =
     store.status !== BrowserStatus.Loaded || store.mode !== PageMode.Browser;
@@ -72,7 +69,9 @@ export function ToolBar({ page }: Props) {
   });
 
   const curIsFavorite = useMemo(() => {
-    return favoriteList.find((item) => item.url === store.url);
+    return favoriteList.find(
+      (item: Record<string, unknown>) => item.url === store.url,
+    );
   }, [favoriteList, store.url]);
 
   const onInputKeyDown = useMemoizedFn(
@@ -91,8 +90,6 @@ export function ToolBar({ page }: Props) {
   const onClickGoBack = useMemoizedFn(async () => {
     const back = await webviewGoBack();
     if (!back) {
-      // TODO: Reset title
-      // document.title = originTitle.current;
       setBrowserStore({ url: "", title: "", mode: PageMode.Default });
     }
   });
@@ -130,7 +127,7 @@ export function ToolBar({ page }: Props) {
 
   const onClickAddFavorite = useMemoizedFn(async () => {
     if (curIsFavorite) {
-      await removeFavorite(curIsFavorite.id);
+      await removeFavorite((curIsFavorite as Record<string, unknown>).id);
     } else {
       const icon = await getFavIcon(store.url);
       await addFavorite({
@@ -139,12 +136,14 @@ export function ToolBar({ page }: Props) {
         icon,
       });
     }
-    refresh();
   });
 
   // Merge to home page
   const onCombineToHome = useMemoizedFn(() => {
-    combineToHomePage(store as any);
+    combineToHomePage({
+      url: store.url,
+      sourceList: [],
+    });
   });
 
   const goto = useMemoizedFn(() => {

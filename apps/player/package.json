@@ -1,0 +1,19 @@
+{
+  "name": "@mediago/player-build",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MediaGo Player - Go video player build scripts",
+  "scripts": {
+    "dev": "gulp dev",
+    "build": "gulp build"
+  },
+  "keywords": [],
+  "author": "caorushizi",
+  "license": "MIT",
+  "devDependencies": {
+    "@swc/register": "^0.1.10",
+    "@types/gulp": "^4.0.18",
+    "cross-env": "^10.1.0",
+    "gulp": "^5.0.1"
+  }
+}

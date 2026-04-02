@@ -1,17 +1,7 @@
-import { spawn } from "node:child_process";
 import EventEmitter from "node:events";
 import fs from "node:fs/promises";
 import { createRequire } from "node:module";
 import { LRUCache } from "lru-cache";
-import { loadModule } from "@mediago/shared-node";
-import path from "node:path";
-
-const ffmpegModule = loadModule("@mediago/deps");
-export const ffmpegPath = path.resolve(
-  path.dirname(ffmpegModule),
-  "bin",
-  "ffmpeg",
-);
 
 export * from "../constants";
 export { error, type IpcResponse, success } from "./ipcResponse";
@@ -73,43 +63,6 @@ export function fileExists(path: string): Promise<boolean> {
     .then(() => true)
     .catch(() => false);
 }
-
-export const convertToAudio = async (
-  input: string,
-  output: string,
-): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    const ffmpeg = spawn(ffmpegPath, [
-      "-y",
-      "-v",
-      "error",
-      "-i",
-      input,
-      "-acodec",
-      "mp3",
-      "-format",
-      "mp3",
-      output,
-    ]);
-    let errData = "";
-
-    ffmpeg.stderr.on("data", (data) => {
-      errData += String(data);
-    });
-
-    ffmpeg.on("error", (err) => {
-      reject(err);
-    });
-
-    ffmpeg.on("close", (code) => {
-      if (code === 0) {
-        resolve();
-      } else {
-        reject(new Error(errData));
-      }
-    });
-  });
-};
 
 const require = createRequire(import.meta.url);
 export const preloadUrl = require.resolve("@mediago/electron-preload");

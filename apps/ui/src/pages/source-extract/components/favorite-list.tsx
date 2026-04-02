@@ -1,5 +1,5 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { useMemoizedFn, useRequest } from "ahooks";
+import { useMemoizedFn } from "ahooks";
 import { App, Form, Input, Modal } from "antd";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -13,19 +13,17 @@ import {
 } from "@/store/browser";
 import { getFavIcon, tdApp } from "@/utils";
 import { FavItem } from "./fav-item";
-import useAPI from "@/hooks/use-api";
+import { useFavorites } from "@/hooks/use-favorites";
+import { usePlatform } from "@/hooks/use-platform";
 
 export function FavoriteList() {
+  const { data: favoriteList, addFavorite, removeFavorite } = useFavorites();
   const {
-    getFavorites,
-    addFavorite,
-    removeFavorite,
     webviewLoadURL,
     onFavoriteItemContextMenu,
     addIpcListener,
     removeIpcListener,
-  } = useAPI();
-  const { data: favoriteList = [], refresh } = useRequest(getFavorites);
+  } = usePlatform();
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [favoriteAddForm] = Form.useForm<Favorite>();
@@ -47,8 +45,7 @@ export function FavoriteList() {
   });
 
   const handleRemoveFavorite = useMemoizedFn(async (id: number) => {
-    removeFavorite(id);
-    refresh();
+    await removeFavorite(id);
   });
 
   const showModal = useMemoizedFn(() => {
@@ -66,11 +63,10 @@ export function FavoriteList() {
         icon,
       });
       favoriteAddForm.resetFields();
-      refresh();
 
       setIsModalOpen(false);
-    } catch (err: any) {
-      message.error(err.message || t("addFavoriteFailed"));
+    } catch (err: unknown) {
+      message.error((err as Error).message || t("addFavoriteFailed"));
     }
   });
 
@@ -79,7 +75,7 @@ export function FavoriteList() {
   });
 
   useEffect(() => {
-    const onClickLoadItem = (item: Favorite) => {
+    const handleLoadItem = (item: Favorite) => {
       setBrowserStore({
         url: item.url,
         mode: PageMode.Browser,
@@ -99,13 +95,14 @@ export function FavoriteList() {
       },
     ) => {
       if (action === "open") {
-        const item = favoriteList.find((item) => item.id === payload);
-        if (item) {
-          onClickLoadItem(item);
+        const found = favoriteList.find(
+          (fav: Record<string, unknown>) => fav.id === payload,
+        );
+        if (found) {
+          handleLoadItem(found);
         }
       } else if (action === "delete") {
         await removeFavorite(payload);
-        refresh();
       }
     };
 
@@ -114,12 +111,12 @@ export function FavoriteList() {
     return () => {
       removeIpcListener("favorite-item-event", onFavoriteEvent);
     };
-  }, []);
+  }, [favoriteList]);
 
   return (
     <div className="h-full w-full py-4">
       <div className="grid grid-cols-4 place-items-center gap-4 overflow-auto md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-9">
-        {favoriteList.map((item) => {
+        {favoriteList.map((item: Record<string, unknown>) => {
           return (
             <FavItem
               key={item.id}

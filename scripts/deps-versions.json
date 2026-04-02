@@ -1,0 +1,77 @@
+{
+  "ffmpeg": {
+    "repo": "eugeneware/ffmpeg-static",
+    "version": "b6.0",
+    "assets": {
+      "darwin-x64": "ffmpeg-darwin-x64.gz",
+      "darwin-arm64": "ffmpeg-darwin-arm64.gz",
+      "linux-x64": "ffmpeg-linux-x64.gz",
+      "linux-arm64": "ffmpeg-linux-arm64.gz",
+      "win32-x64": "ffmpeg-win32-x64.gz"
+    },
+    "binaryName": {
+      "default": "ffmpeg",
+      "win32": "ffmpeg.exe"
+    }
+  },
+  "N_m3u8DL-RE": {
+    "repo": "nilaoda/N_m3u8DL-RE",
+    "version": "v0.3.0-beta",
+    "assets": {
+      "darwin-x64": "N_m3u8DL-RE_v0.3.0-beta_osx-x64_20241203.tar.gz",
+      "darwin-arm64": "N_m3u8DL-RE_v0.3.0-beta_osx-arm64_20241203.tar.gz",
+      "linux-x64": "N_m3u8DL-RE_v0.3.0-beta_linux-x64_20241203.tar.gz",
+      "linux-arm64": "N_m3u8DL-RE_v0.3.0-beta_linux-arm64_20241203.tar.gz",
+      "win32-x64": "N_m3u8DL-RE_v0.3.0-beta_win-x64_20241203.zip",
+      "win32-arm64": "N_m3u8DL-RE_v0.3.0-beta_win-arm64_20241203.zip"
+    },
+    "binaryName": {
+      "default": "N_m3u8DL-RE",
+      "win32": "N_m3u8DL-RE.exe"
+    },
+    "extractBinary": {
+      "default": "N_m3u8DL-RE",
+      "win32": "N_m3u8DL-RE.exe"
+    }
+  },
+  "BBDown": {
+    "repo": "nilaoda/BBDown",
+    "version": "1.6.3",
+    "assets": {
+      "darwin-x64": "BBDown_1.6.3_20240814_osx-x64.zip",
+      "darwin-arm64": "BBDown_1.6.3_20240814_osx-arm64.zip",
+      "linux-x64": "BBDown_1.6.3_20240814_linux-x64.zip",
+      "linux-arm64": "BBDown_1.6.3_20240814_linux-arm64.zip",
+      "win32-x64": "BBDown_1.6.3_20240814_win-x64.zip",
+      "win32-arm64": "BBDown_1.6.3_20240814_win-arm64.zip"
+    },
+    "binaryName": {
+      "default": "BBDown",
+      "win32": "BBDown.exe"
+    },
+    "extractBinary": {
+      "default": "BBDown",
+      "win32": "BBDown.exe"
+    }
+  },
+  "gopeed": {
+    "repo": "GopeedLab/gopeed",
+    "version": "v1.6.5",
+    "assets": {
+      "darwin-x64": "gopeed-web-v1.6.5-macos-amd64.zip",
+      "darwin-arm64": "gopeed-web-v1.6.5-macos-arm64.zip",
+      "linux-x64": "gopeed-web-v1.6.5-linux-amd64.zip",
+      "linux-arm64": "gopeed-web-v1.6.5-linux-arm64.zip",
+      "win32-x64": "gopeed-web-v1.6.5-windows-amd64.zip",
+      "win32-arm64": "gopeed-web-v1.6.5-windows-arm64.zip"
+    },
+    "binaryName": {
+      "default": "gopeed",
+      "win32": "gopeed.exe"
+    },
+    "extractBinary": {
+      "default": "gopeed",
+      "win32": "gopeed.exe"
+    }
+  }
+}
