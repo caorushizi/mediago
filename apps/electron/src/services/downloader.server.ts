@@ -59,7 +59,7 @@ export class DownloaderServer extends EventEmitter {
     const runner = new ServiceRunner({
       executableName: "mediago-core",
       executableDir: path.dirname(core.coreBin),
-      preferredPort: 9900,
+      preferredPort: 39719,
       internal: true,
       extraArgs: [
         `-log-level=info`,

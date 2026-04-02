@@ -4,7 +4,6 @@ import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
 import { EventEmitter } from "node:events";
 import { networkInterfaces } from "node:os";
 import path from "node:path";
-import portfinder from "portfinder";
 import kill from "tree-kill";
 import { isPrivateIPv4, looksVirtual } from "./utils";
 
@@ -148,11 +147,7 @@ export class ServiceRunner extends EventEmitter<ServiceRunnerEvents> {
 
     const host = this.computeHost();
     this.currentHost = host;
-    const resolvedPort = await portfinder.getPortPromise(
-      this.preferredPort !== undefined
-        ? { port: this.preferredPort }
-        : undefined,
-    );
+    const resolvedPort = this.preferredPort ?? 0;
     const childEnv: Record<string, string> = {
       ...this.baseEnvironment,
       PORT: String(resolvedPort),
