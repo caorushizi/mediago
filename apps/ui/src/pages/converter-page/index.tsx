@@ -13,6 +13,7 @@ import {
   Form,
   Input,
   Modal,
+  Pagination,
   Progress,
   Select,
   Space,
@@ -64,6 +65,8 @@ const STATUS_COLORS: Record<string, string> = {
 
 const Converter = () => {
   const { t } = useTranslation();
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(50);
   const {
     data,
     isLoading,
@@ -72,7 +75,7 @@ const Converter = () => {
     deleteConversion,
     startConversion,
     stopConversion,
-  } = useConversions({ current: 1, pageSize: 500 });
+  } = useConversions({ current: page, pageSize });
   const { selectFile, openDir } = usePlatform();
   const { message } = App.useApp();
   const [outputFormat, setOutputFormat] = useState("mp3");
@@ -328,6 +331,17 @@ const Converter = () => {
             </div>
           ))}
       </div>
+
+      <Pagination
+        className="flex justify-end"
+        current={page}
+        pageSize={pageSize}
+        onChange={(p, ps) => {
+          setPage(p);
+          setPageSize(ps);
+        }}
+        total={data?.total ?? 0}
+      />
     </PageContainer>
   );
 };
