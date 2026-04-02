@@ -4,4 +4,18 @@
 **/release
 **/.turbo
 **/.git
+**/.claude
+**/.deps
 *.md
+
+# Go build artifacts
+apps/core/bin/
+apps/core/server
+
+# Electron (not needed for Docker)
+apps/electron/
+docs/
+
+# OS files
+.DS_Store
+**/.DS_Store

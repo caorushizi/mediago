@@ -1,4 +1,4 @@
-name: Make MediaGo Docker Image
+name: Build & Push Docker Image
 
 on:
   workflow_dispatch:
@@ -6,147 +6,71 @@ on:
     tags:
       - "v*"
 
-jobs:
-  build:
-    name: Build Docker Image
-    strategy:
-      matrix:
-        include:
-          - runner: ubuntu-latest
-            arch: amd64
-            platform: linux/amd64
-          - runner: ubuntu-22.04-arm
-            arch: arm64
-            platform: linux/arm64
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
-    runs-on: ${{ matrix.runner }}
+jobs:
+  docker:
+    name: Build and push multi-arch image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: "10.15.0"
-          run_install: false
-          standalone: true
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20.19.5"
-          cache: "pnpm"
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Build
-        run: pnpm release:server
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Login to Aliyun Container Registry
+      - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
-          registry: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_USERNAME }}
-          password: ${{ secrets.ALIYUN_PASSWORD }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Docker meta
         id: meta
-        run: |
-          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
-            TAG_NAME="${GITHUB_REF#refs/tags/}"
-
-            # 如果是 beta 版本，只推送 tag
-            if [[ "${TAG_NAME}" == *"beta"* ]]; then
-              TAGS="registry.cn-beijing.aliyuncs.com/caorushizi/mediago:${TAG_NAME}-${{ matrix.arch }}"
-            else
-              # 正式版本，推送 tag 和 latest
-              TAGS="registry.cn-beijing.aliyuncs.com/caorushizi/mediago:latest-${{ matrix.arch }}\nregistry.cn-beijing.aliyuncs.com/caorushizi/mediago:${TAG_NAME}-${{ matrix.arch }}"
-            fi
-          else
-            # 非 tag 触发，只推送 dev 版本
-            DEV_TAG="dev-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
-            TAGS="registry.cn-beijing.aliyuncs.com/caorushizi/mediago:${DEV_TAG}-${{ matrix.arch }}"
-          fi
-
-          echo "tags<<EOF" >> $GITHUB_OUTPUT
-          echo -e "$TAGS" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            # For version tags: v1.0.0 → 1.0.0 + latest (non-beta only)
+            type=semver,pattern={{version}}
+            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, 'beta') }}
+            # For manual triggers: dev-{run_id}
+            type=raw,value=dev-${{ github.run_id }},enable=${{ !startsWith(github.ref, 'refs/tags/') }}
 
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ./apps/server
-          platforms: ${{ matrix.platform }}
+          context: .
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  create-manifest:
-    name: Create Multi-Arch Manifest
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Login to Aliyun Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_USERNAME }}
-          password: ${{ secrets.ALIYUN_PASSWORD }}
-
-      - name: Create and push multi-arch manifest
-        run: |
-          IMAGE=registry.cn-beijing.aliyuncs.com/caorushizi/mediago
-
-          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
-            TAG_NAME="${GITHUB_REF#refs/tags/}"
-
-            # 创建 tag 镜像
-            docker buildx imagetools create -t ${IMAGE}:${TAG_NAME} \
-              ${IMAGE}:${TAG_NAME}-amd64 \
-              ${IMAGE}:${TAG_NAME}-arm64
-
-            # 如果不是 beta，创建 latest
-            if [[ "${TAG_NAME}" != *"beta"* ]]; then
-              docker buildx imagetools create -t ${IMAGE}:latest \
-                ${IMAGE}:latest-amd64 \
-                ${IMAGE}:latest-arm64
-            fi
-          else
-            # 非 tag 触发，只创建 dev 版本
-            DEV_TAG="dev-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
-
-            docker buildx imagetools create -t ${IMAGE}:${DEV_TAG} \
-              ${IMAGE}:${DEV_TAG}-amd64 \
-              ${IMAGE}:${DEV_TAG}-arm64
-          fi
-
       - name: Build Summary
         run: |
-          echo "### 🎉 Multi-Arch Docker Image Built Successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "### 🎉 Docker Image Published" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Image:** \`registry.cn-beijing.aliyuncs.com/caorushizi/mediago\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Architectures:** amd64, arm64" >> $GITHUB_STEP_SUMMARY
-
-          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
-            TAG_NAME="${GITHUB_REF#refs/tags/}"
-            echo "**Tag:** ${TAG_NAME}" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Available Tags:**" >> $GITHUB_STEP_SUMMARY
-            echo "- \`${TAG_NAME}\`" >> $GITHUB_STEP_SUMMARY
-
-            if [[ "${TAG_NAME}" != *"beta"* ]]; then
-              echo "- \`latest\`" >> $GITHUB_STEP_SUMMARY
-            fi
-          else
-            DEV_TAG="dev-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
-            echo "**Version:** ${DEV_TAG}" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Available Tags:**" >> $GITHUB_STEP_SUMMARY
-            echo "- \`${DEV_TAG}\`" >> $GITHUB_STEP_SUMMARY
-          fi
+          echo "**Image:** \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Platforms:** linux/amd64, linux/arm64" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Tags:**" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.meta.outputs.tags }}" | while read tag; do
+            echo "- \`${tag}\`" >> $GITHUB_STEP_SUMMARY
+          done
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Pull:**" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

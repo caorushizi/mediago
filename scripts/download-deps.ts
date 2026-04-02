@@ -255,7 +255,18 @@ async function findBinaryInDir(
 
 async function main() {
   const isAll = process.argv.includes("--all");
-  const platforms = isAll ? getAllPlatformKeys() : [getCurrentPlatformKey()];
+  const platformIdx = process.argv.indexOf("--platform");
+  const explicitPlatform =
+    platformIdx !== -1 ? process.argv[platformIdx + 1] : undefined;
+
+  let platforms: string[];
+  if (isAll) {
+    platforms = getAllPlatformKeys();
+  } else if (explicitPlatform) {
+    platforms = [explicitPlatform];
+  } else {
+    platforms = [getCurrentPlatformKey()];
+  }
 
   console.log(
     `Downloading third-party tools for ${isAll ? "all platforms" : platforms[0]}...`,

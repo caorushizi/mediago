@@ -180,10 +180,6 @@ await fs.copyFile(
   path.resolve(projectRoot, `apps/core/bin/mediago-core${ext}`),
   path.join(binDir, `mediago-core${ext}`),
 );
-await fs.copyFile(
-  path.resolve(projectRoot, "apps/core/configs/config.json"),
-  path.join(binDir, "config.json"),
-);
 
 // Copy dependency binaries (ffmpeg, N_m3u8DL-RE, BBDown, gopeed)
 const platformKey = `${os.platform()}-${os.arch()}`;
