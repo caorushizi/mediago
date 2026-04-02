@@ -5,6 +5,7 @@ import {
   addFavorite as addFavApi,
   removeFavorite as removeFavApi,
 } from "@/api/favorite";
+import type { Favorite } from "@mediago/shared-common";
 
 export function useFavorites() {
   const { data, isLoading, error, mutate } = useSWR(
@@ -27,7 +28,7 @@ export function useFavorites() {
   };
 
   return {
-    data: (data as unknown[]) ?? [],
+    data: data ?? ([] as Favorite[]),
     isLoading,
     error,
     mutate,

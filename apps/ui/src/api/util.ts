@@ -1,4 +1,4 @@
 import { http } from "@/utils";
 
-export const getPageTitle = (url: string) =>
-  http.get<string>("/api/url/title", { params: { url } });
+export const getPageTitle = (url: string): Promise<{ data: string }> =>
+  http.get("/api/url/title", { params: { url } });

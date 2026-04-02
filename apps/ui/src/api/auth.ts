@@ -1,10 +1,15 @@
 import { http } from "@/utils";
 
-export const getAuthStatusKey = "/api/auth/status";
-export const getAuthStatus = () => http.get(getAuthStatusKey);
+export interface AuthStatus {
+  setuped: boolean;
+}
 
-export const setupAuth = (apiKey: string) =>
+export const getAuthStatusKey = "/api/auth/status";
+export const getAuthStatus = (): Promise<AuthStatus> =>
+  http.get(getAuthStatusKey);
+
+export const setupAuth = (apiKey: string): Promise<boolean> =>
   http.post("/api/auth/setup", { apiKey });
 
-export const signin = (apiKey: string) =>
+export const signin = (apiKey: string): Promise<boolean> =>
   http.post("/api/auth/signin", { apiKey });
