@@ -12,5 +12,7 @@ release
 go.work.sum
 apps/core/bin/
 apps/player/dist/
+apps/electron/bin/
+apps/main/bin/
 .deps/
 
