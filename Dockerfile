@@ -16,11 +16,13 @@ RUN if [ "$TARGETARCH" = "amd64" ]; then \
 
 WORKDIR /src
 
-# Install dependencies (cache pnpm store)
+# Install dependencies — copy all workspace package.json files first for caching
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json .npmrc* ./
 COPY apps/ui/package.json apps/ui/package.json
 COPY apps/player-ui/package.json apps/player-ui/package.json
 COPY apps/server/package.json apps/server/package.json
+COPY apps/core/package.json apps/core/package.json
+COPY apps/electron/package.json apps/electron/package.json
 COPY packages/ packages/
 RUN pnpm install --frozen-lockfile
 

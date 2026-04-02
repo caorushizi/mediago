@@ -12,8 +12,10 @@
 apps/core/bin/
 apps/core/server
 
-# Electron (not needed for Docker)
-apps/electron/
+# Electron source (not needed, but keep package.json for workspace resolution)
+apps/electron/src/
+apps/electron/scripts/
+apps/electron/app/
 docs/
 
 # OS files
