@@ -38,7 +38,7 @@
     "@mediago/browser-extension": "workspace:*",
     "@mediago/electron-preload": "workspace:*",
     "@mediago/core-sdk": "workspace:*",
-    "@mediago/service-runner": "^0.0.1",
+    "@mediago/service-runner": "workspace:*",
     "@mediago/shared-common": "workspace:*",
     "@sentry/electron": "^7.2.0",
     "axios": "^1.12.2",

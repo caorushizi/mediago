@@ -1,0 +1,43 @@
+{
+  "name": "@mediago/service-runner",
+  "version": "0.0.1",
+  "description": "A starter for creating a TypeScript package.",
+  "type": "module",
+  "license": "MIT",
+  "homepage": "https://github.com/caorushizi/node-service#readme",
+  "bugs": {
+    "url": "https://github.com/caorushizi/node-service/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caorushizi/node-service.git"
+  },
+  "author": "caorushizi <84996057@qq.com>",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.2",
+    "bumpp": "^10.3.1",
+    "tsdown": "^0.15.6",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "portfinder": "^1.0.32",
+    "tree-kill": "^1.2.2"
+  }
+}

@@ -8,7 +8,7 @@
     "type:check": "tsc --noEmit"
   },
   "dependencies": {
-    "@mediago/service-runner": "^0.0.1",
+    "@mediago/service-runner": "workspace:*",
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
