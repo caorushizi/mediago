@@ -66,7 +66,7 @@ const STATUS_COLORS: Record<string, string> = {
 const Converter = () => {
   const { t } = useTranslation();
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(50);
+  const [pageSize, setPageSize] = useState(10);
   const {
     data,
     isLoading,
@@ -220,7 +220,7 @@ const Converter = () => {
           <Button onClick={handleOpenModal}>{t("addFile")}</Button>
         </Space>
       }
-      className="rounded-lg bg-white dark:bg-[#1F2024] flex"
+      className="rounded-lg bg-white dark:bg-[#1F2024] flex flex-col flex-1 h-full gap-3 p-3"
     >
       <Modal
         title={t("addFile")}
@@ -269,7 +269,7 @@ const Converter = () => {
         </Form>
       </Modal>
 
-      <div className="flex flex-col gap-3 rounded-lg bg-white p-3 dark:bg-[#1F2024] flex-1 overflow-auto">
+      <div className="flex flex-col gap-3 flex-1 overflow-auto">
         {isLoading && <Loading />}
         {!isLoading && data?.list?.length === 0 && (
           <div className="flex h-full flex-1 flex-row items-center justify-center rounded-lg bg-white dark:bg-[#1F2024]">
