@@ -7,10 +7,10 @@ import (
 	"caorushizi.cn/mediago/internal/api/handler"
 	"caorushizi.cn/mediago/internal/api/middleware"
 	"caorushizi.cn/mediago/internal/api/sse"
-	"caorushizi.cn/mediago/internal/i18n"
 	"caorushizi.cn/mediago/internal/core"
 	"caorushizi.cn/mediago/internal/db"
 	"caorushizi.cn/mediago/internal/db/repo"
+	"caorushizi.cn/mediago/internal/i18n"
 	"caorushizi.cn/mediago/internal/service"
 	"caorushizi.cn/mediago/internal/tasklog"
 	"github.com/gin-contrib/cors"
@@ -60,9 +60,9 @@ func New(queue *core.TaskQueue, logs *tasklog.Manager, database *db.Database, co
 	engine.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "X-API-Key"},
 		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
+		// AllowCredentials: true,
 	}))
 
 	// i18n middleware — resolve language before auth so error messages are translated
