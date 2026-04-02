@@ -54,7 +54,8 @@ export async function buildServerTask() {
   await runCommand("go", [
     "build",
     "-trimpath",
-    "-ldflags=-s -w",
+    "-ldflags",
+    "-s -w",
     "-o",
     SERVER_BINARY_PATH,
     "./cmd/server",
