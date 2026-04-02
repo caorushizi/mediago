@@ -175,7 +175,10 @@ func main() {
 			sysDownloads := getSystemDownloadsDir()
 			logger.Infof("Download dir %q unavailable, using system default: %s", cfg.LocalDir, sysDownloads)
 			cfg.LocalDir = sysDownloads
-			_ = appStore.Set("local", sysDownloads)
+		}
+		// Ensure appStore has the download directory (so UI can read it via /api/config)
+		if appStore.Store().Local == "" {
+			_ = appStore.Set("local", cfg.LocalDir)
 		}
 	}
 
