@@ -58,6 +58,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Download third-party deps
+        run: pnpm deps:download
+
       - name: Build  & release app
         run: pnpm release:electron
         env:

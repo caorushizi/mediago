@@ -52,6 +52,7 @@ export function runCommand(
       cwd: options.cwd ?? ROOT_PATH,
       env: { ...process.env, ...options.env },
       stdio: "inherit",
+      shell: process.platform === "win32",
     });
 
     childProcesses.add(child);
