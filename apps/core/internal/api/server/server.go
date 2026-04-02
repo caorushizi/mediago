@@ -62,7 +62,7 @@ func New(queue *core.TaskQueue, logs *tasklog.Manager, database *db.Database, co
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "X-API-Key"},
 		ExposeHeaders:    []string{"Content-Length"},
-		// AllowCredentials: true,
+		AllowCredentials: true,
 	}))
 
 	// i18n middleware — resolve language before auth so error messages are translated

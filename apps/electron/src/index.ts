@@ -21,10 +21,14 @@ const container = new Container({
 
 const gotTheLock = app.requestSingleInstanceLock();
 
-if (!isDev) {
-  app.setAsDefaultProtocolClient("mediago");
+if (process.defaultApp) {
+  if (process.argv.length >= 2) {
+    app.setAsDefaultProtocolClient(defaultScheme, process.execPath, [
+      path.resolve(process.argv[1]),
+    ]);
+  }
 } else {
-  app.removeAsDefaultProtocolClient("mediago");
+  app.setAsDefaultProtocolClient(defaultScheme);
 }
 
 const start = async (): Promise<void> => {

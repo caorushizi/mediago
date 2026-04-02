@@ -14,7 +14,11 @@ export const isMac = process.platform === Platform.MacOS;
 export const isWin = process.platform === Platform.Windows;
 export const isLinux = process.platform === Platform.Linux;
 
-export const appName = process.env.APP_NAME || "mediago";
+if (!process.env.APP_NAME) {
+  throw new Error("APP_NAME is not defined in environment variables");
+}
+
+export const appName = process.env.APP_NAME;
 export const workspace = resolve(appData, appName);
 export const defaultScheme = "mediago";
 export const PERSIST_MEDIAGO = "persist:mediago";

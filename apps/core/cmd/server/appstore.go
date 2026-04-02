@@ -28,6 +28,7 @@ type AppStore struct {
 	DockerUrl          string `json:"dockerUrl"`
 	EnableMobilePlayer bool   `json:"enableMobilePlayer"`
 	ApiKey             string `json:"apiKey"`
+	PasswordHash       string `json:"passwordHash"`
 }
 
 // defaultAppStore returns default config values matching the TS appStoreDefaults.
@@ -57,5 +58,6 @@ func defaultAppStore() AppStore {
 		DockerUrl:          "",
 		EnableMobilePlayer: false,
 		ApiKey:             "",
+		PasswordHash:       "",
 	}
 }

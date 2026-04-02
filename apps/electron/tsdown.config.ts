@@ -74,6 +74,7 @@ export default defineConfig({
       process.env.APP_TARGET || "electron",
     ),
     "process.env.APP_VERSION": JSON.stringify(pkg.version),
+    "process.env.APP_NAME": JSON.stringify(process.env.APP_NAME),
   },
   loader: {
     ".jpg": "asset",

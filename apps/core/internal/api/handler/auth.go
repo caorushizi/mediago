@@ -7,7 +7,9 @@ import (
 	"caorushizi.cn/mediago/internal/i18n"
 	"caorushizi.cn/mediago/internal/logger"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"go.uber.org/zap"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // AuthHandler handles authentication endpoints.
@@ -20,7 +22,8 @@ func NewAuthHandler(conf ConfigStore) *AuthHandler {
 	return &AuthHandler{conf: conf}
 }
 
-// Setup sets the initial apiKey. Only works if no apiKey is currently configured.
+// Setup sets the initial password. Only works if no password is currently configured.
+// Hashes the password with bcrypt and generates a random API key.
 // @Summary Setup authentication
 // @Tags Auth
 // @Accept json
@@ -40,17 +43,8 @@ func (h *AuthHandler) Setup(c *gin.Context) {
 		return
 	}
 
-	if req.ApiKey == "" {
-		c.JSON(http.StatusBadRequest, dto.ErrorResponse{
-			Success: false,
-			Code:    http.StatusBadRequest,
-			Message: i18n.T(c, i18n.MsgAPIKeyRequired),
-		})
-		return
-	}
-
-	// Check if apiKey is already set
-	existing, _ := h.conf.Get("apiKey").(string)
+	// Check if already set up
+	existing, _ := h.conf.Get("passwordHash").(string)
 	if existing != "" {
 		c.JSON(http.StatusBadRequest, dto.ErrorResponse{
 			Success: false,
@@ -60,8 +54,27 @@ func (h *AuthHandler) Setup(c *gin.Context) {
 		return
 	}
 
-	if err := h.conf.Set("apiKey", req.ApiKey); err != nil {
-		logger.Error("Failed to set apiKey", zap.Error(err))
+	// Hash password with bcrypt
+	hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		logger.Error("Failed to hash password", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
+			Success: false,
+			Code:    http.StatusInternalServerError,
+			Message: err.Error(),
+		})
+		return
+	}
+
+	// Generate a random API key
+	apiKey := uuid.New().String()
+
+	// Store both password hash and API key
+	if err := h.conf.Update(map[string]any{
+		"passwordHash": string(hash),
+		"apiKey":       apiKey,
+	}); err != nil {
+		logger.Error("Failed to save auth config", zap.Error(err))
 		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
 			Success: false,
 			Code:    http.StatusInternalServerError,
@@ -74,11 +87,11 @@ func (h *AuthHandler) Setup(c *gin.Context) {
 		Success: true,
 		Code:    http.StatusOK,
 		Message: i18n.T(c, i18n.MsgOK),
-		Data:    true,
+		Data:    apiKey,
 	})
 }
 
-// Signin validates the provided apiKey.
+// Signin validates the provided password and returns the API key.
 // @Summary Sign in
 // @Tags Auth
 // @Accept json
@@ -98,21 +111,34 @@ func (h *AuthHandler) Signin(c *gin.Context) {
 		return
 	}
 
-	stored, _ := h.conf.Get("apiKey").(string)
-	if req.ApiKey == stored {
-		c.JSON(http.StatusOK, dto.SuccessResponse{
-			Success: true,
-			Code:    http.StatusOK,
-			Message: i18n.T(c, i18n.MsgOK),
-			Data:    true,
-		})
-	} else {
+	storedHash, _ := h.conf.Get("passwordHash").(string)
+	if storedHash == "" {
 		c.JSON(http.StatusUnauthorized, dto.ErrorResponse{
 			Success: false,
 			Code:    http.StatusUnauthorized,
 			Message: i18n.T(c, i18n.MsgInvalidAPIKey),
 		})
+		return
 	}
+
+	// Compare password with stored bcrypt hash
+	if err := bcrypt.CompareHashAndPassword([]byte(storedHash), []byte(req.Password)); err != nil {
+		c.JSON(http.StatusUnauthorized, dto.ErrorResponse{
+			Success: false,
+			Code:    http.StatusUnauthorized,
+			Message: i18n.T(c, i18n.MsgInvalidAPIKey),
+		})
+		return
+	}
+
+	// Return the stored API key
+	apiKey, _ := h.conf.Get("apiKey").(string)
+	c.JSON(http.StatusOK, dto.SuccessResponse{
+		Success: true,
+		Code:    http.StatusOK,
+		Message: i18n.T(c, i18n.MsgOK),
+		Data:    apiKey,
+	})
 }
 
 // Status returns whether authentication is configured.
@@ -122,7 +148,7 @@ func (h *AuthHandler) Signin(c *gin.Context) {
 // @Success 200 {object} dto.SuccessResponse
 // @Router /auth/status [get]
 func (h *AuthHandler) Status(c *gin.Context) {
-	stored, _ := h.conf.Get("apiKey").(string)
+	stored, _ := h.conf.Get("passwordHash").(string)
 	c.JSON(http.StatusOK, dto.SuccessResponse{
 		Success: true,
 		Code:    http.StatusOK,

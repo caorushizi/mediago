@@ -66,10 +66,15 @@ func AuthMiddleware(confStore handler.ConfigStore) gin.HandlerFunc {
 	}
 }
 
-// extractToken gets the API key from Authorization header or query param.
-// Supports: "Authorization: Bearer <token>" header and "?token=<token>" query param.
+// extractToken gets the API key from request headers or query param.
+// Priority: X-API-Key header > Authorization: Bearer header > ?token= query param.
 func extractToken(c *gin.Context) string {
-	// Try Authorization header first
+	// Try X-API-Key header first (used by frontend http client)
+	if key := c.GetHeader("X-API-Key"); key != "" {
+		return key
+	}
+
+	// Try Authorization header
 	auth := c.GetHeader("Authorization")
 	if strings.HasPrefix(auth, "Bearer ") {
 		return strings.TrimPrefix(auth, "Bearer ")
