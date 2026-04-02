@@ -6,30 +6,45 @@ import {
 } from "./adapters";
 
 /**
+ * Unwrap IPC response: { code, data, msg } → data
+ */
+function unwrapIpcResult(result: unknown): unknown {
+  if (result && typeof result === "object" && "code" in result) {
+    return (result as Record<string, unknown>).data;
+  }
+  return result;
+}
+
+/**
  * Provides Electron IPC methods + platform event listeners.
  * Non-SWR hook for imperative platform interactions.
  *
- * Note: platformApi may be a Proxy (Electron mode), so we cannot spread it.
- * Instead we return it directly and let consumers access methods by name.
+ * All PlatformApi method return values are auto-unwrapped from
+ * { code, data, msg } → data, matching the old useAPI() behavior.
  *
  * Go SSE events (download/config) are handled separately by api/events.ts.
  */
 export function usePlatform() {
   return useMemo(() => {
-    // Proxy objects cannot be spread — create a wrapper that delegates
-    // property access to platformApi first, then platformEventListener
     return new Proxy({} as typeof platformApi & IpcListener, {
       get(_target, prop: string) {
-        // Event listener methods
+        // Event listener methods (no unwrap needed)
         if (prop === "addIpcListener")
           return platformEventListener.addIpcListener;
         if (prop === "removeIpcListener")
           return platformEventListener.removeIpcListener;
-        // Platform API methods (may be Proxy in Electron mode)
-        // eslint-disable-next-line -- platformApi is a Proxy, typed access not possible
+
+        // Platform API methods — wrap to auto-unwrap IPC responses
         const val = (platformApi as Record<string, unknown>)[prop];
-        if (val !== undefined) return val;
-        return undefined;
+        if (typeof val === "function") {
+          return async (...args: unknown[]) => {
+            const result = await (val as (...a: unknown[]) => Promise<unknown>)(
+              ...args,
+            );
+            return unwrapIpcResult(result);
+          };
+        }
+        return val;
       },
     });
   }, []);
