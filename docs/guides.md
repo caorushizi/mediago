@@ -43,7 +43,7 @@ MacOS 使用
 - [【mediago】 macos arm64（apple 芯片） v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-setup-darwin-arm64-3.5.0-beta.0.dmg)
 - [【mediago】 macos x64（intel 芯片） v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-setup-darwin-x64-3.5.0-beta.0.dmg)
 - [【mediago】 linux v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-setup-linux-amd64-3.5.0-beta.0.deb)
-- 【mediago】 docker v3.0 `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:v3.5.0-beta.0`
+- 【mediago】 docker v3.0 `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:3.5.0-beta.0`
 
 ## 操作说明
 
