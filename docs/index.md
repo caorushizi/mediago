@@ -30,4 +30,7 @@ features:
   - icon: 🎉
     title: 支持 docker 部署
     details: 支持 docker 部署 web 端，方便快捷。
+  - icon: 🦞
+    title: OpenClaw Skill
+    details: 支持通过 AI 编程助手（OpenClaw、Claude Code 等）用自然语言下载视频，一键安装即可使用。
 ---

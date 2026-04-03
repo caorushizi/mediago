@@ -5,7 +5,7 @@ outline: deep
 
 # Quick Start
 
-This article provides a simple guide to help you get started with using the software.
+This article provides a simple guide to help you get started with using the software. Supports [OpenClaw Skill](/en/skills) for downloading videos via natural language in AI coding assistants.
 
 ::: tip
 To facilitate communication and feedback, you can join the feedback group:

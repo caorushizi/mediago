@@ -29,4 +29,7 @@ features:
   - icon: 🎉
     title: Dockerデプロイ対応
     details: Web端をDockerでデプロイでき、簡単で迅速に設定できます。
+  - icon: 🦞
+    title: OpenClaw Skill
+    details: AI コーディングアシスタント（OpenClaw、Claude Code など）で自然言語を使って動画をダウンロード。ワンコマンドでインストール。
 ---

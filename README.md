@@ -45,6 +45,7 @@
 - **📱&nbsp; 移动播放**： 可以轻松无缝的在 PC 和移动设备之前切换，下载完成后即可使用手机观看视频。
 - **⚡️&nbsp; 批量下载**： 支持同时下载多个视频和直播资源，高速带宽不闲置。
 - **🎉&nbsp; 支持 docker 部署**： 支持 docker 部署 web 端，方便快捷。
+- **🦞&nbsp; OpenClaw Skill**： 支持通过 AI 编程助手（Openclaw、Claude Code 等）用自然语言下载视频，`npx clawhub@latest install mediago` 一键安装。
 
 ## Quickstart
 

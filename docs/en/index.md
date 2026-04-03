@@ -30,4 +30,7 @@ features:
   - icon: 🎉
     title: Docker Deployment Supported
     details: Supports Docker deployment for the web version, making it quick and easy.
+  - icon: 🦞
+    title: OpenClaw Skill
+    details: Download videos using natural language in AI coding assistants (OpenClaw, Claude Code, etc.). Install with one command.
 ---
