@@ -94,7 +94,8 @@ func fetchTitle(url string) string {
 		logger.Warn("getPageTitle: failed to create request", zap.String("url", url), zap.Error(err))
 		return randomName()
 	}
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36")
+	req.Header.Set("Referer", url)
 
 	resp, err := client.Do(req)
 	if err != nil {

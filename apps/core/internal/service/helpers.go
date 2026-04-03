@@ -35,9 +35,16 @@ func RandomName() string {
 }
 
 // GetPageTitle fetches the page title via an HTTP GET request.
-func GetPageTitle(url string, fallback string) string {
+func GetPageTitle(pageURL string, fallback string) string {
 	client := &http.Client{Timeout: 10 * time.Second}
-	resp, err := client.Get(url)
+	req, err := http.NewRequest("GET", pageURL, nil)
+	if err != nil {
+		return fallback
+	}
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36")
+	req.Header.Set("Referer", pageURL)
+
+	resp, err := client.Do(req)
 	if err != nil {
 		return fallback
 	}
