@@ -289,9 +289,17 @@ func main() {
 }
 
 // syncAppStoreToCfg reads appStore values back into cfg.
+// CLI flags take priority: if --local-dir was explicitly set (not the default),
+// the CLI value is kept and written back to appStore.
 func syncAppStoreToCfg(store *conf.Conf[AppStore], cfg *AppConfig) {
 	s := store.Store()
-	if s.Local != "" {
+	cliLocalDir := cfg.LocalDir
+	cliExplicit := cliLocalDir != "" && cliLocalDir != "./downloads"
+
+	if cliExplicit {
+		// CLI explicitly set --local-dir, use it and update appStore
+		_ = store.Set("local", cliLocalDir)
+	} else if s.Local != "" {
 		cfg.LocalDir = s.Local
 	}
 	cfg.Proxy = s.Proxy
