@@ -34,6 +34,7 @@ export default defineConfig({
           { text: "更新日志", link: "/changelog" },
           { text: "通过宝塔面板部署", link: "/bt-install" },
           { text: "配合猫爪下载视频", link: "/catcatch" },
+          { text: "🦞 OpenClaw Skill", link: "/skills" },
         ],
       },
       {
@@ -75,6 +76,7 @@ export default defineConfig({
               { text: "Baota Panel", link: "/en/bt-install" },
               { text: "Documents", link: "/en/documents" },
               { text: "Changelog", link: "/en/changelog" },
+              { text: "🦞 OpenClaw Skill", link: "/en/skills" },
             ],
           },
           {
@@ -113,6 +115,7 @@ export default defineConfig({
               { text: "塔のパネル配置です", link: "/jp/bt-install" },
               { text: "使用説明書です", link: "/jp/documents" },
               { text: "ログを更新します。", link: "/jp/changelog" },
+              { text: "🦞 OpenClaw Skill", link: "/jp/skills" },
             ],
           },
           {

@@ -1,5 +1,6 @@
 import {
   ClearOutlined,
+  CopyOutlined,
   DownloadOutlined,
   FolderOpenOutlined,
   UploadOutlined,
@@ -392,6 +393,65 @@ const SettingPage: React.FC = () => {
     },
     {
       key: "5",
+      label: t("skillsSetting"),
+      children: (() => {
+        const coreUrl = envPath?.playerUrl
+          ? envPath.playerUrl.replace(/\/player\/$/, "")
+          : "";
+        const apiKey = settings.apiKey || "";
+        let setupCmd: string;
+        if (isWeb) {
+          // Server/Docker mode: need both URL and API key
+          const url = coreUrl || "http://localhost:8899";
+          setupCmd = apiKey
+            ? `设置 mediago 地址为 ${url}，api key 为 ${apiKey}`
+            : `设置 mediago 地址为 ${url}`;
+        } else {
+          // Electron mode: only need URL
+          setupCmd = coreUrl
+            ? `设置 mediago 地址为 ${coreUrl}`
+            : "设置 mediago 地址为 http://localhost:39719";
+        }
+        const installCmd = t("skillsInstallCmd");
+        return (
+          <>
+            <Form.Item
+              label={t("skillsInstall")}
+              tooltip={t("skillsInstallTooltip")}
+            >
+              <Space.Compact className="w-full">
+                <Input value={installCmd} readOnly className="font-mono" />
+                <Button
+                  icon={<CopyOutlined />}
+                  onClick={() => {
+                    navigator.clipboard.writeText(installCmd);
+                    message.success(t("skillsCopied"));
+                  }}
+                >
+                  {t("skillsCopy")}
+                </Button>
+              </Space.Compact>
+            </Form.Item>
+            <Form.Item label={t("skillsInit")} tooltip={t("skillsInitTooltip")}>
+              <Space.Compact className="w-full">
+                <Input value={setupCmd} readOnly className="font-mono" />
+                <Button
+                  icon={<CopyOutlined />}
+                  onClick={() => {
+                    navigator.clipboard.writeText(setupCmd);
+                    message.success(t("skillsCopied"));
+                  }}
+                >
+                  {t("skillsCopy")}
+                </Button>
+              </Space.Compact>
+            </Form.Item>
+          </>
+        );
+      })(),
+    },
+    {
+      key: "6",
       label: t("moreSettings"),
       children: (
         <>

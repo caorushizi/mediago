@@ -70,6 +70,16 @@ export const en = {
   enterMobileMode: "Enter Mobile Mode",
   downloadSetting: "Download Setting",
   dockerSetting: "Docker Setting",
+  skillsSetting: "Skills",
+  skillsInstall: "Install Skill",
+  skillsInstallTooltip:
+    "Run this command in terminal to install the mediago skill from ClawHub",
+  skillsInstallCmd: "npx clawhub@latest install mediago",
+  skillsInit: "Initialize",
+  skillsInitTooltip:
+    "After installing, paste this command into Claude Code to complete the configuration",
+  skillsCopy: "Copy",
+  skillsCopied: "Copied to clipboard",
   moreSettings: "More Settings",
   deleteSegments: "Delete segments after download",
   moreAction: "More Action",
