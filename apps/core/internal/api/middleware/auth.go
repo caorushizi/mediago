@@ -30,7 +30,16 @@ func AuthMiddleware(confStore handler.ConfigStore) gin.HandlerFunc {
 		if whitelist[path] || strings.HasPrefix(path, "/swagger/") ||
 			strings.HasPrefix(path, "/player") ||
 			strings.HasPrefix(path, "/api/v1/") ||
-			strings.HasPrefix(path, "/videos/") {
+			strings.HasPrefix(path, "/videos/") ||
+			strings.HasPrefix(path, "/assets/") ||
+			path == "/favicon.ico" ||
+			path == "/" {
+			c.Next()
+			return
+		}
+
+		// SPA frontend routes (non-API paths without dots are likely client-side routes)
+		if !strings.HasPrefix(path, "/api/") && !strings.Contains(path, ".") {
 			c.Next()
 			return
 		}
