@@ -78,6 +78,17 @@ pnpm release:server
 
 ## Releases
 
+### v3.5.0-beta.0 (2026.4.3 发布)
+
+### 软件下载
+
+- [【mediago】 windows(安装版) v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-setup-win32-x64-3.5.0-beta.0.exe)
+- [【mediago】 windows(便携版) v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-portable-win32-x64-3.5.0-beta.0.exe)
+- [【mediago】 macos arm64（apple 芯片） v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-setup-darwin-arm64-3.5.0-beta.0.dmg)
+- [【mediago】 macos x64（intel 芯片） v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-setup-darwin-x64-3.5.0-beta.0.dmg)
+- [【mediago】 linux v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-setup-linux-amd64-3.5.0-beta.0.deb)
+- 【mediago】 docker v3.0 `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:v3.5.0-beta.0`
+
 ### v3.0.0 (2024.10.7 发布)
 
 #### 软件下载
