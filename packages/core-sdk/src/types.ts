@@ -15,6 +15,7 @@ export enum DownloadType {
   M3U8 = "m3u8",
   Bilibili = "bilibili",
   Direct = "direct",
+  Mediago = "mediago",
 }
 
 /**

@@ -26,6 +26,7 @@ export async function dev() {
     `-bilibili-bin=${devConfig.bilibili_bin}`,
     `-m3u8-bin=${devConfig.m3u8_bin}`,
     `-direct-bin=${devConfig.direct_bin}`,
+    `-mediago-bin=${devConfig.mediago_bin}`,
     `-ffmpeg-bin=${devConfig.ffmpeg_bin}`,
   ];
   await runCommand("go", args, { description: "Start development server" });

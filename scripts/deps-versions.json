@@ -73,5 +73,25 @@
       "default": "gopeed",
       "win32": "gopeed.exe"
     }
+  },
+  "mediago": {
+    "repo": "caorushizi/mediago-core",
+    "version": "v0.1.0",
+    "assets": {
+      "darwin-x64": "mediago-v0.1.0-darwin-amd64.tar.gz",
+      "darwin-arm64": "mediago-v0.1.0-darwin-arm64.tar.gz",
+      "linux-x64": "mediago-v0.1.0-linux-amd64.tar.gz",
+      "linux-arm64": "mediago-v0.1.0-linux-arm64.tar.gz",
+      "win32-x64": "mediago-v0.1.0-windows-amd64.zip",
+      "win32-arm64": "mediago-v0.1.0-windows-arm64.zip"
+    },
+    "binaryName": {
+      "default": "mediago",
+      "win32": "mediago.exe"
+    },
+    "extractBinary": {
+      "default": "mediago",
+      "win32": "mediago.exe"
+    }
   }
 }

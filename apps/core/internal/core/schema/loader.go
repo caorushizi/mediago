@@ -101,6 +101,25 @@ func DefaultSchemas() SchemaList {
 					IsLive:  "检测到直播流",
 				},
 			},
+			{
+				Type: "mediago",
+				Args: map[string]ArgSpec{
+					"url":            {ArgsName: []string{}},
+					"localDir":       {ArgsName: []string{"--save-dir", "--tmp-dir"}},
+					"name":           {ArgsName: []string{"--save-name"}},
+					"headers":        {ArgsName: []string{"--header"}},
+					"deleteSegments": {ArgsName: []string{"--del-after-done"}},
+					"proxy":          {ArgsName: []string{"--proxy"}},
+					"__common__":     {ArgsName: []string{"--no-log", "--auto-select", "--thread-count", "8"}},
+				},
+				ConsoleReg: ConsoleReg{
+					Percent: `([\d.]+)%`,
+					Speed:   `([\d.]+[GMK]Bps)`,
+					Error:   "ERROR",
+					Start:   "保存文件名:",
+					IsLive:  "检测到直播流",
+				},
+			},
 		},
 	}
 }

@@ -10,6 +10,7 @@ const (
 	TypeM3U8     DownloadType = "m3u8"
 	TypeBilibili DownloadType = "bilibili"
 	TypeDirect   DownloadType = "direct"
+	TypeMediago  DownloadType = "mediago"
 )
 
 // TaskID is the unique identifier for a task
