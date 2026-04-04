@@ -67,6 +67,7 @@ export enum DownloadType {
   m3u8 = "m3u8",
   bilibili = "bilibili",
   direct = "direct",
+  mediago = "mediago",
 }
 
 export interface DownloadParams {

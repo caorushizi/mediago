@@ -318,6 +318,10 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
                   value: "bilibili",
                 },
                 {
+                  label: t("mediagoMedia"),
+                  value: "mediago",
+                },
+                {
                   label: t("direct"),
                   value: "direct",
                 },
@@ -456,6 +460,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
             {(formInstance) => {
               if (
                 formInstance.getFieldValue("type") !== "m3u8" &&
+                formInstance.getFieldValue("type") !== "mediago" &&
                 !formInstance.getFieldValue("batch")
               ) {
                 return null;

@@ -65,6 +65,7 @@ export function resolveDepsBinaries(): {
   n_m3u8dl_re: string;
   bbdown: string;
   gopeed: string;
+  mediago: string;
 } {
   let binDir: string;
 
@@ -80,5 +81,6 @@ export function resolveDepsBinaries(): {
     n_m3u8dl_re: path.resolve(binDir, `N_m3u8DL-RE${ext}`),
     bbdown: path.resolve(binDir, `BBDown${ext}`),
     gopeed: path.resolve(binDir, `gopeed${ext}`),
+    mediago: path.resolve(binDir, `mediago${ext}`),
   };
 }

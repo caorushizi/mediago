@@ -113,4 +113,5 @@ CMD ["mediago-core", \
      "--m3u8-bin=/app/deps/N_m3u8DL-RE", \
      "--bilibili-bin=/app/deps/BBDown", \
      "--direct-bin=/app/deps/gopeed", \
+     "--mediago-bin=/app/deps/mediago", \
      "--ffmpeg-bin=/app/deps/ffmpeg"]

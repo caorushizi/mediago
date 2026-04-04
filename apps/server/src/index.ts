@@ -52,6 +52,7 @@ const runner = new ServiceRunner({
     `--m3u8-bin=${deps.n_m3u8dl_re}`,
     `--bilibili-bin=${deps.bbdown}`,
     `--direct-bin=${deps.gopeed}`,
+    `--mediago-bin=${deps.mediago}`,
     `--db-path=${DB_PATH}`,
     `--config-dir=${DATA_DIR}`,
   ],

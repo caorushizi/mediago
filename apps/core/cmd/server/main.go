@@ -59,6 +59,7 @@ type AppConfig struct {
 	M3U8Bin        string `json:"m3u8_bin"`
 	BilibiliBin    string `json:"bilibili_bin"`
 	DirectBin      string `json:"direct_bin"`
+	MediagoBin     string `json:"mediago_bin"`
 	MaxRunner      int    `json:"max_runner"`
 	LocalDir       string `json:"local_dir"`
 	DeleteSegments bool   `json:"delete_segments"`
@@ -337,6 +338,7 @@ func initConfig() *AppConfig {
 	flag.StringVar(&cfg.M3U8Bin, "m3u8-bin", cfg.M3U8Bin, "M3U8 downloader binary path")
 	flag.StringVar(&cfg.BilibiliBin, "bilibili-bin", cfg.BilibiliBin, "Bilibili downloader binary path")
 	flag.StringVar(&cfg.DirectBin, "direct-bin", cfg.DirectBin, "Direct downloader binary path")
+	flag.StringVar(&cfg.MediagoBin, "mediago-bin", cfg.MediagoBin, "MediaGo downloader binary path")
 	flag.StringVar(&cfg.SchemaPath, "schema-path", cfg.SchemaPath, "Path to the download schema config.json")
 	flag.StringVar(&cfg.Port, "port", cfg.Port, "Server port")
 	flag.StringVar(&cfg.LocalDir, "local-dir", cfg.LocalDir, "Default download directory")
@@ -390,6 +392,7 @@ func getBinaryMap(cfg *AppConfig) map[core.DownloadType]string {
 		core.TypeM3U8:     cfg.M3U8Bin,
 		core.TypeBilibili: cfg.BilibiliBin,
 		core.TypeDirect:   cfg.DirectBin,
+		core.TypeMediago:  cfg.MediagoBin,
 	}
 }
 

@@ -160,6 +160,7 @@ export const en = {
   pleaseEnterCorrectBatchList: "Please enter correct batch list",
   streamMedia: "Stream Media (m3u8)",
   bilibiliMedia: "Bilibili Media",
+  mediagoMedia: "MediaGo Download",
   checkUpdate: "Check Update",
   allowBetaVersion: "Allow Beta Version",
   updateModal: "Update",
