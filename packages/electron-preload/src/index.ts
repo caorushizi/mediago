@@ -68,9 +68,6 @@ const electronApi: PlatformApi = {
     setSharedState(state: unknown): Promise<void> {
       return ipcRenderer.invoke(IPC.app.setSharedState, state);
     },
-    getMachineId(): Promise<string> {
-      return ipcRenderer.invoke(IPC.app.getMachineId);
-    },
     showBrowserWindow(): Promise<void> {
       return ipcRenderer.invoke(IPC.app.showBrowserWindow);
     },

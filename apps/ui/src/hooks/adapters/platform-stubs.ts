@@ -34,7 +34,6 @@ export const webPlatformStubs: PlatformApi = {
     }),
     getSharedState: async () => ({}),
     setSharedState: noop,
-    getMachineId: async () => "",
     showBrowserWindow: noop,
     combineToHomePage: noop,
   },

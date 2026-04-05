@@ -63,6 +63,8 @@ export default class WebviewService {
   }
 
   async init(): Promise<void> {
+    if (this.view) return;
+
     this.view = new WebContentsView({
       webPreferences: {
         partition: this.defaultSession,
@@ -118,7 +120,7 @@ export default class WebviewService {
   };
 
   onDidFailLoad = (e: Event, code: number, desc: string) => {
-    // this.window.webContents.send("webview-fail-load", { code, desc });
+    this.window?.webContents.send("browser:failLoad", { code, desc });
     this.logger.error(`[Webview] fail load: ${code} ${desc}`);
   };
 
@@ -344,12 +346,26 @@ export default class WebviewService {
     this.window?.webContents.send(channel, ...args);
   }
 
+  private removeViewListeners() {
+    if (!this.view) return;
+    const { webContents } = this.view;
+    webContents.removeListener("dom-ready", this.onDomReady);
+    webContents.removeListener("did-navigate", this.onDidNavigate);
+    webContents.removeListener("did-fail-load", this.onDidFailLoad);
+    webContents.removeListener(
+      "did-navigate-in-page",
+      this.onDidNavigateInPage,
+    );
+    webContents.removeListener("page-title-updated", this.onPageTitleUpdated);
+    webContents.removeListener("will-navigate", this.onWillNavigate);
+  }
+
   destroyView() {
-    if (this.view && this.window) {
+    if (this.view) {
+      this.removeViewListeners();
       this.view.webContents.close();
-      this.window.contentView.removeChildView(this.view);
+      this.window?.contentView.removeChildView(this.view);
     }
-    // FIXME: To avoid memory leaks, the view needs to be destroyed here
     this.view = null;
   }
 

@@ -36,6 +36,7 @@ const initialState: BrowserStore = {
 
 type Actions = {
   setBrowserStore: (values: Partial<BrowserStore>) => void;
+  startNavigation: (url: string) => void;
   addSource: (source: SourceData) => void;
   deleteSource: (url: string) => void;
   setSources: (sources: SourceData[]) => void;
@@ -54,13 +55,29 @@ export const useBrowserStore = create<BrowserStore & Actions>()(
             }
           });
         }),
+      startNavigation: (url) =>
+        set((state) => {
+          state.url = url;
+          state.mode = PageMode.Browser;
+          state.status = BrowserStatus.Loading;
+          state.sources = [];
+          state.errMsg = "";
+          state.errCode = 0;
+        }),
       addSource: (source) =>
         set((state) => {
-          state.sources.push(source);
+          if (!state.sources.some((s: SourceData) => s.url === source.url)) {
+            state.sources.push({
+              ...source,
+              id: state.sources.length + 1,
+            });
+          }
         }),
       deleteSource: (url) =>
         set((state) => {
-          state.sources = state.sources.filter((item: any) => item.url !== url);
+          state.sources = state.sources.filter(
+            (item: SourceData) => item.url !== url,
+          );
         }),
       setSources: (sources) =>
         set((state) => {
@@ -74,6 +91,7 @@ export const useBrowserStore = create<BrowserStore & Actions>()(
   ),
 );
 
+/** Full selector — use only when all fields are needed */
 export const browserStoreSelector = (state: BrowserStore & Actions) => {
   return {
     mode: state.mode,
@@ -86,9 +104,30 @@ export const browserStoreSelector = (state: BrowserStore & Actions) => {
   };
 };
 
+/** Navigation-only selector — url/title/status/mode (no sources) */
+export const browserNavSelector = (state: BrowserStore & Actions) => ({
+  url: state.url,
+  title: state.title,
+  status: state.status,
+  mode: state.mode,
+});
+
+/** Sources-only selector */
+export const browserSourcesSelector = (state: BrowserStore & Actions) => ({
+  sources: state.sources,
+});
+
+/** Error-only selector */
+export const browserErrorSelector = (state: BrowserStore & Actions) => ({
+  status: state.status,
+  errMsg: state.errMsg,
+  errCode: state.errCode,
+});
+
 export const setBrowserSelector = (state: BrowserStore & Actions) => {
   return {
     setBrowserStore: state.setBrowserStore,
+    startNavigation: state.startNavigation,
     addSource: state.addSource,
     deleteSource: state.deleteSource,
     setSources: state.setSources,

@@ -25,29 +25,34 @@ interface WebViewProps {
 
 const WebView: FC<WebViewProps> = ({ className }) => {
   const webviewRef = useRef<HTMLDivElement>(null);
-  const resizeObserver = useRef<ResizeObserver>();
+  const resizeObserver = useRef<ResizeObserver>(null);
+  const rafId = useRef<number>(0);
 
   const { browser } = usePlatform();
 
   useEffect(() => {
     if (!webviewRef.current) return;
 
-    // Monitor the size of webview elements
+    // Monitor the size of webview elements, throttled to one IPC call per frame
     resizeObserver.current = new ResizeObserver((entries) => {
-      if (!webviewRef.current) return;
+      if (rafId.current) cancelAnimationFrame(rafId.current);
+      rafId.current = requestAnimationFrame(() => {
+        if (!webviewRef.current) return;
 
-      const rect = computeRect(webviewRef.current.getBoundingClientRect());
-      const entry = entries[0];
-      const viewRect = computeRect(entry.contentRect);
-      viewRect.x += rect.x;
-      viewRect.y += rect.y;
-      browser.setBounds(viewRect);
+        const rect = computeRect(webviewRef.current.getBoundingClientRect());
+        const entry = entries[0];
+        const viewRect = computeRect(entry.contentRect);
+        viewRect.x += rect.x;
+        viewRect.y += rect.y;
+        browser.setBounds(viewRect);
+      });
     });
 
     resizeObserver.current.observe(webviewRef.current);
     browser.show();
 
     return () => {
+      if (rafId.current) cancelAnimationFrame(rafId.current);
       resizeObserver.current?.disconnect();
       browser.hide();
     };

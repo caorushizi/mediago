@@ -57,6 +57,7 @@ const filterList: SourceFilter[] = [
 export class SniffingHelper extends EventEmitter {
   private pageInfo: PageInfo = { title: "", url: "" };
   private readonly prepareDelay = 1000;
+  private checkTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     @inject(ElectronLogger)
@@ -71,34 +72,43 @@ export class SniffingHelper extends EventEmitter {
 
   update(pageInfo: PageInfo) {
     this.pageInfo = pageInfo;
+    // Cancel pending check from previous page
+    if (this.checkTimer) {
+      clearTimeout(this.checkTimer);
+      this.checkTimer = null;
+    }
     // Reset dedup cache when navigating to a new page
     urlCache.clear();
   }
 
   checkPageInfo() {
-    // Send page related information
-    const sendPageInfo = () => {
+    // Cancel any pending check
+    if (this.checkTimer) {
+      clearTimeout(this.checkTimer);
+    }
+
+    // Capture current page info to avoid race conditions
+    const pageInfo = { ...this.pageInfo };
+
+    this.checkTimer = setTimeout(() => {
+      this.checkTimer = null;
       listLoop: for (const filter of filterList) {
         if (filter.hosts) {
           for (const host of filter.hosts) {
-            if (!host.test(this.pageInfo.url)) {
+            if (!host.test(pageInfo.url)) {
               continue;
             }
 
             this.send({
-              url: this.pageInfo.url,
-              documentURL: this.pageInfo.url,
-              name: this.pageInfo.title,
+              url: pageInfo.url,
+              documentURL: pageInfo.url,
+              name: pageInfo.title,
               type: filter.type,
             });
             break listLoop;
           }
         }
       }
-    };
-
-    setTimeout(() => {
-      sendPageInfo();
     }, this.prepareDelay);
   }
 

@@ -114,7 +114,8 @@ export class FloatButton extends LitElement {
     this.button.style.top = `${newPos.top}px`;
   };
 
-  receiveMessage = (_: unknown, data: SourceData) => {
+  receiveMessage = (...args: unknown[]) => {
+    const data = args[1] as SourceData;
     this.data = [...this.data, { ...data, name: document.title }];
   };
 

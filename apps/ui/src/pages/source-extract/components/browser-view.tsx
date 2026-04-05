@@ -5,89 +5,68 @@ import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import { Button } from "@/components/ui/button";
 import WebView from "@/components/web-view";
+import { useBrowserActions } from "@/hooks/use-browser-actions";
 import { usePlatform } from "@/hooks/use-platform";
 import {
   BrowserStatus,
-  browserStoreSelector,
-  PageMode,
+  browserErrorSelector,
+  browserSourcesSelector,
   setBrowserSelector,
+  type SourceData,
   useBrowserStore,
 } from "@/store/browser";
-import { generateUrl } from "@/utils";
 import { BrowserViewPanel } from "./browser-view-panel";
 
 export function BrowserView() {
-  const { browser, on, off } = usePlatform();
-  const store = useBrowserStore(useShallow(browserStoreSelector));
-  const { addSource, setBrowserStore } = useBrowserStore(
-    useShallow(setBrowserSelector),
+  const { on, off } = usePlatform();
+  const { goto, goHome } = useBrowserActions();
+  const { status, errMsg, errCode } = useBrowserStore(
+    useShallow(browserErrorSelector),
   );
+  const { sources } = useBrowserStore(useShallow(browserSourcesSelector));
+  const url = useBrowserStore((s) => s.url);
+  const { addSource } = useBrowserStore(useShallow(setBrowserSelector));
   const { t } = useTranslation();
 
-  useEffect(() => {
-    const onWebviewLinkMessage = async (e: unknown, data: unknown) => {
-      addSource(data);
-    };
+  const onSourceDetected = useMemoizedFn((...args: unknown[]) => {
+    addSource(args[1] as SourceData);
+  });
 
-    on("browser:sourceDetected", onWebviewLinkMessage);
+  useEffect(() => {
+    on("browser:sourceDetected", onSourceDetected);
 
     return () => {
-      off("browser:sourceDetected", onWebviewLinkMessage);
+      off("browser:sourceDetected", onSourceDetected);
     };
-  }, [store.status]);
-
-  const onClickGoHome = useMemoizedFn(async () => {
-    await browser.home();
-    setBrowserStore({
-      url: "",
-      title: "",
-      mode: PageMode.Default,
-    });
-  });
-
-  const loadUrl = useMemoizedFn((url: string) => {
-    setBrowserStore({
-      url,
-      mode: PageMode.Browser,
-      status: BrowserStatus.Loading,
-    });
-    browser.loadURL(url);
-  });
-
-  const goto = useMemoizedFn(() => {
-    const link = generateUrl(store.url);
-    loadUrl(link);
-  });
+  }, []);
 
   const renderContent = useMemoizedFn(() => {
-    // Loaded state
-    if (store.status === BrowserStatus.Loading) {
+    // Loading or Loaded: show the WebView so the native WebContentsView is visible
+    if (status === BrowserStatus.Loading || status === BrowserStatus.Loaded) {
       return (
-        <div className="flex h-full w-full flex-row items-center justify-center">
-          <Spin />
+        <div className="relative h-full w-full flex-1">
+          <WebView className="h-full w-full flex-1" />
+          {status === BrowserStatus.Loading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-black/40">
+              <Spin />
+            </div>
+          )}
         </div>
       );
     }
 
     // Load failure
-    if (store.status === BrowserStatus.Failed) {
+    if (status === BrowserStatus.Failed) {
       return (
         <div className="flex h-full w-full flex-row items-center justify-center">
-          <Empty
-            description={`${store.errMsg || t("loadFailed")} (${store.errCode})`}
-          >
+          <Empty description={`${errMsg || t("loadFailed")} (${errCode})`}>
             <Space>
-              <Button onClick={onClickGoHome}>{t("backToHome")}</Button>
-              <Button onClick={goto}>{t("refresh")}</Button>
+              <Button onClick={goHome}>{t("backToHome")}</Button>
+              <Button onClick={() => goto(url)}>{t("refresh")}</Button>
             </Space>
           </Empty>
         </div>
       );
-    }
-
-    // Load successfully
-    if (store.status === BrowserStatus.Loaded) {
-      return <WebView className="h-full w-full flex-1" />;
     }
 
     return null;
@@ -95,7 +74,7 @@ export function BrowserView() {
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      {!store.sources.length ? (
+      {!sources.length ? (
         renderContent()
       ) : (
         <Splitter className="flex h-full flex-1 gap-2">

@@ -21,7 +21,6 @@ export const IPC = {
     getEnvPath: "app.getEnvPath",
     getSharedState: "app.getSharedState",
     setSharedState: "app.setSharedState",
-    getMachineId: "app.getMachineId",
     showBrowserWindow: "app.showBrowserWindow",
     combineToHomePage: "app.combineToHomePage",
   },
