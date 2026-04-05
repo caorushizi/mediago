@@ -332,6 +332,7 @@ export interface PlatformApi {
   installUpdate(): Promise<void>;
   exportDownloadList(): Promise<void>;
   openUrl(url: string): Promise<void>;
+  dismissOverlayDialog(): Promise<void>;
   openBrowser(url: string): Promise<void>;
   getLocalIP(): Promise<string>;
   rendererEvent(

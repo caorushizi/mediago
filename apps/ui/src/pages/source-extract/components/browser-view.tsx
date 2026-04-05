@@ -1,10 +1,8 @@
-import { DownloadTask, SHOW_DOWNLOAD_DIALOG } from "@mediago/shared-common";
 import { useMemoizedFn } from "ahooks";
 import { Empty, Space, Spin, Splitter } from "antd";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
-import DownloadForm, { type DownloadFormRef } from "@/components/download-form";
 import { Button } from "@/components/ui/button";
 import WebView from "@/components/web-view";
 import { usePlatform } from "@/hooks/use-platform";
@@ -21,44 +19,20 @@ import { BrowserViewPanel } from "./browser-view-panel";
 export function BrowserView() {
   const { webviewLoadURL, addIpcListener, removeIpcListener, webviewGoHome } =
     usePlatform();
-  const downloadForm = useRef<DownloadFormRef>(null);
   const store = useBrowserStore(useShallow(browserStoreSelector));
   const { addSource, setBrowserStore } = useBrowserStore(
     useShallow(setBrowserSelector),
   );
   const { t } = useTranslation();
-  const [placeHolder, setPlaceHolder] = useState<string>("");
-  const browserId = useId();
 
   useEffect(() => {
-    const onShowDownloadDialog = async (
-      e: unknown,
-      data: DownloadTask[],
-      image: string,
-    ) => {
-      if (image) {
-        setPlaceHolder(image);
-      }
-
-      const item = data[0];
-      downloadForm.current?.openModal({
-        batch: false,
-        type: item.type,
-        url: item.url,
-        name: item.name,
-        headers: item.headers,
-      });
-    };
-
     const onWebviewLinkMessage = async (e: unknown, data: unknown) => {
       addSource(data);
     };
 
-    addIpcListener(SHOW_DOWNLOAD_DIALOG, onShowDownloadDialog);
     addIpcListener("webview-link-message", onWebviewLinkMessage);
 
     return () => {
-      removeIpcListener(SHOW_DOWNLOAD_DIALOG, onShowDownloadDialog);
       removeIpcListener("webview-link-message", onWebviewLinkMessage);
     };
   }, [store.status]);
@@ -86,12 +60,6 @@ export function BrowserView() {
     loadUrl(link);
   });
 
-  const handleFormVisibleChange = useMemoizedFn((visible: boolean) => {
-    if (!visible) {
-      setPlaceHolder("");
-    }
-  });
-
   const renderContent = useMemoizedFn(() => {
     // Loaded state
     if (store.status === BrowserStatus.Loading) {
@@ -100,11 +68,6 @@ export function BrowserView() {
           <Spin />
         </div>
       );
-    }
-
-    // Modal box
-    if (placeHolder) {
-      return <img alt="" src={placeHolder} className="h-full w-full" />;
     }
 
     // Load failure
@@ -143,13 +106,6 @@ export function BrowserView() {
           </Splitter.Panel>
         </Splitter>
       )}
-      <DownloadForm
-        id={browserId}
-        isEdit
-        ref={downloadForm}
-        destroyOnClose
-        onFormVisibleChange={handleFormVisibleChange}
-      />
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { provide } from "@inversifyjs/binding-decorators";
 import {
   CLEAR_WEBVIEW_CACHE,
   type Controller,
+  DISMISS_OVERLAY_DIALOG,
   type DownloadTask,
   PLUGIN_READY,
   SET_WEBVIEW_BOUNDS,
@@ -18,6 +19,7 @@ import {
 import { handle } from "../core/decorators";
 import { i18n } from "../core/i18n";
 import { DownloaderServer } from "../services/downloader.server";
+import OverlayDialogService from "../services/overlay-dialog.service";
 import { TYPES } from "../types/symbols";
 import {
   type IpcMainEvent,
@@ -39,6 +41,8 @@ export default class WebviewController implements Controller {
     private readonly downloaderServer: DownloaderServer,
     @inject(SniffingHelper)
     private readonly sniffingHelper: SniffingHelper,
+    @inject(OverlayDialogService)
+    private readonly overlayDialog: OverlayDialogService,
   ) {}
 
   @handle(SET_WEBVIEW_BOUNDS)
@@ -111,8 +115,12 @@ export default class WebviewController implements Controller {
   }
 
   @handle(SHOW_DOWNLOAD_DIALOG)
-  async showDownloadDialog(e: IpcMainEvent, data: DownloadTask) {
-    const image = await this.webview.captureView();
-    this.webview.sendToWindow(SHOW_DOWNLOAD_DIALOG, data, image?.toDataURL());
+  async showDownloadDialog(e: IpcMainEvent, data: DownloadTask[]) {
+    this.overlayDialog.show(data);
+  }
+
+  @handle(DISMISS_OVERLAY_DIALOG)
+  async dismissOverlayDialog() {
+    this.overlayDialog.hide();
   }
 }
