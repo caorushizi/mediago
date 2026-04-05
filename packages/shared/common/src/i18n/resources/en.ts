@@ -84,6 +84,7 @@ export const en = {
   deleteSegments: "Delete segments after download",
   moreAction: "More Action",
   configDir: "Config Directory",
+  clear: "Clear",
   clearCache: "Clear Cache",
   clearCacheSuccess: "Clear Cache Success",
   clearCacheFailed: "Clear Cache Failed",

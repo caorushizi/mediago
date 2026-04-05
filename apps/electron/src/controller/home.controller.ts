@@ -64,11 +64,6 @@ export default class HomeController implements Controller {
     this.sharedState = state;
   }
 
-  @handle(IPC.app.getMachineId)
-  async getMachineId(): Promise<string> {
-    return "";
-  }
-
   @handle(IPC.update.check)
   async checkUpdate() {
     this.updater.manualUpdate();

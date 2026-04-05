@@ -346,7 +346,6 @@ export interface PlatformApi {
     getEnvPath(): Promise<EnvPath>;
     getSharedState(): Promise<unknown>;
     setSharedState(state: unknown): Promise<void>;
-    getMachineId(): Promise<string>;
     showBrowserWindow(): Promise<void>;
     combineToHomePage(store: BrowserStore): Promise<void>;
   };

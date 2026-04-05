@@ -1,38 +1,29 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { useMemoizedFn } from "ahooks";
-import { App, Form, Input, Modal } from "antd";
+import { App, Form, Input, Modal, Spin } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useShallow } from "zustand/react/shallow";
 import { ADD_FAVORITE, OPEN_FAVORITE } from "@/const";
-import {
-  BrowserStatus,
-  PageMode,
-  setBrowserSelector,
-  useBrowserStore,
-} from "@/store/browser";
 import { getFavIcon, tdApp } from "@/utils";
 import { FavItem } from "./fav-item";
 import { useFavorites } from "@/hooks/use-favorites";
 import { usePlatform } from "@/hooks/use-platform";
+import { useBrowserActions } from "@/hooks/use-browser-actions";
 
 export function FavoriteList() {
-  const { data: favoriteList, addFavorite, removeFavorite } = useFavorites();
-  const { browser, contextMenu } = usePlatform();
+  const {
+    data: favoriteList,
+    isLoading,
+    error,
+    addFavorite,
+    removeFavorite,
+  } = useFavorites();
+  const { contextMenu } = usePlatform();
+  const { loadUrl } = useBrowserActions();
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [favoriteAddForm] = Form.useForm<Favorite>();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
-
-  const loadUrl = useMemoizedFn((url: string) => {
-    setBrowserStore({
-      url,
-      mode: PageMode.Browser,
-      status: BrowserStatus.Loading,
-    });
-    browser.loadURL(url);
-  });
 
   const onClickLoadItem = useMemoizedFn((item: Favorite) => {
     loadUrl(item.url);
@@ -82,21 +73,35 @@ export function FavoriteList() {
     }
   });
 
+  if (isLoading) {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <Spin />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-full w-full items-center justify-center text-red-500">
+        {t("loadFailed")}
+      </div>
+    );
+  }
+
   return (
     <div className="h-full w-full py-4">
       <div className="grid grid-cols-4 place-items-center gap-4 overflow-auto md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-9">
-        {favoriteList.map((item: Record<string, unknown>) => {
-          return (
-            <FavItem
-              key={item.id}
-              onContextMenu={() => handleContextMenu(item)}
-              onClick={() => onClickLoadItem(item)}
-              onClose={() => handleRemoveFavorite(item.id)}
-              src={item.icon}
-              title={item.title}
-            />
-          );
-        })}
+        {favoriteList.map((item) => (
+          <FavItem
+            key={item.id}
+            onContextMenu={() => handleContextMenu(item)}
+            onClick={() => onClickLoadItem(item)}
+            onClose={() => handleRemoveFavorite(item.id)}
+            src={item.icon}
+            title={item.title}
+          />
+        ))}
         <FavItem
           key={"add"}
           onClick={showModal}

@@ -77,6 +77,7 @@ export const zh = {
   deleteSegments: "下载完成删除分片",
   moreAction: "更多操作",
   configDir: "配置文件目录",
+  clear: "清空",
   clearCache: "清除缓存",
   clearCacheSuccess: "清除缓存成功",
   clearCacheFailed: "清除缓存失败",

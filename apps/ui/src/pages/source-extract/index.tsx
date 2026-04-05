@@ -1,16 +1,15 @@
 import { useAsyncEffect, useMemoizedFn } from "ahooks";
-import { type React, useEffect, useRef } from "react";
+import { type FC, useEffect, useRef } from "react";
 import { useShallow } from "zustand/react/shallow";
 import PageContainer from "@/components/page-container";
 import { setAppStoreSelector, useAppStore } from "@/store/app";
 import {
   BrowserStatus,
-  browserStoreSelector,
   PageMode,
   setBrowserSelector,
   useBrowserStore,
 } from "@/store/browser";
-import { cn, convertPlainObject } from "@/utils";
+import { cn } from "@/utils";
 import { BrowserView } from "./components/browser-view";
 import { FavoriteList } from "./components/favorite-list";
 import { ToolBar } from "./components/tool-bar";
@@ -21,18 +20,24 @@ interface SourceExtractProps {
   page?: boolean;
 }
 
-const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
+const SourceExtract: FC<SourceExtractProps> = ({ page = false }) => {
   const { on, off, app } = usePlatform();
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
-  const store = useBrowserStore(useShallow(browserStoreSelector));
+  const mode = useBrowserStore((s) => s.mode);
+  const title = useBrowserStore((s) => s.title);
   const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
   const originTitle = useRef(document.title);
 
   useEffect(() => {
     const unsubscribe = useBrowserStore.subscribe(
-      (state) => state,
-      (state) => {
-        app.setSharedState(convertPlainObject(state));
+      (state) => ({
+        url: state.url,
+        title: state.title,
+        mode: state.mode,
+        status: state.status,
+      }),
+      (selected) => {
+        app.setSharedState(selected);
       },
     );
 
@@ -44,7 +49,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   useAsyncEffect(async () => {
     try {
       const configData = await getConfig();
-      setAppStore(configData as Record<string, unknown>);
+      setAppStore(configData);
     } catch {
       // ignore
     }
@@ -52,57 +57,55 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
 
   useAsyncEffect(async () => {
     const state = await app.getSharedState();
-    setBrowserStore(state as Record<string, unknown>);
+    if (state) setBrowserStore(state as Partial<BrowserStore>);
   }, []);
 
   useEffect(() => {
     on("browser:domReady", onDomReady);
-    on("webview-fail-load", onFailLoad);
+    on("browser:failLoad", onFailLoad);
     on("browser:didNavigate", onDidNavigate);
     on("browser:didNavigateInPage", onDidNavigateInPage);
 
     return () => {
       off("browser:domReady", onDomReady);
-      off("webview-fail-load", onFailLoad);
+      off("browser:failLoad", onFailLoad);
       off("browser:didNavigate", onDidNavigate);
       off("browser:didNavigateInPage", onDidNavigateInPage);
     };
-  }, [store.status]);
+  }, []);
 
   const setPageInfo = useMemoizedFn(({ url, title }: UrlDetail) => {
-    document.title = title;
     setBrowserStore({ url, title });
   });
 
-  const onDomReady = useMemoizedFn((e: unknown, info: UrlDetail) => {
-    setPageInfo(info);
+  const onDomReady = useMemoizedFn((...args: unknown[]) => {
+    setPageInfo(args[1] as UrlDetail);
   });
 
-  const onFailLoad = useMemoizedFn(
-    (e: unknown, data: { code: number; desc: string }) => {
-      setBrowserStore({
-        status: BrowserStatus.Failed,
-        errCode: data.code,
-        errMsg: data.desc,
-      });
-    },
-  );
+  const onFailLoad = useMemoizedFn((...args: unknown[]) => {
+    const data = args[1] as { code: number; desc: string };
+    setBrowserStore({
+      status: BrowserStatus.Failed,
+      errCode: data.code,
+      errMsg: data.desc,
+    });
+  });
 
-  const onDidNavigate = useMemoizedFn((e: unknown, info: UrlDetail) => {
-    setPageInfo(info);
+  const onDidNavigate = useMemoizedFn((...args: unknown[]) => {
+    setPageInfo(args[1] as UrlDetail);
     setBrowserStore({ status: BrowserStatus.Loaded });
   });
 
-  const onDidNavigateInPage = useMemoizedFn((e: unknown, info: UrlDetail) => {
-    setPageInfo(info);
+  const onDidNavigateInPage = useMemoizedFn((...args: unknown[]) => {
+    setPageInfo(args[1] as UrlDetail);
   });
 
   useEffect(() => {
-    document.title = store.title || document.title;
+    document.title = title || document.title;
     return () => {
       document.title = originTitle.current;
     };
-  }, [store.title]);
+  }, [title]);
 
   return (
     <PageContainer
@@ -111,7 +114,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     >
       <ToolBar page={page} />
       <div className="flex flex-1 overflow-hidden">
-        {store.mode === PageMode.Browser ? <BrowserView /> : <FavoriteList />}
+        {mode === PageMode.Browser ? <BrowserView /> : <FavoriteList />}
       </div>
     </PageContainer>
   );

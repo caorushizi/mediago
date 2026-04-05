@@ -1,7 +1,7 @@
 import { EyeInvisibleOutlined } from "@ant-design/icons";
 import { useMemoizedFn } from "ahooks";
 import { Input, Tooltip } from "antd";
-import { type React, useMemo } from "react";
+import { type KeyboardEvent, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import {
@@ -17,7 +17,6 @@ import {
   ShareIcon,
 } from "@/assets/svg";
 import { IconButton } from "@/components/icon-button";
-import { OPEN_URL } from "@/const";
 import {
   appStoreSelector,
   setAppStoreSelector,
@@ -25,13 +24,14 @@ import {
 } from "@/store/app";
 import {
   BrowserStatus,
-  browserStoreSelector,
+  browserNavSelector,
   PageMode,
   setBrowserSelector,
   useBrowserStore,
 } from "@/store/browser";
 import { themeSelector, useSessionStore } from "@/store/session";
-import { cn, generateUrl, getFavIcon, tdApp } from "@/utils";
+import { cn, getFavIcon } from "@/utils";
+import { useBrowserActions } from "@/hooks/use-browser-actions";
 import { useFavorites } from "@/hooks/use-favorites";
 import { usePlatform } from "@/hooks/use-platform";
 
@@ -42,8 +42,9 @@ interface Props {
 export function ToolBar({ page }: Props) {
   const { data: favoriteList, addFavorite, removeFavorite } = useFavorites();
   const { browser, app, contextMenu } = usePlatform();
+  const { goto, goHome } = useBrowserActions();
   const { theme } = useSessionStore(useShallow(themeSelector));
-  const store = useBrowserStore(useShallow(browserStoreSelector));
+  const store = useBrowserStore(useShallow(browserNavSelector));
   const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
@@ -62,21 +63,13 @@ export function ToolBar({ page }: Props) {
   });
 
   const curIsFavorite = useMemo(() => {
-    return favoriteList.find(
-      (item: Record<string, unknown>) => item.url === store.url,
-    );
+    return favoriteList.find((item) => item.url === store.url);
   }, [favoriteList, store.url]);
 
   const onInputKeyDown = useMemoizedFn(
-    async (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (!store.url) {
-        return;
-      }
-      if (e.key !== "Enter") {
-        return;
-      }
-
-      await goto();
+    async (e: KeyboardEvent<HTMLInputElement>) => {
+      if (!store.url || e.key !== "Enter") return;
+      goto(store.url);
     },
   );
 
@@ -87,25 +80,6 @@ export function ToolBar({ page }: Props) {
     }
   });
 
-  const onClickGoHome = useMemoizedFn(async () => {
-    await browser.home();
-    setBrowserStore({
-      url: "",
-      title: "",
-      mode: PageMode.Default,
-    });
-  });
-
-  const loadUrl = useMemoizedFn((url: string) => {
-    tdApp.onEvent(OPEN_URL);
-    setBrowserStore({
-      url,
-      mode: PageMode.Browser,
-      status: BrowserStatus.Loading,
-    });
-    browser.loadURL(url);
-  });
-
   const onInputContextMenu = useMemoizedFn(() => {
     contextMenu.show([
       { key: "copy", label: t("copy") },
@@ -113,17 +87,14 @@ export function ToolBar({ page }: Props) {
     ]);
   });
 
-  const onClickEnter = useMemoizedFn(async () => {
-    if (!store.url) {
-      return;
-    }
-
-    await goto();
+  const onClickEnter = useMemoizedFn(() => {
+    if (!store.url) return;
+    goto(store.url);
   });
 
   const onClickAddFavorite = useMemoizedFn(async () => {
     if (curIsFavorite) {
-      await removeFavorite((curIsFavorite as Record<string, unknown>).id);
+      await removeFavorite(curIsFavorite.id);
     } else {
       const icon = await getFavIcon(store.url);
       await addFavorite({
@@ -134,17 +105,11 @@ export function ToolBar({ page }: Props) {
     }
   });
 
-  // Merge to home page
   const onCombineToHome = useMemoizedFn(() => {
     app.combineToHomePage({
       url: store.url,
       sourceList: [],
     });
-  });
-
-  const goto = useMemoizedFn(() => {
-    const link = generateUrl(store.url);
-    loadUrl(link);
   });
 
   const iconColor = theme === "dark" ? "white" : "black";
@@ -172,7 +137,7 @@ export function ToolBar({ page }: Props) {
       <IconButton
         disabled={disabled}
         title={t("home")}
-        onClick={onClickGoHome}
+        onClick={goHome}
         icon={<HomeIcon fill={iconColor} />}
       />
       <IconButton
@@ -185,14 +150,14 @@ export function ToolBar({ page }: Props) {
       store.status === BrowserStatus.Loading ? (
         <IconButton
           title={t("cancle")}
-          onClick={onClickGoHome}
+          onClick={goHome}
           icon={<CloseIcon fill={iconColor} />}
         />
       ) : (
         <IconButton
           disabled={disabled}
           title={t("refresh")}
-          onClick={goto}
+          onClick={() => goto(store.url)}
           icon={<RefreshIcon fill={iconColor} />}
         />
       )}
