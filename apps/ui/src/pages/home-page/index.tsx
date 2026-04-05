@@ -28,7 +28,7 @@ interface Props {
 }
 
 const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
-  const { openDir } = usePlatform();
+  const { shell } = usePlatform();
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
   const newFormRef = useRef<DownloadFormRef>(null);
@@ -77,7 +77,7 @@ const HomePage: FC<Props> = ({ filter = DownloadFilter.list }) => {
       rightExtra={
         <div className="flex flex-row gap-2">
           {!isWeb && (
-            <Button onClick={() => openDir(appStore.local)}>
+            <Button onClick={() => shell.open(appStore.local)}>
               <FolderIcon />
               {t("openFolder")}
             </Button>

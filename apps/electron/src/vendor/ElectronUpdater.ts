@@ -35,20 +35,20 @@ export default class UpdateService {
       this.checkForUpdates();
     }
     autoUpdater.on("checking-for-update", () => {
-      this.mainWindow.send("checkingForUpdate");
+      this.mainWindow.send("update:checking");
     });
     autoUpdater.on("update-available", () => {
-      this.mainWindow.send("updateAvailable");
+      this.mainWindow.send("update:available");
     });
     autoUpdater.on("update-not-available", () => {
-      this.mainWindow.send("updateNotAvailable");
+      this.mainWindow.send("update:notAvailable");
     });
     autoUpdater.on("download-progress", (progress) => {
       this.logger.info(`progress: ${progress.percent}`);
-      this.mainWindow.send("updateDownloadProgress", progress);
+      this.mainWindow.send("update:downloadProgress", progress);
     });
     autoUpdater.on("update-downloaded", () => {
-      this.mainWindow.send("updateDownloaded");
+      this.mainWindow.send("update:downloaded");
     });
   }
 

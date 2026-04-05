@@ -10,12 +10,12 @@ interface Props {
 }
 
 export function AppHeader({ className }: Props) {
-  const { openUrl } = usePlatform();
+  const { shell } = usePlatform();
   const { t } = useTranslation();
 
   const openHelpUrl = useMemoizedFn(() => {
     const url = "https://downloader.caorushizi.cn/guides.html?form=client";
-    openUrl(url);
+    shell.open(url);
   });
 
   return (

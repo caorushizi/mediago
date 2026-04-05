@@ -32,6 +32,10 @@ import { usePlatform } from "@/hooks/use-platform";
 import { useEnvPath } from "@/hooks/use-config";
 import { setConfigValue } from "@/api/config";
 import {
+  exportFavorites as exportFavoritesApi,
+  importFavorites,
+} from "@/api/favorite";
+import {
   appStoreSelector,
   setAppStoreSelector,
   useAppStore,
@@ -43,19 +47,8 @@ import { AppLanguage, AppStore, AppTheme } from "@mediago/shared-common";
 const version = import.meta.env.APP_VERSION;
 
 const SettingPage: React.FC = () => {
-  const {
-    onSelectDownloadDir,
-    openDir,
-    clearWebviewCache,
-    exportFavorites,
-    importFavorites,
-    checkUpdate,
-    startUpdate,
-    addIpcListener,
-    removeIpcListener,
-    installUpdate,
-    appContextMenu,
-  } = usePlatform();
+  const { dialog, shell, browser, contextMenu, update, on, off } =
+    usePlatform();
   const { t } = useTranslation();
   const formRef = useRef<FormInstance<AppStore>>(null);
   const settings = useAppStore(useShallow(appStoreSelector));
@@ -74,8 +67,10 @@ const SettingPage: React.FC = () => {
   }, [settings]);
 
   const onSelectDir = useMemoizedFn(async () => {
-    const local = await onSelectDownloadDir();
+    const paths = await dialog.open({ type: "directory" });
+    const local = paths?.[0];
     if (local) {
+      await setConfigValue("local", local);
       setAppStore({ local });
       formRef.current?.setFieldValue("local", local);
     }
@@ -108,7 +103,16 @@ const SettingPage: React.FC = () => {
 
   const onMenuClick = useMemoizedFn(async (_) => {
     try {
-      await importFavorites();
+      const contents = await dialog.open({
+        type: "file",
+        filters: [{ name: "JSON", extensions: ["json"] }],
+        readContent: true,
+      });
+      if (!contents?.length) return;
+      const favorites = JSON.parse(contents[0]);
+      if (Array.isArray(favorites)) {
+        await importFavorites(favorites);
+      }
       message.success(t("importFavoriteSuccess"));
     } catch {
       message.error(t("importFavoriteFailed"));
@@ -117,7 +121,15 @@ const SettingPage: React.FC = () => {
 
   const handleExportFavorite = useMemoizedFn(async () => {
     try {
-      await exportFavorites();
+      const content = await exportFavoritesApi();
+      await dialog.save({
+        content:
+          typeof content === "string"
+            ? content
+            : JSON.stringify(content, null, 2),
+        defaultPath: "favorites.json",
+        filters: [{ name: "JSON", extensions: ["json"] }],
+      });
       message.success(t("exportFavoriteSuccess"));
     } catch {
       message.error(t("exportFavoriteFailed"));
@@ -127,7 +139,7 @@ const SettingPage: React.FC = () => {
   const handleCheckUpdate = useMemoizedFn(async () => {
     tdApp.onEvent(CHECK_UPDATE);
     setOpenUpdateModal(true);
-    await checkUpdate();
+    await update.check();
   });
 
   const handleHiddenUpdateModal = useMemoizedFn(() => {
@@ -135,11 +147,11 @@ const SettingPage: React.FC = () => {
   });
 
   const handleUpdate = useMemoizedFn(() => {
-    startUpdate();
+    update.startDownload();
   });
 
   const handleInstallUpdate = useMemoizedFn(() => {
-    installUpdate();
+    update.install();
   });
 
   useEffect(() => {
@@ -152,18 +164,18 @@ const SettingPage: React.FC = () => {
     const onDownloaded = () => {
       setUpdateDownloaded(true);
     };
-    addIpcListener("updateDownloadProgress", onDownloadProgress);
-    addIpcListener("updateDownloaded", onDownloaded);
+    on("update:downloadProgress", onDownloadProgress);
+    on("update:downloaded", onDownloaded);
 
     return () => {
-      removeIpcListener("updateDownloadProgress", onDownloadProgress);
-      removeIpcListener("updateDownloaded", onDownloaded);
+      off("update:downloadProgress", onDownloadProgress);
+      off("update:downloaded", onDownloaded);
     };
   }, []);
 
   const handleClearWebviewCache = useMemoizedFn(async () => {
     try {
-      await clearWebviewCache();
+      await browser.clearCache();
       message.success(t("clearCacheSuccess"));
     } catch {
       message.error(t("clearCacheFailed"));
@@ -266,7 +278,12 @@ const SettingPage: React.FC = () => {
             <Input
               width="xl"
               placeholder={t("pleaseEnterProxy")}
-              onContextMenu={appContextMenu}
+              onContextMenu={() =>
+                contextMenu.show([
+                  { key: "copy", label: t("copy") },
+                  { key: "paste", label: t("paste") },
+                ])
+              }
             />
           </Form.Item>
           <Form.Item
@@ -335,7 +352,12 @@ const SettingPage: React.FC = () => {
           <Form.Item hidden={!isWeb} name="proxy" label={t("proxySetting")}>
             <Input
               placeholder={t("pleaseEnterProxy")}
-              onContextMenu={appContextMenu}
+              onContextMenu={() =>
+                contextMenu.show([
+                  { key: "copy", label: t("copy") },
+                  { key: "paste", label: t("paste") },
+                ])
+              }
             />
           </Form.Item>
           <Form.Item
@@ -376,13 +398,23 @@ const SettingPage: React.FC = () => {
           <Form.Item name="apiKey" label={t("apiKey")}>
             <Input
               placeholder={t("pleaseEnterApiKey")}
-              onContextMenu={appContextMenu}
+              onContextMenu={() =>
+                contextMenu.show([
+                  { key: "copy", label: t("copy") },
+                  { key: "paste", label: t("paste") },
+                ])
+              }
             />
           </Form.Item>
           <Form.Item name="dockerUrl" label={t("dockerUrl")}>
             <Input
               placeholder={t("pleaseEnterDockerUrl")}
-              onContextMenu={appContextMenu}
+              onContextMenu={() =>
+                contextMenu.show([
+                  { key: "copy", label: t("copy") },
+                  { key: "paste", label: t("paste") },
+                ])
+              }
             />
           </Form.Item>
           <Form.Item label={t("enableDocker")} name="enableDocker">
@@ -461,19 +493,21 @@ const SettingPage: React.FC = () => {
           <Form.Item hidden={isWeb} label={t("moreAction")}>
             <Space>
               <Button
-                onClick={() => openDir(envPath?.configDir)}
+                onClick={() =>
+                  envPath?.configDir && shell.open(envPath.configDir)
+                }
                 icon={<FolderOpenOutlined />}
               >
                 {t("configDir")}
               </Button>
               <Button
-                onClick={() => openDir(envPath?.binDir)}
+                onClick={() => envPath?.binDir && shell.open(envPath.binDir)}
                 icon={<FolderOpenOutlined />}
               >
                 {t("binPath")}
               </Button>
               <Button
-                onClick={() => openDir(settings.local)}
+                onClick={() => settings.local && shell.open(settings.local)}
                 icon={<FolderOpenOutlined />}
               >
                 {t("localDir")}

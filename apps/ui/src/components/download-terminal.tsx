@@ -15,7 +15,7 @@ interface TerminalProps {
 
 const Terminal: FC<TerminalProps> = ({ className, id, header }) => {
   const terminalRef = useRef<HTMLDivElement | null>(null);
-  const { addIpcListener, removeIpcListener } = usePlatform();
+  const { on, off } = usePlatform();
   const { data } = useSWR({ key: "download-log", args: id }, ({ args }) =>
     getDownloadLog(args),
   );
@@ -53,11 +53,11 @@ const Terminal: FC<TerminalProps> = ({ className, id, header }) => {
       fitAddon.fit();
     };
 
-    addIpcListener("download-message", onDownloadMessage);
+    on("download-message", onDownloadMessage);
     window.addEventListener("resize", resize);
 
     return () => {
-      removeIpcListener("download-message", onDownloadMessage);
+      off("download-message", onDownloadMessage);
       window.removeEventListener("resize", resize);
       terminal.dispose();
     };

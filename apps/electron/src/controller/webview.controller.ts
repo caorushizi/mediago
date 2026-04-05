@@ -1,32 +1,14 @@
 import { provide } from "@inversifyjs/binding-decorators";
 import {
-  CLEAR_WEBVIEW_CACHE,
   type Controller,
-  DISMISS_OVERLAY_DIALOG,
   type DownloadTask,
-  PLUGIN_READY,
-  SET_WEBVIEW_BOUNDS,
-  SHOW_DOWNLOAD_DIALOG,
-  WEBVIEW_CHANGE_USER_AGENT,
-  WEBVIEW_GO_BACK,
-  WEBVIEW_GO_HOME,
-  WEBVIEW_HIDE,
-  WEBVIEW_LOAD_URL,
-  WEBVIEW_RELOAD,
-  WEBVIEW_SHOW,
-  WEBVIEW_URL_CONTEXTMENU,
+  IPC,
 } from "@mediago/shared-common";
 import { handle } from "../core/decorators";
-import { i18n } from "../core/i18n";
 import { DownloaderServer } from "../services/downloader.server";
 import OverlayDialogService from "../services/overlay-dialog.service";
 import { TYPES } from "../types/symbols";
-import {
-  type IpcMainEvent,
-  Menu,
-  type MenuItem,
-  type MenuItemConstructorOptions,
-} from "electron";
+import { type IpcMainEvent } from "electron";
 import { inject, injectable } from "inversify";
 import { SniffingHelper } from "../services/sniffing-helper.service";
 import WebviewService from "../services/webview.service";
@@ -45,81 +27,64 @@ export default class WebviewController implements Controller {
     private readonly overlayDialog: OverlayDialogService,
   ) {}
 
-  @handle(SET_WEBVIEW_BOUNDS)
+  @handle(IPC.browser.setBounds)
   async setWebviewBounds(e: IpcMainEvent, bounds: Electron.Rectangle) {
     this.webview.setBounds(bounds);
   }
 
-  @handle(WEBVIEW_LOAD_URL)
+  @handle(IPC.browser.loadURL)
   async browserViewLoadUrl(e: IpcMainEvent, url: string): Promise<void> {
     await this.webview.loadURL(url);
   }
 
-  @handle(WEBVIEW_URL_CONTEXTMENU)
-  async appContextMenu() {
-    const template: Array<MenuItemConstructorOptions | MenuItem> = [
-      {
-        label: i18n.t("copy"),
-        role: "copy",
-      },
-      {
-        label: i18n.t("paste"),
-        role: "paste",
-      },
-    ];
-
-    const menu = Menu.buildFromTemplate(template);
-    menu.popup();
-  }
-
-  @handle(WEBVIEW_GO_BACK)
+  @handle(IPC.browser.back)
   async webviewGoBack(): Promise<boolean> {
     return this.webview.goBack();
   }
 
-  @handle(WEBVIEW_RELOAD)
+  @handle(IPC.browser.reload)
   async webviewReload() {
     await this.webview.reload();
   }
 
-  @handle(WEBVIEW_SHOW)
+  @handle(IPC.browser.show)
   async webviewShow() {
     this.webview.show();
   }
 
-  @handle(WEBVIEW_HIDE)
+  @handle(IPC.browser.hide)
   async webviewHide() {
     this.webview.hide();
   }
 
-  @handle(WEBVIEW_GO_HOME)
+  @handle(IPC.browser.home)
   async webviewGoHome() {
     await this.webview.goHome();
   }
 
-  @handle(WEBVIEW_CHANGE_USER_AGENT)
+  @handle(IPC.browser.setUserAgent)
   async webviewChangeUserAgent(e: IpcMainEvent, isMobile: boolean) {
     this.webview.setUserAgent(isMobile);
     const client = this.downloaderServer.getClient();
     await client.setConfigKey("isMobile", isMobile);
   }
 
-  @handle(PLUGIN_READY)
+  @handle(IPC.browser.pluginReady)
   async pluginReady() {
     this.sniffingHelper.pluginReady();
   }
 
-  @handle(CLEAR_WEBVIEW_CACHE)
+  @handle(IPC.browser.clearCache)
   async clearWebviewCache() {
     return this.webview.clearCache();
   }
 
-  @handle(SHOW_DOWNLOAD_DIALOG)
+  @handle(IPC.browser.showDownloadDialog)
   async showDownloadDialog(e: IpcMainEvent, data: DownloadTask[]) {
     this.overlayDialog.show(data);
   }
 
-  @handle(DISMISS_OVERLAY_DIALOG)
+  @handle(IPC.browser.dismissOverlayDialog)
   async dismissOverlayDialog() {
     this.overlayDialog.hide();
   }

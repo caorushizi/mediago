@@ -298,49 +298,75 @@ export interface GoApi {
   openUrl(url: string): Promise<void>;
 }
 
-/**
- * Platform-specific operations — routed to Electron IPC in desktop mode,
- * no-op stubs in web/server mode.
- */
+// ============================================================
+// Generic dialog / shell / contextMenu types
+// ============================================================
+
+export interface DialogOpenOptions {
+  type: "file" | "directory";
+  filters?: { name: string; extensions: string[] }[];
+  multiple?: boolean;
+  /** If true, returns file contents instead of paths (only for type: 'file') */
+  readContent?: boolean;
+}
+
+export interface DialogSaveOptions {
+  content: string;
+  defaultPath?: string;
+  filters?: { name: string; extensions: string[] }[];
+}
+
+export interface ContextMenuItem {
+  key: string;
+  label: string;
+  type?: "separator";
+}
+
+// ============================================================
+// PlatformApi — namespaced, routed to Electron IPC in desktop
+// mode, no-op stubs in web/server mode.
+// ============================================================
+
 export interface PlatformApi {
-  onSelectDownloadDir(): Promise<string>;
-  openDir(dir?: string): Promise<void>;
-  setWebviewBounds(rect: Rectangle): Promise<void>;
-  webviewGoBack(): Promise<boolean>;
-  webviewReload(): Promise<void>;
-  webviewLoadURL(url?: string): Promise<void>;
-  webviewGoHome(): Promise<void>;
-  webviewHide(): Promise<void>;
-  webviewShow(): Promise<void>;
-  onDownloadListContextMenu(id: number): Promise<void>;
-  onFavoriteItemContextMenu(id: number): Promise<void>;
-  showBrowserWindow(): Promise<void>;
-  appContextMenu(): Promise<void>;
-  combineToHomePage(store: BrowserStore): Promise<void>;
-  selectFile(): Promise<string>;
-  getSharedState(): Promise<unknown>;
-  setSharedState(state: unknown): Promise<void>;
-  setUserAgent(isMobile: boolean): Promise<void>;
-  showDownloadDialog(data: Omit<DownloadTask, "id">[]): Promise<unknown>;
-  pluginReady(): Promise<void>;
-  getMachineId(): Promise<string>;
-  clearWebviewCache(): Promise<void>;
-  exportFavorites(): Promise<void>;
-  importFavorites(): Promise<void>;
-  checkUpdate(): Promise<void>;
-  startUpdate(): Promise<void>;
-  installUpdate(): Promise<void>;
-  exportDownloadList(): Promise<void>;
-  openUrl(url: string): Promise<void>;
-  dismissOverlayDialog(): Promise<void>;
-  openBrowser(url: string): Promise<void>;
-  getLocalIP(): Promise<string>;
-  rendererEvent(
-    channel: string,
-    funcId: string,
-    listener: (...args: unknown[]) => void,
-  ): void;
-  removeEventListener(channel: string, funcId: string): void;
+  browser: {
+    loadURL(url: string): Promise<void>;
+    back(): Promise<boolean>;
+    reload(): Promise<void>;
+    show(): Promise<void>;
+    hide(): Promise<void>;
+    home(): Promise<void>;
+    setBounds(rect: Rectangle): Promise<void>;
+    setUserAgent(isMobile: boolean): Promise<void>;
+    clearCache(): Promise<void>;
+    pluginReady(): Promise<void>;
+    showDownloadDialog(data: Omit<DownloadTask, "id">[]): Promise<void>;
+    dismissOverlayDialog(): Promise<void>;
+  };
+  app: {
+    getEnvPath(): Promise<EnvPath>;
+    getSharedState(): Promise<unknown>;
+    setSharedState(state: unknown): Promise<void>;
+    getMachineId(): Promise<string>;
+    showBrowserWindow(): Promise<void>;
+    combineToHomePage(store: BrowserStore): Promise<void>;
+  };
+  dialog: {
+    open(options: DialogOpenOptions): Promise<string[]>;
+    save(options: DialogSaveOptions): Promise<string>;
+  };
+  shell: {
+    open(target: string): Promise<void>;
+  };
+  contextMenu: {
+    show(items: ContextMenuItem[]): Promise<string | null>;
+  };
+  update: {
+    check(): Promise<void>;
+    startDownload(): Promise<void>;
+    install(): Promise<void>;
+  };
+  on(channel: string, listener: (...args: unknown[]) => void): void;
+  off(channel: string, listener: (...args: unknown[]) => void): void;
 }
 
 /** Combined API — backward compatible union of Go + Platform */

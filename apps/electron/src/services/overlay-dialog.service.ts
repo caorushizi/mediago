@@ -1,9 +1,5 @@
 import { provide } from "@inversifyjs/binding-decorators";
-import {
-  DISMISS_OVERLAY_DIALOG,
-  type DownloadTask,
-  SHOW_OVERLAY_DIALOG,
-} from "@mediago/shared-common";
+import { type DownloadTask, IpcEvent } from "@mediago/shared-common";
 import { WebContentsView } from "electron";
 import isDev from "electron-is-dev";
 import { inject, injectable } from "inversify";
@@ -46,7 +42,10 @@ export default class OverlayDialogService {
     this.view.webContents.on("dom-ready", () => {
       this.ready = true;
       if (this.pendingData) {
-        this.view?.webContents.send(SHOW_OVERLAY_DIALOG, this.pendingData);
+        this.view?.webContents.send(
+          IpcEvent.browser.showOverlayDialog,
+          this.pendingData,
+        );
         this.pendingData = null;
       }
     });
@@ -85,7 +84,7 @@ export default class OverlayDialogService {
 
     // Send data to the overlay renderer
     if (this.ready) {
-      this.view.webContents.send(SHOW_OVERLAY_DIALOG, data);
+      this.view.webContents.send(IpcEvent.browser.showOverlayDialog, data);
     } else {
       this.pendingData = data;
     }

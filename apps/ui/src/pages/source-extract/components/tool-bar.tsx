@@ -41,14 +41,7 @@ interface Props {
 
 export function ToolBar({ page }: Props) {
   const { data: favoriteList, addFavorite, removeFavorite } = useFavorites();
-  const {
-    webviewLoadURL,
-    webviewGoBack,
-    webviewGoHome,
-    combineToHomePage,
-    setUserAgent,
-    appContextMenu,
-  } = usePlatform();
+  const { browser, app, contextMenu } = usePlatform();
   const { theme } = useSessionStore(useShallow(themeSelector));
   const store = useBrowserStore(useShallow(browserStoreSelector));
   const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
@@ -62,7 +55,7 @@ export function ToolBar({ page }: Props) {
   // Set default UA
   const onSetDefaultUA = useMemoizedFn(() => {
     const nextMode = !appStore.isMobile;
-    setUserAgent(nextMode);
+    browser.setUserAgent(nextMode);
     setAppStore({
       isMobile: nextMode,
     });
@@ -88,14 +81,14 @@ export function ToolBar({ page }: Props) {
   );
 
   const onClickGoBack = useMemoizedFn(async () => {
-    const back = await webviewGoBack();
+    const back = await browser.back();
     if (!back) {
       setBrowserStore({ url: "", title: "", mode: PageMode.Default });
     }
   });
 
   const onClickGoHome = useMemoizedFn(async () => {
-    await webviewGoHome();
+    await browser.home();
     setBrowserStore({
       url: "",
       title: "",
@@ -110,11 +103,14 @@ export function ToolBar({ page }: Props) {
       mode: PageMode.Browser,
       status: BrowserStatus.Loading,
     });
-    webviewLoadURL(url);
+    browser.loadURL(url);
   });
 
   const onInputContextMenu = useMemoizedFn(() => {
-    appContextMenu();
+    contextMenu.show([
+      { key: "copy", label: t("copy") },
+      { key: "paste", label: t("paste") },
+    ]);
   });
 
   const onClickEnter = useMemoizedFn(async () => {
@@ -140,7 +136,7 @@ export function ToolBar({ page }: Props) {
 
   // Merge to home page
   const onCombineToHome = useMemoizedFn(() => {
-    combineToHomePage({
+    app.combineToHomePage({
       url: store.url,
       sourceList: [],
     });

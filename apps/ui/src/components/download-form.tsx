@@ -80,7 +80,7 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
     );
     const [folders, setFolders] = useState<Options[]>([]);
     const [videoFolders, setVideoFolders] = useState<string[]>([]);
-    const { appContextMenu } = usePlatform();
+    const { contextMenu } = usePlatform();
     const { addVideosToDocker } = useDockerApi();
     const { increase } = useDownloadStore(useShallow(downloadStoreSelector));
 
@@ -354,7 +354,12 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
                 >
                   <Input
                     placeholder={t("pleaseEnterVideoName")}
-                    onContextMenu={appContextMenu}
+                    onContextMenu={() =>
+                      contextMenu.show([
+                        { key: "copy", label: t("copy") },
+                        { key: "paste", label: t("paste") },
+                      ])
+                    }
                   />
                 </Form.Item>
               );
@@ -400,7 +405,12 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
                   <BatchUrlTextarea
                     rows={5}
                     placeholder={t("videoLikeDescription")}
-                    onContextMenu={appContextMenu}
+                    onContextMenu={() =>
+                      contextMenu.show([
+                        { key: "copy", label: t("copy") },
+                        { key: "paste", label: t("paste") },
+                      ])
+                    }
                   />
                 </Form.Item>
               );
@@ -429,7 +439,12 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
                 >
                   <Input
                     placeholder={t("pleaseEnterOnlineVideoUrlOrDragM3U8Here")}
-                    onContextMenu={appContextMenu}
+                    onContextMenu={() =>
+                      contextMenu.show([
+                        { key: "copy", label: t("copy") },
+                        { key: "paste", label: t("paste") },
+                      ])
+                    }
                     onDrop={(e) => {
                       const file = e.dataTransfer.files[0] as File & {
                         path: string;
@@ -473,7 +488,12 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
                   <TextArea
                     rows={4}
                     placeholder={t("additionalHeadersDescription")}
-                    onContextMenu={appContextMenu}
+                    onContextMenu={() =>
+                      contextMenu.show([
+                        { key: "copy", label: t("copy") },
+                        { key: "paste", label: t("paste") },
+                      ])
+                    }
                   />
                 </Form.Item>
               );

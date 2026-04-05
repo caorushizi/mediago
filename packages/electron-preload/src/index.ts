@@ -1,43 +1,14 @@
 import {
-  CHECK_UPDATE,
-  CLEAR_WEBVIEW_CACHE,
-  COMBINE_TO_HOME_PAGE,
-  DISMISS_OVERLAY_DIALOG,
-  EXPORT_DOWNLOAD_LIST,
-  EXPORT_FAVORITES,
-  GET_ENV_PATH,
-  GET_MACHINE_ID,
-  GET_SHARED_STATE,
-  IMPORT_FAVORITES,
-  INSTALL_UPDATE,
-  ON_DOWNLOAD_LIST_CONTEXT_MENU,
-  ON_FAVORITE_ITEM_CONTEXT_MENU,
-  OPEN_DIR,
-  OPEN_URL,
-  PLUGIN_READY,
-  SELECT_DOWNLOAD_DIR,
-  SELECT_FILE,
-  SET_SHARED_STATE,
-  SET_WEBVIEW_BOUNDS,
-  SHOW_BROWSER_WINDOW,
-  SHOW_DOWNLOAD_DIALOG,
-  START_UPDATE,
-  WEBVIEW_CHANGE_USER_AGENT,
-  WEBVIEW_GO_BACK,
-  WEBVIEW_GO_HOME,
-  WEBVIEW_HIDE,
-  WEBVIEW_LOAD_URL,
-  WEBVIEW_RELOAD,
-  WEBVIEW_SHOW,
-  WEBVIEW_URL_CONTEXTMENU,
+  IPC,
   type PlatformApi,
+  type EnvPath,
   type DownloadTask,
   type BrowserStore,
-  type EnvPath,
+  type DialogOpenOptions,
+  type DialogSaveOptions,
+  type ContextMenuItem,
 } from "@mediago/shared-common";
-import { contextBridge, ipcRenderer, shell } from "electron";
-
-const apiFunctions: Record<string, any> = {};
+import { contextBridge, ipcRenderer } from "electron";
 
 const apiKey = "electron";
 
@@ -48,117 +19,99 @@ const apiKey = "electron";
  * getEnvPath is a special case: it's in GoApi but also needed before Go adapter
  * is initialized (to discover coreUrl), so we keep it in the preload as well.
  */
-const electronApi: PlatformApi & { getEnvPath(): Promise<EnvPath> } = {
-  getEnvPath(): Promise<EnvPath> {
-    return ipcRenderer.invoke(GET_ENV_PATH);
+const electronApi: PlatformApi = {
+  browser: {
+    loadURL(url: string): Promise<void> {
+      return ipcRenderer.invoke(IPC.browser.loadURL, url);
+    },
+    back(): Promise<boolean> {
+      return ipcRenderer.invoke(IPC.browser.back);
+    },
+    reload(): Promise<void> {
+      return ipcRenderer.invoke(IPC.browser.reload);
+    },
+    show(): Promise<void> {
+      return ipcRenderer.invoke(IPC.browser.show);
+    },
+    hide(): Promise<void> {
+      return ipcRenderer.invoke(IPC.browser.hide);
+    },
+    home(): Promise<void> {
+      return ipcRenderer.invoke(IPC.browser.home);
+    },
+    setBounds(rect: Electron.Rectangle): Promise<void> {
+      return ipcRenderer.invoke(IPC.browser.setBounds, rect);
+    },
+    setUserAgent(isMobile: boolean): Promise<void> {
+      return ipcRenderer.invoke(IPC.browser.setUserAgent, isMobile);
+    },
+    clearCache(): Promise<void> {
+      return ipcRenderer.invoke(IPC.browser.clearCache);
+    },
+    pluginReady(): Promise<void> {
+      return ipcRenderer.invoke(IPC.browser.pluginReady);
+    },
+    showDownloadDialog(data: Omit<DownloadTask, "id">[]): Promise<void> {
+      return ipcRenderer.invoke(IPC.browser.showDownloadDialog, data);
+    },
+    dismissOverlayDialog(): Promise<void> {
+      return ipcRenderer.invoke(IPC.browser.dismissOverlayDialog);
+    },
   },
-  onSelectDownloadDir(): Promise<string> {
-    return ipcRenderer.invoke(SELECT_DOWNLOAD_DIR);
+  app: {
+    getEnvPath(): Promise<EnvPath> {
+      return ipcRenderer.invoke(IPC.app.getEnvPath);
+    },
+    getSharedState(): Promise<unknown> {
+      return ipcRenderer.invoke(IPC.app.getSharedState);
+    },
+    setSharedState(state: unknown): Promise<void> {
+      return ipcRenderer.invoke(IPC.app.setSharedState, state);
+    },
+    getMachineId(): Promise<string> {
+      return ipcRenderer.invoke(IPC.app.getMachineId);
+    },
+    showBrowserWindow(): Promise<void> {
+      return ipcRenderer.invoke(IPC.app.showBrowserWindow);
+    },
+    combineToHomePage(store: BrowserStore): Promise<void> {
+      return ipcRenderer.invoke(IPC.app.combineToHomePage, store);
+    },
   },
-  async openDir(dir?: string): Promise<void> {
-    if (!dir) return;
-    return ipcRenderer.invoke(OPEN_DIR, dir);
+  dialog: {
+    open(options: DialogOpenOptions): Promise<string[]> {
+      return ipcRenderer.invoke(IPC.dialog.open, options);
+    },
+    save(options: DialogSaveOptions): Promise<string> {
+      return ipcRenderer.invoke(IPC.dialog.save, options);
+    },
   },
-  openUrl(url: string): Promise<void> {
-    return ipcRenderer.invoke(OPEN_URL, url);
+  shell: {
+    open(target: string): Promise<void> {
+      return ipcRenderer.invoke(IPC.shell.open, target);
+    },
   },
-  setWebviewBounds(rect: Electron.Rectangle): Promise<void> {
-    return ipcRenderer.invoke(SET_WEBVIEW_BOUNDS, rect);
+  contextMenu: {
+    show(items: ContextMenuItem[]): Promise<string | null> {
+      return ipcRenderer.invoke(IPC.contextMenu.show, items);
+    },
   },
-  webviewGoBack(): Promise<boolean> {
-    return ipcRenderer.invoke(WEBVIEW_GO_BACK);
+  update: {
+    check(): Promise<void> {
+      return ipcRenderer.invoke(IPC.update.check);
+    },
+    startDownload(): Promise<void> {
+      return ipcRenderer.invoke(IPC.update.startDownload);
+    },
+    install(): Promise<void> {
+      return ipcRenderer.invoke(IPC.update.install);
+    },
   },
-  webviewReload(): Promise<void> {
-    return ipcRenderer.invoke(WEBVIEW_RELOAD);
-  },
-  webviewLoadURL(url?: string): Promise<void> {
-    return ipcRenderer.invoke(WEBVIEW_LOAD_URL, url);
-  },
-  webviewGoHome(): Promise<void> {
-    return ipcRenderer.invoke(WEBVIEW_GO_HOME);
-  },
-  webviewHide(): Promise<void> {
-    return ipcRenderer.invoke(WEBVIEW_HIDE);
-  },
-  webviewShow(): Promise<void> {
-    return ipcRenderer.invoke(WEBVIEW_SHOW);
-  },
-  onDownloadListContextMenu(id: number): Promise<void> {
-    return ipcRenderer.invoke(ON_DOWNLOAD_LIST_CONTEXT_MENU, id);
-  },
-  onFavoriteItemContextMenu(id: number): Promise<void> {
-    return ipcRenderer.invoke(ON_FAVORITE_ITEM_CONTEXT_MENU, id);
-  },
-  showBrowserWindow(): Promise<void> {
-    return ipcRenderer.invoke(SHOW_BROWSER_WINDOW);
-  },
-  appContextMenu(): Promise<void> {
-    return ipcRenderer.invoke(WEBVIEW_URL_CONTEXTMENU);
-  },
-  combineToHomePage(store: BrowserStore): Promise<void> {
-    return ipcRenderer.invoke(COMBINE_TO_HOME_PAGE, store);
-  },
-  selectFile(): Promise<string> {
-    return ipcRenderer.invoke(SELECT_FILE);
-  },
-  getSharedState(): Promise<unknown> {
-    return ipcRenderer.invoke(GET_SHARED_STATE);
-  },
-  setSharedState(state: unknown): Promise<void> {
-    return ipcRenderer.invoke(SET_SHARED_STATE, state);
-  },
-  setUserAgent(isMobile: boolean): Promise<void> {
-    return ipcRenderer.invoke(WEBVIEW_CHANGE_USER_AGENT, isMobile);
-  },
-  showDownloadDialog(data: Omit<DownloadTask, "id">[]) {
-    return ipcRenderer.invoke(SHOW_DOWNLOAD_DIALOG, data);
-  },
-  pluginReady() {
-    return ipcRenderer.invoke(PLUGIN_READY);
-  },
-  getMachineId(): Promise<string> {
-    return ipcRenderer.invoke(GET_MACHINE_ID);
-  },
-  clearWebviewCache(): Promise<void> {
-    return ipcRenderer.invoke(CLEAR_WEBVIEW_CACHE);
-  },
-  exportFavorites(): Promise<void> {
-    return ipcRenderer.invoke(EXPORT_FAVORITES);
-  },
-  importFavorites(): Promise<void> {
-    return ipcRenderer.invoke(IMPORT_FAVORITES);
-  },
-  checkUpdate(): Promise<void> {
-    return ipcRenderer.invoke(CHECK_UPDATE);
-  },
-  startUpdate(): Promise<void> {
-    return ipcRenderer.invoke(START_UPDATE);
-  },
-  installUpdate(): Promise<void> {
-    return ipcRenderer.invoke(INSTALL_UPDATE);
-  },
-  exportDownloadList(): Promise<void> {
-    return ipcRenderer.invoke(EXPORT_DOWNLOAD_LIST);
-  },
-  dismissOverlayDialog(): Promise<void> {
-    return ipcRenderer.invoke(DISMISS_OVERLAY_DIALOG);
-  },
-  openBrowser(url: string): Promise<void> {
-    return shell.openExternal(url);
-  },
-  async getLocalIP(): Promise<string> {
-    return "";
-  },
-  rendererEvent(channel: string, funcId: string, listener: any): void {
-    const key = `${channel}-${funcId}`;
-    apiFunctions[key] = listener;
+  on(channel: string, listener: (...args: unknown[]) => void): void {
     ipcRenderer.on(channel, listener);
   },
-  removeEventListener(channel: string, funcId: string): void {
-    const key = `${channel}-${funcId}`;
-    const fun = apiFunctions[key];
-    ipcRenderer.removeListener(channel, fun);
-    delete apiFunctions[key];
+  off(channel: string, listener: (...args: unknown[]) => void): void {
+    ipcRenderer.removeListener(channel, listener);
   },
 };
 

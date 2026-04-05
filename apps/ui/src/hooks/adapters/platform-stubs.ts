@@ -1,56 +1,64 @@
 import type { PlatformApi } from "@mediago/shared-common";
 
-const noop = async () => {};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const noop = async (..._args: unknown[]): Promise<any> => {};
 
 /**
  * Web/server mode stubs for PlatformApi.
  * All Electron-native operations are no-ops in web mode.
  */
 export const webPlatformStubs: PlatformApi = {
-  onSelectDownloadDir: async () => "",
-  openDir: noop,
-  setWebviewBounds: noop,
-  webviewGoBack: async () => false,
-  webviewReload: noop,
-  webviewLoadURL: noop,
-  webviewGoHome: noop,
-  webviewHide: noop,
-  webviewShow: noop,
-  onDownloadListContextMenu: noop,
-  onFavoriteItemContextMenu: noop,
-  showBrowserWindow: noop,
-  appContextMenu: noop,
-  combineToHomePage: noop,
-  selectFile: async () => "",
-  getSharedState: async () => ({}),
-  setSharedState: noop,
-  setUserAgent: noop,
-  showDownloadDialog: async () => null,
-  pluginReady: noop,
-  getMachineId: async () => "",
-  clearWebviewCache: noop,
-  exportFavorites: noop,
-  importFavorites: noop,
-  checkUpdate: noop,
-  startUpdate: noop,
-  installUpdate: noop,
-  dismissOverlayDialog: noop,
-  exportDownloadList: noop,
-  openUrl: async (url: string) => {
-    const a = document.createElement("a");
-    a.href = url;
-    a.target = "_blank";
-    a.rel = "noopener noreferrer";
-    a.click();
+  browser: {
+    loadURL: noop,
+    back: async () => false,
+    reload: noop,
+    show: noop,
+    hide: noop,
+    home: noop,
+    setBounds: noop,
+    setUserAgent: noop,
+    clearCache: noop,
+    pluginReady: noop,
+    showDownloadDialog: noop,
+    dismissOverlayDialog: noop,
   },
-  openBrowser: async (url: string) => {
-    const a = document.createElement("a");
-    a.href = url;
-    a.target = "_blank";
-    a.rel = "noopener noreferrer";
-    a.click();
+  app: {
+    getEnvPath: async () => ({
+      binPath: "",
+      dbPath: "",
+      workspace: "",
+      platform: "",
+      local: "",
+      playerUrl: "",
+      coreUrl: "",
+    }),
+    getSharedState: async () => ({}),
+    setSharedState: noop,
+    getMachineId: async () => "",
+    showBrowserWindow: noop,
+    combineToHomePage: noop,
   },
-  getLocalIP: async () => "",
-  rendererEvent: () => {},
-  removeEventListener: () => {},
+  dialog: {
+    open: async () => [],
+    save: async () => "",
+  },
+  shell: {
+    open: async (target: string) => {
+      const a = document.createElement("a");
+      a.href = target;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.click();
+    },
+  },
+  contextMenu: {
+    show: async () => null,
+  },
+  update: {
+    check: noop,
+    startDownload: noop,
+    install: noop,
+  },
+  on: () => {},
+  off: () => {},
 };

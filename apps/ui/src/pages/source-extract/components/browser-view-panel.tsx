@@ -26,7 +26,7 @@ export function BrowserViewPanel() {
     useShallow(setBrowserSelector),
   );
   const { t } = useTranslation();
-  const { showDownloadDialog } = usePlatform();
+  const { browser } = usePlatform();
   const { message } = App.useApp();
 
   const handleClear = useMemoizedFn(() => {
@@ -88,7 +88,7 @@ export function BrowserViewPanel() {
                   type="text"
                   size="small"
                   title={t("edit")}
-                  onClick={() => showDownloadDialog([item])}
+                  onClick={() => browser.showDownloadDialog([item])}
                 />
                 {enableDocker && (
                   <AntdButton
@@ -96,7 +96,7 @@ export function BrowserViewPanel() {
                     type="text"
                     size="small"
                     title={t("edit")}
-                    onClick={() => showDownloadDialog([item])}
+                    onClick={() => browser.showDownloadDialog([item])}
                   />
                 )}
               </div>
