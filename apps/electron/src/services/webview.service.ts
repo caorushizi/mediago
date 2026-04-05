@@ -98,14 +98,14 @@ export default class WebviewService {
     if (!this.view) return;
     const pageInfo = this.getPageInfo();
     this.sniffingHelper.update(pageInfo);
-    this.window?.webContents.send("webview-dom-ready", pageInfo);
+    this.window?.webContents.send("browser:domReady", pageInfo);
   };
 
   onDidNavigate = async () => {
     if (!this.view) return;
     const pageInfo = this.getPageInfo();
     this.sniffingHelper.update(pageInfo);
-    this.window?.webContents.send("webview-did-navigate", pageInfo);
+    this.window?.webContents.send("browser:didNavigate", pageInfo);
 
     try {
       const content = await readFile(pluginUrl, "utf-8");
@@ -127,7 +127,7 @@ export default class WebviewService {
     const pageInfo = this.getPageInfo();
     this.sniffingHelper.update(pageInfo);
     this.sniffingHelper.checkPageInfo();
-    this.window?.webContents.send("webview-did-navigate-in-page", pageInfo);
+    this.window?.webContents.send("browser:didNavigateInPage", pageInfo);
   };
 
   onPageTitleUpdated = () => {
@@ -146,7 +146,7 @@ export default class WebviewService {
     if (!this.view) return;
     // Send to the window for processing
     // Previously addDownloadTask was called here; now handled by Go server
-    this.window?.webContents.send("webview-link-message", item);
+    this.window?.webContents.send("browser:sourceDetected", item);
   };
 
   getPageInfo() {
@@ -375,7 +375,7 @@ export default class WebviewService {
     }
 
     if (!init) {
-      this.window?.webContents.send("change-privacy");
+      this.window?.webContents.send("browser:privacyChanged");
     }
   }
 }

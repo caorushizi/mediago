@@ -2,7 +2,7 @@ import "vite/client";
 
 declare global {
   interface Window {
-    electron: MediaGoApi;
+    electron: import("@mediago/shared-common").PlatformApi;
     TDAPP?: {
       onEvent: (
         eventId: string,

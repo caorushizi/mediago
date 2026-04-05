@@ -24,8 +24,7 @@ interface Props {
 
 export function DownloadTaskList({ filter }: Props) {
   const [selected, setSelected] = useState<number[]>([]);
-  const { addIpcListener, removeIpcListener, onDownloadListContextMenu } =
-    usePlatform();
+  const { contextMenu } = usePlatform();
   const { message } = App.useApp();
   const { t } = useTranslation();
   const editFormRef = useRef<DownloadFormRef>(null);
@@ -34,29 +33,7 @@ export function DownloadTaskList({ filter }: Props) {
   const { mutate, isLoading, data } = useTasks(filter);
 
   useEffect(() => {
-    const onDownloadMenuEvent = async (
-      _e: unknown,
-      params: { action: string; payload: number },
-    ) => {
-      const { action, payload } = params;
-
-      if (action === "select") {
-        setSelected((keys) => [...keys, payload]);
-      } else if (action === "download") {
-        onStartDownload(payload);
-      } else if (action === "refresh") {
-        mutate();
-      } else if (action === "delete") {
-        await deleteDownloadTask(payload);
-        mutate();
-      }
-    };
-
-    addIpcListener("download-item-event", onDownloadMenuEvent);
-
     return () => {
-      removeIpcListener("download-item-event", onDownloadMenuEvent);
-
       // Clean up any pending refresh timers
       if (refreshTimeoutRef.current) {
         clearTimeout(refreshTimeoutRef.current);
@@ -119,8 +96,24 @@ export function DownloadTaskList({ filter }: Props) {
     mutate();
   });
 
-  const handleContext = useMemoizedFn((item: number) => {
-    onDownloadListContextMenu(item);
+  const handleContext = useMemoizedFn(async (id: number) => {
+    const action = await contextMenu.show([
+      { key: "select", label: t("select") },
+      { key: "download", label: t("download") },
+      { key: "refresh", label: t("refresh") },
+      { key: "separator", label: "", type: "separator" },
+      { key: "delete", label: t("delete") },
+    ]);
+    if (action === "select") {
+      setSelected((keys) => [...keys, id]);
+    } else if (action === "download") {
+      onStartDownload(id);
+    } else if (action === "refresh") {
+      mutate();
+    } else if (action === "delete") {
+      await deleteDownloadTask(id);
+      mutate();
+    }
   });
 
   const onDeleteItems = useMemoizedFn(async (ids: number[]) => {

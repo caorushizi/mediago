@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "ui": "tui",
+  "ui": "stream",
   "globalEnv": ["APP_TARGET", "MEDIAGO_CORE_BIN"],
   "tasks": {
     "dev": {

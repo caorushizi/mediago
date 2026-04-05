@@ -76,7 +76,7 @@ const Converter = () => {
     startConversion,
     stopConversion,
   } = useConversions({ current: page, pageSize });
-  const { selectFile, openDir } = usePlatform();
+  const { dialog, shell } = usePlatform();
   const { message } = App.useApp();
   const [outputFormat, setOutputFormat] = useState("mp3");
   const [quality, setQuality] = useState("medium");
@@ -85,7 +85,8 @@ const Converter = () => {
 
   const handleBrowseFile = useMemoizedFn(async () => {
     try {
-      const file = await selectFile();
+      const paths = await dialog.open({ type: "file" });
+      const file = paths?.[0];
       if (file) setFilePath(file);
     } catch (e: unknown) {
       message.error((e as Error).message);
@@ -147,7 +148,7 @@ const Converter = () => {
       const dir =
         targetPath.substring(0, targetPath.lastIndexOf("/")) ||
         targetPath.substring(0, targetPath.lastIndexOf("\\"));
-      await openDir(dir || targetPath);
+      await shell.open(dir || targetPath);
     } catch {
       // ignore
     }

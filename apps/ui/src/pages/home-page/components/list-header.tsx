@@ -29,7 +29,7 @@ export function ListHeader({
   const { message } = App.useApp();
   const { t } = useTranslation();
   const disabled = useMemo(() => selected.length === 0, [selected.length]);
-  const { exportDownloadList } = usePlatform();
+  const { dialog } = usePlatform();
   const items: MenuProps["items"] = useMemo(() => {
     return [
       {
@@ -43,7 +43,14 @@ export function ListHeader({
     const { key } = e;
     if (key === "exportDownloadList") {
       try {
-        await exportDownloadList();
+        const { exportDownloadList } = await import("@/api/download-task");
+        const content = await exportDownloadList();
+        await dialog.save({
+          content:
+            typeof content === "string" ? content : JSON.stringify(content),
+          defaultPath: "downloads.txt",
+          filters: [{ name: "Text", extensions: ["txt"] }],
+        });
       } catch {
         message.error(t("exportDownloadListFailed"));
       }

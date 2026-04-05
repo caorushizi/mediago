@@ -22,8 +22,7 @@ interface SourceExtractProps {
 }
 
 const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
-  const { addIpcListener, removeIpcListener, getSharedState, setSharedState } =
-    usePlatform();
+  const { on, off, app } = usePlatform();
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
   const store = useBrowserStore(useShallow(browserStoreSelector));
   const { setBrowserStore } = useBrowserStore(useShallow(setBrowserSelector));
@@ -33,7 +32,7 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
     const unsubscribe = useBrowserStore.subscribe(
       (state) => state,
       (state) => {
-        setSharedState(convertPlainObject(state));
+        app.setSharedState(convertPlainObject(state));
       },
     );
 
@@ -52,21 +51,21 @@ const SourceExtract: React.FC<SourceExtractProps> = ({ page = false }) => {
   }, []);
 
   useAsyncEffect(async () => {
-    const state = await getSharedState();
+    const state = await app.getSharedState();
     setBrowserStore(state as Record<string, unknown>);
   }, []);
 
   useEffect(() => {
-    addIpcListener("webview-dom-ready", onDomReady);
-    addIpcListener("webview-fail-load", onFailLoad);
-    addIpcListener("webview-did-navigate", onDidNavigate);
-    addIpcListener("webview-did-navigate-in-page", onDidNavigateInPage);
+    on("browser:domReady", onDomReady);
+    on("webview-fail-load", onFailLoad);
+    on("browser:didNavigate", onDidNavigate);
+    on("browser:didNavigateInPage", onDidNavigateInPage);
 
     return () => {
-      removeIpcListener("webview-dom-ready", onDomReady);
-      removeIpcListener("webview-fail-load", onFailLoad);
-      removeIpcListener("webview-did-navigate", onDidNavigate);
-      removeIpcListener("webview-did-navigate-in-page", onDidNavigateInPage);
+      off("browser:domReady", onDomReady);
+      off("webview-fail-load", onFailLoad);
+      off("browser:didNavigate", onDidNavigate);
+      off("browser:didNavigateInPage", onDidNavigateInPage);
     };
   }, [store.status]);
 

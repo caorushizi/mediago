@@ -21,7 +21,7 @@ export const platformApi: PlatformApi = isWeb
  * Go SSE events are handled separately by api/events.ts.
  */
 export const platformEventListener: IpcListener = isWeb
-  ? { addIpcListener: () => {}, removeIpcListener: () => {} }
+  ? { on: () => {}, off: () => {} }
   : electronIpcAdapter;
 
 export type { IpcListener } from "./utils";

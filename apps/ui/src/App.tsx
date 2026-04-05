@@ -44,7 +44,7 @@ function getAlgorithm(appTheme: "dark" | "light") {
 
 const App: FC = () => {
   useAuth();
-  const { addIpcListener, removeIpcListener } = usePlatform();
+  const { on, off } = usePlatform();
   const { setUpdateAvailable, setUploadChecking } = useSessionStore(
     useShallow(updateSelector),
   );
@@ -105,17 +105,17 @@ const App: FC = () => {
     const unsubConfig = onConfigChanged(handleConfigChanged);
 
     // Electron IPC events
-    addIpcListener("change-privacy", onChangePrivacy);
-    addIpcListener("updateAvailable", onUpdateAvailable);
-    addIpcListener("updateNotAvailable", onUpdateNotAvailable);
-    addIpcListener("checkingForUpdate", checkingForUpdate);
+    on("browser:privacyChanged", onChangePrivacy);
+    on("update:available", onUpdateAvailable);
+    on("update:notAvailable", onUpdateNotAvailable);
+    on("update:checking", checkingForUpdate);
 
     return () => {
       unsubConfig();
-      removeIpcListener("change-privacy", onChangePrivacy);
-      removeIpcListener("updateAvailable", onUpdateAvailable);
-      removeIpcListener("updateNotAvailable", onUpdateNotAvailable);
-      removeIpcListener("checkingForUpdate", checkingForUpdate);
+      off("browser:privacyChanged", onChangePrivacy);
+      off("update:available", onUpdateAvailable);
+      off("update:notAvailable", onUpdateNotAvailable);
+      off("update:checking", checkingForUpdate);
     };
   }, []);
 
@@ -145,7 +145,8 @@ const App: FC = () => {
         // Electron mode: get coreUrl directly from preload IPC
         // FIXME: wait for Go Core to fully start
         await new Promise((r) => setTimeout(r, 1000));
-        const ipcResult = await window.electron?.getEnvPath();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const ipcResult: any = await window.electron?.app?.getEnvPath();
         const envPath = ipcResult?.code === 0 ? ipcResult.data : ipcResult;
         if (envPath?.coreUrl) {
           coreUrl = envPath.coreUrl;

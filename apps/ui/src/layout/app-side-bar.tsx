@@ -88,7 +88,7 @@ interface Props {
 }
 
 export function AppSideBar({ className }: Props) {
-  const { showBrowserWindow, combineToHomePage } = usePlatform();
+  const { app } = usePlatform();
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
@@ -112,7 +112,7 @@ export function AppSideBar({ className }: Props) {
       if (appStore.openInNewWindow) {
         setAppStore({ openInNewWindow: false });
         navigate("/source");
-        await combineToHomePage({
+        await app.combineToHomePage({
           url: "",
           sourceList: [],
         });
@@ -121,7 +121,7 @@ export function AppSideBar({ className }: Props) {
         if (location.pathname === "/source") {
           navigate("/");
         }
-        await showBrowserWindow();
+        await app.showBrowserWindow();
       }
     },
   );
@@ -135,7 +135,7 @@ export function AppSideBar({ className }: Props) {
       if (appStore.openInNewWindow) {
         e.preventDefault();
         e.stopPropagation();
-        showBrowserWindow();
+        app.showBrowserWindow();
       }
     },
   );

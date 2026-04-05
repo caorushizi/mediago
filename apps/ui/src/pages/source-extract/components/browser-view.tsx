@@ -17,8 +17,7 @@ import { generateUrl } from "@/utils";
 import { BrowserViewPanel } from "./browser-view-panel";
 
 export function BrowserView() {
-  const { webviewLoadURL, addIpcListener, removeIpcListener, webviewGoHome } =
-    usePlatform();
+  const { browser, on, off } = usePlatform();
   const store = useBrowserStore(useShallow(browserStoreSelector));
   const { addSource, setBrowserStore } = useBrowserStore(
     useShallow(setBrowserSelector),
@@ -30,15 +29,15 @@ export function BrowserView() {
       addSource(data);
     };
 
-    addIpcListener("webview-link-message", onWebviewLinkMessage);
+    on("browser:sourceDetected", onWebviewLinkMessage);
 
     return () => {
-      removeIpcListener("webview-link-message", onWebviewLinkMessage);
+      off("browser:sourceDetected", onWebviewLinkMessage);
     };
   }, [store.status]);
 
   const onClickGoHome = useMemoizedFn(async () => {
-    await webviewGoHome();
+    await browser.home();
     setBrowserStore({
       url: "",
       title: "",
@@ -52,7 +51,7 @@ export function BrowserView() {
       mode: PageMode.Browser,
       status: BrowserStatus.Loading,
     });
-    webviewLoadURL(url);
+    browser.loadURL(url);
   });
 
   const goto = useMemoizedFn(() => {

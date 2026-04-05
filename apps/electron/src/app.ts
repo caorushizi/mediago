@@ -111,8 +111,8 @@ export default class ElectronApp {
         this.configCache.update(key, value);
 
         // Forward to UI windows
-        this.mainWindow.send("config-changed", { key, value });
-        this.browserWindow.send("config-changed", { key, value });
+        this.mainWindow.send("config:changed", { key, value });
+        this.browserWindow.send("config:changed", { key, value });
 
         // Platform side effects
         const handlers: Record<string, (v: any) => void> = {

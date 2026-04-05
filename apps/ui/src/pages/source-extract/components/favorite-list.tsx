@@ -1,7 +1,7 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { useMemoizedFn } from "ahooks";
 import { App, Form, Input, Modal } from "antd";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import { ADD_FAVORITE, OPEN_FAVORITE } from "@/const";
@@ -18,12 +18,7 @@ import { usePlatform } from "@/hooks/use-platform";
 
 export function FavoriteList() {
   const { data: favoriteList, addFavorite, removeFavorite } = useFavorites();
-  const {
-    webviewLoadURL,
-    onFavoriteItemContextMenu,
-    addIpcListener,
-    removeIpcListener,
-  } = usePlatform();
+  const { browser, contextMenu } = usePlatform();
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [favoriteAddForm] = Form.useForm<Favorite>();
@@ -36,7 +31,7 @@ export function FavoriteList() {
       mode: PageMode.Browser,
       status: BrowserStatus.Loading,
     });
-    webviewLoadURL(url);
+    browser.loadURL(url);
   });
 
   const onClickLoadItem = useMemoizedFn((item: Favorite) => {
@@ -74,44 +69,18 @@ export function FavoriteList() {
     setIsModalOpen(false);
   });
 
-  useEffect(() => {
-    const handleLoadItem = (item: Favorite) => {
-      setBrowserStore({
-        url: item.url,
-        mode: PageMode.Browser,
-        status: BrowserStatus.Loading,
-      });
-      webviewLoadURL(item.url);
-    };
-
-    const onFavoriteEvent = async (
-      e: unknown,
-      {
-        action,
-        payload,
-      }: {
-        action: string;
-        payload: number;
-      },
-    ) => {
-      if (action === "open") {
-        const found = favoriteList.find(
-          (fav: Record<string, unknown>) => fav.id === payload,
-        );
-        if (found) {
-          handleLoadItem(found);
-        }
-      } else if (action === "delete") {
-        await removeFavorite(payload);
-      }
-    };
-
-    addIpcListener("favorite-item-event", onFavoriteEvent);
-
-    return () => {
-      removeIpcListener("favorite-item-event", onFavoriteEvent);
-    };
-  }, [favoriteList]);
+  const handleContextMenu = useMemoizedFn(async (item: Favorite) => {
+    const action = await contextMenu.show([
+      { key: "open", label: t("open") },
+      { key: "separator", label: "", type: "separator" },
+      { key: "delete", label: t("delete") },
+    ]);
+    if (action === "open") {
+      loadUrl(item.url);
+    } else if (action === "delete") {
+      await removeFavorite(item.id);
+    }
+  });
 
   return (
     <div className="h-full w-full py-4">
@@ -120,7 +89,7 @@ export function FavoriteList() {
           return (
             <FavItem
               key={item.id}
-              onContextMenu={() => onFavoriteItemContextMenu(item.id)}
+              onContextMenu={() => handleContextMenu(item)}
               onClick={() => onClickLoadItem(item)}
               onClose={() => handleRemoveFavorite(item.id)}
               src={item.icon}

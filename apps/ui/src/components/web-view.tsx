@@ -27,7 +27,7 @@ const WebView: FC<WebViewProps> = ({ className }) => {
   const webviewRef = useRef<HTMLDivElement>(null);
   const resizeObserver = useRef<ResizeObserver>();
 
-  const { setWebviewBounds, webviewHide, webviewShow } = usePlatform();
+  const { browser } = usePlatform();
 
   useEffect(() => {
     if (!webviewRef.current) return;
@@ -41,15 +41,15 @@ const WebView: FC<WebViewProps> = ({ className }) => {
       const viewRect = computeRect(entry.contentRect);
       viewRect.x += rect.x;
       viewRect.y += rect.y;
-      setWebviewBounds(viewRect);
+      browser.setBounds(viewRect);
     });
 
     resizeObserver.current.observe(webviewRef.current);
-    webviewShow();
+    browser.show();
 
     return () => {
       resizeObserver.current?.disconnect();
-      webviewHide();
+      browser.hide();
     };
   }, []);
 

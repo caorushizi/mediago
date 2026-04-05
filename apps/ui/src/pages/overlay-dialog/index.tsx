@@ -1,4 +1,4 @@
-import { type DownloadTask, SHOW_OVERLAY_DIALOG } from "@mediago/shared-common";
+import { type DownloadTask, IpcEvent } from "@mediago/shared-common";
 import { useEffect, useId, useRef } from "react";
 import DownloadForm, { type DownloadFormRef } from "@/components/download-form";
 import { usePlatform } from "@/hooks/use-platform";
@@ -6,8 +6,7 @@ import { usePlatform } from "@/hooks/use-platform";
 import "./index.css";
 
 export default function OverlayDialog() {
-  const { addIpcListener, removeIpcListener, dismissOverlayDialog } =
-    usePlatform();
+  const { on, off, browser } = usePlatform();
   const downloadForm = useRef<DownloadFormRef>(null);
   const dialogId = useId();
 
@@ -26,16 +25,16 @@ export default function OverlayDialog() {
       });
     };
 
-    addIpcListener(SHOW_OVERLAY_DIALOG, onShowOverlayDialog);
+    on(IpcEvent.browser.showOverlayDialog, onShowOverlayDialog);
 
     return () => {
-      removeIpcListener(SHOW_OVERLAY_DIALOG, onShowOverlayDialog);
+      off(IpcEvent.browser.showOverlayDialog, onShowOverlayDialog);
     };
-  }, [addIpcListener, removeIpcListener]);
+  }, [on, off]);
 
   const handleFormVisibleChange = (visible: boolean) => {
     if (!visible) {
-      dismissOverlayDialog();
+      browser.dismissOverlayDialog();
     }
   };
 

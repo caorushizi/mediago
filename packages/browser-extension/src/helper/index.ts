@@ -1,27 +1,17 @@
 import type { DownloadTask } from "@mediago/shared-common";
-import { nanoid } from "nanoid";
 
-const eventMap = new Map();
-
-const getIpcId = (func: any) => {
-  let id = "";
-  if (eventMap.get(func)) {
-    id = eventMap.get(func);
-  } else {
-    id = nanoid();
-    eventMap.set(func, id);
-  }
-  return id;
-};
-
-export function addIpcListener(eventName: string, func: any) {
-  const id = getIpcId(func);
-  window.electron.rendererEvent(eventName, id, func);
+export function addIpcListener(
+  eventName: string,
+  func: (...args: unknown[]) => void,
+) {
+  window.electron.on(eventName, func);
 }
 
-export function removeIpcListener(eventName: string, func: any) {
-  const id = getIpcId(func);
-  window.electron.removeEventListener(eventName, id);
+export function removeIpcListener(
+  eventName: string,
+  func: (...args: unknown[]) => void,
+) {
+  window.electron.off(eventName, func);
 }
 
 export interface Item {
@@ -31,12 +21,12 @@ export interface Item {
 }
 
 export function showDownloadDialog(item: Omit<DownloadTask, "id">[]) {
-  window.electron.showDownloadDialog(item);
+  window.electron.browser.showDownloadDialog(item);
 }
 
 // Notifies the main process that the plug-in is ready
 export function pluginReady() {
-  window.electron.pluginReady();
+  window.electron.browser.pluginReady();
 }
 
 export const BILIBILI_DOWNLOAD_BUTTON = ".bili-video-card__image--link";

@@ -62,14 +62,14 @@ export const DownloadTaskItem = memo(function DownloadTaskItem({
 }: Props) {
   const appStore = useAppStore(useShallow(appStoreSelector));
   const { t } = useTranslation();
-  const { openUrl } = usePlatform();
+  const { shell } = usePlatform();
   const { envPath } = useEnvPath();
 
   // Handlers
   const handlePlay = useMemoizedFn(() => {
     tdApp.onEvent(PLAY_VIDEO);
     if (envPath?.playerUrl) {
-      openUrl(`${envPath.playerUrl}?id=${task.id}`);
+      shell.open(`${envPath.playerUrl}?id=${task.id}`);
     }
   });
 
