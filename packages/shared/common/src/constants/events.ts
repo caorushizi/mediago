@@ -37,6 +37,10 @@ export const WEBVIEW_HIDE = "webview-hide";
 export const WEBVIEW_GO_HOME = "webview-go-home";
 export const WEBVIEW_CHANGE_USER_AGENT = "webview-change-user-agent";
 
+// Overlay dialog
+export const SHOW_OVERLAY_DIALOG = "show-overlay-dialog";
+export const DISMISS_OVERLAY_DIALOG = "dismiss-overlay-dialog";
+
 // Plugin / cache
 export const PLUGIN_READY = "plugin-ready";
 export const CLEAR_WEBVIEW_CACHE = "clear-webview-cache";

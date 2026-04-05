@@ -20,6 +20,7 @@ import { db, isMac, logDir } from "./constants";
 import ElectronDevtools from "./vendor/ElectronDevtools";
 import ElectronUpdater from "./vendor/ElectronUpdater";
 import GoConfigCache from "./services/go-config-cache";
+import OverlayDialogService from "./services/overlay-dialog.service";
 import WebviewService from "./services/webview.service";
 import BrowserWindowService from "./windows/browser.window";
 import MainWindow from "./windows/main.window";
@@ -45,6 +46,8 @@ export default class ElectronApp {
     private readonly downloaderServer: DownloaderServer,
     @inject(WebviewService)
     private readonly webviewService: WebviewService,
+    @inject(OverlayDialogService)
+    private readonly overlayDialogService: OverlayDialogService,
     @inject(GoConfigCache)
     private readonly configCache: GoConfigCache,
     @inject(BrowserWindowService)
@@ -55,6 +58,7 @@ export default class ElectronApp {
 
   private async serviceInit(): Promise<void> {
     this.mainWindow.init();
+    this.overlayDialogService.init();
   }
 
   private async vendorInit() {

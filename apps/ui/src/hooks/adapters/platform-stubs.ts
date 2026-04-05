@@ -34,6 +34,7 @@ export const webPlatformStubs: PlatformApi = {
   checkUpdate: noop,
   startUpdate: noop,
   installUpdate: noop,
+  dismissOverlayDialog: noop,
   exportDownloadList: noop,
   openUrl: async (url: string) => {
     const a = document.createElement("a");

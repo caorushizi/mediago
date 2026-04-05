@@ -2,6 +2,7 @@ import {
   CHECK_UPDATE,
   CLEAR_WEBVIEW_CACHE,
   COMBINE_TO_HOME_PAGE,
+  DISMISS_OVERLAY_DIALOG,
   EXPORT_DOWNLOAD_LIST,
   EXPORT_FAVORITES,
   GET_ENV_PATH,
@@ -138,6 +139,9 @@ const electronApi: PlatformApi & { getEnvPath(): Promise<EnvPath> } = {
   },
   exportDownloadList(): Promise<void> {
     return ipcRenderer.invoke(EXPORT_DOWNLOAD_LIST);
+  },
+  dismissOverlayDialog(): Promise<void> {
+    return ipcRenderer.invoke(DISMISS_OVERLAY_DIALOG);
   },
   openBrowser(url: string): Promise<void> {
     return shell.openExternal(url);

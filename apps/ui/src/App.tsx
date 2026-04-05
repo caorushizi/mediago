@@ -34,6 +34,7 @@ const SourceExtract = lazy(() => import("./pages/source-extract"));
 const SettingPage = lazy(() => import("./pages/setting-page"));
 const ConverterPage = lazy(() => import("./pages/converter-page"));
 const SigninPage = lazy(() => import("./pages/signin-page"));
+const OverlayDialog = lazy(() => import("./pages/overlay-dialog"));
 
 function getAlgorithm(appTheme: "dark" | "light") {
   return appTheme === "dark"
@@ -263,6 +264,14 @@ const App: FC = () => {
             element={
               <Suspense fallback={<Loading />}>
                 <SourceExtract page={true} />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/download-dialog"
+            element={
+              <Suspense fallback={<Loading />}>
+                <OverlayDialog />
               </Suspense>
             }
           />
