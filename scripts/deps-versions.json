@@ -76,14 +76,14 @@
   },
   "mediago": {
     "repo": "caorushizi/mediago-core",
-    "version": "v0.1.0",
+    "version": "v0.2.1",
     "assets": {
-      "darwin-x64": "mediago-v0.1.0-darwin-amd64.tar.gz",
-      "darwin-arm64": "mediago-v0.1.0-darwin-arm64.tar.gz",
-      "linux-x64": "mediago-v0.1.0-linux-amd64.tar.gz",
-      "linux-arm64": "mediago-v0.1.0-linux-arm64.tar.gz",
-      "win32-x64": "mediago-v0.1.0-windows-amd64.zip",
-      "win32-arm64": "mediago-v0.1.0-windows-arm64.zip"
+      "darwin-x64": "mediago-v0.2.1-darwin-amd64.tar.gz",
+      "darwin-arm64": "mediago-v0.2.1-darwin-arm64.tar.gz",
+      "linux-x64": "mediago-v0.2.1-linux-amd64.tar.gz",
+      "linux-arm64": "mediago-v0.2.1-linux-arm64.tar.gz",
+      "win32-x64": "mediago-v0.2.1-windows-amd64.zip",
+      "win32-arm64": "mediago-v0.2.1-windows-arm64.zip"
     },
     "binaryName": {
       "default": "mediago",
