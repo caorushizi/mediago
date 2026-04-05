@@ -1,10 +1,6 @@
 import type { PlatformApi } from "@mediago/shared-common";
-import type { BilibiliButton } from "./components";
 
 declare global {
-  interface HTMLElementTagNameMap {
-    "bilibili-button": BilibiliButton;
-  }
   interface Window {
     electron: PlatformApi;
     TDAPP?: {
@@ -14,6 +10,6 @@ declare global {
         mapKv: Record<string, string>,
       ) => void;
     };
-    clarity?: any;
+    clarity?: (...args: unknown[]) => void;
   }
 }
