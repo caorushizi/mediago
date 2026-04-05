@@ -106,8 +106,9 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
     useImperativeHandle(ref, () => {
       return {
         openModal: (value) => {
-          form.setFieldsValue(value);
           setModalOpen(true);
+          // Defer so the Form is mounted before setting values
+          queueMicrotask(() => form.setFieldsValue(value));
         },
         setFieldsValue: (value) => {
           form.setFieldsValue(value);
@@ -291,7 +292,9 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
           colon={false}
           onValuesChange={handleValuesChange}
         >
-          <Form.Item name="id" hidden />
+          <Form.Item name="id" hidden>
+            <Input />
+          </Form.Item>
           <Form.Item hidden={isEdit} label={t("batchDownload")} name={"batch"}>
             <Switch />
           </Form.Item>

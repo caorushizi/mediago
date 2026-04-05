@@ -461,13 +461,13 @@ const SettingPage: React.FC = () => {
           <Form.Item hidden={isWeb} label={t("moreAction")}>
             <Space>
               <Button
-                onClick={() => openDir(envPath?.workspace)}
+                onClick={() => openDir(envPath?.configDir)}
                 icon={<FolderOpenOutlined />}
               >
                 {t("configDir")}
               </Button>
               <Button
-                onClick={() => openDir(envPath?.binPath)}
+                onClick={() => openDir(envPath?.binDir)}
                 icon={<FolderOpenOutlined />}
               >
                 {t("binPath")}
