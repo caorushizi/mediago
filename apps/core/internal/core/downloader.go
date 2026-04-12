@@ -4,6 +4,8 @@ package core
 import (
 	"context"
 	"errors"
+	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -15,7 +17,6 @@ import (
 
 var (
 	ErrUnsupportedType = errors.New("unsupported download type")
-	ErrBinNotFound     = errors.New("binary not found for type")
 )
 
 // DownloaderSvc is the downloader service
@@ -148,16 +149,26 @@ func (d *DownloaderSvc) Download(ctx context.Context, p DownloadParams, cb Callb
 		logger.Error("Unsupported download type",
 			zap.String("id", string(p.ID)),
 			zap.String("type", string(p.Type)))
-		return ErrUnsupportedType
+		return fmt.Errorf("%w: %q", ErrUnsupportedType, p.Type)
 	}
 
 	// get the executable path for the corresponding download type
 	bin, ok := d.binMap[p.Type]
 	if !ok || bin == "" {
-		logger.Error("Binary not found for download type",
+		logger.Error("Binary not configured for download type",
 			zap.String("id", string(p.ID)),
 			zap.String("type", string(p.Type)))
-		return ErrBinNotFound
+		return fmt.Errorf("binary not configured for type %q", p.Type)
+	}
+
+	// check if the binary file actually exists on disk
+	if _, statErr := os.Stat(bin); statErr != nil {
+		logger.Error("Binary file not found on disk",
+			zap.String("id", string(p.ID)),
+			zap.String("type", string(p.Type)),
+			zap.String("binary", bin),
+			zap.Error(statErr))
+		return fmt.Errorf("binary %q not found for type %q: %w", bin, p.Type, statErr)
 	}
 
 	logger.Debug("Using downloader binary",

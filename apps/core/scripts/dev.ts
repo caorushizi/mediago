@@ -23,11 +23,7 @@ export async function dev() {
     `-delete-segments=${devConfig.delete_segments.toString()}`,
     `-proxy=${devConfig.proxy}`,
     `-use-proxy=${devConfig.use_proxy.toString()}`,
-    `-bilibili-bin=${devConfig.bilibili_bin}`,
-    `-m3u8-bin=${devConfig.m3u8_bin}`,
-    `-direct-bin=${devConfig.direct_bin}`,
-    `-mediago-bin=${devConfig.mediago_bin}`,
-    `-ffmpeg-bin=${devConfig.ffmpeg_bin}`,
+    `-deps-dir=${devConfig.deps_dir}`,
   ];
   await runCommand("go", args, { description: "Start development server" });
 }

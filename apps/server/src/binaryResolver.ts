@@ -54,33 +54,21 @@ export function resolvePlayerBinary(): { playerBin: string } {
 }
 
 /**
- * Resolves paths to helper binaries: ffmpeg, N_m3u8DL-RE, BBDown, gopeed.
+ * Resolves the deps directory containing helper binaries (ffmpeg, N_m3u8DL-RE, BBDown, etc.).
  *
- * Uses .deps/{platform}-{arch}/ directory.
+ * Uses .deps/{platform}/{arch}/ directory.
  *
  * Override with MEDIAGO_DEPS_DIR env var.
  */
-export function resolveDepsBinaries(): {
-  ffmpeg: string;
-  n_m3u8dl_re: string;
-  bbdown: string;
-  gopeed: string;
-  mediago: string;
-} {
-  let binDir: string;
+export function resolveDepsBinaries(): { depsDir: string } {
+  let depsDir: string;
 
   if (process.env.MEDIAGO_DEPS_DIR) {
-    binDir = process.env.MEDIAGO_DEPS_DIR;
+    depsDir = process.env.MEDIAGO_DEPS_DIR;
   } else {
     const platformKey = `${os.platform()}-${os.arch()}`;
-    binDir = path.join(getMonorepoRoot(), ".deps", platformKey);
+    depsDir = path.join(getMonorepoRoot(), ".deps", platformKey);
   }
 
-  return {
-    ffmpeg: path.resolve(binDir, `ffmpeg${ext}`),
-    n_m3u8dl_re: path.resolve(binDir, `N_m3u8DL-RE${ext}`),
-    bbdown: path.resolve(binDir, `BBDown${ext}`),
-    gopeed: path.resolve(binDir, `gopeed${ext}`),
-    mediago: path.resolve(binDir, `mediago${ext}`),
-  };
+  return { depsDir };
 }

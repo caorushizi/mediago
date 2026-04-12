@@ -84,6 +84,9 @@ export const urlDownloadType = (url: string): DownloadType => {
   if (url.includes("bilibili")) {
     return DownloadType.bilibili;
   }
+  if (url.includes("youtube.com") || url.includes("youtu.be")) {
+    return DownloadType.youtube;
+  }
   if (url.includes("m3u8")) {
     return DownloadType.m3u8;
   }

@@ -11,7 +11,20 @@ const (
 	TypeBilibili DownloadType = "bilibili"
 	TypeDirect   DownloadType = "direct"
 	TypeMediago  DownloadType = "mediago"
+	TypeYoutube  DownloadType = "youtube"
 )
+
+// BinaryNames maps each DownloadType to its executable filename (without extension).
+var BinaryNames = map[DownloadType]string{
+	TypeM3U8:     "N_m3u8DL-RE",
+	TypeBilibili: "BBDown",
+	TypeDirect:   "gopeed",
+	TypeMediago:  "mediago",
+	TypeYoutube:  "yt-dlp",
+}
+
+// FFmpegBinaryName is the filename for the ffmpeg binary (without extension).
+const FFmpegBinaryName = "ffmpeg"
 
 // TaskID is the unique identifier for a task
 type TaskID string

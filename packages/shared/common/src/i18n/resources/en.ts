@@ -162,6 +162,7 @@ export const en = {
   streamMedia: "Stream Media (m3u8)",
   bilibiliMedia: "Bilibili Media",
   mediagoMedia: "MediaGo Download",
+  youtubeMedia: "YouTube (yt-dlp)",
   checkUpdate: "Check Update",
   allowBetaVersion: "Allow Beta Version",
   updateModal: "Update",

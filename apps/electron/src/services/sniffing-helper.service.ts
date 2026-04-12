@@ -45,6 +45,13 @@ const filterList: SourceFilter[] = [
     },
   },
   {
+    hosts: [/^https?:\/\/(www\.)?(youtube\.com|youtu\.be)\//],
+    type: DownloadType.youtube,
+    schema: {
+      name: "title",
+    },
+  },
+  {
     matches: [
       /\.(mp4|flv|mov|avi|mkv|wmv|m4a|ogg|m4b|m4p|m4r|m4b|m4p|m4r)(?![a-zA-Z])/,
     ],

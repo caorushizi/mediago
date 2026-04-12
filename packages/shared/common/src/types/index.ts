@@ -68,6 +68,7 @@ export enum DownloadType {
   bilibili = "bilibili",
   direct = "direct",
   mediago = "mediago",
+  youtube = "youtube",
 }
 
 export interface DownloadParams {

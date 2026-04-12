@@ -74,6 +74,22 @@
       "win32": "gopeed.exe"
     }
   },
+  "yt-dlp": {
+    "repo": "yt-dlp/yt-dlp",
+    "version": "2026.03.17",
+    "assets": {
+      "darwin-x64": "yt-dlp_macos",
+      "darwin-arm64": "yt-dlp_macos",
+      "linux-x64": "yt-dlp_linux",
+      "linux-arm64": "yt-dlp_linux_aarch64",
+      "win32-x64": "yt-dlp.exe",
+      "win32-arm64": "yt-dlp.exe"
+    },
+    "binaryName": {
+      "default": "yt-dlp",
+      "win32": "yt-dlp.exe"
+    }
+  },
   "mediago": {
     "repo": "caorushizi/mediago-core",
     "version": "v0.2.1",

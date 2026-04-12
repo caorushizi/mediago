@@ -156,6 +156,7 @@ export const zh = {
   streamMedia: "流媒体(m3u8)",
   bilibiliMedia: "哔哩哔哩",
   mediagoMedia: "MediaGo 下载",
+  youtubeMedia: "YouTube (yt-dlp)",
   checkUpdate: "检查更新",
   allowBetaVersion: "允许升级测试版本",
   updateModal: "更新",

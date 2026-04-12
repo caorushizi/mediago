@@ -11,13 +11,13 @@ export const config = {
   BIN_DIR: "./bin",
   RELEASE_DIR: "./release",
   DEPS_DIR: join("..", "..", ".deps"),
+  TOOLS_BIN_DIR: join("..", "..", ".deps"),
   GO_LDFLAGS: "-s -w",
   PLAYER_UI_DIR: join("..", "player-ui"),
   PLAYER_ASSETS_DIR: join("assets", "player"),
 };
 
-const exeExt = process.platform === "win32" ? ".exe" : "";
-const platformKey = `${process.platform}/${process.arch}`;
+const platformKey = `${process.platform}-${process.arch}`;
 const homeDir =
   process.platform === "win32"
     ? win32.join(process.env.USERPROFILE || "C:\\", ".mediago")
@@ -29,11 +29,7 @@ export const devConfig = {
   log_dir: `${homeDir}/logs`,
   config_dir: `${homeDir}/data`,
   schema_path: "./configs/config.json",
-  m3u8_bin: `${config.DEPS_DIR}/${platformKey}/N_m3u8DL-RE${exeExt}`,
-  bilibili_bin: `${config.DEPS_DIR}/${platformKey}/BBDown${exeExt}`,
-  direct_bin: `${config.DEPS_DIR}/${platformKey}/gopeed${exeExt}`,
-  mediago_bin: `${config.DEPS_DIR}/${platformKey}/mediago${exeExt}`,
-  ffmpeg_bin: `${config.DEPS_DIR}/${platformKey}/ffmpeg${exeExt}`,
+  deps_dir: `${config.DEPS_DIR}/${platformKey}`,
   max_runner: 3,
   local_dir: `${homeDir}/downloads`,
   delete_segments: true,

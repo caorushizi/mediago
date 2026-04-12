@@ -321,12 +321,16 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
                   value: "bilibili",
                 },
                 {
-                  label: t("mediagoMedia"),
-                  value: "mediago",
+                  label: t("youtubeMedia"),
+                  value: "youtube",
                 },
                 {
                   label: t("direct"),
                   value: "direct",
+                },
+                {
+                  label: t("mediagoMedia"),
+                  value: "mediago",
                 },
               ]}
               placeholder={t("pleaseSelectVideoType")}
