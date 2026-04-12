@@ -56,10 +56,7 @@ type AppConfig struct {
 	LogLevel       string `json:"log_level"`
 	LogDir         string `json:"log_dir"`
 	SchemaPath     string `json:"schema_path"`
-	M3U8Bin        string `json:"m3u8_bin"`
-	BilibiliBin    string `json:"bilibili_bin"`
-	DirectBin      string `json:"direct_bin"`
-	MediagoBin     string `json:"mediago_bin"`
+	DepsDir        string `json:"deps_dir"`
 	MaxRunner      int    `json:"max_runner"`
 	LocalDir       string `json:"local_dir"`
 	DeleteSegments bool   `json:"delete_segments"`
@@ -67,7 +64,6 @@ type AppConfig struct {
 	UseProxy       bool   `json:"use_proxy"`
 	DBPath         string `json:"db_path"`
 	ConfigDir      string `json:"config_dir"`
-	FFmpegBin      string `json:"ffmpeg_bin"`
 	EnableAuth     bool   `json:"enable_auth"`
 	StaticDir      string `json:"static_dir"`
 }
@@ -272,7 +268,7 @@ func main() {
 	server := api.NewServer(queue, taskLogs, database, confStore, api.ServerOptions{
 		EnableAuth: cfg.EnableAuth,
 		StaticDir:  cfg.StaticDir,
-		FFmpegBin:  cfg.FFmpegBin,
+		FFmpegBin:  getFFmpegBin(cfg),
 		VideoRoot:  cfg.LocalDir,
 		EnvPaths: handler.EnvPaths{
 			ConfigDir: cfg.ConfigDir,
@@ -321,9 +317,7 @@ func initConfig() *AppConfig {
 		LogLevel:       "info",
 		LogDir:         "./logs",
 		SchemaPath:     "", // computed later
-		M3U8Bin:        "",
-		BilibiliBin:    "",
-		DirectBin:      "",
+		DepsDir:        "",
 		MaxRunner:      2,
 		LocalDir:       "./downloads",
 		DeleteSegments: true,
@@ -335,10 +329,7 @@ func initConfig() *AppConfig {
 	// 1. Define command-line flags
 	flag.StringVar(&cfg.LogLevel, "log-level", cfg.LogLevel, "Log level (debug/info/warn/error)")
 	flag.StringVar(&cfg.LogDir, "log-dir", cfg.LogDir, "Log directory")
-	flag.StringVar(&cfg.M3U8Bin, "m3u8-bin", cfg.M3U8Bin, "M3U8 downloader binary path")
-	flag.StringVar(&cfg.BilibiliBin, "bilibili-bin", cfg.BilibiliBin, "Bilibili downloader binary path")
-	flag.StringVar(&cfg.DirectBin, "direct-bin", cfg.DirectBin, "Direct downloader binary path")
-	flag.StringVar(&cfg.MediagoBin, "mediago-bin", cfg.MediagoBin, "MediaGo downloader binary path")
+	flag.StringVar(&cfg.DepsDir, "deps-dir", cfg.DepsDir, "Directory containing downloader tool binaries")
 	flag.StringVar(&cfg.SchemaPath, "schema-path", cfg.SchemaPath, "Path to the download schema config.json")
 	flag.StringVar(&cfg.Port, "port", cfg.Port, "Server port")
 	flag.StringVar(&cfg.LocalDir, "local-dir", cfg.LocalDir, "Default download directory")
@@ -348,7 +339,6 @@ func initConfig() *AppConfig {
 	flag.IntVar(&cfg.MaxRunner, "max-runner", cfg.MaxRunner, "Maximum concurrent download runners")
 	flag.StringVar(&cfg.DBPath, "db-path", cfg.DBPath, "Path to SQLite database file")
 	flag.StringVar(&cfg.ConfigDir, "config-dir", cfg.ConfigDir, "Directory for persistent config file")
-	flag.StringVar(&cfg.FFmpegBin, "ffmpeg-bin", cfg.FFmpegBin, "FFmpeg binary path")
 	flag.BoolVar(&cfg.EnableAuth, "enable-auth", cfg.EnableAuth, "Enable API key authentication")
 	flag.StringVar(&cfg.StaticDir, "static-dir", cfg.StaticDir, "Directory to serve static files from (SPA mode)")
 
@@ -386,14 +376,27 @@ func getDefaultSchemaPath() string {
 	return "configs/config.json"
 }
 
-// getBinaryMap returns a map of downloader binary paths from the configuration.
-func getBinaryMap(cfg *AppConfig) map[core.DownloadType]string {
-	return map[core.DownloadType]string{
-		core.TypeM3U8:     cfg.M3U8Bin,
-		core.TypeBilibili: cfg.BilibiliBin,
-		core.TypeDirect:   cfg.DirectBin,
-		core.TypeMediago:  cfg.MediagoBin,
+// exeExt returns ".exe" on Windows, empty string otherwise.
+func exeExt() string {
+	if runtime.GOOS == "windows" {
+		return ".exe"
 	}
+	return ""
+}
+
+// getBinaryMap builds the downloader binary path map from a single deps directory.
+func getBinaryMap(cfg *AppConfig) map[core.DownloadType]string {
+	ext := exeExt()
+	m := make(map[core.DownloadType]string, len(core.BinaryNames))
+	for dt, name := range core.BinaryNames {
+		m[dt] = filepath.Join(cfg.DepsDir, name+ext)
+	}
+	return m
+}
+
+// getFFmpegBin returns the ffmpeg binary path derived from the deps directory.
+func getFFmpegBin(cfg *AppConfig) string {
+	return filepath.Join(cfg.DepsDir, core.FFmpegBinaryName+exeExt())
 }
 
 func getEnv(key, def string) string {

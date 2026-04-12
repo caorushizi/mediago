@@ -35,8 +35,8 @@ const Terminal: FC<TerminalProps> = ({ className, id, header }) => {
     terminal.open(terminalRef.current);
     fitAddon.fit();
 
-    if (data) {
-      terminal.write(data);
+    if (data?.log) {
+      terminal.write(data.log);
     }
 
     const onDownloadMessage = (

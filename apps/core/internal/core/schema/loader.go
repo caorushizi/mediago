@@ -102,6 +102,24 @@ func DefaultSchemas() SchemaList {
 				},
 			},
 			{
+				Type: "youtube",
+				Args: map[string]ArgSpec{
+					"url":        {ArgsName: []string{}},
+					"localDir":   {ArgsName: []string{"-P"}},
+					"name":       {ArgsName: []string{"-o"}},
+					"headers":    {ArgsName: []string{"--add-header"}},
+					"proxy":      {ArgsName: []string{"--proxy"}},
+					"__common__": {ArgsName: []string{"--no-mtime", "--progress", "--newline", "--no-colors"}},
+				},
+				ConsoleReg: ConsoleReg{
+					Percent: `([\d.]+)%`,
+					Speed:   `([\d.]+\s?[MKG]?i?B/s)`,
+					Error:   `ERROR`,
+					Start:   `\[download\] Destination:`,
+					IsLive:  `\[live\]`,
+				},
+			},
+			{
 				Type: "mediago",
 				Args: map[string]ArgSpec{
 					"url":            {ArgsName: []string{}},
