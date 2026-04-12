@@ -1,25 +1,25 @@
 <div align="center">
   <h1>MediaGo</h1>
-  <a href="https://downloader.caorushizi.cn/guides.html?form=github">快速开始</a>
+  <a href="https://downloader.caorushizi.cn/en/guides.html?form=github">Quick Start</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://downloader.caorushizi.cn?form=github">官网</a>
+  <a href="https://downloader.caorushizi.cn/en?form=github">Website</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://downloader.caorushizi.cn/documents.html?form=github">文档</a>
+  <a href="https://downloader.caorushizi.cn/en/documents.html?form=github">Docs</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="https://github.com/caorushizi/mediago/discussions">Discussions</a>
   <br>
 
-<a href="https://github.com/caorushizi/mediago/blob/master/README.en.md">English</a>
+<a href="https://github.com/caorushizi/mediago/blob/master/README.zh.md">中文</a>
 <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
 <a href="https://github.com/caorushizi/mediago/blob/master/README.jp.md">日本語</a>
 <br>
 
-  <!-- MediaGo Pro 推广 -->
+  <!-- MediaGo Pro -->
   <a href="https://mediago.torchstellar.com/?from=github">
-    <img src="https://img.shields.io/badge/✨_全新发布-MediaGo_Pro-ff6b6b?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiAyTDMgN2wzIDMgNi00IDYgNCAzLTMtOS01eiIvPjxwYXRoIGQ9Ik0zIDE3bDkgNSA5LTUtMy0zLTYgNC02LTQtMyAzeiIvPjwvc3ZnPg==" alt="MediaGo Pro" />
+    <img src="https://img.shields.io/badge/✨_New_Release-MediaGo_Pro-ff6b6b?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiAyTDMgN2wzIDMgNi00IDYgNCAzLTMtOS01eiIvPjxwYXRoIGQ9Ik0zIDE3bDkgNSA5LTUtMy0zLTYgNC02LTQtMyAzeiIvPjwvc3ZnPg==" alt="MediaGo Pro" />
   </a>
   <a href="https://mediago.torchstellar.com/?from=github">
-    <img src="https://img.shields.io/badge/🚀_立即体验-在线版本_无需安装-2a82f6?style=for-the-badge" alt="Try Now" />
+    <img src="https://img.shields.io/badge/🚀_Try_Now-Online_Version_No_Install-2a82f6?style=for-the-badge" alt="Try Now" />
   </a>
   <br>
 
@@ -37,136 +37,125 @@
   <hr />
 </div>
 
-## Intro
+## What is MediaGo?
 
-本项目支持 m3u8 视频在线提取工具 流媒体下载 m3u8 下载。
+A cross-platform streaming media downloader with built-in browser sniffing — grab m3u8, HLS, and more with zero packet-capture hassle.
 
-- **✅&nbsp; 无需抓包**： 使用软件自带浏览器可以轻松嗅探网页中的视频资源，通过嗅探到的资源列表选择自己想要下载的资源，简单快速。
-- **📱&nbsp; 移动播放**： 可以轻松无缝的在 PC 和移动设备之前切换，下载完成后即可使用手机观看视频。
-- **⚡️&nbsp; 批量下载**： 支持同时下载多个视频和直播资源，高速带宽不闲置。
-- **🎉&nbsp; 支持 docker 部署**： 支持 docker 部署 web 端，方便快捷。
-- **🦞&nbsp; OpenClaw Skill**： 支持通过 AI 编程助手（Openclaw、Claude Code 等）用自然语言下载视频，`npx clawhub@latest install mediago` 一键安装。
+- **✅&nbsp; No packet capture needed** — The built-in browser automatically detects video resources on any page. Just pick what you want from the detected list and download.
+- **📱&nbsp; Watch on mobile** — Seamlessly switch between PC and mobile. Once a video is downloaded, scan a QR code to watch it on your phone.
+- **⚡️&nbsp; Batch downloads** — Download multiple videos and live streams at the same time — no wasted bandwidth.
+- **🎉&nbsp; Docker support** — Deploy the web UI via Docker for quick, headless operation.
+- **🦞&nbsp; OpenClaw Skill** — Download videos with natural language through AI coding assistants (OpenClaw, Claude Code, etc.). Install with `npx clawhub@latest install mediago`.
 
-## Quickstart
+## Quick Start
 
-运行代码需要 node 和 pnpm，node 需要在官网下载安装，pnpm 可以通过`npm i -g pnpm`安装。
-
-## 运行代码
+You need **Node.js** and **pnpm**. Install Node.js from the [official site](https://nodejs.org/), then install pnpm:
 
 ```shell
-# 代码下载
+npm i -g pnpm
+```
+
+## Running locally
+
+```shell
+# Clone the repo
 git clone https://github.com/caorushizi/mediago.git
 
-# 安装依赖
+# Install dependencies
 pnpm install
 
-# 首次安装需要 rebuild 一下
-pnpm rebuild:workspace
-
-# electron 开发环境
+# Start the Electron desktop app (dev mode)
 pnpm dev:electron
 
-# electron 打包运行
-pnpm release:electron
-
-# server 开发环境
+# — or — start the web server (dev mode)
 pnpm dev:server
 
-# server 打包运行
-pnpm release:server
+# Package the Electron app for distribution
+pnpm pack:electron
 
+# Package the web server for distribution
+pnpm pack:server
 ```
 
 ## Releases
 
-### v3.5.0-beta.0 (2026.4.3 发布)
+### v3.5.0-beta.0 (Apr 3, 2026)
 
-### 软件下载
+#### Downloads
 
-- [【mediago】 windows(安装版) v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-setup-win32-x64-3.5.0-beta.0.exe)
-- [【mediago】 windows(便携版) v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-portable-win32-x64-3.5.0-beta.0.exe)
-- [【mediago】 macos arm64（apple 芯片） v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-setup-darwin-arm64-3.5.0-beta.0.dmg)
-- [【mediago】 macos x64（intel 芯片） v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-setup-darwin-x64-3.5.0-beta.0.dmg)
-- [【mediago】 linux v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-setup-linux-amd64-3.5.0-beta.0.deb)
-- 【mediago】 docker v3.0 `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:3.5.0-beta.0`
+- [Windows (installer) v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-setup-win32-x64-3.5.0-beta.0.exe)
+- [Windows (portable) v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-portable-win32-x64-3.5.0-beta.0.exe)
+- [macOS ARM64 (Apple Silicon) v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-setup-darwin-arm64-3.5.0-beta.0.dmg)
+- [macOS x64 (Intel) v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-setup-darwin-x64-3.5.0-beta.0.dmg)
+- [Linux v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-setup-linux-amd64-3.5.0-beta.0.deb)
+- Docker v3.5.0-beta.0: `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:3.5.0-beta.0`
 
-### v3.0.0 (2024.10.7 发布)
+### v3.0.0 (Oct 7, 2024)
 
-#### 软件下载
+#### Downloads
 
-- [【mediago】 windows(安装版) v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-win32-x64-3.0.0.exe)
-- [【mediago】 windows(便携版) v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-portable-win32-x64-3.0.0.exe)
-- [【mediago】 macos arm64（apple 芯片） v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-darwin-arm64-3.0.0.dmg)
-- [【mediago】 macos x64（intel 芯片） v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-darwin-x64-3.0.0.dmg)
-- [【mediago】 linux v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-linux-amd64-3.0.0.deb)
-- 【mediago】 docker `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:latest`
+- [Windows (installer) v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-win32-x64-3.0.0.exe)
+- [Windows (portable) v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-portable-win32-x64-3.0.0.exe)
+- [macOS ARM64 (Apple Silicon) v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-darwin-arm64-3.0.0.dmg)
+- [macOS x64 (Intel) v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-darwin-x64-3.0.0.dmg)
+- [Linux v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-linux-amd64-3.0.0.deb)
+- Docker: `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:latest`
 
-### docker 宝塔面板一键部署（推荐）
+### One-click Docker deployment via BT Panel
 
-1. 安装宝塔面板，前往 [宝塔面板](https://www.bt.cn/new/download.html?r=dk_mediago) 官网，选择正式版的脚本下载安装
+1. Install [BT Panel](https://www.bt.cn/new/download.html?r=dk_mediago) using the official script.
+2. Log in to the panel, click **Docker** in the sidebar, and follow the prompts to install the Docker service.
+3. Find **MediaGo** in the app store, click **Install**, configure your domain, and you're done.
 
-2. 安装后登录宝塔面板，在菜单栏中点击 `Docker`，首次进入会提示安装`Docker`服务，点击立即安装，按提示完成安装
+## Screenshots
 
-3. 安装完成后在应用商店中找到`MediaGo`，点击安装，配置域名等基本信息即可完成安装
+![Home](./images/home.png)
 
-### 软件截图
+![Home — dark mode](./images/home-dark.png)
 
-![首页](./images/home.png)
+![Settings](./images/settings.png)
 
-### 重要更新
+![Resource extraction](./images/browser.png)
 
-- 支持 docker 部署 web 端
-- 更新桌面端 UI
+## Changelog (v3.0.0)
 
-### 更新日志
+- Docker deployment for the web UI
+- Redesigned desktop UI
+- Video playback on desktop and mobile
+- Fixed blank window on macOS launch
+- Improved batch download UX
+- Added Windows portable build (no install required)
+- Enhanced resource sniffing — detect multiple videos per page
+- Import / export favorites
+- Export the download list from the home page
+- Improved "New download" form flow
+- Open the app and add downloads via URL scheme
+- Various bug fixes and UX improvements
 
-- 更新桌面端 UI
-- 支持 docker 部署 web 端
-- 新增视频播放，支持桌面端和移动端播放
-- 修复 mac 打开无法展示界面的问题
-- 优化了批量下载的交互
-- 添加了 windows 的便携版（免安装哦）
-- 优化了下载列表，支持页面中多个视频的嗅探
-- 支持收藏列表手动导入导出
-- 支持首页下载列表导出
-- 优化了【新建下载】表单的交互逻辑
-- 支持 UrlScheme 打开应用，并添加下载任务
-- 修复了一些 bug 并提升用户体验
+## Tech Stack
 
-## 软件截图
+- [React](https://react.dev/)
+- [Electron](https://www.electronjs.org)
+- [Koa](https://koajs.com)
+- [Vite](https://vitejs.dev)
+- [Ant Design](https://ant.design)
+- [Tailwind CSS](https://tailwindcss.com)
+- [shadcn/ui](https://ui.shadcn.com/)
+- [Inversify](https://inversify.io)
 
-![首页](./images/home.png)
+## Acknowledgements
 
-![首页-dark](./images/home-dark.png)
+- [N_m3u8DL-RE](https://github.com/nilaoda/N_m3u8DL-RE)
+- [BBDown](https://github.com/nilaoda/BBDown)
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp)
+- [mediago-core](https://github.com/caorushizi/mediago-core)
 
-![设置页面](./images/settings.png)
+## Disclaimer
 
-![资源提取](./images/browser.png)
-
-## 技术栈
-
-- react <https://react.dev/>
-- electron <https://www.electronjs.org>
-- koa <https://koajs.com>
-- vite <https://cn.vitejs.dev>
-- antd <https://ant.design>
-- tailwindcss <https://tailwindcss.com>
-- shadcn <https://ui.shadcn.com/>
-- inversify <https://inversify.io>
-- typeorm <https://typeorm.io>
-
-## 鸣谢
-
-- N_m3u8DL-RE 来自于 <https://github.com/nilaoda/N_m3u8DL-RE>
-- BBDown 来自于 <https://github.com/nilaoda/BBDown>
-- mediago 来自于 <https://github.com/caorushizi/mediago-core>
-
-## 免责声明
-
-> **本项目仅供学习和研究使用，请勿用于任何商业或非法用途。**
+> **This project is for educational and research purposes only. Do not use it for any commercial or illegal purposes.**
 >
-> 1. 本项目提供的所有代码和功能仅作为学习流媒体技术的参考，使用者需自行遵守所在地区的法律法规。
-> 2. 使用本项目下载的任何内容，其版权归原始内容所有者所有。使用者应在下载后 24 小时内删除，或取得版权方授权。
-> 3. 本项目开发者不对使用者的任何行为承担责任，包括但不限于：下载受版权保护的内容、对第三方平台造成的影响等。
-> 4. 禁止将本项目用于大规模抓取、破坏平台服务或任何侵犯他人合法权益的行为。
-> 5. 使用本项目即表示您已阅读并同意本免责声明。如不同意，请立即停止使用并删除本项目。
+> 1. All code and functionality provided by this project are intended solely as a reference for learning about streaming media technologies. Users must comply with the laws and regulations of their jurisdiction.
+> 2. Any content downloaded using this project remains the property of its original copyright holders. Users should delete downloaded content within 24 hours or obtain proper authorization.
+> 3. The developers of this project are not responsible for any actions taken by users, including but not limited to downloading copyrighted content or impacting third-party platforms.
+> 4. Using this project for mass scraping, disrupting platform services, or any activity that infringes upon the legitimate rights of others is strictly prohibited.
+> 5. By using this project you acknowledge that you have read and agree to this disclaimer. If you do not agree, stop using the project and delete it immediately.
