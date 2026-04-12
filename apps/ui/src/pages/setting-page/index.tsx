@@ -436,13 +436,13 @@ const SettingPage: React.FC = () => {
           // Server/Docker mode: need both URL and API key
           const url = coreUrl || "http://localhost:8899";
           setupCmd = apiKey
-            ? `设置 mediago 地址为 ${url}，api key 为 ${apiKey}`
-            : `设置 mediago 地址为 ${url}`;
+            ? `Set mediago url to ${url}, api key to ${apiKey}`
+            : `Set mediago url to ${url}`;
         } else {
           // Electron mode: only need URL
           setupCmd = coreUrl
-            ? `设置 mediago 地址为 ${coreUrl}`
-            : "设置 mediago 地址为 http://localhost:39719";
+            ? `Set mediago url to ${coreUrl}`
+            : "Set mediago url to http://localhost:39719";
         }
         const installCmd = t("skillsInstallCmd");
         return (

@@ -97,7 +97,7 @@ export default function SigninPage() {
                       htmlFor="repeat-password"
                       className="block text-sm/6 font-medium text-gray-900 dark:text-gray-100"
                     >
-                      {t("reppeatPassword")}
+                      {t("repeatPassword")}
                     </label>
                     <div className="mt-2">
                       <input
