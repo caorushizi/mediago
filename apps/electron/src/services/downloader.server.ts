@@ -54,8 +54,6 @@ export class DownloaderServer extends EventEmitter {
     const core = resolveCoreBinaries();
     const deps = resolveDepsBinaries();
 
-    this.logger.info("Resolved core binary:", path.dirname(core.coreBin));
-
     const runner = new ServiceRunner({
       executableName: "mediago-core",
       executableDir: path.dirname(core.coreBin),

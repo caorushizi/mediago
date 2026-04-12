@@ -83,10 +83,6 @@ export default class ElectronApp {
 
     // 2. Start Go download service in the background; errors are non-fatal
     try {
-      this.logger.info("[ElectronApp] Starting Go core service...", {
-        logDir,
-        db,
-      });
       await this.downloaderServer.start({
         logDir: logDir,
         dbPath: db,

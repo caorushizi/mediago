@@ -36,8 +36,6 @@ fs.mkdirSync(DOWNLOAD_DIR, { recursive: true });
 const core = resolveCoreBinaries();
 const deps = resolveDepsBinaries();
 
-console.log("Resolved core binary:", path.dirname(core.coreBin));
-
 const runner = new ServiceRunner({
   executableName: "mediago-core",
   executableDir: path.dirname(core.coreBin),
