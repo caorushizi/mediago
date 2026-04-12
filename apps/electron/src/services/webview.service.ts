@@ -24,7 +24,6 @@ import GoConfigCache from "./go-config-cache";
 import BrowserWindow from "../windows/browser.window";
 import MainWindow from "../windows/main.window";
 import { SniffingHelper, type SourceParams } from "./sniffing-helper.service";
-import fetch from "cross-fetch";
 
 const require = createRequire(import.meta.url);
 
@@ -209,8 +208,8 @@ export default class WebviewService {
       throw new Error(i18n.t("browserViewNotFound"));
     }
     const { webContents } = this.view;
-    if (webContents.canGoBack()) {
-      webContents.goBack();
+    if (webContents.navigationHistory.canGoBack()) {
+      webContents.navigationHistory.goBack();
       return true;
     } else {
       this.destroyView();

@@ -53,12 +53,13 @@ export default class UpdateService {
   }
 
   async checkForUpdates() {
-    setTimeout(
-      () => {
-        autoUpdater.checkForUpdates();
-      },
-      1 * 1000 * 60,
-    );
+    setTimeout(async () => {
+      try {
+        await autoUpdater.checkForUpdates();
+      } catch (e) {
+        this.logger.error("Check for updates failed", e);
+      }
+    }, 60_000);
   }
 
   async autoUpdate() {
@@ -77,7 +78,11 @@ export default class UpdateService {
   }
 
   async manualUpdate() {
-    autoUpdater.checkForUpdates();
+    try {
+      await autoUpdater.checkForUpdates();
+    } catch (e) {
+      this.logger.error("Manual update check failed", e);
+    }
   }
 
   async startDownload() {
