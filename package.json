@@ -26,8 +26,8 @@
     "type:check": "turbo type:check",
     "core:dev": "pnpm --filter @mediago/core-build run dev",
     "core:build": "pnpm --filter @mediago/core-build run build",
-    "player:dev": "pnpm --filter @mediago/player-build run dev",
-    "player:build": "pnpm --filter @mediago/player-build run build",
+    "player:dev": "pnpm --filter @mediago/core-build run dev",
+    "player:build": "pnpm --filter @mediago/core-build run build",
     "deps:download": "tsx scripts/download-deps.ts",
     "deps:download:all": "tsx scripts/download-deps.ts --all",
     "prepare": "husky"
