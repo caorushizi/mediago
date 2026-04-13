@@ -22,8 +22,8 @@ pnpm build:electron         # Production build for Electron
 pnpm build:web              # Build UI only (server mode)
 pnpm core:dev               # Start Go Core dev server (port 9900)
 pnpm core:build             # Compile Go Core binary
-pnpm player:dev             # Start Player dev (Go backend + UI)
-pnpm player:build           # Build Player (UI embedded in Go binary)
+pnpm player:dev             # Start Player dev (alias for core:dev)
+pnpm player:build           # Build Player (alias for core:build)
 pnpm deps:download          # Download third-party tools (ffmpeg, BBDown, etc.)
 pnpm deps:download:all      # Download tools for all platforms
 pnpm lint                   # Lint with oxlint
