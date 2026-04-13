@@ -49,7 +49,7 @@
     "electron-store": "^11.0.2",
     "i18next": "^25.6.0",
     "inversify": "^7.9.1",
-    "lodash": "^4.17.21",
+    "lodash": "^4.18.1",
     "lru-cache": "^11.0.1",
     "mime-types": "^3.0.1",
     "nanoid": "^5.0.7",
