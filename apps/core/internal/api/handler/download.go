@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"caorushizi.cn/mediago/internal/api/dto"
+	"caorushizi.cn/mediago/internal/api/sse"
 	"caorushizi.cn/mediago/internal/i18n"
 	"caorushizi.cn/mediago/internal/logger"
 	"caorushizi.cn/mediago/internal/service"
@@ -16,11 +17,12 @@ import (
 type DownloadHandler struct {
 	svc  *service.DownloadTaskService
 	conf ConfigStore
+	hub  *sse.Hub
 }
 
 // NewDownloadHandler creates a DownloadHandler.
-func NewDownloadHandler(svc *service.DownloadTaskService, conf ConfigStore) *DownloadHandler {
-	return &DownloadHandler{svc: svc, conf: conf}
+func NewDownloadHandler(svc *service.DownloadTaskService, conf ConfigStore, hub *sse.Hub) *DownloadHandler {
+	return &DownloadHandler{svc: svc, conf: conf, hub: hub}
 }
 
 // Create adds download tasks (supports batch creation).
@@ -58,6 +60,20 @@ func (h *DownloadHandler) Create(c *gin.Context) {
 				logger.Warn("auto-start download failed", zap.Int64("id", v.ID), zap.Error(err))
 			}
 		}
+	}
+
+	// Broadcast creation so every connected renderer (main window, overlay
+	// dialog, external clients) can update its own badge/state without
+	// relying on cross-WebContents IPC.
+	if h.hub != nil && len(videos) > 0 {
+		ids := make([]int64, 0, len(videos))
+		for _, v := range videos {
+			ids = append(ids, v.ID)
+		}
+		h.hub.Broadcast("download-create", map[string]interface{}{
+			"ids":   ids,
+			"count": len(ids),
+		})
 	}
 
 	c.JSON(http.StatusOK, dto.SuccessResponse{Success: true, Code: http.StatusOK, Message: i18n.T(c, i18n.MsgOK), Data: videos})

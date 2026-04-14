@@ -108,7 +108,7 @@ func New(queue *core.TaskQueue, logs *tasklog.Manager, database *db.Database, co
 		converter := service.NewConverter(opt.FFmpegBin)
 		conversionSvc := service.NewConversionService(conversionRepo, converter, hub)
 
-		srv.downloadHandler = handler.NewDownloadHandler(downloadSvc, confStore)
+		srv.downloadHandler = handler.NewDownloadHandler(downloadSvc, confStore, hub)
 		srv.favoriteHandler = handler.NewFavoriteHandler(favoriteSvc)
 		srv.conversionHandler = handler.NewConversionHandler(conversionSvc)
 		srv.downloadService = downloadSvc

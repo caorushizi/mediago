@@ -96,7 +96,7 @@ export function ToolBar({ page }: Props) {
     if (curIsFavorite) {
       await removeFavorite(curIsFavorite.id);
     } else {
-      const icon = await getFavIcon(store.url);
+      const icon = getFavIcon(store.url);
       await addFavorite({
         url: store.url,
         title: store.title || store.url,

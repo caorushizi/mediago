@@ -1,5 +1,6 @@
 // DOWNLOAD_EVENT_NAME is used as the channel name for dispatching download events
 import { http } from "@/utils";
+import { useDownloadStore } from "@/store/download";
 
 type Callback = (...args: unknown[]) => void;
 
@@ -20,6 +21,26 @@ export function initGoEvents(coreUrl: string) {
   }
 
   es = new EventSource(`${coreUrl}/api/events`);
+
+  // Task creation is broadcast from Go Core's download.Create handler.
+  // Driving the sidebar badge from SSE (instead of the local `increase()`
+  // call in the form/panel handlers) keeps the count correct across
+  // WebContents — e.g. the source-extract overlay dialog has its own
+  // Zustand instance and its local store updates never reach the main
+  // window.
+  es.addEventListener("download-create", (e) => {
+    try {
+      const payload = JSON.parse(e.data);
+      const count =
+        typeof payload?.count === "number" && payload.count > 0
+          ? payload.count
+          : 1;
+      const { increase } = useDownloadStore.getState();
+      for (let i = 0; i < count; i++) increase();
+    } catch {
+      // ignore malformed payloads
+    }
+  });
 
   es.addEventListener("download-start", (e) => {
     const payload = JSON.parse(e.data);

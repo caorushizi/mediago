@@ -28,17 +28,19 @@ export const requestImage = (url: string, timeout = 1000): Promise<void> => {
   });
 };
 
-export const getFavIcon = async (url: string) => {
-  let iconUrl = "";
+export const getFavIcon = (url: string): string => {
+  // Return the canonical /favicon.ico URL without probing via <img> first.
+  // The probe used a 1s timeout and dropped any URL that wasn't instantly
+  // loadable (CORS, redirects, slow TLS, sites serving favicons from other
+  // paths), which left most favorites with an empty icon. The consumer
+  // (<Avatar src> in fav-item.tsx) already falls back to a link icon when
+  // the image fails to load, so a best-effort URL is safe here.
   try {
     const urlObject = new URL(url);
-    const fetchUrl = urlObject.origin ? `${urlObject.origin}/favicon.ico` : "";
-    await requestImage(fetchUrl);
-    iconUrl = fetchUrl;
+    return urlObject.origin ? `${urlObject.origin}/favicon.ico` : "";
   } catch {
-    // empty
+    return "";
   }
-  return iconUrl;
 };
 
 export const generateUrl = (url: string) => {

@@ -42,7 +42,7 @@ export function FavoriteList() {
   const handleOk = useMemoizedFn(async () => {
     try {
       const values = await favoriteAddForm.validateFields();
-      const icon = await getFavIcon(values.url);
+      const icon = getFavIcon(values.url);
       await addFavorite({
         url: values.url,
         title: values.title,

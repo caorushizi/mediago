@@ -23,7 +23,6 @@ import { createDownloadTasks, getDownloadFolders } from "@/api/download-task";
 import { useDockerApi } from "@/hooks/use-docker-api";
 import { appStoreSelector, useAppStore } from "@/store/app";
 import { downloadFormSelector, useConfigStore } from "@/store/config";
-import { downloadStoreSelector, useDownloadStore } from "@/store/download";
 import { tdApp } from "@/utils";
 import { DownloadTask, DownloadType } from "@mediago/shared-common";
 import { BatchUrlTextarea } from "./batchurl-textarea";
@@ -82,7 +81,6 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
     const [videoFolders, setVideoFolders] = useState<string[]>([]);
     const { contextMenu } = usePlatform();
     const { addVideosToDocker } = useDockerApi();
-    const { increase } = useDownloadStore(useShallow(downloadStoreSelector));
 
     useAsyncEffect(async () => {
       if (modalOpen) {
@@ -149,7 +147,9 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
       try {
         const tasks = await getFormItems();
         await createDownloadTasks(tasks);
-        increase();
+        // Badge increments via the "download-create" SSE event
+        // (apps/ui/src/api/events.ts); drives both the main window and
+        // the overlay-dialog WebContents from a single source.
         setModalOpen(false);
         onConfirm?.(form.getFieldsValue());
         tdApp.onEvent(ADD_TO_LIST, { id });
@@ -184,7 +184,8 @@ export default forwardRef<DownloadFormRef, DownloadFormProps>(
       try {
         const tasks = await getFormItems();
         await createDownloadTasks(tasks, true);
-        increase();
+        // Badge increments via the "download-create" SSE event; see
+        // handleSave comment.
         setModalOpen(false);
         onConfirm?.(form.getFieldsValue());
         tdApp.onEvent(DOWNLOAD_NOW, { id });

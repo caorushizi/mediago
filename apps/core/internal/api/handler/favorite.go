@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -48,6 +49,16 @@ func (h *FavoriteHandler) Create(c *gin.Context) {
 		Icon:  req.Icon,
 	})
 	if err != nil {
+		// Duplicate URL is a normal user-facing condition, not a server
+		// fault — surface it as 409 with a translated message.
+		if errors.Is(err, service.ErrURLAlreadyExists) {
+			c.JSON(http.StatusConflict, dto.ErrorResponse{
+				Success: false,
+				Code:    http.StatusConflict,
+				Message: i18n.T(c, i18n.MsgURLAlreadyExists),
+			})
+			return
+		}
 		logger.Error("Failed to add favorite", zap.Error(err))
 		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Success: false, Code: http.StatusInternalServerError, Message: err.Error()})
 		return

@@ -114,6 +114,8 @@ export function BrowserViewPanel() {
         folder: "",
       };
       await createDownloadTasks([downloadTask], true);
+      // Badge increments via the "download-create" SSE event (see
+      // apps/ui/src/api/events.ts), so no local increase() call needed.
     } catch (e) {
       message.error((e as Error).message);
     }

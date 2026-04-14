@@ -47,6 +47,13 @@ http.interceptors.response.use(
       useAppStore.getState().setAppStore({ apiKey: "" });
       window.location.pathname = "/signin";
     }
+    // Go Core's error responses follow { success: false, message } too;
+    // surface the translated server message instead of Axios's default
+    // "Request failed with status code XXX".
+    const serverMessage = resp?.data?.message;
+    if (typeof serverMessage === "string" && serverMessage.length > 0) {
+      return Promise.reject(new Error(serverMessage));
+    }
     return Promise.reject(error);
   },
 );
