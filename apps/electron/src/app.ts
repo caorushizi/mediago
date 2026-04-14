@@ -31,6 +31,8 @@ import { AppTheme, resolveAppLanguage } from "@mediago/shared-common";
 @injectable()
 @provide()
 export default class ElectronApp {
+  private tray?: Tray;
+
   constructor(
     @inject(MainWindow)
     private readonly mainWindow: MainWindow,
@@ -162,6 +164,16 @@ export default class ElectronApp {
     tray.addListener("click", () => {
       this.mainWindow.init();
     });
+    this.tray = tray;
+    this.refreshTrayMenu();
+
+    // Rebuild the tray menu whenever the app language changes so the
+    // labels stay in sync with user settings and the OS locale.
+    i18n.on("languageChanged", () => this.refreshTrayMenu());
+  }
+
+  private refreshTrayMenu() {
+    if (!this.tray) return;
     const contextMenu = Menu.buildFromTemplate([
       {
         label: i18n.t("showMainWindow"),
@@ -172,7 +184,7 @@ export default class ElectronApp {
         role: "quit",
       },
     ]);
-    tray.setContextMenu(contextMenu);
+    this.tray.setContextMenu(contextMenu);
   }
 
   secondInstance = (event: Event, commandLine: string[]) => {
