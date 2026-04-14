@@ -22,7 +22,7 @@ import {
   Space,
   Switch,
 } from "antd";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/react/shallow";
 import PageContainer from "@/components/page-container";
@@ -61,9 +61,34 @@ const SettingPage: React.FC = () => {
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [updateDownloaded, setUpdateDownloaded] = useState(false);
 
+  // Mounting all 6 cards + ~25 Form.Items in one render produces a
+  // ~300ms long task on navigation (dominated by Ant Design Form.Item
+  // registration + cssinjs). Render one card per animation frame so the
+  // longest task is just a single card (~50ms) — no individual frame is
+  // long enough to feel janky.
+  const [visibleCount, setVisibleCount] = useState(1);
+
+  const isFirstSync = useRef(true);
   useEffect(() => {
+    // initialValues already seeds the form on mount; the extra
+    // setFieldsValue here would force Ant Form to diff every Form.Item
+    // again right after mount, which is a meaningful slice of the jank.
+    if (isFirstSync.current) {
+      isFirstSync.current = false;
+      return;
+    }
     formRef.current?.setFieldsValue(settings);
   }, [settings]);
+
+  // Mount remaining cards one per animation frame, so each task stays
+  // short enough to avoid a visible freeze.
+  useEffect(() => {
+    if (visibleCount >= 6) return;
+    const raf = requestAnimationFrame(() => {
+      setVisibleCount((c) => c + 1);
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [visibleCount]);
 
   const onSelectDir = useMemoizedFn(async () => {
     const paths = await dialog.open({ type: "directory" });
@@ -186,349 +211,394 @@ const SettingPage: React.FC = () => {
     title: string;
     hidden?: boolean;
     children: React.ReactNode;
-  }> = [
-    {
-      key: "1",
-      title: t("basicSetting"),
-      children: (
-        <>
-          <Form.Item name="local" label={renderButtonLabel()}>
-            <Input disabled placeholder={t("pleaseSelectDownloadDir")} />
-          </Form.Item>
-          <Form.Item hidden={isWeb} name="theme" label={t("downloaderTheme")}>
-            <Select
-              options={[
-                { label: t("followSystem"), value: AppTheme.System },
-                { label: t("dark"), value: AppTheme.Dark },
-                { label: t("light"), value: AppTheme.Light },
-              ]}
-              placeholder={t("pleaseSelectTheme")}
-              allowClear={false}
-            />
-          </Form.Item>
-          <Form.Item name="language" label={t("displayLanguage")}>
-            <Select
-              options={[
-                { label: t("followSystem"), value: AppLanguage.System },
-                { label: t("chinese"), value: AppLanguage.ZH },
-                { label: t("english"), value: AppLanguage.EN },
-              ]}
-              placeholder={t("pleaseSelectLanguage")}
-              allowClear={false}
-            />
-          </Form.Item>
-          <Form.Item
-            hidden={isWeb}
-            label={t("downloadPrompt")}
-            name="promptTone"
-          >
-            <Switch />
-          </Form.Item>
-          <Form.Item label={t("showTerminal")} name="showTerminal">
-            <Switch />
-          </Form.Item>
-          <Form.Item
-            hidden={isWeb}
-            label={t("autoUpgrade")}
-            tooltip={t("autoUpgradeTooltip")}
-            name="autoUpgrade"
-          >
-            <Switch />
-          </Form.Item>
-          <Form.Item
-            hidden={isWeb}
-            label={t("allowBetaVersion")}
-            name="allowBeta"
-          >
-            <Switch />
-          </Form.Item>
-          <Form.Item
-            hidden={isWeb}
-            label={t("closeMainWindow")}
-            name="closeMainWindow"
-          >
-            <Radio.Group>
-              <Radio value={true}>{t("close")}</Radio>
-              <Radio value={false}>{t("minimizeToTray")}</Radio>
-            </Radio.Group>
-          </Form.Item>
-          <Form.Item
-            label={t("enableMobilePlayer")}
-            name="enableMobilePlayer"
-            hidden={isWeb}
-          >
-            <Switch />
-          </Form.Item>
-        </>
-      ),
-    },
-    {
-      key: "2",
-      hidden: isWeb,
-      title: t("browserSetting"),
-      children: !isWeb && (
-        <>
-          <Form.Item label={t("audioMuted")} name="audioMuted">
-            <Switch />
-          </Form.Item>
-          <Form.Item label={t("openInNewWindow")} name="openInNewWindow">
-            <Switch />
-          </Form.Item>
-          <Form.Item name="proxy" label={t("proxySetting")}>
-            <Input
-              placeholder={t("pleaseEnterProxy")}
-              onContextMenu={() =>
-                contextMenu.show([
-                  { key: "copy", label: t("copy") },
-                  { key: "paste", label: t("paste") },
-                ])
-              }
-            />
-          </Form.Item>
-          <Form.Item
-            name="useProxy"
-            label={t("proxySwitch")}
-            rules={[
-              {
-                validator(rules, value) {
-                  if (value && formRef.current?.getFieldValue("proxy") === "") {
-                    return Promise.reject(t("pleaseEnterProxyFirst"));
+  }> = useMemo<
+    Array<{
+      key: string;
+      title: string;
+      hidden?: boolean;
+      children: React.ReactNode;
+    }>
+  >(
+    () =>
+      [
+        {
+          key: "1",
+          title: t("basicSetting"),
+          children: (
+            <>
+              <Form.Item name="local" label={renderButtonLabel()}>
+                <Input disabled placeholder={t("pleaseSelectDownloadDir")} />
+              </Form.Item>
+              <Form.Item
+                hidden={isWeb}
+                name="theme"
+                label={t("downloaderTheme")}
+              >
+                <Select
+                  options={[
+                    { label: t("followSystem"), value: AppTheme.System },
+                    { label: t("dark"), value: AppTheme.Dark },
+                    { label: t("light"), value: AppTheme.Light },
+                  ]}
+                  placeholder={t("pleaseSelectTheme")}
+                  allowClear={false}
+                />
+              </Form.Item>
+              <Form.Item name="language" label={t("displayLanguage")}>
+                <Select
+                  options={[
+                    { label: t("followSystem"), value: AppLanguage.System },
+                    { label: t("chinese"), value: AppLanguage.ZH },
+                    { label: t("english"), value: AppLanguage.EN },
+                  ]}
+                  placeholder={t("pleaseSelectLanguage")}
+                  allowClear={false}
+                />
+              </Form.Item>
+              <Form.Item
+                hidden={isWeb}
+                label={t("downloadPrompt")}
+                name="promptTone"
+              >
+                <Switch />
+              </Form.Item>
+              <Form.Item label={t("showTerminal")} name="showTerminal">
+                <Switch />
+              </Form.Item>
+              <Form.Item
+                hidden={isWeb}
+                label={t("autoUpgrade")}
+                tooltip={t("autoUpgradeTooltip")}
+                name="autoUpgrade"
+              >
+                <Switch />
+              </Form.Item>
+              <Form.Item
+                hidden={isWeb}
+                label={t("allowBetaVersion")}
+                name="allowBeta"
+              >
+                <Switch />
+              </Form.Item>
+              <Form.Item
+                hidden={isWeb}
+                label={t("closeMainWindow")}
+                name="closeMainWindow"
+              >
+                <Radio.Group>
+                  <Radio value={true}>{t("close")}</Radio>
+                  <Radio value={false}>{t("minimizeToTray")}</Radio>
+                </Radio.Group>
+              </Form.Item>
+              <Form.Item
+                label={t("enableMobilePlayer")}
+                name="enableMobilePlayer"
+                hidden={isWeb}
+              >
+                <Switch />
+              </Form.Item>
+            </>
+          ),
+        },
+        {
+          key: "2",
+          hidden: isWeb,
+          title: t("browserSetting"),
+          children: !isWeb && (
+            <>
+              <Form.Item label={t("audioMuted")} name="audioMuted">
+                <Switch />
+              </Form.Item>
+              <Form.Item label={t("openInNewWindow")} name="openInNewWindow">
+                <Switch />
+              </Form.Item>
+              <Form.Item name="proxy" label={t("proxySetting")}>
+                <Input
+                  placeholder={t("pleaseEnterProxy")}
+                  onContextMenu={() =>
+                    contextMenu.show([
+                      { key: "copy", label: t("copy") },
+                      { key: "paste", label: t("paste") },
+                    ])
                   }
-                  return Promise.resolve();
-                },
-              },
-            ]}
-          >
-            <Switch />
-          </Form.Item>
-          <Form.Item label={t("blockAds")} name="blockAds">
-            <Switch />
-          </Form.Item>
-          <Form.Item label={t("enterMobileMode")} name="isMobile">
-            <Switch />
-          </Form.Item>
-          <Form.Item
-            label={t("useImmersiveSniffing")}
-            tooltip={t("immersiveSniffingDescription")}
-            name="useExtension"
-          >
-            <Switch />
-          </Form.Item>
-          <Form.Item
-            label={t("privacy")}
-            tooltip={t("privacyTooltip")}
-            name="privacy"
-          >
-            <Switch />
-          </Form.Item>
-          <Form.Item label={t("moreAction")}>
-            <Space wrap>
-              <Button
-                onClick={handleClearWebviewCache}
-                icon={<ClearOutlined />}
+                />
+              </Form.Item>
+              <Form.Item
+                name="useProxy"
+                label={t("proxySwitch")}
+                rules={[
+                  {
+                    validator(rules, value) {
+                      if (
+                        value &&
+                        formRef.current?.getFieldValue("proxy") === ""
+                      ) {
+                        return Promise.reject(t("pleaseEnterProxyFirst"));
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
               >
-                {t("clearCache")}
-              </Button>
-              <Button onClick={handleExportFavorite}>
-                <DownloadOutlined />
-                {t("exportFavorite")}
-              </Button>
-
-              <Button onClick={onMenuClick}>
-                <UploadOutlined />
-                {t("importFavorite")}
-              </Button>
-            </Space>
-          </Form.Item>
-        </>
-      ),
-    },
-    {
-      key: "3",
-      title: t("downloadSetting"),
-      children: (
-        <>
-          <Form.Item hidden={!isWeb} name="proxy" label={t("proxySetting")}>
-            <Input
-              placeholder={t("pleaseEnterProxy")}
-              onContextMenu={() =>
-                contextMenu.show([
-                  { key: "copy", label: t("copy") },
-                  { key: "paste", label: t("paste") },
-                ])
-              }
-            />
-          </Form.Item>
-          <Form.Item
-            name="downloadProxySwitch"
-            label={t("downloadProxySwitch")}
-            rules={[
-              {
-                validator(rules, value) {
-                  if (value && formRef.current?.getFieldValue("proxy") === "") {
-                    return Promise.reject(t("pleaseEnterProxyFirst"));
-                  }
-                  return Promise.resolve();
-                },
-              },
-            ]}
-          >
-            <Switch />
-          </Form.Item>
-          <Form.Item label={t("deleteSegments")} name="deleteSegments">
-            <Switch />
-          </Form.Item>
-          <Form.Item
-            label={t("maxRunner")}
-            tooltip={t("maxRunnerDescription")}
-            name="maxRunner"
-          >
-            <InputNumber min={1} max={50} precision={0} />
-          </Form.Item>
-        </>
-      ),
-    },
-    {
-      key: "4",
-      title: t("dockerSetting"),
-      hidden: isWeb,
-      children: (
-        <>
-          <Form.Item name="apiKey" label={t("apiKey")}>
-            <Input
-              placeholder={t("pleaseEnterApiKey")}
-              onContextMenu={() =>
-                contextMenu.show([
-                  { key: "copy", label: t("copy") },
-                  { key: "paste", label: t("paste") },
-                ])
-              }
-            />
-          </Form.Item>
-          <Form.Item name="dockerUrl" label={t("dockerUrl")}>
-            <Input
-              placeholder={t("pleaseEnterDockerUrl")}
-              onContextMenu={() =>
-                contextMenu.show([
-                  { key: "copy", label: t("copy") },
-                  { key: "paste", label: t("paste") },
-                ])
-              }
-            />
-          </Form.Item>
-          <Form.Item label={t("enableDocker")} name="enableDocker">
-            <Switch />
-          </Form.Item>
-        </>
-      ),
-    },
-    {
-      key: "5",
-      title: t("skillsSetting"),
-      children: (() => {
-        const coreUrl = envPath?.playerUrl
-          ? envPath.playerUrl.replace(/\/player\/$/, "")
-          : "";
-        const apiKey = settings.apiKey || "";
-        let setupCmd: string;
-        if (isWeb) {
-          // Server/Docker mode: need both URL and API key
-          const url = coreUrl || "http://localhost:8899";
-          setupCmd = apiKey
-            ? `Set mediago url to ${url}, api key to ${apiKey}`
-            : `Set mediago url to ${url}`;
-        } else {
-          // Electron mode: only need URL
-          setupCmd = coreUrl
-            ? `Set mediago url to ${coreUrl}`
-            : "Set mediago url to http://localhost:39719";
-        }
-        const installCmd = t("skillsInstallCmd");
-        return (
-          <>
-            <Form.Item
-              label={t("skillsInstall")}
-              tooltip={t("skillsInstallTooltip")}
-            >
-              <Space.Compact className="w-full">
-                <Input value={installCmd} readOnly className="font-mono" />
-                <Button
-                  icon={<CopyOutlined />}
-                  onClick={() => {
-                    navigator.clipboard.writeText(installCmd);
-                    message.success(t("skillsCopied"));
-                  }}
-                >
-                  {t("skillsCopy")}
-                </Button>
-              </Space.Compact>
-            </Form.Item>
-            <Form.Item label={t("skillsInit")} tooltip={t("skillsInitTooltip")}>
-              <Space.Compact className="w-full">
-                <Input value={setupCmd} readOnly className="font-mono" />
-                <Button
-                  icon={<CopyOutlined />}
-                  onClick={() => {
-                    navigator.clipboard.writeText(setupCmd);
-                    message.success(t("skillsCopied"));
-                  }}
-                >
-                  {t("skillsCopy")}
-                </Button>
-              </Space.Compact>
-            </Form.Item>
-          </>
-        );
-      })(),
-    },
-    {
-      key: "6",
-      title: t("moreSettings"),
-      children: (
-        <>
-          <Form.Item hidden={!isWeb} name="apiKey" label={t("apiKey")}>
-            <Input disabled />
-          </Form.Item>
-          <Form.Item hidden={isWeb} label={t("moreAction")}>
-            <Space wrap>
-              <Button
-                onClick={() =>
-                  envPath?.configDir && shell.open(envPath.configDir)
-                }
-                icon={<FolderOpenOutlined />}
+                <Switch />
+              </Form.Item>
+              <Form.Item label={t("blockAds")} name="blockAds">
+                <Switch />
+              </Form.Item>
+              <Form.Item label={t("enterMobileMode")} name="isMobile">
+                <Switch />
+              </Form.Item>
+              <Form.Item
+                label={t("useImmersiveSniffing")}
+                tooltip={t("immersiveSniffingDescription")}
+                name="useExtension"
               >
-                {t("configDir")}
-              </Button>
-              <Button
-                onClick={() => envPath?.binDir && shell.open(envPath.binDir)}
-                icon={<FolderOpenOutlined />}
+                <Switch />
+              </Form.Item>
+              <Form.Item
+                label={t("privacy")}
+                tooltip={t("privacyTooltip")}
+                name="privacy"
               >
-                {t("binPath")}
-              </Button>
-              <Button
-                onClick={() => settings.local && shell.open(settings.local)}
-                icon={<FolderOpenOutlined />}
-              >
-                {t("localDir")}
-              </Button>
-            </Space>
-          </Form.Item>
-          <Form.Item label={t("currentVersion")}>
-            <Space wrap>
-              <div>{version}</div>
-              {!isWeb && (
-                <Badge dot={updateAvailable}>
-                  <Button type="text" onClick={handleCheckUpdate}>
-                    {t("checkUpdate")}
+                <Switch />
+              </Form.Item>
+              <Form.Item label={t("moreAction")}>
+                <Space wrap>
+                  <Button
+                    onClick={handleClearWebviewCache}
+                    icon={<ClearOutlined />}
+                  >
+                    {t("clearCache")}
                   </Button>
-                </Badge>
-              )}
-            </Space>
-          </Form.Item>
-        </>
-      ),
-    },
-  ].filter((item) => !item.hidden);
+                  <Button onClick={handleExportFavorite}>
+                    <DownloadOutlined />
+                    {t("exportFavorite")}
+                  </Button>
+
+                  <Button onClick={onMenuClick}>
+                    <UploadOutlined />
+                    {t("importFavorite")}
+                  </Button>
+                </Space>
+              </Form.Item>
+            </>
+          ),
+        },
+        {
+          key: "3",
+          title: t("downloadSetting"),
+          children: (
+            <>
+              <Form.Item hidden={!isWeb} name="proxy" label={t("proxySetting")}>
+                <Input
+                  placeholder={t("pleaseEnterProxy")}
+                  onContextMenu={() =>
+                    contextMenu.show([
+                      { key: "copy", label: t("copy") },
+                      { key: "paste", label: t("paste") },
+                    ])
+                  }
+                />
+              </Form.Item>
+              <Form.Item
+                name="downloadProxySwitch"
+                label={t("downloadProxySwitch")}
+                rules={[
+                  {
+                    validator(rules, value) {
+                      if (
+                        value &&
+                        formRef.current?.getFieldValue("proxy") === ""
+                      ) {
+                        return Promise.reject(t("pleaseEnterProxyFirst"));
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <Switch />
+              </Form.Item>
+              <Form.Item label={t("deleteSegments")} name="deleteSegments">
+                <Switch />
+              </Form.Item>
+              <Form.Item
+                label={t("maxRunner")}
+                tooltip={t("maxRunnerDescription")}
+                name="maxRunner"
+              >
+                <InputNumber min={1} max={50} precision={0} />
+              </Form.Item>
+            </>
+          ),
+        },
+        {
+          key: "4",
+          title: t("dockerSetting"),
+          hidden: isWeb,
+          children: (
+            <>
+              <Form.Item name="apiKey" label={t("apiKey")}>
+                <Input
+                  placeholder={t("pleaseEnterApiKey")}
+                  onContextMenu={() =>
+                    contextMenu.show([
+                      { key: "copy", label: t("copy") },
+                      { key: "paste", label: t("paste") },
+                    ])
+                  }
+                />
+              </Form.Item>
+              <Form.Item name="dockerUrl" label={t("dockerUrl")}>
+                <Input
+                  placeholder={t("pleaseEnterDockerUrl")}
+                  onContextMenu={() =>
+                    contextMenu.show([
+                      { key: "copy", label: t("copy") },
+                      { key: "paste", label: t("paste") },
+                    ])
+                  }
+                />
+              </Form.Item>
+              <Form.Item label={t("enableDocker")} name="enableDocker">
+                <Switch />
+              </Form.Item>
+            </>
+          ),
+        },
+        {
+          key: "5",
+          title: t("skillsSetting"),
+          children: (() => {
+            const coreUrl = envPath?.playerUrl
+              ? envPath.playerUrl.replace(/\/player\/$/, "")
+              : "";
+            const apiKey = settings.apiKey || "";
+            let setupCmd: string;
+            if (isWeb) {
+              // Server/Docker mode: need both URL and API key
+              const url = coreUrl || "http://localhost:8899";
+              setupCmd = apiKey
+                ? `Set mediago url to ${url}, api key to ${apiKey}`
+                : `Set mediago url to ${url}`;
+            } else {
+              // Electron mode: only need URL
+              setupCmd = coreUrl
+                ? `Set mediago url to ${coreUrl}`
+                : "Set mediago url to http://localhost:39719";
+            }
+            const installCmd = t("skillsInstallCmd");
+            return (
+              <>
+                <Form.Item
+                  label={t("skillsInstall")}
+                  tooltip={t("skillsInstallTooltip")}
+                >
+                  <Space.Compact className="w-full">
+                    <Input value={installCmd} readOnly className="font-mono" />
+                    <Button
+                      icon={<CopyOutlined />}
+                      onClick={() => {
+                        navigator.clipboard.writeText(installCmd);
+                        message.success(t("skillsCopied"));
+                      }}
+                    >
+                      {t("skillsCopy")}
+                    </Button>
+                  </Space.Compact>
+                </Form.Item>
+                <Form.Item
+                  label={t("skillsInit")}
+                  tooltip={t("skillsInitTooltip")}
+                >
+                  <Space.Compact className="w-full">
+                    <Input value={setupCmd} readOnly className="font-mono" />
+                    <Button
+                      icon={<CopyOutlined />}
+                      onClick={() => {
+                        navigator.clipboard.writeText(setupCmd);
+                        message.success(t("skillsCopied"));
+                      }}
+                    >
+                      {t("skillsCopy")}
+                    </Button>
+                  </Space.Compact>
+                </Form.Item>
+              </>
+            );
+          })(),
+        },
+        {
+          key: "6",
+          title: t("moreSettings"),
+          children: (
+            <>
+              <Form.Item hidden={!isWeb} name="apiKey" label={t("apiKey")}>
+                <Input disabled />
+              </Form.Item>
+              <Form.Item hidden={isWeb} label={t("moreAction")}>
+                <Space wrap>
+                  <Button
+                    onClick={() =>
+                      envPath?.configDir && shell.open(envPath.configDir)
+                    }
+                    icon={<FolderOpenOutlined />}
+                  >
+                    {t("configDir")}
+                  </Button>
+                  <Button
+                    onClick={() =>
+                      envPath?.binDir && shell.open(envPath.binDir)
+                    }
+                    icon={<FolderOpenOutlined />}
+                  >
+                    {t("binPath")}
+                  </Button>
+                  <Button
+                    onClick={() => settings.local && shell.open(settings.local)}
+                    icon={<FolderOpenOutlined />}
+                  >
+                    {t("localDir")}
+                  </Button>
+                </Space>
+              </Form.Item>
+              <Form.Item label={t("currentVersion")}>
+                <Space wrap>
+                  <div>{version}</div>
+                  {!isWeb && (
+                    <Badge dot={updateAvailable}>
+                      <Button type="text" onClick={handleCheckUpdate}>
+                        {t("checkUpdate")}
+                      </Button>
+                    </Badge>
+                  )}
+                </Space>
+              </Form.Item>
+            </>
+          ),
+        },
+      ].filter((item) => !item.hidden),
+    [
+      // Form.Items subscribe to the form store by name, so we don't need
+      // the full settings object here — only the two fields that are read
+      // directly inside the JSX (skillsSetting IIFE and the "open local"
+      // button). Keeping the dep list narrow lets the memo survive most
+      // SSE config-changed updates.
+      t,
+      settings.apiKey,
+      settings.local,
+      envPath,
+      updateAvailable,
+      renderButtonLabel,
+      onMenuClick,
+      handleExportFavorite,
+      handleClearWebviewCache,
+      handleCheckUpdate,
+      contextMenu,
+      shell,
+      message,
+    ],
+  );
 
   return (
     <PageContainer title={t("setting")}>
@@ -544,14 +614,9 @@ const SettingPage: React.FC = () => {
           onValuesChange={onFormValueChange}
         >
           <div className="gap-4 md:columns-2">
-            {cardSections.map((section) => (
-              <div className="mb-4 block break-inside-avoid">
-                <Card
-                  key={section.key}
-                  title={section.title}
-                  size="small"
-                  variant="borderless"
-                >
+            {cardSections.slice(0, visibleCount).map((section) => (
+              <div key={section.key} className="mb-4 block break-inside-avoid">
+                <Card title={section.title} size="small" variant="borderless">
                   {section.children}
                 </Card>
               </div>
