@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import i18n from "../i18n";
+import { resolveAppLanguage } from "../utils";
 import { AppLanguage, AppStore, AppTheme } from "@mediago/shared-common";
 import { persist } from "zustand/middleware";
 
@@ -44,7 +45,7 @@ export const useAppStore = create<AppStore & Actions>()(
           set((state) => {
             const { language } = values;
             if (language) {
-              i18n.changeLanguage(language);
+              i18n.changeLanguage(resolveAppLanguage(language));
             }
 
             Object.entries(values).forEach(([key, val]) => {

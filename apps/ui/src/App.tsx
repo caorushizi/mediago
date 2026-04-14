@@ -19,12 +19,12 @@ import {
   updateSelector,
   useSessionStore,
 } from "./store/session";
-import { getBrowserLang, isWeb, tdApp } from "./utils";
+import { isWeb, resolveAppLanguage, tdApp } from "./utils";
 import { usePlatform } from "./hooks/use-platform";
 import { setupHttp } from "./utils/http";
 import { getConfig } from "./api/config";
 import { initGoEvents, onConfigChanged } from "./api/events";
-import { AppLanguage, DownloadFilter } from "@mediago/shared-common";
+import { DownloadFilter } from "@mediago/shared-common";
 import { useAuth } from "./hooks/use-auth";
 import { Locale } from "antd/es/locale";
 
@@ -56,18 +56,7 @@ const App: FC = () => {
   const [adapterReady, setAdapterReady] = useState(false);
 
   useEffect(() => {
-    if (language === AppLanguage.ZH) {
-      setAppLocale(zhCN);
-    } else if (language === AppLanguage.EN) {
-      setAppLocale(enUS);
-    } else {
-      const lang = getBrowserLang();
-      if (lang.startsWith("zh")) {
-        setAppLocale(zhCN);
-      } else {
-        setAppLocale(enUS);
-      }
-    }
+    setAppLocale(resolveAppLanguage(language) === "zh" ? zhCN : enUS);
   }, [language]);
 
   const themeChange = useMemoizedFn((event: MediaQueryListEvent) => {

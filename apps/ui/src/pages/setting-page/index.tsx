@@ -10,6 +10,7 @@ import {
   App,
   Badge,
   Button,
+  Card,
   Form,
   type FormInstance,
   Input,
@@ -20,8 +21,6 @@ import {
   Select,
   Space,
   Switch,
-  Tabs,
-  type TabsProps,
 } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -182,18 +181,19 @@ const SettingPage: React.FC = () => {
     }
   });
 
-  const tabItems: TabsProps["items"] = [
+  const cardSections: Array<{
+    key: string;
+    title: string;
+    hidden?: boolean;
+    children: React.ReactNode;
+  }> = [
     {
       key: "1",
-      label: t("basicSetting"),
+      title: t("basicSetting"),
       children: (
         <>
           <Form.Item name="local" label={renderButtonLabel()}>
-            <Input
-              width="xl"
-              disabled
-              placeholder={t("pleaseSelectDownloadDir")}
-            />
+            <Input disabled placeholder={t("pleaseSelectDownloadDir")} />
           </Form.Item>
           <Form.Item hidden={isWeb} name="theme" label={t("downloaderTheme")}>
             <Select
@@ -264,8 +264,8 @@ const SettingPage: React.FC = () => {
     },
     {
       key: "2",
-      disabled: isWeb,
-      label: t("browserSetting"),
+      hidden: isWeb,
+      title: t("browserSetting"),
       children: !isWeb && (
         <>
           <Form.Item label={t("audioMuted")} name="audioMuted">
@@ -276,7 +276,6 @@ const SettingPage: React.FC = () => {
           </Form.Item>
           <Form.Item name="proxy" label={t("proxySetting")}>
             <Input
-              width="xl"
               placeholder={t("pleaseEnterProxy")}
               onContextMenu={() =>
                 contextMenu.show([
@@ -323,7 +322,7 @@ const SettingPage: React.FC = () => {
             <Switch />
           </Form.Item>
           <Form.Item label={t("moreAction")}>
-            <Space>
+            <Space wrap>
               <Button
                 onClick={handleClearWebviewCache}
                 icon={<ClearOutlined />}
@@ -346,7 +345,7 @@ const SettingPage: React.FC = () => {
     },
     {
       key: "3",
-      label: t("downloadSetting"),
+      title: t("downloadSetting"),
       children: (
         <>
           <Form.Item hidden={!isWeb} name="proxy" label={t("proxySetting")}>
@@ -391,8 +390,8 @@ const SettingPage: React.FC = () => {
     },
     {
       key: "4",
-      label: t("dockerSetting"),
-      disabled: isWeb,
+      title: t("dockerSetting"),
+      hidden: isWeb,
       children: (
         <>
           <Form.Item name="apiKey" label={t("apiKey")}>
@@ -425,7 +424,7 @@ const SettingPage: React.FC = () => {
     },
     {
       key: "5",
-      label: t("skillsSetting"),
+      title: t("skillsSetting"),
       children: (() => {
         const coreUrl = envPath?.playerUrl
           ? envPath.playerUrl.replace(/\/player\/$/, "")
@@ -484,14 +483,14 @@ const SettingPage: React.FC = () => {
     },
     {
       key: "6",
-      label: t("moreSettings"),
+      title: t("moreSettings"),
       children: (
         <>
           <Form.Item hidden={!isWeb} name="apiKey" label={t("apiKey")}>
             <Input disabled />
           </Form.Item>
           <Form.Item hidden={isWeb} label={t("moreAction")}>
-            <Space>
+            <Space wrap>
               <Button
                 onClick={() =>
                   envPath?.configDir && shell.open(envPath.configDir)
@@ -515,7 +514,7 @@ const SettingPage: React.FC = () => {
             </Space>
           </Form.Item>
           <Form.Item label={t("currentVersion")}>
-            <Space>
+            <Space wrap>
               <div>{version}</div>
               {!isWeb && (
                 <Badge dot={updateAvailable}>
@@ -529,23 +528,35 @@ const SettingPage: React.FC = () => {
         </>
       ),
     },
-  ].filter((item) => !item.disabled);
+  ].filter((item) => !item.hidden);
 
   return (
     <PageContainer title={t("setting")}>
-      <div className="rounded-lg bg-white px-3 py-2 dark:bg-[#1F2024] h-full">
+      <div className="h-full overflow-auto px-1 py-2">
         <Form<AppStore>
           ref={formRef}
           layout="horizontal"
-          labelAlign={"left"}
+          labelAlign="left"
+          labelCol={{ flex: "140px" }}
+          wrapperCol={{ flex: "1 1 auto" }}
           colon={false}
           initialValues={settings}
           onValuesChange={onFormValueChange}
-          className="flex flex-col gap-2"
-          // labelCol={{ span: 5 }}
-          wrapperCol={{ span: 10 }}
         >
-          <Tabs defaultActiveKey="1" items={tabItems} onChange={() => {}} />
+          <div className="gap-4 md:columns-2">
+            {cardSections.map((section) => (
+              <div className="mb-4 block break-inside-avoid">
+                <Card
+                  key={section.key}
+                  title={section.title}
+                  size="small"
+                  variant="borderless"
+                >
+                  {section.children}
+                </Card>
+              </div>
+            ))}
+          </div>
         </Form>
       </div>
 

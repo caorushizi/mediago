@@ -131,7 +131,14 @@ async function extractGz(filePath: string, outputPath: string): Promise<void> {
 }
 
 async function extractZip(zipPath: string, outputDir: string): Promise<void> {
-  execSync(`unzip -o "${zipPath}" -d "${outputDir}"`, { stdio: "pipe" });
+  if (process.platform === "win32") {
+    const psCommand = `Add-Type -AssemblyName System.IO.Compression.FileSystem; if (Test-Path -LiteralPath '${outputDir}') { Remove-Item -LiteralPath '${outputDir}' -Recurse -Force }; [System.IO.Compression.ZipFile]::ExtractToDirectory('${zipPath}', '${outputDir}')`;
+    execSync(`powershell -NoProfile -Command "${psCommand}"`, {
+      stdio: "pipe",
+    });
+  } else {
+    execSync(`unzip -o "${zipPath}" -d "${outputDir}"`, { stdio: "pipe" });
+  }
 }
 
 async function extractTarGz(

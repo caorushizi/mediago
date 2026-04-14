@@ -26,7 +26,7 @@ import BrowserWindowService from "./windows/browser.window";
 import MainWindow from "./windows/main.window";
 import "./controller";
 import ElectronLogger from "./vendor/ElectronLogger";
-import { AppTheme } from "@mediago/shared-common";
+import { AppTheme, resolveAppLanguage } from "@mediago/shared-common";
 
 @injectable()
 @provide()
@@ -95,7 +95,7 @@ export default class ElectronApp {
 
       // 4. Apply initial config
       nativeTheme.themeSource = (config.theme || "system") as AppTheme;
-      i18n.changeLanguage(config.language);
+      i18n.changeLanguage(resolveAppLanguage(config.language, app.getLocale()));
     } catch (err) {
       this.logger.error("[ElectronApp] Failed to start Go core service:", err);
     }
@@ -131,7 +131,9 @@ export default class ElectronApp {
             this.webviewService.setDefaultSession(v);
           },
           language: (v) => {
-            i18n.changeLanguage(v);
+            i18n.changeLanguage(
+              resolveAppLanguage(v as string, app.getLocale()),
+            );
           },
           allowBeta: (v) => {
             this.updater.changeAllowBeta(v);

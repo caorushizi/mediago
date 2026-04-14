@@ -2,7 +2,10 @@ import { type ClassValue, clsx } from "clsx";
 import dayjs from "dayjs";
 import { twMerge } from "tailwind-merge";
 import { isUrl } from "./url";
-import { DownloadType } from "@mediago/shared-common";
+import {
+  DownloadType,
+  resolveAppLanguage as sharedResolveAppLanguage,
+} from "@mediago/shared-common";
 
 export { http, setupHttp } from "./http";
 export { tdApp } from "./tdapp";
@@ -104,4 +107,8 @@ export function getBrowserLang(): string {
       : navigator.language;
 
   return lang.toLowerCase();
+}
+
+export function resolveAppLanguage(language: string | undefined): "zh" | "en" {
+  return sharedResolveAppLanguage(language, getBrowserLang());
 }
