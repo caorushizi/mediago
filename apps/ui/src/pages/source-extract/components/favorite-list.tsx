@@ -9,6 +9,7 @@ import { FavItem } from "./fav-item";
 import { useFavorites } from "@/hooks/use-favorites";
 import { usePlatform } from "@/hooks/use-platform";
 import { useBrowserActions } from "@/hooks/use-browser-actions";
+import { getPageTitle } from "@/api/util";
 
 export function FavoriteList() {
   const {
@@ -58,6 +59,23 @@ export function FavoriteList() {
 
   const handleCancel = useMemoizedFn(() => {
     setIsModalOpen(false);
+  });
+
+  // Auto-fill the title from the page's <title> tag when the user leaves
+  // the URL field, unless they already typed a title themselves.
+  const handleUrlBlur = useMemoizedFn(async () => {
+    const url: string = favoriteAddForm.getFieldValue("url");
+    if (!url || !/^https?:\/\/.+/.test(url)) return;
+    if (favoriteAddForm.getFieldValue("title")) return;
+    try {
+      const { data: title } = await getPageTitle(url);
+      // Re-check: the user may have typed something while we were fetching.
+      if (!favoriteAddForm.getFieldValue("title") && title) {
+        favoriteAddForm.setFieldValue("title", title);
+      }
+    } catch {
+      // Best-effort: leave title blank if fetch fails; server falls back to URL.
+    }
   });
 
   const handleContextMenu = useMemoizedFn(async (item: Favorite) => {
@@ -122,18 +140,6 @@ export function FavoriteList() {
         <div className="flex min-h-36 flex-col justify-center">
           <Form<Favorite> form={favoriteAddForm} autoFocus>
             <Form.Item
-              name="title"
-              label={t("siteName")}
-              rules={[
-                {
-                  required: true,
-                  message: t("pleaseEnterSiteName"),
-                },
-              ]}
-            >
-              <Input placeholder={t("pleaseEnterSiteName")} />
-            </Form.Item>
-            <Form.Item
               name="url"
               label={t("siteUrl")}
               rules={[
@@ -147,7 +153,13 @@ export function FavoriteList() {
                 },
               ]}
             >
-              <Input placeholder={t("pleaseEnterSiteUrl")} />
+              <Input
+                placeholder={t("pleaseEnterSiteUrl")}
+                onBlur={handleUrlBlur}
+              />
+            </Form.Item>
+            <Form.Item name="title" label={t("siteName")}>
+              <Input placeholder={t("pleaseEnterSiteName")} />
             </Form.Item>
           </Form>
         </div>

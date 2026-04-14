@@ -43,8 +43,12 @@ func (h *FavoriteHandler) Create(c *gin.Context) {
 		return
 	}
 
+	title := req.Title
+	if title == "" {
+		title = req.URL
+	}
 	fav, err := h.svc.AddFavorite(&service.AddFavoriteInput{
-		Title: req.Title,
+		Title: title,
 		URL:   req.URL,
 		Icon:  req.Icon,
 	})
