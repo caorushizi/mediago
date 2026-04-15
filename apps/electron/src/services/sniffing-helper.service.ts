@@ -1,6 +1,10 @@
 import EventEmitter from "node:events";
 import { provide } from "@inversifyjs/binding-decorators";
-import { DownloadType } from "@mediago/shared-common";
+import {
+  DownloadType,
+  matchPageUrl,
+  matchRequestUrl,
+} from "@mediago/shared-common";
 import { type OnSendHeadersListenerDetails, session } from "electron";
 import { inject, injectable } from "inversify";
 import {
@@ -19,45 +23,10 @@ export interface SourceParams {
   headers?: string;
 }
 
-export interface SourceFilter {
-  hosts?: RegExp[];
-  matches?: RegExp[];
-  type: DownloadType;
-  schema?: Record<string, string>;
-}
-
 interface PageInfo {
   title: string;
   url: string;
 }
-
-const filterList: SourceFilter[] = [
-  {
-    matches: [/\.m3u8/],
-    type: DownloadType.m3u8,
-  },
-  {
-    // TODO: Collections, lists, favorites
-    hosts: [/^https?:\/\/(www\.)?bilibili.com\/video/],
-    type: DownloadType.bilibili,
-    schema: {
-      name: "title",
-    },
-  },
-  {
-    hosts: [/^https?:\/\/(www\.)?(youtube\.com|youtu\.be)\//],
-    type: DownloadType.youtube,
-    schema: {
-      name: "title",
-    },
-  },
-  {
-    matches: [
-      /\.(mp4|flv|mov|avi|mkv|wmv|m4a|ogg|m4b|m4p|m4r|m4b|m4p|m4r)(?![a-zA-Z])/,
-    ],
-    type: DownloadType.direct,
-  },
-];
 
 @injectable()
 @provide()
@@ -99,22 +68,14 @@ export class SniffingHelper extends EventEmitter {
 
     this.checkTimer = setTimeout(() => {
       this.checkTimer = null;
-      listLoop: for (const filter of filterList) {
-        if (filter.hosts) {
-          for (const host of filter.hosts) {
-            if (!host.test(pageInfo.url)) {
-              continue;
-            }
-
-            this.send({
-              url: pageInfo.url,
-              documentURL: pageInfo.url,
-              name: pageInfo.title,
-              type: filter.type,
-            });
-            break listLoop;
-          }
-        }
+      const filter = matchPageUrl(pageInfo.url);
+      if (filter) {
+        this.send({
+          url: pageInfo.url,
+          documentURL: pageInfo.url,
+          name: pageInfo.title,
+          type: filter.type,
+        });
       }
     }, this.prepareDelay);
   }
@@ -142,24 +103,15 @@ export class SniffingHelper extends EventEmitter {
     const { url, requestHeaders } = details;
     const { title, url: documentURL } = this.pageInfo;
 
-    listLoop: for (const filter of filterList) {
-      if (filter.matches) {
-        for (const match of filter.matches) {
-          const u = new URL(url);
-          if (!match.test(u.pathname)) {
-            continue;
-          }
-
-          this.send({
-            url,
-            documentURL,
-            name: title,
-            type: filter.type,
-            headers: formatHeaders(requestHeaders),
-          });
-          break listLoop;
-        }
-      }
+    const filter = matchRequestUrl(url);
+    if (filter) {
+      this.send({
+        url,
+        documentURL,
+        name: title,
+        type: filter.type,
+        headers: formatHeaders(requestHeaders),
+      });
     }
   };
 }

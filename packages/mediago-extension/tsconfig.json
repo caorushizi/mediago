@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.app.json",
+  "compilerOptions": {
+    "lib": ["DOM", "DOM.Iterable", "ES2022", "WebWorker"],
+    "types": ["chrome", "vite/client"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "skipLibCheck": true
+  },
+  "include": ["src", "manifest.config.ts", "vite.config.ts"]
+}

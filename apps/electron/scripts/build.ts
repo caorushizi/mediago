@@ -28,6 +28,18 @@ function getReleaseConfig(): Configuration {
     buildVersion: pkg.version,
     appId: process.env.APP_ID,
     copyright: process.env.APP_COPYRIGHT,
+    // Register the custom scheme at install/first-run time.
+    // • macOS: electron-builder merges this into CFBundleURLTypes.
+    // • Windows: runtime `app.setAsDefaultProtocolClient` in src/index.ts
+    //   handles registry entries on first launch — electron-builder
+    //   doesn't write these directly.
+    // • Linux: runtime handler writes the .desktop file at first launch.
+    protocols: [
+      {
+        name: "MediaGo URL Scheme",
+        schemes: [process.env.APP_NAME as string],
+      },
+    ],
     artifactName:
       "${productName}-setup-${platform}-${arch}-${buildVersion}.${ext}",
     npmRebuild: true,
@@ -111,8 +123,11 @@ function getReleaseConfig(): Configuration {
       extendInfo: {
         CFBundleURLTypes: [
           {
-            CFBundleURLName: "Mediago URL Scheme",
-            CFBundleURLSchemes: ["mediagoaaa"],
+            CFBundleURLName: "MediaGo URL Scheme",
+            // Must match `process.env.APP_NAME` in .env — the same
+            // scheme used by src/index.ts's setAsDefaultProtocolClient
+            // and by the browser extension's MEDIAGO_SCHEME.
+            CFBundleURLSchemes: [process.env.APP_NAME as string],
           },
         ],
       },
