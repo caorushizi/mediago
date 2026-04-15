@@ -72,7 +72,24 @@ export function useOptions() {
     }
     setSaving(true);
     try {
+      // Re-fetch the current persisted settings so we merge on top
+      // instead of wiping fields this card doesn't own (downloadNow,
+      // schemaSilent — managed by ImportBehaviourCard).
+      const current = await sendMessage<ExtensionResponse>({
+        type: "GET_SETTINGS",
+      });
+      const base: ExtensionSettings =
+        current.type === "SETTINGS"
+          ? current.settings
+          : {
+              mode: "desktop-http",
+              serverUrl: "",
+              apiKey: "",
+              downloadNow: false,
+              schemaSilent: true,
+            };
       const settings: ExtensionSettings = {
+        ...base,
         mode,
         serverUrl: mode === "docker-http" ? normalizedUrl() : "",
         apiKey: mode === "docker-http" ? apiKey.trim() : "",

@@ -15,11 +15,19 @@ export const DESKTOP_HTTP_BASE = "http://127.0.0.1:9900";
 export const MEDIAGO_SCHEME: string =
   import.meta.env.APP_NAME || "mediago-community";
 
-/** Default mode on first install: local Desktop via HTTP (silent, no prompt). */
+/**
+ * Default mode on first install: local Desktop via HTTP (silent, no
+ * prompt). Import-behaviour knobs default to the least-surprising
+ * choices: don't auto-start (user gets to review the queue first) and
+ * don't re-prompt on schema (one-click is the entire point of the
+ * extension).
+ */
 export const DEFAULT_SETTINGS: ExtensionSettings = {
   mode: "desktop-http",
   serverUrl: "",
   apiKey: "",
+  downloadNow: false,
+  schemaSilent: true,
 };
 
 /** localStorage keys in `chrome.storage.local`. */

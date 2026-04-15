@@ -68,6 +68,7 @@ async function probeHttp(config: HttpConfig): Promise<ServerStatus> {
 async function importViaHttp(
   config: HttpConfig,
   sources: DetectedSource[],
+  opts: { startDownload: boolean },
 ): Promise<ImportResult> {
   if (!config.serverUrl) {
     return { ok: false, count: 0, error: "MediaGo server not configured" };
@@ -81,7 +82,7 @@ async function importViaHttp(
       ),
       body: JSON.stringify({
         tasks: sourcesToTasks(sources),
-        startDownload: false,
+        startDownload: opts.startDownload,
       }),
     });
     if (!res.ok) {
@@ -121,10 +122,16 @@ async function importViaHttp(
  * Because the route binds a *single* task into query params, batch
  * imports are serialised (one deeplink at a time) in `importViaSchema`.
  */
-function buildTaskDeeplink(source: DetectedSource): string {
+interface SchemaFlags {
+  silent: boolean;
+  downloadNow: boolean;
+}
+
+function buildTaskDeeplink(source: DetectedSource, flags: SchemaFlags): string {
   const params = new URLSearchParams();
-  params.set("n", "1");
-  params.set("silent", "1");
+  params.set("n", "1"); // required trigger for useUrlInvoke
+  if (flags.silent) params.set("silent", "1");
+  if (flags.downloadNow) params.set("downloadNow", "1");
   params.set("url", source.url);
   if (source.name) params.set("name", source.name);
   params.set("type", source.type);
@@ -161,6 +168,7 @@ async function openDeeplink(url: string): Promise<void> {
 
 async function importViaSchema(
   sources: DetectedSource[],
+  flags: SchemaFlags,
 ): Promise<ImportResult> {
   // `chrome.tabs.update` navigates THE single active tab — there's
   // no way to chain more than one scheme invocation without racing
@@ -176,7 +184,7 @@ async function importViaSchema(
     };
   }
   try {
-    await openDeeplink(buildTaskDeeplink(sources[0]));
+    await openDeeplink(buildTaskDeeplink(sources[0], flags));
     return { ok: true, count: 1 };
   } catch (err) {
     return {
@@ -252,9 +260,14 @@ export async function importSources(
 
   switch (settings.mode) {
     case "desktop-schema":
-      return importViaSchema(sources);
+      return importViaSchema(sources, {
+        silent: settings.schemaSilent,
+        downloadNow: settings.downloadNow,
+      });
     case "desktop-http":
-      return importViaHttp({ serverUrl: DESKTOP_HTTP_BASE }, sources);
+      return importViaHttp({ serverUrl: DESKTOP_HTTP_BASE }, sources, {
+        startDownload: settings.downloadNow,
+      });
     case "docker-http":
       if (!settings.serverUrl) {
         return {
@@ -266,6 +279,7 @@ export async function importSources(
       return importViaHttp(
         { serverUrl: settings.serverUrl, apiKey: settings.apiKey || undefined },
         sources,
+        { startDownload: settings.downloadNow },
       );
   }
 }

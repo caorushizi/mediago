@@ -57,6 +57,25 @@ export interface ExtensionSettings {
   serverUrl: string;
   /** For `docker-http` only, when the server runs with `--enable-auth`. */
   apiKey: string;
+  /**
+   * Whether to start downloading immediately after the task lands on
+   * MediaGo, or just append it to the list for the user to start
+   * manually. Applies to **both** modes:
+   * - HTTP: sent as `startDownload` in the POST body.
+   * - Schema: encoded as `downloadNow=1` in the deeplink URL.
+   */
+  downloadNow: boolean;
+  /**
+   * Schema-only knob. When `true` (default), the deeplink carries
+   * `silent=1` so MediaGo adds the task without prompting. When
+   * `false`, MediaGo Desktop opens its download form dialog prefilled
+   * with the sniffed values so the user can tweak name / folder /
+   * type before committing.
+   *
+   * Has no effect in HTTP modes — HTTP imports are always silent
+   * because there's no interactive UI in that path.
+   */
+  schemaSilent: boolean;
 }
 
 /** Reachability probe result for the configured MediaGo server. */

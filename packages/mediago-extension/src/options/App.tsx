@@ -1,3 +1,4 @@
+import { ImportBehaviourCard } from "./components/ImportBehaviourCard";
 import { RuleListCard } from "./components/RuleListCard";
 import { ServerCard } from "./components/ServerCard";
 
@@ -15,6 +16,7 @@ export function App() {
           <h1 className="text-lg font-semibold">MediaGo 扩展设置</h1>
         </header>
         <ServerCard />
+        <ImportBehaviourCard />
         <RuleListCard />
       </div>
     </div>
