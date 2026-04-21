@@ -35,6 +35,28 @@ const Terminal: FC<TerminalProps> = ({ className, id, header }) => {
     terminal.open(terminalRef.current);
     fitAddon.fit();
 
+    // Copy-on-shortcut. xterm doesn't bind Ctrl+C / Cmd+C to "copy
+    // selection" by default (it passes them through as control chars).
+    // Since stdin is disabled for this read-only log view, hijacking
+    // those keys is safe — when there's a selection we copy it and tell
+    // xterm to stop handling the event; otherwise we let it through.
+    terminal.attachCustomKeyEventHandler((ev) => {
+      if (ev.type !== "keydown") return true;
+      const isCopy =
+        (ev.ctrlKey || ev.metaKey) &&
+        !ev.altKey &&
+        !ev.shiftKey &&
+        ev.key.toLowerCase() === "c";
+      if (!isCopy) return true;
+      const sel = terminal.getSelection();
+      if (!sel) return true;
+      void navigator.clipboard.writeText(sel).catch(() => {
+        /* clipboard API may be unavailable in non-secure contexts; ignore */
+      });
+      ev.preventDefault();
+      return false;
+    });
+
     if (data?.log) {
       terminal.write(data.log);
     }

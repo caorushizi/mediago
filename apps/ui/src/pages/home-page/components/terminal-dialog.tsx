@@ -20,9 +20,17 @@ interface Props {
 
 export function TerminalDialog({ trigger, title, id, asChild }: Props) {
   const { t } = useTranslation();
-  const handleContextMenu = useMemoizedFn(
+
+  // Radix Dialog portals the DOM to document.body, but React synthetic
+  // events still bubble up through the React tree — that means a
+  // right-click inside this dialog would otherwise propagate to the
+  // underlying DownloadTaskItem's `onContextMenu` and pop its "select /
+  // download / refresh / delete" menu instead of the native "Copy"
+  // menu. Stop React-level bubbling so the item handler is isolated;
+  // don't preventDefault, so Chromium's built-in context menu still
+  // fires for the xterm selection.
+  const stopContextPropagation = useMemoizedFn(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      e.preventDefault();
       e.stopPropagation();
     },
   );
@@ -30,7 +38,10 @@ export function TerminalDialog({ trigger, title, id, asChild }: Props) {
   return (
     <Dialog>
       <DialogTrigger asChild={asChild}>{trigger}</DialogTrigger>
-      <DialogContent onContextMenu={handleContextMenu} className="min-w-fit">
+      <DialogContent
+        className="min-w-fit"
+        onContextMenu={stopContextPropagation}
+      >
         <DialogHeader>
           <DialogTitle>{t("downloadLog")}</DialogTitle>
           <DialogDescription>{title}</DialogDescription>
