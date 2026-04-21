@@ -1,15 +1,34 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Variable woff2 font faces. Bundled locally (no Google Fonts fetch) so
+ * the extension works offline and survives the MV3 `content_security_policy`
+ * clampdown on remote font loading. Vite + crxjs copy the woff2 files
+ * under `dist/assets/` and rewrite the URLs so browsers only download
+ * the subsets whose unicode-range actually matches. */
+@import "@fontsource-variable/geist/index.css";
+@import "@fontsource-variable/source-serif-4/index.css";
+@import "@fontsource-variable/jetbrains-mono/wght.css";
+
 /* biome-ignore lint/suspicious/noUnknownAtRules: shadcn */
 @custom-variant dark (&:is(.dark *));
 
 /* biome-ignore lint/suspicious/noUnknownAtRules: shadcn */
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  /* --- shadcn/ui tokens, wired to the Cursor palette --- */
+  /* Cursor's radius scale:
+   *   xs (4px)       — inline elements: <code>, tiny badges, dividers
+   *   sm (6px)       — compact controls, inline buttons
+   *   md (8px)       — default; buttons, menus
+   *   lg (10px)      — featured containers: hero cards, toasts
+   *   xl (14px)      — breathing containers (not used in extension yet)
+   * The "default" radius (--radius = 8px) is what shadcn expects under
+   * `rounded-md`; we keep the rest wired for explicit opt-in. */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px); /* 10px — featured */
+  --radius-xl: calc(var(--radius) + 6px); /* 14px — breathing */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -28,52 +47,152 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
+  /* --- Cursor surface scale --- */
+  --color-surface-100: var(--surface-100);
+  --color-surface-200: var(--surface-200);
+  --color-surface-300: var(--surface-300);
+  --color-surface-400: var(--surface-400);
+  --color-surface-500: var(--surface-500);
+
+  /* --- AI timeline accent colors --- */
+  --color-timeline-thinking: var(--timeline-thinking);
+  --color-timeline-grep: var(--timeline-grep);
+  --color-timeline-read: var(--timeline-read);
+  --color-timeline-edit: var(--timeline-edit);
+
+  /* --- extra brand accents --- */
+  --color-success: var(--success);
+  --color-orange: var(--orange);
+  --color-gold: var(--gold);
+
+  /* --- font families --- */
+  --font-sans:
+    "Geist Variable", system-ui, -apple-system, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", Roboto, Arial, sans-serif;
+  --font-display: var(--font-sans);
+  --font-serif:
+    "Source Serif 4 Variable", "Iowan Old Style", "Palatino Linotype",
+    "URW Palladio L", "P052", ui-serif, Georgia, "Source Han Serif SC",
+    "Noto Serif CJK SC", "Songti SC", SimSun, serif;
+  --font-mono:
+    "JetBrains Mono Variable", ui-monospace, "SFMono-Regular", Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 :root {
-  --radius: 0.5rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  /* --- base radius --- */
+  --radius: 0.5rem; /* 8px — Cursor's "comfortable" */
+
+  /* --- Cursor light palette --- */
+  --background: #f2f1ed; /* Cursor Cream, Surface 200 */
+  --foreground: #26251e; /* Cursor Dark */
+  --card: #e6e5e0; /* Surface 400 */
+  --card-foreground: #26251e;
+  --popover: #f7f7f4; /* Surface 100 — floats lighter than page */
+  --popover-foreground: #26251e;
+  --primary: #26251e;
+  --primary-foreground: #f2f1ed;
+  --secondary: #ebeae5; /* Surface 300 — warm button rest */
+  --secondary-foreground: #26251e;
+  --muted: #ebeae5;
+  --muted-foreground: rgba(38, 37, 30, 0.55);
+  --accent: #ebeae5;
+  --accent-foreground: #26251e;
+  --destructive: #cf2d56; /* warm crimson — signature hover color */
+  --border: oklab(0.263084 -0.00230259 0.0124794 / 0.1); /* warm oklab edge */
+  --input: oklab(0.263084 -0.00230259 0.0124794 / 0.1);
+  --ring: oklab(0.263084 -0.00230259 0.0124794 / 0.2);
+
+  /* --- surface scale --- */
+  --surface-100: #f7f7f4;
+  --surface-200: #f2f1ed;
+  --surface-300: #ebeae5;
+  --surface-400: #e6e5e0;
+  --surface-500: #e1e0db;
+
+  /* --- timeline (light) --- */
+  --timeline-thinking: #dfa88f; /* peach */
+  --timeline-grep: #9fc9a2; /* sage */
+  --timeline-read: #9fbbe0; /* blue */
+  --timeline-edit: #c0a8dd; /* lavender */
+
+  /* --- extra accents --- */
+  --success: #1f8a65;
+  --orange: #f54e00;
+  --gold: #c08532;
+
+  /* --- signature shadows --- */
+  --shadow-ambient:
+    rgba(0, 0, 0, 0.02) 0px 0px 16px, rgba(0, 0, 0, 0.008) 0px 0px 8px;
+  --shadow-elevated:
+    rgba(0, 0, 0, 0.14) 0px 28px 70px, rgba(0, 0, 0, 0.1) 0px 14px 32px,
+    oklab(0.263084 -0.00230259 0.0124794 / 0.1) 0px 0px 0px 1px;
+  --shadow-focus: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+
+  /* --- motion timings ---
+   * Cursor's interaction language uses 150ms ease for color transitions
+   * (hover text shift to crimson, background fades) and 200ms ease for
+   * shadow transitions (ambient → elevated card lift). Centralising
+   * keeps the site-wide rhythm coherent. */
+  --transition-color: 150ms ease;
+  --transition-shadow: 200ms ease;
 }
 
 /* The extension has no user-facing theme toggle. Mirror the OS
- * preference — the popup and options root components add the `dark`
- * class on <html> when `prefers-color-scheme: dark` matches. */
+ * preference — applySystemTheme() adds `.dark` on <html> when
+ * `prefers-color-scheme: dark` matches. The dark palette is a warm
+ * brown offset (not a cold neutral inversion) so the Cursor aesthetic
+ * survives the mode switch. */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --background: #1e1d16; /* warm near-black page */
+  --foreground: #ebeae5;
+  --card: #26251e; /* Cursor Dark becomes a lifted card */
+  --card-foreground: #ebeae5;
+  --popover: #2a2920;
+  --popover-foreground: #ebeae5;
+  --primary: #ebeae5;
+  --primary-foreground: #1e1d16;
+  --secondary: #2a2920;
+  --secondary-foreground: #ebeae5;
+  --muted: #2a2920;
+  --muted-foreground: rgba(235, 234, 229, 0.6);
+  --accent: #2a2920;
+  --accent-foreground: #ebeae5;
+  --destructive: #e65476; /* brightened for dark */
+  --border: rgba(235, 234, 229, 0.1);
+  --input: rgba(235, 234, 229, 0.12);
+  --ring: rgba(235, 234, 229, 0.25);
+
+  --surface-100: #2e2d24;
+  --surface-200: #26251e;
+  --surface-300: #2a2920;
+  --surface-400: #302f26;
+  --surface-500: #36352c;
+
+  /* timeline colors are already light on light; dim slightly on dark
+   * so they read as subdued accents rather than candy-bright dots */
+  --timeline-thinking: #c48d73;
+  --timeline-grep: #85b288;
+  --timeline-read: #85a4c9;
+  --timeline-edit: #a58cc6;
+
+  --success: #2aab7e;
+  --orange: #ff6a26;
+  --gold: #d29a4a;
+
+  --shadow-ambient:
+    rgba(0, 0, 0, 0.3) 0px 0px 16px, rgba(0, 0, 0, 0.2) 0px 0px 8px;
+  --shadow-elevated:
+    rgba(0, 0, 0, 0.45) 0px 28px 70px, rgba(0, 0, 0, 0.35) 0px 14px 32px,
+    rgba(235, 234, 229, 0.08) 0px 0px 0px 1px;
+  --shadow-focus: rgba(0, 0, 0, 0.3) 0px 4px 12px;
+
+  /* transitions are palette-agnostic but re-declaring inside .dark
+   * lets per-mode overrides (e.g. a slower shadow at night) stay a
+   * one-line change later if we want it */
+  --transition-color: 150ms ease;
+  --transition-shadow: 200ms ease;
 }
 
 @layer base {
@@ -85,14 +204,29 @@
     @apply bg-background text-foreground;
   }
   body {
-    font-family:
-      system-ui,
-      -apple-system,
-      "Segoe UI",
-      Roboto,
-      "Helvetica Neue",
-      Arial,
-      sans-serif;
+    font-family: var(--font-sans);
+    /* Default body shaping. The per-voice feats (`ss09` on display,
+     * `cv11` on editorial copy) are opt-in via .font-feat-* utilities
+     * in `@layer utilities` — the defaults here give reliable shaping
+     * everywhere, including system-font fallbacks. */
+    font-feature-settings: "kern", "liga", "calt";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Gothic-style compression: progressively tighter letter-spacing at
+   * larger display sizes mirrors Cursor's typographic signature
+   * (-2.16px at 72px, -0.72px at 36px, etc.). Tailwind's size utilities
+   * rely on these defaults — components override as needed via
+   * `tracking-*` utilities. */
+  h1 {
+    letter-spacing: -0.03em;
+  }
+  h2 {
+    letter-spacing: -0.02em;
+  }
+  h3 {
+    letter-spacing: -0.0125em;
   }
 
   /* Popup surface. Width is fixed so layout doesn't jump between
@@ -108,5 +242,64 @@
   /* Options page is opened in a new tab — let it fill the viewport. */
   body.options {
     min-height: 100vh;
+  }
+}
+
+/* Shared utility layers — exposes the three signature Cursor shadow
+ * recipes so components can opt in without re-declaring the box-shadow
+ * string inline. */
+@layer utilities {
+  .shadow-ambient {
+    box-shadow: var(--shadow-ambient);
+  }
+  .shadow-elevated {
+    box-shadow: var(--shadow-elevated);
+  }
+  .shadow-focus {
+    box-shadow: var(--shadow-focus);
+  }
+
+  /* OpenType feature toggles.
+   *
+   * Cursor uses `"ss09"` on CursorGothic button/caption copy for a
+   * more engineered glyph set, and `"cswh"` on jjannon body text for
+   * contextual swash alternates. Our Geist/Source-Serif-4 substitutes
+   * don't carry those exact features — the closest in-spirit matches
+   * are `"ss09"` on Geist (numbered stylistic set — alt numbers /
+   * engineering glyphs) and `"cv11"` on Source Serif 4 (contextual
+   * alternates). Both degrade harmlessly on fonts that don't define
+   * them, so applying liberally is safe.
+   */
+  .font-feat-display {
+    font-feature-settings: "ss09", "ss01";
+  }
+  .font-feat-editorial {
+    font-feature-settings: "cv11", "kern", "liga";
+  }
+
+  /* Hero display size — the options-page headline.
+   *
+   * Cursor's marketing hero is 72px; the extension options page is a
+   * settings surface, not a marketing page, so 60px strikes a middle
+   * ground: the CursorGothic-style compressed feel survives without
+   * feeling campaign-shouty. Drops to 40px on the 380px popup-likes.
+   * Letter-spacing stays in the -0.028 → -0.02 range per Cursor's
+   * size-to-tracking curve (-2.16px / 72px = -0.03em at 72; we scale). */
+  .text-hero {
+    font-size: 40px;
+    line-height: 1.08;
+    letter-spacing: -0.024em;
+  }
+  @media (min-width: 640px) {
+    .text-hero {
+      font-size: 52px;
+      letter-spacing: -0.027em;
+    }
+  }
+  @media (min-width: 900px) {
+    .text-hero {
+      font-size: 60px;
+      letter-spacing: -0.03em;
+    }
   }
 }

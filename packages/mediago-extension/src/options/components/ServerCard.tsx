@@ -1,4 +1,5 @@
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -13,36 +14,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { renderLocalized } from "@/i18n/localized-message";
 import { DESKTOP_HTTP_BASE } from "@/shared/constants";
 import type { InvocationMode } from "@/shared/types";
 
 import { useOptions } from "../use-options";
 
-const MODE_OPTIONS: Array<{
-  value: InvocationMode;
-  title: string;
-  description: string;
-}> = [
-  {
-    value: "desktop-schema",
-    title: "Desktop · Schema 协议",
-    description:
-      "通过 mediago-community:// 协议唤起桌面版（未运行时自动拉起）。仅适用于本机安装了 MediaGo Desktop 的用户。",
-  },
-  {
-    value: "desktop-http",
-    title: "Desktop · HTTP 本地接口",
-    description: `通过 ${DESKTOP_HTTP_BASE} 与运行中的桌面版通信。要求 Desktop 处于运行状态，但无需授权弹窗。`,
-  },
-  {
-    value: "docker-http",
-    title: "Docker / 自建服务 · HTTP",
-    description:
-      "连接远端 Docker 部署或任何自建 MediaGo 服务端。需要填写服务器地址；启用鉴权时额外填 API Key。",
-  },
-];
-
 export function ServerCard() {
+  const { t } = useTranslation();
   const {
     mode,
     setMode,
@@ -58,19 +37,49 @@ export function ServerCard() {
     save,
   } = useOptions();
 
+  const modeOptions: Array<{
+    value: InvocationMode;
+    title: string;
+    description: string;
+  }> = [
+    {
+      value: "desktop-schema",
+      title: t("options.server.modeSchemaTitle"),
+      description: t("options.server.modeSchemaDesc"),
+    },
+    {
+      value: "desktop-http",
+      title: t("options.server.modeDesktopHttpTitle"),
+      description: t("options.server.modeDesktopHttpDesc", {
+        base: DESKTOP_HTTP_BASE,
+      }),
+    },
+    {
+      value: "docker-http",
+      title: t("options.server.modeDockerHttpTitle"),
+      description: t("options.server.modeDockerHttpDesc"),
+    },
+  ];
+
   const handleSave = async () => {
     const res = await save();
-    if (res.ok) toast.success("已保存");
-    else toast.error(res.error);
+    if (res.ok) toast.success(t("common.saved"));
+    else toast.error(renderLocalized(t, res.error, "common.saveFailed"));
   };
 
   return (
-    <Card>
+    // ServerCard is the page's primary action target — the place the
+    // user goes to change how the extension talks to MediaGo. `interactive`
+    // makes it lift from ambient → elevated on hover, signalling it's
+    // actionable. The info cards below (rules / language) stay static.
+    <Card interactive>
       <CardHeader>
-        <CardTitle>调用方式</CardTitle>
-        <CardDescription>
-          扩展不会自动降级。选定模式后，调用失败会直接报错——如需切换请返回此页面手动更改。
-        </CardDescription>
+        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+          <span className="inline-block h-1 w-1 rounded-full bg-timeline-read" />
+          dispatch
+        </div>
+        <CardTitle>{t("options.server.title")}</CardTitle>
+        <CardDescription>{t("options.server.description")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
         <RadioGroup<InvocationMode>
@@ -78,7 +87,7 @@ export function ServerCard() {
           onValueChange={setMode}
           name="mode"
         >
-          {MODE_OPTIONS.map((o) => (
+          {modeOptions.map((o) => (
             <RadioGroupItem
               key={o.value}
               value={o.value}
@@ -90,13 +99,18 @@ export function ServerCard() {
         </RadioGroup>
 
         {mode === "docker-http" && (
-          <div className="space-y-4 rounded-md border bg-muted/30 p-4">
+          <div className="space-y-4 rounded-lg border border-border bg-surface-200 p-4">
             <div className="space-y-1.5">
-              <Label htmlFor="server-url">服务器 URL</Label>
+              <Label
+                htmlFor="server-url"
+                className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground"
+              >
+                {t("options.server.serverUrlLabel")}
+              </Label>
               <Input
                 id="server-url"
                 type="url"
-                placeholder="http://your-host:8899"
+                placeholder={t("options.server.serverUrlPlaceholder")}
                 value={serverUrl}
                 onChange={(e) => setServerUrl(e.target.value)}
                 disabled={!loaded}
@@ -105,13 +119,19 @@ export function ServerCard() {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="api-key">
-                API Key <span className="text-muted-foreground">（可选）</span>
+              <Label
+                htmlFor="api-key"
+                className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground"
+              >
+                {t("options.server.apiKeyLabel")}{" "}
+                <span className="text-foreground/40">
+                  {t("options.server.apiKeyOptional")}
+                </span>
               </Label>
               <Input
                 id="api-key"
                 type="password"
-                placeholder="留空则不发送 X-API-Key"
+                placeholder={t("options.server.apiKeyPlaceholder")}
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
                 disabled={!loaded}
@@ -122,25 +142,38 @@ export function ServerCard() {
         )}
 
         {mode === "desktop-schema" && (
-          <p className="rounded-md border bg-muted/30 p-3 text-xs text-muted-foreground leading-relaxed">
-            通过 MediaGo 既有的{" "}
-            <code>
+          <p className="rounded-lg border border-border bg-surface-200 p-4 font-serif text-[13px] leading-relaxed text-muted-foreground">
+            {t("options.server.schemaNoteLead")}{" "}
+            <code className="rounded-xs bg-surface-400 px-1.5 py-0.5 font-mono text-[11px] text-foreground">
               mediago-community://index.html/?n=1&amp;silent=1&amp;url=...
             </code>{" "}
-            渲染路由协议调用桌面版。调用时会把当前 tab 跳到该协议 URL（参照
-            cat-catch 的做法），Chrome 首次弹出"Open
-            MediaGo-community?"对话框，点
-            <strong>允许</strong>并勾<strong>总是允许</strong>之后即可静默直通。
-            <br />
-            <strong className="text-foreground">限制</strong>： Schema
-            一次只能发送一条；批量请切 HTTP 模式。
+            {t("options.server.schemaNoteMid")}{" "}
+            <strong className="font-medium text-foreground">
+              {t("options.server.schemaAllow")}
+            </strong>
+            {" · "}
+            <strong className="font-medium text-foreground">
+              {t("options.server.schemaAlways")}
+            </strong>{" "}
+            {t("options.server.schemaAfter")}
+            <span className="mt-2 flex items-baseline gap-2">
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-destructive">
+                {t("options.server.limitationLabel")}
+              </span>
+              <span className="text-foreground/70">
+                {t("options.server.limitationBody")}
+              </span>
+            </span>
           </p>
         )}
 
         {mode === "desktop-http" && (
-          <p className="rounded-md border bg-muted/30 p-3 text-xs text-muted-foreground">
-            固定连接 <code>{DESKTOP_HTTP_BASE}</code>
-            ——桌面版随应用启动自动监听，点击"测试连接"可确认当前是否在线。
+          <p className="rounded-lg border border-border bg-surface-200 p-4 font-serif text-[13px] leading-relaxed text-muted-foreground">
+            {t("options.server.desktopHttpNoteLead")}{" "}
+            <code className="rounded-xs bg-surface-400 px-1.5 py-0.5 font-mono text-[11px] text-foreground">
+              {DESKTOP_HTTP_BASE}
+            </code>
+            {t("options.server.desktopHttpNoteTail")}
           </p>
         )}
 
@@ -151,14 +184,21 @@ export function ServerCard() {
             disabled={testing || !loaded}
           >
             {testing && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-            测试连接
+            {t("common.testConnection")}
           </Button>
-          <Button onClick={handleSave} disabled={saving || !loaded}>
+          <Button
+            variant="dark"
+            onClick={handleSave}
+            disabled={saving || !loaded}
+          >
             {saving && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-            保存
+            {t("common.save")}
           </Button>
           {lastStatus && (
-            <StatusInline ok={lastStatus.ok} text={lastStatus.message} />
+            <StatusInline
+              ok={lastStatus.ok}
+              text={renderLocalized(t, lastStatus.message)}
+            />
           )}
         </div>
       </CardContent>
@@ -169,14 +209,20 @@ export function ServerCard() {
 function StatusInline({ ok, text }: { ok: boolean; text: string }) {
   if (ok) {
     return (
-      <Badge variant="success" className="max-w-[360px] gap-1">
+      <Badge
+        variant="success"
+        className="max-w-[360px] gap-1 normal-case tracking-normal"
+      >
         <CheckCircle2 className="h-3 w-3 shrink-0" />
         <span className="truncate">{text}</span>
       </Badge>
     );
   }
   return (
-    <Badge variant="destructive" className="max-w-[360px] gap-1">
+    <Badge
+      variant="destructive"
+      className="max-w-[360px] gap-1 normal-case tracking-normal"
+    >
       <XCircle className="h-3 w-3 shrink-0" />
       <span className="truncate">{text}</span>
     </Badge>

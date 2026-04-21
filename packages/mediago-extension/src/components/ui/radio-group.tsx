@@ -7,6 +7,12 @@ import { cn } from "@/lib/utils";
  * for the options page — only one consumer, 3 fixed options — so this
  * keeps the bundle leaner and the API familiar (native `input type=radio`
  * with styled labels).
+ *
+ * Visuals follow Cursor: each option is a cream card with an oklab
+ * ring; the selected card gets a stronger ring + warm-filled background
+ * instead of a bright brand color. Hover subtly tints but does NOT
+ * shift color — the crimson hover is reserved for clickable text, not
+ * for choice-making widgets.
  */
 
 interface RadioGroupProps<Value extends string> extends Omit<
@@ -69,10 +75,10 @@ export function RadioGroupItem({
   return (
     <label
       className={cn(
-        "group flex cursor-pointer items-start gap-3 rounded-md border p-3 transition-colors",
+        "group flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-surface-200 p-3 transition-colors",
         checked
-          ? "border-primary bg-primary/5"
-          : "hover:border-muted-foreground/40",
+          ? "border-foreground/55 bg-surface-300"
+          : "hover:border-ring hover:bg-surface-100",
         disabled && "cursor-not-allowed opacity-50",
         className,
       )}
@@ -85,12 +91,12 @@ export function RadioGroupItem({
         checked={checked}
         onChange={() => ctx.onValueChange(value)}
         disabled={disabled}
-        className="mt-0.5 h-4 w-4 cursor-pointer accent-primary"
+        className="mt-0.5 h-4 w-4 cursor-pointer accent-foreground"
       />
       <div className="flex flex-1 flex-col">
-        <span className="text-sm font-medium">{title}</span>
+        <span className="text-sm font-medium leading-tight">{title}</span>
         {description && (
-          <span className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
+          <span className="mt-1 font-serif text-[13px] leading-relaxed text-muted-foreground">
             {description}
           </span>
         )}

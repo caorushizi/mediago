@@ -1,13 +1,20 @@
-import { Inbox } from "lucide-react";
+import { Radar } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export function EmptyState() {
+  const { t } = useTranslation();
   return (
-    <div className="flex flex-col items-center justify-center gap-2 px-6 py-12 text-center text-muted-foreground">
-      <Inbox className="h-8 w-8 opacity-40" />
-      <p className="text-xs leading-relaxed">
-        当前页面暂未检测到可下载资源。
+    <div className="flex flex-col items-center justify-center gap-3 px-6 py-14 text-center">
+      <div className="relative">
+        <div className="absolute inset-0 animate-ping rounded-full bg-timeline-read/20" />
+        <div className="relative flex h-12 w-12 items-center justify-center rounded-full bg-surface-300">
+          <Radar className="h-5 w-5 text-muted-foreground" />
+        </div>
+      </div>
+      <p className="font-serif text-[13px] leading-relaxed text-muted-foreground">
+        {t("empty.title")}
         <br />
-        浏览网页过程中命中规则时会自动出现在这里。
+        <span className="text-foreground/45">{t("empty.hint")}</span>
       </p>
     </div>
   );

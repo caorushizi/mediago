@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 import {
@@ -14,6 +15,7 @@ import type { ExtensionSettings } from "@/shared/types";
 import { useImportBehaviour } from "../use-import-behaviour";
 
 export function ImportBehaviourCard() {
+  const { t } = useTranslation();
   const { settings, patch } = useImportBehaviour();
   const disabled = settings === null;
   const downloadNow = settings?.downloadNow ?? false;
@@ -22,35 +24,49 @@ export function ImportBehaviourCard() {
 
   const apply = async (update: Partial<ExtensionSettings>) => {
     const ok = await patch(update);
-    if (ok) toast.success("已保存");
-    else toast.error("保存失败");
+    if (ok) toast.success(t("common.saved"));
+    else toast.error(t("common.saveFailed"));
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>导入行为</CardTitle>
+        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+          <span className="inline-block h-1 w-1 rounded-full bg-timeline-edit" />
+          behaviour
+        </div>
+        <CardTitle>{t("options.importBehaviour.title")}</CardTitle>
         <CardDescription>
-          这些选项通过 deeplink 查询串（<code>silent</code> /{" "}
-          <code>downloadNow</code>）或 HTTP body（
-          <code>startDownload</code>）告诉 MediaGo 收到任务后怎么处理。
+          {t("options.importBehaviour.descriptionLead")}
+          <code className="mx-0.5 rounded-xs bg-surface-300 px-1 py-0.5 font-mono text-[11px] text-foreground">
+            silent
+          </code>
+          {" / "}
+          <code className="mx-0.5 rounded-xs bg-surface-300 px-1 py-0.5 font-mono text-[11px] text-foreground">
+            downloadNow
+          </code>
+          {t("options.importBehaviour.descriptionMid")}
+          <code className="mx-0.5 rounded-xs bg-surface-300 px-1 py-0.5 font-mono text-[11px] text-foreground">
+            startDownload
+          </code>
+          {t("options.importBehaviour.descriptionTail")}
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3">
         <ToggleRow
-          label="立即开始下载"
-          description="开：任务进队列并立刻开跑。关：仅加入下载列表，等用户手动触发。对 Schema 和 HTTP 两种模式都生效。"
+          label={t("options.importBehaviour.downloadNowLabel")}
+          description={t("options.importBehaviour.downloadNowDesc")}
           checked={downloadNow}
           disabled={disabled}
           onCheckedChange={(v) => apply({ downloadNow: v })}
         />
 
         <ToggleRow
-          label="静默导入（Schema 模式）"
+          label={t("options.importBehaviour.schemaSilentLabel")}
           description={
             schemaOnly
-              ? "开：deeplink 携带 silent=1，MediaGo 收到即创建任务。关：MediaGo 会弹出下载表单让用户核对名字 / 类型 / 保存路径再提交。"
-              : "仅 Schema 模式生效 —— HTTP 模式没有桌面弹窗概念，总是静默。"
+              ? t("options.importBehaviour.schemaSilentActive")
+              : t("options.importBehaviour.schemaSilentInactive")
           }
           checked={schemaSilent}
           disabled={disabled || !schemaOnly}
@@ -78,12 +94,12 @@ function ToggleRow({
 }: ToggleRowProps) {
   const id = `toggle-${label}`;
   return (
-    <div className="flex items-start justify-between gap-4 rounded-md border p-3">
-      <div className="flex-1 space-y-1">
-        <Label htmlFor={id} className="text-sm">
+    <div className="flex items-start justify-between gap-4 rounded-lg border border-border bg-surface-200 p-4">
+      <div className="flex-1 space-y-1.5">
+        <Label htmlFor={id} className="text-sm font-medium">
           {label}
         </Label>
-        <p className="text-xs leading-relaxed text-muted-foreground">
+        <p className="font-serif text-[13px] leading-relaxed text-muted-foreground">
           {description}
         </p>
       </div>
