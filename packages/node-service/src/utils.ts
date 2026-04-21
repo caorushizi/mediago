@@ -9,7 +9,7 @@ export function looksVirtual(name: string, mac: string) {
   const lower = name.toLowerCase();
   const macLower = mac.toLowerCase();
 
-  // 名称关键字
+  // Interface-name keywords that commonly indicate a virtual adapter.
   const virtualKeywords = [
     "virtual",
     "vmware",

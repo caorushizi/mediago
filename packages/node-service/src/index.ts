@@ -8,33 +8,43 @@ import kill from "tree-kill";
 import { isPrivateIPv4, looksVirtual } from "./utils";
 
 /**
- * ServiceRunner 配置选项
+ * ServiceRunner configuration options.
  */
 export interface ServiceRunnerOptions {
-  /** 可执行文件名（例如："bin/mediago-core"，Windows 会自动添加 .exe） */
+  /** Executable name (e.g. "bin/mediago-core"; `.exe` is appended on Windows). */
   executableName: string;
-  /** 可执行文件所在目录 */
+  /** Directory containing the executable. */
   executableDir: string;
-  /** 首选服务端口号（实际启动时会选择系统可用端口） */
+  /** Preferred port; the actual listen port may differ if taken. */
   preferredPort?: number;
-  /** 是否仅监听本机；false 时自动选择内网 IPv4，默认 true */
+  /**
+   * Whether to listen only on the loopback interface (127.0.0.1).
+   * Defaults to `true`.
+   *
+   * - `true`  — bind to 127.0.0.1; only the local machine can reach it.
+   * - `false` — bind to 0.0.0.0 (every network interface); both the
+   *             local machine and the LAN can reach it. `state.host` /
+   *             `getURL()` still return the detected LAN IPv4 so the
+   *             UI can surface a shareable address, while the actual
+   *             listener accepts 127.0.0.1 / localhost too.
+   */
   internal?: boolean;
-  /** 健康检查路径（默认 "/healthy"） */
+  /** Health-check path (default "/healthy"). */
   healthPath?: string;
-  /** 等待健康检查通过的最长时间（毫秒，默认 15000） */
+  /** Max time to wait for the health check to pass, in ms (default 15000). */
   healthCheckTimeoutMs?: number;
-  /** 健康检查轮询间隔（毫秒，默认 500） */
+  /** Health-check poll interval, in ms (default 500). */
   healthCheckIntervalMs?: number;
-  /** 单次健康检查请求超时（毫秒，默认 2000） */
+  /** Timeout for a single health-check request, in ms (default 2000). */
   healthRequestTimeoutMs?: number;
-  /** 传递给子进程的命令行参数 */
+  /** Command-line arguments passed to the child process. */
   extraArgs?: string[];
-  /** 传递给子进程的环境变量 */
+  /** Environment variables passed to the child process. */
   extraEnv?: Record<string, string | undefined>;
 }
 
 /**
- * ServiceRunner 重启时可更新的配置
+ * Configuration that can be updated on restart.
  */
 export interface ServiceRunnerRestartOptions {
   preferredPort?: number;
@@ -48,20 +58,20 @@ export interface ServiceRunnerRestartOptions {
 }
 
 /**
- * ServiceRunner 状态
+ * ServiceRunner runtime state.
  */
 export interface ServiceRunnerState {
   pid?: number;
-  /** 当前监听地址 */
+  /** Current listen host. */
   host: string;
-  /** 当前监听端口号（未启动时为 0） */
+  /** Current listen port (0 when not started). */
   port: number;
   url: string;
   started: boolean;
 }
 
 /**
- * ServiceRunner 事件
+ * ServiceRunner events.
  */
 export interface ServiceRunnerEvents {
   exit: [code: number | null, signal: NodeJS.Signals | null];
@@ -71,8 +81,8 @@ export interface ServiceRunnerEvents {
 }
 
 /**
- * 服务进程管理器
- * 负责启动、停止和管理子进程服务
+ * Child-process service manager.
+ * Handles starting, stopping, and supervising the service subprocess.
  */
 export class ServiceRunner extends EventEmitter<ServiceRunnerEvents> {
   private childProcess: ChildProcessWithoutNullStreams | null = null;
@@ -92,14 +102,14 @@ export class ServiceRunner extends EventEmitter<ServiceRunnerEvents> {
   constructor(options: ServiceRunnerOptions) {
     super();
 
-    // 解析二进制文件路径
+    // Resolve the binary path (append `.exe` on Windows).
     const executableName =
       process.platform === "win32"
         ? `${options.executableName}.exe`
         : options.executableName;
     this.binaryPath = path.resolve(options.executableDir, executableName);
 
-    // 初始化配置
+    // Apply configuration.
     this.preferredPort = options.preferredPort;
     this.internalOnly = options.internal ?? true;
     this.spawnArguments = Object.freeze([...(options.extraArgs ?? [])]);
@@ -117,7 +127,7 @@ export class ServiceRunner extends EventEmitter<ServiceRunnerEvents> {
     );
     this.currentHost = this.computeHost();
 
-    // 初始化状态
+    // Initialise runtime state.
     this.runtimeState = {
       host: this.currentHost,
       port: this.preferredPort ?? 0,
@@ -130,7 +140,7 @@ export class ServiceRunner extends EventEmitter<ServiceRunnerEvents> {
   }
 
   /**
-   * 启动服务
+   * Start the service.
    */
   async start(): Promise<ServiceRunnerState> {
     if (this.isRunning()) {
@@ -138,7 +148,7 @@ export class ServiceRunner extends EventEmitter<ServiceRunnerEvents> {
     }
 
     if (this.childProcess) {
-      // 清理遗留的子进程句柄（例如异常退出后）
+      // Clean up a stale child-process handle (e.g. after an abnormal exit).
       this.resetRuntimeState(false);
     }
 
@@ -148,15 +158,19 @@ export class ServiceRunner extends EventEmitter<ServiceRunnerEvents> {
     const host = this.computeHost();
     this.currentHost = host;
     const resolvedPort = this.preferredPort ?? 0;
+    // Bind host ≠ display host:
+    //   - `internal: true`  → bind 127.0.0.1 (display is also 127.0.0.1)
+    //   - `internal: false` → bind 0.0.0.0 (listen on every interface);
+    //                         `state.host` keeps the detected LAN IPv4
+    //                         so the UI can surface a shareable address.
+    // This lets the Desktop app be reached via 127.0.0.1 AND its LAN IP
+    // at the same time, while still showing the LAN URL in settings.
+    const bindHost = this.internalOnly ? "127.0.0.1" : "0.0.0.0";
     const childEnv: Record<string, string> = {
       ...this.baseEnvironment,
       PORT: String(resolvedPort),
-      HOST: host,
+      HOST: bindHost,
     };
-
-    if (!Object.prototype.hasOwnProperty.call(childEnv, "HOST")) {
-      childEnv.HOST = host;
-    }
 
     try {
       const child = spawn(this.binaryPath, this.spawnArguments, {
@@ -193,7 +207,7 @@ export class ServiceRunner extends EventEmitter<ServiceRunnerEvents> {
   }
 
   /**
-   * 停止服务（优雅关闭进程树）
+   * Stop the service, gracefully terminating the process tree.
    */
   async stop(): Promise<void> {
     const child = this.childProcess;
@@ -235,7 +249,7 @@ export class ServiceRunner extends EventEmitter<ServiceRunnerEvents> {
   }
 
   /**
-   * 重启服务，可在重启前更新配置
+   * Restart the service, optionally applying new configuration first.
    */
   async restart(
     updates?: ServiceRunnerRestartOptions,
@@ -252,35 +266,36 @@ export class ServiceRunner extends EventEmitter<ServiceRunnerEvents> {
   }
 
   /**
-   * 获取当前状态
+   * Return a snapshot of the current runtime state.
    */
   getState(): ServiceRunnerState {
     return { ...this.runtimeState };
   }
 
   /**
-   * 获取服务 URL
+   * Return the current service URL.
    */
   getURL(): string {
     return this.runtimeState.url;
   }
 
   /**
-   * 获取进程 PID
+   * Return the child process PID, if any.
    */
   getPID(): number | undefined {
     return this.runtimeState.pid;
   }
 
   /**
-   * 判断服务是否正在运行
+   * Whether the service is currently running.
    */
   isRunning(): boolean {
     return Boolean(this.runtimeState.pid) && this.runtimeState.started;
   }
 
   /**
-   * 主动触发健康检查，判断服务当前是否存活
+   * Actively probe the health endpoint and report whether the service
+   * is reachable right now.
    */
   async checkHealth(): Promise<boolean> {
     if (
