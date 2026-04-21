@@ -1,5 +1,24 @@
 import { defineManifest } from "@crxjs/vite-plugin";
-import pkg from "./package.json" with { type: "json" };
+// The extension version intentionally tracks the Desktop app version —
+// they ship together, and users expect chrome://extensions to match the
+// MediaGo window's "Current version" label. The single source of truth
+// for the Desktop version is `apps/electron/app/package.json`, which
+// `apps/electron/tsdown.config.ts` also reads (and exposes as
+// `process.env.APP_VERSION` to the renderer). We piggyback on the same
+// file here so bumping one version bumps both.
+import desktopPkg from "../../apps/electron/app/package.json" with { type: "json" };
+
+/**
+ * Chrome's manifest `version` field only accepts 1-4 dot-separated
+ * integers (`3.5.0`, `3.5.0.42`). SemVer suffixes like `-beta.2` or
+ * `+build.7` are rejected at install time. Strip them for `version`
+ * but keep the full string in `version_name`, which is a free-form
+ * display label shown in chrome://extensions without participating in
+ * update ordering.
+ */
+function toManifestVersion(v: string): string {
+  return v.split(/[-+]/)[0];
+}
 
 export default defineManifest({
   manifest_version: 3,
@@ -13,7 +32,8 @@ export default defineManifest({
   name: "__MSG_appName__",
   short_name: "MediaGo",
   description: "__MSG_appDescription__",
-  version: pkg.version,
+  version: toManifestVersion(desktopPkg.version),
+  version_name: desktopPkg.version,
   icons: {
     "16": "public/icons/mediago-16.png",
     "32": "public/icons/mediago-32.png",
