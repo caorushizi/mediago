@@ -1,6 +1,7 @@
 import {
   DownloadFilter,
   DownloadStatus,
+  type DownloadCreatedEvent,
   type DownloadEvent,
   type DownloadFailedEvent,
   type DownloadProgress,
@@ -32,6 +33,8 @@ const isFailedEvent = (obj: DownloadEvent): obj is DownloadFailedEvent =>
   obj.type === "failed";
 const isStoppedEvent = (obj: DownloadEvent): obj is DownloadStoppedEvent =>
   obj.type === "stopped";
+const isCreatedEvent = (obj: DownloadEvent): obj is DownloadCreatedEvent =>
+  obj.type === "created";
 const isProgressEvent = (
   obj: DownloadEvent,
 ): obj is DownloadEvent<DownloadProgress[]> => obj.type === "progress";
@@ -91,6 +94,14 @@ export function useTasks(filter: DownloadFilter = DownloadFilter.list) {
       }
 
       if (isStoppedEvent(eventData)) {
+        mutate();
+        return;
+      }
+
+      // Tasks created externally (browser extension, Docker clients)
+      // arrive here — refetch so the new rows show up immediately
+      // without a manual refresh.
+      if (isCreatedEvent(eventData)) {
         mutate();
         return;
       }

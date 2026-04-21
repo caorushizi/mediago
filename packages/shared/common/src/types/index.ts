@@ -163,6 +163,19 @@ export interface DownloadProgressEvent extends DownloadEvent<
   type: "progress";
 }
 
+/**
+ * Emitted when new tasks are created — e.g. the browser extension POSTs
+ * to /api/downloads, or any external client hits Go Core directly.
+ * Carries the newly-created task IDs so listeners can cheaply decide
+ * whether they need to refetch.
+ */
+export interface DownloadCreatedEvent extends DownloadEvent<{
+  ids: number[];
+  count: number;
+}> {
+  type: "created";
+}
+
 export interface EnvPath {
   binPath: string;
   dbPath: string;

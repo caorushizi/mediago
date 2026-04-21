@@ -35,8 +35,18 @@ export function initGoEvents(coreUrl: string) {
         typeof payload?.count === "number" && payload.count > 0
           ? payload.count
           : 1;
+      const ids: number[] = Array.isArray(payload?.ids)
+        ? payload.ids.map((id: unknown) => Number(id))
+        : [];
       const { increase } = useDownloadStore.getState();
       for (let i = 0; i < count; i++) increase();
+
+      // Also fan out to download-event listeners so `useTasks` can
+      // revalidate its list — otherwise tasks imported externally
+      // (browser extension's HTTP mode, Docker clients) only bump
+      // the sidebar badge and the list stays stale until a manual
+      // refresh.
+      dispatchDownload({ type: "created", data: { ids, count } });
     } catch {
       // ignore malformed payloads
     }
