@@ -7,7 +7,7 @@ import { getExeExt, mkdir, runCommand, copyFile, rmrf } from "./utils";
  * Start the development server
  */
 export async function dev() {
-  console.log("🚀 启动开发服务器...");
+  console.log("🚀 Starting development server...");
   const args = [
     "run",
     "-tags",
@@ -32,7 +32,7 @@ export async function dev() {
  * Build player-ui and copy dist to core assets for embedding
  */
 export async function buildPlayerUI() {
-  console.log("🎬 构建 Player UI...");
+  console.log("🎬 Building Player UI...");
   const playerUiDist = join(config.PLAYER_UI_DIR, "dist");
 
   // Build player-ui
@@ -48,14 +48,14 @@ export async function buildPlayerUI() {
   rmrf(config.PLAYER_ASSETS_DIR);
   copyFile(playerUiDist, config.PLAYER_ASSETS_DIR);
 
-  console.log(`✅ Player UI 已复制到 ${config.PLAYER_ASSETS_DIR}`);
+  console.log(`✅ Player UI copied to ${config.PLAYER_ASSETS_DIR}`);
 }
 
 /**
  * Compile the development build for the current platform
  */
 export async function devBuild() {
-  console.log("🔨 编译开发版本...");
+  console.log("🔨 Compiling development build...");
 
   // Build and embed player-ui first
   await buildPlayerUI();
@@ -80,5 +80,5 @@ export async function devBuild() {
   if (process.platform !== "win32") {
     chmodSync(output, 0o755);
   }
-  console.log(`✅ 开发版本编译成功 -> ${output}`);
+  console.log(`✅ Development build compiled -> ${output}`);
 }

@@ -66,11 +66,11 @@ async function buildBinary(cfg: BuildConfig) {
  * Build binaries for all platforms
  */
 export async function releaseBuild() {
-  console.log("🔨 构建所有平台二进制文件...");
+  console.log("🔨 Building binaries for all platforms...");
   mkdir(config.BIN_DIR);
 
   await Promise.all(BUILD_PLATFORMS.map(buildBinary));
-  console.log("✅ 全平台二进制文件编译完成");
+  console.log("✅ All-platform binaries compiled");
 }
 
 /**
@@ -125,24 +125,22 @@ async function packagePlatform(cfg: BuildConfig) {
  * Package the complete release bundles for all platforms
  */
 async function releasePackage() {
-  console.log("📦 打包所有平台发布包...");
+  console.log("📦 Packaging release bundles for all platforms...");
 
   await Promise.all(PACKAGE_PLATFORMS.map(packagePlatform));
 
-  console.log("✅ 所有平台发布包打包完成");
-  console.log(
-    `📦 发布包位置: ${resolveReleasePath(releaseConfig.packagesDir)}/`,
-  );
+  console.log("✅ All-platform release bundles packed");
+  console.log(`📦 Output: ${resolveReleasePath(releaseConfig.packagesDir)}/`);
 }
 
 /**
  * Clean all release artifacts
  */
 export async function releaseClean() {
-  console.log("🧹 清理发布产物...");
+  console.log("🧹 Cleaning release artifacts...");
   rmrf(config.BIN_DIR);
   rmrf(config.RELEASE_DIR);
-  console.log("✅ 发布产物清理完成");
+  console.log("✅ Release artifacts cleaned");
 }
 export const releasePackageFull = series(
   releaseClean,
