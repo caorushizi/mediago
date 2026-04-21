@@ -57,6 +57,14 @@ func (s *DownloadTaskService) AddDownloadTask(input *AddDownloadTaskInput) (*db.
 		title = fmt.Sprintf("untitled-%s", RandomName())
 	}
 
+	// Sanitize BEFORE the de-duplication lookup so the value we check
+	// against the DB is the same filesystem-safe form we'll later hand
+	// to the downloader and use for post-download file-existence
+	// checks. Without this a title like "(2) 主页 / X" slips a '/'
+	// into the filename, aria2 reads it as a path separator, and the
+	// saved file ends up at a different path than the DB row.
+	title = core.SanitizeFilename(title)
+
 	existing, err := s.repo.FindByName(title)
 	if err != nil {
 		return nil, err
@@ -88,6 +96,10 @@ func (s *DownloadTaskService) AddDownloadTasks(inputs []*AddDownloadTaskInput) (
 		if title == "" {
 			title = fmt.Sprintf("untitled-%s", RandomName())
 		}
+
+		// Sanitize BEFORE the de-duplication lookup (same rationale
+		// as AddDownloadTask above).
+		title = core.SanitizeFilename(title)
 
 		existing, err := s.repo.FindByName(title)
 		if err != nil {

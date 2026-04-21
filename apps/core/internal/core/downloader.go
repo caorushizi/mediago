@@ -73,8 +73,12 @@ func (d *DownloaderSvc) buildArgs(p DownloadParams, s schema.Schema) []string {
 			pushKV(spec.ArgsName, final)
 
 		case "name":
-			// file name argument: handle postfix
-			name := p.Name
+			// File-name argument. The task-creation service already
+			// runs `SanitizeFilename` before persisting `p.Name`, so
+			// this path sees a filesystem-safe value. We sanitize
+			// again defensively — cheap, and guards against any future
+			// code path that bypasses the service layer.
+			name := SanitizeFilename(p.Name)
 			if spec.Postfix == "@@AUTO@@" {
 				// automatically infer the file extension
 				name = name + "." + guessExtFromURL(p.URL)
@@ -117,6 +121,49 @@ func (d *DownloaderSvc) buildArgs(p DownloadParams, s schema.Schema) []string {
 	return out
 }
 
+
+// SanitizeFilename strips or replaces characters that filesystems — chiefly
+// Windows — reject or misinterpret when they appear in a filename. It is
+// intentionally aggressive enough to be safe across Windows, macOS, and
+// Linux:
+//
+//   - Reserved path / wildcard characters: \ / : * ? " < > |
+//   - ASCII control characters (0x00–0x1F)
+//   - Trailing dots and spaces (Windows strips them silently at create time,
+//     producing a name that doesn't match what was requested)
+//
+// Illegal characters collapse to a single underscore. The result is never
+// empty — if every character was illegal we fall back to "download".
+//
+// Exported so the task-creation service can sanitize once at persist time;
+// buildArgs then sees an already-safe value and the downloader command-line,
+// the DB row, and the post-download "file exists?" check all agree on the
+// same filename.
+func SanitizeFilename(name string) string {
+	if name == "" {
+		return "download"
+	}
+
+	var b strings.Builder
+	b.Grow(len(name))
+	for _, r := range name {
+		switch {
+		case r < 0x20:
+			// control char → drop
+		case r == '\\' || r == '/' || r == ':' || r == '*' || r == '?' ||
+			r == '"' || r == '<' || r == '>' || r == '|':
+			b.WriteRune('_')
+		default:
+			b.WriteRune(r)
+		}
+	}
+
+	cleaned := strings.TrimRight(b.String(), ". ")
+	if cleaned == "" {
+		return "download"
+	}
+	return cleaned
+}
 
 // guessExtFromURL infers the file extension from a URL
 func guessExtFromURL(u string) string {
