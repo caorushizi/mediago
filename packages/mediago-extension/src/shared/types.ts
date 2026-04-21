@@ -1,6 +1,30 @@
 import type { DownloadType } from "@mediago/shared-common";
 
 /**
+ * UI language choice persisted in extension settings.
+ *
+ * - `system` — follow the browser UI language (`chrome.i18n.getUILanguage()`).
+ * - `zh` / `en` — hard-pinned.
+ *
+ * This maps 1:1 to the "跟随系统 / 中文 / English" radio on the options
+ * page and is resolved to a concrete locale at i18n bootstrap time.
+ */
+export type ExtensionLanguage = "system" | "zh" | "en";
+
+/**
+ * Wire-format for localisable text produced in the service worker and
+ * rendered in popup / options. The service worker has no i18n instance
+ * of its own, so it emits `{ key, values? }` descriptors and the React
+ * side calls `t(key, values)` to render. Using descriptors (rather than
+ * pre-formatted strings) lets the UI re-render correctly when the user
+ * switches language without round-tripping through the SW.
+ */
+export interface LocalizedMessage {
+  key: string;
+  values?: Record<string, string | number>;
+}
+
+/**
  * A sniffed resource attached to a browser tab.
  *
  * Shape matches what the popup renders and what the background forwards
@@ -76,13 +100,23 @@ export interface ExtensionSettings {
    * because there's no interactive UI in that path.
    */
   schemaSilent: boolean;
+  /**
+   * UI language for popup / options. Defaults to `"system"`, matching
+   * the behaviour of the main app (`apps/ui`'s AppStore.language).
+   */
+  language: ExtensionLanguage;
 }
 
 /** Reachability probe result for the configured MediaGo server. */
 export interface ServerStatus {
   ok: boolean;
-  /** Human-readable description, localised when possible. */
-  message: string;
+  /**
+   * Either a translation descriptor (for wording owned by the extension,
+   * e.g. "schema invoked, please verify Desktop launched") or a raw
+   * string when the value comes from the server / network stack and has
+   * no canonical translation (HTTP status text, OS error messages).
+   */
+  message: LocalizedMessage | string;
   /** HTTP status if the probe reached the server. */
   status?: number;
 }
@@ -109,5 +143,10 @@ export type ExtensionResponse =
   | { type: "SOURCES"; sources: DetectedSource[] }
   | { type: "SETTINGS"; settings: ExtensionSettings }
   | { type: "STATUS"; status: ServerStatus }
-  | { type: "IMPORT_RESULT"; ok: boolean; count: number; error?: string }
+  | {
+      type: "IMPORT_RESULT";
+      ok: boolean;
+      count: number;
+      error?: LocalizedMessage | string;
+    }
   | { type: "OK" };

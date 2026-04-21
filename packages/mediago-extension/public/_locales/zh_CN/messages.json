@@ -1,0 +1,14 @@
+{
+  "appName": {
+    "message": "MediaGo 资源检测",
+    "description": "Extension name shown in the Chrome toolbar and chrome://extensions."
+  },
+  "appDescription": {
+    "message": "检测任意网页上的可下载视频 / 音频链接，一键发送到 MediaGo 服务端。",
+    "description": "Extension description shown in chrome://extensions."
+  },
+  "actionTitle": {
+    "message": "MediaGo 资源检测",
+    "description": "Tooltip shown when hovering the toolbar icon."
+  }
+}

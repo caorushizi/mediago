@@ -2,6 +2,7 @@ import { DESKTOP_HTTP_BASE, MEDIAGO_SCHEME } from "@/shared/constants";
 import type {
   DetectedSource,
   ExtensionSettings,
+  LocalizedMessage,
   ServerStatus,
 } from "@/shared/types";
 
@@ -28,10 +29,19 @@ function sourcesToTasks(sources: DetectedSource[]) {
   }));
 }
 
+function errorToText(err: unknown): string {
+  return err instanceof Error ? err.message : String(err);
+}
+
 interface ImportResult {
   ok: boolean;
   count: number;
-  error?: string;
+  /**
+   * Translation descriptor when the service worker can attribute the
+   * failure to a known-wording case; raw string for anything opaque
+   * (HTTP status text, OS / network error messages).
+   */
+  error?: LocalizedMessage | string;
 }
 
 /* --------------------------- HTTP path --------------------------- */
@@ -58,10 +68,7 @@ async function probeHttp(config: HttpConfig): Promise<ServerStatus> {
     }
     return { ok: true, status: res.status, message: "connected" };
   } catch (err) {
-    return {
-      ok: false,
-      message: err instanceof Error ? err.message : String(err),
-    };
+    return { ok: false, message: errorToText(err) };
   }
 }
 
@@ -71,7 +78,11 @@ async function importViaHttp(
   opts: { startDownload: boolean },
 ): Promise<ImportResult> {
   if (!config.serverUrl) {
-    return { ok: false, count: 0, error: "MediaGo server not configured" };
+    return {
+      ok: false,
+      count: 0,
+      error: { key: "errors.serverNotConfigured" },
+    };
   }
   try {
     const res = await fetch(joinUrl(config.serverUrl, "/api/downloads"), {
@@ -97,11 +108,7 @@ async function importViaHttp(
     }
     return { ok: true, count: sources.length };
   } catch (err) {
-    return {
-      ok: false,
-      count: 0,
-      error: err instanceof Error ? err.message : String(err),
-    };
+    return { ok: false, count: 0, error: errorToText(err) };
   }
 }
 
@@ -154,16 +161,30 @@ function buildTaskDeeplink(source: DetectedSource, flags: SchemaFlags): string {
  * After the user approves once (and ticks "Always allow" on the
  * dialog), subsequent navigations are silent — Chrome routes the URL
  * straight to the OS with no prompt.
+ *
+ * Throws a sentinel `SchemaNoTabError` when there is no active tab, so
+ * the caller can render a translated message.
  */
+class SchemaNoTabError extends Error {
+  readonly code = "NO_ACTIVE_TAB";
+}
+
 async function openDeeplink(url: string): Promise<void> {
   const [activeTab] = await chrome.tabs.query({
     active: true,
     currentWindow: true,
   });
   if (activeTab?.id === undefined) {
-    throw new Error("当前窗口没有活动 tab，无法发起协议调用");
+    throw new SchemaNoTabError("no active tab");
   }
   await chrome.tabs.update(activeTab.id, { url });
+}
+
+function schemaError(err: unknown): LocalizedMessage | string {
+  if (err instanceof SchemaNoTabError) {
+    return { key: "errors.schemaNoActiveTab" };
+  }
+  return errorToText(err);
 }
 
 async function importViaSchema(
@@ -179,19 +200,14 @@ async function importViaSchema(
     return {
       ok: false,
       count: 0,
-      error:
-        "Schema 模式一次只能导入一条；批量导入请切换到 HTTP 模式（Options 页）",
+      error: { key: "errors.schemaBatchNotSupported" },
     };
   }
   try {
     await openDeeplink(buildTaskDeeplink(sources[0], flags));
     return { ok: true, count: 1 };
   } catch (err) {
-    return {
-      ok: false,
-      count: 0,
-      error: err instanceof Error ? err.message : String(err),
-    };
+    return { ok: false, count: 0, error: schemaError(err) };
   }
 }
 
@@ -203,16 +219,9 @@ async function probeSchemaPing(): Promise<ServerStatus> {
   // Desktop build.
   try {
     await openDeeplink(`${MEDIAGO_SCHEME}://index.html/`);
-    return {
-      ok: true,
-      message:
-        "已唤起 mediago-community:// 协议，如 Desktop 窗口未出现请确认是否已安装",
-    };
+    return { ok: true, message: { key: "errors.schemaInvoked" } };
   } catch (err) {
-    return {
-      ok: false,
-      message: err instanceof Error ? err.message : String(err),
-    };
+    return { ok: false, message: schemaError(err) };
   }
 }
 
@@ -243,7 +252,7 @@ export async function probe(
 ): Promise<ServerStatus> {
   if (mode === "desktop-schema") return probeSchemaPing();
   const base = mode === "desktop-http" ? DESKTOP_HTTP_BASE : serverUrl;
-  if (!base) return { ok: false, message: "请先填写服务器 URL" };
+  if (!base) return { ok: false, message: { key: "errors.serverUrlRequired" } };
   return probeHttp({ serverUrl: base, apiKey });
 }
 
@@ -273,7 +282,7 @@ export async function importSources(
         return {
           ok: false,
           count: 0,
-          error: "Docker 模式未配置服务器地址，请先到设置页填写",
+          error: { key: "errors.dockerNotConfigured" },
         };
       }
       return importViaHttp(

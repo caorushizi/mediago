@@ -5,6 +5,7 @@ import type {
   ExtensionMessage,
   ExtensionResponse,
   ExtensionSettings,
+  LocalizedMessage,
   ServerStatus,
 } from "@/shared/types";
 
@@ -27,6 +28,17 @@ interface PopupData {
 }
 
 /**
+ * Toast payload kind — the background may send either a ready-made
+ * string (HTTP/network error from the server) or a translation
+ * descriptor owned by the extension. The caller renders it.
+ */
+export type ToastValue =
+  | string
+  | LocalizedMessage
+  | undefined
+  | { key: "popup.imported"; values: { count: number } };
+
+/**
  * Encapsulates every round-trip the popup makes to the background
  * worker. Also resolves the current mode → status probe policy:
  *
@@ -37,7 +49,7 @@ interface PopupData {
  *   the one-shot ping check.
  */
 export function usePopupData(
-  onToast: (kind: "success" | "error", text: string) => void,
+  onToast: (kind: "success" | "error", value: ToastValue) => void,
 ): PopupData {
   const [tab, setTab] = useState<chrome.tabs.Tab | null>(null);
   const [sources, setSources] = useState<DetectedSource[]>([]);
@@ -68,7 +80,7 @@ export function usePopupData(
     if (settingsRes.settings.mode === "desktop-schema") {
       // Silent probe would spawn an OS handoff every time the popup
       // opens. Just flag the mode instead.
-      setServerStatus({ ok: true, message: "schema" });
+      setServerStatus({ ok: true, message: { key: "status.schemaMode" } });
       return;
     }
     const statusRes = await sendMessage<ExtensionResponse>({
@@ -101,9 +113,12 @@ export function usePopupData(
         });
         if (res.type === "IMPORT_RESULT") {
           if (res.ok) {
-            onToast("success", `已导入 ${res.count} 个任务`);
+            onToast("success", {
+              key: "popup.imported",
+              values: { count: res.count },
+            });
           } else {
-            onToast("error", res.error ?? "导入失败");
+            onToast("error", res.error);
           }
         }
       } finally {

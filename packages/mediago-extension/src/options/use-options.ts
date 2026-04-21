@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 
+import { DEFAULT_SETTINGS } from "@/shared/constants";
 import type {
   ExtensionMessage,
   ExtensionResponse,
   ExtensionSettings,
   InvocationMode,
+  LocalizedMessage,
   ServerStatus,
 } from "@/shared/types";
 
@@ -45,7 +47,10 @@ export function useOptions() {
   const test = useCallback(async () => {
     // Docker mode requires a URL; the other two are fine without.
     if (mode === "docker-http" && !normalizedUrl()) {
-      setLastStatus({ ok: false, message: "请先填写服务器 URL" });
+      setLastStatus({
+        ok: false,
+        message: { key: "errors.serverUrlRequired" },
+      });
       return;
     }
     setTesting(true);
@@ -63,31 +68,23 @@ export function useOptions() {
   }, [apiKey, mode, normalizedUrl]);
 
   const save = useCallback(async (): Promise<
-    { ok: true } | { ok: false; error: string }
+    { ok: true } | { ok: false; error: LocalizedMessage }
   > => {
     // Mode-specific validation — we never silently downgrade, so we
     // reject invalid combinations instead of rescuing them.
     if (mode === "docker-http" && !normalizedUrl()) {
-      return { ok: false, error: "Docker 模式必须填写服务器 URL" };
+      return { ok: false, error: { key: "errors.dockerServerRequired" } };
     }
     setSaving(true);
     try {
       // Re-fetch the current persisted settings so we merge on top
       // instead of wiping fields this card doesn't own (downloadNow,
-      // schemaSilent — managed by ImportBehaviourCard).
+      // schemaSilent, language — managed by other cards).
       const current = await sendMessage<ExtensionResponse>({
         type: "GET_SETTINGS",
       });
       const base: ExtensionSettings =
-        current.type === "SETTINGS"
-          ? current.settings
-          : {
-              mode: "desktop-http",
-              serverUrl: "",
-              apiKey: "",
-              downloadNow: false,
-              schemaSilent: true,
-            };
+        current.type === "SETTINGS" ? current.settings : DEFAULT_SETTINGS;
       const settings: ExtensionSettings = {
         ...base,
         mode,
@@ -99,7 +96,7 @@ export function useOptions() {
         settings,
       });
       if (res.type === "OK") return { ok: true };
-      return { ok: false, error: "保存失败" };
+      return { ok: false, error: { key: "common.saveFailed" } };
     } finally {
       setSaving(false);
     }

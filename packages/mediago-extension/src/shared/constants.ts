@@ -28,6 +28,7 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
   apiKey: "",
   downloadNow: false,
   schemaSilent: true,
+  language: "system",
 };
 
 /** localStorage keys in `chrome.storage.local`. */

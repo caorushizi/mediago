@@ -1,0 +1,14 @@
+{
+  "appName": {
+    "message": "MediaGo Media Sniffer",
+    "description": "Extension name shown in the Chrome toolbar and chrome://extensions."
+  },
+  "appDescription": {
+    "message": "Detect downloadable video / audio URLs on any page and send them to your MediaGo server in one click.",
+    "description": "Extension description shown in chrome://extensions."
+  },
+  "actionTitle": {
+    "message": "MediaGo Media Sniffer",
+    "description": "Tooltip shown when hovering the toolbar icon."
+  }
+}
