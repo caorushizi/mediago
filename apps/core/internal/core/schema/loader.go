@@ -86,19 +86,42 @@ func DefaultSchemas() SchemaList {
 				},
 			},
 			{
+				// Direct downloads are handled by aria2c (static build vendored
+				// at extra/aria2/<os>/<arch>/). The -x/-s/-k flags carry over
+				// verbatim from the previous gopeed config — aria2 uses the
+				// same short flags — and the remaining four flags tune aria2's
+				// own console readout so the regex below can pick up progress.
 				Type: "direct",
 				Args: map[string]ArgSpec{
-					"localDir":   {ArgsName: []string{"-D"}},
-					"name":       {ArgsName: []string{"-N"}, Postfix: "@@AUTO@@"},
-					"url":        {ArgsName: []string{}},
-					"__common__": {ArgsName: []string{"-x", "16", "-s", "16", "-k", "1M"}},
+					"localDir": {ArgsName: []string{"-d"}},                      // download directory
+					"name":     {ArgsName: []string{"-o"}, Postfix: "@@AUTO@@"}, // output filename
+					"url":      {ArgsName: []string{}},
+					"__common__": {ArgsName: []string{
+						"-x", "16", // max-connection-per-server
+						"-s", "16", // split
+						"-k", "1M", // min-split-size
+						"--console-log-level=notice", // keep readout line above the noise
+						"--summary-interval=1",       // emit a progress line every second
+						"--allow-overwrite=true",     // re-runs overwrite the previous file
+						"--auto-file-renaming=false", // never silently rename when -o conflicts
+						// Workaround for SChannel TLS-handshake issues on the
+						// aria2 1.19.0 Windows build (SEC_I_MESSAGE_FRAGMENT /
+						// 0x80090318) against modern CDNs like twimg.com.
+						// NOTE: the handshake failure occurs BEFORE cert
+						// validation, so this flag may not always rescue it —
+						// the proper fix is upgrading aria2 to a build that
+						// links against OpenSSL (e.g. 1.37.0).
+						"--check-certificate=false",
+					}},
 				},
 				ConsoleReg: ConsoleReg{
-					Percent: `([\d.]+)%`,
-					Speed:   `([\d.]+[GMK]B/s)`,
-					Error:   "fail",
-					Start:   "downloading...",
-					IsLive:  "检测到直播流",
+					// aria2 summary line looks like:
+					//   [#abc 1.5MiB/1.8MiB(83%) CN:2 DL:512KiB ETA:2s]
+					Percent: `\((\d+)%\)`,
+					Speed:   `DL:(\S+)`, // e.g. "DL:512KiB"; shown as-is in the UI
+					Error:   `errorCode=\d+|exception`,
+					Start:   `Download (started|Results:)`,
+					IsLive:  ``, // direct downloads never have a live-stream phase
 				},
 			},
 			{

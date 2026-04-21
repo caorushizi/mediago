@@ -54,24 +54,12 @@
       "win32": "BBDown.exe"
     }
   },
-  "gopeed": {
-    "repo": "GopeedLab/gopeed",
-    "version": "v1.6.5",
-    "assets": {
-      "darwin-x64": "gopeed-web-v1.6.5-macos-amd64.zip",
-      "darwin-arm64": "gopeed-web-v1.6.5-macos-arm64.zip",
-      "linux-x64": "gopeed-web-v1.6.5-linux-amd64.zip",
-      "linux-arm64": "gopeed-web-v1.6.5-linux-arm64.zip",
-      "win32-x64": "gopeed-web-v1.6.5-windows-amd64.zip",
-      "win32-arm64": "gopeed-web-v1.6.5-windows-arm64.zip"
-    },
+  "aria2": {
+    "source": "local",
+    "path": "extra/aria2",
     "binaryName": {
-      "default": "gopeed",
-      "win32": "gopeed.exe"
-    },
-    "extractBinary": {
-      "default": "gopeed",
-      "win32": "gopeed.exe"
+      "default": "aria2c",
+      "win32": "aria2c.exe"
     }
   },
   "yt-dlp": {

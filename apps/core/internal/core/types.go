@@ -18,7 +18,7 @@ const (
 var BinaryNames = map[DownloadType]string{
 	TypeM3U8:     "N_m3u8DL-RE",
 	TypeBilibili: "BBDown",
-	TypeDirect:   "gopeed",
+	TypeDirect:   "aria2c",
 	TypeMediago:  "mediago",
 	TypeYoutube:  "yt-dlp",
 }

@@ -1,8 +1,16 @@
 /**
  * download-deps.ts
  *
- * Downloads third-party tool binaries from GitHub Releases.
- * Tools: ffmpeg, N_m3u8DL-RE, BBDown, gopeed
+ * Provisions third-party tool binaries for the current (or all) platform(s).
+ *
+ * Two source types are supported:
+ *   - `source: "github"` (default) — fetch from a GitHub Release.
+ *   - `source: "local"` — copy from a repo-tracked directory (e.g. `extra/<tool>/`).
+ *     Used for tools we can't reliably fetch from a single upstream (aria2's
+ *     static builds are scattered across different repos per-platform), so we
+ *     vendor them in-tree instead.
+ *
+ * Tools: ffmpeg, N_m3u8DL-RE, BBDown, aria2, yt-dlp, mediago.
  *
  * Usage:
  *   tsx scripts/download-deps.ts           # Download for current platform only
@@ -14,8 +22,10 @@ import {
   createReadStream,
   existsSync,
   chmodSync,
+  copyFileSync,
   mkdirSync,
   readFileSync,
+  statSync,
 } from "node:fs";
 import { rename, unlink, readdir, rm } from "node:fs/promises";
 import path from "node:path";
@@ -37,9 +47,20 @@ const depsVersions = JSON.parse(
 // ============================================================
 
 interface ToolDef {
-  repo: string;
-  version: string;
-  assets: Record<string, string>;
+  /**
+   * Where to fetch the binary from.
+   * - "github" (default): download from a GitHub Release using `repo`, `version`, `assets`.
+   * - "local": copy from a repo-tracked directory at `path/<os>/<arch>/<binaryName>`.
+   */
+  source?: "github" | "local";
+  /** Repo-relative directory holding vendored binaries. Required for `source: "local"`. */
+  path?: string;
+  /** GitHub repo in `owner/name` form. Required for `source: "github"`. */
+  repo?: string;
+  /** Release tag (e.g. `v1.6.5`). Required for `source: "github"`. */
+  version?: string;
+  /** Per-platform asset filename on the GitHub release. Required for `source: "github"`. */
+  assets?: Record<string, string>;
   binaryName: { default: string; win32?: string };
   extractBinary?: { default: string; win32?: string };
 }
@@ -148,14 +169,94 @@ async function extractTarGz(
   execSync(`tar -xzf "${tarGzPath}" -C "${outputDir}"`, { stdio: "pipe" });
 }
 
+/**
+ * Copy a vendored (repo-tracked) binary from `<repoRoot>/<tool.path>/<os>/<arch>/<binaryName>`
+ * into `.deps/<os>-<arch>/<binaryName>`. Used for tools whose per-platform
+ * static builds live in the repo rather than upstream releases.
+ *
+ * The layout intentionally diverges from `.deps/`:
+ *   - source:  `<tool.path>/<os>/<arch>/...`  (two-level `os/arch`)
+ *   - dest:    `.deps/<os>-<arch>/...`        (flat `os-arch`)
+ * which keeps the vendored tree navigable in a file browser while letting
+ * binaryResolver.ts keep its single-directory-per-platform convention.
+ */
+function copyLocalTool(
+  toolName: string,
+  tool: ToolDef,
+  platformKey: string,
+): void {
+  if (!tool.path) {
+    console.log(`  ⚠ ${toolName} has source:"local" but no path; skipping`);
+    return;
+  }
+
+  const [os, arch] = platformKey.split("-");
+  const binaryName = getBinaryName(tool, platformKey);
+  const srcFile = path.resolve(
+    __dirname,
+    "..",
+    tool.path,
+    os,
+    arch,
+    binaryName,
+  );
+  const destDir = path.join(DEPS_DIR, platformKey);
+  const destFile = path.join(destDir, binaryName);
+
+  if (!existsSync(srcFile)) {
+    console.log(
+      `  ⚠ No vendored ${toolName} at ${path.relative(process.cwd(), srcFile)}, skipping`,
+    );
+    return;
+  }
+
+  // Skip if destination already matches source (size-based heuristic —
+  // cheap and catches the common case of "already provisioned once").
+  if (existsSync(destFile)) {
+    const srcSize = statSync(srcFile).size;
+    const destSize = statSync(destFile).size;
+    if (srcSize === destSize) {
+      console.log(`  ✓ ${toolName} already exists for ${platformKey}`);
+      return;
+    }
+  }
+
+  mkdirSync(destDir, { recursive: true });
+  copyFileSync(srcFile, destFile);
+
+  if (!platformKey.startsWith("win32")) {
+    try {
+      chmodSync(destFile, 0o755);
+    } catch {
+      // Ignore permission errors on Windows host
+    }
+  }
+
+  console.log(`  ✓ ${toolName} ready for ${platformKey} (local)`);
+}
+
 async function downloadTool(
   toolName: string,
   tool: ToolDef,
   platformKey: string,
 ): Promise<void> {
+  // Vendored tools: bypass the GitHub release path entirely.
+  if (tool.source === "local") {
+    copyLocalTool(toolName, tool, platformKey);
+    return;
+  }
+
+  if (!tool.assets) {
+    console.log(`  ⚠ ${toolName} has no assets defined; skipping`);
+    return;
+  }
   const assetName = tool.assets[platformKey];
   if (!assetName) {
     console.log(`  ⚠ No asset for ${toolName} on ${platformKey}, skipping`);
+    return;
+  }
+  if (!tool.repo || !tool.version) {
+    console.log(`  ⚠ ${toolName} missing repo/version; skipping`);
     return;
   }
 

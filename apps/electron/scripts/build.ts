@@ -213,7 +213,7 @@ await fs.copyFile(
   path.join(binDir, `mediago-core${ext}`),
 );
 
-// Copy dependency binaries (ffmpeg, N_m3u8DL-RE, BBDown, gopeed)
+// Copy dependency binaries (ffmpeg, N_m3u8DL-RE, BBDown, aria2c, yt-dlp)
 const platformKey = `${os.platform()}-${os.arch()}`;
 const localDepsDir = path.resolve(projectRoot, ".deps", platformKey);
 try {
