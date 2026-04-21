@@ -78,6 +78,15 @@ function getReleaseConfig(): Configuration {
         from: "./app/build/deps",
         to: "deps",
       },
+      {
+        // MediaGo browser extension (Manifest V3). Shipped unpacked
+        // inside the installer's `resources/extension/` so users can
+        // "Load unpacked" it from Chrome / Edge via the Settings page's
+        // "Browser extension directory" button. The runtime path is
+        // resolved by `resolveExtensionDir()` in binaryResolver.ts.
+        from: "./app/build/extension",
+        to: "extension",
+      },
     ],
     win: {
       icon: "../assets/icon.ico",
@@ -167,6 +176,14 @@ const electronTask = [
   {
     src: "packages/browser-extension/build",
     dest: "app/build/plugin",
+  },
+  {
+    // MediaGo browser extension dist — produced upstream by
+    // `turbo run build -F @mediago/extension` (wired into
+    // `pnpm build:electron` at the repo root). Gets zipped into the
+    // installer via the `extraResources` entry above.
+    src: "packages/mediago-extension/dist",
+    dest: "app/build/extension",
   },
 ];
 

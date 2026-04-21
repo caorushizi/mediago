@@ -32,6 +32,12 @@ export const webPlatformStubs: PlatformApi = {
       playerUrl: "",
       coreUrl: "",
     }),
+    // Web/server mode has no local filesystem — the browser extension
+    // is an Electron-only concept, and the Settings UI hides the
+    // "Browser extension directory" button behind `isWeb`. The stub
+    // just returns an empty string so type-wise the shared contract
+    // holds.
+    getExtensionDir: async () => "",
     getSharedState: async () => ({}),
     setSharedState: noop,
     showBrowserWindow: noop,

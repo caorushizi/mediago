@@ -46,7 +46,7 @@ import { AppLanguage, AppStore, AppTheme } from "@mediago/shared-common";
 const version = import.meta.env.APP_VERSION;
 
 const SettingPage: React.FC = () => {
-  const { dialog, shell, browser, contextMenu, update, on, off } =
+  const { dialog, shell, browser, contextMenu, update, on, off, app } =
     usePlatform();
   const { t } = useTranslation();
   const formRef = useRef<FormInstance<AppStore>>(null);
@@ -559,6 +559,15 @@ const SettingPage: React.FC = () => {
                     icon={<FolderOpenOutlined />}
                   >
                     {t("localDir")}
+                  </Button>
+                  <Button
+                    onClick={async () => {
+                      const dir = await app.getExtensionDir();
+                      if (dir) shell.open(dir);
+                    }}
+                    icon={<FolderOpenOutlined />}
+                  >
+                    {t("extensionDir")}
                   </Button>
                 </Space>
               </Form.Item>

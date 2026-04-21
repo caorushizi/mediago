@@ -6,6 +6,7 @@ import { TYPES } from "../types/symbols";
 import { type IpcMainEvent } from "electron";
 import { inject, injectable } from "inversify";
 import { exePath, workspace } from "../utils";
+import { resolveExtensionDir } from "../utils/binaryResolver";
 import ElectronUpdater from "../vendor/ElectronUpdater";
 import BrowserWindow from "../windows/browser.window";
 import MainWindow from "../windows/main.window";
@@ -40,6 +41,21 @@ export default class HomeController implements Controller {
       playerUrl: coreUrl ? `${coreUrl}/player/` : "",
       coreUrl,
     };
+  }
+
+  /**
+   * Path to the bundled MediaGo browser-extension directory.
+   *
+   * The UI pairs this with the generic `shell.open()` IPC — no
+   * dedicated "open extension dir" action is needed, we just return
+   * the path and let the renderer treat it like any other folder
+   * shortcut (configDir / binDir / localDir). In dev this resolves to
+   * `packages/mediago-extension/dist/` inside the monorepo; in prod
+   * it's `resources/extension/` inside the installer.
+   */
+  @handle(IPC.app.getExtensionDir)
+  async getExtensionDir(): Promise<string> {
+    return resolveExtensionDir().extensionDir;
   }
 
   @handle(IPC.app.showBrowserWindow)

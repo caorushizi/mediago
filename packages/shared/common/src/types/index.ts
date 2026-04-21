@@ -345,6 +345,13 @@ export interface PlatformApi {
   };
   app: {
     getEnvPath(): Promise<EnvPath>;
+    /**
+     * Absolute path to the bundled browser-extension directory.
+     * Electron-only (web/server stub returns an empty string). Paired
+     * with `shell.open()` to surface the folder in the OS file manager
+     * from the Settings page.
+     */
+    getExtensionDir(): Promise<string>;
     getSharedState(): Promise<unknown>;
     setSharedState(state: unknown): Promise<void>;
     showBrowserWindow(): Promise<void>;

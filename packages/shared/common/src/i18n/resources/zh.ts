@@ -83,6 +83,7 @@ export const zh = {
   clearCacheFailed: "清除缓存失败",
   binPath: "可执行程序目录",
   localDir: "本地存储目录",
+  extensionDir: "浏览器扩展目录",
   currentVersion: "当前版本",
   selectFolder: "选择文件夹",
   selectFile: "选择文件",

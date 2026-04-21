@@ -19,6 +19,7 @@ export const IPC = {
   },
   app: {
     getEnvPath: "app.getEnvPath",
+    getExtensionDir: "app.getExtensionDir",
     getSharedState: "app.getSharedState",
     setSharedState: "app.setSharedState",
     showBrowserWindow: "app.showBrowserWindow",

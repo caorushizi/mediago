@@ -1,7 +1,14 @@
 import type { ExtensionSettings } from "./types";
 
-/** Desktop Go Core default listen address. Hard-coded in desktop-http mode. */
-export const DESKTOP_HTTP_BASE = "http://127.0.0.1:9900";
+/**
+ * Desktop Go Core listen address in `desktop-http` mode.
+ *
+ * `39719` matches the Electron main process's hard-coded `preferredPort`
+ * in `apps/electron/src/services/downloader.server.ts`. NOT the `9900`
+ * used by Go Core in standalone web/server mode — those are two
+ * different deployment shapes that happen to share the same binary.
+ */
+export const DESKTOP_HTTP_BASE = "http://127.0.0.1:39719";
 
 /**
  * Custom scheme used by MediaGo Desktop. Sourced from the repo root

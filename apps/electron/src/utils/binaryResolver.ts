@@ -94,3 +94,38 @@ export function resolvePlayerBinary(): { playerBin: string } {
     playerBin: path.join(process.resourcesPath, "bin", `mediago-player${ext}`),
   };
 }
+
+/**
+ * Resolves the bundled browser-extension directory.
+ *
+ * Development: packages/mediago-extension/dist (produced by
+ *   `pnpm -F @mediago/extension build`)
+ * Production: extraResources/extension (copied by electron-builder
+ *   via the scripts/build.ts `extraResources` declaration)
+ *
+ * Override with MEDIAGO_EXTENSION_DIR env var.
+ *
+ * Consumed by the `shell.openExtensionDir` IPC — the Settings page
+ * exposes a "Browser extension directory" button so users can locate
+ * the unpacked extension to load into Chrome / Edge.
+ */
+export function resolveExtensionDir(): { extensionDir: string } {
+  if (process.env.MEDIAGO_EXTENSION_DIR) {
+    return { extensionDir: process.env.MEDIAGO_EXTENSION_DIR };
+  }
+
+  if (isDev) {
+    return {
+      extensionDir: path.join(
+        getMonorepoRoot(),
+        "packages",
+        "mediago-extension",
+        "dist",
+      ),
+    };
+  }
+
+  return {
+    extensionDir: path.join(process.resourcesPath, "extension"),
+  };
+}

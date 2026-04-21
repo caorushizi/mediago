@@ -89,6 +89,7 @@ export const en = {
   clearCacheFailed: "Failed to clear cache",
   binPath: "Executable path",
   localDir: "Download directory",
+  extensionDir: "Browser extension directory",
   currentVersion: "Version",
   selectFolder: "Select folder",
   selectFile: "Select file",
