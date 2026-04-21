@@ -2,6 +2,7 @@ import { constants as fsConstants } from "node:fs";
 import { access } from "node:fs/promises";
 import { type ChildProcessWithoutNullStreams, spawn } from "node:child_process";
 import { EventEmitter } from "node:events";
+import { createServer as createNetServer } from "node:net";
 import { networkInterfaces } from "node:os";
 import path from "node:path";
 import kill from "tree-kill";
@@ -166,6 +167,25 @@ export class ServiceRunner extends EventEmitter<ServiceRunnerEvents> {
     // This lets the Desktop app be reached via 127.0.0.1 AND its LAN IP
     // at the same time, while still showing the LAN URL in settings.
     const bindHost = this.internalOnly ? "127.0.0.1" : "0.0.0.0";
+
+    // Pre-flight port check. Without this, a stray instance (e.g. a
+    // background-running installed Desktop app) holding the preferred
+    // port causes our freshly-spawned child to fail to bind and exit
+    // immediately — but `waitForHealthy()` would still see `/healthy`
+    // answered by that other instance and mistakenly call the service
+    // "started". Every subsequent request then hits the wrong server.
+    // Fail fast with a human-readable error instead.
+    if (resolvedPort > 0) {
+      const free = await ServiceRunner.isPortFree(bindHost, resolvedPort);
+      if (!free) {
+        throw new Error(
+          `Port ${resolvedPort} on ${bindHost} is already in use. ` +
+            `Another instance (e.g. an installed Desktop build running in the ` +
+            `background) may be holding it — close it and retry.`,
+        );
+      }
+    }
+
     const childEnv: Record<string, string> = {
       ...this.baseEnvironment,
       PORT: String(resolvedPort),
@@ -423,6 +443,32 @@ export class ServiceRunner extends EventEmitter<ServiceRunnerEvents> {
     }
 
     return undefined;
+  }
+
+  /**
+   * Try to bind the given host/port briefly to determine whether it is
+   * available. Resolves `true` on success, `false` if the socket errors
+   * (EADDRINUSE or similar).
+   *
+   * Uses a plain TCP server and releases it immediately — the short
+   * window between the check and the child's own bind attempt is a
+   * theoretical race, but it is sufficient for the real-world case we
+   * care about: a long-running stray instance already holding the port.
+   */
+  private static isPortFree(host: string, port: number): Promise<boolean> {
+    return new Promise((resolve) => {
+      const server = createNetServer();
+      server.unref();
+      server.once("error", () => resolve(false));
+      server.once("listening", () => {
+        server.close(() => resolve(true));
+      });
+      try {
+        server.listen(port, host);
+      } catch {
+        resolve(false);
+      }
+    });
   }
 
   private static buildURL(host: string, port: number): string {
