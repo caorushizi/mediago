@@ -105,6 +105,7 @@ export enum AppLanguage {
   System = "system",
   ZH = "zh",
   EN = "en",
+  IT = "it",
 }
 
 export interface DownloadContext {
