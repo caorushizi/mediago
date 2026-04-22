@@ -19,6 +19,11 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  # Docker Hub mirror — same image, different registry. Credentials
+  # come from the DOCKERHUB_USERNAME / DOCKERHUB_TOKEN secrets (token,
+  # not account password). If either secret is empty, the Docker Hub
+  # login step is skipped and only GHCR gets pushed.
+  DOCKERHUB_IMAGE: caorushizi/mediago
 
 jobs:
   docker:
@@ -45,11 +50,39 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # Only log in (and later push) to Docker Hub when both secrets are
+      # configured. Lets forks / trial runs without Docker Hub
+      # credentials still build-and-push to GHCR.
+      - name: Login to Docker Hub
+        if: ${{ secrets.DOCKERHUB_USERNAME != '' && secrets.DOCKERHUB_TOKEN != '' }}
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Compose the list of target images based on which registries we
+      # actually have credentials for. Without this, metadata-action
+      # would always generate Docker Hub tags and build-push-action
+      # would then fail with 401 on forks that haven't set the secrets.
+      - name: Resolve image targets
+        id: targets
+        env:
+          HAS_DOCKERHUB: ${{ secrets.DOCKERHUB_USERNAME != '' && secrets.DOCKERHUB_TOKEN != '' }}
+        run: |
+          {
+            echo "images<<EOF"
+            echo "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+            if [ "$HAS_DOCKERHUB" = "true" ]; then
+              echo "${{ env.DOCKERHUB_IMAGE }}"
+            fi
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ steps.targets.outputs.images }}
           tags: |
             # 1. Manual rebuild with an explicit tag (e.g. `3.5.0`, `3.5.0-fix.1`)
             type=raw,value=${{ inputs.tag }},enable=${{ inputs.tag != '' }}
@@ -78,10 +111,16 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Build Summary
+        env:
+          HAS_DOCKERHUB: ${{ secrets.DOCKERHUB_USERNAME != '' && secrets.DOCKERHUB_TOKEN != '' }}
         run: |
           echo "### 🎉 Docker Image Published" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Image:** \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Registries:**" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}\`" >> $GITHUB_STEP_SUMMARY
+          if [ "$HAS_DOCKERHUB" = "true" ]; then
+            echo "- \`docker.io/${{ env.DOCKERHUB_IMAGE }}\`" >> $GITHUB_STEP_SUMMARY
+          fi
           echo "**Platforms:** linux/amd64, linux/arm64" >> $GITHUB_STEP_SUMMARY
           echo "**Version:** \`${{ steps.meta.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
           echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
@@ -94,4 +133,7 @@ jobs:
           echo "**Pull:**" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
           echo "docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          if [ "$HAS_DOCKERHUB" = "true" ]; then
+            echo "docker pull ${{ env.DOCKERHUB_IMAGE }}:${{ steps.meta.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          fi
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
