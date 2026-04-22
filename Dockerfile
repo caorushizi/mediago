@@ -98,20 +98,14 @@ RUN mkdir -p /app/deps && \
 
 RUN mkdir -p /app/mediago/data /app/mediago/logs /app/mediago/downloads
 
+# Entrypoint script — isolates the invocation flags from the Dockerfile
+# so editing the default args doesn't require rebuilding the full image
+# layer and so callers can still append overrides via `docker run`.
+COPY scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 EXPOSE 8899
 
 VOLUME ["/app/mediago"]
 
-CMD ["mediago-core", \
-     "--port=8899", \
-     "--static-dir=/app/static", \
-     "--enable-auth", \
-     "--db-path=/app/mediago/data/mediago.db", \
-     "--config-dir=/app/mediago/data", \
-     "--log-dir=/app/mediago/logs", \
-     "--local-dir=/app/mediago/downloads", \
-     "--m3u8-bin=/app/deps/N_m3u8DL-RE", \
-     "--bilibili-bin=/app/deps/BBDown", \
-     "--direct-bin=/app/deps/aria2c", \
-     "--mediago-bin=/app/deps/mediago", \
-     "--ffmpeg-bin=/app/deps/ffmpeg"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
