@@ -37,131 +37,105 @@
   <hr />
 </div>
 
-## Intro
+跨平台视频下载器，内置嗅探 —— 打开网页、选一下想要的资源、保存完事。不用抓包、不用折腾浏览器插件、不用面对命令行。
 
-本项目支持 m3u8 视频在线提取工具 流媒体下载 m3u8 下载。
+## ✨ 主打功能
 
-- **✅&nbsp; 无需抓包**： 使用软件自带浏览器可以轻松嗅探网页中的视频资源，通过嗅探到的资源列表选择自己想要下载的资源，简单快速。
-- **📱&nbsp; 移动播放**： 可以轻松无缝的在 PC 和移动设备之前切换，下载完成后即可使用手机观看视频。
-- **⚡️&nbsp; 批量下载**： 支持同时下载多个视频和直播资源，高速带宽不闲置。
-- **🎉&nbsp; 支持 docker 部署**： 支持 docker 部署 web 端，方便快捷。
-- **🦞&nbsp; OpenClaw Skill**： 支持通过 AI 编程助手（Openclaw、Claude Code 等）用自然语言下载视频，`npx clawhub@latest install mediago` 一键安装。
+### 🌐 浏览器扩展（Chrome / Edge）
 
-## Quickstart
+浏览网页时遇到想下的视频 → 点扩展图标 → 一键发到 MediaGo。自动识别页面里的可下载资源，工具栏图标显示检测到的数量，主流视频网站（包括 YouTube、Bilibili 等）都能覆盖。扩展随桌面端安装包一起打包，在 **设置 → 更多设置 → 浏览器扩展目录** 就能找到安装文件夹。
 
-运行代码需要 node 和 pnpm，node 需要在官网下载安装，pnpm 可以通过`npm i -g pnpm`安装。
+### 🎬 支持 YouTube 和 1000+ 站点
 
-## 运行代码
+底层用的是 yt-dlp。支持 YouTube、Twitter/X、Instagram、Reddit 等 [一千多个视频站点](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md)。
+
+### 🦞 让 AI 助手帮你下载 —— OpenClaw Skill
+
+在用 Claude Code、Cursor 等 AI 编程助手？装上 MediaGo Skill 后直接跟 AI 说"帮我下载这个视频：&lt;链接&gt;"就行，剩下的交给 AI。
 
 ```shell
-# 代码下载
-git clone https://github.com/caorushizi/mediago.git
-
-# 安装依赖
-pnpm install
-
-# 首次安装需要 rebuild 一下
-pnpm rebuild:workspace
-
-# electron 开发环境
-pnpm dev:electron
-
-# electron 打包运行
-pnpm release:electron
-
-# server 开发环境
-pnpm dev:server
-
-# server 打包运行
-pnpm release:server
-
+npx clawhub@latest install mediago
 ```
 
-## Releases
+### 🔌 可以和其他工具联动
 
-### v3.5.0-beta.0 (2026.4.3 发布)
+MediaGo 提供一整套 HTTP 接口 —— 脚本、自动化工具、其他 App 都能直接调用 MediaGo 创建下载任务、查询进度、管理列表。浏览器扩展就是通过这套接口和桌面端对话的，你也可以接入自己的工作流。
 
-### 软件下载
+### 🎞️ 内置格式转换
 
-- [【mediago】 windows(安装版) v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-setup-win32-x64-3.5.0-beta.0.exe)
-- [【mediago】 windows(便携版) v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-portable-win32-x64-3.5.0-beta.0.exe)
-- [【mediago】 macos arm64（apple 芯片） v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-setup-darwin-arm64-3.5.0-beta.0.dmg)
-- [【mediago】 macos x64（intel 芯片） v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-setup-darwin-x64-3.5.0-beta.0.dmg)
-- [【mediago】 linux v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-setup-linux-amd64-3.5.0-beta.0.deb)
-- 【mediago】 docker v3.0 `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:3.5.0-beta.0`
+下载完成后可以直接在 MediaGo 里转换格式、选画质，不用再打开别的软件。
 
-### v3.0.0 (2024.10.7 发布)
+### 🐳 Docker 一键部署
 
-#### 软件下载
+服务器端一条命令部署，局域网内任意设备都能打开 Web 界面：
 
-- [【mediago】 windows(安装版) v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-win32-x64-3.0.0.exe)
-- [【mediago】 windows(便携版) v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-portable-win32-x64-3.0.0.exe)
-- [【mediago】 macos arm64（apple 芯片） v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-darwin-arm64-3.0.0.dmg)
-- [【mediago】 macos x64（intel 芯片） v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-darwin-x64-3.0.0.dmg)
-- [【mediago】 linux v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-linux-amd64-3.0.0.deb)
-- 【mediago】 docker `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:latest`
+```shell
+docker run -d --name mediago -p 8899:8899 \
+  -v /path/to/mediago:/app/mediago \
+  ghcr.io/caorushizi/mediago:3.5.0
+```
 
-### docker 宝塔面板一键部署（推荐）
+支持 Intel / AMD (amd64) 和 ARM (arm64) 两种架构。桌面版同时监听 `127.0.0.1` 和局域网 IP，同一个 Wi-Fi 下的手机、平板可以直接打开 Web 界面。
 
-1. 安装宝塔面板，前往 [宝塔面板](https://www.bt.cn/new/download.html?r=dk_mediago) 官网，选择正式版的脚本下载安装
-
-2. 安装后登录宝塔面板，在菜单栏中点击 `Docker`，首次进入会提示安装`Docker`服务，点击立即安装，按提示完成安装
-
-3. 安装完成后在应用商店中找到`MediaGo`，点击安装，配置域名等基本信息即可完成安装
-
-### 软件截图
+## 📷 软件截图
 
 ![首页](./images/home.png)
 
-### 重要更新
+![首页 — 深色模式](./images/home-dark.png)
 
-- 支持 docker 部署 web 端
-- 更新桌面端 UI
-
-### 更新日志
-
-- 更新桌面端 UI
-- 支持 docker 部署 web 端
-- 新增视频播放，支持桌面端和移动端播放
-- 修复 mac 打开无法展示界面的问题
-- 优化了批量下载的交互
-- 添加了 windows 的便携版（免安装哦）
-- 优化了下载列表，支持页面中多个视频的嗅探
-- 支持收藏列表手动导入导出
-- 支持首页下载列表导出
-- 优化了【新建下载】表单的交互逻辑
-- 支持 UrlScheme 打开应用，并添加下载任务
-- 修复了一些 bug 并提升用户体验
-
-## 软件截图
-
-![首页](./images/home.png)
-
-![首页-dark](./images/home-dark.png)
-
-![设置页面](./images/settings.png)
+![设置](./images/settings.png)
 
 ![资源提取](./images/browser.png)
 
-## 技术栈
+## 📥 下载
 
-- react <https://react.dev/>
-- electron <https://www.electronjs.org>
-- koa <https://koajs.com>
-- vite <https://cn.vitejs.dev>
-- antd <https://ant.design>
-- tailwindcss <https://tailwindcss.com>
-- shadcn <https://ui.shadcn.com/>
-- inversify <https://inversify.io>
-- typeorm <https://typeorm.io>
+### v3.5.0（正式版）
 
-## 鸣谢
+- [Windows — 安装版](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-win32-x64-3.5.0.exe)
+- [Windows — 便携版](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-portable-win32-x64-3.5.0.exe)
+- [macOS — Apple Silicon (arm64)](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-darwin-arm64-3.5.0.dmg)
+- [macOS — Intel (x64)](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-darwin-x64-3.5.0.dmg)
+- [Linux (deb)](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-linux-amd64-3.5.0.deb)
+- **Docker：** `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:3.5.0`
 
-- N_m3u8DL-RE 来自于 <https://github.com/nilaoda/N_m3u8DL-RE>
-- BBDown 来自于 <https://github.com/nilaoda/BBDown>
-- mediago 来自于 <https://github.com/caorushizi/mediago-core>
+查看历史版本请移步 [GitHub Releases](https://github.com/caorushizi/mediago/releases)。
 
-## 免责声明
+### 🪄 宝塔面板一键部署 Docker
+
+1. 安装宝塔面板，前往 [宝塔面板官网](https://www.bt.cn/new/download.html?r=dk_mediago) 选择正式版的脚本下载安装
+2. 登录宝塔面板，在菜单栏中点击 **Docker**，首次进入会提示安装 Docker 服务，点击立即安装并按提示完成
+3. 在应用商店中找到 **MediaGo**，点击安装，配置域名等基本信息即可
+
+## 📝 v3.5.0 更新要点
+
+- **🌐 浏览器扩展**：任意网站一键嗅探视频、一键发到 MediaGo
+- **🎬 YouTube + 1000+ 站点**：集成 yt-dlp
+- **🦞 OpenClaw Skill**：通过 AI 编程助手下载视频
+- **🔌 开放 HTTP 接口**：接入脚本、自动化工具和其他应用
+- **🎞️ 内置格式转换**：选输出格式和画质
+- **🐳 Docker 部署简化**：挂载一个目录即可，多架构镜像已迁至 GHCR
+- **⚡ 启动更快**：后端重写，资源占用更低，内置视频播放器
+
+## 🛠️ 技术栈
+
+[![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)](https://react.dev/)
+[![Electron](https://img.shields.io/badge/Electron-191970?logo=electron&logoColor=white)](https://www.electronjs.org)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)](https://vitejs.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-000?logo=shadcnui&logoColor=white)](https://ui.shadcn.com/)
+[![Go](https://img.shields.io/badge/Go-00ADD8?logo=go&logoColor=white)](https://go.dev/)
+[![Ant Design](https://img.shields.io/badge/Ant_Design-0170FE?logo=antdesign&logoColor=white)](https://ant.design)
+
+## 🙏 鸣谢
+
+- [N_m3u8DL-RE](https://github.com/nilaoda/N_m3u8DL-RE)
+- [BBDown](https://github.com/nilaoda/BBDown)
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp)
+- [aria2](https://aria2.github.io/)
+- [mediago-core](https://github.com/caorushizi/mediago-core)
+
+## ⚖️ 免责声明
 
 > **本项目仅供学习和研究使用，请勿用于任何商业或非法用途。**
 >
@@ -170,3 +144,7 @@ pnpm release:server
 > 3. 本项目开发者不对使用者的任何行为承担责任，包括但不限于：下载受版权保护的内容、对第三方平台造成的影响等。
 > 4. 禁止将本项目用于大规模抓取、破坏平台服务或任何侵犯他人合法权益的行为。
 > 5. 使用本项目即表示您已阅读并同意本免责声明。如不同意，请立即停止使用并删除本项目。
+
+---
+
+> 想从源码构建？见 [CONTRIBUTING.md](./CONTRIBUTING.md)（英文）。

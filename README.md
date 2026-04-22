@@ -37,77 +37,64 @@
   <hr />
 </div>
 
-## What is MediaGo?
+A cross-platform video downloader with built-in sniffing — point it at a
+page, pick what you want, and save. No packet capture, no browser
+extensions to configure, no fiddling with command-line tools.
 
-A cross-platform streaming media downloader with built-in browser sniffing — grab m3u8, HLS, and more with zero packet-capture hassle.
+## ✨ What's inside
 
-- **✅&nbsp; No packet capture needed** — The built-in browser automatically detects video resources on any page. Just pick what you want from the detected list and download.
-- **📱&nbsp; Watch on mobile** — Seamlessly switch between PC and mobile. Once a video is downloaded, scan a QR code to watch it on your phone.
-- **⚡️&nbsp; Batch downloads** — Download multiple videos and live streams at the same time — no wasted bandwidth.
-- **🎉&nbsp; Docker support** — Deploy the web UI via Docker for quick, headless operation.
-- **🦞&nbsp; OpenClaw Skill** — Download videos with natural language through AI coding assistants (OpenClaw, Claude Code, etc.). Install with `npx clawhub@latest install mediago`.
+### 🌐 Browser extension for Chrome / Edge
 
-## Quick Start
+See something you want on any site → click the extension → send it to
+MediaGo. Detects video resources automatically, shows the count on the
+toolbar badge, works with most mainstream video platforms including
+YouTube, Bilibili and more. Ships bundled with the Desktop app — open
+**Settings → More Settings → Browser extension directory** to find the
+install folder.
 
-You need **Node.js** and **pnpm**. Install Node.js from the [official site](https://nodejs.org/), then install pnpm:
+### 🎬 YouTube and 1000+ sites
+
+Powered by yt-dlp under the hood. Supports YouTube, Twitter/X, Instagram,
+Reddit and [over a thousand more video sites](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md).
+
+### 🦞 AI assistants can download for you — OpenClaw Skill
+
+Using Claude Code, Cursor or another AI coding assistant? Install the
+MediaGo skill and just say _"please download this video: &lt;url&gt;"_.
+The AI handles the rest.
 
 ```shell
-npm i -g pnpm
+npx clawhub@latest install mediago
 ```
 
-## Running locally
+### 🔌 Works with other tools
+
+MediaGo exposes a full HTTP API — scripts, automation tools and other
+apps can create download tasks, query progress and manage the list
+directly. The browser extension uses this same API to talk to the desktop
+app; anyone else can tap in too.
+
+### 🎞️ Built-in format conversion
+
+After a download finishes, convert it to another format or quality
+without leaving MediaGo. No more opening a separate tool for ffmpeg.
+
+### 🐳 One-line Docker deployment
+
+Headless install on your server, then access the web UI from anywhere on
+the same network:
 
 ```shell
-# Clone the repo
-git clone https://github.com/caorushizi/mediago.git
-
-# Install dependencies
-pnpm install
-
-# Start the Electron desktop app (dev mode)
-pnpm dev:electron
-
-# — or — start the web server (dev mode)
-pnpm dev:server
-
-# Package the Electron app for distribution
-pnpm pack:electron
-
-# Package the web server for distribution
-pnpm pack:server
+docker run -d --name mediago -p 8899:8899 \
+  -v /path/to/mediago:/app/mediago \
+  ghcr.io/caorushizi/mediago:3.5.0
 ```
 
-## Releases
+Supports both Intel / AMD (amd64) and ARM (arm64). On the desktop build,
+MediaGo listens on both `127.0.0.1` and your LAN IP out of the box, so
+phones and tablets on the same Wi-Fi can open the web UI too.
 
-### v3.5.0-beta.0 (Apr 3, 2026)
-
-#### Downloads
-
-- [Windows (installer) v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-setup-win32-x64-3.5.0-beta.0.exe)
-- [Windows (portable) v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-portable-win32-x64-3.5.0-beta.0.exe)
-- [macOS ARM64 (Apple Silicon) v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-setup-darwin-arm64-3.5.0-beta.0.dmg)
-- [macOS x64 (Intel) v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-setup-darwin-x64-3.5.0-beta.0.dmg)
-- [Linux v3.5.0-beta.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0-beta.0/mediago-community-setup-linux-amd64-3.5.0-beta.0.deb)
-- Docker v3.5.0-beta.0: `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:3.5.0-beta.0`
-
-### v3.0.0 (Oct 7, 2024)
-
-#### Downloads
-
-- [Windows (installer) v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-win32-x64-3.0.0.exe)
-- [Windows (portable) v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-portable-win32-x64-3.0.0.exe)
-- [macOS ARM64 (Apple Silicon) v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-darwin-arm64-3.0.0.dmg)
-- [macOS x64 (Intel) v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-darwin-x64-3.0.0.dmg)
-- [Linux v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-linux-amd64-3.0.0.deb)
-- Docker: `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:latest`
-
-### One-click Docker deployment via BT Panel
-
-1. Install [BT Panel](https://www.bt.cn/new/download.html?r=dk_mediago) using the official script.
-2. Log in to the panel, click **Docker** in the sidebar, and follow the prompts to install the Docker service.
-3. Find **MediaGo** in the app store, click **Install**, configure your domain, and you're done.
-
-## Screenshots
+## 📷 Screenshots
 
 ![Home](./images/home.png)
 
@@ -117,40 +104,58 @@ pnpm pack:server
 
 ![Resource extraction](./images/browser.png)
 
-## Changelog (v3.0.0)
+## 📥 Download
 
-- Docker deployment for the web UI
-- Redesigned desktop UI
-- Video playback on desktop and mobile
-- Fixed blank window on macOS launch
-- Improved batch download UX
-- Added Windows portable build (no install required)
-- Enhanced resource sniffing — detect multiple videos per page
-- Import / export favorites
-- Export the download list from the home page
-- Improved "New download" form flow
-- Open the app and add downloads via URL scheme
-- Various bug fixes and UX improvements
+### v3.5.0 (stable)
 
-## Tech Stack
+- [Windows — installer](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-win32-x64-3.5.0.exe)
+- [Windows — portable](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-portable-win32-x64-3.5.0.exe)
+- [macOS — Apple Silicon (arm64)](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-darwin-arm64-3.5.0.dmg)
+- [macOS — Intel (x64)](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-darwin-x64-3.5.0.dmg)
+- [Linux (deb)](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-linux-amd64-3.5.0.deb)
+- **Docker:** `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:3.5.0`
 
-- [React](https://react.dev/)
-- [Electron](https://www.electronjs.org)
-- [Koa](https://koajs.com)
-- [Vite](https://vitejs.dev)
-- [Ant Design](https://ant.design)
-- [Tailwind CSS](https://tailwindcss.com)
-- [shadcn/ui](https://ui.shadcn.com/)
-- [Inversify](https://inversify.io)
+Browsing older releases? See the [GitHub Releases page](https://github.com/caorushizi/mediago/releases).
 
-## Acknowledgements
+### 🪄 One-click Docker deployment via BT Panel
+
+1. Install [BT Panel](https://www.bt.cn/new/download.html?r=dk_mediago) using the official script.
+2. Log in to the panel, click **Docker** in the sidebar and finish the
+   Docker service setup (just follow the prompts).
+3. Find **MediaGo** in the app store, click **Install**, configure your
+   domain, and you're done.
+
+## 📝 What's new in v3.5.0
+
+- **🌐 Browser extension** — sniff videos on any site, send to MediaGo
+  in one click
+- **🎬 YouTube + 1000+ sites** — powered by yt-dlp
+- **🦞 OpenClaw Skill** — download videos via AI coding assistants
+- **🔌 HTTP API** — integrate with scripts, automation and third-party tools
+- **🎞️ In-app format conversion** — choose output format and quality
+- **🐳 Simpler Docker deployment** — mount a single folder, multi-arch images on GHCR
+- **⚡ Faster startup** — backend rewrite, lower memory footprint, built-in video player
+
+## 🛠️ Built with
+
+[![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)](https://react.dev/)
+[![Electron](https://img.shields.io/badge/Electron-191970?logo=electron&logoColor=white)](https://www.electronjs.org)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)](https://vitejs.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-000?logo=shadcnui&logoColor=white)](https://ui.shadcn.com/)
+[![Go](https://img.shields.io/badge/Go-00ADD8?logo=go&logoColor=white)](https://go.dev/)
+[![Ant Design](https://img.shields.io/badge/Ant_Design-0170FE?logo=antdesign&logoColor=white)](https://ant.design)
+
+## 🙏 Acknowledgements
 
 - [N_m3u8DL-RE](https://github.com/nilaoda/N_m3u8DL-RE)
 - [BBDown](https://github.com/nilaoda/BBDown)
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp)
+- [aria2](https://aria2.github.io/)
 - [mediago-core](https://github.com/caorushizi/mediago-core)
 
-## Disclaimer
+## ⚖️ Disclaimer
 
 > **This project is for educational and research purposes only. Do not use it for any commercial or illegal purposes.**
 >
@@ -159,3 +164,7 @@ pnpm pack:server
 > 3. The developers of this project are not responsible for any actions taken by users, including but not limited to downloading copyrighted content or impacting third-party platforms.
 > 4. Using this project for mass scraping, disrupting platform services, or any activity that infringes upon the legitimate rights of others is strictly prohibited.
 > 5. By using this project you acknowledge that you have read and agree to this disclaimer. If you do not agree, stop using the project and delete it immediately.
+
+---
+
+> Building from source? See [CONTRIBUTING.md](./CONTRIBUTING.md).

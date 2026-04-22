@@ -1,13 +1,19 @@
 <div align="center">
   <h1>MediaGo</h1>
-  <a href="https://downloader.caorushizi.cn/jp/guides.html?form=github">早く始めます</a>
+  <a href="https://downloader.caorushizi.cn/jp/guides.html?form=github">クイックスタート</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://downloader.caorushizi.cn/jp?form=github">公式サイトです</a>
+  <a href="https://downloader.caorushizi.cn/jp?form=github">公式サイト</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://downloader.caorushizi.cn/jp/documents.html?form=github">にやすりをかける</a>
+  <a href="https://downloader.caorushizi.cn/jp/documents.html?form=github">ドキュメント</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="https://github.com/caorushizi/mediago/discussions">Discussions</a>
   <br>
+
+<a href="https://github.com/caorushizi/mediago/blob/master/README.md">English</a>
+<span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+<a href="https://github.com/caorushizi/mediago/blob/master/README.zh.md">中文</a>
+<br>
+
   <!-- MediaGo Pro -->
   <a href="https://mediago.torchstellar.com/?from=github">
     <img src="https://img.shields.io/badge/✨_新登場-MediaGo_Pro-ff6b6b?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiAyTDMgN2wzIDMgNi00IDYgNCAzLTMtOS01eiIvPjxwYXRoIGQ9Ik0zIDE3bDkgNSA5LTUtMy0zLTYgNC02LTQtMyAzeiIvPjwvc3ZnPg==" alt="MediaGo Pro" />
@@ -16,15 +22,14 @@
     <img src="https://img.shields.io/badge/🚀_今すぐ試す-オンライン版_インストール不要-2a82f6?style=for-the-badge" alt="Try Now" />
   </a>
   <br>
-  <br>
 
   <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/caorushizi/mediago/total">
   <img alt="GitHub Downloads (all assets, latest release)" src="https://img.shields.io/github/downloads/caorushizi/mediago/latest/total">
   <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/caorushizi/mediago">
   <img alt="GitHub forks" src="https://img.shields.io/github/forks/caorushizi/mediago">
+  <img alt="GitCode" src="https://gitcode.com/caorushizi/mediago/star/badge.svg">
   <br>
-  <br>
-  
+
   <a href="https://trendshift.io/repositories/11083" target="_blank">
     <img src="https://trendshift.io/api/badge/repositories/11083" alt="caorushizi%2Fmediago | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/>
   </a>
@@ -32,120 +37,114 @@
   <hr />
 </div>
 
-## Intro
+ビルトインのスニッフィング機能を備えたクロスプラットフォームの動画ダウンローダー —— ページを開いて、欲しいリソースを選んで、保存するだけ。パケットキャプチャ不要、ブラウザ拡張の設定不要、コマンドラインの操作も不要です。
 
-本プロジェクトはm3u8ビデオ抽出ツール、ストリーミングダウンロード、m3u8ダウンロードをサポートしています。
+## ✨ 主な機能
 
-- **✅&nbsp; パケットキャプチャ不要**： ソフトウェアに内蔵されたブラウザを使用して、ウェブページ内のビデオリソースを簡単に検出し、検出したリソースリストからダウンロードしたいリソースを選択することで、シンプルかつ迅速にダウンロードできます。
-- **📱&nbsp; モバイル再生**： PCとモバイルデバイス間で簡単にシームレスに切り替えが可能で、ダウンロードが完了した後はスマートフォンでビデオを視聴できます。
-- **⚡️&nbsp; バッチダウンロード**： 複数のビデオやライブストリームリソースを同時にダウンロードでき、高速帯域幅を無駄にしません。
-- **🎉&nbsp; Dockerデプロイメントサポート**： WebエンドをDockerでデプロイすることができ、簡単かつ便利です。
+### 🌐 ブラウザ拡張機能（Chrome / Edge）
 
-## Quickstart
+ウェブを閲覧中に気になる動画を見つけたら → 拡張機能のアイコンをクリック → ワンクリックで MediaGo に送信。ページ内のダウンロード可能なリソースを自動検出し、ツールバーアイコンのバッジに件数を表示します。YouTube、Bilibili をはじめ主要な動画サイトに対応。拡張機能はデスクトップ版インストーラーに同梱されているので、**設定 → その他の設定 → ブラウザ拡張ディレクトリ** から直接インストールフォルダを開けます。
 
-コードを実行するには、Node.jsとpnpmが必要です。Node.jsは公式ウェブサイトからダウンロードしてインストールし、pnpmは`npm i -g pnpm`コマンドでインストールできます。
+### 🎬 YouTube と 1000+ サイト対応
 
-## コードの実行
+内部では yt-dlp を使用。YouTube、Twitter/X、Instagram、Reddit など [1000 以上の動画サイト](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md) をサポートします。
+
+### 🦞 AI アシスタントで動画をダウンロード — OpenClaw Skill
+
+Claude Code や Cursor などの AI コーディングアシスタントを使っていますか？MediaGo Skill をインストールすれば、AI に「この動画をダウンロードして：&lt;URL&gt;」と言うだけでダウンロードが始まります。
 
 ```shell
-# コードのダウンロードです
-git clone https://github.com/caorushizi/mediago.git
-
-# インストール依存症です
-pnpm i
-
-# 開発環境です
-pnpm dev
-
-# 梱包して運行します
-pnpm release
-
-# dockerミラーリングを構築します
-docker buildx build -t caorushizi/mediago:latest .
-
-# docker启动
-docker run -d --name mediago -p 8899:8899 -v /root/mediago:/root/mediago registry.cn-beijing.aliyuncs.com/caorushizi/mediago
-
+npx clawhub@latest install mediago
 ```
 
-## Releases
+### 🔌 他のツールと連携
 
-### v3.0.0 (2024.10.7 発売)
+MediaGo は完全な HTTP API を提供します。スクリプト、自動化ツール、他のアプリから直接ダウンロードタスクの作成、進捗の取得、リスト管理が可能です。ブラウザ拡張機能はこの API を介してデスクトップアプリと通信しており、自分のワークフローに組み込むこともできます。
 
-#### ソフトウェアダウンロード
+### 🎞️ 内蔵フォーマット変換
 
-- [【mediago】 windows（インストーラー版） v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-win32-x64-3.0.0.exe)
-- [【mediago】 windows（ポータブル版） v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-portable-win32-x64-3.0.0.exe)
-- [【mediago】 macos arm64（Appleチップ） v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-darwin-arm64-3.0.0.dmg)
-- [【mediago】 macos x64（Intelチップ） v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-darwin-x64-3.0.0.dmg)
-- [【mediago】 linux v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-linux-amd64-3.0.0.deb)
-- 【mediago】 docker v3.0 `docker run -d --name mediago -p 8899:8899 -v /root/mediago:/root/mediago registry.cn-beijing.aliyuncs.com/caorushizi/mediago:v3.0.0`
+ダウンロード完了後、MediaGo 内で他のフォーマットや画質に変換できます。ffmpeg を別途起動する必要はありません。
 
-#### 国内ダウンロード
+### 🐳 Docker でワンライン展開
 
-- [【mediago】 windows（インストーラー版） v3.0.0](https://static.ziying.site/mediago/mediago-setup-win32-x64-3.0.0.exe)
-- [【mediago】 windows（ポータブル版） v3.0.0](https://static.ziying.site/mediago/mediago-portable-win32-x64-3.0.0.exe)
-- [【mediago】 macos arm64（Appleチップ） v3.0.0](https://static.ziying.site/mediago/mediago-setup-darwin-arm64-3.0.0.dmg)
-- [【mediago】 macos x64（Intelチップ） v3.0.0](https://static.ziying.site/mediago/mediago-setup-darwin-x64-3.0.0-beta.5.dmg)
-- [【mediago】 linux v3.0.0](https://static.ziying.site/mediago/mediago-setup-linux-amd64-3.0.0.deb)
-- 【mediago】 docker v3.0 `docker run -d --name mediago -p 8899:8899 -v /root/mediago:/root/mediago registry.cn-beijing.aliyuncs.com/caorushizi/mediago:v3.0.0`
+サーバーにヘッドレスでインストールし、同じネットワーク内のどこからでも Web UI にアクセスできます：
 
-### docker 宝塔パネルワンクリックデプロイ（推奨）
+```shell
+docker run -d --name mediago -p 8899:8899 \
+  -v /path/to/mediago:/app/mediago \
+  ghcr.io/caorushizi/mediago:3.5.0
+```
 
-1. 宝塔パネルをインストールし、[宝塔パネル](https://www.bt.cn/new/download.html?r=dk_mediago) の公式サイトから正式版のスクリプトを選択してインストールします。
+Intel / AMD (amd64) と ARM (arm64) の両方に対応。デスクトップ版は `127.0.0.1` と LAN IP の両方で待ち受けるため、同じ Wi-Fi のスマートフォンやタブレットからも Web UI を開けます。
 
-2. インストール後、宝塔パネルにログインし、メニューから `Docker` をクリックします。初めてアクセスすると、`Docker` サービスをインストールするように指示されるので、「今すぐインストール」をクリックし、指示に従ってインストールを完了します。
+## 📷 スクリーンショット
 
-3. インストールが完了したら、アプリストアで「MediaGo」を見つけ、インストールをクリックし、ドメイン名などの基本情報を設定してインストールを完了します。
+![ホームページ](./images/home.png)
 
-### ソフトウェアスクリーンショット
+![ホームページ — ダークモード](./images/home-dark.png)
 
-![ホームページ](https://static.ziying.site/images/home.png)
+![設定](./images/settings.png)
 
-### 重要な更新
+![リソース抽出](./images/browser.png)
 
-- Web端のdockerデプロイをサポート
-- デスクトップ端のUIを更新
+## 📥 ダウンロード
 
-### 更新ログ
+### v3.5.0（安定版）
 
-- デスクトップ端のUIを更新
-- Web端のdockerデプロイをサポート
-- 新たにビデオ再生機能を追加、デスクトップとモバイル端両方で再生可能
-- Macでの画面表示ができない問題を修正
-- バッチダウンロードのインタラクションを最適化
-- Windowsのポータブル版（インストール不要）を追加
-- ダウンロードリストの最適化、ページ内の複数のビデオリソースを嗅ぎ取る機能を追加
-- 手動でお気に入りリストのインポートとエクスポートをサポート
-- ホームページのダウンロードリストエクスポートをサポート
-- 「新規ダウンロード」フォームのインタラクションロジックを最適化
-- UrlSchemeでアプリを開き、ダウンロードタスクを追加する機能をサポート
-- バグの修正とユーザー体験の向上
+- [Windows — インストーラー版](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-win32-x64-3.5.0.exe)
+- [Windows — ポータブル版](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-portable-win32-x64-3.5.0.exe)
+- [macOS — Apple Silicon (arm64)](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-darwin-arm64-3.5.0.dmg)
+- [macOS — Intel (x64)](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-darwin-x64-3.5.0.dmg)
+- [Linux (deb)](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-linux-amd64-3.5.0.deb)
+- **Docker：** `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:3.5.0`
 
-## ソフトウェアスクリーンショット
+過去のバージョンは [GitHub Releases ページ](https://github.com/caorushizi/mediago/releases) をご覧ください。
 
-![ホームページ](https://static.ziying.site/images/home.png)
+### 🪄 宝塔パネルでワンクリック Docker デプロイ
 
-![ホームページ（ダークモード）](https://static.ziying.site/images/home-dark.png)
+1. [宝塔パネル公式サイト](https://www.bt.cn/new/download.html?r=dk_mediago) から正式版のスクリプトをダウンロードしてインストール
+2. 宝塔パネルにログイン、メニューから **Docker** をクリック。初回アクセス時に Docker サービスのインストールを求められるので、「今すぐインストール」をクリックして完了
+3. アプリストアで **MediaGo** を見つけて、インストールをクリック、ドメインなどの基本情報を設定すれば完了
 
-![設定ページ](https://static.ziying.site/images/settings.png)
+## 📝 v3.5.0 の新機能
 
-![リソース抽出](https://static.ziying.site/images/browser.png)
+- **🌐 ブラウザ拡張機能** — 任意のサイトで動画をスニッフィング、ワンクリックで MediaGo に送信
+- **🎬 YouTube + 1000+ サイト** — yt-dlp による対応
+- **🦞 OpenClaw Skill** — AI コーディングアシスタント経由でダウンロード
+- **🔌 HTTP API** — スクリプト、自動化、サードパーティツールとの統合
+- **🎞️ アプリ内フォーマット変換** — 出力形式と画質を選択
+- **🐳 Docker デプロイの簡素化** — 単一ディレクトリをマウント、GHCR のマルチアーキテクチャイメージ
+- **⚡ 起動の高速化** — バックエンド書き換え、メモリ使用量の削減、内蔵動画プレーヤー
 
-## 技術スタック
+## 🛠️ 技術スタック
 
-- react <https://react.dev/>
-- electron <https://www.electronjs.org>
-- koa <https://koajs.com>
-- vite <https://cn.vitejs.dev>
-- antd <https://ant.design>
-- tailwindcss <https://tailwindcss.com>
-- shadcn <https://ui.shadcn.com/>
-- inversify <https://inversify.io>
-- typeorm <https://typeorm.io>
+[![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)](https://react.dev/)
+[![Electron](https://img.shields.io/badge/Electron-191970?logo=electron&logoColor=white)](https://www.electronjs.org)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)](https://vitejs.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-000?logo=shadcnui&logoColor=white)](https://ui.shadcn.com/)
+[![Go](https://img.shields.io/badge/Go-00ADD8?logo=go&logoColor=white)](https://go.dev/)
+[![Ant Design](https://img.shields.io/badge/Ant_Design-0170FE?logo=antdesign&logoColor=white)](https://ant.design)
 
-## 感謝
+## 🙏 謝辞
 
-- N_m2u8DL-CLI は <https://github.com/nilaoda/N_m3u8DL-CLI> から来ています
-- N_m3u8DL-RE は <https://github.com/nilaoda/N_m3u8DL-RE> から来ています
-- mediago は <https://github.com/caorushizi/hls-downloader> から来ています
+- [N_m3u8DL-RE](https://github.com/nilaoda/N_m3u8DL-RE)
+- [BBDown](https://github.com/nilaoda/BBDown)
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp)
+- [aria2](https://aria2.github.io/)
+- [mediago-core](https://github.com/caorushizi/mediago-core)
+
+## ⚖️ 免責事項
+
+> **本プロジェクトは学習および研究目的にのみ提供されるものであり、商用または違法な目的での使用はご遠慮ください。**
+>
+> 1. 本プロジェクトが提供するすべてのコードおよび機能は、ストリーミング技術の学習のための参考資料としてのみ使用されます。利用者は所在地域の法令を遵守してください。
+> 2. 本プロジェクトを使用してダウンロードされたコンテンツの著作権は、原コンテンツの所有者に帰属します。利用者はダウンロード後 24 時間以内にコンテンツを削除するか、著作権者の許可を取得する必要があります。
+> 3. 本プロジェクトの開発者は、著作権で保護されたコンテンツのダウンロードや第三者プラットフォームへの影響を含め、利用者の行動に対して一切の責任を負いません。
+> 4. 大規模なスクレイピング、プラットフォームサービスの妨害、その他他者の合法的権利を侵害する行為に本プロジェクトを使用することは禁止されています。
+> 5. 本プロジェクトを使用することにより、あなたはこの免責事項を読み、同意したものとみなされます。同意しない場合は、直ちに本プロジェクトの使用を停止し、削除してください。
+
+---
+
+> ソースからビルドする場合は [CONTRIBUTING.md](./CONTRIBUTING.md)（英語）を参照してください。
