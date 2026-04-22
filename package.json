@@ -24,6 +24,7 @@
     "check": "pnpm lint && pnpm format:check && turbo type:check",
     "pack:electron": "pnpm core:build && pnpm build:electron && pnpm -F @mediago/electron run pack",
     "release:electron": "pnpm core:build && pnpm build:electron && pnpm -F @mediago/electron run release",
+    "build:docker": "docker build -t mediago:local .",
     "docs:dev": "pnpm -F @mediago/docs run docs:dev",
     "docs:build": "pnpm -F @mediago/docs run docs:build",
     "type:check": "turbo type:check",
