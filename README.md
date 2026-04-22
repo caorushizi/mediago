@@ -94,13 +94,13 @@ phones and tablets on the same Wi-Fi can open the web UI too.
 
 ## 📷 Screenshots
 
-![Home](./images/home.png)
+![Home](./images/home_en.png)
 
-![Home — dark mode](./images/home-dark.png)
+![Home — dark mode](./images/home-dark_en.png)
 
-![Settings](./images/settings.png)
+![Settings](./images/settings_en.png)
 
-![Resource extraction](./images/browser.png)
+![Resource extraction](./images/browser_en.png)
 
 ## 📥 Download
 
