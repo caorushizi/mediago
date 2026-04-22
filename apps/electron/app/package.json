@@ -1,7 +1,7 @@
 {
   "name": "mediago",
   "version": "3.5.0",
-  "description": "A powerful and easy-to-use online video downloader",
+  "description": "mediago installer",
   "main": "main/index.js",
   "type": "module",
   "author": "caorushizi",

@@ -52,5 +52,5 @@
   ; Trade-off: title bar reads "Setup - mediago-community 3.5.0" in every
   ; locale instead of the translated "Installazione di ..." — acceptable.
   ; ---------------------------------------------------------------------
-  Caption "Setup - ${PRODUCT_NAME} ${VERSION}"
+  BrandingText "${PRODUCT_NAME} ${VERSION}"
 !macroend
