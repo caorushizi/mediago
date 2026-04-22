@@ -85,9 +85,7 @@ Headless install on your server, then access the web UI from anywhere on
 the same network:
 
 ```shell
-docker run -d --name mediago -p 8899:8899 \
-  -v /path/to/mediago:/app/mediago \
-  caorushizi/mediago:3.5.0
+docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago caorushizi/mediago:3.5.0
 ```
 
 Available on [Docker Hub](https://hub.docker.com/r/caorushizi/mediago) and GHCR (`ghcr.io/caorushizi/mediago`) — same image, pick whichever registry is faster for you. Supports both Intel / AMD (amd64) and ARM (arm64). On the desktop build,
