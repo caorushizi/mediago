@@ -7,15 +7,17 @@ outline: deep
 
 This article provides a simple guide to help you get started with using the software. Supports [OpenClaw Skill](/en/skills) for downloading videos via natural language in AI coding assistants.
 
-::: tip
-To facilitate communication and feedback, you can join the feedback group:
-
-MediaGo QQ Feedback Group 1: 574209001
-:::
-
 ::: info
 
 v3.5 is the latest version. Please feel free to provide feedback in this release and we will address it as quickly as possible.
+
+:::
+
+::: tip
+macOS usage
+
+- **[Intel chip]** Install the x64 build from the release page. After installation, allow apps from unidentified developers in Mac's Security settings.
+- **[Apple Silicon]** Install the arm64 build from the release page. After installation, run `sudo xattr -dr com.apple.quarantine /Applications/mediago-community.app` in Terminal.
 
 :::
 

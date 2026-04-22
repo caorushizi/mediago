@@ -31,6 +31,7 @@ export default defineConfig({
         items: [
           { text: "快速开始", link: "/guides" },
           { text: "使用说明", link: "/documents" },
+          { text: "下载接口", link: "/api" },
           { text: "更新日志", link: "/changelog" },
           { text: "通过宝塔面板部署", link: "/bt-install" },
           { text: "浏览器扩展", link: "/extension" },
@@ -76,6 +77,7 @@ export default defineConfig({
               { text: "Quick start", link: "/en/guides" },
               { text: "Baota Panel", link: "/en/bt-install" },
               { text: "Documents", link: "/en/documents" },
+              { text: "Download API", link: "/en/api" },
               { text: "Changelog", link: "/en/changelog" },
               { text: "Browser extension", link: "/en/extension" },
               { text: "🦞 OpenClaw Skill", link: "/en/skills" },
@@ -116,6 +118,7 @@ export default defineConfig({
               { text: "早く始めます", link: "/jp/guides" },
               { text: "塔のパネル配置です", link: "/jp/bt-install" },
               { text: "使用説明書です", link: "/jp/documents" },
+              { text: "ダウンロード API", link: "/jp/api" },
               { text: "ログを更新します。", link: "/jp/changelog" },
               { text: "ブラウザ拡張機能", link: "/jp/extension" },
               { text: "🦞 OpenClaw Skill", link: "/jp/skills" },
