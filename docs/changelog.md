@@ -5,6 +5,27 @@ outline: deep
 
 # 更新日志
 
+## v3.5.0 (2026.4.22 发布)
+
+### 软件下载
+
+- [【mediago】 windows（安装版） v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-win32-x64-3.5.0.exe)
+- [【mediago】 windows（便携版） v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-portable-win32-x64-3.5.0.exe)
+- [【mediago】 macos arm64（apple 芯片） v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-darwin-arm64-3.5.0.dmg)
+- [【mediago】 macos x64（intel 芯片） v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-darwin-x64-3.5.0.dmg)
+- [【mediago】 linux v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-linux-amd64-3.5.0.deb)
+- 【mediago】 docker v3.5.0 `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:3.5.0`
+
+### 主要更新
+
+- **🌐 浏览器扩展（Chrome / Edge）** —— 任意网站一键嗅探视频、一键发到 MediaGo
+- **🎬 支持 YouTube 和 1000+ 站点** —— 集成 yt-dlp
+- **🦞 OpenClaw Skill** —— 通过 AI 编程助手用自然语言下载视频
+- **🔌 开放 HTTP 接口** —— 支持脚本、自动化工具、第三方应用接入
+- **🎞️ 内置视频格式转换** —— 下载完成后在应用内选输出格式和画质
+- **🐳 Docker 部署简化** —— 镜像迁至 GitHub Container Registry（GHCR），支持 x86 / ARM 双架构，挂载单一目录即可
+- **⚡ 启动更快** —— 后端用 Go 重写，内存占用更低，内置视频播放器
+
 ## v3.0.0 (2024.10.7 发布)
 
 ### 软件下载

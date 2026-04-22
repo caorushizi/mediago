@@ -15,41 +15,33 @@ MediaGo QQフィードバックグループ 1： 574209001
 :::
 
 ::: info  
-v3.0 は最新バージョンです。皆さんの意見はできるだけ3.0バージョンでお寄せください。私たちはできるだけ早く修正します。  
+v3.5 が最新バージョンです。ご意見はできるだけこのバージョンでお寄せください。できるだけ早く対応します。  
 :::
 
 ## ダウンロードとインストール
 
-### v3.0.0 (2024年10月7日リリース)
+### v3.5.0 (2026年4月22日リリース)
 
 #### ソフトウェアのダウンロード
 
-- [【mediago】 windows（インストール版） v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-win32-x64-3.0.0.exe)
-- [【mediago】 windows（ポータブル版） v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-portable-win32-x64-3.0.0.exe)
-- [【mediago】 macos arm64（Appleチップ） v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-darwin-arm64-3.0.0.dmg)
-- [【mediago】 macos x64（Intelチップ） v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-darwin-x64-3.0.0.dmg)
-- [【mediago】 linux v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-linux-amd64-3.0.0.deb)
-- 【mediago】 docker v3.0 `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:latest`
+- [【mediago】 Windows（インストーラー版） v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-win32-x64-3.5.0.exe)
+- [【mediago】 Windows（ポータブル版） v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-portable-win32-x64-3.5.0.exe)
+- [【mediago】 macOS arm64（Apple Silicon） v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-darwin-arm64-3.5.0.dmg)
+- [【mediago】 macOS x64（Intel） v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-darwin-x64-3.5.0.dmg)
+- [【mediago】 Linux v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-linux-amd64-3.5.0.deb)
+- 【mediago】 Docker v3.5.0 `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:3.5.0`
 
-#### 重要な更新内容
+過去のバージョンは [GitHub Releases ページ](https://github.com/caorushizi/mediago/releases) をご覧ください。
 
-- DockerでWeb端末の展開をサポート
-- デスクトップ端末UIを更新
+#### 主な新機能
 
-#### 更新ログ
-
-- DockerでWeb端末の展開をサポート
-- デスクトップ端末UIを更新
-- 動画再生機能を追加、デスクトップとモバイル端末両方で再生可能
-- macで画面が表示されない問題を修正
-- バッチダウンロードのインタラクションを最適化
-- Windows用ポータブル版（インストール不要）を追加
-- ダウンロードリストを最適化し、ページ内の複数の動画の嗅探をサポート
-- お気に入りリストの手動インポート/エクスポートをサポート
-- ホームページのダウンロードリストエクスポートをサポート
-- 【新規ダウンロード】フォームのインタラクションロジックを最適化
-- UrlSchemeを使用してアプリを開き、ダウンロードタスクを追加
-- バグの修正とユーザーエクスペリエンスの向上
+- **ブラウザ拡張機能** (Chrome / Edge) — 任意のサイトで動画をワンクリックスニッフィング
+- **YouTube と 1000+ サイト** — yt-dlp による対応
+- **OpenClaw Skill** — AI コーディングアシスタント経由でのダウンロード
+- **HTTP API** — スクリプト・自動化・サードパーティツールとの統合
+- **アプリ内フォーマット変換** — ダウンロード完了後に出力形式と画質を選択
+- **Docker デプロイの簡素化** — GHCR のマルチアーキテクチャイメージ、単一ディレクトリのマウント
+- **起動の高速化** — バックエンドを Go で書き直し、メモリ使用量の削減、内蔵動画プレーヤー
 
 ## 操作方法
 

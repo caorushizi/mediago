@@ -5,6 +5,27 @@ outline: deep
 
 # 更新ログ
 
+## v3.5.0 (2026.4.22 リリース)
+
+### ソフトウェアダウンロード
+
+- [【mediago】 Windows（インストーラー版） v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-win32-x64-3.5.0.exe)
+- [【mediago】 Windows（ポータブル版） v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-portable-win32-x64-3.5.0.exe)
+- [【mediago】 macOS arm64（Apple Silicon） v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-darwin-arm64-3.5.0.dmg)
+- [【mediago】 macOS x64（Intel） v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-darwin-x64-3.5.0.dmg)
+- [【mediago】 Linux v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-linux-amd64-3.5.0.deb)
+- 【mediago】 Docker v3.5.0 `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:3.5.0`
+
+### 主な新機能
+
+- **🌐 ブラウザ拡張機能（Chrome / Edge）** — 任意のサイトで動画をワンクリックスニッフィング、MediaGo へ送信
+- **🎬 YouTube と 1000+ サイト** — yt-dlp による対応
+- **🦞 OpenClaw Skill** — AI コーディングアシスタント経由で自然言語ダウンロード
+- **🔌 HTTP API** — スクリプト・自動化・サードパーティツールとの統合
+- **🎞️ アプリ内フォーマット変換** — ダウンロード完了後に出力形式と画質を選択
+- **🐳 Docker デプロイの簡素化** — GitHub Container Registry のマルチアーキテクチャイメージ、単一ディレクトリのマウント
+- **⚡ 起動の高速化** — バックエンドを Go で書き直し、メモリ使用量の削減、内蔵動画プレーヤー
+
 ## v3.0.0 (2024.10.7 リリース)
 
 ### ソフトウェアダウンロード

@@ -15,42 +15,34 @@ MediaGo QQ Feedback Group 1: 574209001
 
 ::: info
 
-v3.0 is the latest version. Please feel free to provide feedback within version 3.0, and we will address it as soon as possible.
+v3.5 is the latest version. Please feel free to provide feedback in this release and we will address it as quickly as possible.
 
 :::
 
 ## Download and Installation
 
-### v3.0.0 (Released on October 7, 2024)
+### v3.5.0 (Released on April 22, 2026)
 
 #### Software Download
 
-- [【mediago】 Windows (Installer) v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-win32-x64-3.0.0.exe)
-- [【mediago】 Windows (Portable) v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-portable-win32-x64-3.0.0.exe)
-- [【mediago】 macOS arm64 (Apple Silicon) v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-darwin-arm64-3.0.0.dmg)
-- [【mediago】 macOS x64 (Intel) v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-darwin-x64-3.0.0.dmg)
-- [【mediago】 Linux v3.0.0](https://github.com/caorushizi/mediago/releases/download/v3.0.0/mediago-setup-linux-amd64-3.0.0.deb)
-- 【mediago】 Docker v3.0 `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:latest`
+- [【mediago】 Windows (Installer) v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-win32-x64-3.5.0.exe)
+- [【mediago】 Windows (Portable) v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-portable-win32-x64-3.5.0.exe)
+- [【mediago】 macOS arm64 (Apple Silicon) v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-darwin-arm64-3.5.0.dmg)
+- [【mediago】 macOS x64 (Intel) v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-darwin-x64-3.5.0.dmg)
+- [【mediago】 Linux v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-linux-amd64-3.5.0.deb)
+- 【mediago】 Docker v3.5.0 `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:3.5.0`
 
-#### Important Updates
+Older releases are on the [GitHub Releases page](https://github.com/caorushizi/mediago/releases).
 
-- Support for Docker deployment of the web version.
-- Updated desktop UI.
+#### What's New
 
-#### Changelog
-
-- Support for Docker deployment of the web version.
-- Updated desktop UI.
-- Added video playback, supporting both desktop and mobile versions.
-- Fixed an issue where macOS could not display the interface.
-- Optimized the interaction for batch downloads.
-- Added a portable version for Windows (no installation required).
-- Optimized the download list, supporting sniffing of multiple videos on a page.
-- Supports manual import/export of the favorite list.
-- Supports export of the homepage download list.
-- Optimized the interaction logic for the "New Download" form.
-- Supports UrlScheme to open the app and add download tasks.
-- Fixed some bugs and improved the user experience.
+- **Browser extension** (Chrome / Edge) — one-click video sniffing on any site.
+- **YouTube and 1000+ sites** — powered by yt-dlp.
+- **OpenClaw Skill** — download videos through AI coding assistants.
+- **Open HTTP API** — integrate with scripts, automation and third-party tools.
+- **In-app format conversion** — pick output format and quality after downloading.
+- **Simpler Docker deployment** — multi-arch images on GHCR, mount a single folder.
+- **Faster startup** — backend rewritten in Go, lower memory footprint, built-in player.
 
 ## Operation Instructions
 

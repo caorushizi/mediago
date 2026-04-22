@@ -5,6 +5,27 @@ outline: deep
 
 # Changelog
 
+## v3.5.0 (Released on 2026.4.22)
+
+### Software Downloads
+
+- [【mediago】 Windows (Installer) v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-win32-x64-3.5.0.exe)
+- [【mediago】 Windows (Portable) v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-portable-win32-x64-3.5.0.exe)
+- [【mediago】 macOS arm64 (Apple Silicon) v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-darwin-arm64-3.5.0.dmg)
+- [【mediago】 macOS x64 (Intel) v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-darwin-x64-3.5.0.dmg)
+- [【mediago】 Linux v3.5.0](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-linux-amd64-3.5.0.deb)
+- 【mediago】 Docker v3.5.0 `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:3.5.0`
+
+### Highlights
+
+- **🌐 Browser extension (Chrome / Edge)** — one-click video sniffing on any site, sent straight to MediaGo.
+- **🎬 YouTube and 1000+ sites** — powered by yt-dlp.
+- **🦞 OpenClaw Skill** — download videos through AI coding assistants with natural language.
+- **🔌 Open HTTP API** — integrate with scripts, automation and third-party tools.
+- **🎞️ In-app format conversion** — pick output format and quality after a download completes.
+- **🐳 Simpler Docker deployment** — multi-arch images (x86 / ARM) on GitHub Container Registry, mount a single folder.
+- **⚡ Faster startup** — backend rewritten in Go, lower memory footprint, built-in video player.
+
 ## v3.0.0 (Released on 2024.10.7)
 
 ### Software Downloads
