@@ -147,3 +147,5 @@ docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago caoru
 ---
 
 > ソースからビルドする場合は [CONTRIBUTING.md](./CONTRIBUTING.md)（英語）を参照してください。
+>
+> MediaGo の翻訳をご検討中の方は [TRANSLATION.md](./TRANSLATION.md)（英語）をご参照ください。

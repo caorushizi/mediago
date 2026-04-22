@@ -167,3 +167,5 @@ Browsing older releases? See the [GitHub Releases page](https://github.com/caoru
 ---
 
 > Building from source? See [CONTRIBUTING.md](./CONTRIBUTING.md).
+>
+> Translating MediaGo? See [TRANSLATION.md](./TRANSLATION.md).
