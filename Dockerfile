@@ -34,6 +34,12 @@ COPY apps/player-ui/ apps/player-ui/
 COPY apps/electron/app/package.json apps/electron/app/package.json
 COPY scripts/ scripts/
 
+# Vendored binaries (aria2 in particular). `scripts/download-deps.ts`
+# treats `source: "local"` entries by copying from `extra/<tool>/<os>/<arch>/`
+# into `.deps/`; without this COPY they silently get skipped and the
+# resulting image ships with no aria2c.
+COPY extra/ extra/
+
 # Build player-ui (will be embedded in Go core binary)
 RUN pnpm --filter @mediago/player-ui run build
 
