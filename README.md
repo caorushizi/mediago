@@ -87,10 +87,10 @@ the same network:
 ```shell
 docker run -d --name mediago -p 8899:8899 \
   -v /path/to/mediago:/app/mediago \
-  ghcr.io/caorushizi/mediago:3.5.0
+  caorushizi/mediago:3.5.0
 ```
 
-Supports both Intel / AMD (amd64) and ARM (arm64). On the desktop build,
+Available on [Docker Hub](https://hub.docker.com/r/caorushizi/mediago) and GHCR (`ghcr.io/caorushizi/mediago`) — same image, pick whichever registry is faster for you. Supports both Intel / AMD (amd64) and ARM (arm64). On the desktop build,
 MediaGo listens on both `127.0.0.1` and your LAN IP out of the box, so
 phones and tablets on the same Wi-Fi can open the web UI too.
 
@@ -113,7 +113,8 @@ phones and tablets on the same Wi-Fi can open the web UI too.
 - [macOS — Apple Silicon (arm64)](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-darwin-arm64-3.5.0.dmg)
 - [macOS — Intel (x64)](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-darwin-x64-3.5.0.dmg)
 - [Linux (deb)](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-linux-amd64-3.5.0.deb)
-- **Docker:** `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:3.5.0`
+- [**Docker Hub**](https://hub.docker.com/r/caorushizi/mediago): `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago caorushizi/mediago:3.5.0`
+- **GHCR**: `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:3.5.0`
 
 Browsing older releases? See the [GitHub Releases page](https://github.com/caorushizi/mediago/releases).
 

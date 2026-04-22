@@ -70,12 +70,10 @@ MediaGo 提供一整套 HTTP 接口 —— 脚本、自动化工具、其他 App
 服务器端一条命令部署，局域网内任意设备都能打开 Web 界面：
 
 ```shell
-docker run -d --name mediago -p 8899:8899 \
-  -v /path/to/mediago:/app/mediago \
-  ghcr.io/caorushizi/mediago:3.5.0
+docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago caorushizi/mediago:3.5.0
 ```
 
-支持 Intel / AMD (amd64) 和 ARM (arm64) 两种架构。桌面版同时监听 `127.0.0.1` 和局域网 IP，同一个 Wi-Fi 下的手机、平板可以直接打开 Web 界面。
+在 [Docker Hub](https://hub.docker.com/r/caorushizi/mediago) 和 GHCR（`ghcr.io/caorushizi/mediago`）上同步发布 —— 同一份镜像，哪个源更快用哪个。支持 Intel / AMD (amd64) 和 ARM (arm64) 两种架构。桌面版同时监听 `127.0.0.1` 和局域网 IP，同一个 Wi-Fi 下的手机、平板可以直接打开 Web 界面。
 
 ## 📷 软件截图
 
@@ -96,7 +94,8 @@ docker run -d --name mediago -p 8899:8899 \
 - [macOS — Apple Silicon (arm64)](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-darwin-arm64-3.5.0.dmg)
 - [macOS — Intel (x64)](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-darwin-x64-3.5.0.dmg)
 - [Linux (deb)](https://github.com/caorushizi/mediago/releases/download/v3.5.0/mediago-community-setup-linux-amd64-3.5.0.deb)
-- **Docker：** `docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:3.5.0`
+- [**Docker Hub**](https://hub.docker.com/r/caorushizi/mediago)：`docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago caorushizi/mediago:3.5.0`
+- **GHCR**：`docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago ghcr.io/caorushizi/mediago:3.5.0`
 
 查看历史版本请移步 [GitHub Releases](https://github.com/caorushizi/mediago/releases)。
 
