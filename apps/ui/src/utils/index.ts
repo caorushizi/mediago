@@ -111,6 +111,8 @@ export function getBrowserLang(): string {
   return lang.toLowerCase();
 }
 
-export function resolveAppLanguage(language: string | undefined): "zh" | "en" {
+export function resolveAppLanguage(
+  language: string | undefined,
+): ReturnType<typeof sharedResolveAppLanguage> {
   return sharedResolveAppLanguage(language, getBrowserLang());
 }

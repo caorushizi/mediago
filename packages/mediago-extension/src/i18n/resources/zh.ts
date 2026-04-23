@@ -31,6 +31,7 @@ const resource = {
       system: "跟随系统",
       zh: "中文",
       en: "English",
+      it: "Italiano",
     },
     server: {
       title: "调用方式",

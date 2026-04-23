@@ -4,12 +4,12 @@ import type { DownloadType } from "@mediago/shared-common";
  * UI language choice persisted in extension settings.
  *
  * - `system` — follow the browser UI language (`chrome.i18n.getUILanguage()`).
- * - `zh` / `en` — hard-pinned.
+ * - `zh` / `en` / `it` — hard-pinned.
  *
- * This maps 1:1 to the "跟随系统 / 中文 / English" radio on the options
+ * This maps 1:1 to the language radio on the options
  * page and is resolved to a concrete locale at i18n bootstrap time.
  */
-export type ExtensionLanguage = "system" | "zh" | "en";
+export type ExtensionLanguage = "system" | "zh" | "en" | "it";
 
 /**
  * Wire-format for localisable text produced in the service worker and

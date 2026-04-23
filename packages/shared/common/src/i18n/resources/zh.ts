@@ -52,6 +52,7 @@ export const zh = {
   downloaderTheme: "下载器主题",
   followSystem: "跟随系统",
   english: "English",
+  italian: "Italiano",
   pleaseSelectLanguage: "请选择显示语言",
   downloadPrompt: "下载完成提示",
   browserSetting: "浏览器设置",

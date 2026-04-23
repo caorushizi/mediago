@@ -12,6 +12,8 @@
 <a href="https://github.com/caorushizi/mediago/blob/master/README.zh.md">中文</a>
 <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
 <a href="https://github.com/caorushizi/mediago/blob/master/README.jp.md">日本語</a>
+<span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+<a href="https://github.com/caorushizi/mediago/blob/master/README.it.md">Italiano</a>
 <br>
 
   <!-- MediaGo Pro -->
@@ -40,6 +42,8 @@
 A cross-platform video downloader with built-in sniffing — point it at a
 page, pick what you want, and save. No packet capture, no browser
 extensions to configure, no fiddling with command-line tools.
+
+The app UI currently ships with English, Simplified Chinese, and Italian.
 
 ## ✨ What's inside
 

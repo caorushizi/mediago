@@ -9,5 +9,6 @@ export {
   DEFAULT_FRONTEND_APP,
   i18nResources,
   en,
+  it,
   zh,
 } from "./resources";

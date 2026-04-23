@@ -33,6 +33,7 @@ const resource: ExtensionResources = {
       system: "Follow system",
       zh: "中文",
       en: "English",
+      it: "Italiano",
     },
     server: {
       title: "Dispatch Mode",

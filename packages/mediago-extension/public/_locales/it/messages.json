@@ -1,0 +1,14 @@
+{
+  "appName": {
+    "message": "MediaGo Rilevatore media",
+    "description": "Extension name shown in the Chrome toolbar and chrome://extensions."
+  },
+  "appDescription": {
+    "message": "Rileva URL video / audio scaricabili su qualsiasi pagina e inviali al tuo server MediaGo con un clic.",
+    "description": "Extension description shown in chrome://extensions."
+  },
+  "actionTitle": {
+    "message": "MediaGo Rilevatore media",
+    "description": "Tooltip shown when hovering the toolbar icon."
+  }
+}

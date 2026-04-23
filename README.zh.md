@@ -12,6 +12,8 @@
 <a href="https://github.com/caorushizi/mediago/blob/master/README.md">English</a>
 <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
 <a href="https://github.com/caorushizi/mediago/blob/master/README.jp.md">日本語</a>
+<span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+<a href="https://github.com/caorushizi/mediago/blob/master/README.it.md">Italiano</a>
 <br>
 
   <!-- MediaGo Pro 推广 -->
@@ -38,6 +40,8 @@
 </div>
 
 跨平台视频下载器，内置嗅探 —— 打开网页、选一下想要的资源、保存完事。不用抓包、不用折腾浏览器插件、不用面对命令行。
+
+应用界面目前内置中文、英文和意大利语。
 
 ## ✨ 主打功能
 

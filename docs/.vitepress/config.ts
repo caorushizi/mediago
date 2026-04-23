@@ -142,6 +142,47 @@ export default defineConfig({
         ],
       },
     },
+    it: {
+      label: "Italiano",
+      lang: "it",
+      themeConfig: {
+        nav: [
+          { text: "Home", link: "/it" },
+          { text: "Guide", link: "/it/guides" },
+          { text: "Changelog", link: "/it/changelog" },
+        ],
+
+        sidebar: [
+          {
+            text: "Avvio rapido",
+            items: [
+              { text: "Avvio rapido", link: "/it/guides" },
+              { text: "BT Panel", link: "/it/bt-install" },
+              { text: "Guida utente", link: "/it/documents" },
+              { text: "API di download", link: "/it/api" },
+              { text: "Changelog", link: "/it/changelog" },
+              { text: "Estensione browser", link: "/it/extension" },
+              { text: "🦞 OpenClaw Skill", link: "/it/skills" },
+            ],
+          },
+          {
+            text: "Q&A",
+            items: [
+              { text: "Versioni precedenti", link: "/it/history" },
+              { text: "Feedback", link: "/it/proposal" },
+              { text: "Siti supportati", link: "/it/list" },
+            ],
+          },
+        ],
+
+        socialLinks: [
+          {
+            icon: "github",
+            link: "https://github.com/caorushizi/mediago",
+          },
+        ],
+      },
+    },
   },
 
   vite: {

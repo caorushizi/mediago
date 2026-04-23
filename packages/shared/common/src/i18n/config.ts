@@ -6,8 +6,10 @@ export const BASE_I18N_OPTIONS = {
   },
 } as const;
 
+export type ResolvedAppLanguage = "zh" | "en" | "it";
+
 /**
- * Resolve a stored AppStore.language value to a real i18n key ("zh" | "en").
+ * Resolve a stored AppStore.language value to a real i18n key.
  *
  * The persisted language may be `"system"` (meta value meaning "follow OS locale").
  * Each process resolves it at apply-time by passing its own locale source:
@@ -19,9 +21,17 @@ export const BASE_I18N_OPTIONS = {
 export function resolveAppLanguage(
   language: string | undefined,
   systemLocale: string | undefined,
-): "zh" | "en" {
-  if (language === "zh" || language === "en") {
+): ResolvedAppLanguage {
+  if (language === "zh" || language === "en" || language === "it") {
     return language;
   }
-  return (systemLocale ?? "").toLowerCase().startsWith("zh") ? "zh" : "en";
+
+  const normalizedSystemLocale = (systemLocale ?? "").toLowerCase();
+  if (normalizedSystemLocale.startsWith("zh")) {
+    return "zh";
+  }
+  if (normalizedSystemLocale.startsWith("it")) {
+    return "it";
+  }
+  return "en";
 }

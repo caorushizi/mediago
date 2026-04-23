@@ -2,9 +2,11 @@ import { App as AntdApp, ConfigProvider, theme as antdTheme } from "antd";
 import { type FC, lazy, Suspense, useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import "dayjs/locale/zh-cn";
+import "dayjs/locale/it";
 import { useAsyncEffect, useMemoizedFn } from "ahooks";
 import zhCN from "antd/es/locale/zh_CN";
 import enUS from "antd/es/locale/en_US";
+import itIT from "antd/es/locale/it_IT";
 import { useShallow } from "zustand/react/shallow";
 import Loading from "./components/loading";
 import { PAGE_LOAD } from "./const";
@@ -26,7 +28,7 @@ import { getConfig } from "./api/config";
 import { initGoEvents, onConfigChanged } from "./api/events";
 import { DownloadFilter } from "@mediago/shared-common";
 import { useAuth } from "./hooks/use-auth";
-import { Locale } from "antd/es/locale";
+import type { Locale } from "antd/es/locale";
 
 const AppLayout = lazy(() => import("./layout/app-layout"));
 const HomePage = lazy(() => import("./pages/home-page"));
@@ -40,6 +42,20 @@ function getAlgorithm(appTheme: "dark" | "light") {
   return appTheme === "dark"
     ? antdTheme.darkAlgorithm
     : antdTheme.defaultAlgorithm;
+}
+
+function getAntdLocale(
+  language: ReturnType<typeof resolveAppLanguage>,
+): Locale {
+  switch (language) {
+    case "zh":
+      return zhCN;
+    case "it":
+      return itIT;
+    case "en":
+    default:
+      return enUS;
+  }
 }
 
 const App: FC = () => {
@@ -56,7 +72,7 @@ const App: FC = () => {
   const [adapterReady, setAdapterReady] = useState(false);
 
   useEffect(() => {
-    setAppLocale(resolveAppLanguage(language) === "zh" ? zhCN : enUS);
+    setAppLocale(getAntdLocale(resolveAppLanguage(language)));
   }, [language]);
 
   const themeChange = useMemoizedFn((event: MediaQueryListEvent) => {

@@ -12,6 +12,8 @@
 <a href="https://github.com/caorushizi/mediago/blob/master/README.md">English</a>
 <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
 <a href="https://github.com/caorushizi/mediago/blob/master/README.zh.md">中文</a>
+<span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+<a href="https://github.com/caorushizi/mediago/blob/master/README.it.md">Italiano</a>
 <br>
 
   <!-- MediaGo Pro -->
@@ -38,6 +40,8 @@
 </div>
 
 ビルトインのスニッフィング機能を備えたクロスプラットフォームの動画ダウンローダー —— ページを開いて、欲しいリソースを選んで、保存するだけ。パケットキャプチャ不要、ブラウザ拡張の設定不要、コマンドラインの操作も不要です。
+
+アプリ UI は現在、英語・簡体中国語・イタリア語に対応しています。
 
 ## ✨ 主な機能
 

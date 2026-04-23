@@ -250,6 +250,7 @@ const SettingPage: React.FC = () => {
                     { label: t("followSystem"), value: AppLanguage.System },
                     { label: t("chinese"), value: AppLanguage.ZH },
                     { label: t("english"), value: AppLanguage.EN },
+                    { label: t("italian"), value: AppLanguage.IT },
                   ]}
                   placeholder={t("pleaseSelectLanguage")}
                   allowClear={false}
