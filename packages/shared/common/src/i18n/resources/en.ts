@@ -57,6 +57,7 @@ export const en = {
   displayLanguage: "Language",
   chinese: "中文",
   english: "English",
+  italian: "Italiano",
   pleaseSelectLanguage: "Select a language",
   downloadPrompt: "Download prompt",
   browserSetting: "Browser",

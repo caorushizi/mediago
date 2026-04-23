@@ -25,7 +25,7 @@ Supports light and dark modes.
 
 ### 3. Display Language
 
-Supports Chinese and English.
+Supports Chinese, English, and Italian.
 
 ### 4. Download Completion Notification
 

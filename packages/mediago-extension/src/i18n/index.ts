@@ -17,12 +17,15 @@ export type ExtensionLanguage = "system" | SupportedLanguage;
 export function resolveLanguage(
   setting: ExtensionLanguage | undefined,
 ): SupportedLanguage {
-  if (setting === "zh" || setting === "en") return setting;
+  if (setting === "zh" || setting === "en" || setting === "it") return setting;
   const uiLang =
     (typeof chrome !== "undefined" && chrome.i18n?.getUILanguage?.()) ||
     (typeof navigator !== "undefined" ? navigator.language : "") ||
     "";
-  return uiLang.toLowerCase().startsWith("zh") ? "zh" : "en";
+  const normalizedUiLang = uiLang.toLowerCase();
+  if (normalizedUiLang.startsWith("zh")) return "zh";
+  if (normalizedUiLang.startsWith("it")) return "it";
+  return "en";
 }
 
 /**

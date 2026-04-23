@@ -46,7 +46,7 @@ Two toggles on the options page under **Import Behaviour**:
 
 ## Interface language
 
-The extension supports Chinese and English. By default it follows the browser UI language (Chinese browser → Chinese UI). You can force a choice on the options page under **Interface Language**: Follow system / 中文 / English.
+The extension supports Chinese, English, and Italian. By default it follows the browser UI language. You can force a choice on the options page under **Interface Language**: Follow system / 中文 / English / Italiano.
 
 ## Troubleshooting
 

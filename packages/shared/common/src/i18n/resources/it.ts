@@ -235,7 +235,7 @@ export const it = {
   enableMobilePlayer: "Abilita riproduttore mobile",
   adminPassword: "Password amministratore",
   forgotPassword: "Password dimenticata?",
-  forgetPasswordDescription: "Se hai dimenticato la password dell'amministratore, puoi reimpostarla:\n1. Trova la cartella di archiviazione di MediaGo.\n2. Apri la cartella '.store' e modifica 'config.json'.\n3. Cancella il valore del campo apiKey."
+  forgetPasswordDescription: "Se hai dimenticato la password dell'amministratore, puoi reimpostarla:\n1. Trova la cartella di archiviazione di MediaGo.\n2. Apri la cartella '.store' e modifica 'config.json'.\n3. Cancella il valore del campo apiKey.",
   signin: "Accedi",
   signinMediaGoServer: "Accedi al server MediaGo",
   initializeMediaGoServer: "Imposta server MediaGo",

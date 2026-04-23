@@ -29,7 +29,7 @@ const resource: ExtensionResources = {
     language: {
       title: "Lingua interfaccia",
       description:
-        "Lingua usata dal popup e dalla pagina delle opzioni. Scelte "Usa stessa lingua sistema" in base alla lingua dell'interfaccia utente del browser.",
+        `Lingua usata dal popup e dalla pagina delle opzioni. Scelte "Usa stessa lingua sistema" in base alla lingua dell'interfaccia utente del browser.`,
       system: "Usa stessa lingua sistema",
       zh: "中文",
       en: "English",
@@ -41,7 +41,7 @@ const resource: ExtensionResources = {
         "L'estensione non fallisce mai silenziosamente. Una volta scelta una modalità, qualsiasi errore viene segnalato così com'è: se necessario cambia modalità manualmente in questa pagina.",
       modeSchemaTitle: "Desktop · Protocollo schema",
       modeSchemaDesc:
-        "Passa tramite il protocollo mediago-community:// (avvia desktop se non è in esecuzione). Richiede l\'installazione locale dell'app MediaGo Desktop.",
+        "Passa tramite il protocollo mediago-community:// (avvia desktop se non è in esecuzione). Richiede l'installazione locale dell'app MediaGo Desktop.",
       modeDesktopHttpTitle: "Desktop · HTTP locale",
       modeDesktopHttpDesc:
         "Parla con l'app desktop in esecuzione tramite {{base}}. Richiede che l'app desktop sia in esecuzione, ma non c'è nessuna finestra di conferma.",
@@ -78,7 +78,7 @@ const resource: ExtensionResources = {
       schemaSilentActive:
         "ON: il deeplink porta silent=1 quindi MediaGo crea immediatamente l'attività. OFF: MediaGo apre il modulo di download precompilato con il nome/tipo/cartella sniffata per la revisione.",
       schemaSilentInactive:
-        "Ha effetto solo in modalità sSchema: la modalità HTTP non prevede il concetto di dialogo ed è sempre silenziosa.",0
+        "Ha effetto solo in modalità sSchema: la modalità HTTP non prevede il concetto di dialogo ed è sempre silenziosa.",
     },
     rules: {
       title: "Regole sniffing",

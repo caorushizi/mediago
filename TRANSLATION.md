@@ -16,7 +16,8 @@ pnpm dev:electron
 
 1. Copy `packages/shared/common/src/i18n/resources/en.ts` to `<lang>.ts`,
    translate every value.
-2. Register the new locale (four small edits — see below).
+2. Register the new locale in the shared resources, resolver, UI dropdown,
+   and browser extension (see below).
 3. Open **Settings → Language**, pick your locale, and iterate. Vite HMR
    reflects edits in the running app within a second.
 4. Open a PR — we review and merge.
@@ -24,9 +25,9 @@ pnpm dev:electron
 ## Where strings live
 
 - **Main app UI** (desktop + self-hosted web):
-  `packages/shared/common/src/i18n/resources/{en,zh}.ts`
+  `packages/shared/common/src/i18n/resources/{en,it,zh}.ts`
 - **Browser extension** (separate, smaller catalog):
-  `packages/mediago-extension/src/i18n/resources/{en,zh}.ts`
+  `packages/mediago-extension/src/i18n/resources/{en,it,zh}.ts`
 
 Resources are plain TypeScript modules — each file exports a flat object of
 `key: "translation"` pairs. Keys are shared across languages; only values
@@ -55,12 +56,12 @@ export const fr = {
 ```
 
 Don't forget to add the new `french: "Français"` key to **every** resource
-file (`en.ts`, `zh.ts`, and your new `fr.ts`) so the Settings dropdown can
-render it in each language.
+file (`en.ts`, `it.ts`, `zh.ts`, and your new `fr.ts`) so the Settings
+dropdown can render it in each language.
 
 ### 2. Register the resource
 
-Three tiny edits:
+Core app registration:
 
 **`packages/shared/common/src/i18n/resources/index.ts`** — import the new
 locale and add it to both exports:
@@ -68,25 +69,35 @@ locale and add it to both exports:
 ```ts
 import { fr } from "./fr";
 // ...
-export const i18nResources = { en, zh, fr } as const;
-export const SUPPORTED_LANGUAGES = ["en", "zh", "fr"] as const;
-export { en, zh, fr };
+export const i18nResources = { en, it, zh, fr } as const;
+export const SUPPORTED_LANGUAGES = ["en", "it", "zh", "fr"] as const;
+export { en, it, zh, fr };
 ```
 
 **`packages/shared/common/src/i18n/config.ts`** — widen the
 `resolveAppLanguage` return type and the check inside:
 
 ```ts
+export type ResolvedAppLanguage = "zh" | "en" | "it" | "fr";
+
 export function resolveAppLanguage(
   language: string | undefined,
   systemLocale: string | undefined,
-): "zh" | "en" | "fr" {
-  if (language === "zh" || language === "en" || language === "fr") {
+): ResolvedAppLanguage {
+  if (
+    language === "zh" ||
+    language === "en" ||
+    language === "it" ||
+    language === "fr"
+  ) {
     return language;
   }
   // ...existing fallback...
 }
 ```
+
+If the new locale should follow the OS/browser locale automatically, add the
+matching `systemLocale` prefix check in the same function.
 
 **`packages/shared/common/src/types/index.ts`** — extend the `AppLanguage`
 enum:
@@ -99,6 +110,11 @@ export enum AppLanguage {
   FR = "fr",
 }
 ```
+
+**`apps/ui/src/App.tsx`** — if Ant Design ships a locale for your language,
+import it and include it in `getAntdLocale`. Otherwise, explicitly fall back
+to `enUS` for Ant Design components while your app strings still use your
+translated resource file.
 
 ### 3. Add the Settings dropdown option
 
@@ -117,7 +133,15 @@ options={[
 ### 4. (Optional) Translate the browser extension
 
 Same pattern, under `packages/mediago-extension/src/i18n/resources/`. It's a
-much smaller catalog and lives in its own `index.ts`.
+much smaller catalog and lives in its own `index.ts`. Also update:
+
+- `packages/mediago-extension/src/i18n/index.ts` for language resolution.
+- `packages/mediago-extension/src/shared/types.ts` for the persisted language
+  union.
+- `packages/mediago-extension/src/options/components/LanguageCard.tsx` for
+  the options-page selector.
+- `packages/mediago-extension/public/_locales/<lang>/messages.json` for the
+  Chrome extension name, description, and action tooltip.
 
 ## Live preview workflow
 
