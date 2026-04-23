@@ -7,6 +7,10 @@
   <a href="https://downloader.caorushizi.cn/jp/documents.html?form=github">ドキュメント</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="https://github.com/caorushizi/mediago/discussions">Discussions</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="https://discord.gg/yxWBVRWGqM">Discord</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="https://www.reddit.com/r/MediaGo_Studio/">Reddit</a>
   <br>
 
 <a href="https://github.com/caorushizi/mediago/blob/master/README.md">English</a>
