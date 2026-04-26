@@ -16,3 +16,7 @@ apps/main/bin/
 .deps/
 
 tmp/
+
+# Local planning notes that should not be published with the open-source repo.
+docs/.vitepress/seo-keyword-map*.md
+docs/.vitepress/private/

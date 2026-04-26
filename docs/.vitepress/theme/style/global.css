@@ -11,3 +11,65 @@
     --vp-layout-top-height: 80px;
   }
 }
+
+/* Keep blog tables inside the article column. */
+.vp-doc[class*="_blog_"] table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.vp-doc[class*="_blog_"] th,
+.vp-doc[class*="_blog_"] td {
+  min-width: 120px;
+  vertical-align: top;
+}
+
+.vp-doc[class*="_blog_"] th {
+  white-space: nowrap;
+}
+
+/* Blog translations are handled by an explicit article-level link to avoid untranslated locale URLs. */
+body:has(.vp-doc[class*="_blog_"]) .VPNavBarTranslations,
+body:has(.vp-doc[class*="_blog_"]) .VPNavBarExtra .translations,
+body:has(.vp-doc[class*="_blog_"]) .VPNavScreen .translations {
+  display: none !important;
+}
+
+.blog-language-switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 24px;
+  padding: 10px 12px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-2);
+  font-size: 14px;
+}
+
+.blog-language-switch a {
+  flex: 0 0 auto;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--vp-c-brand-soft);
+  color: var(--vp-c-brand-1);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.blog-language-switch a:hover {
+  background: var(--vp-c-brand-2);
+  color: var(--vp-c-white);
+}
+
+@media (max-width: 640px) {
+  .blog-language-switch {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

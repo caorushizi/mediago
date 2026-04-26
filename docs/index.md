@@ -45,4 +45,19 @@ features:
   - icon: 🐳
     title: Docker 一键部署
     details: 一条命令部署到 NAS / VPS 上，浏览器直接访问。Docker Hub 和 GHCR 同步发布多架构镜像。
+  - icon: 📚
+    title: 视频下载器推荐
+    details: 按免费、电脑端、M3U8、IDM、yt-dlp、猫抓和 NAS 场景梳理主流工具怎么选。
+    link: /blog/video-downloader-recommendation/
+    linkText: 查看推荐
+  - icon: 🧭
+    title: 网页视频下载指南
+    details: 了解网页视频下载的常见入口、工具选择和 MediaGo 的内置浏览器、扩展、队列工作流。
+    link: /blog/video-download/
+    linkText: 查看指南
+  - icon: 📡
+    title: M3U8 / HLS 专题
+    details: 解释 M3U8、HLS、DASH、直播流和分段视频的关系，以及常见下载失败原因。
+    link: /blog/m3u8-hls-download/
+    linkText: 了解专题
 ---

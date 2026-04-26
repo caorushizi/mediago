@@ -44,6 +44,14 @@
                   {{ t("search") }}
                 </a>
               </li>
+              <li class="mb-1">
+                <a
+                  href="/blog/"
+                  class="text-[var(--vp-c-text-2)] no-underline transition-colors hover:text-[var(--vp-c-text-1)] duration-300"
+                >
+                  {{ t("blog") }}
+                </a>
+              </li>
             </ul>
           </div>
 
