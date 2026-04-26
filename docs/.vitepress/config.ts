@@ -4,7 +4,7 @@ import { defineConfig, type HeadConfig } from "vitepress";
 import { baiduAnalytics, googleAnalytics } from "./plugins";
 
 const isDev = process.env.NODE_ENV === "development";
-const siteUrl = "https://mediago.torchstellar.com";
+const siteUrl = "https://downloader.caorushizi.cn";
 
 const head: HeadConfig[] = [
   ["link", { rel: "shortcut icon", href: "/favicon.svg" }],
