@@ -1,5 +1,5 @@
 {
-  "name": "mediago",
+  "name": "mediago-community",
   "version": "3.5.0",
   "description": "A powerful and easy-to-use online video downloader",
   "main": "main/index.js",
