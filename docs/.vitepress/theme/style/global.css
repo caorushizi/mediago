@@ -1,17 +1,5 @@
 @import "tailwindcss";
 
-/* Top Banner - 使用 VitePress 官方变量 */
-:root {
-  --vp-layout-top-height: 60px;
-}
-
-/* 移动端横幅高度 */
-@media (max-width: 768px) {
-  :root {
-    --vp-layout-top-height: 80px;
-  }
-}
-
 /* Keep blog tables inside the article column. */
 .vp-doc[class*="_blog_"] table {
   display: block;

@@ -28,7 +28,7 @@ Related articles:
 
 **Information current as of: April 26, 2026**
 
-**Products reviewed: MediaGo open-source edition, MediaGo Pro, yt-dlp, 4K Video Downloader Plus, Video DownloadHelper, JDownloader 2, Internet Download Manager, MeTube, Tube Archivist, Pinchflat, TubeSync, Downie, Pulltube, YTDLnis, Seal, N_m3u8DL-RE, FFmpeg, Streamlink, yutto, BBDown, TwitchDownloader, Cobalt, SnapDownloader, iTubeGo, VideoProc Converter AI, and CleverGet.**
+**Products reviewed: MediaGo open-source edition, yt-dlp, 4K Video Downloader Plus, Video DownloadHelper, JDownloader 2, Internet Download Manager, MeTube, Tube Archivist, Pinchflat, TubeSync, Downie, Pulltube, YTDLnis, Seal, N_m3u8DL-RE, FFmpeg, Streamlink, yutto, BBDown, TwitchDownloader, Cobalt, SnapDownloader, iTubeGo, VideoProc Converter AI, and CleverGet.**
 
 > This article only discusses public, owned, licensed, educational, internal, or otherwise authorized media workflows. It does not cover access-control bypassing, protected content acquisition, DRM circumvention, or platform restriction evasion.
 
@@ -47,9 +47,9 @@ Under this shift, the boundaries between traditional video downloaders, command-
 - Can it continue after the download with transcoding, transcription, translation, audio extraction, and vocal separation?
 - Can it become a long-running private media center rather than a one-time link parser?
 
-From that perspective, MediaGo occupies an unusual product position. The open-source edition already covers cross-platform desktop apps, built-in sniffing, Chrome/Edge extensions, Bilibili, YouTube, Twitter/X, Instagram, HLS/M3U8, live streams, 1000+ sites, an HTTP API, OpenClaw Skill, Docker/NAS deployment, and local-network access. MediaGo Pro further strengthens the modern UI, the desktop and NAS dual form factor, private media library, multi-device playback, plugin center, batch management, format conversion, and built-in player. According to the product roadmap, MediaGo Pro is expected to add AI-related capabilities in May 2026, including Agent, video processing, video/audio transcription, subtitle translation, vocal extraction, and video vocal separation. Planned features should be judged by the released version when they ship.
+From that perspective, MediaGo occupies an unusual product position. The open-source edition already covers cross-platform desktop apps, built-in sniffing, Chrome/Edge extensions, Bilibili, YouTube, Twitter/X, Instagram, HLS/M3U8, live streams, 1000+ sites, an HTTP API, OpenClaw Skill, Docker/NAS deployment, and local-network access.
 
-Overall, MediaGo and MediaGo Pro are not competing only on "video downloading." They are expanding toward a complete workflow for video acquisition, management, processing, playback, and automation. Their relationship with yt-dlp, 4K Video Downloader Plus, VideoProc Converter AI, MeTube, Tube Archivist, and similar products is not a one-dimensional replacement relationship; the overlap depends on the user scenario.
+Overall, MediaGo is not competing only on "video downloading." It is expanding toward a complete workflow for video acquisition, management, processing, playback, and automation. Its relationship with yt-dlp, 4K Video Downloader Plus, VideoProc Converter AI, MeTube, Tube Archivist, and similar products is not a one-dimensional replacement relationship; the overlap depends on the user scenario.
 
 ---
 
@@ -80,58 +80,49 @@ Most video downloaders are good at one entry point: command line, browser extens
 
 That makes MediaGo more than a tool where users paste a link and download. It can work as a video download foundation called by scripts, browsers, desktop apps, NAS systems, and agents.
 
-### 2. MediaGo Pro is closer to a private media processing platform than a traditional video downloader
-
-MediaGo Pro's public commercial page positions it as "a high-speed desktop downloader and a private media library in your NAS." That means it is not simply a paid feature pack for the open-source edition; it is a higher-end desktop and server-side product.
-
-The current page shows support for Windows, Mac, Linux, and Docker. It can be deployed on a personal computer as a desktop downloader, or on a NAS/private server as a 24/7 download center. The displayed capabilities include cross-screen streaming playback, a fast download engine, Docker/NAS integration, a full desktop client, intelligent download sniffing, batch management, built-in browser, format conversion, and built-in player.
-
-If the AI roadmap for May 2026 lands as planned, MediaGo Pro will move further into "post-download processing": video transcription, subtitle translation, audio extraction, vocal separation, and agent automation. This will place it in more direct comparison with VideoProc Converter AI, the AI audio capabilities of 4K Video Downloader Plus, and NAS private media library tools.
-
-### 3. yt-dlp remains core infrastructure, but most users need productized packaging
+### 2. yt-dlp remains core infrastructure, but most users need productized packaging
 
 yt-dlp remains extremely strong in site coverage and command-line flexibility. It fits developers, scripted jobs, and scenarios that require special parameters. But for normal users, creators, education users, and enterprise archiving users, a command-line tool has a high learning cost. The value of products like MediaGo is to wrap the capabilities of tools such as yt-dlp, N_m3u8DL-RE, and BBDown into a more intuitive interface and workflow.
 
-### 4. NAS tools are becoming a standalone category
+### 3. NAS tools are becoming a standalone category
 
-MeTube, Tube Archivist, Pinchflat, and TubeSync all point to the same trend: more users want video download jobs to run long-term on home servers, Docker hosts, or NAS devices. Tube Archivist is strong as a YouTube private media library. Pinchflat and TubeSync are strong for YouTube channel/playlist synchronization. MeTube is strong as a lightweight yt-dlp Web UI. MediaGo Pro's difference is the combined route of desktop + NAS + plugins + multi-site support + media library + AI post-processing.
+MeTube, Tube Archivist, Pinchflat, and TubeSync all point to the same trend: more users want video download jobs to run long-term on home servers, Docker hosts, or NAS devices. Tube Archivist is strong as a YouTube private media library. Pinchflat and TubeSync are strong for YouTube channel/playlist synchronization. MeTube is strong as a lightweight yt-dlp Web UI. MediaGo's difference is the combined route of desktop + browser + NAS + API + multi-site support + streaming protocols.
 
-### 5. Traditional commercial downloaders still have a market, but growth is shifting toward AI and private processing
+### 4. Traditional commercial downloaders still have a market, but growth is shifting toward AI and private processing
 
-4K Video Downloader Plus, SnapDownloader, iTubeGo, Downie, Pulltube, and similar tools are mature on the desktop experience. However, most of them lack NAS, API, agent, and private media library capabilities. VideoProc Converter AI represents another direction: AI video enhancement, transcoding, compression, and screen recording as the main product, with downloading as one module. MediaGo Pro's opportunity is to start from the download entry point and extend into an AI media processing workflow.
+4K Video Downloader Plus, SnapDownloader, iTubeGo, Downie, Pulltube, and similar tools are mature on the desktop experience. However, most of them lack NAS, API, agent, and open-source transparency. VideoProc Converter AI represents another direction: AI video enhancement, transcoding, compression, and screen recording as the main product, with downloading as one module. MediaGo's opportunity is to connect the download entry, browser sniffing, protocol handling, and automation workflows in an open-source form.
 
 ---
 
 ## 3. Overall Comparison Matrix
 
-| Product                         | Type                                            | Main platforms                       | Site coverage                                        | HLS/M3U8/DASH | Browser capability                     | NAS/Docker            | API/Agent                       | AI/Post-processing                                                       | Relationship to MediaGo                                |
-| ------------------------------- | ----------------------------------------------- | ------------------------------------ | ---------------------------------------------------- | ------------- | -------------------------------------- | --------------------- | ------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------ |
-| **MediaGo open-source edition** | Comprehensive video downloader                  | Windows / macOS / Linux / Docker     | Bilibili, YouTube, Twitter/X, Instagram, 1000+ sites | Strong        | Chrome/Edge, built-in browser          | Strong                | HTTP API, OpenClaw Skill        | Format conversion                                                        | Baseline product                                       |
-| **MediaGo Pro**                 | Commercial downloader and private media library | Windows / Mac / Linux / Docker / NAS | Multi-platform and plugin expansion                  | Strong        | Intelligent sniffing, built-in browser | Strong                | Extensible today, Agent planned | Format conversion today, AI transcription/translation/separation planned | Commercial enhancement of MediaGo                      |
-| yt-dlp                          | Command-line engine                             | Windows / macOS / Linux              | Extremely broad                                      | Strong        | Weak                                   | Scriptable deployment | Strong                          | Depends on external tools                                                | Important underlying ecosystem                         |
-| 4K Video Downloader Plus        | Commercial desktop app                          | Windows / macOS / Ubuntu             | YouTube, Vimeo, TikTok, Bilibili, etc.               | Medium-strong | Built-in browser                       | Weak                  | Weak                            | AI audio processing                                                      | Strong commercial desktop competitor                   |
-| Video DownloadHelper            | Browser extension                               | Chrome / Firefox / Edge              | 1000+ sites                                          | Strong        | Very strong                            | Weak                  | Weak                            | Conversion/audio extraction                                              | Strong browser entry, weak downstream workflow         |
-| JDownloader 2                   | Download manager                                | Windows / macOS / Linux / NAS        | Plugin-based                                         | Medium        | Works with plugins                     | Medium                | Medium                          | Weak                                                                     | Strong file-download manager, less video-focused       |
-| IDM                             | Download accelerator                            | Windows                              | Browser-capture based                                | Medium        | Strong                                 | Weak                  | Weak                            | Weak                                                                     | Strong Windows download accelerator                    |
-| MeTube                          | Self-hosted Web UI                              | Docker / NAS                         | yt-dlp-supported sites                               | Strong        | Can work with extensions               | Very strong           | Medium                          | Weak                                                                     | Strong lightweight NAS downloader                      |
-| Tube Archivist                  | YouTube private media library                   | Docker / NAS                         | YouTube                                              | Medium-strong | Companion extension                    | Very strong           | Medium-strong                   | Weak                                                                     | Strong YouTube archiving                               |
-| Pinchflat                       | YouTube media manager                           | Docker / NAS                         | YouTube                                              | Medium-strong | Weak                                   | Very strong           | Medium                          | Weak                                                                     | Strong YouTube-to-media-center workflow                |
-| TubeSync                        | YouTube PVR                                     | Docker / Podman                      | YouTube                                              | Medium-strong | Weak                                   | Very strong           | Medium                          | Weak                                                                     | Strong unattended synchronization                      |
-| Downie                          | macOS commercial downloader                     | macOS                                | 1000+ sites                                          | Medium-strong | Browser integration                    | Weak                  | Weak                            | Basic post-processing                                                    | Strong Mac desktop experience                          |
-| Pulltube                        | macOS commercial downloader                     | macOS                                | 1000+ sites                                          | Medium-strong | Chrome/Safari/Firefox                  | Weak                  | Weak                            | Conversion, trimming, subtitles                                          | Strong Mac experience                                  |
-| YTDLnis                         | Android downloader                              | Android                              | yt-dlp sites                                         | Strong        | Share-sheet entry                      | Weak                  | Medium-strong                   | Basic post-processing                                                    | Strong Android tool                                    |
-| Seal                            | Android downloader                              | Android                              | yt-dlp sites                                         | Medium-strong | Share-sheet entry                      | Weak                  | Medium                          | Basic post-processing                                                    | Simple Android tool                                    |
-| N_m3u8DL-RE                     | Streaming CLI                                   | Cross-platform                       | Requires stream URL                                  | Very strong   | Weak                                   | Deployable            | Strong                          | Muxing/subtitles                                                         | Core HLS/DASH/MSS specialist                           |
-| FFmpeg                          | Audio/video infrastructure                      | All platforms                        | Not site-based                                       | Very strong   | Weak                                   | Deployable            | Very strong                     | Very strong                                                              | Underlying processing infrastructure                   |
-| Streamlink                      | Live-stream CLI                                 | Windows / macOS / Linux              | Twitch, YouTube, etc.                                | Strong        | Weak                                   | Deployable            | Strong                          | Weak                                                                     | Strong live-stream handling                            |
-| yutto                           | Bilibili CLI                                    | Python / Docker                      | Bilibili                                             | Strong        | Weak                                   | Medium                | Strong                          | Danmaku/subtitles                                                        | Deep Bilibili tool                                     |
-| BBDown                          | Bilibili CLI                                    | .NET / cross-platform                | Bilibili                                             | Strong        | Weak                                   | Medium                | Strong                          | Danmaku/subtitles/cover                                                  | Bilibili parsing core                                  |
-| TwitchDownloader                | Twitch specialist                               | Windows GUI / cross-platform CLI     | Twitch                                               | Strong        | Weak                                   | Medium                | Strong                          | Chat rendering                                                           | Strong Twitch specialist                               |
-| Cobalt                          | Web/self-hosted downloader                      | Web / Docker                         | Social-platform oriented                             | Medium        | Web entry                              | Strong                | Strong                          | Weak                                                                     | Lightweight Web shape                                  |
-| SnapDownloader                  | Commercial desktop app                          | Windows / macOS                      | 900+ sites                                           | Medium        | Weak                                   | Weak                  | Weak                            | Basic trimming/audio extraction                                          | Traditional commercial downloader                      |
-| iTubeGo                         | Commercial desktop app                          | Windows / macOS / Android            | 1000+ or more sites claimed                          | Medium        | Weak                                   | Weak                  | Weak                            | Basic conversion                                                         | Traditional commercial downloader                      |
-| VideoProc Converter AI          | AI video toolbox                                | Windows / macOS                      | Broad download module                                | Medium-strong | Weak                                   | Weak                  | Weak                            | Very strong                                                              | Strong AI processing, downloading is not its only core |
-| CleverGet                       | Commercial download suite                       | Windows / macOS                      | 1000+ sites and modules                              | Medium-strong | Built-in browser/recording             | Weak                  | Weak                            | Medium                                                                   | Modular commercial download suite                      |
+| Product                         | Type                           | Main platforms                   | Site coverage                                        | HLS/M3U8/DASH | Browser capability            | NAS/Docker            | API/Agent                | AI/Post-processing              | Relationship to MediaGo                                |
+| ------------------------------- | ------------------------------ | -------------------------------- | ---------------------------------------------------- | ------------- | ----------------------------- | --------------------- | ------------------------ | ------------------------------- | ------------------------------------------------------ |
+| **MediaGo open-source edition** | Comprehensive video downloader | Windows / macOS / Linux / Docker | Bilibili, YouTube, Twitter/X, Instagram, 1000+ sites | Strong        | Chrome/Edge, built-in browser | Strong                | HTTP API, OpenClaw Skill | Format conversion               | Baseline product                                       |
+| yt-dlp                          | Command-line engine            | Windows / macOS / Linux          | Extremely broad                                      | Strong        | Weak                          | Scriptable deployment | Strong                   | Depends on external tools       | Important underlying ecosystem                         |
+| 4K Video Downloader Plus        | Commercial desktop app         | Windows / macOS / Ubuntu         | YouTube, Vimeo, TikTok, Bilibili, etc.               | Medium-strong | Built-in browser              | Weak                  | Weak                     | AI audio processing             | Strong commercial desktop competitor                   |
+| Video DownloadHelper            | Browser extension              | Chrome / Firefox / Edge          | 1000+ sites                                          | Strong        | Very strong                   | Weak                  | Weak                     | Conversion/audio extraction     | Strong browser entry, weak downstream workflow         |
+| JDownloader 2                   | Download manager               | Windows / macOS / Linux / NAS    | Plugin-based                                         | Medium        | Works with plugins            | Medium                | Medium                   | Weak                            | Strong file-download manager, less video-focused       |
+| IDM                             | Download accelerator           | Windows                          | Browser-capture based                                | Medium        | Strong                        | Weak                  | Weak                     | Weak                            | Strong Windows download accelerator                    |
+| MeTube                          | Self-hosted Web UI             | Docker / NAS                     | yt-dlp-supported sites                               | Strong        | Can work with extensions      | Very strong           | Medium                   | Weak                            | Strong lightweight NAS downloader                      |
+| Tube Archivist                  | YouTube private media library  | Docker / NAS                     | YouTube                                              | Medium-strong | Companion extension           | Very strong           | Medium-strong            | Weak                            | Strong YouTube archiving                               |
+| Pinchflat                       | YouTube media manager          | Docker / NAS                     | YouTube                                              | Medium-strong | Weak                          | Very strong           | Medium                   | Weak                            | Strong YouTube-to-media-center workflow                |
+| TubeSync                        | YouTube PVR                    | Docker / Podman                  | YouTube                                              | Medium-strong | Weak                          | Very strong           | Medium                   | Weak                            | Strong unattended synchronization                      |
+| Downie                          | macOS commercial downloader    | macOS                            | 1000+ sites                                          | Medium-strong | Browser integration           | Weak                  | Weak                     | Basic post-processing           | Strong Mac desktop experience                          |
+| Pulltube                        | macOS commercial downloader    | macOS                            | 1000+ sites                                          | Medium-strong | Chrome/Safari/Firefox         | Weak                  | Weak                     | Conversion, trimming, subtitles | Strong Mac experience                                  |
+| YTDLnis                         | Android downloader             | Android                          | yt-dlp sites                                         | Strong        | Share-sheet entry             | Weak                  | Medium-strong            | Basic post-processing           | Strong Android tool                                    |
+| Seal                            | Android downloader             | Android                          | yt-dlp sites                                         | Medium-strong | Share-sheet entry             | Weak                  | Medium                   | Basic post-processing           | Simple Android tool                                    |
+| N_m3u8DL-RE                     | Streaming CLI                  | Cross-platform                   | Requires stream URL                                  | Very strong   | Weak                          | Deployable            | Strong                   | Muxing/subtitles                | Core HLS/DASH/MSS specialist                           |
+| FFmpeg                          | Audio/video infrastructure     | All platforms                    | Not site-based                                       | Very strong   | Weak                          | Deployable            | Very strong              | Very strong                     | Underlying processing infrastructure                   |
+| Streamlink                      | Live-stream CLI                | Windows / macOS / Linux          | Twitch, YouTube, etc.                                | Strong        | Weak                          | Deployable            | Strong                   | Weak                            | Strong live-stream handling                            |
+| yutto                           | Bilibili CLI                   | Python / Docker                  | Bilibili                                             | Strong        | Weak                          | Medium                | Strong                   | Danmaku/subtitles               | Deep Bilibili tool                                     |
+| BBDown                          | Bilibili CLI                   | .NET / cross-platform            | Bilibili                                             | Strong        | Weak                          | Medium                | Strong                   | Danmaku/subtitles/cover         | Bilibili parsing core                                  |
+| TwitchDownloader                | Twitch specialist              | Windows GUI / cross-platform CLI | Twitch                                               | Strong        | Weak                          | Medium                | Strong                   | Chat rendering                  | Strong Twitch specialist                               |
+| Cobalt                          | Web/self-hosted downloader     | Web / Docker                     | Social-platform oriented                             | Medium        | Web entry                     | Strong                | Strong                   | Weak                            | Lightweight Web shape                                  |
+| SnapDownloader                  | Commercial desktop app         | Windows / macOS                  | 900+ sites                                           | Medium        | Weak                          | Weak                  | Weak                     | Basic trimming/audio extraction | Traditional commercial downloader                      |
+| iTubeGo                         | Commercial desktop app         | Windows / macOS / Android        | 1000+ or more sites claimed                          | Medium        | Weak                          | Weak                  | Weak                     | Basic conversion                | Traditional commercial downloader                      |
+| VideoProc Converter AI          | AI video toolbox               | Windows / macOS                  | Broad download module                                | Medium-strong | Weak                          | Weak                  | Weak                     | Very strong                     | Strong AI processing, downloading is not its only core |
+| CleverGet                       | Commercial download suite      | Windows / macOS                  | 1000+ sites and modules                              | Medium-strong | Built-in browser/recording    | Weak                  | Weak                     | Medium                          | Modular commercial download suite                      |
 
 ---
 
@@ -190,75 +181,9 @@ MediaGo's open-source edition is one of the more complete video downloader produ
 
 ---
 
-## 5. MediaGo Pro Deep Dive
+## 5. Major Competitor Analysis
 
-### 5.1 Current product positioning
-
-MediaGo Pro's public commercial page positions it as "a high-speed desktop downloader and a private media library in your NAS." That means it is not simply a paid feature pack on top of the open-source edition, but a dual desktop/server product aimed at more demanding users.
-
-The current page shows support for Windows, Mac, Linux, and Docker. It can run on a personal computer as a desktop downloader, or on a NAS/private server as an always-on download center. Its displayed capabilities include cross-screen streaming playback, fast download engine, Docker/NAS integration, full desktop client, intelligent download sniffing, batch management, built-in browser, format conversion, and built-in player.
-
-### 5.2 Commercial edition capability structure
-
-| Module                | Current state                                                               |
-| --------------------- | --------------------------------------------------------------------------- |
-| UI                    | More modern product UI than the open-source edition                         |
-| Desktop               | Windows, Mac, Linux                                                         |
-| Server                | Docker, NAS, private servers                                                |
-| Private media library | Can form an accessible and playable media space on the NAS side             |
-| Multi-device playback | Phones, tablets, TVs, and browsers can access server-side content           |
-| Downloading           | Intelligent sniffing, concurrent downloading, batch queues, task scheduling |
-| Processing            | Format conversion, built-in player                                          |
-| Plugins               | Official plugins and community plugins                                      |
-| Licensing             | Desktop-only, NAS-only, and full-platform plans                             |
-| Support               | The full-platform plan includes priority technical support                  |
-
-### 5.3 Plugin system
-
-MediaGo Pro's public plugin center currently shows both official and community plugins. Official plugins include an M3U8 Downloader Pro and a direct-link downloader. Community plugins include YT-DLP Integration and a Bilibili Downloader. The plugin design matters because video sites, protocols, download scenarios, and post-processing capabilities continue to change. Compared with hardcoding all features into the main application, a plugin mechanism is better for expansion and maintenance.
-
-This is also where MediaGo Pro differs from many traditional commercial downloaders. Traditional commercial downloaders are usually closed all-in-one applications, where users can only wait for vendor updates. A plugin center lets the product gradually build an external extension ecosystem.
-
-### 5.4 Planned AI capabilities
-
-According to product roadmap information, MediaGo Pro is expected to add AI-related capabilities in May 2026, including:
-
-- AI Agent;
-- Video processing;
-- Video or audio transcription;
-- Subtitle translation;
-- Vocal extraction;
-- Video vocal separation.
-
-The significance of these capabilities is not simply "more features"; they change the product category. Traditional video downloaders stop when the download finishes. With AI processing, MediaGo Pro can continue the workflow after the video is downloaded:
-
-1. Download public videos, licensed courses, or owned media;
-2. Automatically transcribe them into text;
-3. Automatically generate or translate subtitles;
-4. Extract audio;
-5. Separate vocals and background;
-6. Archive the result into a private media library;
-7. Trigger downstream tasks automatically through an agent.
-
-That would move MediaGo Pro into the category of an AI private media workstation.
-
-### 5.5 Relationship with the open-source edition
-
-| Version                     | Role                                                                                                   | Best-fit users                                                                             |
-| --------------------------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| MediaGo open-source edition | Free, open-source, cross-platform, deployable, automatable base version                                | Normal users, developers, open-source users, lightweight NAS users                         |
-| Current MediaGo Pro         | More modern UI, desktop/NAS dual form factor, plugin center, private media library, commercial support | Advanced users, NAS users, content workers, long-term users                                |
-| MediaGo Pro AI edition      | Downloading, archiving, transcription, translation, vocal separation, agent automation                 | Creators, knowledge-management users, education users, enterprise media organization users |
-
-### 5.6 Conclusion
-
-The most important thing about MediaGo Pro is not any single download capability; it is the expansion of the product boundary. It already has both desktop and NAS forms. If AI processing and agent capabilities land well, it will move beyond traditional video downloaders and become a platform around video asset acquisition, organization, processing, and playback.
-
----
-
-## 6. Major Competitor Analysis
-
-## 6.1 yt-dlp
+## 5.1 yt-dlp
 
 ### Product overview
 
@@ -288,7 +213,7 @@ yt-dlp is both an ecosystem partner for MediaGo and a core tool that all advance
 
 ---
 
-## 6.2 4K Video Downloader Plus
+## 5.2 4K Video Downloader Plus
 
 ### Product overview
 
@@ -311,15 +236,15 @@ yt-dlp is both an ecosystem partner for MediaGo and a core tool that all advance
 - API and agent automation are weak;
 - Less open-source transparency than MediaGo;
 - Plugin ecosystem is not its core model;
-- Private media library capability is weaker than MediaGo Pro's direction.
+- Private media library capability is not the core strength of the open-source and self-hosted direction.
 
 ### Conclusion
 
-4K Video Downloader Plus is an important benchmark for MediaGo Pro in commercial desktop downloaders. If MediaGo Pro only compares "link downloading," its advantage is not enough. The real differentiation should be NAS, plugins, private media library, agents, and post-download AI workflow.
+4K Video Downloader Plus is an important benchmark among traditional commercial desktop downloaders. MediaGo's differentiation is stronger around open-source transparency, Docker/NAS, HTTP API, browser extensions, and integration across multiple underlying tools.
 
 ---
 
-## 6.3 Video DownloadHelper
+## 5.3 Video DownloadHelper
 
 ### Product overview
 
@@ -349,7 +274,7 @@ Video DownloadHelper is a representative browser video detection entry point. Me
 
 ---
 
-## 6.4 JDownloader 2
+## 5.4 JDownloader 2
 
 ### Product overview
 
@@ -379,7 +304,7 @@ JDownloader 2 is suitable for file download management, but it is not a represen
 
 ---
 
-## 6.5 Internet Download Manager
+## 5.5 Internet Download Manager
 
 ### Product overview
 
@@ -409,7 +334,7 @@ IDM is a strong product from the previous generation of download managers. Media
 
 ---
 
-## 6.6 MeTube
+## 5.6 MeTube
 
 ### Product overview
 
@@ -435,11 +360,11 @@ MeTube is very suitable for NAS users: deployment is simple, the Web UI is clear
 
 ### Conclusion
 
-MeTube represents lightweight NAS downloaders. MediaGo and MediaGo Pro are stronger in the combination of desktop app, built-in browser, browser extension, M3U8/HLS, Bilibili, API, plugin system, and private media library.
+MeTube represents lightweight NAS downloaders. MediaGo is stronger in the combination of desktop app, built-in browser, browser extension, M3U8/HLS, Bilibili, API, and Docker/NAS.
 
 ---
 
-## 6.7 Tube Archivist
+## 5.7 Tube Archivist
 
 ### Product overview
 
@@ -465,11 +390,11 @@ Tube Archivist's goal is not temporary downloading; it is building a private You
 
 ### Conclusion
 
-Tube Archivist is a benchmark for YouTube private media libraries. If MediaGo Pro emphasizes NAS private media library features, it should learn from Tube Archivist's archiving, search, playback, and metadata management. But MediaGo Pro's differentiation should be multi-platform support, desktop entry, plugin system, and AI post-processing.
+Tube Archivist is a benchmark for YouTube private media libraries. If MediaGo strengthens NAS media archiving, it should learn from Tube Archivist's archiving, search, playback, and metadata management. MediaGo's differentiation is multi-platform support, desktop entry, browser sniffing, protocol support, and API automation.
 
 ---
 
-## 6.8 Pinchflat
+## 5.8 Pinchflat
 
 ### Product overview
 
@@ -495,11 +420,11 @@ Pinchflat does not emphasize in-app consumption. It stores downloaded content on
 
 ### Conclusion
 
-Pinchflat is suitable as an automated YouTube-to-media-center pipeline. MediaGo Pro is better positioned for multi-source acquisition, download management, private media library, and post-processing.
+Pinchflat is suitable as an automated YouTube-to-media-center pipeline. MediaGo is better positioned for multi-source acquisition, download management, browser sniffing, and self-hosted download centers.
 
 ---
 
-## 6.9 TubeSync
+## 5.9 TubeSync
 
 ### Product overview
 
@@ -525,11 +450,11 @@ TubeSync is more like "Sonarr for YouTube." It emphasizes unattended operation, 
 
 ### Conclusion
 
-TubeSync is a long-term YouTube synchronization tool. If MediaGo Pro later adds channel subscriptions and automatic post-processing, it can cover some TubeSync scenarios. MediaGo's basic advantage remains multi-platform and multi-entry workflows.
+TubeSync is a long-term YouTube synchronization tool. If MediaGo later adds channel subscriptions and automatic tasks, it can cover some TubeSync scenarios. MediaGo's basic advantage remains multi-platform and multi-entry workflows.
 
 ---
 
-## 6.10 Downie
+## 5.10 Downie
 
 ### Product overview
 
@@ -555,11 +480,11 @@ Downie's main value is the native Mac experience. For users who only use macOS, 
 
 ### Conclusion
 
-Downie is a typical Mac single-machine downloader. To attract Mac users, MediaGo Pro needs a smooth enough UI experience. Its real difference, however, is cross-platform support, NAS, plugins, and AI workflow.
+Downie is a typical Mac single-machine downloader. To attract Mac users, MediaGo needs a smooth enough UI experience. Its real difference, however, is cross-platform support, Docker/NAS, browser extensions, and API workflows.
 
 ---
 
-## 6.11 Pulltube
+## 5.11 Pulltube
 
 ### Product overview
 
@@ -585,11 +510,11 @@ Pulltube is strong as an integrated Mac experience, especially around format sup
 
 ### Conclusion
 
-Pulltube is a strong single-machine tool for Mac users. MediaGo Pro's advantage should not simply be "it can also download"; it should be the full chain of desktop + NAS + media library + agent + AI processing.
+Pulltube is a strong single-machine tool for Mac users. MediaGo's advantage should not simply be "it can also download"; it should be the full chain of desktop + browser + Docker/NAS + API.
 
 ---
 
-## 6.12 YTDLnis
+## 5.12 YTDLnis
 
 ### Product overview
 
@@ -619,7 +544,7 @@ YTDLnis is a strong Android tool. MediaGo can serve mobile devices through a loc
 
 ---
 
-## 6.13 Seal
+## 5.13 Seal
 
 ### Product overview
 
@@ -645,11 +570,11 @@ Seal is simpler and fits Android users who do not need many complex settings.
 
 ### Conclusion
 
-Seal is a simple mobile tool. MediaGo Pro's mobile strategy is better built around Web UI, NAS playback, and remote management rather than copying an Android downloader.
+Seal is a simple mobile tool. MediaGo's mobile strategy is better built around Web UI, NAS playback, and remote management rather than copying an Android downloader.
 
 ---
 
-## 6.14 N_m3u8DL-RE
+## 5.14 N_m3u8DL-RE
 
 ### Product overview
 
@@ -679,7 +604,7 @@ N_m3u8DL-RE is a "streaming engine" that MediaGo can integrate. MediaGo provides
 
 ---
 
-## 6.15 FFmpeg
+## 5.15 FFmpeg
 
 ### Product overview
 
@@ -706,11 +631,11 @@ FFmpeg is not a video downloader, but almost every video download, transcoding, 
 
 ### Conclusion
 
-FFmpeg is infrastructure, not a video download product for normal users. MediaGo Pro's transcoding, vocal separation, subtitle processing, and audio extraction can be built on similar infrastructure, but the product value comes from workflow design.
+FFmpeg is infrastructure, not a video download product for normal users. MediaGo's transcoding, subtitle processing, and audio extraction can be built on similar infrastructure, but the product value comes from workflow design.
 
 ---
 
-## 6.16 Streamlink
+## 5.16 Streamlink
 
 ### Product overview
 
@@ -740,7 +665,7 @@ Streamlink is a live-stream tool. If MediaGo strengthens live recording, automat
 
 ---
 
-## 6.17 yutto
+## 5.17 yutto
 
 ### Product overview
 
@@ -770,7 +695,7 @@ yutto is a Bilibili specialist tool. MediaGo's value is to place Bilibili capabi
 
 ---
 
-## 6.18 BBDown
+## 5.18 BBDown
 
 ### Product overview
 
@@ -799,7 +724,7 @@ BBDown is more like a Bilibili capability kernel. MediaGo can productize this ki
 
 ---
 
-## 6.19 TwitchDownloader
+## 5.19 TwitchDownloader
 
 ### Product overview
 
@@ -824,11 +749,11 @@ TwitchDownloader's special value is Twitch chat downloading and rendering, which
 
 ### Conclusion
 
-TwitchDownloader is a deep single-platform tool. MediaGo Pro can treat Twitch as a plugin or platform-extension direction, but it does not need to directly compete on a niche feature such as Twitch chat rendering.
+TwitchDownloader is a deep single-platform tool. MediaGo can treat Twitch as a platform-extension direction, but it does not need to directly compete on a niche feature such as Twitch chat rendering.
 
 ---
 
-## 6.20 Cobalt
+## 5.20 Cobalt
 
 ### Product overview
 
@@ -854,11 +779,11 @@ Cobalt is very lightweight: paste a link and get a file. It is more like a light
 
 ### Conclusion
 
-Cobalt represents lightweight Web downloaders. MediaGo Pro is better suited for local, private, long-running, and post-processing workflows.
+Cobalt represents lightweight Web downloaders. MediaGo is better suited for local, private, long-running, and multi-entry download workflows.
 
 ---
 
-## 6.21 SnapDownloader
+## 5.21 SnapDownloader
 
 ### Product overview
 
@@ -884,11 +809,11 @@ SnapDownloader is a typical traditional commercial downloader: desktop app, past
 
 ### Conclusion
 
-SnapDownloader is a baseline traditional commercial downloader. MediaGo Pro's differentiation should be NAS, plugins, AI, and private media management.
+SnapDownloader is a baseline traditional commercial downloader. MediaGo's differentiation should be open-source transparency, Docker/NAS, browser extensions, and API automation.
 
 ---
 
-## 6.22 iTubeGo
+## 5.22 iTubeGo
 
 ### Product overview
 
@@ -914,11 +839,11 @@ iTubeGo is positioned similarly to SnapDownloader: normal-user desktop downloadi
 
 ### Conclusion
 
-iTubeGo fits traditional desktop download and conversion scenarios. If MediaGo Pro strengthens AI and NAS, it will sit at a higher-level product position.
+iTubeGo fits traditional desktop download and conversion scenarios. If MediaGo strengthens NAS, self-hosting, and API workflows, it will sit in a more differentiated product position.
 
 ---
 
-## 6.23 VideoProc Converter AI
+## 5.23 VideoProc Converter AI
 
 ### Product overview
 
@@ -944,11 +869,11 @@ VideoProc Converter AI's core is not downloading; it is processing. It has clear
 
 ### Conclusion
 
-VideoProc Converter AI is one of the most important references for MediaGo Pro's planned AI capabilities. The difference is that VideoProc starts from processing, while MediaGo Pro can start from downloading and private media libraries, then make AI an automatic post-download processing step.
+VideoProc Converter AI is an important reference for AI video processing. The difference is that VideoProc starts from processing, while MediaGo starts from downloading, sniffing, protocol support, and self-hosting, with downstream processing relying more on external tools and workflow integration.
 
 ---
 
-## 6.24 CleverGet
+## 5.24 CleverGet
 
 ### Product overview
 
@@ -974,13 +899,13 @@ CleverGet's product strategy is to cover many platforms and download scenarios t
 
 ### Conclusion
 
-CleverGet represents commercial download suites. MediaGo Pro is better positioned around private deployment, cross-platform support, plugin ecosystem, NAS media library, and AI workflow.
+CleverGet represents commercial download suites. MediaGo is better positioned around open-source transparency, private deployment, cross-platform support, browser entry, Docker/NAS, and API workflows.
 
 ---
 
-## 7. Cross-dimensional Comparison
+## 5. Cross-dimensional Comparison
 
-## 7.1 Site platform coverage
+## 6.1 Site platform coverage
 
 | Tier                       | Products                                                                       |
 | -------------------------- | ------------------------------------------------------------------------------ |
@@ -995,29 +920,28 @@ MediaGo's site coverage comes from a multi-layer combination: yt-dlp provides br
 
 ---
 
-## 7.2 Video protocols and format support
+## 6.2 Video protocols and format support
 
-| Protocol/format             | Strong products                                                                         |
-| --------------------------- | --------------------------------------------------------------------------------------- |
-| HLS/M3U8                    | MediaGo, N_m3u8DL-RE, yt-dlp, Video DownloadHelper, FFmpeg                              |
-| DASH/MPD                    | N_m3u8DL-RE, yt-dlp, Video DownloadHelper, MediaGo                                      |
-| MSS/ISM                     | N_m3u8DL-RE                                                                             |
-| Live streams                | MediaGo, N_m3u8DL-RE, Streamlink, VideoProc, Video DownloadHelper                       |
-| MP4/MKV/WebM                | 4K, VideoProc, Pulltube, SnapDownloader, iTubeGo, FFmpeg                                |
-| Audio extraction            | yt-dlp, 4K, Pulltube, VideoProc, SnapDownloader, iTubeGo, MediaGo Pro planned direction |
-| Subtitles                   | 4K, yt-dlp, YTDLnis, Seal, Pulltube, VideoProc, MediaGo                                 |
-| Vocal separation/extraction | 4K, VideoProc, MediaGo Pro planned direction                                            |
+| Protocol/format             | Strong products                                                   |
+| --------------------------- | ----------------------------------------------------------------- |
+| HLS/M3U8                    | MediaGo, N_m3u8DL-RE, yt-dlp, Video DownloadHelper, FFmpeg        |
+| DASH/MPD                    | N_m3u8DL-RE, yt-dlp, Video DownloadHelper, MediaGo                |
+| MSS/ISM                     | N_m3u8DL-RE                                                       |
+| Live streams                | MediaGo, N_m3u8DL-RE, Streamlink, VideoProc, Video DownloadHelper |
+| MP4/MKV/WebM                | 4K, VideoProc, Pulltube, SnapDownloader, iTubeGo, FFmpeg          |
+| Audio extraction            | yt-dlp, 4K, Pulltube, VideoProc, SnapDownloader, iTubeGo          |
+| Subtitles                   | 4K, yt-dlp, YTDLnis, Seal, Pulltube, VideoProc, MediaGo           |
+| Vocal separation/extraction | 4K, VideoProc                                                     |
 
 At the streaming-protocol layer, N_m3u8DL-RE and FFmpeg are underlying strong tools, while yt-dlp is strong in site ecosystem coverage. MediaGo's advantage is wrapping these protocol capabilities into a GUI, browser entry, NAS, and API.
 
 ---
 
-## 7.3 Cross-platform and deployment
+## 6.3 Cross-platform and deployment
 
 | Product                  | Windows             | macOS               | Linux               | Android               | Docker/NAS |
 | ------------------------ | ------------------- | ------------------- | ------------------- | --------------------- | ---------- |
 | MediaGo                  | Yes                 | Yes                 | Yes                 | Through Web UI        | Yes        |
-| MediaGo Pro              | Yes                 | Yes                 | Yes                 | Through Web UI        | Yes        |
 | yt-dlp                   | Yes                 | Yes                 | Yes                 | Indirect              | Deployable |
 | 4K Video Downloader Plus | Yes                 | Yes                 | Ubuntu              | Android option exists | Weak       |
 | Video DownloadHelper     | Chrome/Firefox/Edge | Chrome/Firefox/Edge | Chrome/Firefox/Edge | Weak                  | Weak       |
@@ -1039,48 +963,46 @@ MediaGo has a clear cross-platform advantage: the desktop app covers Windows, ma
 
 ---
 
-## 7.4 Browser capabilities
+## 6.4 Browser capabilities
 
 The browser entry is an important dividing line for modern video downloaders. Many web videos do not expose a simple MP4 link, so users need tools to identify media resources on the page.
 
-| Product              | Browser capability                                          |
-| -------------------- | ----------------------------------------------------------- |
-| MediaGo              | Chrome/Edge extension + built-in browser + local API        |
-| MediaGo Pro          | Intelligent sniffing + built-in browser + plugin extensions |
-| Video DownloadHelper | Strong browser extension capability                         |
-| IDM                  | Browser integration and video panel                         |
-| Pulltube             | Chrome/Safari/Firefox extension                             |
-| Downie               | Browser extension ecosystem                                 |
-| MeTube               | Can work with browser link sending                          |
-| Tube Archivist       | Companion extension                                         |
-| yt-dlp               | Requires copy-paste links or script calls                   |
+| Product              | Browser capability                                   |
+| -------------------- | ---------------------------------------------------- |
+| MediaGo              | Chrome/Edge extension + built-in browser + local API |
+| Video DownloadHelper | Strong browser extension capability                  |
+| IDM                  | Browser integration and video panel                  |
+| Pulltube             | Chrome/Safari/Firefox extension                      |
+| Downie               | Browser extension ecosystem                          |
+| MeTube               | Can work with browser link sending                   |
+| Tube Archivist       | Companion extension                                  |
+| yt-dlp               | Requires copy-paste links or script calls            |
 
 MediaGo's browser capability is not isolated. Its extension communicates with the main app through a local API. After a video is detected, it enters the local downloader, format conversion, and NAS workflow. This is better for long-term task management than a pure browser extension.
 
 ---
 
-## 7.5 NAS and private media library
+## 6.5 NAS and private media library
 
-| Need                                               | Better-fit products          |
-| -------------------------------------------------- | ---------------------------- |
-| General NAS video download center                  | MediaGo, MediaGo Pro, MeTube |
-| YouTube private media library                      | Tube Archivist               |
-| YouTube to Plex/Jellyfin/Kodi                      | Pinchflat, TubeSync          |
-| Lightweight yt-dlp Web UI                          | MeTube                       |
-| Multi-device playback with desktop/NAS integration | MediaGo Pro                  |
-| Lightweight self-hosted Web downloader             | Cobalt                       |
+| Need                                            | Better-fit products |
+| ----------------------------------------------- | ------------------- |
+| General NAS video download center               | MediaGo, MeTube     |
+| YouTube private media library                   | Tube Archivist      |
+| YouTube to Plex/Jellyfin/Kodi                   | Pinchflat, TubeSync |
+| Lightweight yt-dlp Web UI                       | MeTube              |
+| Multi-device access and self-hosted downloading | MediaGo             |
+| Lightweight self-hosted Web downloader          | Cobalt              |
 
-In NAS scenarios, MediaGo Pro's opportunity is clear: it is not only a YouTube tool, and it is not only a yt-dlp Web UI. It combines a desktop downloader, NAS private media library, browser sniffing, plugins, and future AI workflows.
+In NAS scenarios, MediaGo's opportunity is clear: it is not only a YouTube tool, and it is not only a yt-dlp Web UI. It combines a desktop downloader, Docker/NAS, browser sniffing, HTTP API, and streaming-protocol support.
 
 ---
 
-## 7.6 AI and post-download processing
+## 6.6 AI and post-download processing
 
 | Product                  | Current AI/processing capability                                                                                                  |
 | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
 | VideoProc Converter AI   | AI upscaling, frame interpolation, stabilization, noise suppression, vocal processing, transcoding, compression, screen recording |
 | 4K Video Downloader Plus | AI audio processing, including vocal extraction/removal and speech isolation                                                      |
-| MediaGo Pro              | Format conversion today; expected support for Agent, transcription, subtitle translation, vocal extraction, vocal separation      |
 | FFmpeg                   | Strong transcoding and audio/video processing foundation, but not an AI product                                                   |
 | Pulltube                 | Format conversion, subtitles, trimming                                                                                            |
 | SnapDownloader           | Basic trimming, format conversion, audio extraction                                                                               |
@@ -1091,11 +1013,11 @@ AI-related capability will become a new competitive point for video downloaders.
 
 ---
 
-## 8. Recommended Products by User Scenario
+## 6. Recommended Products by User Scenario
 
 ### Scenario 1: Normal users who want to download public videos, course replays, or owned materials
 
-Recommended order: **MediaGo / MediaGo Pro, 4K Video Downloader Plus, Video DownloadHelper, Downie/Pulltube**
+Recommended order: **MediaGo, 4K Video Downloader Plus, Video DownloadHelper, Downie/Pulltube**
 
 MediaGo is better for multi-platform and cross-system users. 4K fits traditional commercial desktop downloading. Video DownloadHelper is good for temporary browser detection. Downie/Pulltube fit Mac single-machine users.
 
@@ -1113,15 +1035,15 @@ If the user needs a GUI and web page detection, MediaGo is better. If the user a
 
 ### Scenario 4: Users who need NAS or Docker to run long-term
 
-Recommended order: **MediaGo Pro, MediaGo Docker, MeTube, Tube Archivist, Pinchflat, TubeSync**
+Recommended order: **MediaGo Docker, MeTube, Tube Archivist, Pinchflat, TubeSync**
 
 If the goal is a general download center, MediaGo is more suitable. If the goal is a YouTube private media library, Tube Archivist is more focused. If the goal is feeding YouTube channels into Plex/Jellyfin/Kodi, Pinchflat and TubeSync are better.
 
 ### Scenario 5: Creators who need post-download processing
 
-Recommended order: **MediaGo Pro, VideoProc Converter AI, 4K Video Downloader Plus, FFmpeg**
+Recommended order: **VideoProc Converter AI, 4K Video Downloader Plus, FFmpeg, MediaGo**
 
-At the moment, VideoProc is more mature in AI processing, and 4K already has AI audio features. MediaGo Pro's opportunity is to connect downloading, media library, transcription, translation, vocal separation, and agent automation.
+At the moment, VideoProc is more mature in AI processing, and 4K already has AI audio features. MediaGo is better used as the front-end entry for downloading, sniffing, transcoding, and self-hosting.
 
 ### Scenario 6: Android mobile downloading
 
@@ -1131,9 +1053,9 @@ YTDLnis is more feature-complete, while Seal is simpler. MediaGo is better as a 
 
 ### Scenario 7: Mac users who only want a native single-machine experience
 
-Recommended order: **Pulltube, Downie, MediaGo Pro**
+Recommended order: **Pulltube, Downie, MediaGo**
 
-Pulltube and Downie have more mature native Mac experiences. MediaGo Pro's advantages are cross-platform support, NAS, plugins, and future AI workflows.
+Pulltube and Downie have more mature native Mac experiences. MediaGo's advantages are cross-platform support, Docker/NAS, browser extensions, and API workflows.
 
 ### Scenario 8: Users who only need command-line batch processing
 
@@ -1143,9 +1065,9 @@ Technical users should still keep these underlying tools. MediaGo's value is to 
 
 ---
 
-## 9. Product Judgment: MediaGo and MediaGo Pro
+## 8. Product Judgment: MediaGo
 
-### 9.1 MediaGo's strongest current advantage
+### 8.1 MediaGo's strongest current advantage
 
 MediaGo's strongest current advantage is "connection." It connects:
 
@@ -1159,37 +1081,9 @@ MediaGo's strongest current advantage is "connection." It connects:
 
 Many traditional downloaders do not have this connection capability.
 
-### 9.2 What is most promising about MediaGo Pro
-
-The most promising thing about MediaGo Pro is "the next step after downloading." After a video is downloaded, users usually do not need an isolated file. They need a media asset that is searchable, playable, transcribable, translatable, editable, extractable, and classifiable.
-
-If MediaGo Pro's AI roadmap lands well, it can form the following loop:
-
-```text
-Web page / link / plugin / Agent
-        ↓
-Video detection and download
-        ↓
-Format conversion and media library archiving
-        ↓
-Transcription, translation, subtitles, vocal separation
-        ↓
-Multi-device playback, search, reuse, and secondary creation
-```
-
-This chain fits 2026 user needs better than the traditional "copy link and download" model.
-
-### 9.3 A healthy relationship between the open-source and commercial editions
-
-MediaGo's open-source edition is suitable as the trust entry and base version. It lets users understand the product capability and lets developers and technical users verify the core logic.
-
-MediaGo Pro can then serve higher-end needs: better UI, more stable commercial support, NAS private media library, plugin capability, AI processing, agent automation, and long-term running experience.
-
-This division is healthy: the open-source edition provides base capabilities and community trust, while the commercial edition provides a more complete product experience and sustainable maintenance.
-
 ---
 
-## 10. Final Conclusion
+## 9. Final Conclusion
 
 Video downloaders in 2026 have split into several directions:
 
@@ -1199,50 +1093,43 @@ Video downloaders in 2026 have split into several directions:
 - **MeTube, Tube Archivist, Pinchflat, and TubeSync** represent NAS and self-hosted workflows;
 - **YTDLnis and Seal** represent Android mobile workflows;
 - **VideoProc Converter AI** represents AI video processing;
-- **MediaGo / MediaGo Pro** try to connect desktop, browser, NAS, protocol downloads, plugins, API, agents, and post-processing into the same workflow.
+- **MediaGo** tries to connect desktop, browser, NAS, protocol downloads, API, agents, and post-processing into the same workflow.
 
 If we only look at individual capabilities, yt-dlp has the strongest site coverage, N_m3u8DL-RE is the most specialized in streaming protocols, VideoProc is more mature in AI processing, Tube Archivist is deeper as a YouTube private media library, and Pulltube/Downie feel more native on Mac.
 
-But if we look at the full chain of a user's long-term video downloading and media processing work, MediaGo's integrated value is stronger. The open-source edition solves cross-platform support, sniffing, multi-site coverage, HLS/M3U8, Bilibili, YouTube, Docker, API, and agent entry. MediaGo Pro further expands toward modern UI, NAS private media library, plugin center, multi-device playback, and AI post-processing.
+But if we look at the full chain of a user's long-term video downloading and media processing work, MediaGo's integrated value is stronger. The open-source edition solves cross-platform support, sniffing, multi-site coverage, HLS/M3U8, Bilibili, YouTube, Docker, API, and agent entry.
 
 Therefore, MediaGo's most reasonable 2026 positioning is not a normal downloader, but:
 
 > **A video download, private media management, and automated processing platform for desktop and NAS.**
 
-If MediaGo Pro successfully adds AI Agent, video transcription, subtitle translation, vocal extraction, and vocal separation, it has the opportunity to move from the traditional video downloader category into a more advanced private media workflow category. This direction can serve normal users, content creators, education users, researchers, NAS users, and enterprise knowledge-management users.
-
----
-
 ## References
 
 1. MediaGo GitHub: <https://github.com/caorushizi/mediago>
 2. MediaGo documentation: <https://downloader.caorushizi.cn/>
-3. MediaGo Pro website: <https://mediago.torchstellar.com/>
-4. MediaGo Pro pricing: <https://mediago.torchstellar.com/pricing>
-5. MediaGo Pro plugin center: <https://mediago.torchstellar.com/plugins>
-6. yt-dlp GitHub: <https://github.com/yt-dlp/yt-dlp>
-7. 4K Video Downloader Plus: <https://www.4kdownload.com/products/videodownloader-42>
-8. Video DownloadHelper: <https://www.downloadhelper.net/>
-9. JDownloader 2: <https://jdownloader.org/jdownloader2>
-10. JDownloader streaming guide: <https://support.jdownloader.org/en/knowledgebase/article/download-from-video-audio-streaming-websites>
-11. Internet Download Manager: <https://www.internetdownloadmanager.com/>
-12. IDM video downloading guide: <https://www.internetdownloadmanager.com/articles/flv_downloading.html>
-13. MeTube GitHub: <https://github.com/alexta69/metube>
-14. Tube Archivist GitHub: <https://github.com/tubearchivist/tubearchivist>
-15. Pinchflat GitHub: <https://github.com/kieraneglin/pinchflat>
-16. TubeSync GitHub: <https://github.com/meeb/tubesync>
-17. Downie: <https://software.charliemonroe.net/downie/>
-18. Pulltube: <https://mymixapps.com/pulltube>
-19. YTDLnis GitHub: <https://github.com/deniscerri/ytdlnis>
-20. Seal GitHub: <https://github.com/JunkFood02/Seal>
-21. N_m3u8DL-RE GitHub: <https://github.com/nilaoda/N_m3u8DL-RE>
-22. FFmpeg: <https://ffmpeg.org/about.html>
-23. Streamlink: <https://streamlink.github.io/>
-24. yutto GitHub: <https://github.com/yutto-dev/yutto>
-25. BBDown GitHub: <https://github.com/nilaoda/BBDown>
-26. TwitchDownloader GitHub: <https://github.com/lay295/TwitchDownloader>
-27. Cobalt GitHub: <https://github.com/imputnet/cobalt>
-28. SnapDownloader: <https://snapdownloader.com/>
-29. iTubeGo: <https://itubego.com/en63/>
-30. VideoProc Converter AI: <https://www.videoproc.com/video-converting-software/>
-31. CleverGet: <https://cleverget.org/>
+3. yt-dlp GitHub: <https://github.com/yt-dlp/yt-dlp>
+4. 4K Video Downloader Plus: <https://www.4kdownload.com/products/videodownloader-42>
+5. Video DownloadHelper: <https://www.downloadhelper.net/>
+6. JDownloader 2: <https://jdownloader.org/jdownloader2>
+7. JDownloader streaming guide: <https://support.jdownloader.org/en/knowledgebase/article/download-from-video-audio-streaming-websites>
+8. Internet Download Manager: <https://www.internetdownloadmanager.com/>
+9. IDM video downloading guide: <https://www.internetdownloadmanager.com/articles/flv_downloading.html>
+10. MeTube GitHub: <https://github.com/alexta69/metube>
+11. Tube Archivist GitHub: <https://github.com/tubearchivist/tubearchivist>
+12. Pinchflat GitHub: <https://github.com/kieraneglin/pinchflat>
+13. TubeSync GitHub: <https://github.com/meeb/tubesync>
+14. Downie: <https://software.charliemonroe.net/downie/>
+15. Pulltube: <https://mymixapps.com/pulltube>
+16. YTDLnis GitHub: <https://github.com/deniscerri/ytdlnis>
+17. Seal GitHub: <https://github.com/JunkFood02/Seal>
+18. N_m3u8DL-RE GitHub: <https://github.com/nilaoda/N_m3u8DL-RE>
+19. FFmpeg: <https://ffmpeg.org/about.html>
+20. Streamlink: <https://streamlink.github.io/>
+21. yutto GitHub: <https://github.com/yutto-dev/yutto>
+22. BBDown GitHub: <https://github.com/nilaoda/BBDown>
+23. TwitchDownloader GitHub: <https://github.com/lay295/TwitchDownloader>
+24. Cobalt GitHub: <https://github.com/imputnet/cobalt>
+25. SnapDownloader: <https://snapdownloader.com/>
+26. iTubeGo: <https://itubego.com/en63/>
+27. VideoProc Converter AI: <https://www.videoproc.com/video-converting-software/>
+28. CleverGet: <https://cleverget.org/>
