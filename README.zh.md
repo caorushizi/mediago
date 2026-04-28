@@ -158,5 +158,5 @@ docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago caoru
 >
 > 想为 MediaGo 做翻译？见 [TRANSLATION.md](./TRANSLATION.md)（英文）。
 
-尾注: 感谢吾爱破解论坛  
-Ip_Zain@www.52pojie.cn
+尾注: 感谢[吾爱破解论坛](https://www.52pojie.cn/)  
+lp_Zain@www.52pojie.cn
