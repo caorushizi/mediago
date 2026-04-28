@@ -17,18 +17,7 @@
           <div class="text-sm text-[var(--vp-c-text-2)]">{{ t("slogan") }}</div>
         </div>
 
-        <!-- 右侧区域 -->
         <div class="flex flex-col md:flex-row gap-8 md:gap-12">
-          <!-- 二维码部分 -->
-          <div class="px-3 flex-shrink-0 mt-8 md:mt-0">
-            <!-- <div class="font-semibold mb-2 text-[var(--vp-c-text-1)]">{{ t('contact') }}</div> -->
-            <img
-              src="../assets/wx.png"
-              alt="WeChat QR Code"
-              class="w-[280px] object-contain"
-            />
-          </div>
-
           <!-- 帮助链接部分 -->
           <div class="px-3 text-sm flex-shrink-0 min-w-[150px] mt-8 md:mt-0">
             <div class="font-semibold mb-2 text-[var(--vp-c-text-1)]">
@@ -37,37 +26,10 @@
             <ul class="list-none m-0 p-0">
               <li class="mb-1">
                 <a
-                  target="_blank"
-                  href="https://mediago.pro/"
-                  class="text-[var(--vp-c-text-2)] no-underline transition-colors hover:text-[var(--vp-c-text-1)] duration-300"
-                >
-                  {{ t("search") }}
-                </a>
-              </li>
-              <li class="mb-1">
-                <a
                   href="/blog/"
                   class="text-[var(--vp-c-text-2)] no-underline transition-colors hover:text-[var(--vp-c-text-1)] duration-300"
                 >
                   {{ t("blog") }}
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <!-- 友情链接部分 -->
-          <div class="px-3 text-sm flex-shrink-0 min-w-[150px] mt-8 md:mt-0">
-            <div class="font-semibold mb-2 text-[var(--vp-c-text-1)]">
-              {{ t("links") }}
-            </div>
-            <ul class="list-none m-0 p-0">
-              <li class="mb-1">
-                <a
-                  href="https://www.jiexi.im/player/"
-                  class="text-[var(--vp-c-text-2)] no-underline transition-colors hover:text-[var(--vp-c-text-1)] duration-300"
-                  target="_blank"
-                >
-                  {{ t("jiexi.im") }}
                 </a>
               </li>
             </ul>

@@ -4,10 +4,7 @@ import { useData, inBrowser, useRoute } from "vitepress";
 import { computed, watchEffect } from "vue";
 import Comments from "./components/Comments.vue";
 import Footer from "./components/Footer.vue";
-import QrCode from "./components/QrCode.vue";
-import TopBanner from "./components/TopBanner.vue";
 import { useI18n } from "vue-i18n";
-import AdBanner from "./components/AdBanner.vue";
 
 const { lang } = useData();
 const route = useRoute();
@@ -67,12 +64,6 @@ const { Layout } = DefaultTheme;
 
 <template>
   <Layout>
-    <template #layout-top>
-      <TopBanner />
-    </template>
-    <!-- <template #sidebar-nav-before>
-      <AdBanner />
-    </template> -->
     <template #doc-before>
       <div
         v-if="blogTranslationLink"
@@ -82,9 +73,6 @@ const { Layout } = DefaultTheme;
         <span>{{ blogTranslationLink.note }}</span>
         <a :href="blogTranslationLink.href">{{ blogTranslationLink.label }}</a>
       </div>
-    </template>
-    <template #doc-footer-before>
-      <QrCode />
     </template>
     <template #doc-after>
       <Comments />
