@@ -116,6 +116,7 @@ export default class ElectronApp {
         const handlers: Record<string, (v: any) => void> = {
           theme: (v) => {
             nativeTheme.themeSource = v;
+            this.webviewService.refreshBottomCornerRadius();
           },
           useProxy: (v) => {
             this.webviewService.setProxy(v, this.configCache.get("proxy"));

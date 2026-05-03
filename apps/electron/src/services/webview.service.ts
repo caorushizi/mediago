@@ -6,6 +6,7 @@ import { i18n } from "../core/i18n";
 import {
   type Event,
   type HandlerDetails,
+  nativeTheme,
   session,
   WebContentsView,
 } from "electron";
@@ -28,6 +29,10 @@ import { SniffingHelper, type SourceParams } from "./sniffing-helper.service";
 const require = createRequire(import.meta.url);
 
 const preload = require.resolve("@mediago/electron-preload");
+const BROWSER_VIEW_BOTTOM_RADIUS = 8;
+const BROWSER_VIEW_DARK_SHELL_BACKGROUND = "#141415";
+const BROWSER_VIEW_MAIN_SHELL_BACKGROUND = "#F4F7FA";
+const BROWSER_VIEW_WINDOW_SHELL_BACKGROUND = "#EBF0F5";
 
 @injectable()
 @provide()
@@ -36,6 +41,7 @@ export default class WebviewService {
   private blocker?: ElectronBlocker;
   private defaultSession: string;
   private viewShow = false;
+  private bottomRadiusCssKey?: string;
 
   constructor(
     @inject(MainWindow)
@@ -56,6 +62,7 @@ export default class WebviewService {
 
     this.sniffingHelper.start(privacy);
     this.sniffingHelper.on("source", this.onSource);
+    nativeTheme.on("updated", this.onNativeThemeUpdated);
 
     this.setDefaultSession(privacy, true);
     this.setProxy(useProxy, proxy);
@@ -99,6 +106,7 @@ export default class WebviewService {
     if (!this.view) return;
     const pageInfo = this.getPageInfo();
     this.sniffingHelper.update(pageInfo);
+    void this.injectBottomCornerRadius();
     this.window?.webContents.send("browser:domReady", pageInfo);
   };
 
@@ -150,6 +158,10 @@ export default class WebviewService {
     this.window?.webContents.send("browser:sourceDetected", item);
   };
 
+  onNativeThemeUpdated = () => {
+    this.refreshBottomCornerRadius();
+  };
+
   getPageInfo() {
     if (!this.view) {
       throw new Error(i18n.t("browserViewNotFound"));
@@ -181,6 +193,7 @@ export default class WebviewService {
     if (!this.view) return;
     this.window?.contentView.addChildView(this.view);
     this.viewShow = true;
+    void this.injectBottomCornerRadius();
   }
 
   hide() {
@@ -341,8 +354,86 @@ export default class WebviewService {
     return this.view.webContents.capturePage();
   }
 
+  refreshBottomCornerRadius() {
+    void this.injectBottomCornerRadius();
+  }
+
   sendToWindow(channel: string, ...args: unknown[]) {
     this.window?.webContents.send(channel, ...args);
+  }
+
+  private getBottomCornerBackgroundColor() {
+    if (nativeTheme.shouldUseDarkColors) {
+      return BROWSER_VIEW_DARK_SHELL_BACKGROUND;
+    }
+
+    if (this.browserWindow.window) {
+      return BROWSER_VIEW_WINDOW_SHELL_BACKGROUND;
+    }
+
+    return BROWSER_VIEW_MAIN_SHELL_BACKGROUND;
+  }
+
+  private getBottomCornerRadiusCss() {
+    const radius = BROWSER_VIEW_BOTTOM_RADIUS;
+    const backgroundColor = this.getBottomCornerBackgroundColor();
+
+    return `
+      :root::before,
+      :root::after {
+        content: "";
+        position: fixed;
+        bottom: 0;
+        width: ${radius}px;
+        height: ${radius}px;
+        pointer-events: none;
+        z-index: 2147483647;
+      }
+
+      :root::before {
+        left: 0;
+        background: radial-gradient(
+          circle at top right,
+          transparent ${radius - 0.5}px,
+          ${backgroundColor} ${radius}px
+        );
+      }
+
+      :root::after {
+        right: 0;
+        background: radial-gradient(
+          circle at top left,
+          transparent ${radius - 0.5}px,
+          ${backgroundColor} ${radius}px
+        );
+      }
+    `;
+  }
+
+  private async injectBottomCornerRadius() {
+    if (!this.view || this.view.webContents.isDestroyed()) return;
+
+    try {
+      const { webContents } = this.view;
+      if (this.bottomRadiusCssKey) {
+        await webContents
+          .removeInsertedCSS(this.bottomRadiusCssKey)
+          .catch(() => {
+            // The previous key may belong to a document that has already navigated.
+          });
+        this.bottomRadiusCssKey = undefined;
+      }
+
+      this.bottomRadiusCssKey = await webContents.insertCSS(
+        this.getBottomCornerRadiusCss(),
+        { cssOrigin: "user" },
+      );
+    } catch (error) {
+      this.logger.error(
+        "[Webview] failed to inject bottom corner radius CSS",
+        error,
+      );
+    }
   }
 
   private removeViewListeners() {
@@ -366,6 +457,7 @@ export default class WebviewService {
       this.window?.contentView.removeChildView(this.view);
     }
     this.view = null;
+    this.bottomRadiusCssKey = undefined;
   }
 
   async clearCache() {
