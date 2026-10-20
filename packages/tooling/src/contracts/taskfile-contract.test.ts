@@ -274,7 +274,6 @@ const implementationGraph = {
   "internal:test:e2e": {
     deps: [
       "internal:deps:e2e",
-      "internal:core:build",
       "internal:test:e2e:build",
       "internal:test:e2e:chromium",
     ],
@@ -283,7 +282,6 @@ const implementationGraph = {
   "internal:test:e2e:web": {
     deps: [
       "internal:deps:e2e",
-      "internal:core:build",
       "internal:test:e2e:build",
       "internal:test:e2e:chromium",
     ],
@@ -292,7 +290,6 @@ const implementationGraph = {
   "internal:test:e2e:electron": {
     deps: [
       "internal:deps:e2e",
-      "internal:core:build",
       "internal:test:e2e:build",
       "internal:test:e2e:chromium",
     ],
@@ -301,7 +298,6 @@ const implementationGraph = {
   "internal:test:e2e:extension": {
     deps: [
       "internal:deps:e2e",
-      "internal:core:build",
       "internal:test:e2e:build",
       "internal:test:e2e:chromium",
     ],
@@ -356,11 +352,7 @@ const implementationGraph = {
     leaves: [],
   },
   "internal:ci:test:e2e": {
-    deps: [
-      "internal:deps:e2e",
-      "internal:core:build",
-      "internal:test:e2e:build",
-    ],
+    deps: ["internal:deps:e2e", "internal:test:e2e:build"],
     leaves: [
       "pnpm exec playwright install-deps chromium",
       "pnpm exec playwright install chromium",
@@ -575,7 +567,7 @@ const prerequisiteGraph = {
     leaves: ["pnpm core:build:production"],
   },
   "internal:test:e2e:build": {
-    deps: ["internal:deps:node"],
+    deps: ["internal:core:build"],
     leaves: ["pnpm test:e2e:build:raw"],
   },
   "internal:test:e2e:chromium": {
