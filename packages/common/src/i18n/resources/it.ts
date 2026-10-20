@@ -111,8 +111,7 @@ export const it = {
     "Dopo l'installazione, per completare l'installazione, incolla questo comando nel codice Claude",
   skillsCopy: "Copia",
   skillsCopied: "Copiato negli appunti",
-  skillsSetupWithApiKey:
-    "Imposta l'url mediago su {{url}} e la chiave api su {{apiKey}}",
+  skillsSetupWithApiKey: "Imposta l'url mediago su {{url}} e la chiave api su {{apiKey}}",
   skillsSetupWithoutApiKey: "Imposta l'url mediago su {{url}}",
   clipboardCopyFailed: "Impossibile copiare negli appunti",
   settingsSaveFailed: "Impossibile salvare l'impostazione",
@@ -165,8 +164,7 @@ export const it = {
   parsePreview: "Anteprima analisi",
   validCount: "{{count}} validi",
   invalidCount: "{{count}} non validi",
-  batchEmptyHint:
-    "Dopo aver inserito i collegamenti le righe analizzate appariranno qui",
+  batchEmptyHint: "Dopo aver inserito i collegamenti le righe analizzate appariranno qui",
   singleDownload: "Download singolo",
   batchListHelp:
     "Inserisci un collegamento per riga. Se necessario, aggiungi dopo il collegamento il nome del video e la cartella.",
@@ -217,8 +215,7 @@ export const it = {
   audioMuted: "Audio OFF",
   openBrowser: "Apri browser",
   privacy: "Navigazione in incognito",
-  privacyTooltip:
-    "Quando abilitato, il browser non salverà alcun dato di navigazione",
+  privacyTooltip: "Quando abilitato, il browser non salverà alcun dato di navigazione",
   converter: "Conversione",
   addFile: "Aggiungi file",
   convertAll: "Converti tutto",
@@ -228,8 +225,7 @@ export const it = {
   stop: "Stop",
   converterSubtitle: "Converti più file video e audio locali",
   createConversionTask: "Crea attività",
-  createConversionTaskHint:
-    "Seleziona i file multimediali locali e configura l’output",
+  createConversionTaskHint: "Seleziona i file multimediali locali e configura l’output",
   selectMediaFiles: "Seleziona file",
   releaseToAddFiles: "Rilascia per aggiungere i file",
   dropMediaHere: "Trascina qui i file multimediali",
@@ -313,8 +309,7 @@ export const it = {
   updateCheckFailed: "Impossibile controllare gli aggiornamenti",
   updateDownloadFailed: "Impossibile scaricare l'aggiornamento",
   updateInstallFailed: "Impossibile installare l'aggiornamento",
-  updateCheckRequired:
-    "Prima di avviare il download controlla gli aggiornamenti",
+  updateCheckRequired: "Prima di avviare il download controlla gli aggiornamenti",
   updateNotDownloaded: "Prima di installarlo scarica l'aggiornamento",
   updateErrorDetailsHint:
     "Per maggiori dettagli apri i registri o copia la diagnostica.",
@@ -324,8 +319,7 @@ export const it = {
   openUpdateLogsFailed: "Impossibile aprire la cartella registri",
   copyUpdateDiagnostics: "Copia diagnostica",
   updateDiagnosticsCopied: "Diagnostica aggiornamento copiata",
-  updateDiagnosticsCopyFailed:
-    "Impossibile copiare la diagnostica aggiornamento",
+  updateDiagnosticsCopyFailed: "Impossibile copiare la diagnostica aggiornamento",
   closeMainWindow: "Chiusura finestra principale",
   minimizeToTray: "Minimizza nella barra sistema",
   failReason: "Motivo errore",
@@ -360,8 +354,7 @@ export const it = {
   videoNotExists: "Video non trovato",
   unknownError: "Errore sconosciuto",
   unsupportedDownloadType: "Tipo download non supportato",
-  captureVideoLinkInWindow:
-    "Collegamento video catturato nella finestra: {{url}}",
+  captureVideoLinkInWindow: "Collegamento video catturato nella finestra: {{url}}",
   browserViewNotFound: "Vista browser non trovata",
   currentWindowNotFound: "Finestra attuale non trovata",
   proxyNotAllowEmpty: "[Proxy] - L'indirizzo non può essere vuoto",
@@ -439,11 +432,11 @@ export const it = {
   enableMobilePlayer: "Abilita riproduttore mobile",
   adminPassword: "Password amministratore",
   forgotPassword: "Password dimenticata?",
-  forgetPasswordDescription:
-    "Se hai dimenticato la password dell'amministratore, puoi reimpostarla:\n1. Trova la cartella di archiviazione di MediaGo.\n2. Apri la cartella '.store' e modifica 'config.json'.\n3. Cancella il valore del campo apiKey.",
+  forgetPasswordDescription: "Se hai dimenticato la password dell'amministratore, puoi reimpostarla:\n1. Trova la cartella di archiviazione di MediaGo.\n2. Apri la cartella '.store' e modifica 'config.json'.\n3. Cancella il valore del campo apiKey.",
   signin: "Accedi",
   signinMediaGoServer: "Accedi al server MediaGo",
-  initializeMediaGoServer: "Imposta server MediaGo",
+  
+initializeMediaGoServer: "Imposta server MediaGo",
   settingUpAdminPassword: "Crea password amministratore",
   repeatPassword: "Conferma password",
   pleaseEnterPassword: "Inserisci password",
