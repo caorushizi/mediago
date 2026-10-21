@@ -1073,3 +1073,25 @@ tasks:
     internal: true
     cmds:
       - node packages/tooling/src/github/release-workflow.ts tag-docker-release
+
+  ci:release:prepare-recovery:
+    desc: Validate the original beta release and reusable artifacts
+    cmds:
+      - task: internal:require-task-version
+      - task: internal:ci:release:prepare-recovery
+
+  ci:release:apply-recovery-tooling:
+    desc: Apply reviewed packaging tools to the original product commit
+    cmds:
+      - task: internal:require-task-version
+      - task: internal:ci:release:apply-recovery-tooling
+
+  internal:ci:release:prepare-recovery:
+    internal: true
+    cmds:
+      - node packages/tooling/src/github/release-recovery.ts prepare
+
+  internal:ci:release:apply-recovery-tooling:
+    internal: true
+    cmds:
+      - node packages/tooling/src/github/release-recovery.ts apply-tooling

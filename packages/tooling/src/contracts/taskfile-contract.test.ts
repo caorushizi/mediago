@@ -142,6 +142,8 @@ const publicTasks = [
   "ci:docker:detect-dockerhub",
   "ci:docker:resolve-targets",
   "ci:docker:write-summary",
+  "ci:release:prepare-recovery",
+  "ci:release:apply-recovery-tooling",
   "ci:release:validate-request",
   "ci:release:detect-release-state",
   "ci:release:reserve-test-version",
@@ -440,6 +442,16 @@ const implementationGraph = {
       "node packages/tooling/src/github/docker-workflow.ts write-summary",
     ],
   },
+  "internal:ci:release:prepare-recovery": {
+    deps: [],
+    leaves: ["node packages/tooling/src/github/release-recovery.ts prepare"],
+  },
+  "internal:ci:release:apply-recovery-tooling": {
+    deps: [],
+    leaves: [
+      "node packages/tooling/src/github/release-recovery.ts apply-tooling",
+    ],
+  },
   "internal:ci:release:validate-request": {
     deps: [],
     leaves: [
@@ -622,6 +634,8 @@ const metadataWorkflowTasks = [
   "internal:ci:docker:detect-dockerhub",
   "internal:ci:docker:resolve-targets",
   "internal:ci:docker:write-summary",
+  "internal:ci:release:prepare-recovery",
+  "internal:ci:release:apply-recovery-tooling",
   "internal:ci:release:validate-request",
   "internal:ci:release:detect-release-state",
   "internal:ci:release:reserve-test-version",
@@ -1183,7 +1197,7 @@ describe("Task command leaves", () => {
           continue;
         }
         expect(command.text, `${name} has an unsafe leaf command`).toMatch(
-          /^(?:node\s+packages\/tooling\/src\/bootstrap\/task-(?:version-gate|doctor)\.ts|node packages\/tooling\/src\/github\/(?:desktop|docker|release)-workflow\.ts [\w-]+|node packages\/tooling\/src\/electron-artifacts\/cli\.ts electron-artifacts release-files "\$VERSION" "\$UPDATER_CHANNEL"|node -e "console\.log\('MEDIAGO_(?:RUNTIME_READY', process\.env\.MEDIAGO_DEPS_DIR|DEV_PROCESSES_STARTING')\)"|pnpm\s+[\w:-]+(?::raw)?(?:\s+[^;&|\n]+)?|pnpm\s+(?:-F|--filter)\s+\S+\s+run\s+\S+|pnpm\s+install(?:\s+[^;&|\n]+)?|pnpm\s+exec(?:\s+[^;&|\n]+)?|xvfb-run -a pnpm test:e2e:raw --project="\$\{MEDIAGO_E2E_PROJECT:-\*\}"|go\s+[^;&|\n]+|docker\s+[^;&|\n]+)$/,
+          /^(?:node\s+packages\/tooling\/src\/bootstrap\/task-(?:version-gate|doctor)\.ts|node packages\/tooling\/src\/github\/(?:(?:desktop|docker|release)-workflow|release-recovery)\.ts [\w-]+|node packages\/tooling\/src\/electron-artifacts\/cli\.ts electron-artifacts release-files "\$VERSION" "\$UPDATER_CHANNEL"|node -e "console\.log\('MEDIAGO_(?:RUNTIME_READY', process\.env\.MEDIAGO_DEPS_DIR|DEV_PROCESSES_STARTING')\)"|pnpm\s+[\w:-]+(?::raw)?(?:\s+[^;&|\n]+)?|pnpm\s+(?:-F|--filter)\s+\S+\s+run\s+\S+|pnpm\s+install(?:\s+[^;&|\n]+)?|pnpm\s+exec(?:\s+[^;&|\n]+)?|xvfb-run -a pnpm test:e2e:raw --project="\$\{MEDIAGO_E2E_PROJECT:-\*\}"|go\s+[^;&|\n]+|docker\s+[^;&|\n]+)$/,
         );
       }
     }
