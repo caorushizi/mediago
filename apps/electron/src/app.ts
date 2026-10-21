@@ -295,7 +295,7 @@ export default class ElectronApp {
         click: () => this.mainWindow.showWindow(),
       },
       {
-        label: i18n.t("exitApp"),
+        label: i18n.t("exitApp", { applicationName: app.name }),
         role: "quit",
       },
     ]);
