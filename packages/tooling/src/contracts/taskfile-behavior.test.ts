@@ -144,6 +144,24 @@ test("shared E2E build selects the test profile inside its production-mode raw l
   expect(result.output).not.toContain("TASK_E2E_PRODUCTION_SECRET_SENTINEL");
 });
 
+test.each([0, 7])(
+  "shared E2E build waits for Core and propagates Core exit %s",
+  (coreExitCode) => {
+    const fixture = createE2eBuildOrderingFixture(coreExitCode);
+    const result = runTask(fixture.taskfilePath, "probe");
+    expect(existsSync(fixture.eventsPath), result.output).toBe(true);
+    const events = readFileSync(fixture.eventsPath, "utf8").trim().split("\n");
+
+    if (coreExitCode === 0) {
+      expect(result.status, result.output).toBe(0);
+      expect(events).toEqual(["core:start", "core:ready", "bundle", "tests"]);
+    } else {
+      expect(result.status).not.toBe(0);
+      expect(events).toEqual(["core:start", "core:failed"]);
+    }
+  },
+);
+
 test.each(productionEntries)(
   "$task loads production metadata from profile dotenv after the public version gate",
   ({ leaf, task }) => {
@@ -611,6 +629,53 @@ function createRepositoryTaskfileFixture(
   return { directory, taskfilePath };
 }
 
+function createE2eBuildOrderingFixture(
+  coreExitCode: number,
+): ReturnType<typeof createFixture> & { eventsPath: string } {
+  const rootTaskfile = parse(readFileSync(rootTaskfilePath, "utf8")) as {
+    tasks: Record<string, Record<string, unknown>>;
+  };
+  const fixture = createFixture({
+    version: "3",
+    tasks: {
+      probe: {
+        deps: rootTaskfile.tasks["internal:ci:test:e2e"].deps,
+        cmds: ["node record.cjs tests"],
+      },
+      "internal:deps:e2e": { internal: true },
+      "internal:deps:node": { internal: true },
+      "internal:core:build": {
+        ...rootTaskfile.tasks["internal:core:build"],
+        cmds: ["node core.cjs"],
+      },
+      "internal:test:e2e:build": {
+        ...rootTaskfile.tasks["internal:test:e2e:build"],
+        cmds: ["node record.cjs bundle"],
+      },
+    },
+  });
+  const eventsPath = path.join(fixture.directory, "events.log");
+  writeFileSync(
+    path.join(fixture.directory, "core.cjs"),
+    [
+      'const fs = require("node:fs");',
+      'fs.appendFileSync("events.log", "core:start\\n");',
+      "setTimeout(() => {",
+      `  fs.appendFileSync("events.log", ${JSON.stringify(coreExitCode === 0 ? "core:ready\n" : "core:failed\n")});`,
+      `  process.exit(${coreExitCode});`,
+      "}, 250);",
+    ].join("\n"),
+  );
+  writeFileSync(
+    path.join(fixture.directory, "record.cjs"),
+    [
+      'const fs = require("node:fs");',
+      'fs.appendFileSync("events.log", `${process.argv[2]}\\n`);',
+    ].join("\n"),
+  );
+  return { ...fixture, eventsPath };
+}
+
 function createE2eBuildProfileFixture(): ReturnType<typeof createFixture> & {
   artifactPath: string;
   binDirectory: string;
@@ -624,6 +689,7 @@ function createE2eBuildProfileFixture(): ReturnType<typeof createFixture> & {
       probe: {
         deps: [{ task: "internal:test:e2e:build" }],
       },
+      "internal:core:build": { internal: true },
       "internal:deps:node": {
         internal: true,
       },
