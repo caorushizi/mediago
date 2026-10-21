@@ -1,3 +1,7 @@
+import {
+  configureInstallerMetadata,
+  getApplicationCopyright,
+} from "./installer-metadata.ts";
 import { withAppleNetworkRetry } from "./macos-network-retry.ts";
 import fs from "node:fs/promises";
 import os from "node:os";
@@ -67,7 +71,7 @@ function getReleaseConfig(): Configuration {
     productName: process.env.APP_NAME,
     buildVersion: pkg.version,
     appId: process.env.APP_ID,
-    copyright: process.env.APP_COPYRIGHT,
+    copyright: getApplicationCopyright(process.env.APP_COPYRIGHT),
     // Register the custom scheme at install/first-run time.
     // • macOS: electron-builder merges this into CFBundleURLTypes.
     // • Windows: runtime `app.setAsDefaultProtocolClient` in src/index.ts
@@ -312,6 +316,7 @@ const packageArtifacts = () =>
     config,
     dir: isDir,
     publish: "never",
+    effectiveOptionComputed: configureInstallerMetadata,
   });
 const artifacts = macOSSigning.enabled
   ? await withAppleNetworkRetry(packageArtifacts, {
