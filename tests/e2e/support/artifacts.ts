@@ -22,7 +22,9 @@ export interface ManualArtifactFinalizerOptions {
   close(): Promise<void>;
   failed: boolean;
   name?: string;
-  processes?: Readonly<Record<string, ManagedProcess | undefined>>;
+  processes?: Readonly<
+    Record<string, Pick<ManagedProcess, "logTail"> | undefined>
+  >;
   coreLogDirectory?: string;
   artifactOperationTimeoutMs?: number;
 }
@@ -270,7 +272,9 @@ export async function startManualContextArtifacts(
 
 export async function attachBoundedProcessLogs(
   testInfo: TestInfo,
-  processes: Readonly<Record<string, ManagedProcess | undefined>>,
+  processes: Readonly<
+    Record<string, Pick<ManagedProcess, "logTail"> | undefined>
+  >,
 ): Promise<void> {
   await Promise.all(
     Object.entries(processes).map(async ([name, managedProcess]) => {

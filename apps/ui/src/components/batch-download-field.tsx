@@ -45,7 +45,7 @@ export function BatchDownloadField({
             id={`${formId}-batch-list`}
             value={field.value ?? ""}
             rows={5}
-            placeholder={t("pleaseEnterVideoLink")}
+            placeholder={t("videoLikeDescription")}
             onContextMenu={onShowTextMenu}
             aria-invalid={Boolean(form.formState.errors.batchList)}
             aria-describedby={
