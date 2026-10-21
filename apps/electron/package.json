@@ -40,7 +40,7 @@
     "@mediago/electron-preload": "workspace:*",
     "@mediago/service-runner": "workspace:*",
     "@mediago/common": "workspace:*",
-    "axios": "^1.19.0",
+    "axios": "^1.20.0",
     "dayjs": "^1.11.23",
     "electron-devtools-installer": "^4.0.0",
     "electron-is-dev": "^3.0.1",
