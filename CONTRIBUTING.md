@@ -6,6 +6,10 @@ main [README](./README.md).
 
 ## Prerequisites
 
+- **One CLI** ≥ 0.1.24 — [official downloads](https://github.com/1cli-team/one-cli/releases).
+  `mise.toml` pins the tools used by One tasks. Run `one mise trust` after
+  reviewing the configuration, then `one mise install` to install those
+  versions without changing your global tool selections.
 - **Node.js** ≥ 24.14 — install from [nodejs.org](https://nodejs.org/)
 - **pnpm** 11.23 — activated from the repository's `packageManager` field
 - **Go** ≥ 1.25 — install from [go.dev](https://go.dev/dl/)
@@ -94,11 +98,47 @@ task check
 task test
 ```
 
-Task is the public command interface for setup, development, builds, tests,
-and releases. Turborepo schedules JavaScript workspace builds, while pnpm
-package commands, Go commands, and modules under `packages/tooling/` are
-implementation leaves. Their `:raw` commands are kept
-for Task and CI composition rather than normal developer use.
+One is the preferred local entry point. Task remains the implementation of
+product preparation and the compatible entry point for existing CI.
+Turborepo schedules JavaScript workspace builds; pnpm `:raw` commands,
+Go commands and modules under `packages/tooling/` remain implementation leaves.
+
+### One workspace commands
+
+```shell
+one run                        # List tasks
+one mise trust                 # Trust this clone's reviewed task configuration
+one mise install               # Install the pinned toolchain once
+one setup                      # Node packages and pinned runtime tools
+one dev                        # Desktop + Web, using the existing bootstrap
+one dev:web                    # Core + Web UI
+one dev:electron               # Desktop only
+one dev -p extension           # Browser extension
+one build -p core              # Core with embedded Player UI
+one build -p electron          # Desktop assets
+one build -p docs              # VitePress documentation
+one pack -p electron           # Unpacked desktop directory
+one check                      # Repository lint, format and types
+one test                       # Repository TypeScript and Go suites
+one dev --dry-run -o json      # Inspect without running or loading secrets
+pnpm one:verify                # Verify task plans and configuration synchronization
+```
+
+The v2 `one.manifest.toml` records project paths and toolchains without moving
+source directories. `mise.toml` contains discovered component scripts plus
+explicit product overrides. `one build` defaults to the Electron build;
+Docker and documentation use `one build:docker` and `one build -p docs`.
+After changing project scripts or workspace dependencies, run `one init mise`,
+review the diff and run `pnpm one:verify`. Keep product overrides: they ensure
+that Core, runtime binaries, application targets and packaging metadata are
+prepared by the existing Taskfile, without duplicate background processes.
+
+This adoption does not configure an Infisical binding. Existing application
+and Taskfile environment loaders still apply; One itself does not load local
+`.env` files. Use `MEDIAGO_PROFILE=development`, `test` or `production` for the
+existing MediaGo profiles. One's `--env` option selects an Infisical environment
+when a binding is configured; it does not change `MEDIAGO_PROFILE`.
+CI and release workflows continue to call Task directly.
 
 The self-hosted Web product ships only through the Docker image. Task launches
 the Go Core binary directly for Web development; there is no Node.js server

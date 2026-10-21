@@ -32,3 +32,5 @@ design-qa.md
 *.tsbuildinfo
 .superpowers
 .pnpm-store/
+.one-run-*/
+mise.local.toml

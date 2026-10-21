@@ -138,8 +138,42 @@ task dev:all
 版本只来自 `packages/tooling/manifests/runtime-deps.json`，不会自动升级；单独运行 `pnpm install`
 只会安装 Node 工作区依赖，不会安装 BBDown 等运行时二进制文件。
 
-开发、构建、测试和发布都以 `task` 命令作为统一入口；Turbo、pnpm 的 `:raw`
-脚本、Go 命令以及 `packages/tooling` 中的工具只作为内部实现，不需要日常直接调用。
+推荐使用 [One CLI](https://github.com/1cli-team/one-cli) 0.1.24 或更新版本，先按系统安装：
+
+**macOS / Linux：**
+
+```bash
+curl -fsSL https://1cli.dev/install.sh | bash
+```
+
+**Windows（PowerShell）：**
+
+```powershell
+irm https://1cli.dev/install.ps1 | iex
+```
+
+也可以从 [GitHub Releases](https://github.com/1cli-team/one-cli/releases/latest)
+下载对应系统和架构的 CLI 压缩包，并将 `one` 可执行文件所在目录加入 `PATH`。
+
+安装完成后重新打开终端，在仓库根目录验证版本并初始化：
+
+```shell
+one --version
+one mise trust
+one mise install
+one setup
+one dev
+one dev:web
+one dev:electron
+one check
+one test
+```
+
+`one.manifest.toml` 登记现有项目，`mise.toml` 固定 Node、pnpm、Go 和 Task 版本。
+`one run` 列出全部任务；`one build -p core` 构建 Core，`one build -p docs`
+构建文档；`one dev --dry-run -o json` 仅预览执行计划。修改项目脚本后，运行
+`one init mise` 并检查差异。现有 Task 命令继续兼容，One 复用它们的运行依赖准备、
+环境加载和打包检查；Turbo、pnpm 的 `:raw` 脚本和 `packages/tooling` 工具仍是内部实现。
 
 只开发 Web 端时使用 `task dev:web`，只开发桌面端时使用 `task dev:electron`。
 可部署的 Web 版本只通过 Docker 镜像交付，不再维护独立的 Node.js Server 包。

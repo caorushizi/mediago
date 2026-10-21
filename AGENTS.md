@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 
-MediaGo is a pnpm/turborepo monorepo. Feature apps live in `apps/` (`frontend-main`, `frontend-mobile`, `backend-web`, `backend-electron`) for the user surfaces and API. Reusable logic stays in `packages/` (`shared` for cross-runtime helpers, `backend` for orchestration, `main` for Electron packaging). Long-form docs and assets sit in `docs/`, `images/`, and `docker/`. End-to-end checks live in `tests/`.
+MediaGo is a pnpm/turborepo monorepo registered in `one.manifest.toml`. Feature apps live in `apps/` (`core` for the Go backend, `electron` for desktop, `ui` for the shared frontend, `player-ui` for playback). Reusable logic stays in `packages/`, including `common`, `core-sdk`, `electron-preload`, and `tooling`. Long-form docs and assets sit in `docs/`, `images/`, and `docker/`. End-to-end checks live in `tests/`.
 
 ## Tooling and Script Placement
 
@@ -25,7 +25,7 @@ Repository automation is centralized in `packages/tooling`.
 
 ## Build, Test, and Development Commands
 
-Run `pnpm install` once per clone. Use `pnpm dev` for the unified desktop + web experience, or scope to `pnpm dev:web` / `pnpm dev:electron`. `pnpm build` triggers the production Turborepo pipeline; `pnpm build:web-release` plus `pnpm build:docker` produce the deployable web bundle. Keep the codebase healthy with `pnpm lint`, `pnpm lint:fix`, `pnpm format`, and verify types through `pnpm types`.
+Use One CLI 0.1.24 or newer. On a new clone, review `mise.toml`, run `one mise trust`, `one mise install`, then `one setup`. Use `one dev` for desktop + Web, or `one dev:web` / `one dev:electron` for one surface. Use `one build -p core`, `one build -p electron`, `one build -p docs`, and `one build:docker` for the corresponding targets. `one check` runs lint, formatting and type checks; `one test` runs the TypeScript and Go suites. `mise.toml` pins tool versions and delegates product workflows to the existing Taskfile; CI continues to use Task. After changing project scripts, run `one init mise`, review the diff, and run `pnpm one:verify`. Keep `pnpm format` as the formatting command before commits.
 
 ## Coding Style & Naming Conventions
 
@@ -50,7 +50,7 @@ Do not use cursor-default on an enabled interactive element. Avoid pointer-event
 
 ## Testing Guidelines
 
-Integration suites live under `tests/*.test.ts` and execute via `pnpm test` using the Node `tsx` runner. Name files descriptively like `download.queue.integration.test.ts`. Mock external services, prefer shared fixtures in `tests/fixtures/`, and cover happy path, recovery, and edge behaviors when touching runtime code.
+TypeScript suites use Vitest through `one test:ts`; Go suites use `one test:go`. Integration and Playwright checks use `one test:integration` and `one test:e2e`. Name files descriptively like `download.queue.integration.test.ts`. Mock external services, prefer shared fixtures in `tests/fixtures/`, and cover happy path, recovery, and edge behaviors when touching runtime code.
 
 ## Commit & Pull Request Guidelines
 
