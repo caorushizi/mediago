@@ -93,9 +93,13 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
 
   test-e2e:
-    name: Test three-surface Playwright
+    name: Test Playwright (${{ matrix.project }})
     runs-on: ubuntu-latest
     timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [web, electron, extension]
     steps:
       - uses: actions/checkout@v7
       - uses: go-task/setup-task@v1
@@ -122,15 +126,16 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('pnpm-lock.yaml') }}
-      - name: Run three-surface Playwright
+      - name: Run Playwright project
         run: task ci:test:e2e
         env:
+          MEDIAGO_E2E_PROJECT: ${{ matrix.project }}
           GITHUB_TOKEN: ${{ github.token }}
       - name: Upload Playwright failure artifacts
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-failure-artifacts
+          name: playwright-failure-artifacts-${{ matrix.project }}
           path: |
             playwright-report
             test-results

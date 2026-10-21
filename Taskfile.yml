@@ -935,7 +935,7 @@ tasks:
       - pnpm exec playwright install-deps chromium
       - pnpm exec playwright install chromium
       - pnpm type:check:e2e
-      - xvfb-run -a pnpm test:e2e:raw
+      - xvfb-run -a pnpm test:e2e:raw --project="${MEDIAGO_E2E_PROJECT:-*}"
 
   internal:ci:docs:build:
     internal: true

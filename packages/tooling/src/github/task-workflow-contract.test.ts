@@ -22,9 +22,12 @@ const ciRunAllowlist = {
   ],
   "test-e2e": [
     {
-      name: "Run three-surface Playwright",
+      name: "Run Playwright project",
       run: "task ci:test:e2e",
-      env: { GITHUB_TOKEN: "${{ github.token }}" },
+      env: {
+        MEDIAGO_E2E_PROJECT: "${{ matrix.project }}",
+        GITHUB_TOKEN: "${{ github.token }}",
+      },
     },
   ],
   "pr-gate": [

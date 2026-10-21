@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, test } from "vitest";
+import { parse } from "yaml";
 
 const repositoryRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -19,6 +20,22 @@ describe("ci.yml E2E workflow contract", () => {
 
   test("requires every worker result in the bounded PR gate contract", () => {
     assertPrGateContract(workflow);
+  });
+
+  test("runs all surfaces independently while keeping every result blocking", () => {
+    const jobs = parse(workflow).jobs;
+    expect(jobs["test-e2e"].strategy).toEqual({
+      "fail-fast": false,
+      matrix: { project: ["web", "electron", "extension"] },
+    });
+    expect(jobs["test-e2e"]["continue-on-error"]).toBeUndefined();
+    expect(
+      jobs["test-e2e"].steps.some(
+        (step: Record<string, unknown>) => step["continue-on-error"],
+      ),
+    ).toBe(false);
+    expect(jobs["pr-gate"].needs).toContain("test-e2e");
+    expect(jobs["pr-gate"].env.E2E_RESULT).toBe("${{ needs.test-e2e.result }}");
   });
 
   test("pins Task before the repository command in the E2E job", () => {
@@ -43,7 +60,7 @@ describe("ci.yml E2E workflow contract", () => {
   test("rejects misplaced failure conditions and unrelated later-job tokens", () => {
     const runStep = extractNamedStep(
       extractJob(workflow, "test-e2e"),
-      "Run three-surface Playwright",
+      "Run Playwright project",
     );
     const uploadStep = extractNamedStep(
       extractJob(workflow, "test-e2e"),
@@ -82,7 +99,7 @@ function assertE2EWorkflowContract(workflowContents: string) {
   expect(e2eJob).toBeDefined();
   if (e2eJob === undefined) return;
 
-  expect(e2eJob).toContain("name: Test three-surface Playwright");
+  expect(e2eJob).toContain("name: Test Playwright (${{ matrix.project }})");
   expect(e2eJob).toContain("timeout-minutes: 8");
   expect(e2eJob).toContain("uses: actions/checkout@v7");
   expect(e2eJob).toContain(
@@ -116,8 +133,9 @@ function assertE2EWorkflowContract(workflowContents: string) {
     "key: playwright-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('pnpm-lock.yaml') }}",
   );
 
-  const runStep = extractNamedStep(e2eJob, "Run three-surface Playwright");
+  const runStep = extractNamedStep(e2eJob, "Run Playwright project");
   expect(runStep).toContain("run: task ci:test:e2e");
+  expect(runStep).toContain("MEDIAGO_E2E_PROJECT: ${{ matrix.project }}");
   expect(runStep).not.toContain("if:");
 
   const uploadStep = extractNamedStep(
@@ -126,6 +144,9 @@ function assertE2EWorkflowContract(workflowContents: string) {
   );
   expect(uploadStep).toContain("if: failure()");
   expect(uploadStep).toContain("uses: actions/upload-artifact@v4");
+  expect(uploadStep).toContain(
+    "name: playwright-failure-artifacts-${{ matrix.project }}",
+  );
   expect(uploadStep).toContain("path: |\n");
   expect(uploadStep).toContain("playwright-report\n");
   expect(uploadStep).toContain("test-results\n");

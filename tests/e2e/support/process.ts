@@ -25,6 +25,37 @@ export interface ManagedProcess {
   stop(): Promise<void>;
 }
 
+export interface ProcessOutput {
+  logTail(): string;
+  dispose(): void;
+}
+
+export function captureProcessOutput(
+  child: Pick<ChildProcess, "stdout" | "stderr">,
+): ProcessOutput {
+  const tail = new RedactedRollingTail();
+  const streams = [child.stdout, child.stderr].flatMap((stream) => {
+    if (!stream) return [];
+    const diagnostic = new DiagnosticStream(tail);
+    const onData = (chunk: unknown) => diagnostic.append(chunk);
+    const onEnd = () => diagnostic.end();
+    stream.on("data", onData);
+    stream.on("end", onEnd);
+    return [{ stream, diagnostic, onData, onEnd }];
+  });
+  return {
+    logTail: () =>
+      tail.snapshot(streams.map(({ diagnostic }) => diagnostic.snapshot())),
+    dispose: () => {
+      for (const { stream, diagnostic, onData, onEnd } of streams) {
+        stream.off("data", onData);
+        stream.off("end", onEnd);
+        diagnostic.end();
+      }
+    },
+  };
+}
+
 interface ExitState {
   code: number | null;
   signal: NodeJS.Signals | null;
@@ -587,13 +618,7 @@ export async function startManagedProcess(options: {
     throw startupError(options.label, error, "<no output>");
   }
 
-  const diagnosticTail = new RedactedRollingTail();
-  const stdoutDiagnostics = new DiagnosticStream(diagnosticTail);
-  const stderrDiagnostics = new DiagnosticStream(diagnosticTail);
-  child.stdout?.on("data", (chunk) => stdoutDiagnostics.append(chunk));
-  child.stdout?.on("end", () => stdoutDiagnostics.end());
-  child.stderr?.on("data", (chunk) => stderrDiagnostics.append(chunk));
-  child.stderr?.on("end", () => stderrDiagnostics.end());
+  const output = captureProcessOutput(child);
 
   const exitPromise = new Promise<ExitState>((resolve) => {
     child.once("exit", (code, signal) => {
@@ -614,10 +639,7 @@ export async function startManagedProcess(options: {
         : exitState
           ? formatExit(exitState)
           : "running";
-      const logs = diagnosticTail.snapshot([
-        stdoutDiagnostics.snapshot(),
-        stderrDiagnostics.snapshot(),
-      ]);
+      const logs = output.logTail();
       return boundedDiagnostic(
         `${options.label}: ${state}\n${logs || "<no output>"}`,
         LOG_TAIL_BYTES,
@@ -708,12 +730,7 @@ export async function startManagedProcess(options: {
         cleanupError = caught;
       }
     }
-    const logs =
-      handle?.logTail() ??
-      diagnosticTail.snapshot([
-        stdoutDiagnostics.snapshot(),
-        stderrDiagnostics.snapshot(),
-      ]);
+    const logs = handle?.logTail() ?? output.logTail();
     throw startupError(options.label, error, logs, cleanupError);
   }
 }
