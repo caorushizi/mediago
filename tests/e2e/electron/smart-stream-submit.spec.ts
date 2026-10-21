@@ -2,8 +2,11 @@ import type { ElectronApplication, Page } from "@playwright/test";
 import { electronTest as test, expect } from "../support/electron-app.ts";
 
 async function submitStream(page: Page, name: string, url: string) {
-  await page.goto("http://localhost:8500/");
-  await page.getByRole("button", { name: "New download" }).click();
+  await page.locator('aside a[href="/"]').click();
+  await page
+    .locator("header")
+    .getByRole("button", { name: "New download", exact: true })
+    .click();
   await page.getByLabel("Video name").fill(name);
   await page.getByLabel("Video link").fill(url);
   await page.getByRole("button", { name: "Add to list" }).click();
@@ -35,7 +38,8 @@ test("recognizes suffixless HLS in the dedicated discovery dialog", async ({
   electronRuntime,
 }) => {
   const { client, media, page } = electronRuntime;
-  await submitStream(page, "Suffixless fixture", media.suffixlessHLSURL);
+  const taskName = "Suffixless fixture";
+  await submitStream(page, taskName, media.suffixlessHLSURL);
 
   await expect(
     page.getByRole("heading", { name: "New download" }),
@@ -53,9 +57,7 @@ test("recognizes suffixless HLS in the dedicated discovery dialog", async ({
         current: 1,
         pageSize: 20,
       });
-      return response.data.list.find(
-        (task) => task.name === "Suffixless fixture",
-      )?.url;
+      return response.data.list.find((task) => task.name === taskName)?.url;
     })
     .toBe(`${media.baseURL}/streams/720?token=fixture`);
 });
@@ -64,7 +66,8 @@ test("shows webpage sniffing in a dedicated dialog before source selection", asy
   electronRuntime,
 }) => {
   const { client, media, page } = electronRuntime;
-  await submitStream(page, "Embedded fixture", media.embeddedHLSPageURL);
+  const taskName = "Embedded fixture";
+  await submitStream(page, taskName, media.embeddedHLSPageURL);
 
   await expect(
     page.getByRole("status").filter({
@@ -89,9 +92,7 @@ test("shows webpage sniffing in a dedicated dialog before source selection", asy
         current: 1,
         pageSize: 20,
       });
-      return response.data.list.find(
-        (task) => task.name === "Embedded HLS Fixture",
-      )?.url;
+      return response.data.list.find((task) => task.name === taskName)?.url;
     })
     .toBe(`${media.baseURL}/streams/720?fixture=embedded`);
 });
@@ -100,11 +101,15 @@ test("moves m3u8 fallback into smart discovery without reopening the form", asyn
   electronRuntime,
 }) => {
   const { client, media, page } = electronRuntime;
-  await page.goto("http://localhost:8500/");
-  await page.getByRole("button", { name: "New download" }).click();
+  const taskName = "Prompt fixture";
+  await page.locator('aside a[href="/"]').click();
+  await page
+    .locator("header")
+    .getByRole("button", { name: "New download", exact: true })
+    .click();
   await page.getByLabel("Download type").click();
   await page.getByRole("option", { name: "Stream media (m3u8)" }).click();
-  await page.getByLabel("Video name").fill("Prompt fixture");
+  await page.getByLabel("Video name").fill(taskName);
   await page.getByLabel("Video link").fill(media.embeddedHLSPageURL);
   await page.getByRole("button", { name: "Add to list" }).click();
 
@@ -123,11 +128,9 @@ test("moves m3u8 fallback into smart discovery without reopening the form", asyn
         current: 1,
         pageSize: 20,
       });
-      return response.data.list.some(
-        (task) => task.name === "Embedded HLS Fixture",
-      );
+      return response.data.list.find((task) => task.name === taskName)?.url;
     })
-    .toBe(true);
+    .toBe(`${media.baseURL}/streams/signed?fixture=embedded`);
 });
 
 test("offers interactive Material Extraction after discovery finds no resource", async ({
