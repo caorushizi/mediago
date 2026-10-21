@@ -213,6 +213,7 @@ function getReleaseConfig(): Configuration {
       },
     },
     nsis: {
+      uninstallDisplayName: "${productName}",
       oneClick: false,
       allowElevation: true,
       allowToChangeInstallationDirectory: true,

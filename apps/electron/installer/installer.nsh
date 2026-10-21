@@ -1,56 +1,61 @@
-; ============================================================================
-; Custom NSIS overrides injected by electron-builder.
-;
-; electron-builder splices `!insertmacro customHeader` into the top of its
-; generated installer script (see
-; node_modules/app-builder-lib/templates/nsis/installer.nsi around line 45),
-; which is AFTER `common.nsh` is included. That makes this macro the right
-; place to override directives like `Name`, `Caption`, `BrandingText`.
-;
-; Note on FileDescription: we intentionally do NOT override it here.
-; electron-builder's `NsisTarget.computeVersionKey()` (app-builder-lib ->
-; out/targets/nsis/NsisTarget.js) unconditionally emits
-;   VIAddVersionKey /LANG=1033 "FileDescription" "${appInfo.description}"
-; from `apps/electron/app/package.json`'s `description`. Any customHeader
-; VIAddVersionKey targeting the same LANG+key triggers a hard NSIS error
-; ("already defined!") that `-WX` does not gate. Different LANG (e.g. 0)
-; produces a `warning 9100: without standard key FileVersion` which IS
-; gated by -WX and still fails the build.
-;
-; Do not rewrite the completed installer with a generic PE resource editor.
-; NSIS stores its compressed installation data in a PE overlay, and resource
-; editors may discard that overlay while rewriting the executable. Keep
-; electron-builder's default FileDescription so the installer payload remains
-; intact.
-;
-; Wired up through `nsis.include` in packages/tooling/src/electron/build.ts.
-; ============================================================================
+!include "LogicLib.nsh"
+!include "Win\COM.nsh"
+
+!define MEDIAGO_INSTALLER_INCLUDE_DIR "${__FILEDIR__}"
 
 !macro customHeader
-  ; ---------------------------------------------------------------------
-  ; Surface the version in the installer's title bar.
-  ;
-  ; electron-builder's common.nsh sets `Name "${PRODUCT_NAME}"`, from
-  ; which NSIS derives the default `$(^SetupCaption)` (e.g. "Setup -
-  ; mediago-community"). That caption omits the version — users had to
-  ; look at the gray BrandingText at the bottom-left to see which
-  ; release they were installing.
-  ;
-  ; Why `Caption` and not `Name`: re-setting `Name` emits
-  ; `warning 6029: Name: specified multiple times`, and electron-builder
-  ; compiles NSIS with `-WX` (warnings-as-errors), so the build fails.
-  ;
-  ; Why a plain literal and not `$(^SetupCaption)`: the localized lang
-  ; string is evaluated at runtime via the MUI plugin. electron-builder
-  ; compiles an intermediate installer with `-DBUILD_UNINSTALLER` and
-  ; executes it silently (NsisTarget.js line ~370, `execWine(installerPath,
-  ; ..., __COMPAT_LAYER=RunAsInvoker)`) just to extract the uninstaller.
-  ; Evaluating a language string in the `Caption` directive during that
-  ; silent pass crashes with STATUS_STACK_BUFFER_OVERRUN (exit 3221225725)
-  ; and aborts the whole packaging. A plain literal sidesteps the MUI
-  ; runtime call entirely, so the intermediate pass finishes cleanly.
-  ; Trade-off: title bar reads "Setup - mediago-community 3.5.0" in every
-  ; locale instead of the translated "Installazione di ..." — acceptable.
-  ; ---------------------------------------------------------------------
-  Caption "Setup - ${PRODUCT_NAME} ${VERSION}"
+  BrandingText "Copyright ${PRODUCT_NAME}"
+
+  !ifndef BUILD_UNINSTALLER
+    ; Caption writes ^SetupCaption itself: referring to it from Caption recurses.
+    !include "${MEDIAGO_INSTALLER_INCLUDE_DIR}\languages.nsh"
+    !undef APP_DESCRIPTION
+    !define APP_DESCRIPTION "$(MediaGoAppDescription)"
+  !endif
 !macroend
+
+!ifndef BUILD_UNINSTALLER
+  ; Load and save the existing link so arguments, icons and AppUserModelID survive.
+  Function MediaGoUpdateShortcutDescription
+    Exch $0
+    Push $1
+    Push $2
+    Push $3
+
+    ${If} ${FileExists} "$0"
+      StrCpy $1 0
+      StrCpy $2 0
+      !insertmacro ComHlpr_CreateInProcInstance ${CLSID_ShellLink} ${IID_IShellLink} r1 ".r3"
+      ${If} $3 = 0
+        ${IUnknown::QueryInterface} $1 '("${IID_IPersistFile}",.r2).r3'
+        ${If} $3 = 0
+          ${IPersistFile::Load} $2 '("$0",2).r3'
+          ${If} $3 = 0
+            ${IShellLink::SetDescription} $1 '("$(MediaGoAppDescription)").r3'
+            ${If} $3 = 0
+              ${IPersistFile::Save} $2 '("$0",1).r3'
+            ${EndIf}
+          ${EndIf}
+          ${IUnknown::Release} $2 ""
+        ${EndIf}
+        ${IUnknown::Release} $1 ""
+      ${EndIf}
+      ${If} $3 != 0
+        DetailPrint "Could not update shortcut description: $0 ($3)"
+      ${EndIf}
+    ${EndIf}
+
+    Pop $3
+    Pop $2
+    Pop $1
+    Pop $0
+  FunctionEnd
+
+  !macro customInstall
+    ; Upgrades normally keep shortcuts, skipping electron-builder's CreateShortCut.
+    Push "$newStartMenuLink"
+    Call MediaGoUpdateShortcutDescription
+    Push "$newDesktopLink"
+    Call MediaGoUpdateShortcutDescription
+  !macroend
+!endif
