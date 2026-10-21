@@ -136,6 +136,48 @@ Browsing older releases? See the [GitHub Releases page](https://github.com/caoru
 
 ## 🧑‍💻 Development from source
 
+Install [One CLI](https://github.com/1cli-team/one-cli) 0.1.24 or newer first.
+
+**macOS / Linux:**
+
+```bash
+curl -fsSL https://1cli.dev/install.sh | bash
+```
+
+**Windows (PowerShell):**
+
+```powershell
+irm https://1cli.dev/install.ps1 | iex
+```
+
+For manual installation, download the CLI archive for your operating system
+and architecture from [GitHub Releases](https://github.com/1cli-team/one-cli/releases/latest)
+and add the `one` executable to `PATH`.
+
+After installation, open a new terminal and run these commands from the
+repository root:
+
+```shell
+one --version
+one mise trust
+one mise install
+one setup
+one dev
+one dev:web
+one dev:electron
+one check
+one test
+```
+
+`one.manifest.toml` registers the existing projects. `mise.toml` pins Node,
+pnpm, Go and Task and exposes product workflows through One. Run `one run`
+to list tasks, `one build -p core` to build Core, or `one build -p docs`
+to build the documentation. `one dev --dry-run -o json` previews execution.
+After changing package scripts, run `one init mise` and review the diff.
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for configuration and validation.
+
+The following Task commands remain compatible and are used by existing CI:
+
 Repository workflows support [Task](https://taskfile.dev/) v3.51.1 or newer
 within the v3 release line. Install the latest compatible v3 release on macOS,
 Linux, or Windows (PowerShell) with a Go toolchain, make sure the Go binary
@@ -160,9 +202,9 @@ application. Their only version source is `packages/tooling/manifests/runtime-de
 does not automatically upgrade them. Running `pnpm install` alone installs
 only Node workspace packages, not runtime binaries such as BBDown.
 
-Use `task` as the single public entry point for development, builds, tests,
-and releases. Turbo, pnpm `:raw` scripts, Go commands, and utilities in
-`packages/tooling` are implementation details used by Task and CI.
+One delegates product workflows to the existing Taskfile. Turbo, pnpm `:raw`
+scripts, Go commands, and utilities in `packages/tooling` remain implementation
+details used by Task and CI.
 
 Use `task dev:web` for the web surface or `task dev:electron` for
 desktop-only development. The deployable Web product is the Docker image;

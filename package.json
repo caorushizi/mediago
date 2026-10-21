@@ -8,6 +8,7 @@
   "type": "module",
   "packageManager": "pnpm@11.23.0",
   "scripts": {
+    "one:verify": "node packages/tooling/src/one/verify.ts",
     "knip": "knip",
     "dev:electron": "task dev:electron",
     "dev:electron:raw": "pnpm start:electron",

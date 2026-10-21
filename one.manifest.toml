@@ -1,0 +1,53 @@
+version = 2
+
+[workspace]
+id = "mediago"
+name = "MediaGo"
+
+[projects.core]
+path = "apps/core"
+toolchain = "go"
+
+[projects.electron]
+path = "apps/electron"
+toolchain = "node"
+
+[projects.ui]
+path = "apps/ui"
+toolchain = "node"
+
+[projects.player-ui]
+path = "apps/player-ui"
+toolchain = "node"
+
+[projects.docs]
+path = "docs"
+toolchain = "node"
+
+[projects.common]
+path = "packages/common"
+toolchain = "node"
+
+[projects.core-sdk]
+path = "packages/core-sdk"
+toolchain = "node"
+
+[projects.browser-extension]
+path = "packages/browser-extension"
+toolchain = "node"
+
+[projects.electron-preload]
+path = "packages/electron-preload"
+toolchain = "node"
+
+[projects.extension]
+path = "packages/mediago-extension"
+toolchain = "node"
+
+[projects.service-runner]
+path = "packages/node-service"
+toolchain = "node"
+
+[projects.tooling]
+path = "packages/tooling"
+toolchain = "node"
