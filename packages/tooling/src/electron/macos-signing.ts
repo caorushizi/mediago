@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop -- Validate each artifact before detaching its mount or deleting extracted files. */
 import { spawnSync } from "node:child_process";
 import {
   lstatSync,
@@ -8,6 +9,7 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { withAppleNetworkRetry } from "./macos-network-retry.ts";
 
 export const MACOS_SIGNING_ENVIRONMENT_VARIABLES = [
   "CSC_LINK",
@@ -59,11 +61,11 @@ export function hasHardenedRuntimeFlag(signature: string): boolean {
   return /(?:^|\s)flags=[^\r\n]*\bruntime\b/m.test(signature);
 }
 
-export function verifyMacOSDistributionArtifacts(options: {
+export async function verifyMacOSDistributionArtifacts(options: {
   releaseDirectory: string;
   artifacts: readonly string[];
   platform?: NodeJS.Platform;
-}): void {
+}): Promise<void> {
   const platform = options.platform ?? process.platform;
   if (platform !== "darwin") {
     throw new Error("macOS distribution verification requires macOS");
@@ -83,13 +85,13 @@ export function verifyMacOSDistributionArtifacts(options: {
   requireArtifacts("ZIP", zipFiles);
 
   for (const appBundle of appBundles) {
-    verifyAppBundle(appBundle, true);
+    await verifyAppBundle(appBundle, true);
   }
   for (const dmgFile of dmgFiles) {
-    verifyDmg(dmgFile);
+    await verifyDmg(dmgFile);
   }
   for (const zipFile of zipFiles) {
-    verifyZip(zipFile);
+    await verifyZip(zipFile);
   }
 }
 
@@ -99,7 +101,10 @@ function requireArtifacts(label: string, files: readonly string[]): void {
   }
 }
 
-function verifyAppBundle(appBundle: string, verifyBundledTools: boolean): void {
+async function verifyAppBundle(
+  appBundle: string,
+  verifyBundledTools: boolean,
+): Promise<void> {
   runTool("codesign", [
     "--verify",
     "--deep",
@@ -124,7 +129,10 @@ function verifyAppBundle(appBundle: string, verifyBundledTools: boolean): void {
     throw new Error(`${appBundle} does not enable Hardened Runtime`);
   }
 
-  runTool("xcrun", ["stapler", "validate", appBundle]);
+  await withAppleNetworkRetry(
+    () => runTool("xcrun", ["stapler", "validate", appBundle]),
+    { label: "stapler validate" },
+  );
   runTool("spctl", ["--assess", "--type", "execute", "--verbose=4", appBundle]);
 
   if (verifyBundledTools) {
@@ -159,7 +167,7 @@ function verifyBundledMachOFiles(appBundle: string): void {
   }
 }
 
-function verifyDmg(dmgFile: string): void {
+async function verifyDmg(dmgFile: string): Promise<void> {
   runTool("codesign", ["--verify", "--verbose=2", dmgFile]);
 
   const temporaryDirectory = mkdtempSync(
@@ -181,7 +189,7 @@ function verifyDmg(dmgFile: string): void {
     const appBundles = findAppBundles(mountPoint);
     requireArtifacts("app bundle inside the DMG", appBundles);
     for (const appBundle of appBundles) {
-      verifyAppBundle(appBundle, false);
+      await verifyAppBundle(appBundle, false);
     }
   } finally {
     if (mounted) runTool("hdiutil", ["detach", mountPoint]);
@@ -189,7 +197,7 @@ function verifyDmg(dmgFile: string): void {
   }
 }
 
-function verifyZip(zipFile: string): void {
+async function verifyZip(zipFile: string): Promise<void> {
   const temporaryDirectory = mkdtempSync(
     path.join(tmpdir(), "mediago-zip-verification-"),
   );
@@ -198,7 +206,7 @@ function verifyZip(zipFile: string): void {
     const appBundles = findAppBundles(temporaryDirectory);
     requireArtifacts("app bundle inside the ZIP", appBundles);
     for (const appBundle of appBundles) {
-      verifyAppBundle(appBundle, false);
+      await verifyAppBundle(appBundle, false);
     }
   } finally {
     rmSync(temporaryDirectory, { recursive: true, force: true });
@@ -251,10 +259,17 @@ function runTool(command: string, args: readonly string[]): string {
   const result = spawnSync(command, [...args], {
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"],
+    timeout: command === "xcrun" && args[0] === "stapler" ? 120_000 : undefined,
   });
   const output = `${result.stdout ?? ""}${result.stderr ?? ""}`;
   if (result.error) {
-    throw new Error(`${command} failed: ${result.error.message}`);
+    throw new Error(
+      command +
+        " " +
+        args.slice(0, 2).join(" ") +
+        " failed: " +
+        result.error.message,
+    );
   }
   if (result.status !== 0) {
     throw new Error(

@@ -1,3 +1,4 @@
+import { withAppleNetworkRetry } from "./macos-network-retry.ts";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path, { dirname } from "node:path";
@@ -306,15 +307,21 @@ if (!dependencyDirectory?.isDirectory()) {
 await fs.cp(localDepsDir, depsDir, { recursive: true, force: true });
 
 const config = getReleaseConfig();
-const artifacts = await build({
-  config,
-  dir: isDir,
-  publish: "never",
-  // targets: Platform.WINDOWS.createTarget(["nsis", "portable"], Arch.x64),
-});
+const packageArtifacts = () =>
+  build({
+    config,
+    dir: isDir,
+    publish: "never",
+  });
+const artifacts = macOSSigning.enabled
+  ? await withAppleNetworkRetry(packageArtifacts, {
+      label: "signed macOS packaging",
+      attempts: 3,
+    })
+  : await packageArtifacts();
 
 if (macOSSigning.enabled) {
-  verifyMacOSDistributionArtifacts({
+  await verifyMacOSDistributionArtifacts({
     releaseDirectory: path.resolve(appRoot, "release"),
     artifacts,
   });
