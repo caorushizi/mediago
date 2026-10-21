@@ -382,7 +382,7 @@ export const it = {
   videoDownloadSuccess: "{{name}} - scaricato",
   videoDownloadFailed: "{{name}} - download fallito",
   showMainWindow: "Visualizza finestra principale MediaGo",
-  exitApp: "Esci",
+  exitApp: "Esci da {{applicationName}}",
   applicationMenu: {
     about: "Informazioni su {{applicationName}}",
     services: "Servizi",

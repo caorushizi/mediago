@@ -1,7 +1,12 @@
+import { createInstance } from "i18next";
+import { BASE_I18N_OPTIONS } from "../../../packages/common/src/i18n/config.ts";
+import { i18nResources } from "../../../packages/common/src/i18n/resources/index.ts";
 import { beforeEach, expect, test, vi } from "vitest";
 
 const electronMocks = vi.hoisted(() => ({
+  buildFromTemplate: vi.fn(),
   app: {
+    name: "MediaGo",
     getLocale: vi.fn(() => "en"),
     getPreferredSystemLanguages: vi.fn(() => ["zh-CN", "en-US"]),
     on: vi.fn(),
@@ -12,7 +17,7 @@ const electronMocks = vi.hoisted(() => ({
 const i18nMocks = vi.hoisted(() => ({
   changeLanguage: vi.fn(),
   on: vi.fn(),
-  t: vi.fn((key: string) => key),
+  t: vi.fn((key: string, _options?: Record<string, unknown>) => key),
 }));
 
 const applicationMenuMocks = vi.hoisted(() => ({
@@ -28,7 +33,7 @@ const sharedMocks = vi.hoisted(() => ({
 vi.mock("electron", () => ({
   app: electronMocks.app,
   BrowserWindow: { getAllWindows: vi.fn(() => []) },
-  Menu: { buildFromTemplate: vi.fn() },
+  Menu: { buildFromTemplate: electronMocks.buildFromTemplate },
   nativeImage: {},
   nativeTheme: electronMocks.nativeTheme,
   Tray: class Tray {},
@@ -91,12 +96,53 @@ const { default: ElectronApp } = await import("./app");
 
 beforeEach(() => {
   vi.clearAllMocks();
+  i18nMocks.t.mockImplementation((key) => key);
   electronMocks.nativeTheme.themeSource = "system";
   electronMocks.app.getPreferredSystemLanguages.mockReturnValue([
     "zh-CN",
     "en-US",
   ]);
 });
+
+test.each([
+  ["it", "Esci da MediaGo"],
+  ["en", "Quit"],
+  ["zh", "退出应用"],
+])(
+  "renders the %s tray quit label without placeholders",
+  async (language, expected) => {
+    const translator = createInstance();
+    await translator.init({
+      ...BASE_I18N_OPTIONS,
+      lng: language,
+      resources: Object.fromEntries(
+        Object.entries(i18nResources).map(([key, translation]) => [
+          key,
+          { translation },
+        ]),
+      ),
+    });
+    i18nMocks.t.mockImplementation((key, options) =>
+      translator.t(key, options),
+    );
+    const { app } = createApp({ blockAds: false, language });
+    const tray = { setContextMenu: vi.fn() };
+    Reflect.set(app, "tray", tray);
+
+    await app.init();
+    const languageListener = i18nMocks.on.mock.calls.find(
+      ([event]) => event === "languageChanged",
+    )?.[1] as (() => void) | undefined;
+    expect(languageListener).toBeTypeOf("function");
+    languageListener?.();
+
+    expect(electronMocks.buildFromTemplate).toHaveBeenLastCalledWith([
+      { label: translator.t("showMainWindow"), click: expect.any(Function) },
+      { label: expected, role: "quit" },
+    ]);
+    expect(tray.setContextMenu).toHaveBeenCalledOnce();
+  },
+);
 
 test("seeds initial config before prewarming an enabled ad blocker", async () => {
   const { app, configCache, webviewService } = createApp({ blockAds: true });
