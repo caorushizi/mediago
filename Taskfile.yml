@@ -665,7 +665,6 @@ tasks:
     requires: *profile-requires
     deps: &e2e-deps
       - task: internal:deps:e2e
-      - task: internal:core:build
       - task: internal:test:e2e:build
       - task: internal:test:e2e:chromium
     cmds:
@@ -724,7 +723,7 @@ tasks:
     dotenv: *profile-dotenv
     requires: *profile-requires
     deps:
-      - task: internal:deps:node
+      - task: internal:core:build
     cmds:
       - pnpm test:e2e:build:raw
 
@@ -929,7 +928,6 @@ tasks:
     requires: *profile-requires
     deps:
       - task: internal:deps:e2e
-      - task: internal:core:build
       - task: internal:test:e2e:build
     cmds:
       - pnpm exec playwright install-deps chromium

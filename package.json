@@ -8,6 +8,7 @@
   "type": "module",
   "packageManager": "pnpm@11.23.0",
   "scripts": {
+    "one:verify": "node packages/tooling/src/one/verify.ts",
     "knip": "knip",
     "dev:electron": "task dev:electron",
     "dev:electron:raw": "pnpm start:electron",
@@ -105,12 +106,12 @@
     "happy-dom": "^20.11.6",
     "husky": "^9.1.7",
     "knip": "^6.32.2",
-    "lint-staged": "^17.3.0",
+    "lint-staged": "^17.4.1",
     "oxfmt": "^0.65.0",
     "oxlint": "^1.80.0",
     "playwright": "1.62.1",
     "tsx": "^4.23.12",
-    "turbo": "^2.10.11",
+    "turbo": "^2.10.12",
     "typescript": "^7.0.2",
     "vitest": "^4.1.11",
     "yaml": "2.9.0"
