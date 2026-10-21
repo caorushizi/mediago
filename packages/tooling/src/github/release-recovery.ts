@@ -63,7 +63,8 @@ export function validateMacOSRecovery(input: RecoveryInput): string {
         !(
           file.startsWith("packages/tooling/src/electron/") ||
           file === "packages/tooling/src/github/release-recovery.ts" ||
-          file === "packages/tooling/src/github/release-recovery.test.ts"
+          file === "packages/tooling/src/github/release-recovery.test.ts" ||
+          file === "packages/tooling/src/contracts/taskfile-contract.test.ts"
         ) &&
         !file.startsWith(".github/workflows/") &&
         file !== "Taskfile.yml" &&
@@ -249,7 +250,8 @@ function applyTooling(): void {
         !(
           file.startsWith("packages/tooling/src/electron/") ||
           file === "packages/tooling/src/github/release-recovery.ts" ||
-          file === "packages/tooling/src/github/release-recovery.test.ts"
+          file === "packages/tooling/src/github/release-recovery.test.ts" ||
+          file === "packages/tooling/src/contracts/taskfile-contract.test.ts"
         ) &&
         !file.startsWith(".github/workflows/") &&
         file !== "Taskfile.yml" &&
