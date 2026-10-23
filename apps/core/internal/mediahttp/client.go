@@ -100,11 +100,11 @@ func (f *fetcher) resolve(ctx context.Context, target *url.URL) (destination, er
 		if err != nil {
 			return destination{}, err
 		}
-		// Mixed public/private answers are ambiguous and must not bypass redirect policy.
-		if result.scope != -1 && result.scope != scope {
-			return destination{}, ErrTarget
+		// Home NAS hosts can advertise private IPv4 and global IPv6 together.
+		// Preserve their initial scope, but never let a public redirect acquire it.
+		if scope > result.scope {
+			result.scope = scope
 		}
-		result.scope = scope
 	}
 	return result, nil
 }

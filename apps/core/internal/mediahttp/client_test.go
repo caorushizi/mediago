@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/binary"
 	"errors"
 	"fmt"
 	"io"
@@ -141,7 +142,7 @@ func TestDNSIsPinnedAcrossRedirectsAndCredentialsStayOnOrigin(t *testing.T) {
 
 func TestRejectsUnsafeURLsMixedDNSAndRedirectLoops(t *testing.T) {
 	f := testFetcher(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { http.Redirect(w, r, "/again", 302) }), map[string][]netip.Addr{"media.test": {netip.MustParseAddr("8.8.8.8")}, "mixed.test": {netip.MustParseAddr("8.8.8.8"), netip.MustParseAddr("127.0.0.1")}})
-	for _, raw := range []string{"file:///etc/hosts", "ftp://media.test/file", "http://media.test:0/file", "http://media.test:65536/file", "http://mixed.test/file", "http://metadata.google.internal/file", "http://media.test/again"} {
+	for _, raw := range []string{"file:///etc/hosts", "ftp://media.test/file", "http://media.test:0/file", "http://media.test:65536/file", "http://metadata.google.internal/file", "http://media.test/again"} {
 		if response, err := f.get(context.Background(), raw, nil); err == nil {
 			response.Body.Close()
 			t.Fatalf("accepted unsafe target %s", raw)
@@ -301,5 +302,101 @@ func TestGetKeepsBodyAliveAndHonorsCancellation(t *testing.T) {
 	response.Body.Close()
 	if err == nil {
 		t.Fatal("cancelled response kept reading")
+	}
+}
+
+func TestDualStackNASIsAllowedButPublicRedirectToMixedDNSIsBlocked(t *testing.T) {
+	f := testFetcher(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Host == "public.test" {
+			http.Redirect(w, r, "http://nas.test/live", 302)
+			return
+		}
+		io.WriteString(w, "nas media")
+	}), map[string][]netip.Addr{"nas.test": {netip.MustParseAddr("192.168.1.5"), netip.MustParseAddr("2001:4860:4860::8888")}, "public.test": {netip.MustParseAddr("8.8.8.8")}})
+	response, err := f.get(context.Background(), "http://nas.test/live", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	response.Body.Close()
+	if response, err := f.get(context.Background(), "http://public.test/start", nil); !errors.Is(err, ErrTarget) {
+		if response != nil {
+			response.Body.Close()
+		}
+		t.Fatalf("public redirect expanded to mixed DNS: %v", err)
+	}
+}
+
+func TestSOCKSProxyReceivesPinnedIPAndOriginalMediaHost(t *testing.T) {
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer listener.Close()
+	checked := make(chan error, 1)
+	go func() {
+		conn, err := listener.Accept()
+		if err != nil {
+			checked <- err
+			return
+		}
+		defer conn.Close()
+		conn.SetDeadline(time.Now().Add(3 * time.Second))
+		greeting := make([]byte, 2)
+		if _, err := io.ReadFull(conn, greeting); err != nil {
+			checked <- err
+			return
+		}
+		methods := make([]byte, int(greeting[1]))
+		if _, err := io.ReadFull(conn, methods); err != nil {
+			checked <- err
+			return
+		}
+		conn.Write([]byte{5, 0})
+		header := make([]byte, 4)
+		if _, err := io.ReadFull(conn, header); err != nil {
+			checked <- err
+			return
+		}
+		if header[0] != 5 || header[1] != 1 || header[3] != 1 {
+			checked <- fmt.Errorf("SOCKS must connect to vetted IPv4, not re-resolve hostname")
+			return
+		}
+		destination := make([]byte, 6)
+		if _, err := io.ReadFull(conn, destination); err != nil {
+			checked <- err
+			return
+		}
+		if net.IP(destination[:4]).String() != "192.168.1.5" || binary.BigEndian.Uint16(destination[4:]) != 80 {
+			checked <- fmt.Errorf("incorrect SOCKS destination")
+			return
+		}
+		conn.Write([]byte{5, 0, 0, 1, 127, 0, 0, 1, 0, 80})
+		request, err := http.ReadRequest(bufio.NewReader(conn))
+		if err != nil {
+			checked <- err
+			return
+		}
+		if request.Host != "nas.test" || request.URL.Path != "/live" {
+			checked <- fmt.Errorf("SOCKS lost original host/path")
+			return
+		}
+		io.WriteString(conn, "HTTP/1.1 200 OK\r\nContent-Length: 2\r\nConnection: close\r\n\r\nok")
+		checked <- nil
+	}()
+	proxy, _ := url.Parse("socks5://" + listener.Addr().String())
+	transport := http.DefaultTransport.(*http.Transport).Clone()
+	transport.Proxy = http.ProxyURL(proxy)
+	f := fetcher{lookup: func(context.Context, string) ([]netip.Addr, error) {
+		return []netip.Addr{netip.MustParseAddr("192.168.1.5")}, nil
+	}, transport: transport}
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	response, err := f.get(ctx, "http://nas.test/live", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	response.Body.Close()
+	if err := <-checked; err != nil {
+		t.Fatal(err)
 	}
 }
