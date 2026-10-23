@@ -6,10 +6,18 @@ import { analyticsConsent } from "../services/analytics-consent";
 import { Button } from "./ui/button";
 import { Switch } from "./ui/switch";
 
+const SERVER_CONSENT = {
+  enabled: false,
+  decided: false,
+  loaded: false,
+  saving: false,
+};
+
 function useAnalyticsConsent() {
   return useSyncExternalStore(
     analyticsConsent.subscribe,
     analyticsConsent.getSnapshot,
+    () => SERVER_CONSENT,
   );
 }
 
