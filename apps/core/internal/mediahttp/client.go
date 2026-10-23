@@ -236,7 +236,7 @@ func (f *fetcher) request(ctx context.Context, target *url.URL, headers http.Hea
 		transport.TLSClientConfig.ServerName = target.Hostname()
 		client := &http.Client{Transport: transport, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
 		var response *http.Response
-		if proxy != nil && target.Scheme == "http" && (proxy.Scheme == "http" || proxy.Scheme == "https") {
+		if proxy != nil && (proxy.Scheme == "http" || proxy.Scheme == "https") {
 			response, err = proxyGet(ctx, request, proxy, transport)
 		} else {
 			response, err = client.Do(request)
@@ -257,7 +257,7 @@ func (f *fetcher) request(ctx context.Context, target *url.URL, headers http.Hea
 	return nil, fmt.Errorf("media connection failed: %w", lastErr)
 }
 
-// Use a CONNECT tunnel even for plain HTTP media. Absolute-form proxy requests
+// Use a CONNECT tunnel for both HTTP and HTTPS media. Absolute-form proxy requests
 // cannot reliably preserve both a pinned destination and its original virtual
 // host: compliant proxies derive Host from the absolute URI's authority.
 func proxyGet(ctx context.Context, request *http.Request, proxy *url.URL, transport *http.Transport) (*http.Response, error) {

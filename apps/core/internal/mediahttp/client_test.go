@@ -428,3 +428,76 @@ func TestSOCKSProxyReceivesPinnedIPAndOriginalMediaHost(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestTLSMediaThroughHTTPAndHTTPSProxy(t *testing.T) {
+	for _, secureProxy := range []bool{false, true} {
+		t.Run(fmt.Sprintf("tls-proxy-%v", secureProxy), func(t *testing.T) {
+			origin := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if r.Host != "example.com" || r.TLS.ServerName != "example.com" {
+					t.Errorf("origin TLS/Host lost: %s %s", r.Host, r.TLS.ServerName)
+				}
+				io.WriteString(w, "secure proxy media")
+			}))
+			defer origin.Close()
+			handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if r.Method != http.MethodConnect || r.Host != "192.168.1.5:443" {
+					t.Errorf("proxy target=%s %s", r.Method, r.Host)
+					w.WriteHeader(400)
+					return
+				}
+				upstream, err := net.DialTimeout("tcp", origin.Listener.Addr().String(), time.Second)
+				if err != nil {
+					t.Error(err)
+					w.WriteHeader(502)
+					return
+				}
+				defer upstream.Close()
+				conn, buffer, err := w.(http.Hijacker).Hijack()
+				if err != nil {
+					t.Error(err)
+					return
+				}
+				defer conn.Close()
+				conn.SetDeadline(time.Now().Add(3 * time.Second))
+				upstream.SetDeadline(time.Now().Add(3 * time.Second))
+				buffer.WriteString("HTTP/1.1 200 Connection Established\r\n\r\n")
+				buffer.Flush()
+				done := make(chan struct{})
+				go func() { defer close(done); io.Copy(upstream, buffer.Reader); upstream.Close() }()
+				io.Copy(conn, upstream)
+				conn.Close()
+				<-done
+			})
+			var proxy *httptest.Server
+			if secureProxy {
+				proxy = httptest.NewTLSServer(handler)
+			} else {
+				proxy = httptest.NewServer(handler)
+			}
+			defer proxy.Close()
+			roots := x509.NewCertPool()
+			roots.AddCert(origin.Certificate())
+			if secureProxy {
+				roots.AddCert(proxy.Certificate())
+			}
+			transport := NewTransport()
+			transport.TLSClientConfig = &tls.Config{RootCAs: roots}
+			proxyURL, _ := url.Parse(proxy.URL)
+			transport.Proxy = http.ProxyURL(proxyURL)
+			f := fetcher{lookup: func(context.Context, string) ([]netip.Addr, error) {
+				return []netip.Addr{netip.MustParseAddr("192.168.1.5")}, nil
+			}, transport: transport}
+			ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+			defer cancel()
+			response, err := f.get(ctx, "https://example.com/live", nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			body, err := io.ReadAll(response.Body)
+			response.Body.Close()
+			if err != nil || string(body) != "secure proxy media" {
+				t.Fatalf("proxy response=%s,%v", body, err)
+			}
+		})
+	}
+}
