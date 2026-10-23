@@ -1383,8 +1383,22 @@ describe("Docker repository command contract", () => {
       dockerfileSource.indexOf("RUN pnpm install --frozen-lockfile"),
     );
     expect(dockerfileSource).toContain(
-      "COPY docker/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh",
+      "FROM gcr.io/distroless/cc-debian13:latest",
     );
+    expect(dockerfileSource).toContain("/var/lib/dpkg/status.d/libicu76");
+    const entrypoint = JSON.parse(
+      dockerfileSource.match(/^ENTRYPOINT (\[.*\])$/m)![1],
+    ) as string[];
+    expect(entrypoint).toEqual([
+      "/usr/local/bin/mediago-core",
+      "--port=8899",
+      "--enable-auth",
+      "--db-path=/app/mediago/data/mediago.db",
+      "--config-dir=/app/mediago/data",
+      "--log-dir=/app/mediago/logs",
+      "--local-dir=/app/mediago/downloads",
+      "--deps-dir=/app/deps",
+    ]);
   });
 
   it("embeds both browser surfaces in Core without a runtime static directory", () => {

@@ -259,3 +259,9 @@ packages; absence of findings does not validate every bundled native library.
 
 The UI development server binds to `127.0.0.1` by default. For intentional LAN
 testing, set `MEDIAGO_DEV_HOST=0.0.0.0` in `.env.development.local`.
+
+The runtime container uses Distroless Debian 13 with the required ICU/zlib libraries
+and package provenance. It keeps the same port, volume paths and appended flag
+overrides. There is no shell or package manager inside the production image; use
+`docker logs` and the health/API endpoints for diagnostics. The external streaming
+engine is rebuilt from checksum-pinned v0.2.1 source with the patched Go toolchain.

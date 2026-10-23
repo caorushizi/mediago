@@ -88,40 +88,33 @@ RUN GOTOOLCHAIN=go1.27.3 go run /src/rebuild-mediago.go \
     --output /out/deps/linux-$(if [ "$TARGETARCH" = "amd64" ]; then echo x64; else echo "$TARGETARCH"; fi)/mediago \
     --platform linux-${TARGETARCH}
 
-# ===== Stage 3: Runtime =====
-FROM debian:trixie-slim
+RUN mkdir -p /out/runtime-deps && \
+    cp /out/deps/linux-*/* /out/runtime-deps/ && \
+    chmod +x /out/runtime-deps/*
 
+# Prepare only the extra native libraries needed by the .NET download tools.
+FROM debian:trixie-slim AS runtime-libraries
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends ca-certificates libicu76 && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y --no-install-recommends libicu76 zlib1g && \
+    dpkg-query --status libicu76 > /tmp/libicu76.status && \
+    dpkg-query --status zlib1g > /tmp/zlib1g.status
+
+# ===== Stage 3: Runtime =====
+FROM gcr.io/distroless/cc-debian13:latest
+
+COPY --from=runtime-libraries /usr/lib/*-linux-gnu/libicudata.so.76* /usr/lib/
+COPY --from=runtime-libraries /usr/lib/*-linux-gnu/libicui18n.so.76* /usr/lib/
+COPY --from=runtime-libraries /usr/lib/*-linux-gnu/libicuuc.so.76* /usr/lib/
+COPY --from=runtime-libraries /usr/lib/*-linux-gnu/libz.so.1* /usr/lib/
+# Preserve package provenance so scanners can identify the copied libraries.
+COPY --from=runtime-libraries /tmp/libicu76.status /var/lib/dpkg/status.d/libicu76
+COPY --from=runtime-libraries /tmp/zlib1g.status /var/lib/dpkg/status.d/zlib1g
 
 WORKDIR /app
-
-# Core binary
 COPY --from=go-builder /out/mediago-core /usr/local/bin/mediago-core
-
-# Third-party tools — copy from the platform-specific directory
-ARG TARGETARCH
-COPY --from=go-builder /out/deps/linux-* /app/deps-tmp/
-RUN mkdir -p /app/deps && \
-    if [ -d /app/deps-tmp ]; then \
-      find /app/deps-tmp -type f -exec cp {} /app/deps/ \; ; \
-    fi && \
-    chmod +x /app/deps/* 2>/dev/null || true && \
-    rm -rf /app/deps-tmp
-
+COPY --from=go-builder /out/runtime-deps/ /app/deps/
 COPY THIRD_PARTY_NOTICES.md /app/THIRD_PARTY_NOTICES.md
-
-RUN mkdir -p /app/mediago/data /app/mediago/logs /app/mediago/downloads
-
-# Entrypoint script — isolates the invocation flags from the Dockerfile
-# so editing the default args doesn't require rebuilding the full image
-# layer and so callers can still append overrides via `docker run`.
-COPY docker/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-
 EXPOSE 8899
-
 VOLUME ["/app/mediago"]
-
-ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+# Core is PID1 and receives SIGTERM directly. Extra docker-run flags still append.
+ENTRYPOINT ["/usr/local/bin/mediago-core", "--port=8899", "--enable-auth", "--db-path=/app/mediago/data/mediago.db", "--config-dir=/app/mediago/data", "--log-dir=/app/mediago/logs", "--local-dir=/app/mediago/downloads", "--deps-dir=/app/deps"]
