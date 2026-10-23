@@ -96,6 +96,8 @@ const normativeDocumentation = {
 } as const;
 
 const publicTasks = [
+  "security:js",
+  "security:go",
   "doctor",
   "setup",
   "deps:node",
@@ -194,6 +196,8 @@ const profileImplementations = {
 } as const;
 
 const implementationGraph = {
+  "internal:security:js": { deps: [], leaves: ["pnpm security:js"] },
+  "internal:security:go": { deps: [], leaves: ["pnpm security:go"] },
   "internal:setup": {
     deps: ["internal:deps:node", "internal:deps:runtime"],
     leaves: [],

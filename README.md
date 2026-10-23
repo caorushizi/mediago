@@ -248,3 +248,14 @@ task test
 > Building from source? See [CONTRIBUTING.md](./CONTRIBUTING.md).
 >
 > Translating MediaGo? See [TRANSLATION.md](./TRANSLATION.md).
+
+### Security checks
+
+Run `pnpm security:js` for the complete workspace dependency audit and
+`pnpm security:go` with official `govulncheck` v1.9.0 on PATH for affected Go
+function calls. GitHub runs these checks, CodeQL, and container dependency scans
+on pull requests and daily. Container scans cover OS and identifiable embedded
+packages; absence of findings does not validate every bundled native library.
+
+The UI development server binds to `127.0.0.1` by default. For intentional LAN
+testing, set `MEDIAGO_DEV_HOST=0.0.0.0` in `.env.development.local`.

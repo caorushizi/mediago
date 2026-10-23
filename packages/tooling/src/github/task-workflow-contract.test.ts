@@ -10,9 +10,21 @@ const repositoryRoot = path.resolve(
   "../../../..",
 );
 const ciRunAllowlist = {
-  quality: [{ run: "task ci:quality" }],
+  quality: [{ run: "task ci:quality" }, { run: "pnpm security:js" }],
   "test-ts": [{ run: "task ci:test:ts" }],
-  "test-go": [{ run: "task ci:test:go" }],
+  "test-go": [
+    { run: "task ci:test:go" },
+    {
+      name: "Install official Go vulnerability scanner",
+      run: "go install golang.org/x/vuln/cmd/govulncheck@v1.9.0",
+    },
+    {
+      name: "Check affected backend function calls",
+      "working-directory": "apps/core",
+      run: "govulncheck ./...",
+      env: { CGO_ENABLED: "0" },
+    },
+  ],
   "test-media-integration": [
     {
       name: "Run media integration tests",

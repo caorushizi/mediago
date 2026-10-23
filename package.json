@@ -84,7 +84,9 @@
     "deps:download": "task deps:runtime",
     "deps:download:raw": "tsx packages/tooling/src/runtime-deps/download.ts",
     "deps:download:all": "tsx packages/tooling/src/runtime-deps/download.ts --all",
-    "prepare": "husky"
+    "prepare": "husky",
+    "security:js": "node packages/tooling/src/security/scan.ts js",
+    "security:go": "node packages/tooling/src/security/scan.ts go"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,mjs,cjs}": [
