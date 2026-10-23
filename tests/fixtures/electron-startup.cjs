@@ -25,5 +25,6 @@ if (process.type === "renderer") {
     });
     window.loadURL("http://localhost:8500/").catch(() => app.quit());
   });
-  app.on("window-all-closed", () => app.quit());
+  // The test destroys its disposable windows before explicitly quitting.
+  app.on("window-all-closed", () => {});
 }

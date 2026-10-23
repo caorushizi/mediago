@@ -61,11 +61,13 @@ async function withStartupFixture(
   } finally {
     server.closeAllConnections();
     try {
-      await closeElectron(
-        application,
-        identity,
-        process.platform === "win32" ? 10_000 : 5_000,
-      );
+      try {
+        await application?.evaluate(({ BrowserWindow }) => {
+          for (const window of BrowserWindow.getAllWindows()) window.destroy();
+        });
+      } finally {
+        await closeElectron(application, identity);
+      }
     } finally {
       await new Promise<void>((resolve, reject) =>
         server.close((error) => (error ? reject(error) : resolve())),
