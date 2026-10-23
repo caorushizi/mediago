@@ -101,7 +101,7 @@
   "license": "MIT",
   "devDependencies": {
     "@mediago/tooling": "workspace:*",
-    "@playwright/test": "1.62.1",
+    "@playwright/test": "1.64.1",
     "@types/node": "^26.3.0",
     "@vitest/coverage-v8": "~4.1.12",
     "cross-env": "^10.1.0",
