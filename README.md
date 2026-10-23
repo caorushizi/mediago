@@ -267,3 +267,7 @@ and package provenance. It keeps the same port, volume paths and appended flag
 overrides. There is no shell or package manager inside the production image; use
 `docker logs` and the health/API endpoints for diagnostics. The external streaming
 engine is rebuilt from checksum-pinned v0.2.1 source with the patched Go toolchain.
+
+## Privacy and Code signing policy
+
+Usage statistics are optional. See the [Privacy policy](docs/en/privacy.md) for installer-time choice and in-app controls. Windows SignPath signing is pending approval/integration; existing unsigned releases remain unsigned. See the [Code signing policy](docs/en/code-signing.md).

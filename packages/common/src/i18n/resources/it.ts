@@ -1,4 +1,12 @@
 export const it = {
+  analyticsUsage: "Condividi statistiche di utilizzo",
+  analyticsChoiceTitle: "Statistiche facoltative",
+  analyticsDescription:
+    "Consenti a TalkingData di ricevere eventi di utilizzo e informazioni del browser e della rete per migliorare MediaGo. Disattivato fino al consenso. I download funzionano senza statistiche. La disattivazione ricarica l’interfaccia per fermare l’SDK; i download in corso continuano.",
+  analyticsPrivacyPolicy: "Informativa sulla privacy",
+  analyticsDecline: "Continua senza statistiche",
+  analyticsAllow: "Consenti statistiche",
+  analyticsSaveFailed: "Impossibile salvare la preferenza. Riprova.",
   downloadList: "Download in corso",
   downloadComplete: "Download completato",
   materialExtraction: "Estrazione",

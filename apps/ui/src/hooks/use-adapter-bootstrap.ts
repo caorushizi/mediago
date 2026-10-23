@@ -44,9 +44,7 @@ export function useAdapterBootstrap() {
 
   useEffect(() => {
     if (!adapterReady) return;
-    tdApp.onEvent(PAGE_LOAD, {
-      deviceId: useAppStore.getState().machineId || "",
-    });
+    tdApp.onEvent(PAGE_LOAD);
   }, [adapterReady]);
 
   return adapterReady;

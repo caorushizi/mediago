@@ -106,3 +106,7 @@ It's so simple! Go ahead and download your videos now.
 ::: warning
 This software is for learning and communication purposes only.
 :::
+
+## Privacy and Code signing policy
+
+[Privacy policy](/en/privacy) · [Code signing policy](/en/code-signing). Windows SignPath signing is pending approval/integration; existing unsigned releases remain unsigned.

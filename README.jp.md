@@ -181,3 +181,7 @@ task test
 > ソースからビルドする場合は [CONTRIBUTING.md](./CONTRIBUTING.md)（英語）を参照してください。
 >
 > MediaGo の翻訳をご検討中の方は [TRANSLATION.md](./TRANSLATION.md)（英語）をご参照ください。
+
+## プライバシーと Code signing policy
+
+利用統計は任意です。インストーラーでの選択と設定方法は[プライバシーポリシー](docs/jp/privacy.md)を参照してください。Windows の SignPath 署名は申請準備中で、既存の未署名版は未署名のままです。[Code signing policy（英語）](docs/en/code-signing.md)を公開しています。

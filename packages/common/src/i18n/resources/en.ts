@@ -1,4 +1,13 @@
 export const en = {
+  analyticsUsage: "Share usage statistics",
+  analyticsChoiceTitle: "Optional usage statistics",
+  analyticsDescription:
+    "Allow TalkingData to receive usage events and browser/network information to help improve MediaGo. Disabled until you agree. Downloads work without statistics. Turning this off reloads the interface to stop the SDK; running downloads continue.",
+  analyticsPrivacyPolicy: "Privacy policy",
+  analyticsDecline: "Continue without statistics",
+  analyticsAllow: "Allow statistics",
+  analyticsSaveFailed:
+    "Could not save your statistics preference. Please try again.",
   downloadList: "Downloads",
   downloadComplete: "Download complete",
   materialExtraction: "Extraction",

@@ -15,6 +15,7 @@ Var newStartMenuLink
 Var newDesktopLink
 !endif
 !ifndef BUILD_UNINSTALLER
+  !insertmacro customPageAfterChangeDir
   !insertmacro MUI_PAGE_INSTFILES
 !else
   SilentInstall silent
@@ -70,6 +71,10 @@ Section
       CreateShortCut "$newDesktopLink" "$SYSDIR\cmd.exe" "/c echo preserved" "$SYSDIR\shell32.dll" 7 SW_SHOWMINIMIZED "" "${TEST_LINK_DESCRIPTION}"
       WinShell::SetLnkAUMI "$newStartMenuLink" "mediago.test.preserved"
       WinShell::SetLnkAUMI "$newDesktopLink" "mediago.test.preserved"
+    !endif
+    !ifdef TEST_ANALYTICS_DECISION
+      StrCpy $MediaGoAnalyticsSelectionMade 1
+      StrCpy $MediaGoAnalyticsChoice "${TEST_ANALYTICS_DECISION}"
     !endif
     !insertmacro customInstall
     FileOpen $9 "${TEST_DIRECTORY}\strings.txt" w
