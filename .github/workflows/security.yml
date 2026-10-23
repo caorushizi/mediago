@@ -40,6 +40,8 @@ jobs:
       - name: Install official Go vulnerability scanner
         run: go install golang.org/x/vuln/cmd/govulncheck@v1.9.0
       - run: pnpm security:go
+      - name: Verify engine source checks and target validation
+        run: go test packages/tooling/src/runtime-deps/rebuild-mediago.go packages/tooling/src/runtime-deps/rebuild-mediago_test.go
 
   codeql:
     name: CodeQL (${{ matrix.language }})
@@ -74,7 +76,9 @@ jobs:
       - name: Build Go source for CodeQL
         if: matrix.language == 'go'
         working-directory: apps/core
-        run: go build ./...
+        run: |
+          go build ./...
+          go build -o "$RUNNER_TEMP/rebuild-mediago" ../../packages/tooling/src/runtime-deps/rebuild-mediago.go
         env:
           CGO_ENABLED: "0"
       - uses: github/codeql-action/analyze@793b778da9c9275a0f276522b27cb5fc14bba279 # v4
@@ -93,6 +97,13 @@ jobs:
         run: docker build --tag mediago:security .
         env:
           DOCKER_BUILDKIT: "1"
+      - name: Smoke test runtime and native tools
+        run: |
+          docker run --rm --entrypoint /usr/local/bin/mediago-core mediago:security --help
+          docker run --rm --entrypoint /app/deps/mediago mediago:security --help
+          docker run --rm --entrypoint /app/deps/ffmpeg mediago:security -version
+          docker run --rm --entrypoint /app/deps/N_m3u8DL-RE mediago:security --help
+          docker run --rm --entrypoint /app/deps/BBDown mediago:security --help
       - name: Scan OS and identifiable bundled dependencies
         uses: aquasecurity/trivy-action@8f28faec26515256b6d22074d1d2a8986f4cbd87
         with:

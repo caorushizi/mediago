@@ -80,11 +80,19 @@ RUN cd apps/core && \
     CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
     go build -trimpath -ldflags="-s -w" -o /out/mediago-core ./cmd/server
 
+# Rebuild the separately maintained download engine from checksum-pinned source.
+# The repository API client is a different CLI and cannot replace this engine.
+COPY packages/tooling/src/runtime-deps/rebuild-mediago.go /src/rebuild-mediago.go
+COPY --from=node-builder /src/.deps/ /out/deps/
+RUN GOTOOLCHAIN=go1.27.3 go run /src/rebuild-mediago.go \
+    --output /out/deps/linux-$(if [ "$TARGETARCH" = "amd64" ]; then echo x64; else echo "$TARGETARCH"; fi)/mediago \
+    --platform linux-${TARGETARCH}
+
 # ===== Stage 3: Runtime =====
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends ca-certificates libicu72 && \
+    apt-get install -y --no-install-recommends ca-certificates libicu76 && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -94,7 +102,7 @@ COPY --from=go-builder /out/mediago-core /usr/local/bin/mediago-core
 
 # Third-party tools — copy from the platform-specific directory
 ARG TARGETARCH
-COPY --from=node-builder /src/.deps/linux-* /app/deps-tmp/
+COPY --from=go-builder /out/deps/linux-* /app/deps-tmp/
 RUN mkdir -p /app/deps && \
     if [ -d /app/deps-tmp ]; then \
       find /app/deps-tmp -type f -exec cp {} /app/deps/ \; ; \
