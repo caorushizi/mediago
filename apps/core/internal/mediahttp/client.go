@@ -3,7 +3,6 @@ package mediahttp
 
 import (
 	"bufio"
-	"bytes"
 	"context"
 	"crypto/tls"
 	"errors"
@@ -258,38 +257,40 @@ func (f *fetcher) request(ctx context.Context, target *url.URL, headers http.Hea
 	return nil, fmt.Errorf("media connection failed: %w", lastErr)
 }
 
-// An HTTP proxy needs the pinned IP in the absolute request target and the
-// original virtual host in Host. Request.WriteProxy uses Host for both, which
-// would let the proxy resolve the untrusted hostname a second time.
+// Use a CONNECT tunnel even for plain HTTP media. Absolute-form proxy requests
+// cannot reliably preserve both a pinned destination and its original virtual
+// host: compliant proxies derive Host from the absolute URI's authority.
 func proxyGet(ctx context.Context, request *http.Request, proxy *url.URL, transport *http.Transport) (*http.Response, error) {
 	address := proxy.Host
 	if proxy.Port() == "" {
+		port := "80"
 		if proxy.Scheme == "https" {
-			address = net.JoinHostPort(proxy.Hostname(), "443")
-		} else {
-			address = net.JoinHostPort(proxy.Hostname(), "80")
+			port = "443"
 		}
+		address = net.JoinHostPort(proxy.Hostname(), port)
 	}
 	dial := transport.DialContext
 	if dial == nil {
 		dial = (&net.Dialer{}).DialContext
 	}
-	conn, err := dial(ctx, "tcp", address)
+	socket, err := dial(ctx, "tcp", address)
 	if err != nil {
 		return nil, err
 	}
-	socket := conn
 	stop := context.AfterFunc(ctx, func() { socket.Close() })
 	success := false
 	defer func() {
 		if !success {
 			stop()
-			conn.Close()
+			socket.Close()
 		}
 	}()
 	if deadline, ok := ctx.Deadline(); ok {
-		conn.SetDeadline(deadline)
+		if err := socket.SetDeadline(deadline); err != nil {
+			return nil, err
+		}
 	}
+	var conn net.Conn = socket
 	if proxy.Scheme == "https" {
 		config := transport.TLSClientConfig.Clone()
 		config.ServerName = proxy.Hostname()
@@ -299,39 +300,46 @@ func proxyGet(ctx context.Context, request *http.Request, proxy *url.URL, transp
 		}
 		conn = secured
 	}
-	outgoing := request.Clone(ctx)
-	if proxy.User != nil {
-		password, _ := proxy.User.Password()
-		outgoing.SetBasicAuth(proxy.User.Username(), password)
-		outgoing.Header.Set("Proxy-Authorization", outgoing.Header.Get("Authorization"))
-		outgoing.Header.Del("Authorization")
-		if value := request.Header.Get("Authorization"); value != "" {
-			outgoing.Header.Set("Authorization", value)
-		}
-	}
-	var wire bytes.Buffer
-	if err := outgoing.Write(&wire); err != nil {
-		return nil, err
-	}
-	_, rest, ok := bytes.Cut(wire.Bytes(), []byte("\r\n"))
-	if !ok {
-		return nil, errors.New("invalid proxy request")
-	}
-	target := *request.URL
-	target.User = nil
-	target.Fragment = ""
-	target.RawFragment = ""
-	if _, err := fmt.Fprintf(conn, "GET %s HTTP/1.1\r\n", target.String()); err != nil {
-		return nil, err
-	}
-	if _, err := conn.Write(rest); err != nil {
-		return nil, err
-	}
-	response, err := http.ReadResponse(bufio.NewReader(io.LimitReader(conn, 8<<20)), request)
+	connect, err := http.NewRequestWithContext(ctx, http.MethodConnect, "http://"+request.URL.Host, nil)
 	if err != nil {
 		return nil, err
 	}
-	response.Body = &closingBody{ReadCloser: response.Body, close: func() { stop(); conn.Close() }}
+	if proxy.User != nil {
+		password, _ := proxy.User.Password()
+		connect.SetBasicAuth(proxy.User.Username(), password)
+		connect.Header.Set("Proxy-Authorization", connect.Header.Get("Authorization"))
+		connect.Header.Del("Authorization")
+	}
+	if err := connect.Write(conn); err != nil {
+		return nil, err
+	}
+	// Metadata callers read at most 2 MiB; bound proxy handshake and response bytes too.
+	reader := bufio.NewReader(io.LimitReader(conn, 8<<20))
+	response, err := http.ReadResponse(reader, connect)
+	if err != nil {
+		return nil, err
+	}
+	if response.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("media proxy CONNECT failed: %s", response.Status)
+	}
+	tunnel := &bufferedConn{Conn: conn, reader: reader}
+	direct := transport.Clone()
+	direct.Proxy = nil
+	direct.DialContext = func(context.Context, string, string) (net.Conn, error) { return tunnel, nil }
+	client := &http.Client{Transport: direct, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
+	response, err = client.Do(request)
+	if err != nil {
+		direct.CloseIdleConnections()
+		return nil, err
+	}
+	response.Body = &closingBody{ReadCloser: response.Body, close: func() { stop(); direct.CloseIdleConnections(); socket.Close() }}
 	success = true
 	return response, nil
 }
+
+type bufferedConn struct {
+	net.Conn
+	reader *bufio.Reader
+}
+
+func (c *bufferedConn) Read(p []byte) (int, error) { return c.reader.Read(p) }

@@ -15,7 +15,6 @@ import (
 	"net/netip"
 	"net/textproto"
 	"net/url"
-	"strings"
 	"testing"
 	"time"
 )
@@ -163,10 +162,29 @@ func TestRealLocalMediaAndHTTPProxy(t *testing.T) {
 		t.Fatalf("local media failed: %s,%v", body, err)
 	}
 	proxy := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Host != "192.168.1.5:80" || !strings.HasPrefix(r.RequestURI, "http://192.168.1.5:") {
-			t.Errorf("proxy target/host not pinned: %s %s", r.Host, r.RequestURI)
+		if r.Method != http.MethodConnect || r.Host != "192.168.1.5:80" {
+			t.Errorf("proxy did not get pinned CONNECT: %s %s", r.Method, r.Host)
+			w.WriteHeader(400)
+			return
 		}
-		io.WriteString(w, "proxied media")
+		conn, buffer, err := w.(http.Hijacker).Hijack()
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		defer conn.Close()
+		conn.SetDeadline(time.Now().Add(3 * time.Second))
+		buffer.WriteString("HTTP/1.1 200 Connection Established\r\n\r\n")
+		buffer.Flush()
+		inner, err := http.ReadRequest(buffer.Reader)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		if inner.Host != "media.test" || inner.URL.Path != "/live.m3u8" {
+			t.Errorf("tunnel lost virtual host/path: %s %s", inner.Host, inner.URL)
+		}
+		io.WriteString(conn, "HTTP/1.1 200 OK\r\nContent-Length: 13\r\nConnection: close\r\n\r\nproxied media")
 	}))
 	defer proxy.Close()
 	proxyURL, _ := url.Parse(proxy.URL)
@@ -245,8 +263,18 @@ func TestHTTPProxyKeepsPinnedTargetHostAndSeparateCredentials(t *testing.T) {
 			checked <- err
 			return
 		}
-		if line != "GET http://192.168.1.5:80/live.m3u8 HTTP/1.1\r\n" || headers.Get("Host") != "nas.test" || headers.Get("Authorization") != "Bearer media-fixture" || headers.Get("Proxy-Authorization") != "Basic cHJveHktdXNlcjpwcm94eS1wYXNz" {
-			checked <- fmt.Errorf("proxy routing or credential separation failed")
+		if line != "CONNECT 192.168.1.5:80 HTTP/1.1\r\n" || headers.Get("Host") != "192.168.1.5:80" || headers.Get("Authorization") != "" || headers.Get("Proxy-Authorization") != "Basic cHJveHktdXNlcjpwcm94eS1wYXNz" {
+			checked <- fmt.Errorf("proxy CONNECT or credential separation failed")
+			return
+		}
+		io.WriteString(connection, "HTTP/1.1 200 Connection Established\r\n\r\n")
+		inner, err := http.ReadRequest(reader)
+		if err != nil {
+			checked <- err
+			return
+		}
+		if inner.Host != "nas.test" || inner.URL.Path != "/live.m3u8" || inner.Header.Get("Authorization") != "Bearer media-fixture" || inner.Header.Get("Proxy-Authorization") != "" {
+			checked <- fmt.Errorf("tunnel lost media host or leaked proxy credentials")
 			return
 		}
 		io.WriteString(connection, "HTTP/1.1 200 OK\r\nContent-Length: 2\r\nConnection: close\r\n\r\nok")
