@@ -16,11 +16,11 @@ export async function waitForElectronMainWindow(
     .find((candidate) => candidate.url() === MAIN_WINDOW_URL);
   if (!page) throw new Error("Electron main window was not available");
 
-  // A window event only means the debugging target exists. Starting trace
-  // snapshots before the initial document is ready can stall the first evaluate.
-  await page.waitForLoadState("domcontentloaded", { timeout: 10_000 });
+  // Electron can commit the initial document before Playwright observes its
+  // lifecycle event. Check current readiness before starting trace snapshots.
   await page.waitForFunction(
     () =>
+      document.readyState !== "loading" &&
       typeof (
         window as Window & {
           electron?: { app?: { getEnvPath?: unknown } };

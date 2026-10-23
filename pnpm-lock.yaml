@@ -17,6 +17,7 @@ overrides:
   js-yaml@3: 3.15.2
   js-yaml@4: 4.3.2
   http-cache-semantics@4: 4.3.0
+  knip>zod: 4.6.6
   '@videojs/themes>postcss-inline-svg': '-'
 
 importers:
@@ -5927,8 +5928,8 @@ packages:
   yuku-parser@0.8.4:
     resolution: {integrity: sha512-sw41wouvT5rUmLIp87hmvm5vtF+MRSI3x6yjq6xqpYmtkQj+Ht6N7xRQ8lMhLv8N7JAzughGj0Rfi0jQRSu9HQ==}
 
-  zod@4.4.3:
-    resolution: {integrity: sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==}
+  zod@4.6.6:
+    resolution: {integrity: sha512-4UmzQUF5fxvfcYHlbjBmejU+w+hbDnWFx4aS8kBx7nPBHcO2SqPbpAG8snbdg+Xse4pRefR98hgjFgIMCI/UhA==}
 
   zustand@5.0.15:
     resolution: {integrity: sha512-MpSEjRiBkA9crSYeOUH32rJC7SVqAbm0Fqcqge/bUi2PPoLcBWKOsG+C8mevmpr8TwXHBVkChbbJiyvkE+i/3A==}
@@ -9213,7 +9214,7 @@ snapshots:
       tinyglobby: 0.2.17
       unbash: 4.0.10
       yaml: 2.9.0
-      zod: 4.4.3
+      zod: 4.6.6
 
   lazy-val@1.0.5: {}
 
@@ -10819,7 +10820,7 @@ snapshots:
       '@yuku-parser/binding-win32-arm64': 0.8.4
       '@yuku-parser/binding-win32-x64': 0.8.4
 
-  zod@4.4.3: {}
+  zod@4.6.6: {}
 
   zustand@5.0.15(@types/react@19.2.18)(immer@11.1.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8)):
     optionalDependencies:
