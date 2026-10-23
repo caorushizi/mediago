@@ -112,7 +112,7 @@ function assertE2EWorkflowContract(workflowContents: string) {
   expect(e2eJob).toContain("uses: actions/setup-node@v7");
   expect(e2eJob).toContain('node-version: "24.14.0"');
   expect(e2eJob).toContain("uses: actions/setup-go@v7");
-  expect(e2eJob).toContain('go-version: "1.25.0"');
+  expect(e2eJob).toContain("go-version-file: apps/core/go.mod");
 
   expect(e2eJob.match(/run: task ci:test:e2e/g) ?? []).toHaveLength(1);
 

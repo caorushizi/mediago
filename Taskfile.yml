@@ -930,6 +930,7 @@ tasks:
       - task: internal:deps:e2e
       - task: internal:test:e2e:build
     cmds:
+      - node packages/tooling/src/github/prepare-playwright-apt.ts
       - pnpm exec playwright install-deps chromium
       - pnpm exec playwright install chromium
       - pnpm type:check:e2e
