@@ -2,7 +2,11 @@ package handler
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -100,5 +104,53 @@ func waitForDownloadHandlerQueue(t *testing.T, queue *core.TaskQueue) {
 			t.Fatal("timed out waiting for download queue")
 		}
 		time.Sleep(time.Millisecond)
+	}
+}
+
+func TestDownloadListUsesConfiguredRootNotQueryPath(t *testing.T) {
+	previousLogger, previousSugar := logger.Logger, logger.Sugar
+	logger.Logger = zap.NewNop()
+	logger.Sugar = logger.Logger.Sugar()
+	t.Cleanup(func() { logger.Logger = previousLogger; logger.Sugar = previousSugar })
+	database, err := db.New(filepath.Join(t.TempDir(), "downloads.db"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer database.Close()
+	repository := repo.NewVideoRepository(database)
+	configured, outside := t.TempDir(), t.TempDir()
+	for _, entry := range []struct{ root, name string }{{configured, "inside"}, {outside, "outside"}} {
+		if err := os.WriteFile(filepath.Join(entry.root, entry.name+".mp4"), []byte("media"), 0600); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := repository.Create(&db.Video{Name: entry.name, URL: "https://media.test/" + entry.name, Type: "direct", Status: "success"}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	config := newDiscoveryHandlerConfig()
+	config.Set("local", configured)
+	handler := NewDownloadHandler(service.NewDownloadTaskService(repository, nil, nil), config, nil)
+	router := gin.New()
+	router.GET("/api/downloads", handler.List)
+	request := httptest.NewRequest(http.MethodGet, "/api/downloads?current=1&pageSize=10&localPath="+url.QueryEscape(outside), nil)
+	response := httptest.NewRecorder()
+	router.ServeHTTP(response, request)
+	if response.Code != http.StatusOK {
+		t.Fatalf("list failed: %s", response.Body.String())
+	}
+	var result struct{ Data service.PaginatedResult }
+	if err := json.Unmarshal(response.Body.Bytes(), &result); err != nil {
+		t.Fatal(err)
+	}
+	if len(result.Data.List) != 2 {
+		t.Fatalf("list length=%d", len(result.Data.List))
+	}
+	for _, entry := range result.Data.List {
+		if entry.Name == "inside" && !entry.Exists {
+			t.Fatal("configured media disappeared")
+		}
+		if entry.Name == "outside" && (entry.Exists || entry.File != "" || len(entry.Files) != 0) {
+			t.Fatal("query path escaped configured download root")
+		}
 	}
 }

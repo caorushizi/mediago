@@ -29,8 +29,8 @@ func ResolveDownloadDirectory(defaultDir, downloadDir, folder string, desktop bo
 	}
 	// Interpret both separators for validation so Windows-style traversal is
 	// also rejected by Linux servers.
-	portableFolder := strings.ReplaceAll(folder, "\\", "/")
-	if folder != "" && (!filepath.IsLocal(portableFolder) || strings.ContainsAny(portableFolder, ":\x00")) {
+	folder = strings.ReplaceAll(folder, "\\", "/")
+	if folder != "" && (!filepath.IsLocal(folder) || strings.ContainsAny(folder, ":\x00")) {
 		return "", ErrInvalidDownloadFolder
 	}
 	dir := root

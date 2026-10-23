@@ -13,6 +13,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"caorushizi.cn/mediago/internal/mediahttp"
 )
 
 const (
@@ -197,20 +199,7 @@ func (i *M3U8Inspector) fetch(ctx context.Context, rawURL string, headers []stri
 		}
 	}
 
-	client := &http.Client{
-		Transport: transport,
-		Timeout:   inspectTimeout,
-		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-			if len(via) >= 5 {
-				return errors.New("too many playlist redirects")
-			}
-			if req.URL.Scheme != "http" && req.URL.Scheme != "https" {
-				return errors.New("playlist redirect must use HTTP or HTTPS")
-			}
-			return nil
-		},
-	}
-	resp, err := client.Do(req)
+	resp, err := mediahttp.Get(requestContext, rawURL, req.Header, transport, inspectTimeout)
 	if err != nil {
 		return fetchedManifest{}, fmt.Errorf("fetch playlist: %w", err)
 	}
