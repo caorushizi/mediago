@@ -443,6 +443,11 @@ export const it = {
     "Se hai dimenticato la password dell'amministratore, puoi reimpostarla:\n1. Trova la cartella di archiviazione di MediaGo.\n2. Apri la cartella '.store' e modifica 'config.json'.\n3. Cancella il valore del campo apiKey.",
   signin: "Accedi",
   signinMediaGoServer: "Accedi al server MediaGo",
+  setupToken: "Codice di inizializzazione",
+  setupTokenHelp:
+    "Leggi il file setup-token nella cartella di configurazione del server. Solo l’amministratore del server può accedere al file.",
+  setupFailed:
+    "Configurazione fallita. Controlla il codice di inizializzazione o riprova più tardi.",
   initializeMediaGoServer: "Imposta server MediaGo",
   settingUpAdminPassword: "Crea password amministratore",
   repeatPassword: "Conferma password",

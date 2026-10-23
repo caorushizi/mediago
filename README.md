@@ -87,6 +87,8 @@ the same network:
 docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago caorushizi/mediago:3.5.0
 ```
 
+For builds that request an initialization code, read `setup-token` in the server config directory (`docker exec mediago cat /app/mediago/data/setup-token` for the default container), then enter it on the setup page. The file is deleted after successful setup; existing accounts do not need to initialize again.
+
 Available on [Docker Hub](https://hub.docker.com/r/caorushizi/mediago) and GHCR (`ghcr.io/caorushizi/mediago`) — same image, pick whichever registry is faster for you. Supports both Intel / AMD (amd64) and ARM (arm64). On the desktop build,
 MediaGo listens on both `127.0.0.1` and your LAN IP out of the box, so
 phones and tablets on the same Wi-Fi can open the web UI too.
