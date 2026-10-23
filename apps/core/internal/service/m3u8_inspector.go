@@ -184,7 +184,7 @@ func (i *M3U8Inspector) fetch(ctx context.Context, rawURL string, headers []stri
 	}
 	applyInspectHeaders(req, headers)
 
-	transport := http.DefaultTransport.(*http.Transport).Clone()
+	transport := mediahttp.NewTransport()
 	if useProxy, _ := i.config.Get("useProxy").(bool); useProxy {
 		proxyValue, _ := i.config.Get("proxy").(string)
 		if proxyValue != "" {

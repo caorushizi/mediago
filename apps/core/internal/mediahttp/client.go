@@ -34,7 +34,7 @@ type fetcher struct {
 // than resolving the hostname again, including requests through a configured proxy.
 func Get(ctx context.Context, rawURL string, headers http.Header, transport *http.Transport, timeout time.Duration) (*http.Response, error) {
 	if transport == nil {
-		transport = http.DefaultTransport.(*http.Transport)
+		transport = NewTransport()
 	}
 	f := fetcher{lookup: func(ctx context.Context, host string) ([]netip.Addr, error) {
 		return net.DefaultResolver.LookupNetIP(ctx, "ip", host)
@@ -47,6 +47,20 @@ func Get(ctx context.Context, rawURL string, headers http.Header, transport *htt
 	}
 	response.Body = &closingBody{ReadCloser: response.Body, close: cancel}
 	return response, nil
+}
+
+// NewTransport keeps normal environment proxy support without assuming that the
+// mutable http.DefaultTransport is a concrete transport (instrumentation may wrap it).
+func NewTransport() *http.Transport {
+	return &http.Transport{
+		Proxy:                 http.ProxyFromEnvironment,
+		DialContext:           (&net.Dialer{Timeout: 30 * time.Second, KeepAlive: 30 * time.Second}).DialContext,
+		ForceAttemptHTTP2:     true,
+		MaxIdleConns:          100,
+		IdleConnTimeout:       90 * time.Second,
+		TLSHandshakeTimeout:   10 * time.Second,
+		ExpectContinueTimeout: time.Second,
+	}
 }
 
 type closingBody struct {
