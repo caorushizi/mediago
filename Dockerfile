@@ -52,7 +52,7 @@ RUN pnpm build:web:raw
 RUN pnpm deps:download:raw --platform "$(cat /tmp/deps-platform)"
 
 # ===== Stage 2: Go Builder =====
-FROM --platform=$BUILDPLATFORM golang:1.25-bookworm AS go-builder
+FROM --platform=$BUILDPLATFORM golang:1.27.3-bookworm AS go-builder
 
 ARG TARGETOS=linux
 ARG TARGETARCH=amd64

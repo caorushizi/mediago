@@ -178,7 +178,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v7
         with:
-          go-version: "1.25.0"
+          go-version-file: apps/core/go.mod
           cache-dependency-path: apps/core/go.sum
 
       - name: Build desktop artifacts
@@ -260,7 +260,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v7
         with:
-          go-version: "1.25.0"
+          go-version-file: apps/core/go.mod
           cache-dependency-path: apps/core/go.sum
 
       - name: Build private desktop artifacts
