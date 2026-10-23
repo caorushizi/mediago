@@ -54,8 +54,9 @@ RUN pnpm deps:download:raw --platform "$(cat /tmp/deps-platform)"
 # ===== Stage 2: Go Builder =====
 FROM --platform=$BUILDPLATFORM golang:1.25-bookworm AS go-builder
 
-ARG TARGETOS=linux
-ARG TARGETARCH=amd64
+# Inherit BuildKit platform values; defaults here override --platform.
+ARG TARGETOS
+ARG TARGETARCH
 
 WORKDIR /src
 
