@@ -25,7 +25,7 @@ func TestAddressPolicyPreservesLANAndRejectsSpecialTargets(t *testing.T) {
 			t.Fatalf("legitimate target %s: %v", value, err)
 		}
 	}
-	for _, value := range []string{"169.254.169.254", "100.100.100.200", "fd00:ec2::254", "0.0.0.0", "::", "224.0.0.1", "ff02::1", "fe80::1", "255.255.255.255", "::ffff:169.254.169.254"} {
+	for _, value := range []string{"169.254.169.254", "100.100.100.200", "fd00:ec2::254", "fd20:ce::254", "0.0.0.0", "::", "224.0.0.1", "ff02::1", "fe80::1", "255.255.255.255", "::ffff:169.254.169.254"} {
 		if _, err := addressScope(netip.MustParseAddr(value)); !errors.Is(err, ErrTarget) {
 			t.Fatalf("special target accepted %s", value)
 		}
@@ -499,5 +499,18 @@ func TestTLSMediaThroughHTTPAndHTTPSProxy(t *testing.T) {
 				t.Fatalf("proxy response=%s,%v", body, err)
 			}
 		})
+	}
+}
+
+func TestPinnedURLMustKeepLiteralDestination(t *testing.T) {
+	for _, raw := range []string{"http://192.168.1.5:80/live", "https://[fd12::5]:443/live?q=value"} {
+		if !pinnedURLPattern.MatchString(raw) {
+			t.Fatalf("numeric URL rejected: %s", raw)
+		}
+	}
+	for _, raw := range []string{"http://nas.test:80/live", "file:///tmp/local", "http://192.168.1.5.evil.test:80/live", "https://192.168.1.5:443@evil.test/live"} {
+		if pinnedURLPattern.MatchString(raw) {
+			t.Fatalf("hostname could be reinterpreted: %s", raw)
+		}
 	}
 }

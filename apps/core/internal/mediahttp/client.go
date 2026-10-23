@@ -12,12 +12,17 @@ import (
 	"net/http"
 	"net/netip"
 	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
 )
 
 var ErrTarget = errors.New("media request target is not permitted")
+
+// The final socket URL must contain a literal address, never a hostname that a
+// second transport or proxy could resolve differently.
+var pinnedURLPattern = regexp.MustCompile(`^https?://(?:\[[a-fA-F0-9:]+\]|[0-9.]+):[0-9]+(?:/|\?|$)`)
 
 type destination struct {
 	ips   []netip.Addr
@@ -71,7 +76,7 @@ func (b *closingBody) Close() error { err := b.ReadCloser.Close(); b.close(); re
 
 func addressScope(ip netip.Addr) (int, error) {
 	ip = ip.Unmap()
-	if !ip.IsValid() || ip.Zone() != "" || ip.IsUnspecified() || ip.IsMulticast() || ip.IsLinkLocalUnicast() || ip.IsLinkLocalMulticast() || ip == netip.MustParseAddr("255.255.255.255") || ip == netip.MustParseAddr("100.100.100.200") || ip == netip.MustParseAddr("fd00:ec2::254") {
+	if !ip.IsValid() || ip.Zone() != "" || ip.IsUnspecified() || ip.IsMulticast() || ip.IsLinkLocalUnicast() || ip.IsLinkLocalMulticast() || ip == netip.MustParseAddr("255.255.255.255") || ip == netip.MustParseAddr("100.100.100.200") || ip == netip.MustParseAddr("fd00:ec2::254") || ip == netip.MustParseAddr("fd20:ce::254") {
 		return 0, ErrTarget
 	}
 	if ip.IsLoopback() {
@@ -201,7 +206,7 @@ func (f *fetcher) request(ctx context.Context, target *url.URL, headers http.Hea
 	}
 	var lastErr error
 	for _, ip := range dest.ips {
-		wireURL := *target
+		wireURL := url.URL{Scheme: target.Scheme, Path: target.Path, RawPath: target.RawPath, RawQuery: target.RawQuery, ForceQuery: target.ForceQuery}
 		port := target.Port()
 		if port == "" {
 			if target.Scheme == "https" {
@@ -211,7 +216,11 @@ func (f *fetcher) request(ctx context.Context, target *url.URL, headers http.Hea
 			}
 		}
 		wireURL.Host = net.JoinHostPort(ip.Unmap().String(), port)
-		request, err := http.NewRequestWithContext(ctx, http.MethodGet, wireURL.String(), nil)
+		pinnedURL := wireURL.String()
+		if !pinnedURLPattern.MatchString(pinnedURL) {
+			return nil, ErrTarget
+		}
+		request, err := http.NewRequestWithContext(ctx, http.MethodGet, pinnedURL, nil)
 		if err != nil {
 			return nil, err
 		}
