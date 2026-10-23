@@ -61,11 +61,14 @@ func TestSetupRateLimitExpiresWithoutTrustingForwardedHeaders(t *testing.T) {
 			t.Fatalf("attempt%d status=%d", i, res.Code)
 		}
 	}
-	res := authTestRequest(engine, "/setup", map[string]string{"password": "owner-password", "setupToken": "operator-proof"})
+	res := authTestRequest(engine, "/setup", map[string]string{"password": "owner-password", "setupToken": "wrong"})
 	if res.Code != http.StatusTooManyRequests || res.Header().Get("Retry-After") == "" {
 		t.Fatal("setup attempts were not bounded")
 	}
 	now = now.Add(time.Minute + time.Second)
+	if res := authTestRequest(engine, "/setup", map[string]string{"password": "owner-password", "setupToken": "wrong"}); res.Code != http.StatusForbidden {
+		t.Fatalf("invalid-proof budget did not reset: %d", res.Code)
+	}
 	if res := authTestRequest(engine, "/setup", map[string]string{"password": "owner-password", "setupToken": "operator-proof"}); res.Code != http.StatusOK {
 		t.Fatalf("owner remains blocked after rate window: %d", res.Code)
 	}
@@ -122,5 +125,19 @@ func TestAuthenticationRejectsOversizedBodiesAndPasswords(t *testing.T) {
 	}
 	if len(store.values) != 0 {
 		t.Fatal("invalid requests changed credentials")
+	}
+}
+
+func TestValidBootstrapProofIsNotLockedOutByInvalidAttempts(t *testing.T) {
+	store := &bootstrapConfig{values: map[string]any{}}
+	h := NewAuthHandler(store, AuthOptions{RequireSetupToken: true, SetupToken: "operator-proof"})
+	engine := authTestEngine(h)
+	for range authAttemptsPerMinute {
+		if res := authTestRequest(engine, "/setup", map[string]string{"password": "owner-password", "setupToken": "wrong"}); res.Code != http.StatusForbidden {
+			t.Fatalf("invalid proof status=%d", res.Code)
+		}
+	}
+	if res := authTestRequest(engine, "/setup", map[string]string{"password": "owner-password", "setupToken": "operator-proof"}); res.Code != http.StatusOK {
+		t.Fatalf("operator proof was locked out by invalid attempts: status=%d", res.Code)
 	}
 }

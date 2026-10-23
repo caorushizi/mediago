@@ -61,21 +61,24 @@ func authError(c *gin.Context, status int, message string) {
 }
 
 // Bound both bcrypt work and request attempts independently of proxy/IP headers.
-func (h *AuthHandler) beginAttempt(c *gin.Context) bool {
-	h.limits.Lock()
-	now := h.now()
-	if h.window.IsZero() || now.Sub(h.window) >= time.Minute {
-		h.window, h.attempts = now, 0
-	}
-	if h.attempts >= authAttemptsPerMinute {
-		retry := max(1, int(h.window.Add(time.Minute).Sub(now).Seconds())+1)
+func (h *AuthHandler) beginAttempt(c *gin.Context, provenOperator bool) bool {
+	// A valid bootstrap proof must not be locked out by unauthenticated guesses.
+	if !provenOperator {
+		h.limits.Lock()
+		now := h.now()
+		if h.window.IsZero() || now.Sub(h.window) >= time.Minute {
+			h.window, h.attempts = now, 0
+		}
+		if h.attempts >= authAttemptsPerMinute {
+			retry := max(1, int(h.window.Add(time.Minute).Sub(now).Seconds())+1)
+			h.limits.Unlock()
+			c.Header("Retry-After", strconv.Itoa(retry))
+			authError(c, http.StatusTooManyRequests, i18n.MsgAuthRateLimited)
+			return false
+		}
+		h.attempts++
 		h.limits.Unlock()
-		c.Header("Retry-After", strconv.Itoa(retry))
-		authError(c, http.StatusTooManyRequests, i18n.MsgAuthRateLimited)
-		return false
 	}
-	h.attempts++
-	h.limits.Unlock()
 	if !h.work.TryLock() {
 		c.Header("Retry-After", "1")
 		authError(c, http.StatusTooManyRequests, i18n.MsgAuthRateLimited)
@@ -107,7 +110,16 @@ func (h *AuthHandler) Setup(c *gin.Context) {
 		authError(c, http.StatusBadRequest, i18n.MsgAPIKeyAlreadySet)
 		return
 	}
-	if !h.beginAttempt(c) {
+	provenOperator := false
+	if h.options.RequireSetupToken {
+		if h.setupHash == sha256.Sum256(nil) {
+			authError(c, http.StatusServiceUnavailable, i18n.MsgAuthSetupUnavailable)
+			return
+		}
+		got := sha256.Sum256([]byte(req.SetupToken))
+		provenOperator = subtle.ConstantTimeCompare(got[:], h.setupHash[:]) == 1
+	}
+	if !h.beginAttempt(c, provenOperator) {
 		return
 	}
 	defer h.work.Unlock()
@@ -115,16 +127,9 @@ func (h *AuthHandler) Setup(c *gin.Context) {
 		authError(c, http.StatusBadRequest, i18n.MsgAPIKeyAlreadySet)
 		return
 	}
-	if h.options.RequireSetupToken {
-		if h.setupHash == sha256.Sum256(nil) {
-			authError(c, http.StatusServiceUnavailable, i18n.MsgAuthSetupUnavailable)
-			return
-		}
-		got := sha256.Sum256([]byte(req.SetupToken))
-		if subtle.ConstantTimeCompare(got[:], h.setupHash[:]) != 1 {
-			authError(c, http.StatusForbidden, i18n.MsgAuthSetupTokenInvalid)
-			return
-		}
+	if h.options.RequireSetupToken && !provenOperator {
+		authError(c, http.StatusForbidden, i18n.MsgAuthSetupTokenInvalid)
+		return
 	}
 	hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -171,7 +176,7 @@ func (h *AuthHandler) Signin(c *gin.Context) {
 		authError(c, http.StatusUnauthorized, i18n.MsgInvalidAPIKey)
 		return
 	}
-	if !h.beginAttempt(c) {
+	if !h.beginAttempt(c, false) {
 		return
 	}
 	defer h.work.Unlock()

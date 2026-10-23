@@ -59,7 +59,7 @@ Inserisci il codice nella pagina iniziale e imposta la password amministratore. 
 
 Il codice rimane valido dopo un riavvio e il file viene eliminato dopo la configurazione riuscita. Le istanze con password o API key già configurate non richiedono una nuova inizializzazione. Prima della configurazione, le API operative restituiscono `401`; il corpo JSON della richiesta iniziale deve includere `password` e `setupToken`.
 
-Configurazione e accesso con password condividono un limite di 10 tentativi al minuto per istanza. Il limite restituisce `429` con `Retry-After` e non riguarda i normali download autenticati tramite API key.
+I codici di inizializzazione non validi e l’accesso con password condividono un limite di 10 tentativi al minuto per istanza. Il limite restituisce `429` con `Retry-After` e non riguarda i normali download autenticati tramite API key. Un codice di inizializzazione valido resta utilizzabile anche dopo il limite dei tentativi errati; la concorrenza bcrypt rimane limitata.
 
 ## Scoperta media (sniffing e parsing)
 
