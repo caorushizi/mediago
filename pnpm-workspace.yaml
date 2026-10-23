@@ -75,5 +75,6 @@ overrides:
   "js-yaml@3": 3.15.2
   "js-yaml@4": 4.3.2
   "http-cache-semantics@4": 4.3.0
+  "knip>zod": 4.6.6
   # Only precompiled theme CSS is imported; its upstream SVG build tool is unused.
   "@videojs/themes>postcss-inline-svg": "-"
