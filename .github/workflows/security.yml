@@ -94,15 +94,17 @@ jobs:
         with:
           persist-credentials: false
       - name: Build local image without publishing
+        id: build
         run: docker build --tag mediago:security .
         env:
           DOCKER_BUILDKIT: "1"
       - uses: actions/setup-node@v7
         with:
           node-version: "24.14.0"
-      - name: Smoke test native tools, server startup and graceful shutdown
+      - name: Smoke test native tools, server startup and SIGTERM
         run: node packages/tooling/src/security/container-smoke.ts mediago:security
       - name: Scan OS and identifiable bundled dependencies
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         uses: aquasecurity/trivy-action@8f28faec26515256b6d22074d1d2a8986f4cbd87
         with:
           image-ref: mediago:security

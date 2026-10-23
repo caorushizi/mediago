@@ -1386,6 +1386,10 @@ describe("Docker repository command contract", () => {
       "FROM gcr.io/distroless/cc-debian13:latest",
     );
     expect(dockerfileSource).toContain("/var/lib/dpkg/status.d/libicu76");
+    expect(dockerfileSource).toContain("cp --parents -a");
+    expect(dockerfileSource).toContain(
+      "COPY --from=runtime-libraries /runtime-libraries/ /",
+    );
     const entrypoint = JSON.parse(
       dockerfileSource.match(/^ENTRYPOINT (\[.*\])$/m)![1],
     ) as string[];

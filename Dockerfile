@@ -96,19 +96,18 @@ RUN mkdir -p /out/runtime-deps && \
 FROM debian:trixie-slim AS runtime-libraries
 RUN apt-get update && \
     apt-get install -y --no-install-recommends libicu76 zlib1g && \
-    dpkg-query --status libicu76 > /tmp/libicu76.status && \
-    dpkg-query --status zlib1g > /tmp/zlib1g.status
+    mkdir -p /runtime-libraries/var/lib/dpkg/status.d && \
+    cp --parents -a /usr/lib/*-linux-gnu/libicudata.so.76* \
+      /usr/lib/*-linux-gnu/libicui18n.so.76* /usr/lib/*-linux-gnu/libicuuc.so.76* \
+      /usr/lib/*-linux-gnu/libz.so.1* /runtime-libraries/ && \
+    dpkg-query --status libicu76 > /runtime-libraries/var/lib/dpkg/status.d/libicu76 && \
+    dpkg-query --status zlib1g > /runtime-libraries/var/lib/dpkg/status.d/zlib1g
 
 # ===== Stage 3: Runtime =====
 FROM gcr.io/distroless/cc-debian13:latest
 
-COPY --from=runtime-libraries /usr/lib/*-linux-gnu/libicudata.so.76* /usr/lib/
-COPY --from=runtime-libraries /usr/lib/*-linux-gnu/libicui18n.so.76* /usr/lib/
-COPY --from=runtime-libraries /usr/lib/*-linux-gnu/libicuuc.so.76* /usr/lib/
-COPY --from=runtime-libraries /usr/lib/*-linux-gnu/libz.so.1* /usr/lib/
-# Preserve package provenance so scanners can identify the copied libraries.
-COPY --from=runtime-libraries /tmp/libicu76.status /var/lib/dpkg/status.d/libicu76
-COPY --from=runtime-libraries /tmp/zlib1g.status /var/lib/dpkg/status.d/zlib1g
+# Preserve architecture-specific library paths and package metadata for scanning.
+COPY --from=runtime-libraries /runtime-libraries/ /
 
 WORKDIR /app
 COPY --from=go-builder /out/mediago-core /usr/local/bin/mediago-core
