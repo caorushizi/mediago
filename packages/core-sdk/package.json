@@ -39,7 +39,7 @@
     "bumpp": "^12.2.1",
     "tsdown": "^0.22.14",
     "typescript": "^7.0.2",
-    "vitest": "^4.1.11"
+    "vitest": "~4.1.12"
   },
   "dependencies": {
     "axios": "^1.20.0",

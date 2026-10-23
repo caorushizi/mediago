@@ -101,7 +101,7 @@
     "@mediago/tooling": "workspace:*",
     "@playwright/test": "1.62.1",
     "@types/node": "^26.3.0",
-    "@vitest/coverage-v8": "^4.1.11",
+    "@vitest/coverage-v8": "~4.1.12",
     "cross-env": "^10.1.0",
     "happy-dom": "^20.11.6",
     "husky": "^9.1.7",
@@ -113,7 +113,7 @@
     "tsx": "^4.23.12",
     "turbo": "^2.10.12",
     "typescript": "^7.0.2",
-    "vitest": "^4.1.11",
+    "vitest": "~4.1.12",
     "yaml": "2.9.0"
   }
 }
