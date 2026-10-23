@@ -8,10 +8,13 @@ import {
   type ElectronApplication,
 } from "@playwright/test";
 import { waitForElectronMainWindow } from "../support/electron-window.ts";
+import { runIndependentCleanup } from "../support/cleanup.ts";
+import { assertPortFree } from "../support/ports.ts";
 import { scrubElectronEnvironment } from "../support/electron-network.ts";
 import {
   closeElectron,
   readProcessIdentity,
+  withDeadline,
   type ProcessIdentity,
 } from "../support/electron-process.ts";
 
@@ -28,6 +31,7 @@ async function withStartupFixture(
     application: ElectronApplication,
     releaseDocument: () => void,
   ) => Promise<void>,
+  options: { pauseAnimationFrames?: boolean; hideNavigation?: boolean } = {},
 ) {
   let blockedScript: ServerResponse | undefined;
   const server = createServer((request, response) => {
@@ -38,7 +42,13 @@ async function withStartupFixture(
     response.setHeader("Content-Type", "text/html");
     response.end(`<!doctype html><html><head>
       ${delayed ? '<script src="/document-ready.js"></script>' : ""}
-      </head><body><aside><a href="/">Downloads</a></aside></body></html>`);
+      <script>
+        if (${Boolean(options.pauseAnimationFrames)}) {
+          window.requestAnimationFrame = () => 0;
+          window.fixtureFramesPaused = true;
+        }
+      </script>
+      </head><body><aside ${options.hideNavigation ? 'style="display:none"' : ""}><a href="/">Downloads</a></aside></body></html>`);
   });
   await new Promise<void>((resolve, reject) => {
     server.once("error", reject);
@@ -46,6 +56,8 @@ async function withStartupFixture(
   });
   let application: ElectronApplication | undefined;
   let identity: ProcessIdentity | undefined;
+  let primaryError: unknown;
+  let cleanupErrors: unknown[] = [];
   try {
     application = await _electron.launch({
       executablePath: require("electron") as string,
@@ -58,22 +70,50 @@ async function withStartupFixture(
       expect(blockedScript).toBeDefined();
       blockedScript?.end("// Document may now finish parsing.");
     });
+  } catch (error) {
+    primaryError = error;
   } finally {
-    server.closeAllConnections();
-    try {
-      try {
-        await application?.evaluate(({ BrowserWindow }) => {
-          for (const window of BrowserWindow.getAllWindows()) window.destroy();
-        });
-      } finally {
-        await closeElectron(application, identity);
-      }
-    } finally {
-      await new Promise<void>((resolve, reject) =>
-        server.close((error) => (error ? reject(error) : resolve())),
-      );
-    }
+    cleanupErrors = await runIndependentCleanup([
+      {
+        name: "startup Electron",
+        run: async () => {
+          try {
+            if (application)
+              await withDeadline(
+                application.evaluate(({ BrowserWindow }) => {
+                  for (const window of BrowserWindow.getAllWindows())
+                    window.destroy();
+                }),
+                2_000,
+                "destroy fixture windows",
+              );
+          } finally {
+            await closeElectron(application, identity);
+          }
+        },
+      },
+      {
+        name: "startup UI listener",
+        run: async () => {
+          server.closeAllConnections();
+          await new Promise<void>((resolve, reject) =>
+            server.close((error) => (error ? reject(error) : resolve())),
+          );
+        },
+      },
+    ]);
   }
+  if (primaryError !== undefined) {
+    if (cleanupErrors.length)
+      throw new AggregateError(
+        [primaryError, ...cleanupErrors],
+        "Startup and cleanup failed",
+        { cause: primaryError },
+      );
+    throw primaryError;
+  }
+  if (cleanupErrors.length)
+    throw new AggregateError(cleanupErrors, "Startup fixture cleanup failed");
 }
 
 test("accepts an already loaded Electron document across repeated starts", async () => {
@@ -112,5 +152,39 @@ test("waits for both document parsing and the real preload bridge", async () => 
     });
     expect(await mainWindow).toBe(page);
     await expect(page.locator('aside a[href="/"]')).toBeVisible();
+  });
+});
+
+test("starts with a hidden window even when animation frames are suspended", async () => {
+  await withStartupFixture(
+    false,
+    async (application) => {
+      const page = await waitForElectronMainWindow(application);
+      expect(
+        await page.evaluate(
+          () =>
+            (window as Window & { fixtureFramesPaused?: boolean })
+              .fixtureFramesPaused,
+        ),
+      ).toBe(true);
+      expect(await page.locator('aside a[href="/"]').isVisible()).toBe(true);
+    },
+    { pauseAnimationFrames: true },
+  );
+});
+
+test("failed startup releases its UI port before the next Electron start", async () => {
+  await withStartupFixture(
+    false,
+    async (application) => {
+      await expect(
+        waitForElectronMainWindow(application, 1_000),
+      ).rejects.toThrow("Electron startup failed while waiting for");
+    },
+    { hideNavigation: true },
+  );
+  await assertPortFree("127.0.0.1", 8500, "next Electron fixture");
+  await withStartupFixture(false, async (application) => {
+    await waitForElectronMainWindow(application);
   });
 });
