@@ -423,6 +423,10 @@ export const zh = {
   signin: "登录",
   signinMediaGoServer: "登录 MediaGo 服务器",
 
+  setupToken: "初始化校验码",
+  setupTokenHelp:
+    "请读取服务器配置目录中的 setup-token 文件。只有服务器管理员才能访问此文件。",
+  setupFailed: "初始化失败，请检查校验码或稍后再试。",
   initializeMediaGoServer: "初始化 MediaGo 服务器",
 
   settingUpAdminPassword: "设置管理员密码",

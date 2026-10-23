@@ -371,24 +371,29 @@ export class MediaGoClient {
   // #region Auth
 
   /**
-   * Sets up authentication by configuring the initial API key.
+   * Sets up the initial password using the server operator's setup token.
    * Only works if no API key is currently configured.
    */
-  async setupAuth(apiKey: string): Promise<ApiResponse<boolean>> {
-    return this.api.post("/api/auth/setup", { apiKey });
+  async setupAuth(
+    password: string,
+    setupToken?: string,
+  ): Promise<ApiResponse<string>> {
+    return this.api.post("/api/auth/setup", { password, setupToken });
   }
 
   /**
-   * Signs in by validating the provided API key.
+   * Signs in with the admin password and returns the API key.
    */
-  async signin(apiKey: string): Promise<ApiResponse<boolean>> {
-    return this.api.post("/api/auth/signin", { apiKey });
+  async signin(password: string): Promise<ApiResponse<string>> {
+    return this.api.post("/api/auth/signin", { password });
   }
 
   /**
    * Checks whether authentication has been configured.
    */
-  async isSetup(): Promise<ApiResponse<{ setuped: boolean }>> {
+  async isSetup(): Promise<
+    ApiResponse<{ setuped: boolean; setupTokenRequired: boolean }>
+  > {
     return this.api.get("/api/auth/status");
   }
 

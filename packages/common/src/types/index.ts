@@ -435,11 +435,13 @@ export interface BrowserStore {
 }
 
 export interface SetupAuthRequest {
-  apiKey: string;
+  password: string;
+  setupToken?: string;
 }
 
 export interface IS_SETUP_RESPONSE {
   setuped: boolean;
+  setupTokenRequired: boolean;
 }
 
 /**

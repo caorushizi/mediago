@@ -47,6 +47,20 @@ Gli esempi sotto mostrano solo il corpo `data`.
 - **Desktop**: nessuna autenticazione predefinita, usa `localhost:39719`
 - **Docker**: se l'autenticazione è abilitata, copia l'API key dalla pagina **Impostazioni** di MediaGo e includi `Authorization: Bearer <key>` in ogni richiesta
 
+#### Inizializzazione iniziale
+
+Nelle versioni che richiedono un codice di inizializzazione, leggi il file `setup-token` nella cartella di configurazione del server. Con il container Docker ufficiale:
+
+```bash
+docker exec mediago cat /app/mediago/data/setup-token
+```
+
+Inserisci il codice nella pagina iniziale e imposta la password amministratore. Usa il nome del container e il percorso effettivi se personalizzati. I log mostrano solo il percorso del file. Non inserire il codice negli URL e non condividerlo.
+
+Il codice rimane valido dopo un riavvio e il file viene eliminato dopo la configurazione riuscita. Le istanze con password o API key già configurate non richiedono una nuova inizializzazione. Prima della configurazione, le API operative restituiscono `401`; il corpo JSON della richiesta iniziale deve includere `password` e `setupToken`.
+
+Configurazione e accesso con password condividono un limite di 10 tentativi al minuto per istanza. Il limite restituisce `429` con `Retry-After` e non riguarda i normali download autenticati tramite API key.
+
 ## Scoperta media (sniffing e parsing)
 
 La scoperta è un'attività asincrona. `inspect` analizza direttamente un URL M3U8; `browser` chiede al processo principale Electron di creare una vista browser nascosta e isolata. La scheda visibile dell'utente non viene mai navigata o sostituita.

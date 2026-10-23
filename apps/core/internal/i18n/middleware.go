@@ -5,6 +5,9 @@ import (
 	"golang.org/x/text/language"
 )
 
+const maxLanguageInputBytes = 64
+const maxAcceptLanguageBytes = 256
+
 // supported language tags for the matcher.
 var (
 	supported = []language.Tag{
@@ -26,14 +29,14 @@ var (
 func Middleware(getConfigLang func() string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 1. Query parameter
-		if lang := c.Query("lang"); lang != "" {
+		if lang := c.Query("lang"); lang != "" && len(lang) <= maxLanguageInputBytes {
 			c.Set(LangContextKey, resolveCode(lang))
 			c.Next()
 			return
 		}
 
 		// 2. Accept-Language header
-		if accept := c.GetHeader("Accept-Language"); accept != "" {
+		if accept := c.GetHeader("Accept-Language"); accept != "" && len(accept) <= maxAcceptLanguageBytes {
 			tags, _, _ := language.ParseAcceptLanguage(accept)
 			if len(tags) > 0 {
 				_, index, _ := matcher.Match(tags...)
@@ -60,6 +63,9 @@ func Middleware(getConfigLang func() string) gin.HandlerFunc {
 
 // resolveCode normalizes a language string to a supported catalog key.
 func resolveCode(lang string) string {
+	if len(lang) > maxLanguageInputBytes {
+		return DefaultLang
+	}
 	tag, err := language.Parse(lang)
 	if err != nil {
 		return DefaultLang

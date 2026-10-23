@@ -41,6 +41,10 @@ var catalogs = map[string]map[string]string{
 		MsgAPIKeyAlreadySet: "apiKey is already configured",
 		MsgInvalidAPIKey:    "invalid apiKey",
 
+		MsgAuthSetupTokenInvalid: "initialization code is missing or invalid",
+		MsgAuthSetupUnavailable:  "initialization code is unavailable; contact the server administrator",
+		MsgAuthRateLimited:       "too many authentication attempts; try again later",
+
 		// Task
 		MsgTaskCreated:          "Task created successfully",
 		MsgTaskEnqueued:         "Task enqueued successfully",
@@ -104,6 +108,10 @@ var catalogs = map[string]map[string]string{
 		MsgAPIKeyAlreadySet: "apiKey 已配置",
 		MsgInvalidAPIKey:    "apiKey 无效",
 
+		MsgAuthSetupTokenInvalid: "初始化校验码缺失或无效",
+		MsgAuthSetupUnavailable:  "初始化校验码不可用，请联系服务器管理员",
+		MsgAuthRateLimited:       "认证请求过于频繁，请稍后重试",
+
 		// Task
 		MsgTaskCreated:          "任务创建成功",
 		MsgTaskEnqueued:         "任务已加入队列",
@@ -166,6 +174,10 @@ var catalogs = map[string]map[string]string{
 		MsgAPIKeyRequired:   "apiKey è obbligatoria",
 		MsgAPIKeyAlreadySet: "apiKey è già configurata",
 		MsgInvalidAPIKey:    "apiKey non valida",
+
+		MsgAuthSetupTokenInvalid: "codice di inizializzazione mancante o non valido",
+		MsgAuthSetupUnavailable:  "codice di inizializzazione non disponibile; contatta l’amministratore",
+		MsgAuthRateLimited:       "troppi tentativi di autenticazione; riprova più tardi",
 
 		// Task
 		MsgTaskCreated:          "Attività creata correttamente",
