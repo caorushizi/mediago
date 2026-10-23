@@ -212,7 +212,7 @@ func (i *M3U8Inspector) fetch(ctx context.Context, rawURL string, headers []stri
 	if err != nil {
 		return fetchedManifest{}, err
 	}
-	return fetchedManifest{body: body, finalURL: resp.Request.URL.String()}, nil
+	return fetchedManifest{body: body, finalURL: resp.FinalURL.String()}, nil
 }
 
 func readM3U8Manifest(reader io.Reader) ([]byte, error) {

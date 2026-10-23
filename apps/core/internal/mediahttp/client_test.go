@@ -78,8 +78,8 @@ func TestExplicitLANAndLoopbackMediaAndRelativeRedirect(t *testing.T) {
 			}
 			defer response.Body.Close()
 			content, err := io.ReadAll(response.Body)
-			if err != nil || string(content) != "#EXTM3U\n" || response.Request.URL.String() != "http://media.test/hls/master.m3u8" {
-				t.Fatalf("response=%s,%s,%v", response.Request.URL, content, err)
+			if err != nil || string(content) != "#EXTM3U\n" || response.FinalURL.String() != "http://media.test/hls/master.m3u8" {
+				t.Fatalf("response=%s,%s,%v", response.FinalURL.String(), content, err)
 			}
 		})
 	}
@@ -228,7 +228,7 @@ func TestHTTPSPreservesHostAndVerifiesTLS(t *testing.T) {
 		t.Fatal(err)
 	}
 	response.Body.Close()
-	if response.Request.URL.Host != "example.com" {
+	if response.FinalURL.Host != "example.com" {
 		t.Fatal("response lost original host")
 	}
 	if response, err := f.get(context.Background(), "https://wrong.test/live", nil); err == nil {
@@ -512,5 +512,17 @@ func TestPinnedURLMustKeepLiteralDestination(t *testing.T) {
 		if pinnedURLPattern.MatchString(raw) {
 			t.Fatalf("hostname could be reinterpreted: %s", raw)
 		}
+	}
+}
+
+func TestFinalURLDoesNotMutateInFlightWireRequest(t *testing.T) {
+	f := testFetcher(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { io.WriteString(w, "body") }), map[string][]netip.Addr{"nas.test": {netip.MustParseAddr("192.168.1.5")}})
+	response, err := f.get(context.Background(), "http://nas.test/live", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer response.Body.Close()
+	if response.Request.URL.Host != "192.168.1.5:80" || response.FinalURL.Host != "nas.test" {
+		t.Fatalf("source URL overwrote the transport request: %s / %s", response.Request.URL, response.FinalURL.String())
 	}
 }

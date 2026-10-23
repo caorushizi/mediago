@@ -24,6 +24,13 @@ var ErrTarget = errors.New("media request target is not permitted")
 // second transport or proxy could resolve differently.
 var pinnedURLPattern = regexp.MustCompile(`^https?://(?:\[[a-fA-F0-9:]+\]|[0-9.]+):[0-9]+(?:/|\?|$)`)
 
+// Response keeps the original source URL separate from the immutable wire request.
+// Callers resolve relative playlist references against FinalURL.
+type Response struct {
+	*http.Response
+	FinalURL url.URL
+}
+
 type destination struct {
 	ips   []netip.Addr
 	scope int
@@ -36,7 +43,7 @@ type fetcher struct {
 // Get retains explicitly requested LAN and loopback media access. Public URLs
 // cannot redirect into those networks. Every connection uses a vetted IP rather
 // than resolving the hostname again, including requests through a configured proxy.
-func Get(ctx context.Context, rawURL string, headers http.Header, transport *http.Transport, timeout time.Duration) (*http.Response, error) {
+func Get(ctx context.Context, rawURL string, headers http.Header, transport *http.Transport, timeout time.Duration) (*Response, error) {
 	if transport == nil {
 		transport = NewTransport()
 	}
@@ -127,7 +134,7 @@ func (f *fetcher) resolve(ctx context.Context, target *url.URL) (destination, er
 	return result, nil
 }
 
-func (f *fetcher) get(ctx context.Context, rawURL string, headers http.Header) (*http.Response, error) {
+func (f *fetcher) get(ctx context.Context, rawURL string, headers http.Header) (*Response, error) {
 	target, err := url.Parse(rawURL)
 	if err != nil {
 		return nil, ErrTarget
@@ -168,11 +175,11 @@ func (f *fetcher) get(ctx context.Context, rawURL string, headers http.Header) (
 			return nil, err
 		}
 		if response.StatusCode != 301 && response.StatusCode != 302 && response.StatusCode != 303 && response.StatusCode != 307 && response.StatusCode != 308 {
-			return response, nil
+			return &Response{Response: response, FinalURL: *target}, nil
 		}
 		location := response.Header.Get("Location")
 		if location == "" {
-			return response, nil
+			return &Response{Response: response, FinalURL: *target}, nil
 		}
 		response.Body.Close()
 		if redirects == 5 {
@@ -259,8 +266,6 @@ func (f *fetcher) request(ctx context.Context, target *url.URL, headers http.Hea
 			continue
 		}
 		response.Body = &closingBody{ReadCloser: response.Body, close: transport.CloseIdleConnections}
-		// Resolve relative playlist references against the public URL, never the pinned IP.
-		response.Request.URL = target
 		return response, nil
 	}
 	return nil, fmt.Errorf("media connection failed: %w", lastErr)
