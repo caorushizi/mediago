@@ -1,10 +1,12 @@
 import { useSyncExternalStore } from "react";
+import { CircleHelp } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { usePlatform } from "../hooks/use-platform";
 import { analyticsConsent } from "../services/analytics-consent";
 import { Button } from "./ui/button";
 import { Switch } from "./ui/switch";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 const SERVER_CONSENT = {
   enabled: false,
@@ -21,7 +23,7 @@ function useAnalyticsConsent() {
   );
 }
 
-function PrivacyPolicyButton() {
+function PrivacyPolicyButton({ className = "" }: { className?: string }) {
   const { t, i18n } = useTranslation();
   const { shell } = usePlatform();
   const language = i18n.resolvedLanguage?.split("-")[0];
@@ -30,7 +32,7 @@ function PrivacyPolicyButton() {
     <Button
       type="button"
       variant="link"
-      className="h-auto p-0"
+      className={`h-auto p-0 ${className}`}
       onClick={() => {
         void shell.open(
           `https://downloader.caorushizi.cn${prefix}/privacy.html`,
@@ -54,27 +56,41 @@ export function AnalyticsPreferences() {
   const { t } = useTranslation();
   const state = useAnalyticsConsent();
   return (
-    <div className="space-y-2 border-t pt-4">
-      <div className="flex items-center justify-between gap-4">
+    <div className="flex min-h-14 items-center justify-between gap-4 py-4">
+      <div className="flex items-center gap-2">
         <label
           htmlFor="analytics-consent"
-          className="cursor-pointer text-sm font-medium"
+          className="cursor-pointer text-sm font-normal"
         >
           {t("analyticsUsage")}
         </label>
-        <Switch
-          id="analytics-consent"
-          checked={state.enabled}
-          disabled={!state.loaded || state.saving}
-          onCheckedChange={(enabled) =>
-            void choose(enabled, () => toast.error(t("analyticsSaveFailed")))
-          }
-        />
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              aria-label={`${t("analyticsUsage")} ${t("help")}`}
+              className="shrink-0 cursor-pointer rounded-sm text-muted-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            >
+              <CircleHelp className="size-4" aria-hidden="true" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent
+            className="max-w-xs space-y-2 text-left leading-relaxed"
+            sideOffset={6}
+          >
+            <p>{t("analyticsDescription")}</p>
+            <PrivacyPolicyButton className="text-background underline hover:text-background" />
+          </TooltipContent>
+        </Tooltip>
       </div>
-      <p className="text-xs text-muted-foreground">
-        {t("analyticsDescription")}
-      </p>
-      <PrivacyPolicyButton />
+      <Switch
+        id="analytics-consent"
+        checked={state.enabled}
+        disabled={!state.loaded || state.saving}
+        onCheckedChange={(enabled) =>
+          void choose(enabled, () => toast.error(t("analyticsSaveFailed")))
+        }
+      />
     </div>
   );
 }
