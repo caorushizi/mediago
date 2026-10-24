@@ -87,6 +87,8 @@ the same network:
 docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago caorushizi/mediago:3.5.0
 ```
 
+For builds that request an initialization code, read `setup-token` in the server config directory (`docker exec mediago cat /app/mediago/data/setup-token` for the default container), then enter it on the setup page. The file is deleted after successful setup; existing accounts do not need to initialize again.
+
 Available on [Docker Hub](https://hub.docker.com/r/caorushizi/mediago) and GHCR (`ghcr.io/caorushizi/mediago`) — same image, pick whichever registry is faster for you. Supports both Intel / AMD (amd64) and ARM (arm64). On the desktop build,
 MediaGo listens on both `127.0.0.1` and your LAN IP out of the box, so
 phones and tablets on the same Wi-Fi can open the web UI too.
@@ -265,3 +267,7 @@ and package provenance. It keeps the same port, volume paths and appended flag
 overrides. There is no shell or package manager inside the production image; use
 `docker logs` and the health/API endpoints for diagnostics. The external streaming
 engine is rebuilt from checksum-pinned v0.2.1 source with the patched Go toolchain.
+
+## Privacy and Code signing policy
+
+Usage statistics are optional. See the [Privacy policy](docs/en/privacy.md) for installer-time choice and in-app controls. Windows SignPath signing is pending approval/integration; existing unsigned releases remain unsigned. See the [Code signing policy](docs/en/code-signing.md).

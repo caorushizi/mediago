@@ -1,4 +1,5 @@
 import signinBG from "@/assets/images/signin-bg-v2.png";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Dialog,
@@ -16,7 +17,9 @@ import { setAppStoreSelector, useAppStore } from "@/store/app";
 import { useShallow } from "zustand/react/shallow";
 
 export default function SigninPage() {
-  const { isSetuped, setupAuth, signin } = useAuthApi();
+  const { isSetuped, setupTokenRequired, isLoading, error, setupAuth, signin } =
+    useAuthApi();
+  const [submitting, setSubmitting] = useState(false);
   const { setAppStore } = useAppStore(useShallow(setAppStoreSelector));
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -24,6 +27,8 @@ export default function SigninPage() {
   const handleSubmit = useMemoizedFn(
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
+      if (submitting || isLoading || error) return;
+      setSubmitting(true);
 
       try {
         const formData = new FormData(e.currentTarget);
@@ -40,14 +45,19 @@ export default function SigninPage() {
             return;
           }
 
-          apiKey = await setupAuth(password);
+          apiKey = await setupAuth(
+            password,
+            (formData.get("setup-token") as string | null)?.trim(),
+          );
         }
 
         setAppStore({ apiKey });
 
         navigate("/");
       } catch {
-        alert(t("signinFailed"));
+        alert(t(isSetuped ? "signinFailed" : "setupFailed"));
+      } finally {
+        setSubmitting(false);
       }
     },
   );
@@ -73,6 +83,33 @@ export default function SigninPage() {
                   className="space-y-6"
                   onSubmit={handleSubmit}
                 >
+                  {!isSetuped && setupTokenRequired && (
+                    <div>
+                      <label
+                        htmlFor="setup-token"
+                        className="block text-sm/6 font-medium text-foreground"
+                      >
+                        {t("setupToken")}
+                      </label>
+                      <Input
+                        id="setup-token"
+                        name="setup-token"
+                        type="password"
+                        autoComplete="off"
+                        spellCheck={false}
+                        maxLength={128}
+                        required
+                        aria-describedby="setup-token-help"
+                        className="mt-2"
+                      />
+                      <p
+                        id="setup-token-help"
+                        className="mt-2 text-sm text-muted-foreground"
+                      >
+                        {t("setupTokenHelp")}
+                      </p>
+                    </div>
+                  )}
                   <div>
                     <label
                       htmlFor="password"
@@ -134,7 +171,11 @@ export default function SigninPage() {
                   )}
 
                   <div>
-                    <Button type="submit" className="w-full">
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={submitting || isLoading || Boolean(error)}
+                    >
                       {isSetuped ? t("signin") : t("setup")}
                     </Button>
                   </div>

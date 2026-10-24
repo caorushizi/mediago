@@ -7,14 +7,21 @@ VIAddVersionKey /LANG=1033 "ProductName" "${PRODUCT_NAME}"
 VIAddVersionKey /LANG=1033 "FileVersion" "${VERSION}"
 VIAddVersionKey /LANG=1033 "FileDescription" "${APP_DESCRIPTION}"
 VIAddVersionKey /LANG=1033 "LegalCopyright" "MediaGo test"
-!addplugindir /x86-unicode "${PLUGIN_DIR}"
 !include "MUI2.nsh"
 !include "${INSTALLER_INCLUDE}"
+; electron-builder registers plugins and declares installMode after this include.
+!addplugindir /x86-unicode "${PLUGIN_DIR}"
+!ifndef MEDIAGO_ANALYTICS_TEST_FILE
+  !ifndef BUILD_UNINSTALLER
+    Var installMode
+  !endif
+!endif
 !ifndef BUILD_UNINSTALLER
 Var newStartMenuLink
 Var newDesktopLink
 !endif
 !ifndef BUILD_UNINSTALLER
+  !insertmacro customPageAfterChangeDir
   !insertmacro MUI_PAGE_INSTFILES
 !else
   SilentInstall silent
@@ -48,7 +55,14 @@ Var newDesktopLink
 !insertmacro MUI_LANGUAGE "Vietnamese"
 !insertmacro customHeader
 Function .onInit
+  !ifndef MEDIAGO_ANALYTICS_TEST_FILE
+    !ifndef BUILD_UNINSTALLER
+      StrCpy $installMode "current"
+    !endif
+  !endif
   StrCpy $LANGUAGE ${TEST_LANGUAGE}
+  ; Match the interactive installer; /S must bypass the language dialog.
+  !insertmacro MUI_LANGDLL_DISPLAY
   !ifdef BUILD_UNINSTALLER
     WriteUninstaller "${UNINSTALLER_FILE}"
     SetErrorLevel 0
@@ -70,6 +84,10 @@ Section
       CreateShortCut "$newDesktopLink" "$SYSDIR\cmd.exe" "/c echo preserved" "$SYSDIR\shell32.dll" 7 SW_SHOWMINIMIZED "" "${TEST_LINK_DESCRIPTION}"
       WinShell::SetLnkAUMI "$newStartMenuLink" "mediago.test.preserved"
       WinShell::SetLnkAUMI "$newDesktopLink" "mediago.test.preserved"
+    !endif
+    !ifdef TEST_ANALYTICS_DECISION
+      StrCpy $MediaGoAnalyticsSelectionMade 1
+      StrCpy $MediaGoAnalyticsChoice "${TEST_ANALYTICS_DECISION}"
     !endif
     !insertmacro customInstall
     FileOpen $9 "${TEST_DIRECTORY}\strings.txt" w

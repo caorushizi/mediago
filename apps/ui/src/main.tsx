@@ -3,13 +3,13 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import { registerPwaServiceWorker } from "./services/pwa";
-import { isWeb, tdApp } from "./utils";
+import { isWeb } from "./utils";
+import { analyticsConsent } from "./services/analytics-consent";
 import "./i18n";
 import "./globals.css";
 import { BrowserRouter } from "react-router-dom";
 import { syncAppLanguage } from "./i18n/app-language";
 import { useAppStore } from "./store/app";
-tdApp.init();
 if (isWeb) registerPwaServiceWorker();
 
 const application = (
@@ -20,6 +20,7 @@ const application = (
 const shouldUseStrictMode = isWeb || import.meta.env.PROD;
 
 async function startApplication() {
+  await analyticsConsent.initialize();
   // Resolve the persisted preference once before React renders. In Electron,
   // this asks the main process for the OS language, so stale browser language
   // detector caches cannot decide the visible interface language.

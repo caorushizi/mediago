@@ -220,3 +220,7 @@ task test
 
 尾注: 感谢[吾爱破解论坛](https://www.52pojie.cn/)  
 lp_Zain@www.52pojie.cn
+
+## 隐私与代码签名政策
+
+使用统计为可选项，安装时选择及设置中的控制方式见[隐私政策](docs/privacy.md)。Windows SignPath 签名尚在申请准备阶段，已有未签名版本仍然未签名，详见[Code signing policy](docs/code-signing.md)。

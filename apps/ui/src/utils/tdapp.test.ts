@@ -1,67 +1,72 @@
 import { afterEach, expect, test, vi } from "vitest";
 
-interface ScriptDouble {
-  async: boolean;
-  src: string;
-}
-
-function installDocumentDouble(): ScriptDouble[] {
-  const appendedScripts: ScriptDouble[] = [];
-  const head = {
-    appendChild(script: ScriptDouble) {
-      appendedScripts.push(script);
-    },
-  };
-
+function environment(appId: string | undefined = "analytics-app") {
+  const scripts: Array<{
+    async: boolean;
+    src: string;
+    referrerPolicy: string;
+    remove: ReturnType<typeof vi.fn>;
+  }> = [];
+  const onEvent = vi.fn();
+  vi.stubGlobal("window", { TDAPP: { onEvent } });
   vi.stubGlobal("document", {
-    createElement(tagName: string) {
-      if (tagName !== "script")
-        throw new Error(`Unexpected ${tagName} element`);
-      return { async: false, src: "" } satisfies ScriptDouble;
-    },
-    getElementsByTagName(tagName: string) {
-      if (tagName !== "head") throw new Error(`Unexpected ${tagName} lookup`);
-      return [head];
+    createElement: () => ({
+      async: false,
+      src: "",
+      referrerPolicy: "",
+      remove: vi.fn(),
+    }),
+    head: {
+      appendChild: (script: (typeof scripts)[number]) => scripts.push(script),
     },
   });
-
-  return appendedScripts;
+  vi.stubEnv("APP_TD_APPID", appId);
+  vi.stubEnv("APP_VERSION", "3.6.0-beta.1");
+  return { scripts, onEvent };
 }
-
 afterEach(() => {
   vi.unstubAllEnvs();
   vi.unstubAllGlobals();
   vi.resetModules();
 });
 
-test.each([undefined, "", "   "])(
-  "does not load analytics without a nonempty app ID (%s)",
-  async (appId) => {
-    const appendedScripts = installDocumentDouble();
-    vi.stubEnv("APP_TD_APPID", appId);
-    vi.stubEnv("APP_VERSION", "3.5.0");
-    vi.resetModules();
-
-    const { tdApp } = await import("./tdapp");
-    tdApp.init();
-
-    expect(appendedScripts).toStrictEqual([]);
-  },
-);
-
-test("loads analytics for a configured app ID", async () => {
-  const appendedScripts = installDocumentDouble();
-  vi.stubEnv("APP_TD_APPID", "analytics-app");
-  vi.stubEnv("APP_VERSION", "3.5.0");
-  vi.resetModules();
-
+test("configured analytics remains disabled until explicit consent", async () => {
+  const { scripts, onEvent } = environment();
   const { tdApp } = await import("./tdapp");
   tdApp.init();
-
-  expect(appendedScripts).toStrictEqual([
-    {
-      async: true,
-      src: "https://jic.talkingdata.com/app/h5/v1?appid=analytics-app&vn=3.5.0&vc=3.5.0",
-    },
-  ]);
+  tdApp.onEvent("PAGE_LOAD", { deviceId: "private-device" });
+  expect(scripts).toHaveLength(0);
+  expect(onEvent).not.toHaveBeenCalled();
+});
+test.each([undefined, "", "   "])(
+  "consent cannot load an unconfigured SDK (%s)",
+  async (appId) => {
+    const { scripts } = environment();
+    vi.stubEnv("APP_TD_APPID", appId);
+    const { tdApp } = await import("./tdapp");
+    tdApp.init(true);
+    expect(scripts).toHaveLength(0);
+  },
+);
+test("loads once after consent, strips private parameters and stops app events on refusal", async () => {
+  const { scripts, onEvent } = environment();
+  const { tdApp } = await import("./tdapp");
+  tdApp.init(true);
+  tdApp.init(true);
+  expect(scripts).toHaveLength(1);
+  expect(scripts[0]).toMatchObject({
+    referrerPolicy: "no-referrer",
+    src: "https://jic.talkingdata.com/app/h5/v1?appid=analytics-app&vn=3.6.0-beta.1&vc=3.6.0-beta.1",
+  });
+  tdApp.onEvent("DOWNLOAD_NOW", {
+    deviceId: "secret",
+    id: "private-task",
+    url: "https://private/",
+  });
+  expect(onEvent).toHaveBeenLastCalledWith("DOWNLOAD_NOW", "", {});
+  tdApp.disable();
+  tdApp.onEvent("PAGE_LOAD");
+  expect(onEvent).toHaveBeenCalledTimes(1);
+  expect(scripts[0].remove).toHaveBeenCalledOnce();
+  expect(window.TDAPP).toBeUndefined();
 });

@@ -44,12 +44,21 @@ function run(executable: string, args: string[]) {
 
 function build(
   language: number,
-  options: { upgrade?: boolean; missing?: boolean } = {},
+  options: {
+    upgrade?: boolean;
+    missing?: boolean;
+    consent?: boolean;
+    previousConsent?: string;
+    productionConsentPath?: boolean;
+  } = {},
 ) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), "mediago-nsis-"));
   temporaryDirectories.push(directory);
   const executable = path.join(directory, "mediago-nsis-check.exe");
   const uninstaller = path.join(directory, "uninstall.exe");
+  const consentFile = path.join(directory, "analytics-consent");
+  if (options.previousConsent !== undefined)
+    fs.writeFileSync(consentFile, options.previousConsent);
   const definitions = {
     PRODUCT_NAME: "MediaGo Installer QA",
     VERSION: "3.6.0-beta.0",
@@ -60,6 +69,12 @@ function build(
     TEST_LANGUAGE: String(language),
     INSTALLER_INCLUDE: path.join(root, "apps/electron/installer/installer.nsh"),
     PLUGIN_DIR: plugins,
+    ...(options.productionConsentPath
+      ? {}
+      : { MEDIAGO_ANALYTICS_TEST_FILE: consentFile }),
+    ...(options.consent !== undefined
+      ? { TEST_ANALYTICS_DECISION: options.consent ? "1" : "0" }
+      : {}),
     ...(options.upgrade ? { TEST_UPGRADE: "" } : {}),
     ...(options.missing ? { TEST_MISSING_LINKS: "" } : {}),
   };
@@ -71,6 +86,11 @@ function build(
     ),
     path.join(root, "tests/fixtures/nsis/localization.nsi"),
   ];
+
+  if (options.productionConsentPath) {
+    run(compiler, args);
+    return { directory, executable, uninstaller, strings: [], consentFile };
+  }
 
   // Exercise the silent intermediate-uninstaller generation used by electron-builder.
   run(compiler, ["/DBUILD_UNINSTALLER", ...args]);
@@ -89,7 +109,7 @@ function build(
     .replace(/^\uFEFF/, "")
     .trimEnd()
     .split(/\r?\n/);
-  return { directory, executable, uninstaller, strings };
+  return { directory, executable, uninstaller, strings, consentFile };
 }
 
 type Shortcut = {
@@ -137,6 +157,12 @@ describe.skipIf(process.platform !== "win32")("real NSIS localization", () => {
       "Install NSIS or set MEDIAGO_NSIS_ROOT",
     ).toBe(true);
     expect(fs.existsSync(path.join(plugins, "WinShell.dll"))).toBe(true);
+  });
+
+  test("compiles the production consent path after the upstream install-mode declaration", () => {
+    const built = build(1033, { productionConsentPath: true });
+    expect(fs.existsSync(built.executable)).toBe(true);
+    expect(fs.existsSync(built.consentFile)).toBe(false);
   });
 
   afterAll(() => {
@@ -192,6 +218,34 @@ describe.skipIf(process.platform !== "win32")("real NSIS localization", () => {
       expect(
         fs.readFileSync(path.join(built.directory, "uninstalled.txt"), "utf8"),
       ).toBe("uninstaller completed");
+    },
+    60_000,
+  );
+
+  test("silent install bypasses language selection without granting analytics consent", () => {
+    const built = build(1033);
+    expect(fs.existsSync(built.consentFile)).toBe(false);
+  }, 60_000);
+
+  test.each(["0", "1"])(
+    "silent upgrade preserves prior analytics choice %s",
+    (previousConsent) => {
+      const built = build(1033, { previousConsent });
+      expect(fs.readFileSync(built.consentFile, "utf8")).toBe(previousConsent);
+    },
+    60_000,
+  );
+
+  test.each([false, true])(
+    "persists explicit installer analytics choice %s",
+    (consent) => {
+      const built = build(1033, {
+        consent,
+        previousConsent: consent ? "0" : "1",
+      });
+      expect(fs.readFileSync(built.consentFile, "utf8")).toBe(
+        consent ? "1" : "0",
+      );
     },
     60_000,
   );
