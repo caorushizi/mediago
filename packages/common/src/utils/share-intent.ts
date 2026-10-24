@@ -8,6 +8,7 @@ export const SHARE_INTENT_VERSION = 1 as const;
 export const SHARE_INTENT_TTL_MS = 15 * 60 * 1000;
 export const SHARE_INTENT_MAX_URL_LENGTH = 16 * 1024;
 export const SHARE_INTENT_MAX_NAME_LENGTH = 512;
+export const SHARE_INTENT_MAX_TEXT_LENGTH = 64 * 1024;
 
 const DOWNLOAD_TYPES = new Set<string>(Object.values(DownloadType));
 const WEB_PROTOCOLS = new Set(["http:", "https:"]);
@@ -136,9 +137,13 @@ function isSupportedShortVideoURL(hostname: string, pathname: string): boolean {
 export function extractFirstHttpUrl(
   text: string | null | undefined,
 ): string | undefined {
-  const match = text?.match(EXTRACT_HTTP_URL_RE)?.[0];
+  if (!text || text.length > SHARE_INTENT_MAX_TEXT_LENGTH) return undefined;
+  const match = text.match(EXTRACT_HTTP_URL_RE)?.[0];
   if (!match) return undefined;
-  return match.replace(/[),.;!?]+$/, "");
+  let end = match.length;
+  while (end > 0 && "),.;!?".includes(match[end - 1])) end--;
+  const url = match.slice(0, end);
+  return url.length <= SHARE_INTENT_MAX_URL_LENGTH ? url : undefined;
 }
 
 export function normalizeShareIntent(

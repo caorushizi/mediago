@@ -3,6 +3,10 @@
 // ============================================================
 
 export const IPC = {
+  analytics: {
+    getConsent: "analytics.getConsent",
+    setConsent: "analytics.setConsent",
+  },
   browser: {
     createTab: "browser.createTab",
     activateTab: "browser.activateTab",
@@ -62,6 +66,7 @@ export const IPC = {
 export const IpcEvent = {
   app: {
     shareIntentAvailable: "app:shareIntentAvailable",
+    analyticsConsentChanged: "app:analyticsConsentChanged",
   },
   browser: {
     tabsChanged: "browser:tabsChanged",

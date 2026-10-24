@@ -29,6 +29,10 @@ const (
 	MsgAPIKeyAlreadySet = "auth.api_key_already_set"
 	MsgInvalidAPIKey    = "auth.invalid_api_key"
 
+	MsgAuthSetupTokenInvalid = "auth.setup_token_invalid"
+	MsgAuthSetupUnavailable  = "auth.setup_unavailable"
+	MsgAuthRateLimited       = "auth.rate_limited"
+
 	// Task
 	MsgTaskCreated          = "task.created"
 	MsgTaskEnqueued         = "task.enqueued"

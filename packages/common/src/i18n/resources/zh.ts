@@ -1,4 +1,12 @@
 export const zh = {
+  analyticsUsage: "分享使用统计",
+  analyticsChoiceTitle: "可选的使用统计",
+  analyticsDescription:
+    "允许 TalkingData 接收使用事件及浏览器、网络信息，帮助改进 MediaGo。同意前保持关闭，不影响下载。关闭后界面会重新加载以停止统计 SDK，后台下载继续。",
+  analyticsPrivacyPolicy: "隐私政策",
+  analyticsDecline: "不启用统计，继续使用",
+  analyticsAllow: "同意启用统计",
+  analyticsSaveFailed: "统计偏好保存失败，请重试。",
   downloadList: "下载列表",
   downloadComplete: "下载完成",
   materialExtraction: "素材提取",
@@ -423,6 +431,10 @@ export const zh = {
   signin: "登录",
   signinMediaGoServer: "登录 MediaGo 服务器",
 
+  setupToken: "初始化校验码",
+  setupTokenHelp:
+    "请读取服务器配置目录中的 setup-token 文件。只有服务器管理员才能访问此文件。",
+  setupFailed: "初始化失败，请检查校验码或稍后再试。",
   initializeMediaGoServer: "初始化 MediaGo 服务器",
 
   settingUpAdminPassword: "设置管理员密码",

@@ -9,7 +9,6 @@ import (
 	"net/http/httptest"
 	"path/filepath"
 	"strconv"
-	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -29,17 +28,15 @@ func TestMCPCancelledCreationDoesNotPersistOrStart(t *testing.T) {
 			d := &recoveryFileDownloader{path: filepath.Join(t.TempDir(), "out.mp4"), calls: make(chan struct{}, 2)}
 			f := newProtocolFixture(t, true, d)
 			entered, titleStopped, release := make(chan struct{}), make(chan struct{}), make(chan struct{})
-			previous := http.DefaultTransport
-			http.DefaultTransport = roundTripFunc(func(req *http.Request) (*http.Response, error) {
+			titleServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 				defer close(titleStopped)
 				close(entered)
 				select {
 				case <-req.Context().Done():
-					return nil, req.Context().Err()
 				case <-release:
-					return &http.Response{StatusCode: http.StatusOK, Header: make(http.Header), Body: io.NopCloser(strings.NewReader("<title>cancelled title</title>")), Request: req}, nil
+					_, _ = io.WriteString(w, "<title>cancelled title</title>")
 				}
-			})
+			}))
 			var requests sync.WaitGroup
 			client := mcp.NewClient(&mcp.Implementation{Name: "cancellation-test", Version: "1"}, nil)
 			session, err := client.Connect(context.Background(), &mcp.StreamableClientTransport{
@@ -71,9 +68,9 @@ func TestMCPCancelledCreationDoesNotPersistOrStart(t *testing.T) {
 					_ = session.Close()
 				}
 				requests.Wait()
-				// Drain creation before restoring globals, including on a test failure.
+				// Drain creation and the real title server, including on a test failure.
 				_, _ = f.downloads.AddDownloadTasks(nil)
-				http.DefaultTransport = previous
+				titleServer.Close()
 			})
 			if err != nil {
 				t.Fatal(err)
@@ -90,7 +87,7 @@ func TestMCPCancelledCreationDoesNotPersistOrStart(t *testing.T) {
 			}
 			returned := make(chan callResult, 1)
 			go func() {
-				result, err := session.CallTool(ctx, &mcp.CallToolParams{Name: "create_download", Arguments: map[string]any{"url": "https://example.com/watch", "type": "bilibili"}})
+				result, err := session.CallTool(ctx, &mcp.CallToolParams{Name: "create_download", Arguments: map[string]any{"url": titleServer.URL + "/watch", "type": "bilibili"}})
 				returned <- callResult{result, err}
 			}()
 			select {
@@ -131,6 +128,14 @@ func TestMCPCancelledCreationDoesNotPersistOrStart(t *testing.T) {
 }
 
 func TestMCPBatchCancellationKeepsOnlyAlreadyCreatedItems(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	titleServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, request *http.Request) {
+		cancel()
+		<-request.Context().Done()
+	}))
+	defer titleServer.Close()
+
 	f := newProtocolFixture(t, true, nil)
 	job, err := f.discoveries.Create(context.Background(), discovery.CreateDiscoveryInput{URL: "https://example.com/watch", Mode: discovery.ModeBrowser})
 	if err != nil {
@@ -141,20 +146,13 @@ func TestMCPBatchCancellationKeepsOnlyAlreadyCreatedItems(t *testing.T) {
 	}
 	_, err = f.discoveries.Complete(context.Background(), job.ID, []discovery.PrivateSource{
 		{DiscoverySource: discovery.DiscoverySource{ID: "a", URL: "https://example.com/a.mp4", Title: "first", Type: discovery.SourceTypeDirect}},
-		{DiscoverySource: discovery.DiscoverySource{ID: "b", URL: "https://example.com/watch", Type: discovery.SourceTypeBilibili}},
+		{DiscoverySource: discovery.DiscoverySource{ID: "b", URL: titleServer.URL + "/watch", Type: discovery.SourceTypeBilibili}},
 		{DiscoverySource: discovery.DiscoverySource{ID: "c", URL: "https://example.com/c.mp4", Title: "last", Type: discovery.SourceTypeDirect}},
 	}, false)
 	if err != nil {
 		t.Fatal(err)
 	}
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	previous := http.DefaultTransport
-	http.DefaultTransport = roundTripFunc(func(*http.Request) (*http.Response, error) {
-		cancel()
-		return nil, context.Canceled
-	})
-	t.Cleanup(func() { http.DefaultTransport = previous })
+
 	out, err := f.manager.downloadDiscoveredMedia(ctx, downloadDiscoveredMediaInput{ID: job.ID, SourceIDs: []string{"a", "b", "c"}, StartDownload: ptr(false)})
 	if err != nil {
 		t.Fatal(err)
