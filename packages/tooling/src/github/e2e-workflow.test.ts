@@ -143,7 +143,7 @@ function assertE2EWorkflowContract(workflowContents: string) {
     "Upload Playwright failure artifacts",
   );
   expect(uploadStep).toContain("if: failure()");
-  expect(uploadStep).toContain("uses: actions/upload-artifact@v4");
+  expect(uploadStep).toContain("uses: actions/upload-artifact@v7");
   expect(uploadStep).toContain(
     "name: playwright-failure-artifacts-${{ matrix.project }}",
   );
