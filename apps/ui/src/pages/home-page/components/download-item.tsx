@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { memo, type ReactNode, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/toast";
 import { useShallow } from "zustand/react/shallow";
 import { DownloadTag } from "@/components/download-tag";
 import { Button } from "@/components/ui/button";
@@ -113,9 +113,10 @@ export const DownloadTaskItem = memo(function DownloadTaskItem({
       tdApp.onEvent(STOP_DOWNLOAD);
     } catch {
       setIsStoppingRecording(false);
-      toast.error(
-        task.isLive ? t("endRecordingFailed") : t("stopDownloadFailed"),
-      );
+      toast.add({
+        title: task.isLive ? t("endRecordingFailed") : t("stopDownloadFailed"),
+        type: "error",
+      });
     }
   });
 
@@ -141,7 +142,6 @@ export const DownloadTaskItem = memo(function DownloadTaskItem({
       appStore.showTerminal && !task.remoteOffline ? (
         <TerminalDialog
           key="terminal"
-          asChild
           trigger={
             <Button
               type="button"
@@ -517,7 +517,6 @@ export const DownloadTaskItem = memo(function DownloadTaskItem({
                 ·
               </span>
               <TerminalDialog
-                asChild
                 trigger={
                   <button
                     type="button"

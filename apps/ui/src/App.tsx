@@ -1,7 +1,6 @@
 import type { FC } from "react";
 import { AppBootScreen } from "./components/app-boot-screen";
 import { AnalyticsConsentNotice } from "./components/analytics-preferences";
-import { Toaster } from "./components/ui/sonner";
 import { useAdapterBootstrap } from "./hooks/use-adapter-bootstrap";
 import { useAppTheme } from "./hooks/use-app-theme";
 import { AuthGuard } from "./hooks/use-auth";
@@ -11,7 +10,7 @@ import { AppRoutes } from "./routes/app-routes";
 
 const App: FC = () => {
   const adapterReady = useAdapterBootstrap();
-  const theme = useAppTheme();
+  useAppTheme();
 
   useDesktopEvents();
   useDownloadEvents();
@@ -25,7 +24,6 @@ const App: FC = () => {
         <AppRoutes />
       </div>
       <AnalyticsConsentNotice />
-      <Toaster theme={theme} richColors position="top-center" duration={2400} />
     </>
   );
 };

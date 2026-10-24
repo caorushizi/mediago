@@ -1,7 +1,7 @@
 import { AlertCircle, RefreshCw, SlidersHorizontal } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
+import { toast } from "../components/ui/toast";
 
 import { Button } from "../components/ui/button";
 import { resolveLanguage } from "../i18n";
@@ -247,32 +247,35 @@ export function App() {
 
   const handleSaveConnection = async () => {
     const result = await options.saveConnection();
-    if (result.ok) toast.success(t("common.saved"));
+    if (result.ok) toast.add({ title: t("common.saved"), type: "success" });
     else {
-      toast.error(renderLocalized(t, result.error, "common.saveFailed"));
+      toast.add({
+        title: renderLocalized(t, result.error, "common.saveFailed"),
+        type: "error",
+      });
     }
   };
 
   const handleDownloadNowChange = async (checked: boolean) => {
     const ok = await options.changeDownloadNow(checked);
-    if (ok) toast.success(t("common.saved"));
-    else toast.error(t("common.saveFailed"));
+    if (ok) toast.add({ title: t("common.saved"), type: "success" });
+    else toast.add({ title: t("common.saveFailed"), type: "error" });
   };
 
   const handleLanguageChange = async (language: ExtensionLanguage) => {
     const ok = await options.changeLanguage(language);
     if (!ok) {
-      toast.error(t("common.saveFailed"));
+      toast.add({ title: t("common.saveFailed"), type: "error" });
       return;
     }
     await i18n.changeLanguage(resolveLanguage(language));
-    toast.success(t("common.saved"));
+    toast.add({ title: t("common.saved"), type: "success" });
   };
 
   const handlePageQuickActionEnabledChange = async (checked: boolean) => {
     const ok = await options.changePageQuickActionEnabled(checked);
-    if (ok) toast.success(t("common.saved"));
-    else toast.error(t("common.saveFailed"));
+    if (ok) toast.add({ title: t("common.saved"), type: "success" });
+    else toast.add({ title: t("common.saveFailed"), type: "error" });
   };
 
   const version =

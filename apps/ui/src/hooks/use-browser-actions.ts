@@ -1,5 +1,5 @@
 import { useMemoizedFn } from "ahooks";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/toast";
 import { useShallow } from "zustand/react/shallow";
 import { OPEN_URL } from "@/const";
 import { browserActionsSelector, useBrowserStore } from "@/store/browser";
@@ -30,7 +30,7 @@ export function useBrowserActions() {
         status: "failed",
         errorMessage: message,
       });
-      toast.error(message);
+      toast.add({ title: message, type: "error" });
     }
   });
 
@@ -47,7 +47,7 @@ export function useBrowserActions() {
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Unable to create browser tab";
-      toast.error(message);
+      toast.add({ title: message, type: "error" });
       return undefined;
     }
   });

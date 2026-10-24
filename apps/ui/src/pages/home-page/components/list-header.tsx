@@ -1,7 +1,7 @@
 import { DownloadFilter } from "@mediago/common";
 import { useMemoizedFn } from "ahooks";
 import { Trans, useTranslation } from "react-i18next";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -47,14 +47,19 @@ export function ListHeader({
         filters: [{ name: "Text", extensions: ["txt"] }],
       });
     } catch {
-      toast.error(t("exportDownloadListFailed"));
+      toast.add({ title: t("exportDownloadListFailed"), type: "error" });
     }
   });
 
   return (
     <div className="flex flex-row items-center justify-between border-b px-3 py-2">
       <div className="flex flex-row items-center gap-3">
-        <Checkbox checked={checked} onCheckedChange={onSelectAll} />
+        <Checkbox
+          checked={checked === true}
+          indeterminate={checked === "indeterminate"}
+          onCheckedChange={onSelectAll}
+          aria-label={t("selectAll")}
+        />
         <span
           className="cursor-pointer text-sm text-foreground"
           onClick={() => onSelectAll(true)}
@@ -92,11 +97,11 @@ export function ListHeader({
         )}
         {!isWeb && (
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button>{t("more")}</Button>
+            <DropdownMenuTrigger render={<Button />}>
+              {t("more")}
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onSelect={handleExportDownloadList}>
+              <DropdownMenuItem onClick={handleExportDownloadList}>
                 {t("exportDownloadList")}
               </DropdownMenuItem>
             </DropdownMenuContent>

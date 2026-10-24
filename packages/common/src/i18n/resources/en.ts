@@ -194,6 +194,7 @@ export const en = {
     "Enter custom headers, one per line.\n\nExamples:\nOrigin: http://www.example.com\nReferer: http://www.example.com",
   cancle: "Cancel",
   terminal: "Open terminal",
+  notifications: "Notifications",
   close: "Close",
   loading: "Loading",
   startingMediaGo: "Starting MediaGo…",

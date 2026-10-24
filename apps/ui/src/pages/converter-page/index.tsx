@@ -3,7 +3,7 @@ import { useMemoizedFn } from "ahooks";
 import { type DragEvent, useState } from "react";
 import { Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/toast";
 import {
   addConversion as addConversionApi,
   deleteConversion as deleteConversionApi,
@@ -53,10 +53,16 @@ const Converter = () => {
     setStagedFiles(result.files);
 
     if (result.rejected > 0) {
-      toast.warning(t("unsupportedMediaFiles", { count: result.rejected }));
+      toast.add({
+        title: t("unsupportedMediaFiles", { count: result.rejected }),
+        type: "warning",
+      });
     }
     if (result.duplicates > 0) {
-      toast.info(t("duplicateMediaFilesSkipped", { count: result.duplicates }));
+      toast.add({
+        title: t("duplicateMediaFilesSkipped", { count: result.duplicates }),
+        type: "info",
+      });
     }
   });
 
@@ -69,7 +75,7 @@ const Converter = () => {
       });
       if (paths?.length) addPathsToWorkbench(paths);
     } catch (exception: unknown) {
-      toast.error((exception as Error).message);
+      toast.add({ title: (exception as Error).message, type: "error" });
     }
   });
 
@@ -87,12 +93,12 @@ const Converter = () => {
         ).filter(Boolean);
 
         if (paths.length === 0) {
-          toast.warning(t("fileDropUnavailable"));
+          toast.add({ title: t("fileDropUnavailable"), type: "warning" });
           return;
         }
         addPathsToWorkbench(paths);
       } catch (exception: unknown) {
-        toast.error((exception as Error).message);
+        toast.add({ title: (exception as Error).message, type: "error" });
       }
     },
   );
@@ -159,25 +165,30 @@ const Converter = () => {
       if (createdCount > 0) {
         tdApp.onEvent(ADD_CONVERT_TASK);
         if (startImmediately) tdApp.onEvent(START_CONVERT);
-        toast.success(
-          t(
+        toast.add({
+          title: t(
             startImmediately
               ? "conversionBatchStarted"
               : "conversionBatchQueued",
             { count: createdCount },
           ),
-        );
+          type: "success",
+        });
         setIsSettingsOpen(false);
       }
       if (failedFiles.length > 0) {
-        toast.error(
-          t("conversionBatchCreateFailed", { count: failedFiles.length }),
-        );
+        toast.add({
+          title: t("conversionBatchCreateFailed", {
+            count: failedFiles.length,
+          }),
+          type: "error",
+        });
       }
       if (startFailedCount > 0) {
-        toast.warning(
-          t("conversionBatchStartFailed", { count: startFailedCount }),
-        );
+        toast.add({
+          title: t("conversionBatchStartFailed", { count: startFailedCount }),
+          type: "warning",
+        });
       }
 
       setPage(1);
@@ -192,7 +203,7 @@ const Converter = () => {
     try {
       await startConversion(id);
     } catch (exception: unknown) {
-      toast.error((exception as Error).message);
+      toast.add({ title: (exception as Error).message, type: "error" });
     }
   });
 
@@ -200,7 +211,7 @@ const Converter = () => {
     try {
       await stopConversion(id);
     } catch (exception: unknown) {
-      toast.error((exception as Error).message);
+      toast.add({ title: (exception as Error).message, type: "error" });
     }
   });
 
@@ -209,7 +220,7 @@ const Converter = () => {
     try {
       await deleteConversion(id);
     } catch (exception: unknown) {
-      toast.error((exception as Error).message);
+      toast.add({ title: (exception as Error).message, type: "error" });
     }
   });
 
@@ -223,7 +234,7 @@ const Converter = () => {
         separatorIndex > 0 ? targetPath.slice(0, separatorIndex) : targetPath;
       await shell.open(directory);
     } catch (exception: unknown) {
-      toast.error((exception as Error).message);
+      toast.add({ title: (exception as Error).message, type: "error" });
     }
   });
 

@@ -14,7 +14,7 @@ import {
 import { memo, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useController, useFormContext } from "react-hook-form";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/toast";
 import useSWR from "swr";
 import {
   exportFavorites as exportFavoritesApi,
@@ -189,9 +189,9 @@ export const BrowserSettingsCard = memo(function BrowserSettingsCard() {
   const clearCache = async () => {
     try {
       await browser.clearCache();
-      toast.success(t("clearCacheSuccess"));
+      toast.add({ title: t("clearCacheSuccess"), type: "success" });
     } catch {
-      toast.error(t("clearCacheFailed"));
+      toast.add({ title: t("clearCacheFailed"), type: "error" });
     }
   };
 
@@ -206,9 +206,9 @@ export const BrowserSettingsCard = memo(function BrowserSettingsCard() {
         defaultPath: "favorites.json",
         filters: [{ name: "JSON", extensions: ["json"] }],
       });
-      toast.success(t("exportFavoriteSuccess"));
+      toast.add({ title: t("exportFavoriteSuccess"), type: "success" });
     } catch {
-      toast.error(t("exportFavoriteFailed"));
+      toast.add({ title: t("exportFavoriteFailed"), type: "error" });
     }
   };
 
@@ -222,9 +222,9 @@ export const BrowserSettingsCard = memo(function BrowserSettingsCard() {
       if (!contents?.length) return;
       const favorites = JSON.parse(contents[0]);
       if (Array.isArray(favorites)) await importFavorites(favorites);
-      toast.success(t("importFavoriteSuccess"));
+      toast.add({ title: t("importFavoriteSuccess"), type: "success" });
     } catch {
-      toast.error(t("importFavoriteFailed"));
+      toast.add({ title: t("importFavoriteFailed"), type: "error" });
     }
   };
 
@@ -380,9 +380,9 @@ export const SkillsSettingsCard = memo(function SkillsSettingsCard() {
   const copy = async (value: string) => {
     try {
       await navigator.clipboard.writeText(value);
-      toast.success(t("skillsCopied"));
+      toast.add({ title: t("skillsCopied"), type: "success" });
     } catch {
-      toast.error(t("clipboardCopyFailed"));
+      toast.add({ title: t("clipboardCopyFailed"), type: "error" });
     }
   };
 
@@ -457,7 +457,7 @@ export const CLISettingsCard = memo(function CLISettingsCard() {
     void cli
       .getStatus()
       .then(setStatus)
-      .catch(() => toast.error(t("cliStatusFailed")));
+      .catch(() => toast.add({ title: t("cliStatusFailed"), type: "error" }));
   }, [cli, t]);
 
   const install = async () => {
@@ -465,9 +465,9 @@ export const CLISettingsCard = memo(function CLISettingsCard() {
     try {
       const nextStatus = await cli.install({ baseUrl: coreUrl, apiKey });
       setStatus(nextStatus);
-      toast.success(t("cliInstallSuccess"));
+      toast.add({ title: t("cliInstallSuccess"), type: "success" });
     } catch {
-      toast.error(t("cliInstallFailed"));
+      toast.add({ title: t("cliInstallFailed"), type: "error" });
     } finally {
       setInstalling(false);
     }
@@ -516,8 +516,12 @@ export const CLISettingsCard = memo(function CLISettingsCard() {
             onClick={() => {
               void navigator.clipboard
                 .writeText("mediago download <url>")
-                .then(() => toast.success(t("cliCommandCopied")))
-                .catch(() => toast.error(t("clipboardCopyFailed")));
+                .then(() =>
+                  toast.add({ title: t("cliCommandCopied"), type: "success" }),
+                )
+                .catch(() =>
+                  toast.add({ title: t("clipboardCopyFailed"), type: "error" }),
+                );
             }}
             className="absolute right-1 top-1/2 size-7 -translate-y-1/2"
           >
@@ -588,9 +592,9 @@ export const MCPSettingsCard = memo(function MCPSettingsCard() {
     if (!agentConfig || !canCopyAgentConfig) return;
     try {
       await navigator.clipboard.writeText(agentConfig);
-      toast.success(t("mcpConfigCopied"));
+      toast.add({ title: t("mcpConfigCopied"), type: "success" });
     } catch {
-      toast.error(t("clipboardCopyFailed"));
+      toast.add({ title: t("clipboardCopyFailed"), type: "error" });
     }
   };
 
@@ -600,7 +604,7 @@ export const MCPSettingsCard = memo(function MCPSettingsCard() {
       value.toString(16).padStart(2, "0"),
     ).join("");
     await persistSetting("mcpToken", nextToken);
-    toast.success(t("mcpTokenRegenerated"));
+    toast.add({ title: t("mcpTokenRegenerated"), type: "success" });
   };
 
   return (
@@ -778,9 +782,9 @@ export const MoreSettingsCard = memo(function MoreSettingsCard({
     if (!apiKey) return;
     try {
       await navigator.clipboard.writeText(apiKey);
-      toast.success(t("apiKeyCopied"));
+      toast.add({ title: t("apiKeyCopied"), type: "success" });
     } catch {
-      toast.error(t("clipboardCopyFailed"));
+      toast.add({ title: t("clipboardCopyFailed"), type: "error" });
     }
   };
 

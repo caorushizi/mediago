@@ -12,7 +12,7 @@ import type { DownloadTaskDetails } from "@/hooks/use-tasks";
 
 const mocks = vi.hoisted(() => ({
   open: vi.fn(),
-  toastError: vi.fn(),
+  toastAdd: vi.fn(),
 }));
 
 vi.mock("react-i18next", async (importOriginal) => ({
@@ -23,8 +23,8 @@ vi.mock("react-i18next", async (importOriginal) => ({
   }),
 }));
 
-vi.mock("sonner", () => ({
-  toast: { error: mocks.toastError },
+vi.mock("@/components/ui/toast", () => ({
+  toast: { add: mocks.toastAdd },
 }));
 
 vi.mock("@/hooks/use-platform", () => ({
@@ -210,7 +210,12 @@ describe("DownloadTaskItem live recording actions", () => {
 
     expect(container.textContent).toContain("dockerOffline");
     expect(
-      container.querySelector<HTMLInputElement>('button[role="checkbox"]')
+      container
+        .querySelector('[role="checkbox"]')
+        ?.getAttribute("aria-disabled"),
+    ).toBe("true");
+    expect(
+      container.querySelector<HTMLInputElement>('input[type="checkbox"]')
         ?.disabled,
     ).toBe(true);
     expect(

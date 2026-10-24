@@ -190,6 +190,7 @@ export const zh = {
   pleaseSelectTheme: "请选择主题",
   cancle: "取消",
   terminal: "打开控制台",
+  notifications: "通知",
   close: "关闭",
   loading: "加载中",
   startingMediaGo: "正在启动 MediaGo…",

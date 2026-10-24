@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
+import { toast } from "../components/ui/toast";
 
 import { renderLocalized } from "../i18n/localized-message";
 
@@ -10,8 +10,8 @@ export function App() {
   const { t } = useTranslation();
   const data = usePopupData((kind, value) => {
     const text = renderLocalized(t, value, "popup.importFailed");
-    if (kind === "success") toast.success(text);
-    else toast.error(text);
+    if (kind === "success") toast.add({ title: text, type: "success" });
+    else toast.add({ title: text, type: "error" });
   });
 
   return (

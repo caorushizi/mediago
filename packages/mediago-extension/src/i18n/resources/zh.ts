@@ -135,6 +135,8 @@ const resource = {
     },
   },
   common: {
+    close: "关闭",
+    notifications: "通知",
     save: "保存",
     saved: "已保存",
     saveFailed: "保存失败",

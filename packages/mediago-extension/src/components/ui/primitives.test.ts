@@ -1,4 +1,3 @@
-import { readFileSync } from "node:fs";
 import { DownloadType } from "@mediago/common";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -11,11 +10,6 @@ import { Input } from "./input";
 import { RadioGroup, RadioGroupItem } from "./radio-group";
 import { Switch } from "./switch";
 
-const sonnerSource = readFileSync(
-  new URL("./sonner.tsx", import.meta.url),
-  "utf8",
-);
-
 describe("Button", () => {
   it("uses a compact brand primary with a compatible dark alias", () => {
     const primary = buttonVariants();
@@ -26,7 +20,6 @@ describe("Button", () => {
     expect(primary).toContain("text-primary-foreground");
     expect(darkAlias).toContain("bg-action");
     expect(darkAlias).toContain("text-primary-foreground");
-    expect(sonnerSource).toContain("bg-action");
   });
 
   it("exposes keyboard, pressed, and disabled feedback", () => {

@@ -1,12 +1,12 @@
 import { useSyncExternalStore } from "react";
 import { CircleHelp } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/toast";
 import { usePlatform } from "../hooks/use-platform";
 import { analyticsConsent } from "../services/analytics-consent";
 import { Button } from "./ui/button";
 import { Switch } from "./ui/switch";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
+import { InfoTip, InfoTipContent, InfoTipTrigger } from "./ui/info-tip";
 
 const SERVER_CONSENT = {
   enabled: false,
@@ -64,31 +64,36 @@ export function AnalyticsPreferences() {
         >
           {t("analyticsUsage")}
         </label>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              type="button"
-              aria-label={`${t("analyticsUsage")} ${t("help")}`}
-              className="shrink-0 cursor-pointer rounded-sm text-muted-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-            >
-              <CircleHelp className="size-4" aria-hidden="true" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent
+        <InfoTip>
+          <InfoTipTrigger
+            render={
+              <button
+                type="button"
+                aria-label={`${t("analyticsUsage")} ${t("help")}`}
+                className="shrink-0 cursor-pointer rounded-sm text-muted-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              />
+            }
+          >
+            <CircleHelp className="size-4" aria-hidden="true" />
+          </InfoTipTrigger>
+          <InfoTipContent
+            aria-label={t("analyticsUsage")}
             className="max-w-xs space-y-2 text-left leading-relaxed"
             sideOffset={6}
           >
             <p>{t("analyticsDescription")}</p>
             <PrivacyPolicyButton className="text-background underline hover:text-background" />
-          </TooltipContent>
-        </Tooltip>
+          </InfoTipContent>
+        </InfoTip>
       </div>
       <Switch
         id="analytics-consent"
         checked={state.enabled}
         disabled={!state.loaded || state.saving}
         onCheckedChange={(enabled) =>
-          void choose(enabled, () => toast.error(t("analyticsSaveFailed")))
+          void choose(enabled, () =>
+            toast.add({ title: t("analyticsSaveFailed"), type: "error" }),
+          )
         }
       />
     </div>
@@ -100,7 +105,9 @@ export function AnalyticsConsentNotice() {
   const state = useAnalyticsConsent();
   if (!state.loaded || state.decided) return null;
   const save = (enabled: boolean) =>
-    void choose(enabled, () => toast.error(t("analyticsSaveFailed")));
+    void choose(enabled, () =>
+      toast.add({ title: t("analyticsSaveFailed"), type: "error" }),
+    );
   return (
     <section
       aria-label={t("analyticsChoiceTitle")}

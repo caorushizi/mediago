@@ -2,7 +2,7 @@ import { useMemoizedFn } from "ahooks";
 import { Plus } from "lucide-react";
 import { type FormEvent, useId, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/toast";
 import emptyError from "@/assets/images/empty-states/empty-error.png";
 import emptyFavorites from "@/assets/images/empty-states/empty-favorites.png";
 import { AppEmptyState } from "@/components/app-empty-state";
@@ -83,11 +83,13 @@ export function FavoriteList() {
       setTitle("");
       setIsModalOpen(false);
     } catch (err: unknown) {
-      toast.error(
-        err instanceof Error && err.message
-          ? err.message
-          : t("addFavoriteFailed"),
-      );
+      toast.add({
+        title:
+          err instanceof Error && err.message
+            ? err.message
+            : t("addFavoriteFailed"),
+        type: "error",
+      });
     }
   });
 

@@ -18,7 +18,7 @@ const mocks = vi.hoisted(() => ({
   removeFavorite: vi.fn(),
   setDeviceMode: vi.fn<() => Promise<void>>(),
   showContextMenu: vi.fn(),
-  toastError: vi.fn(),
+  toastAdd: vi.fn(),
 }));
 
 vi.mock("react-i18next", async (importOriginal) => ({
@@ -26,8 +26,8 @@ vi.mock("react-i18next", async (importOriginal) => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }));
 
-vi.mock("sonner", () => ({
-  toast: { error: mocks.toastError },
+vi.mock("@/components/ui/toast", () => ({
+  toast: { add: mocks.toastAdd },
 }));
 
 vi.mock("@/hooks/use-favorites", () => ({
@@ -170,7 +170,10 @@ describe("ToolBar device mode", () => {
       button?.click();
     });
 
-    expect(mocks.toastError).toHaveBeenCalledWith("switchDeviceModeFailed");
+    expect(mocks.toastAdd).toHaveBeenCalledWith({
+      title: "switchDeviceModeFailed",
+      type: "error",
+    });
     expect(useBrowserStore.getState().tabs[0].isMobile).toBe(false);
   });
 });

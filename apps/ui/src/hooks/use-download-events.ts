@@ -10,7 +10,7 @@ import {
 } from "@mediago/common";
 import { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/toast";
 import { useSWRConfig } from "swr";
 import { onDownloadEvent } from "@/api/events";
 import { useDownloadStore } from "@/store/download";
@@ -167,7 +167,7 @@ export function useDownloadEvents() {
     () =>
       registerDownloadEventSubscription(onDownloadEvent, {
         translate: (key, options) => t(key, options),
-        notify: toast.error,
+        notify: (message) => toast.add({ title: message, type: "error" }),
         revalidateTasks,
         updateProgress,
         protocolWarning: logDownloadEventWarning,

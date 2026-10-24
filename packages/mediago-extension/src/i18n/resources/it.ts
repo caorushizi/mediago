@@ -148,6 +148,8 @@ const resource: ExtensionResources = {
     },
   },
   common: {
+    close: "Chiudi",
+    notifications: "Notifiche",
     save: "Salva",
     saved: "Salvato",
     saveFailed: "Impossibile salvare",

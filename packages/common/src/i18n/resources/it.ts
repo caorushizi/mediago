@@ -195,6 +195,7 @@ export const it = {
     "Inserisci le intestazioni personalizzate, una per riga.\n\nEsempi:\nOrigin: http://www.esempio.com\nReferer: http://www.esempio.com",
   cancle: "Annulla",
   terminal: "Apri terminale",
+  notifications: "Notifiche",
   close: "Chiudi",
   loading: "Caricamento",
   startingMediaGo: "Avvio MediaGo…",
