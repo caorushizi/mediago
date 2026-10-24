@@ -1,15 +1,17 @@
 import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { assertPortFree } from "../support/ports";
 
 const fixture = fileURLToPath(
   new URL("../../fixtures/ui-primitives/index.html", import.meta.url),
 ).replaceAll("\\", "/");
 const baseURL = "http://127.0.0.1:8501";
+const fixtureURL = `${baseURL}/@fs${fixture.startsWith("/") ? fixture : "/" + fixture}`;
 let stopUI: (() => Promise<void>) | undefined;
 let previousTarget: string | undefined;
+const runtimeErrors = new WeakMap<Page, string[]>();
 
 test.beforeAll(async () => {
   previousTarget = process.env.APP_TARGET;
@@ -36,10 +38,25 @@ test.afterAll(async () => {
 });
 
 test.beforeEach(async ({ page }) => {
-  await page.goto(baseURL + "/@fs/" + fixture);
+  const errors: string[] = [];
+  runtimeErrors.set(page, errors);
+  page.on("pageerror", (error) => errors.push(error.message));
+  page.on("console", (message) => {
+    if (message.type() === "error" && message.text().includes("createRoot")) {
+      errors.push(message.text());
+    }
+  });
+  await page.goto(fixtureURL);
   await expect(
     page.getByRole("heading", { name: "MediaGo UI interaction regression" }),
   ).toBeVisible();
+});
+
+test.afterEach(async ({ page }) => {
+  expect(
+    runtimeErrors.get(page),
+    "fixture must mount once without runtime errors",
+  ).toEqual([]);
 });
 
 test("keeps nested dialog focus, translated select labels and dismiss behavior", async ({
@@ -200,9 +217,7 @@ test("shows tooltip and preview content and scrolls the player sheet", async ({
 for (const surface of ["main", "extension"]) {
   test.describe(surface + " Base UI toast", () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto(
-        baseURL + "/@fs/" + fixture + "?toast=1&surface=" + surface,
-      );
+      await page.goto(fixtureURL + "?toast=1&surface=" + surface);
       await expect(
         page.getByRole("heading", { name: "Toast interaction regression" }),
       ).toBeVisible();
@@ -370,10 +385,12 @@ for (const surface of ["main", "extension"]) {
         .click();
       const title = items.locator('[data-slot="toast-title"]');
       await items.hover();
+      await expect(items).toHaveCSS("cursor", "grab");
       const box = await title.boundingBox();
       if (!box) throw new Error("Toast title is missing");
       await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
       await page.mouse.down();
+      await expect(items).toHaveCSS("cursor", "grabbing");
       await page.mouse.move(
         box.x + box.width / 2 + 160,
         box.y + box.height / 2,

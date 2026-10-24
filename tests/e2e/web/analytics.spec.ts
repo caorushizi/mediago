@@ -9,6 +9,7 @@ let stopUI: (() => Promise<void>) | undefined;
 const fixture = fileURLToPath(
   new URL("../../fixtures/analytics/index.html", import.meta.url),
 ).replaceAll("\\", "/");
+const fixtureURL = `${baseURL}/@fs${fixture.startsWith("/") ? fixture : "/" + fixture}`;
 let previousID: string | undefined;
 let previousTarget: string | undefined;
 test.beforeAll(async () => {
@@ -46,7 +47,7 @@ test("refusal never loads SDK and remains off after reload", async ({
     scripts += 1;
     return route.abort();
   });
-  await page.goto(baseURL + "/@fs/" + fixture);
+  await page.goto(fixtureURL);
   await page
     .getByRole("region", { name: "Optional usage statistics", exact: true })
     .screenshot({ path: testInfo.outputPath("statistics-choice.png") });
@@ -70,7 +71,7 @@ test("refusal never loads SDK and remains off after reload", async ({
 test("opens statistics details and privacy policy access from the keyboard", async ({
   page,
 }, testInfo) => {
-  await page.goto(baseURL + "/@fs/" + fixture);
+  await page.goto(fixtureURL);
   await page
     .getByRole("button", { name: "Continue without statistics", exact: true })
     .click();
@@ -122,7 +123,7 @@ test("allows statistics then stops SDK timers in all tabs on withdrawal", async 
     `,
     });
   });
-  const url = baseURL + "/@fs/" + fixture;
+  const url = fixtureURL;
   await page.goto(url);
   await page
     .getByRole("button", { name: "Allow statistics", exact: true })
