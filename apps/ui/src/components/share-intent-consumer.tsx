@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/toast";
 import { IpcEvent } from "@mediago/common";
 import { usePlatform } from "@/hooks/use-platform";
 import {
@@ -36,7 +36,8 @@ export function ShareIntentConsumer() {
 
     platform.on(IpcEvent.app.shareIntentAvailable, handleAvailable);
     enqueue(drainPendingWebShareIntents());
-    if (consumeStartupShareError()) toast.error(t("shareIntentInvalid"));
+    if (consumeStartupShareError())
+      toast.add({ title: t("shareIntentInvalid"), type: "error" });
     void drainElectronIntents();
 
     return () => {
@@ -49,7 +50,10 @@ export function ShareIntentConsumer() {
 
     remove(nextIntent.id);
     if (nextIntent.warning === "legacy-auto-action-disabled") {
-      toast.warning(t("shareIntentLegacyAutomaticActionDisabled"));
+      toast.add({
+        title: t("shareIntentLegacyAutomaticActionDisabled"),
+        type: "warning",
+      });
     }
     openNew({
       batch: false,

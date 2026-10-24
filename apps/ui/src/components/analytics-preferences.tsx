@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from "react";
 import { CircleHelp } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/toast";
 import { usePlatform } from "../hooks/use-platform";
 import { analyticsConsent } from "../services/analytics-consent";
 import { Button } from "./ui/button";
@@ -91,7 +91,9 @@ export function AnalyticsPreferences() {
         checked={state.enabled}
         disabled={!state.loaded || state.saving}
         onCheckedChange={(enabled) =>
-          void choose(enabled, () => toast.error(t("analyticsSaveFailed")))
+          void choose(enabled, () =>
+            toast.add({ title: t("analyticsSaveFailed"), type: "error" }),
+          )
         }
       />
     </div>
@@ -103,7 +105,9 @@ export function AnalyticsConsentNotice() {
   const state = useAnalyticsConsent();
   if (!state.loaded || state.decided) return null;
   const save = (enabled: boolean) =>
-    void choose(enabled, () => toast.error(t("analyticsSaveFailed")));
+    void choose(enabled, () =>
+      toast.add({ title: t("analyticsSaveFailed"), type: "error" }),
+    );
   return (
     <section
       aria-label={t("analyticsChoiceTitle")}

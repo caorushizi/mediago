@@ -4,7 +4,7 @@ import { Plus } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/toast";
 import {
   deleteDockerDownloadTask,
   startDockerDownload,
@@ -100,7 +100,7 @@ export function DownloadTaskList({
     if (task.remoteOffline) return;
     if (task.origin === "docker") await startDockerDownload(task.id);
     else await startDownload(task.id);
-    toast.success(t("downloadStarted"));
+    toast.add({ title: t("downloadStarted"), type: "success" });
     await mutate();
   });
 
@@ -161,9 +161,10 @@ export function DownloadTaskList({
       success: results.length - failed,
       failed,
     });
-    if (failed === 0) toast.success(message);
-    else if (failed === results.length) toast.error(message);
-    else toast.warning(message);
+    if (failed === 0) toast.add({ title: message, type: "success" });
+    else if (failed === results.length)
+      toast.add({ title: message, type: "error" });
+    else toast.add({ title: message, type: "warning" });
     setSelected([]);
     await mutate();
   });
@@ -180,14 +181,15 @@ export function DownloadTaskList({
       (result) => result.status === "rejected",
     ).length;
     if (failed === 0) {
-      toast.success(t("downloadStarted"));
+      toast.add({ title: t("downloadStarted"), type: "success" });
     } else {
       const message = t("batchDownloadResult", {
         success: results.length - failed,
         failed,
       });
-      if (failed === results.length) toast.error(message);
-      else toast.warning(message);
+      if (failed === results.length)
+        toast.add({ title: message, type: "error" });
+      else toast.add({ title: message, type: "warning" });
     }
     setSelected([]);
     await mutate();

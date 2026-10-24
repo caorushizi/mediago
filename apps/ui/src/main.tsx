@@ -2,6 +2,7 @@ import "./bootstrap-share-intent";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
+import { Toaster } from "./components/ui/toast";
 import { registerPwaServiceWorker } from "./services/pwa";
 import { isWeb } from "./utils";
 import { analyticsConsent } from "./services/analytics-consent";
@@ -14,7 +15,9 @@ if (isWeb) registerPwaServiceWorker();
 
 const application = (
   <BrowserRouter>
-    <App />
+    <Toaster>
+      <App />
+    </Toaster>
   </BrowserRouter>
 );
 const shouldUseStrictMode = isWeb || import.meta.env.PROD;

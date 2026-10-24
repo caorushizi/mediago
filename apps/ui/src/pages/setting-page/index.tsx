@@ -3,7 +3,7 @@ import type { UpdateErrorPhase } from "@mediago/common";
 import { Copy, FolderOpen } from "lucide-react";
 import { memo, startTransition, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -186,10 +186,10 @@ const SettingPage = () => {
     try {
       const result = await update.openLogDirectory();
       if (!result.opened) {
-        toast.error(t("openUpdateLogsFailed"));
+        toast.add({ title: t("openUpdateLogsFailed"), type: "error" });
       }
     } catch {
-      toast.error(t("openUpdateLogsFailed"));
+      toast.add({ title: t("openUpdateLogsFailed"), type: "error" });
     }
   });
 
@@ -197,9 +197,9 @@ const SettingPage = () => {
     try {
       const diagnosticInfo = await update.getDiagnosticInfo();
       await navigator.clipboard.writeText(diagnosticInfo);
-      toast.success(t("updateDiagnosticsCopied"));
+      toast.add({ title: t("updateDiagnosticsCopied"), type: "success" });
     } catch {
-      toast.error(t("updateDiagnosticsCopyFailed"));
+      toast.add({ title: t("updateDiagnosticsCopyFailed"), type: "error" });
     }
   });
 

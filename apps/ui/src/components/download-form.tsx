@@ -3,7 +3,7 @@ import { Container, Download, ListPlus } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/toast";
 import { useShallow } from "zustand/react/shallow";
 import {
   createDownloadTasks,
@@ -178,7 +178,7 @@ export default function DownloadForm({
 
       if (intent === "docker") {
         await addVideosToDocker({ items: tasks });
-        toast.success(t("addToDockerSuccess"));
+        toast.add({ title: t("addToDockerSuccess"), type: "success" });
         setOpen(false);
         onConfirm?.(values);
         return;
@@ -213,9 +213,10 @@ export default function DownloadForm({
       onConfirm?.(values);
     } catch (error: unknown) {
       if ((error as Error)?.name !== "AbortError") {
-        toast.error(
-          (error as Error)?.message || t("pleaseEnterCorrectFormInfo"),
-        );
+        toast.add({
+          title: (error as Error)?.message || t("pleaseEnterCorrectFormInfo"),
+          type: "error",
+        });
       }
     } finally {
       setSubmittingIntent(null);
@@ -238,7 +239,8 @@ export default function DownloadForm({
       try {
         await smartStream.confirm(sourceIds, names, variantUrls);
         const values = form.getValues();
-        if (intent === "docker") toast.success(t("addToDockerSuccess"));
+        if (intent === "docker")
+          toast.add({ title: t("addToDockerSuccess"), type: "success" });
         if (intent === "save") tdApp.onEvent(ADD_TO_LIST, { id });
         if (intent === "download-now") tdApp.onEvent(DOWNLOAD_NOW, { id });
         pendingSmartIntent.current = null;
@@ -246,11 +248,13 @@ export default function DownloadForm({
         setOpen(false);
         onConfirm?.(values);
       } catch (error) {
-        toast.error(
-          error instanceof Error
-            ? error.message
-            : t("pleaseEnterCorrectFormInfo"),
-        );
+        toast.add({
+          title:
+            error instanceof Error
+              ? error.message
+              : t("pleaseEnterCorrectFormInfo"),
+          type: "error",
+        });
       } finally {
         setSubmittingIntent(null);
       }
@@ -278,9 +282,10 @@ export default function DownloadForm({
       await beginSourceInspection(form.getValues(), intent, "smart");
     } catch (error: unknown) {
       if ((error as Error)?.name !== "AbortError") {
-        toast.error(
-          (error as Error)?.message || t("pleaseEnterCorrectFormInfo"),
-        );
+        toast.add({
+          title: (error as Error)?.message || t("pleaseEnterCorrectFormInfo"),
+          type: "error",
+        });
       }
     } finally {
       setSubmittingIntent(null);

@@ -160,5 +160,5 @@ test("App owns the only UI download-event subscription", () => {
   expect(appSource.match(/useDownloadEvents\(\)/g)).toHaveLength(1);
   expect(useTasksSource).not.toContain("onDownloadEvent");
   expect(useTasksSource).not.toContain("handleDownloadFailure");
-  expect(useTasksSource).not.toContain("toast.error");
+  expect(useTasksSource).not.toContain("components/ui/toast");
 });

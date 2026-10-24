@@ -1,7 +1,7 @@
 import { DownloadFilter } from "@mediago/common";
 import { useMemoizedFn } from "ahooks";
 import { Trans, useTranslation } from "react-i18next";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -47,7 +47,7 @@ export function ListHeader({
         filters: [{ name: "Text", extensions: ["txt"] }],
       });
     } catch {
-      toast.error(t("exportDownloadListFailed"));
+      toast.add({ title: t("exportDownloadListFailed"), type: "error" });
     }
   });
 

@@ -1,4 +1,11 @@
-import { useState } from "react";
+import { I18nextProvider, useTranslation } from "react-i18next";
+import { Toaster, toast } from "../../../apps/ui/src/components/ui/toast";
+import {
+  Toaster as ExtensionToaster,
+  toast as extensionToast,
+} from "../../../packages/mediago-extension/src/components/ui/toast";
+import { createExtensionI18n } from "../../../packages/mediago-extension/src/i18n";
+import { StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import i18n from "../../../apps/ui/src/i18n";
 import "../../../apps/ui/src/globals.css";
@@ -242,7 +249,120 @@ function RegressionPage() {
   );
 }
 
+function ToastRegressionPage({ extension }: { extension: boolean }) {
+  const manager = extension ? extensionToast : toast;
+  const { i18n: translations } = useTranslation();
+  const [actions, setActions] = useState(0);
+  useEffect(() => {
+    manager.add({
+      id: "startup",
+      title: "Startup notification",
+      type: "info",
+      timeout: 0,
+    });
+  }, [manager]);
+  return (
+    <main
+      style={{ paddingTop: 140, gap: 8 }}
+      className="mx-auto flex max-w-xl flex-col p-6"
+    >
+      <h1>Toast interaction regression</h1>
+      <Dialog>
+        <DialogTrigger render={<Button />}>Open download</DialogTrigger>
+        <DialogContent>
+          <DialogTitle>Add download</DialogTitle>
+          <DialogDescription>Enter a local download address.</DialogDescription>
+          <Input aria-label="Download URL" />
+          <Button
+            onClick={() =>
+              manager.add({
+                title: "Download failed",
+                type: "error",
+                timeout: 0,
+              })
+            }
+          >
+            Report download error
+          </Button>
+        </DialogContent>
+      </Dialog>
+      {(["success", "error", "warning", "info"] as const).map((type) => (
+        <Button
+          key={type}
+          onClick={() => manager.add({ title: type + " notification", type })}
+        >
+          Show {type}
+        </Button>
+      ))}
+      <Button
+        onClick={() => {
+          for (let index = 1; index <= 5; index++) {
+            manager.add({ title: "Queued notification " + index, timeout: 0 });
+          }
+        }}
+      >
+        Queue notices
+      </Button>
+      <Button
+        onClick={() =>
+          manager.add({
+            title: "Download interrupted",
+            type: "error",
+            description: "The download can be retried.",
+            timeout: 0,
+            actionProps: {
+              children: "Retry",
+              onClick: () => setActions((value) => value + 1),
+            },
+          })
+        }
+      >
+        Show action
+      </Button>
+      <Button
+        onClick={() =>
+          manager.add({
+            title: "A_very_long_unbroken_download_filename_".repeat(5),
+            description:
+              "This persistent notification must fit the viewport without covering the close control.",
+            timeout: 0,
+          })
+        }
+      >
+        Show long notice
+      </Button>
+      <Button
+        onClick={() => {
+          document.documentElement.classList.toggle("dark");
+        }}
+      >
+        Toggle theme
+      </Button>
+      <Button onClick={() => void translations.changeLanguage("zh")}>
+        Chinese labels
+      </Button>
+      <Button onClick={() => manager.close()}>Clear notices</Button>
+      <output aria-label="Toast action count">{actions}</output>
+    </main>
+  );
+}
+
 await i18n.changeLanguage("en");
 const container = document.getElementById("root");
 if (!container) throw new Error("Missing regression fixture root");
-createRoot(container).render(<RegressionPage />);
+const params = new URLSearchParams(location.search);
+const extension = params.get("surface") === "extension";
+const ToastHost = extension ? ExtensionToaster : Toaster;
+createRoot(container).render(
+  params.has("toast") ? (
+    <StrictMode>
+      <I18nextProvider i18n={extension ? createExtensionI18n("en") : i18n}>
+        <ToastHost>
+          <ToastRegressionPage extension={extension} />
+        </ToastHost>
+      </I18nextProvider>
+    </StrictMode>
+  ) : (
+    <RegressionPage />
+  ),
+);

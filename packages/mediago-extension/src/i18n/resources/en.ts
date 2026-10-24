@@ -147,6 +147,8 @@ const resource: ExtensionResources = {
     },
   },
   common: {
+    close: "Close",
+    notifications: "Notifications",
     save: "Save",
     saved: "Saved",
     saveFailed: "Failed to save",

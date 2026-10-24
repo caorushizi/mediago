@@ -18,7 +18,7 @@ import {
   type UseFormGetValues,
 } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Field,
@@ -176,7 +176,7 @@ export function SettingsFormProvider({ children }: { children: ReactNode }) {
           }
         }
 
-        toast.error(t("settingsSaveFailed"));
+        toast.add({ title: t("settingsSaveFailed"), type: "error" });
       }
     },
     [form, setAppStore, t],

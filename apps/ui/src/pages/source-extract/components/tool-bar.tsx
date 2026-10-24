@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { type KeyboardEvent, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/toast";
 import { useShallow } from "zustand/react/shallow";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -66,7 +66,7 @@ export function ToolBar({ page }: Props) {
     try {
       await browser.setDeviceMode(store.tabId, !store.isMobile);
     } catch {
-      toast.error(t("switchDeviceModeFailed"));
+      toast.add({ title: t("switchDeviceModeFailed"), type: "error" });
     } finally {
       setSwitchingDeviceMode(false);
     }

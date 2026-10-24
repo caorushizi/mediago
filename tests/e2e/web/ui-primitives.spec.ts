@@ -196,3 +196,233 @@ test("shows tooltip and preview content and scrolls the player sheet", async ({
     page.getByRole("button", { name: "Playlist", exact: true }),
   ).toBeFocused();
 });
+
+for (const surface of ["main", "extension"]) {
+  test.describe(surface + " Base UI toast", () => {
+    test.beforeEach(async ({ page }) => {
+      await page.goto(
+        baseURL + "/@fs/" + fixture + "?toast=1&surface=" + surface,
+      );
+      await expect(
+        page.getByRole("heading", { name: "Toast interaction regression" }),
+      ).toBeVisible();
+    });
+
+    test("keeps startup messages, status variants, keyboard actions and localized close controls", async ({
+      page,
+    }, testInfo) => {
+      const notifications = page.locator('[data-slot="toast-viewport"]');
+      const items = notifications.locator('[data-slot="toast"]');
+      await expect(items).toHaveCount(1);
+      await expect(items).toContainText("Startup notification");
+      await items.hover();
+      await items.getByRole("button", { name: "Close", exact: true }).click();
+      await expect(items).toHaveCount(0);
+      for (const type of ["success", "error", "warning", "info"]) {
+        await page
+          .getByRole("button", { name: "Show " + type, exact: true })
+          .click();
+        await expect(items).toHaveAttribute("data-type", type);
+        await expect(items.locator('[data-slot="toast-title"]')).toHaveText(
+          type + " notification",
+        );
+        await expect(items.locator('[data-slot="toast-icon"]')).toBeVisible();
+        await items.hover();
+        const close = items.getByRole("button", { name: "Close", exact: true });
+        await expect(close).toHaveCSS("cursor", "pointer");
+        await close.click();
+        await expect(items).toHaveCount(0);
+      }
+      const trigger = page.getByRole("button", {
+        name: "Show action",
+        exact: true,
+      });
+      await trigger.click();
+      await items.hover();
+      await items.screenshot({
+        path: testInfo.outputPath(surface + "-toast-action.png"),
+      });
+      await page.keyboard.press("F6");
+      await expect(notifications).toBeFocused();
+      await page.keyboard.press("Tab");
+      await expect(items).toBeFocused();
+      await page.keyboard.press("Tab");
+      await expect(
+        items.getByRole("button", { name: "Retry", exact: true }),
+      ).toBeFocused();
+      await page.keyboard.press("Enter");
+      await expect(page.getByLabel("Toast action count")).toHaveText("1");
+      await page.keyboard.press("Tab");
+      await expect(
+        items.getByRole("button", { name: "Close", exact: true }),
+      ).toBeFocused();
+      await page.keyboard.press("Enter");
+      await expect(items).toHaveCount(0);
+      await expect(trigger).toBeFocused();
+      await page.getByRole("button", { name: "Chinese labels" }).click();
+      await trigger.click();
+      await expect(notifications).toHaveAttribute("aria-label", "通知");
+      await items.hover();
+      await expect(
+        items.getByRole("button", { name: "关闭", exact: true }),
+      ).toBeVisible();
+    });
+
+    test("shows download errors above a dialog without closing it or stealing focus", async ({
+      page,
+    }) => {
+      await page
+        .getByRole("button", { name: "Clear notices", exact: true })
+        .click();
+      await expect(page.locator('[data-slot="toast"]')).toHaveCount(0);
+      const trigger = page.getByRole("button", {
+        name: "Open download",
+        exact: true,
+      });
+      await trigger.click();
+      const dialog = page.getByRole("dialog", {
+        name: "Add download",
+        exact: true,
+      });
+      const report = dialog.getByRole("button", {
+        name: "Report download error",
+        exact: true,
+      });
+      await report.click();
+      const notice = page.getByRole("dialog", {
+        name: "Download failed",
+        exact: true,
+      });
+      await expect(notice).toBeVisible();
+      await expect(report).toBeFocused();
+      await expect(dialog).toBeVisible();
+      await page.keyboard.press("Escape");
+      await expect(dialog).toHaveCount(0);
+      await expect(trigger).toBeFocused();
+      await notice.hover();
+      await notice.getByRole("button", { name: "Close", exact: true }).click();
+      await expect(notice).toHaveCount(0);
+    });
+
+    test("pauses automatic dismissal during hover and resumes the 2.4-second countdown", async ({
+      page,
+    }) => {
+      await page
+        .getByRole("button", { name: "Clear notices", exact: true })
+        .click();
+      const items = page.locator('[data-slot="toast"]');
+      await expect(items).toHaveCount(0);
+      await page
+        .getByRole("button", { name: "Show success", exact: true })
+        .click();
+      await expect(items).toBeVisible();
+      await items.hover();
+      await page.waitForTimeout(2700);
+      await expect(items).toBeVisible();
+      await page.mouse.move(5, 500);
+      await expect(items).toHaveCount(0, { timeout: 5000 });
+    });
+
+    test("limits and expands stacked notices without overlap and supports swipe dismissal", async ({
+      page,
+    }) => {
+      await page
+        .getByRole("button", { name: "Clear notices", exact: true })
+        .click();
+      const items = page.locator('[data-slot="toast"]');
+      await expect(items).toHaveCount(0);
+      await page
+        .getByRole("button", { name: "Queue notices", exact: true })
+        .click();
+      await expect(items).toHaveCount(5);
+      await expect(
+        items.filter({
+          has: page.locator("[data-slot=toast-title]", {
+            hasText: "Queued notification 5",
+          }),
+        }),
+      ).toBeVisible();
+      const visible = page.locator('[data-slot="toast"]:not([data-limited])');
+      await expect(visible).toHaveCount(3);
+      await expect(
+        page.locator('[data-slot="toast"][data-limited][inert]'),
+      ).toHaveCount(2);
+      await visible.first().hover();
+      await expect(visible.first()).toHaveAttribute("data-expanded", "");
+      await expect
+        .poll(async () =>
+          visible.evaluateAll((elements) => {
+            const bounds = elements
+              .map((element) => element.getBoundingClientRect())
+              .sort((a, b) => a.top - b.top);
+            return bounds
+              .slice(1)
+              .every((box, index) => box.top >= bounds[index].bottom);
+          }),
+        )
+        .toBe(true);
+      await page
+        .getByRole("button", { name: "Clear notices", exact: true })
+        .click();
+      await expect(items).toHaveCount(0);
+      await page
+        .getByRole("button", { name: "Show action", exact: true })
+        .click();
+      const title = items.locator('[data-slot="toast-title"]');
+      await items.hover();
+      const box = await title.boundingBox();
+      if (!box) throw new Error("Toast title is missing");
+      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+      await page.mouse.down();
+      await page.mouse.move(
+        box.x + box.width / 2 + 160,
+        box.y + box.height / 2,
+        { steps: 12 },
+      );
+      await page.mouse.up();
+      await expect(items).toHaveCount(0);
+    });
+
+    test("fits long messages on narrow screens and follows the dark theme", async ({
+      page,
+    }, testInfo) => {
+      await page.setViewportSize({ width: 360, height: 720 });
+      await page
+        .getByRole("button", { name: "Clear notices", exact: true })
+        .click();
+      const items = page.locator('[data-slot="toast"]');
+      await expect(items).toHaveCount(0);
+      await page
+        .getByRole("button", { name: "Show long notice", exact: true })
+        .click();
+      await expect(items).toBeVisible();
+      await items.hover();
+      await expect(
+        items.getByRole("button", { name: "Close", exact: true }),
+      ).toBeInViewport();
+      const colors = await items.evaluate((element) => ({
+        background: getComputedStyle(element).backgroundColor,
+        width: element.getBoundingClientRect().width,
+        left: element.getBoundingClientRect().left,
+        scrollWidth: element.scrollWidth,
+      }));
+      expect(colors.left).toBeCloseTo(16, 0);
+      expect(colors.width).toBeCloseTo(328, 0);
+      expect(colors.scrollWidth).toBeLessThanOrEqual(328);
+      await page
+        .getByRole("button", { name: "Toggle theme", exact: true })
+        .click();
+      await expect
+        .poll(() =>
+          items.evaluate(
+            (element) => getComputedStyle(element).backgroundColor,
+          ),
+        )
+        .not.toBe(colors.background);
+      await page.screenshot({
+        path: testInfo.outputPath(surface + "-base-ui-toast.png"),
+        fullPage: true,
+      });
+    });
+  });
+}

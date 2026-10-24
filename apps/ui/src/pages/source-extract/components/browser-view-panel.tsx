@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { memo, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/toast";
 import { useShallow } from "zustand/react/shallow";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -270,7 +270,10 @@ export function BrowserViewPanel() {
       // Badge increments via the "download-create" SSE event (see
       // apps/ui/src/api/events.ts), so no local increase() call needed.
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : String(e));
+      toast.add({
+        title: e instanceof Error ? e.message : String(e),
+        type: "error",
+      });
     }
   });
 
