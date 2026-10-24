@@ -1,9 +1,11 @@
 package core
 
 import (
+	"crypto/rand"
 	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"sort"
@@ -24,9 +26,9 @@ type liveSegment struct {
 // limited to one continuous, numerically ordered TS track. Multi-track and
 // fragmented-MP4 layouts need the downloader's metadata-aware muxer and are
 // left untouched instead of risking a corrupt output.
-func recoverLiveM3U8Segments(outputDir, downloadName string) (string, error) {
-	segmentRoot := filepath.Join(outputDir, outputBaseName(downloadName))
-	groups, err := liveTSSegmentGroups(segmentRoot)
+func recoverLiveM3U8Segments(root *os.Root, downloadName string) (string, error) {
+	segmentRoot := outputBaseName(downloadName)
+	groups, err := liveTSSegmentGroups(root, segmentRoot)
 	if err != nil {
 		return "", err
 	}
@@ -45,25 +47,22 @@ func recoverLiveM3U8Segments(outputDir, downloadName string) (string, error) {
 		return "", err
 	}
 
-	if err := os.MkdirAll(outputDir, 0o755); err != nil {
-		return "", fmt.Errorf("%w: create output directory: %v", ErrLiveSegmentRecovery, err)
-	}
-	temporary, err := os.CreateTemp(outputDir, ".mediago-live-recovery-*.ts")
+	temporaryPath := ".mediago-live-recovery-" + rand.Text() + ".ts"
+	temporary, err := root.OpenFile(temporaryPath, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0o600)
 	if err != nil {
 		return "", fmt.Errorf("%w: create temporary output: %v", ErrLiveSegmentRecovery, err)
 	}
-	temporaryPath := temporary.Name()
 	keepTemporary := false
 	defer func() {
 		_ = temporary.Close()
 		if !keepTemporary {
-			_ = os.Remove(temporaryPath)
+			_ = root.Remove(temporaryPath)
 		}
 	}()
 
 	var expectedSize int64
 	for _, segment := range segments {
-		source, openErr := os.Open(segment.path)
+		source, openErr := root.Open(segment.path)
 		if openErr != nil {
 			return "", fmt.Errorf("%w: open segment: %v", ErrLiveSegmentRecovery, openErr)
 		}
@@ -91,33 +90,33 @@ func recoverLiveM3U8Segments(outputDir, downloadName string) (string, error) {
 		return "", fmt.Errorf("%w: recovered output is empty", ErrLiveSegmentRecovery)
 	}
 
-	outputPath, err := availableRecoveredOutputPath(outputDir, outputBaseName(downloadName))
+	outputPath, err := availableRecoveredOutputPath(root, outputBaseName(downloadName))
 	if err != nil {
 		return "", err
 	}
-	if err := os.Rename(temporaryPath, outputPath); err != nil {
+	if err := root.Rename(temporaryPath, outputPath); err != nil {
 		return "", fmt.Errorf("%w: publish recovered output: %v", ErrLiveSegmentRecovery, err)
 	}
 	keepTemporary = true
 
-	info, err := os.Stat(outputPath)
+	info, err := root.Stat(outputPath)
 	if err != nil || !info.Mode().IsRegular() || info.Size() != expectedSize {
-		_ = os.Remove(outputPath)
+		_ = root.Remove(outputPath)
 		if err != nil {
 			return "", fmt.Errorf("%w: inspect recovered output: %v", ErrLiveSegmentRecovery, err)
 		}
 		return "", fmt.Errorf("%w: recovered output size mismatch", ErrLiveSegmentRecovery)
 	}
-	absolute, err := filepath.Abs(outputPath)
+	absolute, err := filepath.Abs(filepath.Join(root.Name(), outputPath))
 	if err != nil {
 		return "", fmt.Errorf("%w: resolve recovered output: %v", ErrLiveSegmentRecovery, err)
 	}
 	return absolute, nil
 }
 
-func liveTSSegmentGroups(root string) (map[string][]liveSegment, error) {
+func liveTSSegmentGroups(root *os.Root, segmentDirectory string) (map[string][]liveSegment, error) {
 	groups := make(map[string][]liveSegment)
-	err := filepath.WalkDir(root, func(path string, entry os.DirEntry, walkErr error) error {
+	err := fs.WalkDir(root.FS(), filepath.ToSlash(segmentDirectory), func(path string, entry os.DirEntry, walkErr error) error {
 		if walkErr != nil {
 			if errors.Is(walkErr, os.ErrNotExist) {
 				return nil
@@ -134,15 +133,16 @@ func liveTSSegmentGroups(root string) (map[string][]liveSegment, error) {
 		if parseErr != nil {
 			return fmt.Errorf("%w: non-numeric TS segment name", ErrLiveSegmentRecovery)
 		}
-		info, infoErr := entry.Info()
+		relative := filepath.FromSlash(path)
+		info, infoErr := root.Lstat(relative)
 		if infoErr != nil {
 			return infoErr
 		}
 		if !info.Mode().IsRegular() || info.Size() == 0 {
 			return fmt.Errorf("%w: empty or non-regular TS segment", ErrLiveSegmentRecovery)
 		}
-		directory := filepath.Dir(path)
-		groups[directory] = append(groups[directory], liveSegment{index: index, path: path, size: info.Size()})
+		directory := filepath.Dir(relative)
+		groups[directory] = append(groups[directory], liveSegment{index: index, path: relative, size: info.Size()})
 		return nil
 	})
 	if errors.Is(err, os.ErrNotExist) {
@@ -167,14 +167,14 @@ func validateLiveTSSegments(segments []liveSegment) error {
 	return nil
 }
 
-func availableRecoveredOutputPath(outputDir, baseName string) (string, error) {
+func availableRecoveredOutputPath(root *os.Root, baseName string) (string, error) {
 	candidates := []string{
-		filepath.Join(outputDir, baseName+".ts"),
-		filepath.Join(outputDir, baseName+".recovered.ts"),
+		baseName + ".ts",
+		baseName + ".recovered.ts",
 	}
 	for suffix := 2; ; suffix++ {
 		for _, candidate := range candidates {
-			_, err := os.Lstat(candidate)
+			_, err := root.Lstat(candidate)
 			if errors.Is(err, os.ErrNotExist) {
 				return candidate, nil
 			}
@@ -182,6 +182,6 @@ func availableRecoveredOutputPath(outputDir, baseName string) (string, error) {
 				return "", fmt.Errorf("%w: inspect output target: %v", ErrLiveSegmentRecovery, err)
 			}
 		}
-		candidates = []string{filepath.Join(outputDir, fmt.Sprintf("%s.recovered-%d.ts", baseName, suffix))}
+		candidates = []string{fmt.Sprintf("%s.recovered-%d.ts", baseName, suffix)}
 	}
 }

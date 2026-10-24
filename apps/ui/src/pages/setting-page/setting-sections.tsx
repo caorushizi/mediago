@@ -22,6 +22,7 @@ import {
 } from "@/api/favorite";
 import { getMCPStatus, getMCPStatusKey } from "@/api/config";
 import { Button } from "@/components/ui/button";
+import { AnalyticsPreferences } from "@/components/analytics-preferences";
 import { Input } from "@/components/ui/input";
 import { useEnvPath } from "@/hooks/use-config";
 import { usePlatform } from "@/hooks/use-platform";
@@ -148,6 +149,7 @@ export const BasicSettingsCard = memo(function BasicSettingsCard() {
         </>
       ) : null}
       <SettingSwitchField name="showTerminal" label={t("showTerminal")} />
+      <AnalyticsPreferences />
       {!isWeb ? (
         <>
           <SettingSwitchField

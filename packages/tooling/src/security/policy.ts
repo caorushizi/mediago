@@ -18,3 +18,42 @@ export function assertCleanAudit(status: number | null, stdout: string): void {
     }
   }
 }
+
+// Keep registry messages, URLs and credentials out of public CI logs.
+export function auditFailureSummary(
+  status: number | null,
+  stdout: string,
+): string {
+  try {
+    const value = JSON.parse(stdout) as {
+      error?: { code?: unknown; statusCode?: unknown };
+      metadata?: { vulnerabilities?: Record<string, unknown> };
+    };
+    const errorCode =
+      typeof value.error?.code === "string" &&
+      /^[A-Z0-9_]+$/.test(value.error.code)
+        ? value.error.code
+        : undefined;
+    const httpStatus =
+      typeof value.error?.statusCode === "number"
+        ? value.error.statusCode
+        : undefined;
+    const counts = Object.fromEntries(
+      ["low", "moderate", "high", "critical"].map((level) => [
+        level,
+        typeof value.metadata?.vulnerabilities?.[level] === "number"
+          ? value.metadata.vulnerabilities[level]
+          : null,
+      ]),
+    );
+    return JSON.stringify({
+      exit: status,
+      errorCode,
+      httpStatus,
+      hasMetadata: Boolean(value.metadata),
+      counts,
+    });
+  } catch {
+    return JSON.stringify({ exit: status, invalidJSON: true });
+  }
+}

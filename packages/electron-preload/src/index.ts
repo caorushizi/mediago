@@ -24,6 +24,14 @@ const apiKey = "electron";
  * is initialized (to discover coreUrl), so we keep it in the preload as well.
  */
 const electronApi: PlatformApi = {
+  analytics: {
+    getConsent() {
+      return ipcRenderer.invoke(IPC.analytics.getConsent);
+    },
+    setConsent(enabled: boolean) {
+      return ipcRenderer.invoke(IPC.analytics.setConsent, enabled);
+    },
+  },
   browser: {
     createTab(options?: CreateBrowserTabInput): Promise<BrowserTabSnapshot> {
       return ipcRenderer.invoke(IPC.browser.createTab, options);

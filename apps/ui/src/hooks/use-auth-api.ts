@@ -12,8 +12,11 @@ export function useAuthApi() {
     getAuthStatus,
   );
 
-  const setupAuth = async (password: string): Promise<string> => {
-    const apiKey = await setupApi(password);
+  const setupAuth = async (
+    password: string,
+    setupToken?: string,
+  ): Promise<string> => {
+    const apiKey = await setupApi(password, setupToken);
     mutate();
     return apiKey;
   };
@@ -24,6 +27,7 @@ export function useAuthApi() {
 
   return {
     isSetuped: data?.setuped ?? false,
+    setupTokenRequired: data?.setupTokenRequired ?? false,
     isLoading,
     error,
     setupAuth,
