@@ -774,7 +774,7 @@ function expectTaskEntries(
       asRecord(step, `job ${jobName} step ${index + 1}`),
     );
     const taskSetupIndexes = steps.flatMap((step, index) =>
-      step.uses === "go-task/setup-task@v1" ? [index] : [],
+      step.uses === "go-task/setup-task@v2" ? [index] : [],
     );
     const checkoutIndex = steps.findIndex(
       (step) =>

@@ -44,11 +44,11 @@ describe("ci.yml E2E workflow contract", () => {
     if (testJob === undefined) return;
 
     const taskSetup = [
-      "      - uses: go-task/setup-task@v1",
+      "      - uses: go-task/setup-task@v2",
       "        with:",
       '          version: "3.51.1"',
     ].join("\n");
-    expect(testJob.match(/uses: go-task\/setup-task@v1/g) ?? []).toHaveLength(
+    expect(testJob.match(/uses: go-task\/setup-task@v2/g) ?? []).toHaveLength(
       1,
     );
     expect(testJob).toContain(taskSetup);
