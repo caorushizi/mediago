@@ -20,7 +20,7 @@
     "lucide-react": "^1.34.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "react-i18next": "^17.0.12",
+    "react-i18next": "^17.1.0",
     "swr": "^2.5.1",
     "tailwind-merge": "^3.7.0",
     "video.js": "^8.24.0"
