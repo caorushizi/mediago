@@ -1,8 +1,21 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
+import {
+  closeSync,
+  mkdtempSync,
+  openSync,
+  readSync,
+  rmdirSync,
+  rmSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { verifyContainerArchitecture } from "./container-architecture.ts";
 
 const image = process.argv[2] || "mediago:security";
+const expectedArchitecture =
+  process.argv[3] || (process.arch === "x64" ? "amd64" : process.arch);
 const container = `mediago-security-${randomUUID()}`;
 function docker(args: string[]): string {
   return execFileSync("docker", args, {
@@ -12,24 +25,11 @@ function docker(args: string[]): string {
     stdio: ["ignore", "pipe", "pipe"],
   });
 }
-// Exercise the same native binaries that production downloads launch.
-for (const [binary, args] of [
-  ["/app/deps/mediago", ["--help"]],
-  ["/app/deps/ffmpeg", ["-version"]],
-  ["/app/deps/N_m3u8DL-RE", ["--help"]],
-  ["/app/deps/BBDown", ["--help"]],
-  ["/app/deps/aria2c", ["--version"]],
-  ["/app/deps/yt-dlp", ["--version"]],
-  ["/app/deps/deno", ["--version"]],
-] as const) {
-  docker(["run", "--rm", "--entrypoint", binary, image, ...args]);
-  console.log(`Native startup passed: ${binary}`);
-}
 try {
-  // An appended flag must override the image default without a shell wrapper.
+  // Inspect Core before starting it so an architecture mismatch cannot be
+  // hidden by emulation or by the image's declared platform.
   docker([
-    "run",
-    "--detach",
+    "create",
     "--name",
     container,
     "--publish",
@@ -37,6 +37,55 @@ try {
     image,
     "--port=8900",
   ]);
+  const platform = docker([
+    "image",
+    "inspect",
+    "--format",
+    "{{.Os}}/{{.Architecture}}",
+    image,
+  ]).trim();
+  const inspectionDirectory = mkdtempSync(join(tmpdir(), "mediago-core-elf-"));
+  const corePath = join(inspectionDirectory, "mediago-core");
+  try {
+    docker(["cp", `${container}:/usr/local/bin/mediago-core`, corePath]);
+    const descriptor = openSync(corePath, "r");
+    const header = Buffer.alloc(20);
+    let bytesRead: number;
+    try {
+      bytesRead = readSync(descriptor, header, 0, header.length, 0);
+    } finally {
+      closeSync(descriptor);
+    }
+    const machine = verifyContainerArchitecture(
+      platform,
+      expectedArchitecture,
+      header.subarray(0, bytesRead),
+    );
+    console.log(
+      `Image architecture passed: ${platform}; Core ELF machine=${machine}`,
+    );
+  } finally {
+    rmSync(corePath, { force: true });
+
+    rmdirSync(inspectionDirectory);
+  }
+
+  // Exercise the same native binaries that production downloads launch.
+  for (const [binary, args] of [
+    ["/app/deps/mediago", ["--help"]],
+    ["/app/deps/ffmpeg", ["-version"]],
+    ["/app/deps/N_m3u8DL-RE", ["--help"]],
+    ["/app/deps/BBDown", ["--help"]],
+    ["/app/deps/aria2c", ["--version"]],
+    ["/app/deps/yt-dlp", ["--version"]],
+    ["/app/deps/deno", ["--version"]],
+  ] as const) {
+    docker(["run", "--rm", "--entrypoint", binary, image, ...args]);
+    console.log(`Native startup passed: ${binary}`);
+  }
+
+  // An appended flag must override the image default without a shell wrapper.
+  docker(["start", container]);
   const ports = JSON.parse(
     docker([
       "inspect",

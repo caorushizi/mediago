@@ -20,9 +20,12 @@ import {
 import { captureProcessOutput, type ProcessOutput } from "./process.ts";
 import { scrubElectronEnvironment } from "./electron-network.ts";
 import { waitForElectronMainWindow } from "./electron-window.ts";
+import { runIndependentCleanup } from "./cleanup.ts";
 import {
   closeElectron,
   readProcessIdentity,
+  identityIsAlive,
+  withDeadline,
   type ProcessIdentity,
 } from "./electron-process.ts";
 import { loadMediaFixture, type MediaFixture } from "./media.ts";
@@ -129,137 +132,182 @@ export const electronTest = base.extend<{
       let primaryError: unknown;
 
       try {
-        await assertPortFree(
-          "0.0.0.0",
-          ELECTRON_CORE_PORT,
-          "MediaGo Electron Core",
-        );
-        media = await loadMediaFixture();
-        tabA = await startTestPage(`${media.sampleURL}?fixture=tab-a`, {
-          marker: "tab-a",
-          title: "Fixture Tab A",
-        });
-        tabB = await startTestPage(`${media.sampleURL}?fixture=tab-b`, {
-          marker: "tab-b",
-          title: "Fixture Tab B",
-        });
-        agent = await startTestPage(`${media.sampleURL}?fixture=agent`, {
-          marker: "agent",
-          title: "Fixture Agent",
-        });
-        ui = await startUIProcess("electron");
-        const artifactPaths = manualArtifactPaths(testInfo);
-        application = await _electron.launch({
-          executablePath: electronExecutablePath(),
-          args: [ELECTRON_MAIN_PATH],
-          env: electronEnvironment(runtimeRoot),
-          locale: "en-US",
-          artifactsDir: artifactPaths.artifactsDir,
-          recordVideo: { dir: artifactPaths.videoDir },
-        });
-        electronOutput = captureProcessOutput(application.process());
-        const electronPid = application.process().pid;
-        if (electronPid === undefined)
-          throw new Error("Electron PID is unavailable");
-        electronIdentity = await readProcessIdentity(electronPid);
-        if (!electronIdentity)
-          throw new Error("Electron exited during startup");
-        const page = await waitForElectronMainWindow(application);
-        mainPage = page;
-        await startManualContextArtifacts(application.context());
-        tracingStarted = true;
-        const envPath = normalizeEnvPath(
-          await page.evaluate(() => {
-            const api = (
-              window as Window & {
-                electron?: { app?: { getEnvPath?: () => Promise<unknown> } };
-              }
-            ).electron?.app?.getEnvPath;
-            if (!api) throw new Error("Electron preload API is unavailable");
-            return api();
-          }),
-        );
-        const client = new MediaGoClient({
-          baseURL: new URL(envPath.coreUrl).origin,
-        });
-        client.api.defaults.proxy = false;
-        await expect
-          .poll(async () => {
-            try {
-              return (await client.health()).data.status;
-            } catch {
-              return "unavailable";
-            }
-          })
-          .toBe("ok");
-        await expect
-          .poll(async () => {
-            try {
-              return (await client.getDiscoveryExecutorStatus()).data.available;
-            } catch {
-              return false;
-            }
-          })
-          .toBe(true);
+        const runtime = await withDeadline(
+          (async () => {
+            await assertPortFree(
+              "0.0.0.0",
+              ELECTRON_CORE_PORT,
+              "MediaGo Electron Core",
+            );
+            media = await loadMediaFixture();
+            tabA = await startTestPage(`${media.sampleURL}?fixture=tab-a`, {
+              marker: "tab-a",
+              title: "Fixture Tab A",
+            });
+            tabB = await startTestPage(`${media.sampleURL}?fixture=tab-b`, {
+              marker: "tab-b",
+              title: "Fixture Tab B",
+            });
+            agent = await startTestPage(`${media.sampleURL}?fixture=agent`, {
+              marker: "agent",
+              title: "Fixture Agent",
+            });
+            ui = await startUIProcess("electron");
+            const artifactPaths = manualArtifactPaths(testInfo);
+            application = await _electron.launch({
+              executablePath: electronExecutablePath(),
+              args: [ELECTRON_MAIN_PATH],
+              env: electronEnvironment(runtimeRoot),
+              locale: "en-US",
+              timeout: 10_000,
+              artifactsDir: artifactPaths.artifactsDir,
+              recordVideo: { dir: artifactPaths.videoDir },
+            });
+            electronOutput = captureProcessOutput(application.process());
+            const electronPid = application.process().pid;
+            if (electronPid === undefined)
+              throw new Error("Electron PID is unavailable");
+            electronIdentity = await readProcessIdentity(electronPid);
+            if (!electronIdentity)
+              throw new Error("Electron exited during startup");
+            const page = await waitForElectronMainWindow(application);
+            mainPage = page;
+            await startManualContextArtifacts(application.context());
+            tracingStarted = true;
+            const envPath = normalizeEnvPath(
+              await page.evaluate(() => {
+                const api = (
+                  window as Window & {
+                    electron?: {
+                      app?: { getEnvPath?: () => Promise<unknown> };
+                    };
+                  }
+                ).electron?.app?.getEnvPath;
+                if (!api)
+                  throw new Error("Electron preload API is unavailable");
+                return api();
+              }),
+            );
+            const client = new MediaGoClient({
+              baseURL: new URL(envPath.coreUrl).origin,
+            });
+            client.api.defaults.proxy = false;
+            await expect
+              .poll(async () => {
+                try {
+                  return (await client.health()).data.status;
+                } catch {
+                  return "unavailable";
+                }
+              })
+              .toBe("ok");
+            await expect
+              .poll(async () => {
+                try {
+                  return (await client.getDiscoveryExecutorStatus()).data
+                    .available;
+                } catch {
+                  return false;
+                }
+              })
+              .toBe(true);
 
-        await page.locator('aside a[href="/source"]').click();
-        await expect(page).toHaveURL("http://localhost:8500/source");
-        await expect(
-          page.getByRole("tablist", { name: "Browser tabs" }),
-        ).toBeVisible();
-        await use({
-          application,
-          client,
-          fixtures: { agent, tabA, tabB },
-          media,
-          page,
-        });
+            await page.locator('aside a[href="/source"]').click();
+            await expect(page).toHaveURL("http://localhost:8500/source");
+            await expect(
+              page.getByRole("tablist", { name: "Browser tabs" }),
+            ).toBeVisible();
+            return {
+              application,
+              client,
+              fixtures: { agent, tabA, tabB },
+              media,
+              page,
+            };
+          })(),
+          30_000,
+          "Electron fixture setup",
+        );
+        await use(runtime);
       } catch (error) {
         primaryError = error;
       }
 
-      for (const operation of [
-        async () => {
-          if (!application) return;
-          const close = () => closeElectron(application, electronIdentity);
-          if (!tracingStarted) {
-            try {
-              await close();
-            } finally {
-              await attachBoundedProcessLogs(testInfo, {
-                electron: electronOutput,
-                ui: ui?.process,
+      cleanupErrors.push(
+        ...(await runIndependentCleanup([
+          {
+            name: "Electron artifacts and processes",
+            run: async () => {
+              if (!application) return;
+              const close = () => closeElectron(application, electronIdentity);
+              if (!tracingStarted) {
+                try {
+                  await close();
+                } finally {
+                  await attachBoundedProcessLogs(testInfo, {
+                    electron: electronOutput,
+                    ui: ui?.process,
+                  });
+                }
+                return;
+              }
+              await finalizeManualContextArtifacts({
+                testInfo,
+                context: application.context(),
+                page: mainPage,
+                close,
+                failed:
+                  primaryError !== undefined ||
+                  testInfo.status !== testInfo.expectedStatus,
+                name: "electron",
+                processes: { electron: electronOutput, ui: ui?.process },
               });
-            }
-            return;
-          }
-          await finalizeManualContextArtifacts({
-            testInfo,
-            context: application.context(),
-            page: mainPage,
-            close,
-            failed:
-              primaryError !== undefined ||
-              testInfo.status !== testInfo.expectedStatus,
-            name: "electron",
-            processes: { electron: electronOutput, ui: ui?.process },
-          });
-        },
-        () => electronOutput?.dispose(),
-        () => waitForPortFree("0.0.0.0", ELECTRON_CORE_PORT, 10_000),
-        () => ui?.process.stop(),
-        () => agent?.close(),
-        () => tabB?.close(),
-        () => tabA?.close(),
-        () => media?.close(),
-        () => rm(runtimeRoot, { recursive: true, force: true }),
-      ]) {
-        try {
-          // oxlint-disable-next-line no-await-in-loop -- Ordered teardown keeps ownership deterministic.
-          await operation();
-        } catch (error) {
-          cleanupErrors.push(error);
-        }
+            },
+          },
+          {
+            name: "Vite UI",
+            run: async () => {
+              await ui?.process.stop();
+              await waitForPortFree("127.0.0.1", 8500, 5_000);
+            },
+          },
+          {
+            name: "agent fixture",
+            run: async () => {
+              await agent?.close();
+            },
+          },
+          {
+            name: "tab B fixture",
+            run: async () => {
+              await tabB?.close();
+            },
+          },
+          {
+            name: "tab A fixture",
+            run: async () => {
+              await tabA?.close();
+            },
+          },
+          {
+            name: "media fixture",
+            run: async () => {
+              await media?.close();
+            },
+          },
+        ])),
+      );
+      electronOutput?.dispose();
+      // Only delete runtime data after processes have relinquished the Core port.
+      try {
+        await waitForPortFree("0.0.0.0", ELECTRON_CORE_PORT, 5_000);
+        if (electronIdentity && (await identityIsAlive(electronIdentity)))
+          throw new Error(
+            "Owned Electron is still alive; runtime data was retained",
+          );
+        await rm(runtimeRoot, { recursive: true, force: true });
+      } catch (error) {
+        cleanupErrors.push(error);
       }
       if (primaryError !== undefined && cleanupErrors.length > 0) {
         throw new AggregateError(

@@ -15,6 +15,8 @@
 !macroend
 
 !ifndef BUILD_UNINSTALLER
+  !include "${MEDIAGO_INSTALLER_INCLUDE_DIR}\\analytics.nsh"
+
   ; Load and save the existing link so arguments, icons and AppUserModelID survive.
   Function MediaGoUpdateShortcutDescription
     Exch $0
@@ -52,6 +54,7 @@
   FunctionEnd
 
   !macro customInstall
+    Call MediaGoPersistAnalyticsChoice
     ; Upgrades normally keep shortcuts, skipping electron-builder's CreateShortCut.
     Push "$newStartMenuLink"
     Call MediaGoUpdateShortcutDescription

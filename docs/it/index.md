@@ -37,3 +37,7 @@ features:
     details: "Consulta siti supportati, versioni precedenti e canali di feedback."
     link: /it/list
 ---
+
+## Privacy e Code signing policy
+
+[Informativa privacy](/it/privacy) · [Code signing policy](/it/code-signing). Firma Windows SignPath in attesa di approvazione e integrazione; le versioni precedenti restano non firmate.

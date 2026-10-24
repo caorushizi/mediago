@@ -69,7 +69,7 @@ jobs:
         with:
           go-version-file: apps/core/go.mod
           cache-dependency-path: apps/core/go.sum
-      - uses: github/codeql-action/init@793b778da9c9275a0f276522b27cb5fc14bba279 # v4
+      - uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
@@ -86,23 +86,36 @@ jobs:
           category: /language:${{ matrix.language }}
 
   container:
-    name: Container security
-    runs-on: ubuntu-latest
+    name: Container security (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            platform: linux/amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            platform: linux/arm64
+            runner: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Build local image without publishing
         id: build
-        run: docker build --tag mediago:security .
+        run: docker build --platform "$TARGET_PLATFORM" --tag mediago:security .
         env:
           DOCKER_BUILDKIT: "1"
+          TARGET_PLATFORM: ${{ matrix.platform }}
       - uses: actions/setup-node@v7
         with:
           node-version: "24.14.0"
-      - name: Smoke test native tools, server startup and SIGTERM
-        run: node packages/tooling/src/security/container-smoke.ts mediago:security
+      - name: Verify Core architecture, native tools, server startup and SIGTERM
+        run: node packages/tooling/src/security/container-smoke.ts mediago:security "$TARGET_ARCH"
+        env:
+          TARGET_ARCH: ${{ matrix.arch }}
       - name: Scan OS and identifiable bundled dependencies
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         uses: aquasecurity/trivy-action@8f28faec26515256b6d22074d1d2a8986f4cbd87
@@ -117,7 +130,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: container-security
+          name: container-security-${{ matrix.arch }}
           path: container-security.json
           if-no-files-found: error
           retention-days: 7

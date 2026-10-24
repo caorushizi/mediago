@@ -299,6 +299,8 @@ export default defineConfig({
             { text: "浏览器扩展", link: "/extension" },
             { text: "配合猫爪下载视频", link: "/catcatch" },
             { text: "OpenClaw Skill", link: "/skills" },
+            { text: "隐私政策", link: "/privacy" },
+            { text: "Code signing policy", link: "/code-signing" },
           ],
         },
         {
@@ -367,6 +369,8 @@ export default defineConfig({
                 { text: "Changelog", link: "/en/changelog" },
                 { text: "Browser extension", link: "/en/extension" },
                 { text: "OpenClaw Skill", link: "/en/skills" },
+                { text: "Privacy policy", link: "/en/privacy" },
+                { text: "Code signing policy", link: "/en/code-signing" },
               ],
             },
             {
@@ -409,6 +413,11 @@ export default defineConfig({
               { text: "更新履歴", link: "/jp/changelog" },
               { text: "ブラウザ拡張機能", link: "/jp/extension" },
               { text: "OpenClaw Skill", link: "/jp/skills" },
+              { text: "プライバシー", link: "/jp/privacy" },
+              {
+                text: "Code signing policy (English)",
+                link: "/en/code-signing",
+              },
             ],
           },
           {
@@ -450,6 +459,8 @@ export default defineConfig({
               { text: "Changelog", link: "/it/changelog" },
               { text: "Estensione browser", link: "/it/extension" },
               { text: "OpenClaw Skill", link: "/it/skills" },
+              { text: "Informativa privacy", link: "/it/privacy" },
+              { text: "Code signing policy", link: "/it/code-signing" },
             ],
           },
           {

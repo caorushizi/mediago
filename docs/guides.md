@@ -107,3 +107,7 @@ MacOS 使用
 ::: warning
 本软件仅可用于学习交流
 :::
+
+## 隐私与代码签名
+
+[隐私政策](/privacy) · [Code signing policy](/code-signing)。Windows SignPath 签名尚在申请准备阶段，已有未签名发布包仍然未签名。

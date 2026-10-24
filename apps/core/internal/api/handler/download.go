@@ -99,7 +99,8 @@ func (h *DownloadHandler) List(c *gin.Context) {
 		return
 	}
 
-	localPath := c.Query("localPath")
+	// Resolve history against server configuration, not a client-supplied filesystem root.
+	localPath, _ := h.conf.Get("local").(string)
 	result, err := h.svc.GetDownloadTasks(req.Current, req.PageSize, req.Filter, localPath)
 	if err != nil {
 		logger.Error("Failed to get download tasks", zap.Error(err))

@@ -37,3 +37,7 @@ features:
     details: Check supported sites, older releases, and available feedback channels.
     link: /en/list
 ---
+
+## Privacy and Code signing policy
+
+[Privacy policy](/en/privacy) · [Code signing policy](/en/code-signing). Windows SignPath signing is pending approval/integration; existing unsigned releases remain unsigned.

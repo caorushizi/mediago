@@ -435,11 +435,13 @@ export interface BrowserStore {
 }
 
 export interface SetupAuthRequest {
-  apiKey: string;
+  password: string;
+  setupToken?: string;
 }
 
 export interface IS_SETUP_RESPONSE {
   setuped: boolean;
+  setupTokenRequired: boolean;
 }
 
 /**
@@ -561,7 +563,16 @@ export interface OpenUpdateLogsResult {
 // mode, no-op stubs in web/server mode.
 // ============================================================
 
+export interface AnalyticsConsent {
+  enabled: boolean;
+  decided: boolean;
+}
+
 export interface PlatformApi {
+  analytics: {
+    getConsent(): Promise<AnalyticsConsent>;
+    setConsent(enabled: boolean): Promise<AnalyticsConsent>;
+  };
   browser: {
     createTab(options?: CreateBrowserTabInput): Promise<BrowserTabSnapshot>;
     activateTab(tabId: string): Promise<BrowserTabsSnapshot>;

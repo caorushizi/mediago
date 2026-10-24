@@ -221,6 +221,7 @@ function getReleaseConfig(): Configuration {
     nsis: {
       uninstallDisplayName: "${productName}",
       oneClick: false,
+      displayLanguageSelector: true,
       allowElevation: true,
       allowToChangeInstallationDirectory: true,
       createDesktopShortcut: true,
