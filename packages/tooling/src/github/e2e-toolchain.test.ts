@@ -86,8 +86,8 @@ function assertPackageContract(
   manifest: typeof packageJson,
   gitignoreContents: string,
 ) {
-  expect(manifest.devDependencies["@playwright/test"]).toBe("1.62.1");
-  expect(manifest.devDependencies.playwright).toBe("1.62.1");
+  expect(manifest.devDependencies["@playwright/test"]).toBe("1.64.1");
+  expect(manifest.devDependencies.playwright).toBe("1.64.1");
   for (const [name, command] of Object.entries(expectedE2EScripts)) {
     expect(manifest.scripts[name]).toBe(command);
   }
