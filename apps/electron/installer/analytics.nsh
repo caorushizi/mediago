@@ -7,6 +7,9 @@ Var MediaGoAnalyticsSelectionMade
 Var MediaGoAnalyticsChoice
 Var MediaGoAnalyticsFile
 
+; electron-builder declares installMode and registers plugins after this include.
+; Emit the functions when the page is inserted, after those dependencies exist.
+!macro MediaGoAnalyticsFunctions
 Function MediaGoAnalyticsPath
   !ifdef MEDIAGO_ANALYTICS_TEST_FILE
     StrCpy $MediaGoAnalyticsFile "${MEDIAGO_ANALYTICS_TEST_FILE}"
@@ -94,7 +97,10 @@ Function MediaGoPersistAnalyticsChoice
   ${EndIf}
 FunctionEnd
 
+!macroend
+
 !macro customPageAfterChangeDir
+  !insertmacro MediaGoAnalyticsFunctions
   Page custom MediaGoAnalyticsPageCreate MediaGoAnalyticsPageLeave
 !macroend
 

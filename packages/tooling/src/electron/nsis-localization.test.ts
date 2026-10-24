@@ -49,6 +49,7 @@ function build(
     missing?: boolean;
     consent?: boolean;
     previousConsent?: string;
+    productionConsentPath?: boolean;
   } = {},
 ) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), "mediago-nsis-"));
@@ -68,7 +69,9 @@ function build(
     TEST_LANGUAGE: String(language),
     INSTALLER_INCLUDE: path.join(root, "apps/electron/installer/installer.nsh"),
     PLUGIN_DIR: plugins,
-    MEDIAGO_ANALYTICS_TEST_FILE: consentFile,
+    ...(options.productionConsentPath
+      ? {}
+      : { MEDIAGO_ANALYTICS_TEST_FILE: consentFile }),
     ...(options.consent !== undefined
       ? { TEST_ANALYTICS_DECISION: options.consent ? "1" : "0" }
       : {}),
@@ -83,6 +86,11 @@ function build(
     ),
     path.join(root, "tests/fixtures/nsis/localization.nsi"),
   ];
+
+  if (options.productionConsentPath) {
+    run(compiler, args);
+    return { directory, executable, uninstaller, strings: [], consentFile };
+  }
 
   // Exercise the silent intermediate-uninstaller generation used by electron-builder.
   run(compiler, ["/DBUILD_UNINSTALLER", ...args]);
@@ -149,6 +157,12 @@ describe.skipIf(process.platform !== "win32")("real NSIS localization", () => {
       "Install NSIS or set MEDIAGO_NSIS_ROOT",
     ).toBe(true);
     expect(fs.existsSync(path.join(plugins, "WinShell.dll"))).toBe(true);
+  });
+
+  test("compiles the production consent path after the upstream install-mode declaration", () => {
+    const built = build(1033, { productionConsentPath: true });
+    expect(fs.existsSync(built.executable)).toBe(true);
+    expect(fs.existsSync(built.consentFile)).toBe(false);
   });
 
   afterAll(() => {

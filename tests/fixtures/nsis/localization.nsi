@@ -7,9 +7,15 @@ VIAddVersionKey /LANG=1033 "ProductName" "${PRODUCT_NAME}"
 VIAddVersionKey /LANG=1033 "FileVersion" "${VERSION}"
 VIAddVersionKey /LANG=1033 "FileDescription" "${APP_DESCRIPTION}"
 VIAddVersionKey /LANG=1033 "LegalCopyright" "MediaGo test"
-!addplugindir /x86-unicode "${PLUGIN_DIR}"
 !include "MUI2.nsh"
 !include "${INSTALLER_INCLUDE}"
+; electron-builder registers plugins and declares installMode after this include.
+!addplugindir /x86-unicode "${PLUGIN_DIR}"
+!ifndef MEDIAGO_ANALYTICS_TEST_FILE
+  !ifndef BUILD_UNINSTALLER
+    Var installMode
+  !endif
+!endif
 !ifndef BUILD_UNINSTALLER
 Var newStartMenuLink
 Var newDesktopLink
@@ -49,6 +55,11 @@ Var newDesktopLink
 !insertmacro MUI_LANGUAGE "Vietnamese"
 !insertmacro customHeader
 Function .onInit
+  !ifndef MEDIAGO_ANALYTICS_TEST_FILE
+    !ifndef BUILD_UNINSTALLER
+      StrCpy $installMode "current"
+    !endif
+  !endif
   StrCpy $LANGUAGE ${TEST_LANGUAGE}
   !ifdef BUILD_UNINSTALLER
     WriteUninstaller "${UNINSTALLER_FILE}"
