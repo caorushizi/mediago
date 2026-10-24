@@ -272,6 +272,7 @@ const test = base.extend<{ electronRuntime: ElectronRuntime }>({
           args: [ELECTRON_MAIN_PATH],
           env: electronEnvironment(runtimeRoot),
           locale: "en-US",
+          timeout: 10_000,
           artifactsDir: artifactPaths.artifactsDir,
           recordVideo: { dir: artifactPaths.videoDir },
         });
@@ -357,7 +358,11 @@ const test = base.extend<{ electronRuntime: ElectronRuntime }>({
       const auditNetwork = async (): Promise<void> => {
         if (!networkGuard) return;
         try {
-          await networkGuard.assertFinal();
+          await withDeadline(
+            networkGuard.assertFinal(),
+            2_000,
+            "Electron network audit",
+          );
         } catch (error) {
           networkViolation ??=
             error instanceof Error

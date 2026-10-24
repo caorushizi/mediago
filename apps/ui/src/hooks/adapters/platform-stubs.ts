@@ -8,6 +8,12 @@ const noop = async (..._args: unknown[]): Promise<any> => {};
  * All Electron-native operations are no-ops in web mode.
  */
 export const webPlatformStubs: PlatformApi = {
+  analytics: {
+    getConsent: async () => ({ enabled: false, decided: false }),
+    setConsent: async () => {
+      throw new Error("Web analytics consent is stored in this browser");
+    },
+  },
   browser: {
     createTab: async () => ({
       id: "web-tab",

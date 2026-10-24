@@ -526,7 +526,7 @@ describe("build-docs.yml Task workflow contract", () => {
     });
     expect(build.steps).toContainEqual({
       name: "Upload GitHub Pages artifact",
-      uses: "actions/upload-pages-artifact@v4",
+      uses: "actions/upload-pages-artifact@v5",
       with: { path: "docs/.vitepress/dist" },
     });
     expect(deploy.steps).toContainEqual({

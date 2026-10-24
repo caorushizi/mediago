@@ -5,7 +5,7 @@ import {
   probePnpmPath,
   resolvePnpmEntrypoint,
 } from "../process/bundle-env-runtime.ts";
-import { assertCleanAudit } from "./policy.ts";
+import { assertCleanAudit, auditFailureSummary } from "./policy.ts";
 
 const root = path.resolve(import.meta.dirname, "../../../..");
 const mode = process.argv[2];
@@ -29,7 +29,15 @@ if (mode === "js") {
     maxBuffer: 16 * 1024 * 1024,
   });
   if (result.error) throw result.error;
-  assertCleanAudit(result.status, result.stdout);
+  try {
+    assertCleanAudit(result.status, result.stdout);
+  } catch (error) {
+    console.error(
+      "Dependency audit diagnostic:",
+      auditFailureSummary(result.status, result.stdout),
+    );
+    throw error;
+  }
   console.log(
     "Dependency audit passed: zero low/moderate/high/critical findings.",
   );

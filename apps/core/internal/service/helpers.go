@@ -12,6 +12,8 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"caorushizi.cn/mediago/internal/mediahttp"
 )
 
 // videoExtensions is the list of video file extensions (aligned with the TypeScript videoPattern).
@@ -51,15 +53,10 @@ func GetPageTitle(pageURL string, fallback string) string {
 
 // GetPageTitleWithContext stops the request when its caller is cancelled.
 func GetPageTitleWithContext(ctx context.Context, pageURL string, fallback string) string {
-	client := &http.Client{Timeout: 10 * time.Second}
-	req, err := http.NewRequestWithContext(ctx, "GET", pageURL, nil)
-	if err != nil {
-		return fallback
-	}
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36")
-	req.Header.Set("Referer", pageURL)
-
-	resp, err := client.Do(req)
+	headers := make(http.Header)
+	headers.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36")
+	headers.Set("Referer", pageURL)
+	resp, err := mediahttp.Get(ctx, pageURL, headers, nil, 10*time.Second)
 	if err != nil {
 		return fallback
 	}

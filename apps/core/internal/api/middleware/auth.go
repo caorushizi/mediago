@@ -34,6 +34,17 @@ func AuthMiddleware(confStore handler.ConfigStore) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		path := c.Request.URL.Path
 
+		storedKey, _ := confStore.Get("apiKey").(string)
+		// Only the setup UI, health/status and independently authenticated MCP
+		// remain available before initialization. No business API is fail-open.
+		initializationEndpoint := path == "/api/auth/setup" || path == "/api/auth/signin" || path == "/api/auth/status"
+		if storedKey == "" && !initializationEndpoint && (strings.HasPrefix(path, "/api/") || strings.HasPrefix(path, "/videos/")) {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, dto.ErrorResponse{
+				Success: false, Code: http.StatusUnauthorized, Message: i18n.T(c, i18n.MsgUnauthorized),
+			})
+			return
+		}
+
 		// Whitelist check
 		if whitelist[path] || strings.HasPrefix(path, "/swagger/") ||
 			strings.HasPrefix(path, "/api/bridge/") ||
@@ -54,10 +65,8 @@ func AuthMiddleware(confStore handler.ConfigStore) gin.HandlerFunc {
 		}
 
 		// Get stored apiKey from config
-		storedKey, _ := confStore.Get("apiKey").(string)
 		if storedKey == "" {
-			// No apiKey configured, auth not set up yet — allow access
-			c.Next()
+			c.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
 
