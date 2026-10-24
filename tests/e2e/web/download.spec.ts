@@ -1,4 +1,4 @@
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, readFile, rm, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
@@ -41,6 +41,7 @@ const FORCE_NETWORK_VIOLATION =
   FORCE_TIMEOUT || process.env.MEDIAGO_E2E_FORCE_NETWORK_VIOLATION === "1";
 
 interface WebRuntime {
+  coreURL: string;
   media: MediaFixture;
   runtimeRoot: string;
   ui: StartedUIProcess;
@@ -153,6 +154,7 @@ const test = base.extend<{ webRuntime: WebRuntime }>({
         resources.server
       ) {
         await use({
+          coreURL: resources.server.baseURL,
           media: resources.media,
           runtimeRoot: resources.runtimeRoot,
           ui: resources.ui,
@@ -258,13 +260,28 @@ const test = base.extend<{ webRuntime: WebRuntime }>({
   ],
 });
 
-async function completeFirstRun(page: Page, baseURL: string): Promise<void> {
+async function completeFirstRun(
+  page: Page,
+  runtime: WebRuntime,
+): Promise<void> {
+  const { baseURL } = runtime.ui;
+  const rejected = await page.request.post(
+    runtime.coreURL + "/api/auth/setup",
+    { data: { password: PASSWORD } },
+  );
+  expect(rejected.status()).toBe(403);
+  const blocked = await page.request.get(runtime.coreURL + "/api/tasks");
+  expect(blocked.status()).toBe(401);
   await page.goto(baseURL);
   await expect(page).toHaveURL(/\/signin$/);
+  const tokenPath = path.join(runtime.runtimeRoot, "data", "setup-token");
+  const setupToken = (await readFile(tokenPath, "utf8")).trim();
+  await page.getByLabel("Initialization code").fill(setupToken);
   await page.getByLabel("Create an admin password").fill(PASSWORD);
   await page.getByLabel("Confirm password").fill(PASSWORD);
   await page.getByRole("button", { name: "Set up" }).click();
   await expect(page).toHaveURL(/\/$/);
+  await expect(stat(tokenPath)).rejects.toMatchObject({ code: "ENOENT" });
 }
 
 test("downloads a direct MP4 after first-run authentication", async ({
@@ -289,11 +306,7 @@ test("downloads a direct MP4 after first-run authentication", async ({
     await new Promise<never>(() => {});
   }
 
-  await expect(page).toHaveURL(/\/signin$/);
-  await page.getByLabel("Create an admin password").fill(PASSWORD);
-  await page.getByLabel("Confirm password").fill(PASSWORD);
-  await page.getByRole("button", { name: "Set up" }).click();
-  await expect(page).toHaveURL(/\/$/);
+  await completeFirstRun(page, webRuntime);
   await page.getByRole("button", { name: "New download" }).first().click();
   await page.getByRole("button", { name: "Download now" }).click();
   await expect(
@@ -320,7 +333,7 @@ test("offers Smart Download when a manual m3u8 URL is not HLS", async ({
   page,
   webRuntime,
 }) => {
-  await completeFirstRun(page, webRuntime.ui.baseURL);
+  await completeFirstRun(page, webRuntime);
   await page.getByRole("button", { name: "New download" }).first().click();
 
   const downloadType = page.getByRole("combobox", { name: "Download type" });

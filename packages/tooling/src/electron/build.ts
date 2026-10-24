@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import {
   configureInstallerMetadata,
   getApplicationCopyright,
@@ -220,6 +221,7 @@ function getReleaseConfig(): Configuration {
     nsis: {
       uninstallDisplayName: "${productName}",
       oneClick: false,
+      displayLanguageSelector: true,
       allowElevation: true,
       allowToChangeInstallationDirectory: true,
       createDesktopShortcut: true,
@@ -309,6 +311,25 @@ if (!dependencyDirectory?.isDirectory()) {
   );
 }
 await fs.cp(localDepsDir, depsDir, { recursive: true, force: true });
+// Rebuild the external engine; copying its old release binary retains Go CVEs.
+execFileSync(
+  "go",
+  [
+    "run",
+    path.resolve(
+      projectRoot,
+      "packages/tooling/src/runtime-deps/rebuild-mediago.go",
+    ),
+    "--output",
+    path.join(depsDir, `mediago${ext}`),
+    "--platform",
+    platformKey,
+  ],
+  {
+    stdio: "inherit",
+    env: { ...process.env, GOWORK: "off", GOTOOLCHAIN: "go1.27.3" },
+  },
+);
 
 const config = getReleaseConfig();
 const packageArtifacts = () =>

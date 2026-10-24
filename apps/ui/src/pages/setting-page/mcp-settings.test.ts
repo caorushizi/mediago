@@ -57,6 +57,7 @@ const environmentMocks = vi.hoisted(() => ({
 
 const translationMocks = vi.hoisted(() => ({
   t: vi.fn((key: string) => key),
+  i18n: { resolvedLanguage: "en" },
 }));
 
 vi.mock("react-i18next", async (importOriginal) => ({

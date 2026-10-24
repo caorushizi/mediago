@@ -104,3 +104,7 @@ macOS での使用
 ::: warning  
 このソフトウェアは学習と交流目的でのみ使用できます。  
 :::
+
+## プライバシーと Code signing policy
+
+[プライバシー](/jp/privacy) · [Code signing policy（英語）](/en/code-signing)。Windows SignPath 署名は申請準備中です。既存の未署名版は未署名のままです。

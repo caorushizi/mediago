@@ -73,7 +73,7 @@ jobs:
           python-version: "3.10"
       - uses: actions/setup-go@v7
         with:
-          go-version: "1.25.0"
+          go-version-file: apps/core/go.mod
           cache-dependency-path: apps/core/go.sum
       - name: Restore exact product source and apply reviewed packaging tooling
         env:

@@ -87,6 +87,8 @@ the same network:
 docker run -d --name mediago -p 8899:8899 -v /path/to/mediago:/app/mediago caorushizi/mediago:3.5.0
 ```
 
+For builds that request an initialization code, read `setup-token` in the server config directory (`docker exec mediago cat /app/mediago/data/setup-token` for the default container), then enter it on the setup page. The file is deleted after successful setup; existing accounts do not need to initialize again.
+
 Available on [Docker Hub](https://hub.docker.com/r/caorushizi/mediago) and GHCR (`ghcr.io/caorushizi/mediago`) — same image, pick whichever registry is faster for you. Supports both Intel / AMD (amd64) and ARM (arm64). On the desktop build,
 MediaGo listens on both `127.0.0.1` and your LAN IP out of the box, so
 phones and tablets on the same Wi-Fi can open the web UI too.
@@ -248,3 +250,24 @@ task test
 > Building from source? See [CONTRIBUTING.md](./CONTRIBUTING.md).
 >
 > Translating MediaGo? See [TRANSLATION.md](./TRANSLATION.md).
+
+### Security checks
+
+Run `pnpm security:js` for the complete workspace dependency audit and
+`pnpm security:go` with official `govulncheck` v1.9.0 on PATH for affected Go
+function calls. GitHub runs these checks, CodeQL, and container dependency scans
+on pull requests and daily. Container scans cover OS and identifiable embedded
+packages; absence of findings does not validate every bundled native library.
+
+The UI development server binds to `127.0.0.1` by default. For intentional LAN
+testing, set `MEDIAGO_DEV_HOST=0.0.0.0` in `.env.development.local`.
+
+The runtime container uses Distroless Debian 13 with the required ICU/zlib libraries
+and package provenance. It keeps the same port, volume paths and appended flag
+overrides. There is no shell or package manager inside the production image; use
+`docker logs` and the health/API endpoints for diagnostics. The external streaming
+engine is rebuilt from checksum-pinned v0.2.1 source with the patched Go toolchain.
+
+## Privacy and Code signing policy
+
+Usage statistics are optional. See the [Privacy policy](docs/en/privacy.md) for installer-time choice and in-app controls. Windows SignPath signing is pending approval/integration; existing unsigned releases remain unsigned. See the [Code signing policy](docs/en/code-signing.md).

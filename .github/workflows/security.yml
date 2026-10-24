@@ -1,0 +1,136 @@
+name: Security checks
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+  schedule:
+    - cron: "43 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dependencies:
+    name: Dependency security
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24.14.0"
+          cache: pnpm
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: apps/core/go.mod
+          cache-dependency-path: apps/core/go.sum
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm security:js
+      - name: Install official Go vulnerability scanner
+        run: go install golang.org/x/vuln/cmd/govulncheck@v1.9.0
+      - run: pnpm security:go
+      - name: Verify engine source checks and target validation
+        run: go test packages/tooling/src/runtime-deps/rebuild-mediago.go packages/tooling/src/runtime-deps/rebuild-mediago_test.go
+
+  codeql:
+    name: CodeQL (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: javascript-typescript
+            build-mode: none
+          - language: go
+            build-mode: manual
+          - language: actions
+            build-mode: none
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@v7
+        if: matrix.language == 'go'
+        with:
+          go-version-file: apps/core/go.mod
+          cache-dependency-path: apps/core/go.sum
+      - uses: github/codeql-action/init@793b778da9c9275a0f276522b27cb5fc14bba279 # v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+      - name: Build Go source for CodeQL
+        if: matrix.language == 'go'
+        working-directory: apps/core
+        run: |
+          go build ./...
+          go build -o "$RUNNER_TEMP/rebuild-mediago" ../../packages/tooling/src/runtime-deps/rebuild-mediago.go
+        env:
+          CGO_ENABLED: "0"
+      - uses: github/codeql-action/analyze@793b778da9c9275a0f276522b27cb5fc14bba279 # v4
+        with:
+          category: /language:${{ matrix.language }}
+
+  container:
+    name: Container security (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            platform: linux/amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            platform: linux/arm64
+            runner: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Build local image without publishing
+        id: build
+        run: docker build --platform "$TARGET_PLATFORM" --tag mediago:security .
+        env:
+          DOCKER_BUILDKIT: "1"
+          TARGET_PLATFORM: ${{ matrix.platform }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24.14.0"
+      - name: Verify Core architecture, native tools, server startup and SIGTERM
+        run: node packages/tooling/src/security/container-smoke.ts mediago:security "$TARGET_ARCH"
+        env:
+          TARGET_ARCH: ${{ matrix.arch }}
+      - name: Scan OS and identifiable bundled dependencies
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        uses: aquasecurity/trivy-action@8f28faec26515256b6d22074d1d2a8986f4cbd87
+        with:
+          image-ref: mediago:security
+          scanners: vuln
+          format: json
+          output: container-security.json
+          exit-code: "1"
+          severity: HIGH,CRITICAL
+          ignore-unfixed: false
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: container-security-${{ matrix.arch }}
+          path: container-security.json
+          if-no-files-found: error
+          retention-days: 7

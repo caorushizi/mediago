@@ -6,6 +6,28 @@ vars:
   MEDIAGO_WEB_RUNTIME_ROOT: '{{default (printf "%s/.task/web-core" .ROOT_DIR) .MEDIAGO_WEB_RUNTIME_ROOT}}'
 
 tasks:
+  security:js:
+    desc: Fail on any workspace dependency vulnerability or audit execution error
+    cmds:
+      - task: internal:require-task-version
+      - task: internal:security:js
+
+  security:go:
+    desc: Scan backend source with the installed official govulncheck tool
+    cmds:
+      - task: internal:require-task-version
+      - task: internal:security:go
+
+  internal:security:js:
+    internal: true
+    cmds:
+      - pnpm security:js
+
+  internal:security:go:
+    internal: true
+    cmds:
+      - pnpm security:go
+
   doctor:
     desc: Diagnose the local MediaGo toolchain and runtime dependencies; Node >=24.14.0 is required to aggregate checks
     preconditions:
@@ -930,6 +952,7 @@ tasks:
       - task: internal:deps:e2e
       - task: internal:test:e2e:build
     cmds:
+      - node packages/tooling/src/github/prepare-playwright-apt.ts
       - pnpm exec playwright install-deps chromium
       - pnpm exec playwright install chromium
       - pnpm type:check:e2e

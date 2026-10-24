@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io/fs"
 	"net/http"
 	"net/url"
 	"os"
@@ -354,9 +355,9 @@ func outputBaseName(name string) string {
 	return safeName
 }
 
-func captureOutputFiles(dir, downloadName string) (map[string]outputFileState, error) {
+func captureOutputFiles(root *os.Root, downloadName string) (map[string]outputFileState, error) {
 	result := make(map[string]outputFileState)
-	entries, err := os.ReadDir(dir)
+	entries, err := fs.ReadDir(root.FS(), ".")
 	if errors.Is(err, os.ErrNotExist) {
 		return result, nil
 	}
@@ -370,26 +371,21 @@ func captureOutputFiles(dir, downloadName string) (map[string]outputFileState, e
 			if entry.Name() != name {
 				continue
 			}
-			root := filepath.Join(dir, entry.Name())
-			walkErr := filepath.WalkDir(root, func(path string, nested os.DirEntry, walkErr error) error {
+			walkErr := fs.WalkDir(root.FS(), entry.Name(), func(path string, nested os.DirEntry, walkErr error) error {
 				if walkErr != nil {
 					return walkErr
 				}
 				if nested.IsDir() {
 					return nil
 				}
-				info, infoErr := nested.Info()
+				info, infoErr := root.Lstat(filepath.FromSlash(path))
 				if infoErr != nil {
 					return infoErr
 				}
 				if !info.Mode().IsRegular() || info.Size() == 0 || !hasCompletedMediaExtension(path) {
 					return nil
 				}
-				relative, relativeErr := filepath.Rel(dir, path)
-				if relativeErr != nil {
-					return relativeErr
-				}
-				result[relative] = outputFileState{size: info.Size(), modTime: info.ModTime().UnixNano()}
+				result[filepath.FromSlash(path)] = outputFileState{size: info.Size(), modTime: info.ModTime().UnixNano()}
 				return nil
 			})
 			if walkErr != nil {
@@ -400,7 +396,7 @@ func captureOutputFiles(dir, downloadName string) (map[string]outputFileState, e
 		if !isOutputFilename(entry.Name(), name) {
 			continue
 		}
-		info, err := entry.Info()
+		info, err := root.Lstat(entry.Name())
 		if err != nil {
 			return nil, err
 		}
@@ -474,7 +470,8 @@ func changedOutputCandidates(dir, downloadName string, before, after map[string]
 	return candidates
 }
 
-func normalizeReportedOutputPath(outputDir, reported string) string {
+func normalizeReportedOutputPath(root *os.Root, reported string) string {
+	outputDir := root.Name()
 	reported = trimMatchingQuotes(reported)
 	if reported == "" {
 		return ""
@@ -491,10 +488,10 @@ func normalizeReportedOutputPath(outputDir, reported string) string {
 		return ""
 	}
 	relative, err := filepath.Rel(absoluteDir, absolute)
-	if err != nil || relative == ".." || strings.HasPrefix(relative, ".."+string(filepath.Separator)) {
+	if err != nil || !filepath.IsLocal(relative) {
 		return ""
 	}
-	info, err := os.Stat(absolute)
+	info, err := root.Stat(relative)
 	if err != nil || !info.Mode().IsRegular() || info.Size() == 0 {
 		return ""
 	}
@@ -512,7 +509,8 @@ func trimMatchingQuotes(value string) string {
 	return value
 }
 
-func outputArtifactPaths(outputDir, downloadName, reported string, before, after map[string]outputFileState, topLevelOnly bool) []string {
+func outputArtifactPaths(root *os.Root, downloadName, reported string, before, after map[string]outputFileState, topLevelOnly bool) []string {
+	outputDir := root.Name()
 	artifacts := make([]string, 0)
 	seen := make(map[string]struct{})
 	appendArtifact := func(candidate string) {
@@ -530,7 +528,7 @@ func outputArtifactPaths(outputDir, downloadName, reported string, before, after
 		artifacts = append(artifacts, candidate)
 	}
 
-	appendArtifact(normalizeReportedOutputPath(outputDir, reported))
+	appendArtifact(normalizeReportedOutputPath(root, reported))
 	for _, candidate := range changedOutputCandidates(outputDir, downloadName, before, after) {
 		absolute, err := filepath.Abs(candidate.path)
 		if err != nil {
@@ -674,14 +672,17 @@ func (d *DownloaderSvc) Download(ctx context.Context, p DownloadParams, cb Callb
 		zap.String("binary", bin))
 
 	desktopConfig, hasDesktopConfig := d.cfg.(interface{ IsDesktop() bool })
-	outputDir, err := ResolveDownloadDirectory(
+	outputRoot, err := openDownloadDirectory(
 		d.cfg.(interface{ GetLocalDir() string }).GetLocalDir(), p.DownloadDir, p.Folder,
 		hasDesktopConfig && desktopConfig.IsDesktop(),
 	)
 	if err != nil {
 		return DownloadResult{}, err
 	}
-	outputBefore, inspectErr := captureOutputFiles(outputDir, p.Name)
+	defer outputRoot.Close()
+	// The external tool and rooted inspection must use the same resolved path.
+	p.DownloadDir, p.Folder = outputRoot.Name(), ""
+	outputBefore, inspectErr := captureOutputFiles(outputRoot, p.Name)
 	if inspectErr != nil {
 		return DownloadResult{}, fmt.Errorf("inspect output directory before download: %w", inspectErr)
 	}
@@ -797,18 +798,21 @@ func (d *DownloaderSvc) Download(ctx context.Context, p DownloadParams, cb Callb
 	d.tracker.Remove(parser.TaskID(p.ID))
 
 	collectResult := func(recoverLiveSegments bool) (DownloadResult, error) {
-		outputAfter, inspectErr := captureOutputFiles(outputDir, p.Name)
+		if err := verifyDownloadDirectory(outputRoot); err != nil {
+			return DownloadResult{}, err
+		}
+		outputAfter, inspectErr := captureOutputFiles(outputRoot, p.Name)
 		if inspectErr != nil {
 			return DownloadResult{}, fmt.Errorf("inspect output directory after download: %w", inspectErr)
 		}
 		reportedOutputMu.Lock()
 		reported := reportedOutput
 		reportedOutputMu.Unlock()
-		artifactPaths := outputArtifactPaths(outputDir, p.Name, reported, outputBefore, outputAfter, p.Type == TypeM3U8)
+		artifactPaths := outputArtifactPaths(outputRoot, p.Name, reported, outputBefore, outputAfter, p.Type == TypeM3U8)
 		if len(artifactPaths) == 0 {
 			if p.Type == TypeM3U8 {
 				if recoverLiveSegments {
-					recoveredPath, recoverErr := recoverLiveM3U8Segments(outputDir, p.Name)
+					recoveredPath, recoverErr := recoverLiveM3U8Segments(outputRoot, p.Name)
 					if recoverErr == nil {
 						return DownloadResult{
 							PrimaryPath:       recoveredPath,

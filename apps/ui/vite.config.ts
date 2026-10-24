@@ -21,7 +21,7 @@ const pkg = JSON.parse(await fs.readFile(packageJsonPath, "utf-8"));
 export default defineConfig({
   cacheDir: isWeb ? "node_modules/.vite-server" : "node_modules/.vite-electron",
   server: {
-    host: true,
+    host: process.env.MEDIAGO_DEV_HOST || "127.0.0.1",
     port: isWeb ? 8501 : 8500,
     strictPort: true,
   },

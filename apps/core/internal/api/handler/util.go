@@ -2,18 +2,13 @@ package handler
 
 import (
 	"fmt"
-	"io"
 	"math/rand"
 	"net/http"
-	"regexp"
-	"strings"
-	"time"
 
 	"caorushizi.cn/mediago/internal/api/dto"
 	"caorushizi.cn/mediago/internal/i18n"
-	"caorushizi.cn/mediago/internal/logger"
+	"caorushizi.cn/mediago/internal/service"
 	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 )
 
 // EnvPaths holds server environment paths exposed via the API.
@@ -57,8 +52,6 @@ func (h *UtilHandler) GetEnvPaths(c *gin.Context) {
 	})
 }
 
-var titleRegex = regexp.MustCompile(`(?i)<title[^>]*>(.*?)</title>`)
-
 // GetPageTitle fetches a URL and extracts the HTML <title> tag.
 // @Summary Get page title
 // @Tags Util
@@ -88,38 +81,7 @@ func (h *UtilHandler) GetPageTitle(c *gin.Context) {
 }
 
 func fetchTitle(url string) string {
-	client := &http.Client{Timeout: 10 * time.Second}
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		logger.Warn("getPageTitle: failed to create request", zap.String("url", url), zap.Error(err))
-		return randomName()
-	}
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36")
-	req.Header.Set("Referer", url)
-
-	resp, err := client.Do(req)
-	if err != nil {
-		logger.Warn("getPageTitle: request failed", zap.String("url", url), zap.Error(err))
-		return randomName()
-	}
-	defer resp.Body.Close()
-
-	// Read up to 64KB to find the title
-	body, err := io.ReadAll(io.LimitReader(resp.Body, 64*1024))
-	if err != nil {
-		logger.Warn("getPageTitle: failed to read body", zap.String("url", url), zap.Error(err))
-		return randomName()
-	}
-
-	matches := titleRegex.FindSubmatch(body)
-	if len(matches) >= 2 {
-		title := strings.TrimSpace(string(matches[1]))
-		if title != "" {
-			return title
-		}
-	}
-
-	return randomName()
+	return service.GetPageTitle(url, randomName())
 }
 
 func randomName() string {

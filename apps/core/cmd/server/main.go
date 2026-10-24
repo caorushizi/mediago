@@ -96,9 +96,23 @@ func registerConfigFlags(fs *flag.FlagSet, cfg *app.AppConfig) {
 func runServer(rt *app.Runtime) error {
 	cfg := rt.Config
 	confStore := handler.WrapConfStore[app.AppStore](rt.AppStore)
+	setupToken, err := app.PrepareAuthSetup(cfg, confStore)
+	if err != nil {
+		return err
+	}
+	if setupToken != "" {
+		logger.Infof("Initial authentication requires the token in %s; read this file on the server to complete setup", app.AuthSetupTokenPath(cfg))
+	}
+
 	execPath, _ := os.Executable()
 	server := api.NewServer(rt.Queue, rt.TaskLogs, rt.Database, confStore, api.ServerOptions{
-		EnableAuth:          cfg.EnableAuth,
+		EnableAuth:     cfg.EnableAuth,
+		AuthSetupToken: setupToken,
+		OnAuthSetupComplete: func() {
+			if err := app.ClearAuthSetupToken(cfg); err != nil {
+				logger.Warnf("Could not remove the consumed authentication setup token file: %v", err)
+			}
+		},
 		FFmpegBin:           app.FFmpegBinPath(cfg),
 		VideoRoot:           cfg.LocalDir,
 		ElectronBridgeToken: cfg.ElectronBridgeToken,

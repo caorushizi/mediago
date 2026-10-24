@@ -1,23 +1,17 @@
-# tsdown-starter
+# @mediago/core-sdk
 
-A starter for creating a TypeScript package.
+TypeScript client for the MediaGo Core API.
 
 ## Development
 
-- Install dependencies:
+This package is developed as part of the MediaGo pnpm workspace. Run these
+commands from the repository root; pnpm-lock.yaml is the shared dependency lock.
+Do not generate a separate npm lockfile in this directory.
 
-```bash
-npm install
+```sh
+pnpm install --frozen-lockfile
+pnpm --filter @mediago/core-sdk test
+pnpm --filter @mediago/core-sdk build
 ```
 
-- Run the unit tests:
-
-```bash
-npm run test
-```
-
-- Build the library:
-
-```bash
-npm run build
-```
+Consumers of a published SDK package may still use their own package manager.
