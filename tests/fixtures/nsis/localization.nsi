@@ -61,6 +61,8 @@ Function .onInit
     !endif
   !endif
   StrCpy $LANGUAGE ${TEST_LANGUAGE}
+  ; Match the interactive installer; /S must bypass the language dialog.
+  !insertmacro MUI_LANGDLL_DISPLAY
   !ifdef BUILD_UNINSTALLER
     WriteUninstaller "${UNINSTALLER_FILE}"
     SetErrorLevel 0

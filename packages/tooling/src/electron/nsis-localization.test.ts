@@ -222,7 +222,7 @@ describe.skipIf(process.platform !== "win32")("real NSIS localization", () => {
     60_000,
   );
 
-  test("silent fresh install does not grant analytics consent", () => {
+  test("silent install bypasses language selection without granting analytics consent", () => {
     const built = build(1033);
     expect(fs.existsSync(built.consentFile)).toBe(false);
   }, 60_000);
