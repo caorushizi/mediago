@@ -109,3 +109,7 @@ Le versioni precedenti sono disponibili nella [pagina GitHub Releases](https://g
 ::: warning
 Questo software è destinato esclusivamente a scopi di studio e comunicazione.
 :::
+
+## Privacy e Code signing policy
+
+[Informativa privacy](/it/privacy) · [Code signing policy](/it/code-signing). Firma Windows SignPath in attesa di approvazione e integrazione; le versioni precedenti restano non firmate.

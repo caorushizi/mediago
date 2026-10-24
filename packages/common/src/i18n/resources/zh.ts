@@ -1,4 +1,12 @@
 export const zh = {
+  analyticsUsage: "分享使用统计",
+  analyticsChoiceTitle: "可选的使用统计",
+  analyticsDescription:
+    "允许 TalkingData 接收使用事件及浏览器、网络信息，帮助改进 MediaGo。同意前保持关闭，不影响下载。关闭后界面会重新加载以停止统计 SDK，后台下载继续。",
+  analyticsPrivacyPolicy: "隐私政策",
+  analyticsDecline: "不启用统计，继续使用",
+  analyticsAllow: "同意启用统计",
+  analyticsSaveFailed: "统计偏好保存失败，请重试。",
   downloadList: "下载列表",
   downloadComplete: "下载完成",
   materialExtraction: "素材提取",

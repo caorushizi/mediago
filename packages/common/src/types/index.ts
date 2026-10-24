@@ -563,7 +563,16 @@ export interface OpenUpdateLogsResult {
 // mode, no-op stubs in web/server mode.
 // ============================================================
 
+export interface AnalyticsConsent {
+  enabled: boolean;
+  decided: boolean;
+}
+
 export interface PlatformApi {
+  analytics: {
+    getConsent(): Promise<AnalyticsConsent>;
+    setConsent(enabled: boolean): Promise<AnalyticsConsent>;
+  };
   browser: {
     createTab(options?: CreateBrowserTabInput): Promise<BrowserTabSnapshot>;
     activateTab(tabId: string): Promise<BrowserTabsSnapshot>;
