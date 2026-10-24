@@ -28,7 +28,7 @@
     "react-dom": "^19.2.8",
     "react-i18next": "^17.0.12",
     "sonner": "^2.0.8",
-    "tailwind-merge": "^3.6.0"
+    "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.7.1",
