@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { expect, test } from "vitest";
 import {
   buildDockerSummary,
@@ -187,3 +188,21 @@ test("renders the Docker job summary including all published tags", () => {
 function response(status: number, data: unknown): GitHubJsonResponse {
   return { status, data, text: JSON.stringify(data) };
 }
+
+test("inherits BuildKit target platform arguments in the native Go builder", () => {
+  const dockerfile = readFileSync(
+    new URL("../../../../Dockerfile", import.meta.url),
+    "utf8",
+  );
+  const goBuilder = dockerfile
+    .split(/^FROM /m)
+    .find((stage) =>
+      /^--platform=\$BUILDPLATFORM .* AS go-builder\s*$/m.test(stage),
+    );
+
+  expect(goBuilder).toBeDefined();
+  for (const argument of ["TARGETOS", "TARGETARCH"]) {
+    expect(goBuilder).toMatch(new RegExp(`^ARG ${argument}\\s*$`, "m"));
+    expect(goBuilder).not.toMatch(new RegExp(`^ARG ${argument}=`, "m"));
+  }
+});
