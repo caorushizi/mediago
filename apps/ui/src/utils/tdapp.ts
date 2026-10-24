@@ -1,29 +1,40 @@
 class TDEvent {
-  appId?: string | boolean;
-  vn?: string;
-  vc?: string;
+  private enabled = false;
+  private script: HTMLScriptElement | undefined;
+  private readonly appId = import.meta.env.APP_TD_APPID;
+  private readonly version = import.meta.env.APP_VERSION;
 
-  constructor() {
-    this.appId = import.meta.env.APP_TD_APPID;
-    this.vn = import.meta.env.APP_VERSION;
-    this.vc = import.meta.env.APP_VERSION;
+  get loaded() {
+    return this.script !== undefined;
   }
 
-  init() {
+  init(consented = false) {
+    if (consented !== true) return;
+    this.enabled = true;
     const appId = typeof this.appId === "string" ? this.appId.trim() : "";
-    if (!appId) return;
+    if (!appId || this.script) return;
     const script = document.createElement("script");
-    script.src = `https://jic.talkingdata.com/app/h5/v1?appid=${appId}&vn=${this.vn}&vc=${this.vc}`;
+    script.src = `https://jic.talkingdata.com/app/h5/v1?appid=${encodeURIComponent(appId)}&vn=${encodeURIComponent(this.version ?? "")}&vc=${encodeURIComponent(this.version ?? "")}`;
     script.async = true;
-    const headElement = document.getElementsByTagName("head")[0];
-    headElement.appendChild(script);
+    script.referrerPolicy = "no-referrer";
+    this.script = script;
+    document.head.appendChild(script);
   }
 
-  onEvent(eventId: string, mapKv: Record<string, string> = {}) {
+  disable() {
+    this.enabled = false;
+    this.script?.remove();
+    window.TDAPP = undefined;
+  }
+
+  onEvent(eventId: string, _mapKv: Record<string, string> = {}) {
+    if (!this.enabled || !this.script) return;
     try {
-      window.TDAPP?.onEvent(eventId, "", mapKv);
+      // Count feature usage without application-provided machine/task IDs,
+      // routes, download URLs, filenames or other arbitrary event parameters.
+      window.TDAPP?.onEvent(eventId, "", {});
     } catch {
-      // empty
+      // Statistics must never interrupt downloads.
     }
   }
 }

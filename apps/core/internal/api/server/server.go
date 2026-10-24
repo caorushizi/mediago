@@ -56,6 +56,8 @@ type Server struct {
 
 // Options holds optional configuration for the server.
 type Options struct {
+	AuthSetupToken      string
+	OnAuthSetupComplete func()
 	EnableAuth          bool
 	FFmpegBin           string
 	VideoRoot           string
@@ -116,7 +118,7 @@ func New(queue *core.TaskQueue, logs *tasklog.Manager, database *db.Database, co
 		configHandler:          handler.NewConfigHandler(confStore, hub),
 		eventHandler:           handler.NewEventHandler(hub),
 		healthHandler:          handler.NewHealthHandler(),
-		authHandler:            handler.NewAuthHandler(confStore),
+		authHandler:            handler.NewAuthHandler(confStore, handler.AuthOptions{RequireSetupToken: opt.EnableAuth, SetupToken: opt.AuthSetupToken, OnSetupComplete: opt.OnAuthSetupComplete}),
 		utilHandler:            handler.NewUtilHandler(opt.EnvPaths),
 		sourceHandler:          handler.NewSourceHandler(sourceInspector),
 		discoveryBridgeHandler: handler.NewDiscoveryBridgeHandler(opt.ElectronBridgeToken, discoveryBroker, discoveryService),

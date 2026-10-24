@@ -53,6 +53,10 @@ func (h *TaskHandler) Create(c *gin.Context) {
 		return
 	}
 
+	if req.ID != "" && !tasklog.ValidTaskID(req.ID) {
+		writeInvalidRequest(c)
+		return
+	}
 	params := req.ToDownloadParams()
 
 	logger.Info("Task creation request received",
@@ -200,6 +204,10 @@ func (h *TaskHandler) Logs(c *gin.Context) {
 	}
 
 	content, err := h.logs.Read(id)
+	if errors.Is(err, tasklog.ErrTaskID) {
+		writeInvalidRequest(c)
+		return
+	}
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
 			logger.Warn("Task log not found",

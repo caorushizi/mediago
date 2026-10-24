@@ -1,6 +1,7 @@
 import { expect, test } from "vitest";
 import { DownloadType } from "../types";
 import {
+  SHARE_INTENT_MAX_TEXT_LENGTH,
   ELECTRON_SHARE_PROTOCOLS,
   WEB_SHARE_PROTOCOLS,
   extractFirstHttpUrl,
@@ -122,4 +123,23 @@ test("extracts shared URLs and expires stale intents", () => {
   }
   expect(isFreshShareIntent(intent, 1_001)).toBe(true);
   expect(isFreshShareIntent(intent, 1_000 + 16 * 60 * 1_000)).toBe(false);
+});
+
+test("trims shared URL punctuation in linear time and bounds untrusted text", () => {
+  const suffix = "!".repeat(20_000);
+  expect(
+    extractFirstHttpUrl("https://media.lan/movie.m3u8" + suffix + "x"),
+  ).toBeUndefined();
+  expect(extractFirstHttpUrl("https://media.lan/movie.m3u8" + suffix)).toBe(
+    "https://media.lan/movie.m3u8",
+  );
+  expect(
+    extractFirstHttpUrl("prefix ".repeat(SHARE_INTENT_MAX_TEXT_LENGTH)),
+  ).toBeUndefined();
+  expect(extractFirstHttpUrl("https://nas.lan/a?token=a!b)")).toBe(
+    "https://nas.lan/a?token=a!b",
+  );
+  expect(extractFirstHttpUrl("http://192.168.1.5:8080/live.m3u8")).toBe(
+    "http://192.168.1.5:8080/live.m3u8",
+  );
 });
